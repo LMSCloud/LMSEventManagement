@@ -1,7 +1,7 @@
 {
   "/patrons/{patron_id}/bother": {
     "put": {
-      "x-mojo-to": "Com::ByWaterSolutions::KitchenSink::BotherPatronController#bother",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::BotherPatronController#bother",
       "operationId": "BotherPatron",
       "tags": ["patrons"],
       "parameters": [{

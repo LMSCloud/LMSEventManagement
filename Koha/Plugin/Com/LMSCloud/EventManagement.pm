@@ -1,4 +1,4 @@
-package Koha::Plugin::Com::ByWaterSolutions::KitchenSink;
+package Koha::Plugin::Com::LMSCloud::EventManagement;
 
 ## It's good practice to use Modern::Perl
 use Modern::Perl;
@@ -25,15 +25,15 @@ use Mojo::JSON qw(decode_json);;
 use URI::Escape qw(uri_unescape);
 
 ## Here we set our plugin version
-our $VERSION = "2.2.0";
-our $MINIMUM_VERSION = "20.05";
+our $VERSION = "0.0.1";
+our $MINIMUM_VERSION = "18.05";
 
 ## Here is our metadata, some keys are required, some are optional
 our $metadata = {
-    name            => 'Example Kitchen-Sink Plugin',
-    author          => 'Kyle M Hall',
-    date_authored   => '2009-01-27',
-    date_updated    => "2021-05-27",
+    name            => 'Event Management',
+    author          => 'LMSCloud',
+    date_authored   => '2021-10-15',
+    date_updated    => "2021-10-15",
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,

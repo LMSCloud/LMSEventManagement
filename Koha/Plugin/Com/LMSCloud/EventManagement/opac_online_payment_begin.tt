@@ -80,7 +80,7 @@
                         <input type="hidden" name="BillingPostalCode" value="[% borrower.zipcode %]" />
                         <input type="hidden" name="BillingEmail" value="[% borrower.email %]" />
                         <input type="hidden" name="amount" value="[% total | format('%.2f') %]" />
-                        <input type="hidden" name="payment_method" value="Koha::Plugin::Com::ByWaterSolutions::KitchenSink" />
+                        <input type="hidden" name="payment_method" value="Koha::Plugin::Com::LMSCloud::EventManagement" />
 
                         [% FOREACH a IN accountlines %]
                             <input type="hidden" name="accountlines_id" value="[% a.id %]" />
