@@ -1,0 +1,43 @@
+# German translations for PACKAGE package.
+# Copyright (C) 2021 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# root <tobias.engelke@lmscloud.de>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: root <tobias.engelke@lmscloud.de>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2021-11-09 12:17+0100\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"POT-Creation-Date: \n"
+"X-Generator: Poedit 2.2.1\n"
+
+#: configure.tt:5 configure.tt:17
+msgid "Koha: Kitchen Sink Plugin: Configuration"
+msgstr "Koha: Spülbecken Plugin: Konfiguration"
+
+#: configure.tt:12
+msgid "Home"
+msgstr "Start"
+
+#: configure.tt:12
+msgid "Plugins"
+msgstr "Plugins"
+
+#: configure.tt:12
+msgid "Kitchen Sink"
+msgstr "Spülbecken"
+
+#: configure.tt:12
+msgid "Configuration"
+msgstr "Konfiguration"
+
+#: configure.tt:25
+msgid ":"
+msgstr ":"

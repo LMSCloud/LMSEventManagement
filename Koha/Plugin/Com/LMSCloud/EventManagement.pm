@@ -24,6 +24,12 @@ use MARC::Record;
 use Mojo::JSON qw(decode_json);;
 use URI::Escape qw(uri_unescape);
 
+use Locale::Messages;;
+Locale::Messages->select_package('gettext_pp');
+
+use Locale::Messages qw(:locale_h :libintl_h);
+use POSIX qw(setlocale);
+
 ## Here we set our plugin version
 our $VERSION = "0.0.1";
 our $MINIMUM_VERSION = "18.05";
@@ -238,14 +244,16 @@ sub opac_online_payment_end {
 ## to include external CSS files as well!
 sub opac_head {
     my ( $self ) = @_;
+    
+    return '';
 
-    return q|
-        <style>
-          body {
-            background-color: orange;
-          }
-        </style>
-    |;
+    #~ return q|
+        #~ <style>
+          #~ body {
+            #~ background-color: orange;
+          #~ }
+        #~ </style>
+    #~ |;
 }
 
 ## If your plugin needs to add some javascript in the OPAC, you'll want
@@ -254,10 +262,12 @@ sub opac_head {
 ## chance to include other javascript files if necessary.
 sub opac_js {
     my ( $self ) = @_;
+    
+    return '';
 
-    return q|
-        <script>console.log("Thanks for testing the kitchen sink plugin!");</script>
-    |;
+    #~ return q|
+        #~ <script>console.log("Thanks for testing the kitchen sink plugin!");</script>
+    #~ |;
 }
 
 
@@ -267,14 +277,16 @@ sub opac_js {
 ## to include external CSS files as well!
 sub intranet_head {
     my ( $self ) = @_;
+    
+    return '';
 
-    return q|
-        <style>
-          body {
-            background-color: orange;
-          }
-        </style>
-    |;
+    #~ return q|
+        #~ <style>
+          #~ body {
+            #~ background-color: purple;
+          #~ }
+        #~ </style>
+    #~ |;
 }
 
 ## If your plugin needs to add some javascript in the staff intranet, you'll want
@@ -283,10 +295,12 @@ sub intranet_head {
 ## chance to include other javascript files if necessary.
 sub intranet_js {
     my ( $self ) = @_;
+    
+    return '';
 
-    return q|
-        <script>console.log("Thanks for testing the kitchen sink plugin!");</script>
-    |;
+    #~ return q|
+        #~ <script>console.log("Thanks for testing the kitchen sink plugin!");</script>
+    #~ |;
 }
 
 ## This method allows you to add new html elements to the catalogue toolbar.
@@ -294,13 +308,15 @@ sub intranet_js {
 ## toolbar element of some form. See bug 20968 for more details.
 sub intranet_catalog_biblio_enhancements_toolbar_button {
     my ( $self ) = @_;
+    
+    return '';
 
-    return q|
-        <a class="btn btn-default btn-sm" onclick="alert('Peace and long life');">
-          <i class="fa fa-hand-spock-o" aria-hidden="true"></i>
-          Live long and prosper
-        </a>
-    |;
+    #~ return q|
+        #~ <a class="btn btn-default btn-sm" onclick="alert('Peace and long life');">
+          #~ <i class="fa fa-hand-spock-o" aria-hidden="true"></i>
+          #~ Live long and prosper
+        #~ </a>
+    #~ |;
 }
 
 ## If your tool is complicated enough to needs it's own setting/configuration
@@ -313,6 +329,10 @@ sub configure {
 
     unless ( $cgi->param('save') ) {
         my $template = $self->get_template({ file => 'configure.tt' });
+        $template->param(
+			language => C4::Languages::getlanguage($cgi) || 'en',
+			mbf_path => abs_path( $self->mbf_path( 'translations' ) ),
+		);
 
         ## Grab the values we already have for our settings, if any exist
         $template->param(
