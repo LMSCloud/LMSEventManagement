@@ -319,6 +319,159 @@ sub intranet_catalog_biblio_enhancements_toolbar_button {
     #~ |;
 }
 
+sub add_target_group {
+	my ( $self, $code, $target_group, $min_age, $max_age ) = @_;	
+	
+	my $table = $self->get_qualified_table_name('targetgroups');
+	
+	my $query = "SELECT * FROM $table WHERE code = '$code'";
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+    
+    my $code_exists = $sth->fetchrow_hashref();
+    
+    unless ( $code_exists ) {
+	
+		$query = "INSERT INTO $table (code, targetgroup"; 
+		
+		if ($min_age ne '') {
+			$query = $query.", min_age";
+		}
+		if ($max_age ne '') {
+			$query = $query.", max_age";
+		}
+		$query = $query.") VALUES ('$code', '$target_group'";
+		if ($min_age ne '') {
+			$query = $query.", $min_age";
+		}
+		if ($max_age ne '') {
+			$query = $query.", $max_age";
+		}
+		$query = $query.")";
+
+		$sth = $dbh->prepare($query);
+		$sth->execute();
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+
+sub delete_target_group {
+	my ( $self, $code ) = @_;	
+	
+	my $table = $self->get_qualified_table_name('targetgroups');
+	
+	my $query = "DELETE FROM $table WHERE code = '$code'";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+}
+
+sub get_target_group {
+	my ( $self, $code ) = @_;	
+	
+	my $table = $self->get_qualified_table_name('targetgroups');
+		
+	my $query = "SELECT * FROM $table WHERE code = '$code'";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+	
+	my $targetgroups = $sth->fetchrow_hashref();
+    
+	return $targetgroups;
+}
+
+sub get_target_groups {
+	my $self = shift;
+	
+	my $table = 'koha_plugin_com_lmscloud_eventmanagement_targetgroups';#$self->get_qualified_table_name('targetgroups');
+	
+	my $query = "SELECT * FROM $table";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+	
+	my @targetgroups;
+	while ( my $row = $sth->fetchrow_hashref() ) {
+        push( @targetgroups, $row );
+    }
+    
+	return \@targetgroups;
+}
+
+
+sub configure_targets {
+    my ( $self, $args ) = @_;
+    my $cgi = $self->{'cgi'};
+    
+    my $op = $cgi->param('op');
+    my $submit_new_target = $cgi->param('submit_new_target');
+    my $submit_edit_target = $cgi->param('submit_edit_target');
+    
+    my $template = $self->get_template({ file => 'configure_targets.tt' });	
+    
+    unless ( $submit_new_target || $submit_edit_target) {
+		
+		if ( $op eq 'delete_attribute_type' ) {		
+			my $code = $cgi->param('code');
+			delete_target_group($self, $code);	
+		} 
+		elsif ( $op eq 'edit_attribute_type' ){		
+			my $code = $cgi->param('code');
+			$template->param(
+				target_group => get_target_group($self, $code),
+			);
+		}	
+	} 
+	else {	
+		my $code = $cgi->param('code');
+		my $target_group = $cgi->param('target_group');
+		my $min_age = $cgi->param('min_age');
+		my $max_age = $cgi->param('max_age');
+		my $op = $cgi->param('op');
+		if ( $submit_edit_target ) {
+			delete_target_group($self, $code);
+		} 
+		my $success = add_target_group($self, $code, $target_group, $min_age, $max_age);
+		
+		$template->param(
+			added_group => $success,
+		);
+	}
+	
+	$template->param(
+		op => $op,
+		language => C4::Languages::getlanguage($cgi) || 'en',
+		mbf_path => abs_path( $self->mbf_path( 'translations' ) ),
+		target_groups => get_target_groups($self),
+	);
+	$self->output_html( $template->output() );
+}
+
+sub configure_events {
+    my ( $self, $args ) = @_;
+    my $cgi = $self->{'cgi'};
+    
+    my $op = $cgi->param('op');
+    
+    my $template = $self->get_template({ file => 'configure_events.tt' });	
+	
+	$template->param(
+		op => $op,
+		language => C4::Languages::getlanguage($cgi) || 'en',
+		mbf_path => abs_path( $self->mbf_path( 'translations' ) ),
+	);
+	$self->output_html( $template->output() );
+}
+
 ## If your tool is complicated enough to needs it's own setting/configuration
 ## you will want to add a 'configure' method to your plugin like so.
 ## Here I am throwing all the logic into the 'configure' method, but it could
@@ -326,35 +479,28 @@ sub intranet_catalog_biblio_enhancements_toolbar_button {
 sub configure {
     my ( $self, $args ) = @_;
     my $cgi = $self->{'cgi'};
-
-    unless ( $cgi->param('save') ) {
-        my $template = $self->get_template({ file => 'configure.tt' });
-        $template->param(
+    
+    my $step = $cgi->param('step'); 
+    my $op = $cgi->param('op');
+    
+    my $submit_targets = ($cgi->param('submit_new_target') || $cgi->param('submit_edit_target'));
+    my $submit_events = ($cgi->param('submit_new_event') || $cgi->param('submit_edit_event'));
+ 
+    if ( $step eq 'targets' || $submit_targets) {
+		$self->configure_targets();			
+	} 
+	elsif ( $step eq 'events' || $submit_events ) {
+		$self->configure_events();
+	} 
+	else {
+		my $template = $self->get_template({ file => 'configure.tt' });	
+		$template->param(
+			op => $op,
 			language => C4::Languages::getlanguage($cgi) || 'en',
 			mbf_path => abs_path( $self->mbf_path( 'translations' ) ),
 		);
-
-        ## Grab the values we already have for our settings, if any exist
-        $template->param(
-            enable_opac_payments => $self->retrieve_data('enable_opac_payments'),
-            foo             => $self->retrieve_data('foo'),
-            bar             => $self->retrieve_data('bar'),
-            last_upgraded   => $self->retrieve_data('last_upgraded'),
-        );
-
-        $self->output_html( $template->output() );
-    }
-    else {
-        $self->store_data(
-            {
-                enable_opac_payments => $cgi->param('enable_opac_payments'),
-                foo                => $cgi->param('foo'),
-                bar                => $cgi->param('bar'),
-                last_configured_by => C4::Context->userenv->{'number'},
-            }
-        );
-        $self->go_home();
-    }
+		$self->output_html( $template->output() );
+	}	
 }
 
 ## This is the 'install' method. Any database tables or other setup that should
@@ -364,11 +510,14 @@ sub configure {
 sub install() {
     my ( $self, $args ) = @_;
 
-    my $table = $self->get_qualified_table_name('mytable');
+    my $table = $self->get_qualified_table_name('targetgroups');
 
     return C4::Context->dbh->do( "
         CREATE TABLE IF NOT EXISTS $table (
-            `borrowernumber` INT( 11 ) NOT NULL
+            `code` VARCHAR( 10 ) PRIMARY KEY,
+            `targetgroup` varchar(30) NOT NULL,
+            `min_age` smallint(6),
+            `max_age` smallint(6)
         ) ENGINE = INNODB;
     " );
 }
@@ -390,7 +539,7 @@ sub upgrade {
 sub uninstall() {
     my ( $self, $args ) = @_;
 
-    my $table = $self->get_qualified_table_name('mytable');
+    my $table = $self->get_qualified_table_name('targetgroups');
 
     return C4::Context->dbh->do("DROP TABLE IF EXISTS $table");
 }

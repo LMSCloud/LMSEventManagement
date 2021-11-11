@@ -2,79 +2,40 @@
 
 [% USE KohaDates %]
 [% INCLUDE 'doc-head-open.inc' %]
- <title>[% 'Koha: Kitchen Sink Plugin: Configuration' | gettext %]</title>
+ <title>[% 'Koha: Event Mangement Plugin: Configuration' | gettext %]</title>
 [% INCLUDE 'doc-head-close.inc' %]
 </head>
 <body>
 [% INCLUDE 'header.inc' %]
 [% INCLUDE 'cat-search.inc' %]
 
-<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">[% 'Home' | gettext %]</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a> &rsaquo; [% 'Kitchen Sink' | gettext %] &rsaquo; [% 'Configuration' | gettext %]</div>
+[% SET URL = "/cgi-bin/koha/plugins/run.pl?class=Koha%3A%3APlugin%3A%3ACom%3A%3ALMSCloud%3A%3AEventManagement&method=configure" %]
 
-<div id="doc3">
-    <!-- We can access our own plugins resource files using the PLUGIN_PATH variable. -->
-    <img src="[% PLUGIN_PATH %]/logo.png" />
-    <h3>[% 'Koha: Kitchen Sink Plugin: Configuration' | gettext %]</h3>
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">[% 'Home' | gettext %]</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a> &rsaquo; [% 'Event Management - Configuration' | gettext %]</div>
 
-    <!-- Notice our form here has no 'action', this is good, it means that our forms will always get passed back to 'plugins/run.pl'. You could hard code it instead if you prefer -->
-    <form method="get">
-        <!-- Always pass these two parameters so the plugin system knows what to execute! -->
-        <input type="hidden" name="class" value="[% CLASS %]"/>
-        <input type="hidden" name="method" value="[% METHOD %]"/>
+<!-- We can access our own plugins resource files using the PLUGIN_PATH variable. 
+<img src="../plugins/lms-koha-plugin-event-management/Koha/Plugin/Com/LMSCloud/EventManagement/logo.png" />
+<p>[% PLUGIN_PATH %]/logo.png</p>-->
 
-        <label for="foo">[% 'Parameter foo:' | gettext %] </label>
-        <select name="foo">
-            [% IF foo == 'A' %]
-                <option value="A" selected="selected">Option A</option>
-            [% ELSE %]
-                <option value="A">Option A</option>
-            [% END %]
+<div class="main container-fluid">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2">
 
-            [% IF foo == 'B' %]
-                <option value="B" selected="selected">Option B</option>
-            [% ELSE %]
-                <option value="B">Option B</option>
-            [% END %]
-        </select>
-
-        <p>
-
-        <label for="bar">Parameter 'bar': </label>
-        <input type="text" name="bar" value="[% bar %]" />
-
-        <p>
-
-        <label for="enable_opac_payments">Enable OPAC Account Payments: </label>
-        <select name="enable_opac_payments">
-            [% IF enable_opac_payments == 'No' %]
-                <option value="No" selected="selected">No</option>
-            [% ELSE %]
-                <option value="No">No</option>
-            [% END %]
-
-            [% IF enable_opac_payments == 'Yes' %]
-                <option value="Yes" selected="selected">Yes</option>
-            [% ELSE %]
-                <option value="Yes">Yes</option>
-            [% END %]
-        </select>
-
-        <p>
-
-        <input type="hidden" name="save" value="1" />
-
-        <input type="submit" value="Save configuration" />
-    </form>
-
-    <hr/>
-
-    <p>
-        <h5>Upgrade status</h5>
-        [% IF last_upgraded %]
-            Plugin was last upgraded on this system on [% last_upgraded | $KohaDates with_hours => 1 %]
-        [% ELSE %]
-            Plugin has never been upgraded.
-        [% END %]
-    </p>
+        <h1>Event Management</h1>
+        <div class="row">
+            <div class="col-md-6 sysprefs">
+            
+                <h3>Configuration</h3>
+                <dl>
+                    <dt><a href="[% URL %]&step=targets">Target groups</a></dt>
+                    <dd>Define target groups</dd>
+                    <dt><a href="[% URL %]&step=events">Event types</a></dt>
+                    <dd>Define typical event types</dd>
+                </dl>
+			</div>
+		</div>
+		</div>
+	</div>
+</div>
 
 [% INCLUDE 'intranet-bottom.inc' %]

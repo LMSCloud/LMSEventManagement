@@ -1,0 +1,166 @@
+[% USE gtx = Gettext('com.lmscloud.eventmanagement', language, 'utf-8', mbf_path) %]
+
+[% USE KohaDates %]
+[% USE TablesSettings %]
+[% SET footerjs = 1 %]
+
+[% INCLUDE 'doc-head-open.inc' %]
+ <title>[% 'Koha: Event Mangement Plugin: Configuration' | gettext %]</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+[% SET URL = "/cgi-bin/koha/plugins/run.pl?class=Koha%3A%3APlugin%3A%3ACom%3A%3ALMSCloud%3A%3AEventManagement&method=configure&step=targets" %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">[% 'Home' | gettext %]</a> 
+	&rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a> 
+	&rsaquo; <a href="/cgi-bin/koha/plugins/run.pl?class=Koha%3A%3APlugin%3A%3ACom%3A%3ALMSCloud%3A%3AEventManagement&method=configure">[% 'Event Management - Configuration' | gettext %]</a> 
+	&rsaquo; [% 'Target groups' | gettext %]</div>
+
+<div class="main container-fluid">
+    <div class="row">
+		<div class="col-sm-10 col-sm-push-2">
+			<main>
+				[% IF op == 'edit_attribute_type' %]
+					<h2>Edit target group</h2>
+					[% target_group %]
+					<form class="validated" method="post">
+					 <!-- <input type="hidden" name="op" value="[% confirm_op | html %]" /> -->
+					  <input type="hidden" name="class" value="[% CLASS %]"/>
+					  <input type="hidden" name="method" value="[% METHOD %]"/>
+					  <fieldset class="rows">
+						<ol>
+						  <li>						  
+							  <span class="label">Target group code: </span>[% target_group.code | html %]
+							  <input type="hidden" name="code" value="[% target_group.code | html %]" /><input type="hidden" name="is_a_modif" value="1" />
+						   </li>
+						   <li>
+							   <label for="description">Target group: </label>
+							   <input type="text" id="target_group" name="target_group" required="required" class="required" size="50" maxlength="250" value="[% target_group.targetgroup %]" />
+							   <span class="required">Required</span>
+						   </li>
+							<li>
+								<label for="min_age">Min age: </label>
+								<input type="text" name="min_age" id="min_age" value="[% target_group.min_age %]" size="3" maxlength="3" /> years
+							</li>
+							<li>
+								<label for="max_age">Min age: </label>
+								<input type="text" name="max_age" id="max_age" value="[% target_group.max_age %]" size="3" maxlength="3" /> years
+							</li>
+						</ol>
+					  </fieldset>
+					  <fieldset class="action">
+						  <input type="submit" name="submit_edit_target" value="Save" />
+						  <a class="cancel" href="[% URL %]">Cancel</a>
+					  </fieldset>
+					</form>
+				[% ELSIF op == 'add_new_target_group' %]
+					<h2>Add target group</h2>
+					<form class="validated" method="post">
+					 <!-- <input type="hidden" name="op" value="[% confirm_op | html %]" /> -->
+					  <input type="hidden" name="class" value="[% CLASS %]"/>
+					  <input type="hidden" name="method" value="[% METHOD %]"/>
+					  <fieldset class="rows">
+						<ol>
+						  <li>
+							  <label for="code">Target group code: </label>
+							  <input type="text" id="code" name="code" required="required" class="required" size="10" maxlength="10" />
+							  <span class="required">Required</span>
+						   </li>
+						   <li>
+							   <label for="description">Target group: </label>
+							   <input type="text" id="target_group" name="target_group" required="required" class="required" size="50" maxlength="250" value="" />
+							   <span class="required">Required</span>
+						   </li>
+							<li>
+								<label for="min_age">Min age: </label>
+								<input type="text" name="min_age" id="min_age" value="" size="3" maxlength="3" /> years
+							</li>
+							<li>
+								<label for="max_age">Min age: </label>
+								<input type="text" name="max_age" id="max_age" value="" size="3" maxlength="3" /> years
+							</li>
+						</ol>
+					  </fieldset>
+					  <fieldset class="action">
+						  <input type="submit" name="submit_new_target" value="Save" />
+						  <a class="cancel" href="[% URL %]">Cancel</a>
+					  </fieldset>
+					</form>
+				[% ELSE %]
+					<h2>Target groups</h2>
+					[% IF added_group == 0 %]
+						<div class="dialog alert">Could not add the target group: Code already exists!</div>
+					[% END %]
+					<div id="toolbar" class="btn-toolbar">
+						<a class="btn btn-default" id="newrule" href="[% URL %]&op=add_new_target_group"><i class="fa fa-plus"></i> New target group</a>
+					</div>
+					[% IF NOT target_groups %]
+						<p>There are no saved target groups.</p>
+					[% ELSE %]
+						<table id="target_table">
+						<thead>
+							<tr>
+								<th scope="col">Code</th>
+								<th scope="col">Target group</th>
+								<th scope="col">Min. age</th>
+								<th scope="col">Max. age</th>
+								<th scope="col" class="noExport">Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+						[% FOREACH target_group = target_groups %]
+						<tr>
+							<td>[% target_group.code %]</td>
+							<td>[% target_group.targetgroup %]</td>
+							<td>[% target_group.min_age %]</td>
+							<td>[% target_group.max_age %]</td>
+							<td class="actions">
+								<a class="btn btn-default btn-xs" href="[% URL %]&op=edit_attribute_type&amp;code=[% target_group.code | uri %]"><i class="fa fa-pencil"></i> Edit</a>
+								<a class="delete_group btn btn-default btn-xs" href="[% URL %]&op=delete_attribute_type&amp;code=[% target_group.code | uri %]"><i class="fa fa-trash"></i> Delete</a>
+							</td>
+						</tr>	
+						[% END %] <!-- FOREACH -->
+						</tbody>
+						</table>
+					[% END %]  <!-- % IF target_groups.size == 0 % -->
+				[% END %]  <!-- add_new_target_group -->
+			</main>
+		</div> <!-- /.col-sm-10.col-sm-push-2 -->
+
+		<div class="col-sm-2 col-sm-pull-10">
+			<aside>
+				<div id="navmenu">
+				<div id="navmenulist">
+					<h5>Configuration</h5>
+					<ul>
+						<li><a href="/cgi-bin/koha/plugins/run.pl?class=Koha%3A%3APlugin%3A%3ACom%3A%3ALMSCloud%3A%3AEventManagement&method=configure&step=targets">Target groups</a></li>
+						<li><a href="/cgi-bin/koha/plugins/run.pl?class=Koha%3A%3APlugin%3A%3ACom%3A%3ALMSCloud%3A%3AEventManagement&method=configure&step=events">Event types</a></li>					
+					</ul>
+				</div>
+				</div>
+			</aside>
+		</div> <!-- /.col-sm-2.col-sm-pull-10 -->
+	</div> <!-- /.row -->
+</div> <!-- /.main.container-fluid -->
+
+[% MACRO jsinclude BLOCK %]
+[% INCLUDE 'datatables.inc' %]
+ <script>
+	$(document).ready(function() {
+		var target_table = $("#target_table").DataTable($.extend(true, {}, dataTablesDefaults, {
+			"order": [[ 0, "asc" ]],
+			"sPaginationType": "full_numbers"
+		}));
+
+		$(".delete_group").on("click", function(){
+			return confirmDelete( _("Are you sure you want to delete this target group? This cannot be undone.") );
+		});
+	});
+</script>
+[% END %]
+        
+[% INCLUDE 'intranet-bottom.inc' %]
+
