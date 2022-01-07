@@ -79,7 +79,7 @@
 								<input type="text" name="min_age" id="min_age" value="" size="3" maxlength="3" /> years
 							</li>
 							<li>
-								<label for="max_age">Min age: </label>
+								<label for="max_age">Max age: </label>
 								<input type="text" name="max_age" id="max_age" value="" size="3" maxlength="3" /> years
 							</li>
 						</ol>

@@ -16,6 +16,9 @@ use Koha::DateUtils;
 use Koha::Libraries;
 use Koha::Patron::Categories;
 use Koha::Patron;
+use Koha::Template::Plugin::Branches;
+use GD;
+use Koha::UploadedFiles;
 
 use Cwd qw(abs_path);
 use Data::Dumper;
@@ -90,14 +93,92 @@ sub tool {
     my ( $self, $args ) = @_;
 
     my $cgi = $self->{'cgi'};
+    my $op = $cgi->param('op');
+    my $template = $self->get_template({ file => 'tool.tt' });	
+    
+    my $submit_choose_eventtype = $cgi->param('submit_choose_eventtype');
+    my $submit_new_event = $cgi->param('submit_new_event');
+    my $submit_edit_event = $cgi->param('submit_edit_event');
+    
+    unless ($submit_new_event || $submit_edit_event) {
+		
+		if ($submit_choose_eventtype) {
+			my $eventtypecode = $cgi->param('eventtypecode');
+			my $eventtype = $self->get_event_type($eventtypecode);
+			my $branches = Koha::Template::Plugin::Branches->all();
+			my $targetgroups= $self->get_target_groups();
+			$op = 'add_new_event';
+			$template->param(
+				branches => $branches,
+				eventtype => $eventtype,
+				targetgroups => $targetgroups,
+			);
+		}
+		
+	} else {
+		
+		my $title = $cgi->param('title');
+		my $eventtype = $cgi->param('eventtype');
+		my $branch = $cgi->param('branch');
+		my $targetgroup = $cgi->param('targetgroup');
+		my $max_age = $cgi->param('max_age');
+		#my $pubreg = $cgi->param('pubreg');
+		my $max_participants = $cgi->param('max_participants');
+		my $costs = $cgi->param('costs');
+		my $description = $cgi->param('description');
+		my $starttime = $cgi->param('starttime');
+		my $endtime = $cgi->param('endtime');
+		my $image_id = $cgi->param('uploadedfileid');
+		
+		if ( $submit_edit_event ) {
+			my $id = $cgi->param('id');
+			$self->delete_event($id);
+		} 
+			
+		my $result = $self->add_event( $title, 
+										$eventtype,
+										$branch,		
+										$targetgroup,
+										$max_age,
+										#$pubreg,
+										$max_participants,
+										$costs,
+										$description,
+										$starttime,
+										$endtime,
+										$image_id
+									);
+		$template->param(
+			added_event => $result,
+		);
+		
+	}
+	
+	if ( $op eq 'delete_event' ) {
+		my $id = $cgi->param('id');
+		$self->delete_event($id);
+	} elsif ( $op eq 'edit_event' ){		
+		my $id = $cgi->param('id');
+		my $event = $self->get_event($id);
+		my $eventtype = $self->get_event_type($event->{'eventtypecode'});
+		my $branches = Koha::Template::Plugin::Branches->all();
+		my $targetgroups= $self->get_target_groups();
+		$template->param(
+			branches => $branches,
+			eventtype => $eventtype,
+			targetgroups => $targetgroups,
+			event => $event,
+		);
+	}
 
-    unless ( $cgi->param('submitted') ) {
-        $self->tool_step1();
-    }
-    else {
-        $self->tool_step2();
-    }
-
+	$template->param(
+		op => $op,
+		language => C4::Languages::getlanguage($cgi) || 'en',
+		mbf_path => abs_path( $self->mbf_path( 'translations' ) ),
+		events => $self->get_events(),
+		eventtypes => $self->get_event_types(),
+	);
+	$self->output_html( $template->output() );
 }
 
 ## The existiance of a 'to_marc' subroutine means the plugin is capable
@@ -147,6 +228,38 @@ sub opac_online_payment {
     my ( $self, $args ) = @_;
 
     return $self->retrieve_data('enable_opac_payments') eq 'Yes';
+}
+
+## This method triggers the beginning of the payment process
+## It could result in a form displayed to the patron the is submitted
+## or go straight to a redirect to the payment service ala paypal
+sub opac {
+    my ( $self, $args ) = @_;
+    my $cgi = $self->{'cgi'};
+
+    my ( $template, $borrowernumber ) = get_template_and_user(
+        {   template_name   => abs_path( $self->mbf_path( 'opac_online_payment_begin.tt' ) ),
+            query           => $cgi,
+            type            => 'opac',
+            authnotrequired => 0,
+            is_plugin       => 1,
+        }
+    );
+
+    my @accountline_ids = $cgi->multi_param('accountline');
+
+    my $rs = Koha::Database->new()->schema()->resultset('Accountline');
+    my @accountlines = map { $rs->find($_) } @accountline_ids;
+
+    $template->param(
+        borrower             => scalar Koha::Patrons->find($borrowernumber),
+        payment_method       => scalar $cgi->param('payment_method'),
+        enable_opac_payments => $self->retrieve_data('enable_opac_payments'),
+        accountlines         => \@accountlines,
+    );
+
+
+    $self->output_html( $template->output() );
 }
 
 ## This method triggers the beginning of the payment process
@@ -391,7 +504,7 @@ sub get_target_group {
 sub get_target_groups {
 	my $self = shift;
 	
-	my $table = 'koha_plugin_com_lmscloud_eventmanagement_targetgroups';#$self->get_qualified_table_name('targetgroups');
+	my $table = $self->get_qualified_table_name('targetgroups');
 	
 	my $query = "SELECT * FROM $table";
 
@@ -405,6 +518,297 @@ sub get_target_groups {
     }
     
 	return \@targetgroups;
+}
+
+sub get_events {
+	my $self = shift;
+	
+	my $table = $self->get_qualified_table_name('events');
+	my $tableeventtypes = $self->get_qualified_table_name('eventtypes');
+	my $tabletargetgroups = $self->get_qualified_table_name('targetgroups');
+	
+	#my $query = "SELECT * FROM $table";
+	my $query = "
+		SELECT e.*, branchname,t.targetgroup,et.eventtype 
+		FROM $table AS e 
+		LEFT JOIN branches AS b ON e.branchcode=b.branchcode 
+		LEFT JOIN $tabletargetgroups AS t ON e.targetgroupcode = t.code 
+		LEFT JOIN $tableeventtypes AS et ON e.eventtypecode = et.code
+	";
+	
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+	
+	my @events;
+	while ( my $row = $sth->fetchrow_hashref() ) {
+		if (defined $row->{'imageid'}) {
+			my $rec = Koha::UploadedFiles->find( $row->{imageid} );
+			my $srcimage = $rec->hashvalue. '_'. $rec->filename();
+			$row->{'imagefile'} = $srcimage;
+		} else {
+			$row->{'imagefile'} = '';
+		}
+		
+        push( @events, $row );
+    }
+    
+	return \@events;
+}
+
+sub get_event {
+	my $self = shift;
+	my $id = shift;
+	
+	my $table = $self->get_qualified_table_name('events');
+	my $tableeventtypes = $self->get_qualified_table_name('eventtypes');
+	my $tabletargetgroups = $self->get_qualified_table_name('targetgroups');
+	
+	my $query = "
+		SELECT e.*, branchname,t.targetgroup,et.eventtype 
+		FROM $table AS e 
+		LEFT JOIN branches AS b ON e.branchcode=b.branchcode 
+		LEFT JOIN $tabletargetgroups AS t ON e.targetgroupcode = t.code 
+		LEFT JOIN $tableeventtypes AS et ON e.eventtypecode = et.code
+		WHERE eventid = $id
+	";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+	
+	my $event = $sth->fetchrow_hashref();
+	if (defined $event->{'imageid'}) {
+		my $rec = Koha::UploadedFiles->find( $event->{imageid} );
+		my $srcimage = $rec->hashvalue. '_'. $rec->filename();
+		$event->{'imagefile'} = $srcimage;
+	} else {
+		$event->{'imagefile'} = '';
+	}
+    
+	return $event;
+}
+
+sub get_event_type {
+	my ( $self, $code ) = @_;	
+	
+	my $table = $self->get_qualified_table_name('eventtypes');
+		
+	my $query = "SELECT * FROM $table WHERE code = '$code'";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+	
+	my $eventtype = $sth->fetchrow_hashref();
+    
+	return $eventtype;
+}
+
+sub get_event_types {
+	my $self = shift;
+	
+	my $table = $self->get_qualified_table_name('eventtypes');
+	
+	my $query = "SELECT * FROM $table";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+	
+	my @eventtypes;
+	while ( my $row = $sth->fetchrow_hashref() ) {
+		if (defined $row->{'imageid'}) {
+			my $rec = Koha::UploadedFiles->find( $row->{imageid} );
+			my $srcimage = $rec->hashvalue. '_'. $rec->filename();
+			$row->{'imagefile'} = $srcimage;
+		} else {
+			$row->{'imagefile'} = '';
+		}
+        push( @eventtypes, $row );
+    }
+    
+	return \@eventtypes;
+}
+
+sub delete_event {
+	my ( $self, $id ) = @_;	
+	
+	my $table = $self->get_qualified_table_name('events');
+	
+	my $query = "DELETE FROM $table WHERE eventid = '$id'";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+}
+
+sub delete_event_type {
+	my ( $self, $code ) = @_;	
+	
+	my $table = $self->get_qualified_table_name('eventtypes');
+	
+	my $query = "DELETE FROM $table WHERE code = '$code'";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+}
+
+sub upload_image {
+	my ( $self, $image ) = @_;
+	
+	my $input = $self->{'cgi'}; # CGI->new;
+	my $fileID = $input->param('uploadedfileid');
+	my $filetype = $input->param('filetype');
+	
+	if ($fileID) {
+		my $upload = Koha::UploadedFiles->find( $fileID );
+		if ( $filetype eq 'image' ) {
+			my $fh       = $upload->file_handle;
+			my $srcimage = GD::Image->new($fh);
+			$fh->close if $fh;
+			if ( defined $srcimage ) {
+
+				return $srcimage;
+			}
+		}
+	}
+	else {
+		return '';
+	}
+}
+
+sub add_event {
+	my ( $self, 
+			$title, 
+			$eventtype,
+			$branch,		
+			$targetgroup,
+			$max_age,
+			#$pubreg,
+			$max_participants,
+			$costs,
+			$description,
+			$starttime,
+			$endtime,
+			$image_id ) = @_;
+			
+	my $table = $self->get_qualified_table_name('events');	
+	my $dbh = C4::Context->dbh;
+
+    my $srcimage;
+	
+	my $query = "INSERT INTO $table (title, eventtypecode, branchcode, targetgroupcode"; 
+	my $query_values = "VALUES ('$title', '$eventtype', '$branch', '$targetgroup'";
+	
+
+	if ($max_age ne '') {
+		$query = $query.", max_age";
+		$query_values = $query_values.", '$max_age'";
+	}
+	#~ if ($public_reg ne '') {
+		#~ $query = $query.", public_reg";
+		#~ $query_values = $query_values.", '$pubreg'";
+	#~ }
+	if ($max_participants ne '') {
+		$query = $query.", max_participants";
+		$query_values = $query_values.", '$max_participants'";
+	}
+	if ($costs ne '') {
+		$query = $query.", costs";
+		$query_values = $query_values.", '$costs'";
+	}
+	if ($description ne '') {
+		$query = $query.", description";
+		$query_values = $query_values.", '$description'";
+	}
+	if ($starttime ne '') {
+		$query = $query.", starttime";
+		$query_values = $query_values.", '$starttime'";
+	}
+	if ($endtime ne '') {
+		$query = $query.", endtime";
+		$query_values = $query_values.", '$endtime'";
+	}
+	if ($image_id ne '' ) {
+		$query = $query.", imageid";
+		$query_values = $query_values.", '$image_id'";
+	}
+	
+	$query = $query.") ".$query_values.")";
+
+	my $sth = $dbh->prepare($query);
+	$sth->execute();
+	return 1;
+}
+
+sub add_event_type {
+	my ( $self, 
+			$code, 
+			$eventtype,
+			$branch,		
+			$targetgroup,
+			$max_age,
+			$pubreg,
+			$max_participants,
+			$costs,
+			$description,
+			$image_id ) = @_;
+			
+	my $table = $self->get_qualified_table_name('eventtypes');
+	
+	my $query = "SELECT * FROM $table WHERE code = '$code'";
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+    
+    my $code_exists = $sth->fetchrow_hashref();
+    my $srcimage;
+    unless ( $code_exists ) {
+
+		$query = "INSERT INTO $table (code, branchcode, targetgroupcode"; 
+		my $query_values = "VALUES ('$code', '$branch', '$targetgroup'";
+		
+		if ($eventtype ne '') {
+			$query = $query.", eventtype";
+			$query_values = $query_values.", '$eventtype'";
+		}
+		if ($max_age ne '') {
+			$query = $query.", max_age";
+			$query_values = $query_values.", '$max_age'";
+		}
+		if ($pubreg ne '') {
+			$query = $query.", public_reg";
+			$query_values = $query_values.", '$pubreg'";
+		}
+		if ($max_participants ne '') {
+			$query = $query.", max_participants";
+			$query_values = $query_values.", '$max_participants'";
+		}
+		if ($costs ne '') {
+			$query = $query.", costs";
+			$query_values = $query_values.", '$costs'";
+		}
+		if ($description ne '') {
+			$query = $query.", description";
+			$query_values = $query_values.", '$description'";
+		}
+		if ($image_id ne '' ) {
+			$query = $query.", imageid";
+			$query_values = $query_values.", '$image_id'";
+		}
+		
+		$query = $query.") ".$query_values.")";
+
+		$sth = $dbh->prepare($query);
+		$sth->execute();
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 
@@ -451,7 +855,7 @@ sub configure_targets {
 		op => $op,
 		language => C4::Languages::getlanguage($cgi) || 'en',
 		mbf_path => abs_path( $self->mbf_path( 'translations' ) ),
-		target_groups => get_target_groups($self),
+		target_groups => $self->get_target_groups(),
 	);
 	$self->output_html( $template->output() );
 }
@@ -461,13 +865,63 @@ sub configure_events {
     my $cgi = $self->{'cgi'};
     
     my $op = $cgi->param('op');
-    
+    my $submit_new_eventtype = $cgi->param('submit_new_eventtype');
+    my $submit_edit_eventtype = $cgi->param('submit_edit_eventtype');
+        
     my $template = $self->get_template({ file => 'configure_events.tt' });	
+    
+    unless ( $submit_new_eventtype || $submit_edit_eventtype ) {
+		
+		if ( $op == 'add_new_eventtype' ) {
+			my $branches = Koha::Template::Plugin::Branches->all();
+			my $target_groups = $self->get_target_groups();
+			$template->param(
+				branches => $branches,
+				target_groups => $target_groups,
+			);
+		}
+		
+		if ( $op == 'delete_eventtype' ) {
+			my $code = $cgi->param('code');
+			$self->delete_event_type($code);
+		}
+	}
+	else {
+		my $code = $cgi->param('code');
+		my $eventtype = $cgi->param('eventtype');
+		my $branch = $cgi->param('branch');
+		my $targetgroup = $cgi->param('targetgroup');
+		my $max_age = $cgi->param('max_age');
+		my $pubreg = $cgi->param('pubreg');
+		my $max_participants = $cgi->param('max_participants');
+		my $costs = $cgi->param('costs');
+		my $description = $cgi->param('description');
+		my $image_id = $cgi->param('uploadedfileid');
+		
+			
+		my $result = $self->add_event_type( $code, 
+											$eventtype,
+											$branch,		
+											$targetgroup,
+											$max_age,
+											$pubreg,
+											$max_participants,
+											$costs,
+											$description,
+											$image_id
+									);
+		$template->param(
+			added_event => $result,
+		);								
+	}
+	
+	
 	
 	$template->param(
 		op => $op,
 		language => C4::Languages::getlanguage($cgi) || 'en',
 		mbf_path => abs_path( $self->mbf_path( 'translations' ) ),
+		eventtypes => $self->get_event_types(),
 	);
 	$self->output_html( $template->output() );
 }
@@ -484,7 +938,7 @@ sub configure {
     my $op = $cgi->param('op');
     
     my $submit_targets = ($cgi->param('submit_new_target') || $cgi->param('submit_edit_target'));
-    my $submit_events = ($cgi->param('submit_new_event') || $cgi->param('submit_edit_event'));
+    my $submit_events = ($cgi->param('submit_new_eventtype') || $cgi->param('submit_edit_eventtype') || $cgi->param('submit_image_upload'));
  
     if ( $step eq 'targets' || $submit_targets) {
 		$self->configure_targets();			
@@ -510,16 +964,63 @@ sub configure {
 sub install() {
     my ( $self, $args ) = @_;
 
-    my $table = $self->get_qualified_table_name('targetgroups');
+    my $tabletarget = $self->get_qualified_table_name('targetgroups');
 
-    return C4::Context->dbh->do( "
-        CREATE TABLE IF NOT EXISTS $table (
+    my $result = C4::Context->dbh->do( "
+        CREATE TABLE IF NOT EXISTS $tabletarget (
             `code` VARCHAR( 10 ) PRIMARY KEY,
             `targetgroup` varchar(30) NOT NULL,
             `min_age` smallint(6),
             `max_age` smallint(6)
         ) ENGINE = INNODB;
     " );
+    
+    my $tableeventtypes = $self->get_qualified_table_name('eventtypes');
+    
+    $result |= C4::Context->dbh->do( "
+        CREATE TABLE IF NOT EXISTS $tableeventtypes (
+            `code` VARCHAR( 10 ) PRIMARY KEY,
+            `eventtype` varchar(30) NOT NULL,
+            `branchcode` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+            `targetgroupcode` varchar(10),
+            `max_age` smallint(6),
+            `public_reg` bool,
+            `max_participants` smallint(6),
+            `costs` smallint(6),
+            `description` longtext,
+            `imageid` int(11),
+             FOREIGN KEY (branchcode) REFERENCES branches(branchcode),
+             FOREIGN KEY (targetgroupcode) REFERENCES $tableeventtypes(code),
+             FOREIGN KEY (imageid) REFERENCES uploaded_files(id)
+        ) ENGINE = INNODB;
+    " );
+    
+    my $tableevent = $self->get_qualified_table_name('events');
+    
+    $result |= C4::Context->dbh->do( "
+        CREATE TABLE IF NOT EXISTS $tableevent (
+            `eventid` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            `title` varchar(30) NOT NULL,
+            `eventtypecode` VARCHAR( 10 ),
+            `branchcode` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+            `targetgroupcode` varchar(10),
+            `max_age` smallint(6),
+            `public_reg` bool,
+            `max_participants` smallint(6),
+            `costs` smallint(6),
+            `description` longtext,
+            `imageid` int(11),
+            `starttime` DATETIME,
+            `endtime` DATETIME,
+            `registrationpage` longtext,
+             FOREIGN KEY (branchcode) REFERENCES branches(branchcode),
+             FOREIGN KEY (eventtypecode) REFERENCES $tableeventtypes(code),
+             FOREIGN KEY (targetgroupcode) REFERENCES $tabletarget(code),
+             FOREIGN KEY (imageid) REFERENCES uploaded_files(id)
+        ) ENGINE = INNODB;
+    " );
+    
+    return $result;
 }
 
 ## This is the 'upgrade' method. It will be triggered when a newer version of a
