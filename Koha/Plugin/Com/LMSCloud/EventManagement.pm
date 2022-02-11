@@ -33,6 +33,8 @@ Locale::Messages->select_package('gettext_pp');
 use Locale::Messages qw(:locale_h :libintl_h);
 use POSIX qw(setlocale);
 
+use Koha::Plugin::Com::LMSCloud::EventHelper;
+
 ## Here we set our plugin version
 our $VERSION = "0.0.1";
 our $MINIMUM_VERSION = "18.05";
@@ -234,30 +236,40 @@ sub opac_online_payment {
 ## It could result in a form displayed to the patron the is submitted
 ## or go straight to a redirect to the payment service ala paypal
 sub opac {
+    #~ my ( $self, $args ) = @_;
+    #~ my $cgi = $self->{'cgi'};
+
+	#~ my $template = $self->get_template({ file => 'opac_online_payment_begin.tt' });	
+    #~ my ( $template, $borrowernumber ) = get_template_and_user(
+        #~ {   template_name   => abs_path( $self->mbf_path( 'opac_online_payment_begin.tt' ) ),
+            #~ query           => $cgi,
+            #~ type            => 'opac',
+            #~ authnotrequired => 0,
+            #~ is_plugin       => 1,
+        #~ }
+    #~ );
+
+    #~ #my @accountline_ids = $cgi->multi_param('accountline');
+
+    #~ #my $rs = Koha::Database->new()->schema()->resultset('Accountline');
+    #~ #my @accountlines = map { $rs->find($_) } @accountline_ids;
+
+  
+
+    #~ $self->output_html( $template->output() );
+    
     my ( $self, $args ) = @_;
     my $cgi = $self->{'cgi'};
 
-    my ( $template, $borrowernumber ) = get_template_and_user(
-        {   template_name   => abs_path( $self->mbf_path( 'opac_online_payment_begin.tt' ) ),
-            query           => $cgi,
-            type            => 'opac',
-            authnotrequired => 0,
-            is_plugin       => 1,
-        }
-    );
+    my $template = $self->get_template({ file => 'report-step1.tt' });
 
-    my @accountline_ids = $cgi->multi_param('accountline');
-
-    my $rs = Koha::Database->new()->schema()->resultset('Accountline');
-    my @accountlines = map { $rs->find($_) } @accountline_ids;
-
+    my @libraries = Koha::Libraries->search;
+    #my @categories = Koha::Patron::Categories->search_limited({}, {order_by => ['description']});
     $template->param(
-        borrower             => scalar Koha::Patrons->find($borrowernumber),
-        payment_method       => scalar $cgi->param('payment_method'),
-        enable_opac_payments => $self->retrieve_data('enable_opac_payments'),
-        accountlines         => \@accountlines,
+        libraries => \@libraries,
+        #categories => \@categories,
+        type            => 'opac',
     );
-
 
     $self->output_html( $template->output() );
 }
@@ -520,6 +532,39 @@ sub get_target_groups {
 	return \@targetgroups;
 }
 
+sub get_event {
+	my $self = shift;
+	my $id = shift;
+	
+	my $table = $self->get_qualified_table_name('events');
+	my $tableeventtypes = $self->get_qualified_table_name('eventtypes');
+	my $tabletargetgroups = $self->get_qualified_table_name('targetgroups');
+	
+	my $query = "
+		SELECT e.*, branchname,t.targetgroup,et.eventtype 
+		FROM $table AS e 
+		LEFT JOIN branches AS b ON e.branchcode=b.branchcode 
+		LEFT JOIN $tabletargetgroups AS t ON e.targetgroupcode = t.code 
+		LEFT JOIN $tableeventtypes AS et ON e.eventtypecode = et.code
+		WHERE eventid = $id
+	";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+	
+	my $event = $sth->fetchrow_hashref();
+	if (defined $event->{'imageid'}) {
+		my $rec = Koha::UploadedFiles->find( $event->{imageid} );
+		my $srcimage = $rec->hashvalue. '_'. $rec->filename();
+		$event->{'imagefile'} = $srcimage;
+	} else {
+		$event->{'imagefile'} = '';
+	}
+    
+	return $event;
+}
+
 sub get_events {
 	my $self = shift;
 	
@@ -555,39 +600,6 @@ sub get_events {
     }
     
 	return \@events;
-}
-
-sub get_event {
-	my $self = shift;
-	my $id = shift;
-	
-	my $table = $self->get_qualified_table_name('events');
-	my $tableeventtypes = $self->get_qualified_table_name('eventtypes');
-	my $tabletargetgroups = $self->get_qualified_table_name('targetgroups');
-	
-	my $query = "
-		SELECT e.*, branchname,t.targetgroup,et.eventtype 
-		FROM $table AS e 
-		LEFT JOIN branches AS b ON e.branchcode=b.branchcode 
-		LEFT JOIN $tabletargetgroups AS t ON e.targetgroupcode = t.code 
-		LEFT JOIN $tableeventtypes AS et ON e.eventtypecode = et.code
-		WHERE eventid = $id
-	";
-
-	my $dbh = C4::Context->dbh;
-    my $sth = $dbh->prepare($query);
-    $sth->execute();
-	
-	my $event = $sth->fetchrow_hashref();
-	if (defined $event->{'imageid'}) {
-		my $rec = Koha::UploadedFiles->find( $event->{imageid} );
-		my $srcimage = $rec->hashvalue. '_'. $rec->filename();
-		$event->{'imagefile'} = $srcimage;
-	} else {
-		$event->{'imagefile'} = '';
-	}
-    
-	return $event;
 }
 
 sub get_event_type {
@@ -1055,10 +1067,10 @@ sub report_step1 {
     my $template = $self->get_template({ file => 'report-step1.tt' });
 
     my @libraries = Koha::Libraries->search;
-    my @categories = Koha::Patron::Categories->search_limited({}, {order_by => ['description']});
+    #my @categories = Koha::Patron::Categories->search_limited({}, {order_by => ['description']});
     $template->param(
         libraries => \@libraries,
-        categories => \@categories,
+        #categories => \@categories,
     );
 
     $self->output_html( $template->output() );
