@@ -47,7 +47,7 @@ use Locale::Messages qw(:locale_h :libintl_h);
 
 my $pluginDir = dirname(abs_path($0));
 
-my $template_name = $pluginDir . '/events.tt';
+my $template_name = $pluginDir . '/events-grid.tt';
 
 my $cgi = new CGI;
 
@@ -73,14 +73,57 @@ $template->param(
 if ( !defined($op) ) {
     
     my $events = get_events();
+    my $used_target_groups = get_used_target_groups();
     
+    my $filtered_targedgroups = $cgi->param('targetgroup');
+    
+    foreach my $targetgroup (@{$used_target_groups}) {
+		if ( $filtered_targedgroups =~ /$targetgroup->{targetgroupcode}/ ) {
+			$targetgroup->{checked} = 'checked';
+		}
+	}
+
 	$template->param(
 		plugin_dir        => $pluginDir,
 		op                => $op,
 		events			  => $events,
+		used_target_groups => $used_target_groups,
+	);
+} elsif ( $op eq 'detail' ) {
+	
+	my $id = $cgi->param('id');
+	my $event = get_event($id);
+    
+	$template->param(
+		plugin_dir        => $pluginDir,
+		op                => $op,
+		event			  => $event,
 	);
 }
 
+sub get_used_target_groups {
+
+	my $table = 'koha_plugin_com_lmscloud_eventmanagement_events';
+	my $tabletargetgroups = 'koha_plugin_com_lmscloud_eventmanagement_targetgroups';
+	
+	my $query = "
+		SELECT targetgroupcode, targetgroup, count(*) AS count, 'bla' AS checked 
+		FROM $table e, $tabletargetgroups t 
+		WHERE e.targetgroupcode = t.code 
+		GROUP BY t.targetgroup
+	";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+	
+	my @targetgroups;
+	while ( my $row = $sth->fetchrow_hashref() ) {
+        push( @targetgroups, $row );
+    }
+    
+	return \@targetgroups;
+}
 
 
 sub get_events {
@@ -117,6 +160,39 @@ sub get_events {
     }
     
 	return \@events;
+}
+
+sub get_event {
+	my $id = shift;
+
+	my $table = 'koha_plugin_com_lmscloud_eventmanagement_events';
+	my $tableeventtypes = 'koha_plugin_com_lmscloud_eventmanagement_eventtypes';
+	my $tabletargetgroups = 'koha_plugin_com_lmscloud_eventmanagement_targetgroups';
+	
+	#my $query = "SELECT * FROM $table";
+	my $query = "
+		SELECT e.*, branchname,t.targetgroup,et.eventtype 
+		FROM $table AS e 
+		LEFT JOIN branches AS b ON e.branchcode=b.branchcode 
+		LEFT JOIN $tabletargetgroups AS t ON e.targetgroupcode = t.code 
+		LEFT JOIN $tableeventtypes AS et ON e.eventtypecode = et.code
+		WHERE eventid = $id
+	";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+	
+	my $event = $sth->fetchrow_hashref();
+	if (defined $event->{'imageid'}) {
+		my $rec = Koha::UploadedFiles->find( $event->{imageid} );
+		my $srcimage = $rec->hashvalue. '_'. $rec->filename();
+		$event->{'imagefile'} = $srcimage;
+	} else {
+		$event->{'imagefile'} = '';
+	}
+    
+	return $event;
 }
 
 

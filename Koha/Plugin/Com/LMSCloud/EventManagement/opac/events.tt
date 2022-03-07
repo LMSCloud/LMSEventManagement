@@ -22,7 +22,7 @@
     [% DEFAULT selected_mon_cnt = 0 %]
     <ul class="breadcrumb">
         <li><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a> <span class="divider">&rsaquo;</span></li>
-        <li><a href="#">[% "Upcomming Events" | gettext %]</a></li>
+        <li><a href="#">[% "Upcoming Events" | gettext %]</a></li>
     </ul>
         <div class="container-fluid">
             <div class="row-fluid">
@@ -33,7 +33,7 @@
 					<div class="col-lg-3">
 					<div id="facetcontainer">
 					<div id="search-facets">
-						<h2><a href="#" class="menu-collapse-toggle">Veranstalltungen filtern</a></h2>
+						<h2><a href="#" class="menu-collapse-toggle">Veranstaltungen filtern</a></h2>
 						<ul>
 							<li><h3>Zielgruppe</h3>
 								<ul>
@@ -49,7 +49,7 @@
 									<li>...</li>
 								</ul>
 							</li>
-							<li><h3>Veranstalltungsart</h3>
+							<li><h3>Veranstaltungsart</h3>
 								<ul>
 									<li>...</li>
 								</ul>
@@ -74,7 +74,7 @@
 					</div> <!-- facetcontainer -->
 					</div> <!-- col-lg-3 -->
 					<div class="col-lg-9 order-first order-md-first order-lg-2 maincontent">
-						<h1>[% 'Upcomming Events' | gettext %]</h1>
+						<h1>[% 'Upcoming Events' | gettext %]</h1>
 						<table class="table table-striped">
 						[% FOREACH event IN events %]
 						<tr>
