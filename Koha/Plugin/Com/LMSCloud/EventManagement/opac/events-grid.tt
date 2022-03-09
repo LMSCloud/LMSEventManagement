@@ -24,7 +24,6 @@
 
 [% INCLUDE 'bodytag.inc' bodyid='opac-main' %]
 [% INCLUDE 'masthead.inc' %]
-
 <div class="main">
     <!-- op defaults to 'undef' if template param is undef (meaning show calendar) -->
     [% DEFAULT op = 'undef' %]
@@ -45,48 +44,53 @@
 					<div id="search-facets">
 						<h2><a href="#" class="menu-collapse-toggle">Veranstaltungen filtern</a></h2>
 						<form method="post" id="facetes">
-						<input type="hidden" name="facetes_submit" value="1"/>
 						<ul>
 							
 							<li><h3>Zielgruppe</h3>
 							[% FOREACH target_group IN used_target_groups %]
 								<div>
-									<input [% target_group.checked %] onclick='handleClick(this);' type="checkbox" name="targetgroup" value="[% target_group.targetgroupcode %]">
+									<input onclick='handleClick(this);' type="checkbox" name="targetgroup" value="[% target_group.targetgroupcode %]">
 									<label for="[% target_group.targetgroupcode %]">[% target_group.targetgroup %] ([% target_group.count %])</label> 
 								</div>
 							[% END %] <!-- FOREACH -->
-								<ul>
-									<li><a href=#">Vorschule</a></li>
-									<li><a href=#">Grundschule</a></li>
-									<li><a href=#">Jugend</a></li>
-									<li><a href=#">Erwachsene</a></li>
-									<li><a href=#">Senioren</a></li>
-								</ul>
+
 							</li>
 							<li><h3>Zeitraum</h3>
-								<ul>
-									<li>...</li>
-								</ul>
+								<div>
+									<label for="starttime">[% 'From' | gettext %]</label>
+									<input oninput='handleDate(this);' autocomplete="off" type="date" name="starttime" value="">
+									
+									<label for="endtime">[% 'To' | gettext %]</label>								
+									<input oninput='handleDate(this);' autocomplete="off" type="date" name="endtime" value="">
+								</div>
 							</li>
 							<li><h3>Veranstaltungsart</h3>
-								<ul>
-									<li>...</li>
-								</ul>
+							[% FOREACH eventtype IN used_event_types %]
+								<div>
+									<input onclick='handleClick(this);' type="checkbox" name="eventtype" value="[% eventtype.eventtypecode %]">
+									<label for="[% eventtype.eventtypecode %]">[% eventtype.eventtype %] ([% eventtype.count %])</label> 
+								</div>
+							[% END %] <!-- FOREACH -->
 							</li>
 							<li><h3>Zweigstelle</h3>
-								<ul>
-									<li>...</li>
-								</ul>
+							[% FOREACH branch IN used_branches %]
+								<div>
+									<input onclick='handleClick(this);' type="checkbox" name="branch" value="[% branch.branchcode %]">
+									<label for="[% branch.branchcode %]">[% branch.branchname %] ([% branch.count %])</label> 
+								</div>
+							[% END %] <!-- FOREACH -->
 							</li>
 							<li><h3>Alter</h3>
-								<ul>
-									<li>...</li>
-								</ul>
+								<div>
+									<input oninput='handleAge(this);' autocomplete="off" type="range" name="max_age" min="0" max="99" value="99" step="1">
+									<output>99</output>
+								</div>
 							</li>
 							<li><h3>Ohne Anmeldung</h3>
-								<ul>
-									<li>...</li>
-								</ul>
+								<div>
+									<input onclick='handlePubReg(this);' type="checkbox" name="public_reg" value="1">
+									<label for="[% target_group.targetgroupcode %]">[% 'Registration without library card' | gettext %]</label> 
+								</div>
 							</li>
 						</ul>
 						</form>
@@ -159,30 +163,25 @@
 
 <script>
 
-/*$(document).ready(function(){
-    $("#facetes").on("change", "input:checkbox", function(){
-        alert('Hallo Welt!');
-    });
-});*/
 
-function handleClick(cb) {
-  /*display("Clicked, new value = " + cb.checked);*/
-  //alert('Hallo Welt!' + cb.checked + cb.value);
+//~ function handleClick(cb) {
+  //~ /*display("Clicked, new value = " + cb.checked);*/
+  //~ //alert('Hallo Welt!' + cb.checked + cb.value);
   
-  var url = window.location.href;
+  //~ var url = window.location.href;
   
-  if (cb.checked) { // checkbox checked
-	var regex = new RegExp( cb.name + '=', 'i' );
-	if (url.match(regex)) { // url contains filter group
-		url = url.replace(cb.name + '=', cb.name + '=' + cb.value + '|');
-	} else { // first filter in group
-		if (url.match(/opac_events\?/i)) {
-			url = url.replace(/opac_events\?/i, 'opac_events?' + cb.name + '=' + cb.value + '&');
-		} else { // first filter at all
-			url = url.replace(/opac_events/i, 'opac_events?' + cb.name + '=' + cb.value);
-		}
-	}
-  } else { // checkbox unchecked
+  //~ if (cb.checked) { // checkbox checked
+	//~ var regex = new RegExp( cb.name + '=', 'i' );
+	//~ if (url.match(regex)) { // url contains filter group
+		//~ url = url.replace(cb.name + '=', cb.name + '=' + cb.value + '|');
+	//~ } else { // first filter in group
+		//~ if (url.match(/opac_events\?/i)) {
+			//~ url = url.replace(/opac_events\?/i, 'opac_events?' + cb.name + '=' + cb.value + '&');
+		//~ } else { // first filter at all
+			//~ url = url.replace(/opac_events/i, 'opac_events?' + cb.name + '=' + cb.value);
+		//~ }
+	//~ }
+  //~ } else { // checkbox unchecked
 	//~ alert("unchecked something");
 	//~ var regex = new RegExp( cb.value + "\\|", 'i' );
 	//~ if (url.match(regex)) {
@@ -197,25 +196,165 @@ function handleClick(cb) {
 			//~ url = url.replace("targetgroup="+cb.value, '');
 		//~ }
 	//~ }
-	url = url.replace(cb.value + '|', '');
-	url = url.replace('|' + cb.value, '');
-	url = url.replace(cb.name + '=' + cb.value, '');
+	//~ url = url.replace(cb.value + '|', '');
+	//~ url = url.replace('|' + cb.value, '');
+	//~ url = url.replace(cb.name + '=' + cb.value, '');
 	
-  }
+  //~ }
   
-  if (url.slice(-1) == '?') { // remove last '?' from url
-	  url = url.substring(0, url.length - 1);
-  }
+  //~ if (url.slice(-1) == '?') { // remove last '?' from url
+	  //~ url = url.substring(0, url.length - 1);
+  //~ }
   
-  window.open(url,"_self")
+  //~ window.open(url,"_self")
+//~ }
+
+function handleClick(cb) {
+	
+	var lmscoverflow = document.getElementById("lmscoverflow");
+	let uppcommingEvents = lmscoverflow.getElementsByClassName("lcfItemContainer");
+	
+	var facetes = document.getElementById("facetes");
+	let filters = facetes.querySelectorAll("input");
+	
+	// checked Targedgroupes
+	// checked eventTypes 
+	// ...
+	// selectedAge 
+	// selected dates
+	
+	//~ var checkedTargedGroups = [];
+	//~ var numTargedGroups = 0;
+	
+	//~ for (let filter of filters) {
+		//~ if (filter.name == 'targetgroup' && filter.checked) {
+			//~ checkedTargedGroups.push(filter.value);
+			//~ numTargedGroups++;
+		//~ }
+	//~ }
+	
+	//~ console.log(checkedTargedGroups);
+	
+	//~ for (let event of uppcommingEvents) {
+		//~ console.log(event);
+		
+		//~ for (let filter of filters) {
+			//~ console.log(filter.name);
+			//~ if (filter.name == 'targetgroup') {
+				//~ console.log(filter.value);
+			//~ }
+		//~ }
+	//~ }
+	
+	var nothingIsChecked = true;
+	
+	for (let checkbox of document.querySelectorAll("input[name=" + CSS.escape(cb.name) + "]")) {
+		if (checkbox.checked) {
+			for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) el.style.display = 'block';
+			nothingIsChecked = false;
+		} else {
+			for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) el.style.display = 'none';
+		}
+	}
+	
+	if (nothingIsChecked)
+		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) el.style.display = 'block';
+}
+
+function handlePubReg(cb) {
+	
+	
+	if (cb.checked) {
+		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) el.style.display = 'none';
+		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(cb.value) + "]")) el.style.display = 'block';
+	} else {
+		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) el.style.display = 'block';
+	}
+}
+
+function handleAge(slider) {
+	
+	for (let el of document.querySelectorAll("div[data-" + CSS.escape(slider.name) + "]")) {
+		
+		var age = el.getAttribute("data-" + CSS.escape(slider.name) + "");
+		
+		if (0 <= parseInt(slider.value) && parseInt(slider.value) < parseInt(age)) 
+			el.style.display = 'none';
+		else
+			el.style.display = 'block';
+	}
+	
+	slider.nextElementSibling.value = slider.value
+}
+
+function handleDate(date) {
+	
+	var datevalueFrom = null;
+	var datevalueTo = null;
+	
+	if (date.name == 'starttime') {
+		datevalueFrom = new Date(date.value);
+		datevalueTo = new Date(date.nextElementSibling.nextElementSibling.value);
+	} else {
+		datevalueFrom = new Date(date.previousElementSibling.previousElementSibling.value);
+		datevalueTo = new Date(date.value);
+	}
+	
+	for (let el of document.querySelectorAll("div[data-" + CSS.escape(date.name) + "]")) {
+		
+		var datestring = el.getAttribute("data-" + CSS.escape	(date.name) + "");
+		datestring = datestring.replace(/\s*[0-9]+:[0-9]+:[0-9]+/g,"");
+		
+		var starttime = new Date(datestring);
+		
+		if (date.name == 'starttime') {
+			
+			console.log(isNaN(datevalueTo));
+			
+			if (isNaN(datevalueTo)) {
+					
+				if (starttime.getTime() < datevalueFrom.getTime()) 
+					el.style.display = 'none';
+				else
+					el.style.display = 'block';
+					
+			} else {	// datevalueTo is valid
+				
+				if (starttime.getTime() < datevalueFrom.getTime() || starttime.getTime() >= datevalueTo.getTime()) 
+					el.style.display = 'none';
+				else
+					el.style.display = 'block';
+			}
+				
+		} else {    // date.name == endtime
+			
+			console.log(isNaN(datevalueFrom));
+			
+			if (isNaN(datevalueFrom)) {
+				
+				if (starttime.getTime() >= datevalueTo.getTime()) 
+					el.style.display = 'none';
+				else
+					el.style.display = 'block';			
+				
+			} else { 	// datevalueFrom is valid
+				
+				if (starttime.getTime() >= datevalueTo.getTime() || starttime.getTime() < datevalueFrom.getTime()) 
+					el.style.display = 'none';
+				else
+					el.style.display = 'block';			
+			}
+				
+		}
+	}
 }
 
 </script>
 
-<script type="module">
-  import { LMSCoverFlow } from '/webcustom/js/LMSCoverFlow.js'
+<script src="/webcustom/js/LMSCoverFlow.js"></script>
+<script>
 
-  const lmscoverflow = LMSCoverFlow(
+  const lmscoverflow = LMSCoverFlow.LMSCoverFlow(
     'lmscoverflow',
     {
         coverImageFallbackHeight: 210,
@@ -229,6 +368,15 @@ function handleClick(cb) {
 			author: '[% event.starttime %]',
 			coverurl: '/events/[% event.imagefile %]',
 			referenceToDetailsView: '/opac_events?op=detail&id=[% event.eventid %]',
+			additionalProperties: {
+				"targetgroup":"[% event.targetgroupcode %]",
+				"eventtype":"[% event.eventtypecode %]",
+				"branch":"[% event.branchcode %]",
+				"max_age":"[% event.max_age %]",
+				"public_reg":"[% event.public_reg %]",
+				"starttime":"[% event.starttime %]",
+				"endtime":"[% event.endtime %]",
+			},
 		},
 		[% END %] /* FOREACH */
     ],
@@ -236,7 +384,7 @@ function handleClick(cb) {
 
   lmscoverflow.render();
   
-  const lmscoverflow2 = LMSCoverFlow(
+  const lmscoverflow2 = LMSCoverFlow.LMSCoverFlow(
     'lmscoverflow2',
     {
         coverImageFallbackHeight: 210,

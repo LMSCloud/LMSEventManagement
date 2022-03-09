@@ -72,22 +72,20 @@ $template->param(
 
 if ( !defined($op) ) {
     
-    my $events = get_events();
-    my $used_target_groups = get_used_target_groups();
     
-    my $filtered_targedgroups = $cgi->param('targetgroup');
-    
-    foreach my $targetgroup (@{$used_target_groups}) {
-		if ( $filtered_targedgroups =~ /$targetgroup->{targetgroupcode}/ ) {
-			$targetgroup->{checked} = 'checked';
-		}
-	}
+    my $used_target_groups = get_used_target_groups();	
+    my $used_event_types = get_used_event_types();	
+    my $used_branches = get_used_branches();
+	my $events = get_events();
+	
 
 	$template->param(
 		plugin_dir        => $pluginDir,
 		op                => $op,
 		events			  => $events,
 		used_target_groups => $used_target_groups,
+		used_event_types  => $used_event_types,
+		used_branches	  => $used_branches,
 	);
 } elsif ( $op eq 'detail' ) {
 	
@@ -107,10 +105,10 @@ sub get_used_target_groups {
 	my $tabletargetgroups = 'koha_plugin_com_lmscloud_eventmanagement_targetgroups';
 	
 	my $query = "
-		SELECT targetgroupcode, targetgroup, count(*) AS count, 'bla' AS checked 
+		SELECT targetgroupcode, targetgroup, count(*) AS count  
 		FROM $table e, $tabletargetgroups t 
-		WHERE e.targetgroupcode = t.code 
-		GROUP BY t.targetgroup
+		WHERE e.targetgroupcode = t.code
+		GROUP BY targetgroupcode
 	";
 
 	my $dbh = C4::Context->dbh;
@@ -125,9 +123,57 @@ sub get_used_target_groups {
 	return \@targetgroups;
 }
 
+sub get_used_event_types {
+
+	my $table = 'koha_plugin_com_lmscloud_eventmanagement_events';
+	my $tableeventtypes = 'koha_plugin_com_lmscloud_eventmanagement_eventtypes';
+	
+	my $query = "
+		SELECT eventtypecode, eventtype, count(*) AS count 
+		FROM $table e, $tableeventtypes t 
+		WHERE e.eventtypecode = t.code
+		GROUP BY eventtypecode
+	";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+	
+	my @eventtypes;
+	while ( my $row = $sth->fetchrow_hashref() ) {
+        push( @eventtypes, $row );
+    }
+    
+	return \@eventtypes;
+}
+
+sub get_used_branches {
+
+	my $table = 'koha_plugin_com_lmscloud_eventmanagement_events';
+	my $branches = 'koha_plugin_com_lmscloud_eventmanagement_eventtypes';
+	
+	my $query = "
+		SELECT e.branchcode, branchname, count(*) AS count 
+		FROM $table e, branches b 
+		WHERE e.branchcode = b.branchcode
+		GROUP BY e.branchcode
+	";
+
+	my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+	
+	my @branches;
+	while ( my $row = $sth->fetchrow_hashref() ) {
+        push( @branches, $row );
+    }
+    
+	return \@branches;
+}
+
 
 sub get_events {
-
+	
 	my $table = 'koha_plugin_com_lmscloud_eventmanagement_events';
 	my $tableeventtypes = 'koha_plugin_com_lmscloud_eventmanagement_eventtypes';
 	my $tabletargetgroups = 'koha_plugin_com_lmscloud_eventmanagement_targetgroups';
@@ -135,12 +181,11 @@ sub get_events {
 	#my $query = "SELECT * FROM $table";
 	my $query = "
 		SELECT e.*, branchname,t.targetgroup,et.eventtype 
-		FROM $table AS e 
+		FROM $table AS e
 		LEFT JOIN branches AS b ON e.branchcode=b.branchcode 
 		LEFT JOIN $tabletargetgroups AS t ON e.targetgroupcode = t.code 
 		LEFT JOIN $tableeventtypes AS et ON e.eventtypecode = et.code
 	";
-	
 
 	my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
