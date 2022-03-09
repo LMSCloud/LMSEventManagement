@@ -50,7 +50,7 @@
 							[% FOREACH target_group IN used_target_groups %]
 								<div>
 									<input onclick='handleClick(this);' type="checkbox" name="targetgroup" value="[% target_group.targetgroupcode %]">
-									<label for="[% target_group.targetgroupcode %]">[% target_group.targetgroup %] ([% target_group.count %])</label> 
+									<label for="[% target_group.targetgroupcode %]">[% target_group.targetgroup %] </label> 
 								</div>
 							[% END %] <!-- FOREACH -->
 
@@ -68,7 +68,7 @@
 							[% FOREACH eventtype IN used_event_types %]
 								<div>
 									<input onclick='handleClick(this);' type="checkbox" name="eventtype" value="[% eventtype.eventtypecode %]">
-									<label for="[% eventtype.eventtypecode %]">[% eventtype.eventtype %] ([% eventtype.count %])</label> 
+									<label for="[% eventtype.eventtypecode %]">[% eventtype.eventtype %] </label> 
 								</div>
 							[% END %] <!-- FOREACH -->
 							</li>
@@ -76,7 +76,7 @@
 							[% FOREACH branch IN used_branches %]
 								<div>
 									<input onclick='handleClick(this);' type="checkbox" name="branch" value="[% branch.branchcode %]">
-									<label for="[% branch.branchcode %]">[% branch.branchname %] ([% branch.count %])</label> 
+									<label for="[% branch.branchcode %]">[% branch.branchname %] </label> 
 								</div>
 							[% END %] <!-- FOREACH -->
 							</li>
@@ -211,11 +211,11 @@
 
 function handleClick(cb) {
 	
-	var lmscoverflow = document.getElementById("lmscoverflow");
-	let uppcommingEvents = lmscoverflow.getElementsByClassName("lcfItemContainer");
+	//~ var lmscoverflow = document.getElementById("lmscoverflow");
+	//~ let uppcommingEvents = lmscoverflow.getElementsByClassName("lcfItemContainer");
 	
-	var facetes = document.getElementById("facetes");
-	let filters = facetes.querySelectorAll("input");
+	//~ var facetes = document.getElementById("facetes");
+	//~ let filters = facetes.querySelectorAll("input");
 	
 	// checked Targedgroupes
 	// checked eventTypes 
@@ -246,19 +246,79 @@ function handleClick(cb) {
 		//~ }
 	//~ }
 	
-	var nothingIsChecked = true;
+	//~ var nothingIsChecked = true;
 	
-	for (let checkbox of document.querySelectorAll("input[name=" + CSS.escape(cb.name) + "]")) {
+	//~ for (let checkbox of document.querySelectorAll("input[name=" + CSS.escape(cb.name) + "]")) {
+		//~ if (checkbox.checked) {
+			//~ for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) el.style.display = 'block';
+			//~ nothingIsChecked = false;
+		//~ } else {
+			//~ for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) el.style.display = 'none';
+		//~ }
+	//~ }
+	
+	//~ if (nothingIsChecked)
+		//~ for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) el.style.display = 'block';
+		
+	var numChecked = 0;
+	let allCheckboxes = document.querySelectorAll("input[name=" + CSS.escape(cb.name) + "]");
+	for (let checkbox of allCheckboxes) {
+		
 		if (checkbox.checked) {
-			for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) el.style.display = 'block';
-			nothingIsChecked = false;
+			
+			numChecked++;
+			for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) {
+				var filterdBy = el.getAttribute("data-filterdBy");
+				filterdBy = filterdBy.replace(cb.name,'');
+				console.log(filterdBy);
+				el.setAttribute("data-filterdBy", filterdBy);
+			}
+			
 		} else {
-			for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) el.style.display = 'none';
+			
+			for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) {
+				var filterdBy = el.getAttribute("data-filterdBy");
+				const regex = new RegExp(cb.name);
+				if (!regex.test(filterdBy)) {
+					el.setAttribute("data-filterdBy", filterdBy + cb.name);
+				}
+			}
+			
 		}
 	}
 	
-	if (nothingIsChecked)
-		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) el.style.display = 'block';
+	console.log(numChecked);
+	
+	for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) {
+		var filterdBy = el.getAttribute("data-filterdBy");
+		console.log(filterdBy);
+	}
+	
+	if (numChecked == 0 || numChecked == allCheckboxes.length) { // show all
+		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) {
+			var filterdBy = el.getAttribute("data-filterdBy");
+			filterdBy = filterdBy.replace(cb.name, '');
+			el.setAttribute("data-filterdBy", filterdBy);
+		}
+	}
+		
+	filterEvents();
+	console.log("------------");
+}
+
+function filterEvents() {
+
+	var lmscoverflow = document.getElementById("lmscoverflow");
+	let uppcommingEvents = lmscoverflow.getElementsByClassName("lcfItemContainer");
+	
+	for (let event of uppcommingEvents) {
+		var filterdBy = event.getAttribute("data-filterdBy");
+		if (filterdBy != '') {
+			event.style.display = 'none';
+		} else { 
+			event.style.display = 'block';
+		}
+	}
 }
 
 function handlePubReg(cb) {
@@ -376,6 +436,7 @@ function handleDate(date) {
 				"public_reg":"[% event.public_reg %]",
 				"starttime":"[% event.starttime %]",
 				"endtime":"[% event.endtime %]",
+				"filterdBy":"",
 			},
 		},
 		[% END %] /* FOREACH */
