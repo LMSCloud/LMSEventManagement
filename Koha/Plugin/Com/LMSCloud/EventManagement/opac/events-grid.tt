@@ -84,6 +84,7 @@
 						<h2><a href="#" class="menu-collapse-toggle">Veranstaltungen filtern</a></h2>
 						<ul>
 							
+							[% IF used_target_groups.size > 1 %]
 							<li><h3>Zielgruppe</h5>
 							[% FOREACH target_group IN used_target_groups %]
 								<div>
@@ -92,7 +93,9 @@
 								</div>
 							[% END %] <!-- FOREACH -->
 							</li>
+							[% END %] <!-- IF -->
 
+							[% IF used_event_types.size > 1 %]
 							<li><h3>Veranstaltungsart</h3>
 							[% FOREACH eventtype IN used_event_types %]
 								<div>
@@ -101,7 +104,9 @@
 								</div>
 							[% END %] <!-- FOREACH -->
 							</li>
+							[% END %] <!-- IF -->
 							
+							[% IF used_branches.size > 1 %]
 							<li><h3>Zweigstelle</h3>
 							[% FOREACH branch IN used_branches %]
 								<div>
@@ -110,6 +115,7 @@
 								</div>
 							[% END %] <!-- FOREACH -->
 							</li>
+							[% END %] <!-- IF -->
 							
 							<li><h3>Zeitraum</h3>
 								<div>
