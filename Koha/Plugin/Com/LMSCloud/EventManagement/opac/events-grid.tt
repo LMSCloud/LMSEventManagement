@@ -18,6 +18,45 @@
 				border-left: none;
 			}
 		}
+		
+		.eventfacets{
+			font-size: 95%;
+			font-weight: 400;
+			line-height: 125%;
+			color: #0074ad;
+		}
+		
+		h3 {
+			margin-top: 10px;
+			font-size: 115% !important; 
+			margin-bottom: .5rem;
+			font-weight: 600;
+			line-height: 1.2;
+		}
+		
+		.resetbutton {
+		  border: 1px solid #0066cc;
+		  background-color: #0074ad;
+		  color: #ffffff;
+		  padding: 5px 10px;
+		  margin-top: 15px;
+		  margin-bottom: 5px;
+		  border-radius: calc(.25rem - 1px);
+		}
+
+		.resetbutton:hover {
+		  border: 1px solid #0099cc;
+		  background-color: #3985aa;
+		  color: #ffffff;
+		  padding: 5px 10px;
+		}
+
+		.resetbutton:disabled,
+		.resetbutton[disabled]{
+		  border: 1px solid #999999;
+		  background-color: #efefef;
+		  color: #666666;
+		}
     </style>
 </head>
 [% BLOCK cssinclude %][% END %]
@@ -43,57 +82,63 @@
 					<div id="facetcontainer">
 					<div id="search-facets">
 						<h2><a href="#" class="menu-collapse-toggle">Veranstaltungen filtern</a></h2>
-						<form method="post" id="facetes">
 						<ul>
 							
-							<li><h3>Zielgruppe</h3>
+							<li><h3>Zielgruppe</h5>
 							[% FOREACH target_group IN used_target_groups %]
 								<div>
-									<input onclick='handleClick(this);' type="checkbox" name="targetgroup" value="[% target_group.targetgroupcode %]">
-									<label for="[% target_group.targetgroupcode %]">[% target_group.targetgroup %] </label> 
+									<input onclick='handleClick(this);' type="checkbox" id="[% target_group.targetgroupcode %]" name="targetgroup" value="[% target_group.targetgroupcode %]" autocomplete="off">
+									<label class="eventfacets" for="[% target_group.targetgroupcode %]">[% target_group.targetgroup %] </label> 
 								</div>
 							[% END %] <!-- FOREACH -->
+							</li>
 
-							</li>
-							<li><h3>Zeitraum</h3>
-								<div>
-									<label for="starttime">[% 'From' | gettext %]</label>
-									<input oninput='handleDate(this);' autocomplete="off" type="date" name="starttime" value="">
-									
-									<label for="endtime">[% 'To' | gettext %]</label>								
-									<input oninput='handleDate(this);' autocomplete="off" type="date" name="endtime" value="">
-								</div>
-							</li>
 							<li><h3>Veranstaltungsart</h3>
 							[% FOREACH eventtype IN used_event_types %]
 								<div>
-									<input onclick='handleClick(this);' type="checkbox" name="eventtype" value="[% eventtype.eventtypecode %]">
-									<label for="[% eventtype.eventtypecode %]">[% eventtype.eventtype %] </label> 
+									<input onclick='handleClick(this);' type="checkbox" id="[% eventtype.eventtypecode %]" name="eventtype" value="[% eventtype.eventtypecode %]" autocomplete="off">
+									<label class="eventfacets" for="[% eventtype.eventtypecode %]">[% eventtype.eventtype %] </label> 
 								</div>
 							[% END %] <!-- FOREACH -->
 							</li>
+							
 							<li><h3>Zweigstelle</h3>
 							[% FOREACH branch IN used_branches %]
 								<div>
-									<input onclick='handleClick(this);' type="checkbox" name="branch" value="[% branch.branchcode %]">
-									<label for="[% branch.branchcode %]">[% branch.branchname %] </label> 
+									<input onclick='handleClick(this);' type="checkbox" id="[% branch.branchcode %]" name="branch" value="[% branch.branchcode %]" autocomplete="off">
+									<label class="eventfacets" for="[% branch.branchcode %]">[% branch.branchname %] </label> 
 								</div>
 							[% END %] <!-- FOREACH -->
 							</li>
+							
+							<li><h3>Zeitraum</h3>
+								<div>
+									<label class="eventfacets-date" for="starttime" style="width:15%">[% 'From' | gettext %]</label>
+									<input oninput='handleDate(this);' autocomplete="off" type="date" name="starttime" value="">
+								</div>
+								<div>
+									<label class="eventfacets-date" for="endtime" style="width:15%">[% 'To' | gettext %]</label>								
+									<input oninput='handleDate(this);' id="endtime" autocomplete="off" type="date" name="endtime" value="">
+								</div>
+							</li>
+							
 							<li><h3>Alter</h3>
 								<div>
 									<input oninput='handleAge(this);' autocomplete="off" type="range" name="max_age" min="0" max="99" value="99" step="1">
 									<output>99</output>
 								</div>
 							</li>
-							<li><h3>Ohne Anmeldung</h3>
+							
+							<li><h3>Anmeldung</h3>
 								<div>
-									<input onclick='handlePubReg(this);' type="checkbox" name="public_reg" value="1">
-									<label for="[% target_group.targetgroupcode %]">[% 'Registration without library card' | gettext %]</label> 
+									<input onclick='handlePubReg(this);' type="checkbox" id="public_reg" name="public_reg" value="1">
+									<label class="eventfacets" for="public_reg">[% 'Registration without library card' | gettext %]</label> 
 								</div>
 							</li>
+							<div style="text-align:center;">
+							<button class="resetbutton" onclick='handleResetButton();' id="resetFilter" name="resetFilter" disabled autocomplete="off">[% 'Filter zurücksetzen' | gettext %]</button>
+							</div>
 						</ul>
-						</form>
 					</div> <!-- search-facets -->
 					</div> <!-- facetcontainer -->
 					</div> <!-- col-lg-3 -->
@@ -209,6 +254,34 @@
   //~ window.open(url,"_self")
 //~ }
 
+function handleResetButton() {
+	
+	let allEvents = document.getElementsByClassName("lcfItemContainer");
+	for (let event of allEvents) {
+		event.setAttribute("data-filterdBy", '');
+	}
+	
+	var container = document.getElementById("search-facets");
+	let checkboxes = container.querySelectorAll("input[type=checkbox]");
+	for (let cb of checkboxes) {
+		cb.checked = false;
+	}
+	
+	let dates = container.querySelectorAll("input[type=date]");
+	for (let date of dates) {
+		date.value = null;
+	}
+	
+	let sliders = container.querySelectorAll("input[type=range]");
+	for (let slider of sliders) {
+		slider.value = 99;
+		slider.nextElementSibling.value = slider.value
+	}
+	
+	filterEvents();
+	filterFacets();
+}
+
 function handleClick(cb) {
 	
 	//~ var lmscoverflow = document.getElementById("lmscoverflow");
@@ -267,56 +340,115 @@ function handleClick(cb) {
 		if (checkbox.checked) {
 			
 			numChecked++;
+			// remove checkbox.name from filterBy of all events where attr.value == checkbox.value --> event visible 
 			for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) {
-				var filterdBy = el.getAttribute("data-filterdBy");
-				filterdBy = filterdBy.replace(cb.name,'');
-				console.log(filterdBy);
-				el.setAttribute("data-filterdBy", filterdBy);
+				showEvent(el,cb.name);
 			}
 			
 		} else {
-			
+			// add checkbox.name from filterBy of all events where attr.value == checkbox.value --> hide event
 			for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) {
-				var filterdBy = el.getAttribute("data-filterdBy");
-				const regex = new RegExp(cb.name);
-				if (!regex.test(filterdBy)) {
-					el.setAttribute("data-filterdBy", filterdBy + cb.name);
-				}
+				hideEvent(el,cb.name);
 			}
 			
 		}
 	}
 	
-	console.log(numChecked);
-	
-	for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) {
-		var filterdBy = el.getAttribute("data-filterdBy");
-		console.log(filterdBy);
-	}
-	
-	if (numChecked == 0 || numChecked == allCheckboxes.length) { // show all
+	// show all events if all or no checkboxes of a group are checked
+	if (numChecked == 0 || numChecked == allCheckboxes.length) { 
 		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) {
-			var filterdBy = el.getAttribute("data-filterdBy");
-			filterdBy = filterdBy.replace(cb.name, '');
-			el.setAttribute("data-filterdBy", filterdBy);
+			showEvent(el,cb.name);
 		}
 	}
 		
 	filterEvents();
-	console.log("------------");
+	filterFacets();
+}
+
+function showEvent(event,name) {
+	var filterdBy = event.getAttribute("data-filterdBy");
+	filterdBy = filterdBy.replace(name,'');
+	event.setAttribute("data-filterdBy", filterdBy);
+}
+
+function hideEvent(event,name) {
+	var filterdBy = event.getAttribute("data-filterdBy");
+	const regex = new RegExp(name);
+	if (!regex.test(filterdBy)) {
+		event.setAttribute("data-filterdBy", filterdBy + name);
+	}
+}
+
+function filterFacets() {
+
+	var container = document.getElementById("search-facets");
+	let eventfacets = document.getElementsByClassName("eventfacets");
+	
+	var lmscoverflow = document.getElementById("lmscoverflow");
+	let uppcommingEvents = lmscoverflow.getElementsByClassName("lcfItemContainer");
+	
+	// Check all facets, if there are visible events or not
+	for (let facet of eventfacets) {
+		var inputElement = document.getElementById(facet.htmlFor);
+		if (inputElement == null) {
+			continue;
+		}
+		var showFacet = false;
+		for (let event of uppcommingEvents) {
+			
+			var filterdBy = event.getAttribute("data-filterdBy");
+			var eventValue = event.getAttribute("data-" + inputElement.name);
+			if (filterdBy == '' && eventValue == inputElement.value) {
+				showFacet = true;
+				//break;
+			}
+		}
+		
+		if (!showFacet)
+			facet.style.opacity = '0.3';
+		else 
+			facet.style.opacity = '1.0';
+	}
+	
+	// If nothing is checked ---> disable reset button
+	var container = document.getElementById("search-facets");
+	let checkboxes = container.querySelectorAll("input[type=checkbox]");
+	for (let cb of checkboxes) {
+		if (cb.checked) {
+			document.getElementById("resetFilter").disabled = false;
+			return;
+		}
+	}
+	
+	let dates = container.querySelectorAll("input[type=date]");
+	for (let date of dates) {
+		if (isNaN(date.value)) {
+			document.getElementById("resetFilter").disabled = false;
+			return;
+		}
+	}
+	
+	let sliders = container.querySelectorAll("input[type=range]");
+	for (let slider of sliders) {
+		if (slider.value != 99){
+			document.getElementById("resetFilter").disabled = false;
+			return;
+		}
+	}
+	
+	document.getElementById("resetFilter").disabled = true;
 }
 
 function filterEvents() {
 
-	var lmscoverflow = document.getElementById("lmscoverflow");
-	let uppcommingEvents = lmscoverflow.getElementsByClassName("lcfItemContainer");
+	let uppcommingEvents = document.getElementsByClassName("lcfItemContainer");
 	
 	for (let event of uppcommingEvents) {
 		var filterdBy = event.getAttribute("data-filterdBy");
 		if (filterdBy != '') {
-			event.style.display = 'none';
+			event.style.opacity = '0.3';
 		} else { 
-			event.style.display = 'block';
+			event.style.opacity = '1.0';
 		}
 	}
 }
@@ -325,11 +457,14 @@ function handlePubReg(cb) {
 	
 	
 	if (cb.checked) {
-		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) el.style.display = 'none';
-		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(cb.value) + "]")) el.style.display = 'block';
+		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) hideEvent(el,cb.name);
+		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(cb.value) + "]")) showEvent(el,cb.name);
 	} else {
-		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) el.style.display = 'block';
+		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) showEvent(el,cb.name);
 	}
+	
+	filterEvents();
+	filterFacets();
 }
 
 function handleAge(slider) {
@@ -338,11 +473,17 @@ function handleAge(slider) {
 		
 		var age = el.getAttribute("data-" + CSS.escape(slider.name) + "");
 		
-		if (0 <= parseInt(slider.value) && parseInt(slider.value) < parseInt(age)) 
-			el.style.display = 'none';
-		else
-			el.style.display = 'block';
+		if (0 <= parseInt(slider.value) && parseInt(slider.value) < parseInt(age)) {
+			// event not visible
+			hideEvent(el,slider.name);
+		} else {
+			// event visible
+			showEvent(el,slider.name);
+		}
 	}
+	
+	filterEvents();
+	filterFacets();
 	
 	slider.nextElementSibling.value = slider.value
 }
@@ -354,9 +495,9 @@ function handleDate(date) {
 	
 	if (date.name == 'starttime') {
 		datevalueFrom = new Date(date.value);
-		datevalueTo = new Date(date.nextElementSibling.nextElementSibling.value);
+		datevalueTo = new Date(document.querySelectorAll("input[name=endtime]").value);
 	} else {
-		datevalueFrom = new Date(date.previousElementSibling.previousElementSibling.value);
+		datevalueFrom = new Date(document.querySelectorAll("input[name=starttime]").value);
 		datevalueTo = new Date(date.value);
 	}
 	
@@ -368,45 +509,44 @@ function handleDate(date) {
 		var starttime = new Date(datestring);
 		
 		if (date.name == 'starttime') {
-			
-			console.log(isNaN(datevalueTo));
-			
+				
 			if (isNaN(datevalueTo)) {
 					
 				if (starttime.getTime() < datevalueFrom.getTime()) 
-					el.style.display = 'none';
+					hideEvent(el,date.name);
 				else
-					el.style.display = 'block';
+					showEvent(el,date.name);
 					
 			} else {	// datevalueTo is valid
 				
 				if (starttime.getTime() < datevalueFrom.getTime() || starttime.getTime() >= datevalueTo.getTime()) 
-					el.style.display = 'none';
+					hideEvent(el,date.name);
 				else
-					el.style.display = 'block';
+					showEvent(el,date.name);
 			}
 				
 		} else {    // date.name == endtime
 			
-			console.log(isNaN(datevalueFrom));
-			
 			if (isNaN(datevalueFrom)) {
 				
 				if (starttime.getTime() >= datevalueTo.getTime()) 
-					el.style.display = 'none';
+					hideEvent(el,date.name);
 				else
-					el.style.display = 'block';			
+					showEvent(el,date.name);			
 				
 			} else { 	// datevalueFrom is valid
 				
 				if (starttime.getTime() >= datevalueTo.getTime() || starttime.getTime() < datevalueFrom.getTime()) 
-					el.style.display = 'none';
+					hideEvent(el,date.name);
 				else
-					el.style.display = 'block';			
+					showEvent(el,date.name);			
 			}
 				
 		}
 	}
+	
+	filterEvents();
+	filterFacets();
 }
 
 </script>
@@ -458,6 +598,17 @@ function handleDate(date) {
 			title: '[% event.starttime %]',
 			author: '[% event.title %]',
 			coverurl: '/events/[% event.imagefile %]',
+			referenceToDetailsView: '/opac_events?op=detail&id=[% event.eventid %]',
+			additionalProperties: {
+				"targetgroup":"[% event.targetgroupcode %]",
+				"eventtype":"[% event.eventtypecode %]",
+				"branch":"[% event.branchcode %]",
+				"max_age":"[% event.max_age %]",
+				"public_reg":"[% event.public_reg %]",
+				"starttime":"[% event.starttime %]",
+				"endtime":"[% event.endtime %]",
+				"filterdBy":"",
+			},
 		},
 		[% END %] /* FOREACH */
     ],
