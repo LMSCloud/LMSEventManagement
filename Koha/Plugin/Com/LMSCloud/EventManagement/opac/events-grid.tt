@@ -88,7 +88,7 @@
 							<li><h3>Zielgruppe</h5>
 							[% FOREACH target_group IN used_target_groups %]
 								<div>
-									<input onclick='handleClick(this);' type="checkbox" id="[% target_group.targetgroupcode %]" name="targetgroup" value="[% target_group.targetgroupcode %]" autocomplete="off">
+									<input onclick='handleCheckbox(this);' type="checkbox" id="[% target_group.targetgroupcode %]" name="targetgroup" value="[% target_group.targetgroupcode %]" autocomplete="off">
 									<label class="eventfacets" for="[% target_group.targetgroupcode %]">[% target_group.targetgroup %] </label> 
 								</div>
 							[% END %] <!-- FOREACH -->
@@ -99,7 +99,7 @@
 							<li><h3>Veranstaltungsart</h3>
 							[% FOREACH eventtype IN used_event_types %]
 								<div>
-									<input onclick='handleClick(this);' type="checkbox" id="[% eventtype.eventtypecode %]" name="eventtype" value="[% eventtype.eventtypecode %]" autocomplete="off">
+									<input onclick='handleCheckbox(this);' type="checkbox" id="[% eventtype.eventtypecode %]" name="eventtype" value="[% eventtype.eventtypecode %]" autocomplete="off">
 									<label class="eventfacets" for="[% eventtype.eventtypecode %]">[% eventtype.eventtype %] </label> 
 								</div>
 							[% END %] <!-- FOREACH -->
@@ -110,7 +110,7 @@
 							<li><h3>Zweigstelle</h3>
 							[% FOREACH branch IN used_branches %]
 								<div>
-									<input onclick='handleClick(this);' type="checkbox" id="[% branch.branchcode %]" name="branch" value="[% branch.branchcode %]" autocomplete="off">
+									<input onclick='handleCheckbox(this);' type="checkbox" id="[% branch.branchcode %]" name="branch" value="[% branch.branchcode %]" autocomplete="off">
 									<label class="eventfacets" for="[% branch.branchcode %]">[% branch.branchname %] </label> 
 								</div>
 							[% END %] <!-- FOREACH -->
@@ -149,10 +149,10 @@
 					</div> <!-- facetcontainer -->
 					</div> <!-- col-lg-3 -->
 					<div class="col-lg-10 order-first order-md-first order-lg-2 maincontent">
-						<h1>[% 'Upcoming Events' | gettext %]</h1>	
+						<h2>[% 'Upcoming Events' | gettext %]</h2>	
 						<div id="lmscoverflow">	</div>						
 
-						<h1 style="margin-top:25px">[% 'Regelmäßige Veranstaltungen' | gettext %]</h1>
+						<h2 style="margin-top:25px">[% 'Regelmäßige Veranstaltungen' | gettext %]</h2>
 						<div id="lmscoverflow2">	</div>
 					</div> <!-- col-lg-10 -->
 					
@@ -215,51 +215,6 @@
 <script>
 
 
-//~ function handleClick(cb) {
-  //~ /*display("Clicked, new value = " + cb.checked);*/
-  //~ //alert('Hallo Welt!' + cb.checked + cb.value);
-  
-  //~ var url = window.location.href;
-  
-  //~ if (cb.checked) { // checkbox checked
-	//~ var regex = new RegExp( cb.name + '=', 'i' );
-	//~ if (url.match(regex)) { // url contains filter group
-		//~ url = url.replace(cb.name + '=', cb.name + '=' + cb.value + '|');
-	//~ } else { // first filter in group
-		//~ if (url.match(/opac_events\?/i)) {
-			//~ url = url.replace(/opac_events\?/i, 'opac_events?' + cb.name + '=' + cb.value + '&');
-		//~ } else { // first filter at all
-			//~ url = url.replace(/opac_events/i, 'opac_events?' + cb.name + '=' + cb.value);
-		//~ }
-	//~ }
-  //~ } else { // checkbox unchecked
-	//~ alert("unchecked something");
-	//~ var regex = new RegExp( cb.value + "\\|", 'i' );
-	//~ if (url.match(regex)) {
-		//~ alert("match!" + regex);
-		//~ url = url.replace(cb.value + '|', '');
-	//~ } else {
-		//~ regex = new RegExp( "\\|" + cb.value, 'i' );
-		//~ if (url.match(regex)) {
-			//~ alert("match!" + regex);
-			//~ url = url.replace('|' + cb.value, '');
-		//~ } else {
-			//~ url = url.replace("targetgroup="+cb.value, '');
-		//~ }
-	//~ }
-	//~ url = url.replace(cb.value + '|', '');
-	//~ url = url.replace('|' + cb.value, '');
-	//~ url = url.replace(cb.name + '=' + cb.value, '');
-	
-  //~ }
-  
-  //~ if (url.slice(-1) == '?') { // remove last '?' from url
-	  //~ url = url.substring(0, url.length - 1);
-  //~ }
-  
-  //~ window.open(url,"_self")
-//~ }
-
 function handleResetButton() {
 	
 	let allEvents = document.getElementsByClassName("lcfItemContainer");
@@ -288,95 +243,14 @@ function handleResetButton() {
 	filterFacets();
 }
 
-function handleClick(cb) {
-	
-	//~ var lmscoverflow = document.getElementById("lmscoverflow");
-	//~ let uppcommingEvents = lmscoverflow.getElementsByClassName("lcfItemContainer");
-	
-	//~ var facetes = document.getElementById("facetes");
-	//~ let filters = facetes.querySelectorAll("input");
-	
-	// checked Targedgroupes
-	// checked eventTypes 
-	// ...
-	// selectedAge 
-	// selected dates
-	
-	//~ var checkedTargedGroups = [];
-	//~ var numTargedGroups = 0;
-	
-	//~ for (let filter of filters) {
-		//~ if (filter.name == 'targetgroup' && filter.checked) {
-			//~ checkedTargedGroups.push(filter.value);
-			//~ numTargedGroups++;
-		//~ }
-	//~ }
-	
-	//~ console.log(checkedTargedGroups);
-	
-	//~ for (let event of uppcommingEvents) {
-		//~ console.log(event);
-		
-		//~ for (let filter of filters) {
-			//~ console.log(filter.name);
-			//~ if (filter.name == 'targetgroup') {
-				//~ console.log(filter.value);
-			//~ }
-		//~ }
-	//~ }
-	
-	//~ var nothingIsChecked = true;
-	
-	//~ for (let checkbox of document.querySelectorAll("input[name=" + CSS.escape(cb.name) + "]")) {
-		//~ if (checkbox.checked) {
-			//~ for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) el.style.display = 'block';
-			//~ nothingIsChecked = false;
-		//~ } else {
-			//~ for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) el.style.display = 'none';
-		//~ }
-	//~ }
-	
-	//~ if (nothingIsChecked)
-		//~ for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) el.style.display = 'block';
-		
-	var numChecked = 0;
-	let allCheckboxes = document.querySelectorAll("input[name=" + CSS.escape(cb.name) + "]");
-	for (let checkbox of allCheckboxes) {
-		
-		if (checkbox.checked) {
-			
-			numChecked++;
-			// remove checkbox.name from filterBy of all events where attr.value == checkbox.value --> event visible 
-			for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) {
-				showEvent(el,cb.name);
-			}
-			
-		} else {
-			// add checkbox.name from filterBy of all events where attr.value == checkbox.value --> hide event
-			for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) {
-				hideEvent(el,cb.name);
-			}
-			
-		}
-	}
-	
-	// show all events if all or no checkboxes of a group are checked
-	if (numChecked == 0 || numChecked == allCheckboxes.length) { 
-		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) {
-			showEvent(el,cb.name);
-		}
-	}
-		
-	filterEvents();
-	filterFacets();
-}
-
+// remove 'name' from the data-filterdBy tag of 'event'
 function showEvent(event,name) {
 	var filterdBy = event.getAttribute("data-filterdBy");
 	filterdBy = filterdBy.replace(name,'');
 	event.setAttribute("data-filterdBy", filterdBy);
 }
 
+// add 'name' to the data-filterdBy tag of 'event'
 function hideEvent(event,name) {
 	var filterdBy = event.getAttribute("data-filterdBy");
 	const regex = new RegExp(name);
@@ -385,6 +259,8 @@ function hideEvent(event,name) {
 	}
 }
 
+// this function changes the opacity of filters with no effect.
+// if no filters are selected the "reset all filters" button is disabled
 function filterFacets() {
 
 	var container = document.getElementById("search-facets");
@@ -445,6 +321,7 @@ function filterFacets() {
 	document.getElementById("resetFilter").disabled = true;
 }
 
+// change opacity of filtered events
 function filterEvents() {
 
 	let uppcommingEvents = document.getElementsByClassName("lcfItemContainer");
@@ -459,8 +336,43 @@ function filterEvents() {
 	}
 }
 
-function handlePubReg(cb) {
+// handle the checkbox filters
+function handleCheckbox(cb) {
+		
+	var numChecked = 0;
+	let allCheckboxes = document.querySelectorAll("input[name=" + CSS.escape(cb.name) + "]");
+	for (let checkbox of allCheckboxes) {
+		
+		if (checkbox.checked) {
+			
+			numChecked++;
+			// remove checkbox.name from filterBy of all events where attr.value == checkbox.value --> event visible 
+			for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) {
+				showEvent(el,cb.name);
+			}
+			
+		} else {
+			// add checkbox.name from filterBy of all events where attr.value == checkbox.value --> hide event
+			for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "=" + CSS.escape(checkbox.value) + "]")) {
+				hideEvent(el,cb.name);
+			}
+			
+		}
+	}
 	
+	// show all events if all or no checkboxes of a group are checked
+	if (numChecked == 0 || numChecked == allCheckboxes.length) { 
+		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) {
+			showEvent(el,cb.name);
+		}
+	}
+		
+	filterEvents();
+	filterFacets();
+}
+
+// handle the public registration checkbox
+function handlePubReg(cb) {
 	
 	if (cb.checked) {
 		for (let el of document.querySelectorAll("div[data-" + CSS.escape(cb.name) + "]")) hideEvent(el,cb.name);
@@ -473,6 +385,7 @@ function handlePubReg(cb) {
 	filterFacets();
 }
 
+// handle the age slider
 function handleAge(slider) {
 	
 	for (let el of document.querySelectorAll("div[data-" + CSS.escape(slider.name) + "]")) {
@@ -494,6 +407,7 @@ function handleAge(slider) {
 	slider.nextElementSibling.value = slider.value
 }
 
+// handle the date filter
 function handleDate(date) {
 	
 	var datevalueFrom = null;
