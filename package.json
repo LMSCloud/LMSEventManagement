@@ -1,0 +1,29 @@
+{
+  "name": "lms-koha-plugin-event-management",
+  "version": "1.0.3",
+  "description": "Managing events just got easier!",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lms-tobias/lms-koha-plugin-event-management.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lms-tobias/lms-koha-plugin-event-management/issues"
+  },
+  "homepage": "https://github.com/lms-tobias/lms-koha-plugin-event-management#readme",
+  "devDependencies": {
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "gulp": "^4.0.2",
+    "gulp-github-release": "^1.2.1",
+    "gulp-run": "^1.7.1",
+    "node-datetime": "^2.1.2",
+    "rollup": "^2.79.1"
+  }
+}

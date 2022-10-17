@@ -44,7 +44,8 @@
 						   </li>
 						   <li>
 							   <label for="eventtype">Event type: </label>
-							   <input type="text" id="eventtype" name="eventtype" size="50" maxlength="250" value="" />
+							   <input type="text" id="eventtype" name="eventtype" size="50" maxlength="250" value="" required />
+							   <span class="required">Required</span>
 						   </li>
 							<li>
 								<label for="branch">Branch: </label>
@@ -84,7 +85,7 @@
 							</li>
 							<li>
 								<label for="description">Description: </label>
-								<textarea id="description" name="description" rows="10" cols="120">	</textarea>
+								<textarea id="description" name="description" rows="10" cols="120"></textarea>
 							</li>
 							<li>
 								<div id="fileuploadform">

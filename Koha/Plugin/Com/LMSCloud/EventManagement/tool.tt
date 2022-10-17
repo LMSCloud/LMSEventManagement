@@ -100,7 +100,7 @@
 								<select id="targetgroup" name="targetgroup" required="required" class="required">
 									[% FOREACH targetgroup IN targetgroups %]
 										[% IF targetgroup.code == eventtype.targetgroupcode %]
-											<option value="[% targetgroup.code %] selecteed">[% targetgroup.targetgroup %]</option>
+											<option value="[% targetgroup.code %]" selected>[% targetgroup.targetgroup %]</option>
 										[% ELSE %]
 											<option value="[% targetgroup.code %]">[% targetgroup.targetgroup %]</option>
 										[% END %]
