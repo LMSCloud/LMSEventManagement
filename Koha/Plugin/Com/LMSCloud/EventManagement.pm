@@ -30,6 +30,7 @@ use LWP::UserAgent;
 use MARC::Record;
 use Mojo::JSON qw(decode_json);
 use URI::Escape qw(uri_unescape);
+use Try::Tiny;
 
 use Locale::Messages;
 Locale::Messages->select_package('gettext_pp');
@@ -37,7 +38,7 @@ Locale::Messages->select_package('gettext_pp');
 use Locale::Messages qw(:locale_h :libintl_h);
 use POSIX qw(setlocale);
 
-# use Koha::Plugin::Com::LMSCloud::EventHelper;
+use Koha::Plugin::Com::LMSCloud::EventManagement::Validators qw(validate_event validate_event_type);
 
 ## Here we set our plugin version
 our $VERSION         = '0.0.1';
@@ -45,16 +46,14 @@ our $MINIMUM_VERSION = '18.05';
 
 ## Here is our metadata, some keys are required, some are optional
 our $METADATA = {
-    name            => 'Event Management',
-    author          => 'LMSCloud',
+    name            => 'LMSEventManagement',
+    author          => 'LMSCloud GmbH',
     date_authored   => '2021-10-15',
-    date_updated    => '2021-10-15',
+    date_updated    => '2022-10-18',
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
-    description     => 'This plugin implements every available feature '
-        . 'of the plugin system and is meant '
-        . 'to be documentation and a starting point for writing your own plugins!',
+    description     => 'This plugin makes managing events with koha a breeze!'
 };
 
 ## This is the minimum code required for a plugin's 'new' method
@@ -77,94 +76,155 @@ sub new {
 sub tool {
     my ( $self, $args ) = @_;
 
+    my $template = $self->get_template( { file => 'tools/tool.tt' } );
     my $cgi      = $self->{'cgi'};
     my $op       = $cgi->param('op');
-    my $template = $self->get_template( { file => 'tool.tt' } );
 
-    my $submit_choose_eventtype = $cgi->param('submit_choose_eventtype');
-    my $submit_new_event        = $cgi->param('submit_new_event');
-    my $submit_edit_event       = $cgi->param('submit_edit_event');
+    given ($op) {
+        when (q{}) {
+            $template = $self->get_template( { file => 'tools/tool.tt' } );
 
-    if ( !( $submit_new_event || $submit_edit_event ) ) {
-
-        if ($submit_choose_eventtype) {
-            my $eventtypecode = $cgi->param('eventtypecode');
-            my $eventtype     = $self->get_event_type($eventtypecode);
-            my $branches      = Koha::Template::Plugin::Branches->all();
-            my $targetgroups  = $self->get_target_groups();
-            $op = 'add_new_event';
             $template->param(
-                branches     => $branches,
-                eventtype    => $eventtype,
-                targetgroups => $targetgroups,
+                op     => q{},
+                events => $self->get_events(),
             );
+
+            return $self->output_html( $template->output() );
         }
 
-    }
-    else {
+        when (q{choose_event_type}) {
+            $template = $self->get_template( { file => 'tools/choose_event_type.tt' } );
 
-        my $title       = $cgi->param('title');
-        my $eventtype   = $cgi->param('eventtype');
-        my $branch      = $cgi->param('branch');
-        my $targetgroup = $cgi->param('targetgroup');
-        my $max_age     = $cgi->param('max_age');
+            $template->param( event_types => $self->get_event_types(), );
 
-        #my $pubreg = $cgi->param('pubreg');
-        my $max_participants = $cgi->param('max_participants');
-        my $costs            = $cgi->param('costs');
-        my $description      = $cgi->param('description');
-        my $starttime        = $cgi->param('starttime');
-        my $endtime          = $cgi->param('endtime');
-        my $image_id         = $cgi->param('uploadedfileid');
-
-        if ($submit_edit_event) {
-            my $id = $cgi->param('id');
-            $self->delete_event($id);
+            return $self->output_html( $template->output() );
         }
 
-        my $result = $self->add_event(
-            {   title            => $title,
-                eventtype        => $eventtype,
-                branch           => $branch,
-                targetgroup      => $targetgroup,
-                max_age          => $max_age,
-                max_participants => $max_participants,
-                costs            => $costs,
-                description      => $description,
-                starttime        => $starttime,
-                endtime          => $endtime,
-                image_id         => $image_id
+        when (q{add_event}) {
+            $template = $self->get_template( { file => 'tools/add_event.tt' } );
+
+            $template->param(
+                event_type    => $self->get_event_type( scalar $cgi->param('event_type_id') ),
+                branches      => Koha::Template::Plugin::Branches->all(),
+                target_groups => $self->get_target_groups(),
+            );
+
+            return $self->output_html( $template->output() );
+        }
+
+        when (q{submit_add_event}) {
+            my $event_type = $cgi->param('event_type');
+            my $event_type_is_added;
+
+            use Data::Dumper;
+            warn Dumper('TEST 1');
+
+            # If the event type isn't already defined, we create it
+            if ( !$event_type && scalar $cgi->param('submit_add_event_type') ) {
+                $event_type_is_added = $self->add_event_type(
+                    {   id                => scalar $cgi->param('event_type_id'),
+                        branch            => scalar $cgi->param('branch'),
+                        target_group      => scalar $cgi->param('target_group'),
+                        name              => scalar $cgi->param('event_type_name'),
+                        max_age           => scalar $cgi->param('max_age'),
+                        open_registration => scalar $cgi->param('open_registration'),
+                        max_participants  => scalar $cgi->param('max_participants'),
+                        fee               => scalar $cgi->param('fee'),
+                        description       => scalar $cgi->param('description'),
+                        image             => scalar $cgi->param('image')
+                    }
+                );
             }
-        );
-        $template->param( added_event => $result, );
 
+            my $event_is_added = $self->add_event(
+                {   title             => scalar $cgi->param('title'),
+                    event_type        => $event_type_is_added->{'ok'} ? $event_type_is_added->{'id'} : q{},
+                    branch            => scalar $cgi->param('branch'),
+                    target_group      => scalar $cgi->param('target_group'),
+                    max_age           => scalar $cgi->param('max_age'),
+                    open_registration => scalar $cgi->param('open_registration'),
+                    start_time        => scalar $cgi->param('start_time'),
+                    end_time          => scalar $cgi->param('end_time'),
+                    max_participants  => scalar $cgi->param('max_participants'),
+                    fee               => scalar $cgi->param('fee'),
+                    description       => scalar $cgi->param('description'),
+                    image_id          => scalar $cgi->param('uploaded_file_id'),
+                }
+            );
+
+            if ($event_is_added) {
+                $self->get_template( { file => 'tools/tool.tt' } );
+
+                $template->param( events => $self->get_events() );
+
+                return $self->output_html( $template->output() );
+            }
+
+            $self->get_template( { file => 'tools/add_event.tt' } );
+
+            $template->param(
+                event_type    => $self->get_event_type( scalar $cgi->param('event_type_id') ),
+                branches      => Koha::Template::Plugin::Branches->all(),
+                target_groups => $self->get_target_groups(),
+            );
+
+            return $self->output_html( $template->output() );
+
+        }
     }
 
-    if ( $op eq 'delete_event' ) {
-        my $id = $cgi->param('id');
-        $self->delete_event($id);
-    }
-    elsif ( $op eq 'edit_event' ) {
-        my $id           = $cgi->param('id');
-        my $event        = $self->get_event($id);
-        my $eventtype    = $self->get_event_type( $event->{'eventtypecode'} );
-        my $branches     = Koha::Template::Plugin::Branches->all();
-        my $targetgroups = $self->get_target_groups();
-        $template->param(
-            branches     => $branches,
-            eventtype    => $eventtype,
-            targetgroups => $targetgroups,
-            event        => $event,
-        );
-    }
+    #     when (q{edit_event}) {
+    #         my $id = $cgi->param('id');
 
-    $template->param(
-        op         => $op,
-        language   => C4::Languages::getlanguage($cgi) || 'en',
-        mbf_path   => abs_path( $self->mbf_path('translations') ),
-        events     => $self->get_events(),
-        eventtypes => $self->get_event_types(),
-    );
+    #         if ($submit_edit_event) {
+    #             $self->delete_event($id);
+    #             $self->add_event(
+    #                 {   title            => scalar $cgi->param('title'),
+    #                     event_type       => scalar $cgi->param('event_type'),
+    #                     branch           => scalar $cgi->param('branch'),
+    #                     target_group     => scalar $cgi->param('target_group'),
+    #                     max_age          => scalar $cgi->param('max_age'),
+    #                     max_participants => scalar $cgi->param('max_participants'),
+    #                     fee              => scalar $cgi->param('fee'),
+    #                     description      => scalar $cgi->param('description'),
+    #                     start_time       => scalar $cgi->param('start_time'),
+    #                     end_time         => scalar $cgi->param('end_time'),
+    #                     image_id         => scalar $cgi->param('uploadedfileid'),
+    #                 }
+    #             );
+    #         }
+
+    #         my $event         = $self->get_event($id);
+    #         my $branches      = Koha::Template::Plugin::Branches->all();
+    #         my $target_groups = $self->get_target_groups();
+    #         my $event_type    = $self->get_event_type( $event->{'id'} );
+
+    #         $template->param(
+    #             branches      => $branches,
+    #             event_type    => $event_type,
+    #             target_groups => $target_groups,
+    #             event         => $event,
+    #         );
+
+    #         return $self->output_html( $template->output() );
+    #     }
+
+    #     when (q{delete_event}) {
+    #         my $id = $cgi->param('id');
+
+    #         $self->delete_event($id);
+    #         $template->param(
+    #             op         => $op,
+    #             language   => C4::Languages::getlanguage($cgi) || 'en',
+    #             mbf_path   => abs_path( $self->mbf_path('translations') ),
+    #             events     => $self->get_events(),
+    #             eventtypes => $self->get_event_types(),
+    #         );
+
+    #         return $self->output_html( $template->output() );
+    #     }
+
+    # }
 
     return $self->output_html( $template->output() );
 }
@@ -365,12 +425,12 @@ sub add_target_group {
 sub delete_target_group {
     my ( $self, $code ) = @_;
 
-    my $table = $self->get_qualified_table_name('targetgroups');
-    my $query = qq{DELETE FROM $table WHERE code = '$code'};
+    my $table = $self->get_qualified_table_name('target_groups');
+    my $query = qq{DELETE FROM $table WHERE code = ?};
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
-    $sth->execute();
+    $sth->execute($code);
 
     return;
 }
@@ -378,12 +438,12 @@ sub delete_target_group {
 sub get_target_group {
     my ( $self, $code ) = @_;
 
-    my $table = $self->get_qualified_table_name('targetgroups');
-    my $query = qq{SELECT * FROM $table WHERE code = '$code'};
+    my $table = $self->get_qualified_table_name('target_groups');
+    my $query = qq{SELECT * FROM $table WHERE code = ?};
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
-    $sth->execute();
+    $sth->execute($code);
 
     my $targetgroups = $sth->fetchrow_hashref();
 
@@ -393,7 +453,7 @@ sub get_target_group {
 sub get_target_groups {
     my ($self) = @_;
 
-    my $table = $self->get_qualified_table_name('targetgroups');
+    my $table = $self->get_qualified_table_name('target_groups');
     my $query = "SELECT * FROM $table";
 
     my $dbh = C4::Context->dbh;
@@ -412,16 +472,16 @@ sub get_event {
     my ( $self, $id ) = @_;
 
     my $table             = $self->get_qualified_table_name('events');
-    my $tableeventtypes   = $self->get_qualified_table_name('eventtypes');
-    my $tabletargetgroups = $self->get_qualified_table_name('targetgroups');
+    my $tableeventtypes   = $self->get_qualified_table_name('event_types');
+    my $tabletargetgroups = $self->get_qualified_table_name('target_groups');
 
     my $query = <<~"STATEMENT";
-		SELECT e.*, branchname,t.targetgroup,et.eventtype 
-		FROM $table AS e 
-		LEFT JOIN branches AS b ON e.branchcode=b.branchcode 
-		LEFT JOIN $tabletargetgroups AS t ON e.targetgroupcode = t.code 
-		LEFT JOIN $tableeventtypes AS et ON e.eventtypecode = et.code
-		WHERE eventid = $id
+		SELECT events.*, branchcode, target_groups.name, event_types.name 
+		FROM $table AS events 
+		LEFT JOIN branches AS branches ON events.branchcode = branches.branchcode 
+		LEFT JOIN $tabletargetgroups AS target_groups ON events.target_group = target_groups.id 
+		LEFT JOIN $tableeventtypes AS event_types ON events.event_type = event_types.id
+		WHERE id = $id
 	STATEMENT
 
     my $dbh = C4::Context->dbh;
@@ -445,16 +505,15 @@ sub get_events {
     my ($self) = @_;
 
     my $table             = $self->get_qualified_table_name('events');
-    my $tableeventtypes   = $self->get_qualified_table_name('eventtypes');
-    my $tabletargetgroups = $self->get_qualified_table_name('targetgroups');
+    my $tableeventtypes   = $self->get_qualified_table_name('event_types');
+    my $tabletargetgroups = $self->get_qualified_table_name('target_groups');
 
-    #my $query = "SELECT * FROM $table";
     my $query = <<~"STATEMENT";
-		SELECT e.*, branchname,t.targetgroup,et.eventtype 
-		FROM $table AS e 
-		LEFT JOIN branches AS b ON e.branchcode=b.branchcode 
-		LEFT JOIN $tabletargetgroups AS t ON e.targetgroupcode = t.code 
-		LEFT JOIN $tableeventtypes AS et ON e.eventtypecode = et.code
+		SELECT events.*, branchcode, target_groups.name, event_types.name
+		FROM $table AS events
+		LEFT JOIN branches AS branches ON events.branch = branches.branchcode 
+		LEFT JOIN $tabletargetgroups AS target_groups ON events.target_group = target_groups.id 
+		LEFT JOIN $tableeventtypes AS event_types ON events.event_type = event_types.id
 	STATEMENT
 
     my $dbh = C4::Context->dbh;
@@ -479,15 +538,15 @@ sub get_events {
 }
 
 sub get_event_type {
-    my ( $self, $code ) = @_;
+    my ( $self, $id ) = @_;
 
-    my $table = $self->get_qualified_table_name('eventtypes');
+    my $table = $self->get_qualified_table_name('event_types');
 
-    my $query = qq{SELECT * FROM $table WHERE code = '$code'};
+    my $query = qq{SELECT * FROM $table WHERE id = ?};
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
-    $sth->execute();
+    $sth->execute($id);
 
     my $eventtype = $sth->fetchrow_hashref();
 
@@ -497,7 +556,7 @@ sub get_event_type {
 sub get_event_types {
     my ($self) = @_;
 
-    my $table = $self->get_qualified_table_name('eventtypes');
+    my $table = $self->get_qualified_table_name('event_types');
 
     my $query = "SELECT * FROM $table";
 
@@ -525,12 +584,11 @@ sub delete_event {
     my ( $self, $id ) = @_;
 
     my $table = $self->get_qualified_table_name('events');
-
-    my $query = qq{DELETE FROM $table WHERE eventid = '$id'};
+    my $query = qq{DELETE FROM $table WHERE eventid = ?};
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
-    $sth->execute();
+    $sth->execute($id);
 
     return;
 }
@@ -538,12 +596,12 @@ sub delete_event {
 sub delete_event_type {
     my ( $self, $code ) = @_;
 
-    my $table = $self->get_qualified_table_name('eventtypes');
-    my $query = "DELETE FROM $table WHERE code = '$code'";
+    my $table = $self->get_qualified_table_name('event_types');
+    my $query = qq{DELETE FROM $table WHERE code = ?};
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
-    $sth->execute();
+    $sth->execute($code);
 
     return;
 }
@@ -574,41 +632,40 @@ sub add_event {
 
     my $src_image;
 
-    my $query        = "INSERT INTO $table (title, eventtypecode, branchcode, targetgroupcode";
-    my $query_values = "VALUES ('$args->{'title'}', '$args->{'eventtype'}', '$args->{'branch'}', '$args->{'targetgroup'}'";
+    my $query        = "INSERT INTO $table (title, event_type, branch, target_group";
+    my $query_values = "VALUES ('$args->{'title'}', '$args->{'event_type'}', '$args->{'branch'}', '$args->{'target_group'}'";
 
     if ( $args->{'max_age'} ne q{} ) {
         $query        = $query . q{, max_age};
         $query_values = $query_values . ", '$args->{'max_age'}'";
     }
-
-    #~ if ($public_reg ne q{}) {
-    #~ $query = $query.", public_reg";
-    #~ $query_values = $query_values.", '$pubreg'";
-    #~ }
+    if ( $args->{'open_registration'} ne q{} ) {
+        $query        = $query . q{, open_registration};
+        $query_values = $query_values . ", '$args->{'open_registration'}'";
+    }
     if ( $args->{'max_participants'} ne q{} ) {
         $query        = $query . q{, max_participants};
         $query_values = $query_values . ", '$args->{'max_participants'}'";
     }
-    if ( $args->{'costs'} ne q{} ) {
-        $query        = $query . q{, costs};
-        $query_values = $query_values . ", '$args->{'costs'}'";
+    if ( $args->{'fee'} ne q{} ) {
+        $query        = $query . q{, fee};
+        $query_values = $query_values . ", '$args->{'fee'}'";
     }
     if ( $args->{'description'} ne q{} ) {
         $query        = $query . q{, description};
         $query_values = $query_values . ", '$args->{'description'}'";
     }
-    if ( $args->{'starttime'} ne q{} ) {
-        $query        = $query . q{, starttime};
-        $query_values = $query_values . ", '$args->{'starttime'}'";
+    if ( $args->{'start_time'} ne q{} ) {
+        $query        = $query . q{, start_time};
+        $query_values = $query_values . ", '$args->{'start_time'}'";
     }
-    if ( $args->{'endtime'} ne q{} ) {
-        $query        = $query . q{, endtime};
-        $query_values = $query_values . ", '$args->{'endtime'}'";
+    if ( $args->{'end_time'} ne q{} ) {
+        $query        = $query . q{, end_time};
+        $query_values = $query_values . ", '$args->{'end_time'}'";
     }
-    if ( $args->{'image_id'} ne q{} ) {
-        $query        = $query . q{, imageid};
-        $query_values = $query_values . ", '$args->{'image_id'}'";
+    if ( $args->{'image'} ne q{} ) {
+        $query        = $query . q{, image};
+        $query_values = $query_values . ", '$args->{'image'}'";
     }
 
     $query = $query . qq{) $query_values)};
@@ -621,57 +678,61 @@ sub add_event {
 sub add_event_type {
     my ( $self, $args ) = @_;
 
-    my $table = $self->get_qualified_table_name('eventtypes');
-    my $query = qq{SELECT * FROM $table WHERE code = ?};
+    my $table = $self->get_qualified_table_name('event_types');
+    my $query = qq{SELECT * FROM $table WHERE id = ?};
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
 
-    $sth->execute( $args->{'code'} );
+    $sth->execute( $args->{'id'} );
 
-    my $code_exists = $sth->fetchrow_hashref();
+    my $id_exists = $sth->fetchrow_hashref();
 
-    if ( !$code_exists ) {
-        $query = "INSERT INTO $table (code, branchcode, targetgroupcode";
-        my $query_values = "VALUES ('$args->{'code'}', '$args->{'branch'}', '$args->{'targetgroup'}'";
+    if ( !$id_exists ) {
+        $query = "INSERT INTO $table (id, branch, target_group";
+        my $query_values = "VALUES ('$args->{'id'}', '$args->{'branch'}', '$args->{'target_group'}'";
 
-        if ( $args->{'eventtype'} ne q{} ) {
-            $query        = $query . ', eventtype';
-            $query_values = $query_values . ", '$args->{'eventtype'}'";
+        if ( $args->{'name'} ne q{} ) {
+            $query        = $query . ', name';
+            $query_values = $query_values . ", '$args->{'name'}'";
         }
         if ( $args->{'max_age'} ne q{} ) {
             $query        = $query . ', max_age';
             $query_values = $query_values . ", '$args->{'max_age'}'";
         }
-        if ( $args->{'pubreg'} ne q{} ) {
-            $query        = $query . ', public_reg';
-            $query_values = $query_values . ", '$args->{'pubreg'}'";
+        if ( $args->{'open_registration'} ne q{} ) {
+            $query        = $query . ', open_registration';
+            $query_values = $query_values . ", '$args->{'open_registration'}'";
         }
         if ( $args->{'max_participants'} ne q{} ) {
             $query        = $query . ', max_participants';
             $query_values = $query_values . ", '$args->{'max_participants'}'";
         }
-        if ( $args->{'costs'} ne q{} ) {
-            $query        = $query . ', costs';
-            $query_values = $query_values . ", '$args->{'costs'}'";
+        if ( $args->{'fee'} ne q{} ) {
+            $query        = $query . ', fee';
+            $query_values = $query_values . ", '$args->{'fee'}'";
         }
         if ( $args->{'description'} ne q{} ) {
             $query        = $query . ', description';
             $query_values = $query_values . ", '$args->{'description'}'";
         }
-        if ( $args->{'image_id'} ne q{} ) {
-            $query        = $query . ', imageid';
-            $query_values = $query_values . ", '$args->{'image_id'}'";
+        if ( $args->{'image'} ne q{} ) {
+            $query        = $query . ', image';
+            $query_values = $query_values . ", '$args->{'image'}'";
         }
 
         $query = $query . ') ' . $query_values . ')';
 
         $sth = $dbh->prepare($query);
         $sth->execute();
-        return 1;
+
+        return {
+            ok => 1,
+            id => $args->{'id'},
+        };
     }
     else {
-        return 0;
+        return { ok => 0, };
     }
 }
 
@@ -706,7 +767,7 @@ sub configure_targets {
             delete_target_group( $self, $code );
         }
         my $success = add_target_group(
-            {   table       => $self->get_qualified_table_name('targetgroups'),
+            {   table       => $self->get_qualified_table_name('target_groups'),
                 code        => $code,
                 target_code => scalar $cgi->param('target_group'),
                 min_age     => scalar $cgi->param('min_age'),
@@ -859,7 +920,7 @@ sub install() {
                 `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'maximum allowed number of participants',
                 `fee` SMALLINT unsigned DEFAULT NULL COMMENT 'fee for an event',
                 `description` TEXT(65535) DEFAULT '' COMMENT 'what is happening',
-                `image` TINYINT(11) DEFAULT NULL COMMENT 'image from kohas image management',
+                `image` INT(10) DEFAULT NULL COMMENT 'image from kohas image management',
                 `location` VARCHAR(16) DEFAULT '' COMMENT 'id of a location from the locations table',
                 PRIMARY KEY (`id`),
                 FOREIGN KEY (`branch`) REFERENCES branches(`branchcode`),
@@ -872,21 +933,21 @@ sub install() {
                 `id` TINYINT(16) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) DEFAULT '' COMMENT 'alphanumeric identifier, e.g. name of the event',
                 `event_type` VARCHAR(16) DEFAULT '' COMMENT 'the event type id from the event types table',
-                `branch` VARCHAR(10) DEFAULT '' COMMENT 'a branch id from the branches table',
+                `branch` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT 'a branch id from the branches table',
                 `target_group` VARCHAR(16) DEFAULT '' COMMENT 'a target group id from the target groups table',
                 `max_age` TINYINT unsigned DEFAULT NULL COMMENT 'maximum age requirement',
                 `min_age` TINYINT unsigned DEFAULT NULL COMMENT 'minimum age requirement',
                 `open_registration` TINYINT(1) DEFAULT '0' COMMENT 'is the registration to non-patrons via email',
                 `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'maximum allowed number of participants',
                 `fee` SMALLINT unsigned DEFAULT NULL COMMENT 'fee for an event',
-                `location` VARCHAR(16) DEFAULT '' COMMENT 'id of a location from the locations table'
-                `description` TEXT(65535) DEFAULT '' COMMENT 'whats happening'
-                `image` TINYINT(11) DEFAULT NULL COMMENT 'image from kohas image management'
+                `location` VARCHAR(16) DEFAULT '' COMMENT 'id of a location from the locations table',
+                `description` TEXT(65535) DEFAULT '' COMMENT 'whats happening',
+                `image` INT(10) DEFAULT NULL COMMENT 'image from kohas image management',
                 `start_time` DATETIME DEFAULT NULL COMMENT 'date and time an event begins on',
                 `end_time` DATETIME DEFAULT NULL COMMENT 'date and time an event ends on',
                 `link_to_registration` TEXT(65535) DEFAULT '' COMMENT 'link to a local or an external page with details',
                 PRIMARY KEY (`id`),
-                FOREIGN KEY (`branchcode`) REFERENCES branches(`branchcode`),
+                FOREIGN KEY (`branch`) REFERENCES branches(`branchcode`),
                 FOREIGN KEY (`event_type`) REFERENCES $event_types_table(`id`),
                 FOREIGN KEY (`target_group`) REFERENCES $target_groups_table(`id`),
                 FOREIGN KEY (`image`) REFERENCES uploaded_files(`id`)
@@ -921,7 +982,10 @@ sub uninstall() {
 
     my $dbh = C4::Context->dbh;
 
-    my @tables = ( $self->get_qualified_table_name('events'), $self->get_qualified_table_name('targetgroups'), $self->get_qualified_table_name('eventtypes'), );
+    my @tables = (
+        $self->get_qualified_table_name('events'),        $self->get_qualified_table_name('event_types'),
+        $self->get_qualified_table_name('target_groups'), $self->get_qualified_table_name('locations'),
+    );
 
     for my $table (@tables) {
         my $sth = $dbh->prepare(qq{DROP TABLE IF EXISTS $table });
@@ -930,46 +994,6 @@ sub uninstall() {
 
     return 1;
 
-}
-
-sub tool_step1 {
-    my ( $self, $args ) = @_;
-    my $cgi = $self->{'cgi'};
-
-    my $template = $self->get_template( { file => 'tool-step1.tt' } );
-
-    return $self->output_html( $template->output() );
-}
-
-sub tool_step2 {
-    my ( $self, $args ) = @_;
-    my $cgi = $self->{'cgi'};
-
-    my $template = $self->get_template( { file => 'tool-step2.tt' } );
-
-    my $borrowernumber = C4::Context->userenv->{'number'};
-    my $borrower       = Koha::Patrons->find($borrowernumber);
-    $template->param( 'victim' => $borrower->unblessed() );
-    $template->param( 'victim' => $borrower );
-
-    $borrower->firstname('Bob')->store;
-
-    my $dbh = C4::Context->dbh;
-
-    my $table = $self->get_qualified_table_name('mytable');
-
-    my $sth = $dbh->prepare("SELECT DISTINCT(borrowernumber) FROM $table");
-    $sth->execute();
-    my @victims;
-    while ( my $r = $sth->fetchrow_hashref() ) {
-        my $brw = Koha::Patrons->find( $r->{'borrowernumber'} )->unblessed();
-        push @victims, ($brw);
-    }
-    $template->param( 'victims' => \@victims );
-
-    $dbh->do( "INSERT INTO $table ( borrowernumber ) VALUES ( ? )", undef, ($borrowernumber) );
-
-    return $self->output_html( $template->output() );
 }
 
 ## API methods

@@ -1,3 +1,3 @@
-import LMSEvents from "./LMSEvents";
+import LMSEvents from './LMSEvents';
 
 export default { LMSEvents };

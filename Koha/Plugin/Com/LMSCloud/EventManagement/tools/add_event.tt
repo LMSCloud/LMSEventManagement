@@ -1,0 +1,167 @@
+[% USE gtx = Gettext('com.lmscloud.eventmanagement', language, 'utf-8', mbf_path) %]
+
+[% USE KohaDates %]
+[% USE TablesSettings %]
+[% SET footerjs = 1 %]
+
+[% INCLUDE 'doc-head-open.inc' %]
+ <title>[% 'Koha: Event Mangement Plugin: Configuration' | gettext %]</title>
+[% INCLUDE 'doc-head-close.inc' %]
+
+</head>
+
+<body>
+  [% INCLUDE 'header.inc' %]
+  [% INCLUDE 'cat-search.inc' %]
+
+  <div id="breadcrumbs">
+    <a href="/cgi-bin/koha/mainpage.pl">[% 'Home' | gettext %]</a><span>&nbsp;&rsaquo;&nbsp;</span>
+    <a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a><span>&nbsp;&rsaquo;&nbsp;</span>
+    <span>[% 'Event Management - Tool' | gettext %]</span>
+  </div>
+
+  <div class="main container-fluid">
+    <div class="row">
+      <div class="col-sm-10 col-sm-push-2">
+        <main>
+          <h2>Add event</h2>
+                                  
+          <form method="post" id="uploadfile" enctype="multipart/form-data">
+            <input type="hidden" name="class" value="[% CLASS %]"/>
+            <input type="hidden" name="method" value="[% METHOD %]"/>
+            
+            <fieldset class="rows">
+              <ol>
+
+                <li>
+                  [% IF event_type %]
+                    <label for="event_type">[% 'Event type:' | gettext %]&nbsp;</label><span>[% event_type.name %]</span>
+                    <input type="hidden" id="event_type" name="event_type" value="[% event_type.id %]">
+                  [% ELSE %]
+                    <label for="event_type">[% 'Event type:' | gettext %]&nbsp;</label>
+                    <input type="text" id="event_type_id" name="event_type_id" size="50" maxlength="10"
+                      placeholder="[% 'Event type id' | gettext %]" 
+                    >
+                    <input type="text" id="event_type_name" name="event_type_name" size="50" maxlength="255"
+                      placeholder="[% 'Event type name' | gettext %]"
+                    >
+                    <span class="required">Required</span>
+                    <div class="hint">
+                      [% 'Only the second field is required.
+                          Use the id field if you want to use
+                          this event as a template in the future
+                      ' | gettext %]
+                    </div>
+                  [% END %]
+                </li>
+
+                <li>
+                  <label for="title">Title: </label>
+                  <input type="text" id="title" name="title" size="100" maxlength="100" value="[% event.event_type %]" required />
+                  <span class="required">Required</span>
+                </li>
+
+                <li>
+                  <label for="branch">Branch: </label>
+                  <select id="branch" name="branch" required>
+                    [% FOREACH branch IN branches %]
+                      [% IF branch.branchcode == eventtype.branchcode %]
+                        <option value="[% branch.branchcode %]" selected>[% branch.branchname %]</option>
+                      [% ELSE %]
+                        <option value="[% branch.branchcode %]">[% branch.branchname %]</option>
+                      [% END %]
+                    [% END %]
+                  </select>
+                  <span class="required">Required</span>
+                </li>
+
+                <li>
+                  <label for="target_group">Target group: </label>
+                  <select id="target_group" name="target_group" required>
+                    [% FOREACH target_group IN target_groups %]
+                      [% IF target_group.id == event_type.target_group %]
+                        <option value="[% target_group.id %]" selected>[% target_group.name %]</option>
+                      [% ELSE %]
+                        <option value="[% target_group.id %]">[% target_group.name %]</option>
+                      [% END %]
+                    [% END %]
+                  </select>
+                  <span class="required">Required</span>
+                </li>
+
+                <li>
+                  <label for="max_age">[% 'Max. age:' | gettext %]&nbsp;</label>
+                  <input type="number" name="max_age" id="max_age" value="[% event_type.max_age %]" min="0" max="255" placeholder="6">
+                  <span>[% 'years' | gettext %]</span>
+                </li>
+
+                <li>
+                  <input type="checkbox" id="open_registration" name="open_registration">								
+                  <label for="open_registration">[% 'Allow open registration:' | gettext %]</label>
+                </li>
+
+                <li>
+                  <label for="start_time">[% 'Start time:' | gettext %]&nbsp;</label>
+                  <input type="datetime-local" name="start_time" id="start_time"> 
+                </li>
+
+                <li>
+                  <label for="end_time">[% 'End time:' | gettext %]&nbsp;</label>
+                  <input type="datetime-local" name="end_time" id="end_time"> 
+                </li>
+
+                <li>
+                  <label for="max_participants">[% 'Max. participants:' | gettext %]&nbsp;</label>
+                  <input type="number" name="max_participants" id="max_participants" value="[% event_type.max_participants %]" min="0" max="65535" placeholder="10" />
+                  <span>[% 'persons' | gettext %]</span>
+                </li>
+
+                <li>
+                  <label for="fee">[% 'Fee:' | gettext%]&nbsp;</label>
+                  <input type="number" name="fee" id="fee" value="[% event_type.fee %]" min="0" max="10000" placeholder="[% '24.99' | gettext %]" />
+                  <span>[% CURRENCY %]</span>
+                </li>
+
+                <li>
+                  <label for="description">[% 'Description:' | gettext %]&nbsp;</label>
+                  <textarea id="description" name="description" rows="10" cols="120" value="[% event_type.description %]" placeholder="[% 'Write a description for your event.' | gettext %]"></textarea>
+                </li>
+
+                <li>
+                  <div id="file_upload_form">
+                    <label for="file_to_upload">[% 'Choose a picture for the event:' | gettext %]&nbsp;</label>
+                    <input type="file" id="file_to_upload" name="file_to_upload" accept="image/png, image/jpeg">
+                    <input type="hidden" name="filetype" id="filetype" value="image"/>
+                    <input type="hidden" name="uploaded_file_id" id="uploaded_file_id" value="[% event_type.image %]" />
+                  </div>
+                  <div id="upload_panel">
+                    <div id="file_upload_status" class="progress_panel">
+                      <span>[% 'Upload progress:' | gettext %]&nbsp;</span>
+                      <progress max="100" value="0" id="file_upload_progress">
+                      </progress>
+                      <span class="file_upload_percentage">0</span>
+                      <span>&percnt;</span>
+                    </div>
+                    <div id="file_upload_failed"></div>
+                  </div>
+                </li>
+              
+              </ol>
+            </fieldset>
+
+            <fieldset class="action">
+              <div>
+                <input type="checkbox" name="submit_add_event_type" id="submit_add_event_type"
+                  [% UNLESS event_type %] checked disabled [% END %]
+                >
+                <label for="submit_add_event_type">[% 'Save configuration as template' | gettext %]</label>
+              </div>
+              <input type="submit" name="submit_add_event" value="Save" />
+              <a class="cancel" href="[% URL %]">[% 'Cancel' | gettext %]</a>
+            </fieldset>
+          </form>
+        </main>
+      </div>
+    </div>
+  </div>
+[% INCLUDE 'intranet-bottom.inc' %]
