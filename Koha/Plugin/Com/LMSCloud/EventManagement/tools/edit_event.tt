@@ -24,104 +24,114 @@
     <div class="row">
       <div class="col-sm-10 col-sm-push-2">
         <main>
-          <h2>Edit event</h2>
+          <h2>[% 'Edit event' | gettext %]</h2>
   
           <form method="post" id="uploadfile" enctype="multipart/form-data">
             <input type="hidden" name="class" value="[% CLASS %]"/>
             <input type="hidden" name="method" value="[% METHOD %]"/>
-            <input type="hidden" name="id" value="[% event.eventid %]"/>
+            <input type="hidden" name="op" value="submit_edit_event">
+            <input type="hidden" name="id" value="[% event.id %]"/>
             
             <fieldset class="rows">
               <ol>
 
                 <li>
-                  <label for="eventtype">Event type: </label> [% eventtype.eventtype %]
-                  <input type="hidden" id="eventtype" name="eventtype" value="[% event.eventtypecode %]"/>
+                  <label for="event_type">[% 'Event type:' | gettext %]&nbsp;</label><span>[% event.event_type %]</span>
+                  <input type="hidden" id="event_type" name="event_type" value="[% event.event_type %]"/>
                 </li>
 
                 <li>
-                  <label for="title">Title: </label>
-                  <input type="text" id="title" name="title" required="required" class="required" size="100" maxlength="100" value="[% event.title %]" />
-                  <span class="required">Required</span>
+                  <label for="title">[% 'Title:' | gettext %]&nbsp;</label>
+                  <input type="text" id="title" name="title" size="100" maxlength="100" value="[% event.name %]" required>
+                  <span class="required">[% 'Required' | gettext %]</span>
                 </li>
 
                 <li>
-                  <label for="branch">Branch: </label>
-                  <select id="branch" name="branch" required="required" class="required">
+                  <label for="branch">[% 'Branch' | gettext %]&nbsp;</label>
+                  <select id="branch" name="branch" required>
                     [% FOREACH branch IN branches %]
-                      [% IF branch.branchcode == event.branchcode %]
+                      [% IF branch.branchcode == event.branch %]
                         <option value="[% branch.branchcode %]" selected>[% branch.branchname %]</option>
                       [% ELSE %]
                         <option value="[% branch.branchcode %]">[% branch.branchname %]</option>
                       [% END %]
                     [% END %]
                   </select>
-                  <span class="required">Required</span>
+                  <span class="required">[% 'Required' | gettext %]</span>
                 </li>
 
                 <li>
-                  <label for="targetgroup">Target group: </label>
-                  <select id="targetgroup" name="targetgroup" required="required" class="required">
-                    [% FOREACH targetgroup IN targetgroups %]
-                      [% IF targetgroup.code == event.targetgroupcode %]
-                        <option value="[% event.targetgroupcode %]" selected>[% targetgroup.targetgroup %]</option>
+                  <label for="target_group">[% 'Target group:' | gettext %]&nbsp;</label>
+                  <select id="target_group" name="target_group" required>
+                    [% FOREACH target_group IN target_groups %]
+                      [% IF target_group.id == event.target_group %]
+                        <option value="[% event.target_group %]" selected>[% target_group.name %]</option>
                       [% ELSE %]
-                        <option value="[% event.targetgroupcode %]">[% targetgroup.targetgroup %]</option>
+                        <option value="[% event.target_group %]">[% target_group.name %]</option>
                       [% END %]
                     [% END %]
                   </select>
-                  <span class="required">Required</span>
+                  <span class="required">[% 'Required' | gettext %]</span>
                 </li>
 
                 <li>
-                  <label for="max_age">Max. age: </label>
-                  <input type="number" name="max_age" id="max_age" value="[% event.max_age %] min="0" max="999" /> years
+                  <label for="max_age">[% 'Max. age:' | gettext %]&nbsp;</label>
+                  <input type="number" name="max_age" id="max_age" value="[% event.max_age %]" min="0" max="255" placeholder="0">
+                  <span>[% 'years' | gettext %]</span>
                 </li>
 
                 <li>
-                  <input type="checkbox" id="pubreg" name="pubreg">								
-                  <label for="pubreg">Allow public registration</label>
+                  <input type="checkbox" id="open_registration" name="open_registration"
+                    [% IF event.open_registration %]
+                      checked
+                    [% END %]
+                  > 								
+                  <label for="open_registration">[% 'Allow open registration:' | gettext %]</label>
                 </li>
 
                 <li>
-                  <label for="starttime">Start time: </label>
-                  <input type="datetime-local" name="starttime" id="starttime" value="[% event.starttime %]" /> 
+                  <label for="start_time">[% 'Start time:' | gettext %]&nbsp;</label>
+                  <input type="datetime-local" name="start_time" id="start_time" value="[% event.start_time %]"> 
                 </li>
 
                 <li>
-                  <label for="endtime">End time: </label>
-                  <input type="datetime-local" name="endtime" id="endtime" value="[% event.endtime %]" /> 
+                  <label for="end_time">[% 'End time:' | gettext %]&nbsp;</label>
+                  <input type="datetime-local" name="end_time" id="end_time" value="[% event.end_time %]"> 
                 </li>
 
                 <li>
-                  <label for="max_participants">Max. participants: </label>
-                  <input type="number" name="max_participants" id="max_participants" value="[% event.max_participants %]" min="0" max="10000" /> persons
+                  <label for="max_participants">[% 'Max. participants:' | gettext %]&nbsp;</label>
+                  <input type="number" name="max_participants" id="max_participants" value="[% event.max_participants %]" min="0" max="65535"  placeholder="0"/>
+                  <span>[% 'persons' | gettext %]</span>
                 </li>
 
                 <li>
-                  <label for="costs">Costs: </label>
-                  <input type="number" name="costs" id="costs" value="[% event.costs %]" min="0" max="10000" /> [% CURRANCY %]
+                  <label for="fee">[% 'Fee:' | gettext%]&nbsp;</label>
+                  <input type="number" name="fee" id="fee" value="[% event.fee %]" min="0" max="10000" placeholder="[% '0.00' | gettext %]">
+                  <span>[% CURRENCY %]</span>
                 </li>
 
                 <li>
-                  <label for="description">Description: </label>
-                  <textarea id="description" name="description" rows="10" cols="120" value="[% event.description %]">	</textarea>
+                  <label for="description">[% 'Description:' | gettext %]&nbsp;</label>
+                  <textarea id="description" name="description" rows="10" cols="120" value="[% event.description %]" placeholder="[% 'Write a description for your event.' | gettext %]"></textarea>
                 </li>
 
                 <li>
-                  <div id="fileuploadform">
-                    <label for="fileToUpload">Choose a picture for the event:</label>
-                    <input type="file" id="fileToUpload" name="fileToUpload" accept="image/png, image/jpeg">
+                  <div id="file_upload_form">
+                    <label for="file_to_upload">[% 'Choose a picture for the event:' | gettext %]&nbsp;</label>
+                    <input type="file" id="file_to_upload" name="file_to_upload" accept="image/png, image/jpeg">
                     <input type="hidden" name="filetype" id="filetype" value="image"/>
-                    <input type="hidden" name="uploadedfileid" id="uploadedfileid" value="[% event.imageid %]" />
+                    <input type="hidden" name="uploaded_file_id" id="uploaded_file_id" value="[% event.image %]" />
                   </div>
-                  <div id="uploadpanel">
-                    <div id="fileuploadstatus" class="progress_panel">Upload progress:
-                      <progress max="100" value="0" id="fileuploadprogress">
+                  <div id="upload_panel">
+                    <div id="file_upload_status" class="progress_panel">
+                      <span>[% 'Upload progress:' | gettext %]&nbsp;</span>
+                      <progress max="100" value="0" id="file_upload_progress">
                       </progress>
-                      <span class="fileuploadpercent">0</span>%
+                      <span class="file_upload_percentage">0</span>
+                      <span>&percnt;</span>
                     </div>
-                    <div id="fileuploadfailed"></div>
+                    <div id="file_upload_failed"></div>
                   </div>
                 </li>
 

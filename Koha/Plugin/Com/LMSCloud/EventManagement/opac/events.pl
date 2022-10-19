@@ -17,11 +17,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Koha; if not, see <http://www.gnu.org/licenses>.
 use Modern::Perl;
+use utf8;
+use 5.032;
+
+our $VERSION = '1.0.0';
 
 use Carp;
 use C4::Context;
 use C4::Output;
 use C4::Auth;
+use C4::Languages;
 use Koha::Email;
 use Mail::Sendmail;
 use MIME::QuotedPrint;
@@ -35,6 +40,7 @@ use File::Basename qw( dirname );
 use POSIX 'strftime';
 use POSIX 'floor';
 use DateTime;
+use English qw(-no_match_vars);
 
 use Koha::UploadedFiles;
 
@@ -45,11 +51,12 @@ Locale::Messages->select_package('gettext_pp');
 
 use Locale::Messages qw(:locale_h :libintl_h);
 
-my $pluginDir = dirname( abs_path($0) );
+no if ( $PERL_VERSION >= 5.018 ), 'warnings' => 'experimental';
 
+my $pluginDir     = dirname( abs_path($PROGRAM_NAME) );
 my $template_name = $pluginDir . '/events-grid.tt';
 
-my $cgi = new CGI;
+my $cgi = CGI->new;
 
 # initial value -- calendar is displayed while $op is undef
 # otherwise one of the form pages is displayed
@@ -58,7 +65,7 @@ my $op = $cgi->param('op');
 my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
     {   template_name   => $template_name,
         query           => $cgi,
-        type            => "opac",
+        type            => 'opac',
         authnotrequired => 1,
         is_plugin       => 1,
     }
@@ -69,7 +76,7 @@ $template->param(
     mbf_path => abs_path('../translations')
 );
 
-if ( !defined($op) ) {
+if ( !( defined $op ) ) {
 
     my $used_target_groups = get_used_target_groups();
     my $used_event_types   = get_used_event_types();
@@ -99,63 +106,62 @@ elsif ( $op eq 'detail' ) {
 
 sub get_used_target_groups {
 
-    my $table             = 'koha_plugin_com_lmscloud_eventmanagement_events';
-    my $tabletargetgroups = 'koha_plugin_com_lmscloud_eventmanagement_targetgroups';
+    my $events_table        = 'koha_plugin_com_lmscloud_eventmanagement_events';
+    my $target_groups_table = 'koha_plugin_com_lmscloud_eventmanagement_target_groups';
 
-    my $query = <<~"EOL";
-		SELECT targetgroupcode, targetgroup, count(*) AS count  
-		FROM $table e, $tabletargetgroups t 
-		WHERE e.targetgroupcode = t.code
-		GROUP BY targetgroupcode, targetgroup
-	EOL
+    my $query = <<~"QUERY";
+		SELECT events.target_group, target_groups.name, count(*) AS count  
+		FROM $events_table events, $target_groups_table target_groups 
+		WHERE events.target_group = target_groups.id
+		GROUP BY events.target_group, target_groups.name
+	QUERY
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @targetgroups;
+    my @target_groups;
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @targetgroups, $row );
+        push @target_groups, $row;
     }
 
-    return \@targetgroups;
+    return \@target_groups;
 }
 
 sub get_used_event_types {
 
-    my $table           = 'koha_plugin_com_lmscloud_eventmanagement_events';
-    my $tableeventtypes = 'koha_plugin_com_lmscloud_eventmanagement_eventtypes';
+    my $events_table      = 'koha_plugin_com_lmscloud_eventmanagement_events';
+    my $event_types_table = 'koha_plugin_com_lmscloud_eventmanagement_event_types';
 
-    my $query = "
-		SELECT eventtypecode, eventtype, count(*) AS count 
-		FROM $table e, $tableeventtypes t 
-		WHERE e.eventtypecode = t.code
-		GROUP BY eventtypecode, eventtype
-	";
+    my $query = <<~"QUERY";
+		SELECT events.event_type, event_types.name, count(*) AS count 
+		FROM $events_table events, $event_types_table event_types 
+		WHERE events.event_type = event_types.id
+		GROUP BY events.event_type, event_types.name
+	QUERY
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
     $sth->execute();
 
-    my @eventtypes;
+    my @event_types;
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @eventtypes, $row );
+        push @event_types, $row;
     }
 
-    return \@eventtypes;
+    return \@event_types;
 }
 
 sub get_used_branches {
 
-    my $table    = 'koha_plugin_com_lmscloud_eventmanagement_events';
-    my $branches = 'koha_plugin_com_lmscloud_eventmanagement_eventtypes';
+    my $events_table = 'koha_plugin_com_lmscloud_eventmanagement_events';
 
-    my $query = "
-		SELECT e.branchcode, branchname, count(*) AS count 
-		FROM $table e, branches b 
-		WHERE e.branchcode = b.branchcode
-		GROUP BY e.branchcode, branchname
-	";
+    my $query = <<~"QUERY";
+		SELECT events.branch, branchname, count(*) AS count 
+		FROM $events_table events, branches b 
+		WHERE events.branch = b.branchcode
+		GROUP BY events.branch, branchname
+	QUERY
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
@@ -163,7 +169,7 @@ sub get_used_branches {
 
     my @branches;
     while ( my $row = $sth->fetchrow_hashref() ) {
-        push( @branches, $row );
+        push @branches, $row;
     }
 
     return \@branches;
@@ -171,18 +177,17 @@ sub get_used_branches {
 
 sub get_events {
 
-    my $table             = 'koha_plugin_com_lmscloud_eventmanagement_events';
-    my $tableeventtypes   = 'koha_plugin_com_lmscloud_eventmanagement_eventtypes';
-    my $tabletargetgroups = 'koha_plugin_com_lmscloud_eventmanagement_targetgroups';
+    my $events_table        = 'koha_plugin_com_lmscloud_eventmanagement_events';
+    my $event_types_table   = 'koha_plugin_com_lmscloud_eventmanagement_event_types';
+    my $target_groups_table = 'koha_plugin_com_lmscloud_eventmanagement_target_groups';
 
-    #my $query = "SELECT * FROM $table";
-    my $query = "
-		SELECT e.*, branchname,t.targetgroup,et.eventtype 
-		FROM $table AS e
-		LEFT JOIN branches AS b ON e.branchcode=b.branchcode 
-		LEFT JOIN $tabletargetgroups AS t ON e.targetgroupcode = t.code 
-		LEFT JOIN $tableeventtypes AS et ON e.eventtypecode = et.code
-	";
+    my $query = <<~"QUERY";
+		SELECT events.*, branchname, target_groups.name, event_types.name 
+		FROM $events_table AS events
+		LEFT JOIN branches AS b ON events.branch = b.branchcode 
+		LEFT JOIN $target_groups_table AS target_groups ON events.target_group = target_groups.id 
+		LEFT JOIN $event_types_table AS event_types ON events.event_type = event_types.id
+	QUERY
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
@@ -190,16 +195,18 @@ sub get_events {
 
     my @events;
     while ( my $row = $sth->fetchrow_hashref() ) {
-        if ( defined $row->{'imageid'} ) {
-            my $rec      = Koha::UploadedFiles->find( $row->{'imageid'} );
+        if ( defined $row->{'image'} ) {
+            my $rec      = Koha::UploadedFiles->find( $row->{'image'} );
             my $srcimage = $rec->hashvalue . '_' . $rec->filename();
-            $row->{'imagefile'} = $srcimage;
+
+            $row->{'image'} = $srcimage;
+
         }
         else {
-            $row->{'imagefile'} = '';
+            $row->{'image'} = q{};
         }
 
-        push( @events, $row );
+        push @events, $row;
     }
 
     return \@events;
@@ -208,32 +215,31 @@ sub get_events {
 sub get_event {
     my $id = shift;
 
-    my $table             = 'koha_plugin_com_lmscloud_eventmanagement_events';
-    my $tableeventtypes   = 'koha_plugin_com_lmscloud_eventmanagement_eventtypes';
-    my $tabletargetgroups = 'koha_plugin_com_lmscloud_eventmanagement_targetgroups';
+    my $events_table        = 'koha_plugin_com_lmscloud_eventmanagement_events';
+    my $event_types_table   = 'koha_plugin_com_lmscloud_eventmanagement_event_types';
+    my $target_groups_table = 'koha_plugin_com_lmscloud_eventmanagement_target_groups';
 
-    #my $query = "SELECT * FROM $table";
-    my $query = "
-		SELECT e.*, branchname,t.targetgroup,et.eventtype 
-		FROM $table AS e 
-		LEFT JOIN branches AS b ON e.branchcode=b.branchcode 
-		LEFT JOIN $tabletargetgroups AS t ON e.targetgroupcode = t.code 
-		LEFT JOIN $tableeventtypes AS et ON e.eventtypecode = et.code
-		WHERE eventid = $id
-	";
+    my $query = <<~"QUERY";
+		SELECT events.*, branchname, target_groups.name, event_types.name 
+		FROM $events_table AS events 
+		LEFT JOIN branches AS b ON e.branch = b.branchcode 
+		LEFT JOIN $target_groups_table AS target_groups ON events.target_group = target_groups.id 
+		LEFT JOIN $event_types_table AS event_types ON events.event_type = event_types.id
+		WHERE events.id = $id
+	QUERY
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
     $sth->execute();
 
     my $event = $sth->fetchrow_hashref();
-    if ( defined $event->{'imageid'} ) {
-        my $rec      = Koha::UploadedFiles->find( $event->{imageid} );
+    if ( defined $event->{'image'} ) {
+        my $rec      = Koha::UploadedFiles->find( $event->{'image'} );
         my $srcimage = $rec->hashvalue . '_' . $rec->filename();
-        $event->{'imagefile'} = $srcimage;
+        $event->{'image'} = $srcimage;
     }
     else {
-        $event->{'imagefile'} = '';
+        $event->{'image'} = q{};
     }
 
     return $event;

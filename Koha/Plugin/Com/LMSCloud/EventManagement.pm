@@ -4,6 +4,7 @@ package Koha::Plugin::Com::LMSCloud::EventManagement;
 use Modern::Perl;
 use utf8;
 use 5.032;
+use English qw(-no_match_vars);
 
 ## Required for all plugins
 use base qw(Koha::Plugins::Base);
@@ -39,6 +40,8 @@ use Locale::Messages qw(:locale_h :libintl_h);
 use POSIX qw(setlocale);
 
 use Koha::Plugin::Com::LMSCloud::EventManagement::Validators qw(validate_event validate_event_type);
+
+no if ( $PERL_VERSION >= 5.018 ), 'warnings' => 'experimental';
 
 ## Here we set our plugin version
 our $VERSION         = '0.0.1';
@@ -113,42 +116,19 @@ sub tool {
         }
 
         when (q{submit_add_event}) {
-            my $event_type = $cgi->param('event_type');
-            my $event_type_is_added;
-
-            use Data::Dumper;
-            warn Dumper('TEST 1');
-
-            # If the event type isn't already defined, we create it
-            if ( !$event_type && scalar $cgi->param('submit_add_event_type') ) {
-                $event_type_is_added = $self->add_event_type(
-                    {   id                => scalar $cgi->param('event_type_id'),
-                        branch            => scalar $cgi->param('branch'),
-                        target_group      => scalar $cgi->param('target_group'),
-                        name              => scalar $cgi->param('event_type_name'),
-                        max_age           => scalar $cgi->param('max_age'),
-                        open_registration => scalar $cgi->param('open_registration'),
-                        max_participants  => scalar $cgi->param('max_participants'),
-                        fee               => scalar $cgi->param('fee'),
-                        description       => scalar $cgi->param('description'),
-                        image             => scalar $cgi->param('image')
-                    }
-                );
-            }
-
             my $event_is_added = $self->add_event(
-                {   title             => scalar $cgi->param('title'),
-                    event_type        => $event_type_is_added->{'ok'} ? $event_type_is_added->{'id'} : q{},
+                {   name              => scalar $cgi->param('name'),
+                    event_type        => scalar $cgi->param('event_type'),
                     branch            => scalar $cgi->param('branch'),
                     target_group      => scalar $cgi->param('target_group'),
                     max_age           => scalar $cgi->param('max_age'),
-                    open_registration => scalar $cgi->param('open_registration'),
+                    open_registration => scalar $cgi->param('open_registration') eq 'on' ? 1 : 0,
                     start_time        => scalar $cgi->param('start_time'),
                     end_time          => scalar $cgi->param('end_time'),
                     max_participants  => scalar $cgi->param('max_participants'),
                     fee               => scalar $cgi->param('fee'),
                     description       => scalar $cgi->param('description'),
-                    image_id          => scalar $cgi->param('uploaded_file_id'),
+                    image             => scalar $cgi->param('uploaded_file_id'),
                 }
             );
 
@@ -171,60 +151,29 @@ sub tool {
             return $self->output_html( $template->output() );
 
         }
+
+        when (q{edit_event}) {
+            $template = $self->get_template( { file => 'tools/edit_event.tt' } );
+
+            $template->param(
+                event         => $self->get_event( scalar $cgi->param('event_id') ),
+                branches      => Koha::Template::Plugin::Branches->all(),
+                target_groups => $self->get_target_groups(),
+            );
+
+            return $self->output_html( $template->output() );
+        }
+
+        when (q{submit_delete_event}) {
+            $template = $self->get_template( { file => 'tools/tool.tt' } );
+
+            $self->delete_event( scalar $cgi->param('event_id') );
+
+            $template->param( events => $self->get_events(), );
+
+            return $self->output_html( $template->output() );
+        }
     }
-
-    #     when (q{edit_event}) {
-    #         my $id = $cgi->param('id');
-
-    #         if ($submit_edit_event) {
-    #             $self->delete_event($id);
-    #             $self->add_event(
-    #                 {   title            => scalar $cgi->param('title'),
-    #                     event_type       => scalar $cgi->param('event_type'),
-    #                     branch           => scalar $cgi->param('branch'),
-    #                     target_group     => scalar $cgi->param('target_group'),
-    #                     max_age          => scalar $cgi->param('max_age'),
-    #                     max_participants => scalar $cgi->param('max_participants'),
-    #                     fee              => scalar $cgi->param('fee'),
-    #                     description      => scalar $cgi->param('description'),
-    #                     start_time       => scalar $cgi->param('start_time'),
-    #                     end_time         => scalar $cgi->param('end_time'),
-    #                     image_id         => scalar $cgi->param('uploadedfileid'),
-    #                 }
-    #             );
-    #         }
-
-    #         my $event         = $self->get_event($id);
-    #         my $branches      = Koha::Template::Plugin::Branches->all();
-    #         my $target_groups = $self->get_target_groups();
-    #         my $event_type    = $self->get_event_type( $event->{'id'} );
-
-    #         $template->param(
-    #             branches      => $branches,
-    #             event_type    => $event_type,
-    #             target_groups => $target_groups,
-    #             event         => $event,
-    #         );
-
-    #         return $self->output_html( $template->output() );
-    #     }
-
-    #     when (q{delete_event}) {
-    #         my $id = $cgi->param('id');
-
-    #         $self->delete_event($id);
-    #         $template->param(
-    #             op         => $op,
-    #             language   => C4::Languages::getlanguage($cgi) || 'en',
-    #             mbf_path   => abs_path( $self->mbf_path('translations') ),
-    #             events     => $self->get_events(),
-    #             eventtypes => $self->get_event_types(),
-    #         );
-
-    #         return $self->output_html( $template->output() );
-    #     }
-
-    # }
 
     return $self->output_html( $template->output() );
 }
@@ -478,10 +427,10 @@ sub get_event {
     my $query = <<~"STATEMENT";
 		SELECT events.*, branchcode, target_groups.name, event_types.name 
 		FROM $table AS events 
-		LEFT JOIN branches AS branches ON events.branchcode = branches.branchcode 
+		LEFT JOIN branches AS branches ON events.branch = branches.branchcode 
 		LEFT JOIN $tabletargetgroups AS target_groups ON events.target_group = target_groups.id 
 		LEFT JOIN $tableeventtypes AS event_types ON events.event_type = event_types.id
-		WHERE id = $id
+		WHERE events.id = $id
 	STATEMENT
 
     my $dbh = C4::Context->dbh;
@@ -584,7 +533,7 @@ sub delete_event {
     my ( $self, $id ) = @_;
 
     my $table = $self->get_qualified_table_name('events');
-    my $query = qq{DELETE FROM $table WHERE eventid = ?};
+    my $query = qq{DELETE FROM $table WHERE id = ?};
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
@@ -594,34 +543,16 @@ sub delete_event {
 }
 
 sub delete_event_type {
-    my ( $self, $code ) = @_;
+    my ( $self, $id ) = @_;
 
     my $table = $self->get_qualified_table_name('event_types');
-    my $query = qq{DELETE FROM $table WHERE code = ?};
+    my $query = qq{DELETE FROM $table WHERE id = ?};
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
-    $sth->execute($code);
+    $sth->execute($id);
 
     return;
-}
-
-sub upload_image {
-    my ( $self, $image ) = @_;
-
-    my $input    = $self->{'cgi'};                    # CGI->new;
-    my $file_id  = $input->param('uploadedfileid');
-    my $filetype = $input->param('filetype');
-
-    return $file_id && $filetype eq 'image'
-        ? sub {
-        my $upload    = Koha::UploadedFiles->find($file_id);
-        my $fh        = $upload->file_handle;
-        my $src_image = GD::Image->new($fh);
-        $fh->close if $fh;
-        return $src_image || 0;
-        }
-        : q{};
 }
 
 sub add_event {
@@ -632,8 +563,8 @@ sub add_event {
 
     my $src_image;
 
-    my $query        = "INSERT INTO $table (title, event_type, branch, target_group";
-    my $query_values = "VALUES ('$args->{'title'}', '$args->{'event_type'}', '$args->{'branch'}', '$args->{'target_group'}'";
+    my $query        = "INSERT INTO $table (name, event_type, branch, target_group";
+    my $query_values = "VALUES ('$args->{'name'}', '$args->{'event_type'}', '$args->{'branch'}', '$args->{'target_group'}'";
 
     if ( $args->{'max_age'} ne q{} ) {
         $query        = $query . q{, max_age};

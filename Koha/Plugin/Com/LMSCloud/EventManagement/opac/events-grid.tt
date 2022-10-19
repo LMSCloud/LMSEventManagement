@@ -1,14 +1,17 @@
 [% USE gtx = Gettext('com.lmscloud.eventmanagement', language, 'utf-8', mbf_path) %]
+
 [% USE Asset %]
 [% USE Koha %]
 [% USE Branches %]
+
 [% INCLUDE 'doc-head-open.inc' %]
   <title>[% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %][% 'Koha online' | gettext %][% END %] [% 'Catalog' | gettext %] &rsaquo; [% 'Booking' | gettext %]</title>
   <link rel="stylesheet" href="/api/v1/contrib/eventmanagement/static/css/main.css">
   <script type="text/javascript" src="/api/v1/contrib/eventmanagement/static/js/main.js"></script>
 [% INCLUDE 'doc-head-close.inc' %]
 </head>
-[% BLOCK cssinclude %][% END %]
+[% BLOCK cssinclude %]
+[% END %]
 
 [% INCLUDE 'bodytag.inc' bodyid='opac-main' %]
 [% INCLUDE 'masthead.inc' %]
@@ -50,12 +53,12 @@
                                 <div class="form-check">
                                   <input class="lms-facet form-check-input" 
                                     type="checkbox" 
-                                    value="[% target_group.targetgroupcode %]" 
-                                    id="[% target_group.targetgroupcode %]"
+                                    value="[% target_group.name %]" 
+                                    id="[% target_group.target_group %]"
                                     name="targetGroup"
                                   >
-                                  <label class="form-check-label" for="[% target_group.targetgroupcode %]">
-                                    [% target_group.targetgroup %]
+                                  <label class="form-check-label" for="[% target_group.target_group %]">
+                                    [% target_group.name %]
                                   </label>
                                 </div>
                               </li>
@@ -68,17 +71,17 @@
                         <li>
                           <h3>[% 'Event type' | gettext %]</h3>
                           <ul>
-                            [% FOREACH eventtype IN used_event_types %]
+                            [% FOREACH event_type IN used_event_types %]
                               <li>
                                 <div class="form-check">
                                   <input class="lms-facet form-check-input" 
                                     type="checkbox" 
-                                    value="[% eventtype.eventtypecode %]" 
-                                    id="[% eventtype.eventtypecode %]"
+                                    value="[% event_type.name %]" 
+                                    id="[% event_type.event_type %]"
                                     name="eventType"
                                   >
-                                  <label class="form-check-label" for="[% eventtype.eventtypecode %]">
-                                    [% eventtype.eventtype %]
+                                  <label class="form-check-label" for="[% event_type.event_type %]">
+                                    [% event_type.name %]
                                   </label>
                                 </div>
                               </li>
@@ -96,11 +99,11 @@
                                 <div class="form-check">
                                   <input class="lms-facet form-check-input" 
                                     type="checkbox" 
-                                    value="[% branch.branchcode %]" 
-                                    id="[% branch.branchcode %]"
+                                    value="[% branch.branchname %]" 
+                                    id="[% branch.branch %]"
                                     name="branch"
                                   >
-                                  <label class="form-check-label" for="[% branch.branchcode %]">
+                                  <label class="form-check-label" for="[% branch.branch %]">
                                     [% branch.branchname %]
                                   </label>
                                 </div>
@@ -173,46 +176,39 @@
                 <div id="lms-events" class="card-deck text-center mb-3">
                   [% FOREACH event IN events %]
                     <div class="lms-event card" style="max-width: 18rem;"
-                      data-target-group="[% event.targetgroupcode %]"
-                      data-event-type="[% event.eventtypecode %]"
-                      data-branch="[% event.branchcode %]"
+                      data-target-group="[% event.target_group %]"
+                      data-event-type="[% event.event_type %]"
+                      data-branch="[% event.branch %]"
                       data-max-age="[% event.max_age %]"
-                      data-public-reg="[% event.public_reg %]"
-                      data-start-time="[% event.starttime %]"
-                      data-end-time="[% event.endtime %]"
+                      data-public-reg="[% event.open_registration %]"
+                      data-start-time="[% event.start_time %]"
+                      data-end-time="[% event.end_time %]"
                       data-filtered-by=""
                     >
-                      <a href="/opac-events?op=detail&id=[% event.eventid %]">
-                        <img src="
-                          [% IF event.imagefile %]
-                            [% event.imagefile %]
-                          [% ELSE %]
-                            https://picsum.photos/200/300
-                          [% END %]
-                          " 
+                      <a href="/opac-events?op=detail&id=[% event.id %]">
+                        <img src="/lms-event-management/images/[% event.image %]"
                           class="card-img-top" 
                           alt="..."
                           height="210"
                         >
                       </a>
                       <div class="card-body">
-                        <h5 class="card-title">[% event.title %]</h5>
+                        <h5 class="card-title">[% event.name %]</h5>
                         <p class="card-text">
-                          <time datetime="[% event.starttime %]">[% event.starttime %]</time>
+                          <time datetime="[% event.start_time %]">[% event.start_time %]</time>
                         </p>
                       </div>
                     </div>
                   [% END %] <!-- FOREACH -->
                 </div>						
 
-                <h3>[% 'Recurring events' | gettext %]</h3>
+                [% IF recurring_events %]
+                  <h3>[% 'Recurring events' | gettext %]</h3>
+                [% END %]
               </div> <!-- col-lg-10 -->
             </div> <!-- row -->
           </div> <!-- container-fluid -->					
         </div>    
-        <div class="span9">
-                
-        </div> <!-- / .span12 -->
       </div> <!-- / .row-fluid -->
     </div> <!-- / .container-fluid -->
 
@@ -232,26 +228,26 @@
   
       <ul class="breadcrumb">
         <li><a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %] </a> <span class="divider">&rsaquo;</span> </li>
-        <li><a href="/opac_events"> [% 'Upcoming events' | gettext %] </a><span class="divider">&rsaquo;</span></li>
-        <li><a href="/opac_events"> [% 'Details for' | gettext %]: [% event.title %] </a></li>
+        <li><a href="/opac-events"> [% 'Upcoming events' | gettext %] </a><span class="divider">&rsaquo;</span></li>
+        <li><a href="/opac-events"> [% 'Details for' | gettext %]: [% event.title %] </a></li>
       </ul>
 
       <div class="container-fluid">
         <div class="row">	
           <div class="col-lg-3"> 
-            <img src="/events/[% event.imagefile %]" style="max-width:100%"></img>
+            <img src="/LMSEventManagement/[% event.image %]" style="max-width:100%">
           </div> <!-- col-lg-3 -->
   
           <div class="col-lg-3 event-detail-col">
-            <h1 class="title" property="name">[% event.title %]</h1>
-            <h5 class="author"><a href="#">[% event.eventtype %]</a></h5>
+            <h1 class="title" property="name">[% event.name %]</h1>
+            <h5 class="author"><a href="#">[% event.event_type %]</a></h5>
     
-            <span class="results_summary type"> [% event.starttime %] - [% event.endtime %]</span>
-            <span class="results_summary type"> [% event.branchname %] </span>
-            <span class="results_summary type"> [% event.targetgroup %] </span>
+            <span class="results_summary type"> [% event.start_time %] - [% event.end_time %]</span>
+            <span class="results_summary type"> [% event.branch %] </span>
+            <span class="results_summary type"> [% event.target_group %] </span>
             <span class="results_summary type"> [% event.max_age %] </span>
             <span class="results_summary type"> [% event.max_participants %] </span>
-            <span class="results_summary type"> [% event.public_reg %] </span>
+            <span class="results_summary type"> [% event.open_registration %] </span>
             <span class="results_summary summary">[% event.description %]</span>
   
           </div> <!-- /.col-lg-6 -->

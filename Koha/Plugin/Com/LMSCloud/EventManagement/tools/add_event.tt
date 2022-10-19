@@ -24,59 +24,43 @@
     <div class="row">
       <div class="col-sm-10 col-sm-push-2">
         <main>
-          <h2>Add event</h2>
+          <h2>[% 'Add event'| gettext %]</h2>
                                   
-          <form method="post" id="uploadfile" enctype="multipart/form-data">
+          <form method="post">
             <input type="hidden" name="class" value="[% CLASS %]"/>
             <input type="hidden" name="method" value="[% METHOD %]"/>
+            <input type="hidden" name="op" value="submit_add_event"/>
             
             <fieldset class="rows">
               <ol>
 
                 <li>
-                  [% IF event_type %]
-                    <label for="event_type">[% 'Event type:' | gettext %]&nbsp;</label><span>[% event_type.name %]</span>
-                    <input type="hidden" id="event_type" name="event_type" value="[% event_type.id %]">
-                  [% ELSE %]
-                    <label for="event_type">[% 'Event type:' | gettext %]&nbsp;</label>
-                    <input type="text" id="event_type_id" name="event_type_id" size="50" maxlength="10"
-                      placeholder="[% 'Event type id' | gettext %]" 
-                    >
-                    <input type="text" id="event_type_name" name="event_type_name" size="50" maxlength="255"
-                      placeholder="[% 'Event type name' | gettext %]"
-                    >
-                    <span class="required">Required</span>
-                    <div class="hint">
-                      [% 'Only the second field is required.
-                          Use the id field if you want to use
-                          this event as a template in the future
-                      ' | gettext %]
-                    </div>
-                  [% END %]
+                  <label for="event_type">[% 'Event type:' | gettext %]&nbsp;</label><span>[% event_type.name %]</span>
+                  <input type="hidden" id="event_type" name="event_type" value="[% event_type.id %]">
                 </li>
 
                 <li>
-                  <label for="title">Title: </label>
-                  <input type="text" id="title" name="title" size="100" maxlength="100" value="[% event.event_type %]" required />
-                  <span class="required">Required</span>
+                  <label for="title">[% 'Title:' | gettext %]&nbsp;</label>
+                  <input type="text" id="title" name="title" size="100" maxlength="100" value="[% event.event_type %]" required>
+                  <span class="required">[% 'Required' | gettext %]</span>
                 </li>
 
                 <li>
-                  <label for="branch">Branch: </label>
+                  <label for="branch">[% 'Branch' | gettext %]&nbsp;</label>
                   <select id="branch" name="branch" required>
                     [% FOREACH branch IN branches %]
-                      [% IF branch.branchcode == eventtype.branchcode %]
+                      [% IF branch.branchcode == event_type.branch %]
                         <option value="[% branch.branchcode %]" selected>[% branch.branchname %]</option>
                       [% ELSE %]
                         <option value="[% branch.branchcode %]">[% branch.branchname %]</option>
                       [% END %]
                     [% END %]
                   </select>
-                  <span class="required">Required</span>
+                  <span class="required">[% 'Required' | gettext %]</span>
                 </li>
 
                 <li>
-                  <label for="target_group">Target group: </label>
+                  <label for="target_group">[% 'Target group:' | gettext %]&nbsp;</label>
                   <select id="target_group" name="target_group" required>
                     [% FOREACH target_group IN target_groups %]
                       [% IF target_group.id == event_type.target_group %]
@@ -86,7 +70,7 @@
                       [% END %]
                     [% END %]
                   </select>
-                  <span class="required">Required</span>
+                  <span class="required">[% 'Required' | gettext %]</span>
                 </li>
 
                 <li>
@@ -128,22 +112,11 @@
                 </li>
 
                 <li>
-                  <div id="file_upload_form">
-                    <label for="file_to_upload">[% 'Choose a picture for the event:' | gettext %]&nbsp;</label>
-                    <input type="file" id="file_to_upload" name="file_to_upload" accept="image/png, image/jpeg">
-                    <input type="hidden" name="filetype" id="filetype" value="image"/>
-                    <input type="hidden" name="uploaded_file_id" id="uploaded_file_id" value="[% event_type.image %]" />
-                  </div>
-                  <div id="upload_panel">
-                    <div id="file_upload_status" class="progress_panel">
-                      <span>[% 'Upload progress:' | gettext %]&nbsp;</span>
-                      <progress max="100" value="0" id="file_upload_progress">
-                      </progress>
-                      <span class="file_upload_percentage">0</span>
-                      <span>&percnt;</span>
-                    </div>
-                    <div id="file_upload_failed"></div>
-                  </div>
+                  <label for="file_to_upload">[% 'Choose a picture for the event:' | gettext %]&nbsp;</label>
+                  <input type="file" id="file_to_upload" name="file_to_upload" accept="image/png, image/jpeg">
+                  <input type="hidden" name="filetype" id="filetype" value="image"/>
+                  <input type="hidden" name="uploaded_file_id" id="uploaded_file_id" value="[% event_type.image %]" />
+                  <div class="hint" id="file_upload_hint"></div>
                 </li>
               
               </ol>
@@ -164,4 +137,56 @@
       </div>
     </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const fileUploadInput = document.getElementById('file_to_upload');
+      const fileUploadHint = document.getElementById('file_upload_hint');
+      const uploadedFileIdInput = document.getElementById('uploaded_file_id');
+
+      async function uploadImage(e) {
+        let formData = new FormData();
+        formData.append('file', e.target.files[0]);
+        const response = await fetch('/cgi-bin/koha/tools/upload-file.pl?category=LMSEventManagement&public=1&temp=0', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.status === 'done') {
+          uploadedFileIdInput.value = result.fileid;
+          
+          fileUploadHint.innerHTML = `
+            <i class="fa fa-check" aria-hidden="true">
+            </i><span>&nbsp;Upload succeeded</span>
+          `;
+          
+          return;
+        }
+
+        if (result.status === 'failed') {
+          /** We briefly check whether we've got an already existing file ('UPLERR_ALREADY_EXISTS')
+          *   and assign that id to the image form field to preserve the existing state of the event. */
+          const errors = result.errors
+            ? Object.entries(result.errors).reduce(
+              (accumulator, [ fileName, { code } ]) => `${accumulator}${accumulator ? '\n' : ''}${fileName}: ${code}`
+              , '')
+            : 'Upload aborted';
+
+            if (error.includes('UPLERR_ALREADY_EXISTS')) {
+              //TODO: Implement handling of already existing images
+              uploadedFileIdInput.value = '';
+            }
+
+          fileUploadHint.innerHTML = `
+            <i class="fa fa-exclamation" aria-hidden="true"></i>
+            <span>&nbsp;Upload had errors: ${errors}</span>
+          `;
+        }
+      }
+
+      fileUploadInput.addEventListener('change', (e) => uploadImage(e));
+    });
+  </script>
 [% INCLUDE 'intranet-bottom.inc' %]

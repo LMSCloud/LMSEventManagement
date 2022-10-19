@@ -19,3 +19,32 @@ To set up the Koha plugin system you must first make some changes to your instal
 * Restart your webserver
 
 Once set up is complete you will need to alter your UseKohaPlugins system preference. On the Tools page you will see the Tools Plugins and on the Reports page you will see the Reports Plugins.
+
+## Testing
+
+Assuming koha-testing-docker..
+
+### /etc/apache2/apache2.conf
+
+```conf
+176 <Directory /var/lib/koha/kohadev/plugins/>
+177     Options Indexes FollowSymLinks
+178     AllowOverride None
+179     Require all granted
+180 </Directory>
+181
+182
+183 <Directory /var/lib/koha/kohadev/uploads/LMSEventManagement>
+184     Options Indexes FollowSymLinks
+185     AllowOverride None
+186     Require all granted
+187 </Directory>
+```
+
+### /etc/apache2/sites-available/kohadev.conf
+
+```conf
+ 19    ScriptAlias /opac-events "/var/lib/koha/kohadev/plugins/Koha/Plugin/Com/LMSCloud/EventManagement/opac/events.pl"
+ 20    Alias /plugin "/var/lib/koha/kohadev/plugins"
+ 21    Alias /lms-event-management/images "/var/lib/koha/kohadev/uploads/LMSEventManagement/"
+ ```
