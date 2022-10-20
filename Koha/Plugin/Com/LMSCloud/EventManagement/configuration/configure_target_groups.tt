@@ -33,7 +33,6 @@
               <input type="hidden" name="class" value="[% CLASS %]" />
               <input type="hidden" name="method" value="[% METHOD %]" />
               <input type="hidden" name="op" value="add_target_group">
-              <input type="hidden" name="target_group_id" value="[% target_group.id %]">
               <input type="submit" class="btn btn-default" value="+ [% 'Add target group' | gettext %]">
             </form>
           </div>
@@ -75,7 +74,6 @@
                     </td>
                   </tr>
                 [% END %]
-                <!-- FOREACH -->
               </tbody>
             </table>
           [% END %]
@@ -93,17 +91,15 @@
                     <input type="hidden" name="class" value="[% CLASS %]" />
                     <input type="hidden" name="method" value="[% METHOD %]" />
                     <input type="hidden" name="op" value="configure_target_groups">
-                    <input type="submit" name="configure_target_groups" id="configure_target_groups" class="lmse-link"
-                      value="[% 'Target groups' | gettext %]">
+                    <input type="submit" class="lmse-link" value="[% 'Target groups' | gettext %]">
                   </form>
                 </li>
                 <li>
                   <form method="post">
                     <input type="hidden" name="class" value="[% CLASS %]" />
                     <input type="hidden" name="method" value="[% METHOD %]" />
-                    <input type="hidden" name="op" value="configure_target_groups">
-                    <input type="submit" name="configure_event_types" id="configure_event_types" class="lmse-link"
-                      value="[% 'Event types' | gettext %]">
+                    <input type="hidden" name="op" value="configure_event_types">
+                    <input type="submit" class="lmse-link" value="[% 'Event types' | gettext %]">
                   </form>
                 </li>
               </ul>

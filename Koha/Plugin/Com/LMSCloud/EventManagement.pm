@@ -421,14 +421,16 @@ sub add_target_group {
 }
 
 sub delete_target_group {
-    my ( $self, $code ) = @_;
+
+    #TODO: Catch failure because of foreign key constraints and inform user
+    my ( $self, $id ) = @_;
 
     my $table = $self->get_qualified_table_name('target_groups');
-    my $query = qq{DELETE FROM $table WHERE code = ?};
+    my $query = qq{DELETE FROM $table WHERE id = ?};
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
-    $sth->execute($code);
+    $sth->execute($id);
 
     return;
 }
@@ -546,9 +548,9 @@ sub get_event_type {
     my $sth = $dbh->prepare($query);
     $sth->execute($id);
 
-    my $eventtype = $sth->fetchrow_hashref();
+    my $event_type = $sth->fetchrow_hashref();
 
-    return $eventtype;
+    return $event_type;
 }
 
 sub get_event_types {
@@ -564,13 +566,13 @@ sub get_event_types {
 
     my @eventtypes;
     while ( my $row = $sth->fetchrow_hashref() ) {
-        if ( defined $row->{'imageid'} ) {
-            my $rec       = Koha::UploadedFiles->find( $row->{imageid} );
+        if ( defined $row->{'image'} ) {
+            my $rec       = Koha::UploadedFiles->find( $row->{'image'} );
             my $src_image = $rec->hashvalue . '_' . $rec->filename();
-            $row->{'imagefile'} = $src_image;
+            $row->{'image'} = $src_image;
         }
         else {
-            $row->{'imagefile'} = q{};
+            $row->{'image'} = q{};
         }
         push @eventtypes, $row;
     }
@@ -723,15 +725,12 @@ sub configure {
     my $op  = $cgi->param('op') || q{};
     my $template;
 
+    use Data::Dumper;
+    warn Dumper(qq{TEST $op});
+
     for ($op) {
         when (q{}) {
             $template = $self->get_template( { file => 'configuration/configure.tt' } );
-
-            $template->param(
-                op       => $op,
-                language => C4::Languages::getlanguage($cgi) || 'en',
-                mbf_path => abs_path( $self->mbf_path('translations') ),
-            );
 
             return $self->output_html( $template->output() );
         }
@@ -739,24 +738,140 @@ sub configure {
         when (q{configure_target_groups}) {
             $template = $self->get_template( { file => 'configuration/configure_target_groups.tt' } );
 
+            $template->param( target_groups => $self->get_target_groups(), );
+
             return $self->output_html( $template->output() );
 
         }
 
-        when (q{submit_config_target_groups}) {
+        when (q{add_target_group}) {
 
+        }
+
+        when (q{edit_target_group}) {
+
+        }
+
+        when (q{delete_target_group}) {
+            $self->delete_target_group( scalar $cgi->param('target_group_id') );
+
+            $template = $self->get_template( { file => 'configuration/configure_target_groups.tt' } );
+
+            $template->param( target_groups => $self->get_target_groups(), );
+
+            return $self->output_html( $template->output() );
         }
 
         when (q{configure_event_types}) {
             $template = $self->get_template( { file => 'configuration/configure_event_types.tt' } );
 
+            $template->param( event_types => $self->get_event_types(), );
+
             return $self->output_html( $template->output() );
-
         }
 
-        when (q{submit_config_event_types}) {
+        when (q{add_event_type}) {
+            $template = $self->get_template( { file => 'configuration/add_event_type.tt' } );
 
+            $template->param(
+                event_types   => $self->get_event_types(),
+                branches      => Koha::Template::Plugin::Branches->all(),
+                target_groups => $self->get_target_groups(),
+            );
+
+            return $self->output_html( $template->output() );
         }
+
+        when (q{submit_add_event_type}) {
+            my $event_type_is_added = $self->add_event_type(
+                {   id                => scalar $cgi->param('id'),
+                    name              => scalar $cgi->param('name'),
+                    branch            => scalar $cgi->param('branch'),
+                    target_group      => scalar $cgi->param('target_group'),
+                    max_age           => scalar $cgi->param('max_age'),
+                    open_registration => scalar $cgi->param('open_registration') eq 'on' ? 1 : 0,
+                    max_participants  => scalar $cgi->param('max_participants'),
+                    fee               => scalar $cgi->param('fee'),
+                    description       => scalar $cgi->param('description'),
+                    image             => scalar $cgi->param('uploaded_file_id'),
+                }
+            );
+
+            if ( $event_type_is_added->{'ok'} ) {
+                $template = $self->get_template( { file => 'configuration/configure_event_types.tt' } );
+
+                $template->param( event_types => $self->get_event_types(), );
+
+                return $self->output_html( $template->output() );
+            }
+
+            $template = $self->get_template( { file => 'configuration/add_event_type.tt' } );
+
+            $template->param( event_types => $self->get_event_types(), );
+
+            return $self->output_html( $template->output() );
+        }
+
+        when (q{edit_event_type}) {
+            $template = $self->get_template( { file => 'configuration/edit_event_type.tt' } );
+
+            $template->param(
+                event_type    => $self->get_event_type( scalar $cgi->param('event_type_id') ),
+                branches      => Koha::Template::Plugin::Branches->all(),
+                target_groups => $self->get_target_groups(),
+            );
+
+            return $self->output_html( $template->output() );
+        }
+
+        when (q{submit_edit_event_type}) {
+            my $id = $cgi->param('id');
+
+            $self->delete_event_type($id);
+
+            my $event_type_is_added = $self->add_event_type(
+                {   id                => $id,
+                    name              => scalar $cgi->param('name'),
+                    branch            => scalar $cgi->param('branch'),
+                    target_group      => scalar $cgi->param('target_group'),
+                    max_age           => scalar $cgi->param('max_age'),
+                    open_registration => scalar $cgi->param('open_registration') eq 'on' ? 1 : 0,
+                    max_participants  => scalar $cgi->param('max_participants'),
+                    fee               => scalar $cgi->param('fee'),
+                    description       => scalar $cgi->param('description'),
+                    image             => scalar $cgi->param('uploaded_file_id'),
+                }
+            );
+
+            if ( $event_type_is_added->{'ok'} ) {
+                $template = $self->get_template( { file => 'configuration/configure_event_types.tt' } );
+
+                $template->param( event_types => $self->get_event_types(), );
+
+                return $self->output_html( $template->output() );
+            }
+
+            $template = $self->get_template( { file => 'configuration/edit_event_type.tt' } );
+
+            $template->param(
+                event_type    => $self->get_event_type($id),
+                branches      => Koha::Template::Plugin::Branches->all(),
+                target_groups => $self->get_target_groups(),
+            );
+
+            return $self->output_html( $template->output() );
+        }
+
+        when (q{delete_event_type}) {
+            $self->delete_event_type( scalar $cgi->param('event_type_id') );
+
+            $template = $self->get_template( { file => 'configuration/configure_event_types.tt' } );
+
+            $template->param( event_types => $self->get_event_types(), );
+
+            return $self->output_html( $template->output() );
+        }
+
     }
 
     return $self->output_html( $template->output() );

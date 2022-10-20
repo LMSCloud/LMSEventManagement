@@ -34,19 +34,17 @@
                 <input type="hidden" name="op" value="configure_target_groups">
   
                 <dt>
-                  <input type="submit" name="configure_target_groups" id="configure_target_groups" class="lmse-link"
-                    value="[% 'Target groups' | gettext %]">
+                  <input type="submit" class="lmse-link" value="[% 'Target groups' | gettext %]">
                 </dt>
                 <dd>[% 'Define target groups' | gettext %]</dd>
               </form>
               <form method="post">
                 <input type="hidden" name="class" value="[% CLASS %]" />
                 <input type="hidden" name="method" value="[% METHOD %]" />
-                <input type="hidden" name="op" value="configure_target_groups">
+                <input type="hidden" name="op" value="configure_event_types">
   
                 <dt>
-                  <input type="submit" name="configure_event_types" id="configure_event_types" class="lmse-link"
-                    value="[% 'Event types' | gettext %]">
+                  <input type="submit" class="lmse-link" value="[% 'Event types' | gettext %]">
                 </dt>
                 <dd>[% 'Define typical event types' | gettext %]</dd>
               </form>
