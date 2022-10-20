@@ -34,14 +34,25 @@
             <fieldset class="rows">
               <ol>
 
+                [% IF invalid %]
+                  <li>
+                    <h3>
+                      <i class="fa fa-exclamation" aria-hidden="true"></i>
+                      <span>
+                        [% 'Please select a valid event type' | gettext %]
+                      </span>
+                    </h3>
+                  </li>
+                [% END %]
+
                 <li>
                   <label for="eventtypecode">Event type: </label>
-                  <input type="text" list="event-types" name="event_type_id" id="event_type_id" required />
-                  <datalist id="event-types">
+                  <select  name="event_type_id" id="event_type_id" required >
+                    <option selected disabled>[% 'Select an event type' | gettext %]</option>
                     [% FOREACH event_type IN event_types %]
                       <option value="[% event_type.id %]">[% event_type.name %]</option>
                     [% END %]
-                  </datalist>
+                  </select>
                   <span class="required">Required</span>
                 </li>
 

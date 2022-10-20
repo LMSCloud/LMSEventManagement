@@ -123,12 +123,6 @@
             </fieldset>
 
             <fieldset class="action">
-              <div>
-                <input type="checkbox" name="submit_add_event_type" id="submit_add_event_type"
-                  [% UNLESS event_type %] checked disabled [% END %]
-                >
-                <label for="submit_add_event_type">[% 'Save configuration as template' | gettext %]</label>
-              </div>
               <input type="submit" name="submit_add_event" value="Save" />
               <a class="cancel" href="[% URL %]">[% 'Cancel' | gettext %]</a>
             </fieldset>

@@ -81,16 +81,13 @@ sub tool {
 
     my $template = $self->get_template( { file => 'tools/tool.tt' } );
     my $cgi      = $self->{'cgi'};
-    my $op       = $cgi->param('op');
+    my $op       = $cgi->param('op') || q{};
 
     given ($op) {
         when (q{}) {
             $template = $self->get_template( { file => 'tools/tool.tt' } );
 
-            $template->param(
-                op     => q{},
-                events => $self->get_events(),
-            );
+            $template->param( events => $self->get_events(), );
 
             return $self->output_html( $template->output() );
         }
@@ -104,6 +101,18 @@ sub tool {
         }
 
         when (q{add_event}) {
+            if ( !( scalar $cgi->param('event_type_id') ) ) {
+                $template = $template = $self->get_template( { file => 'tools/choose_event_type.tt' } );
+
+                $template->param(
+                    event_types => $self->get_event_types(),
+                    invalid     => 1,
+                );
+
+                return $self->output_html( $template->output() );
+
+            }
+
             $template = $self->get_template( { file => 'tools/add_event.tt' } );
 
             $template->param(
@@ -453,16 +462,16 @@ sub get_event {
 sub get_events {
     my ($self) = @_;
 
-    my $table             = $self->get_qualified_table_name('events');
-    my $tableeventtypes   = $self->get_qualified_table_name('event_types');
-    my $tabletargetgroups = $self->get_qualified_table_name('target_groups');
+    my $events_table        = $self->get_qualified_table_name('events');
+    my $event_types_table   = $self->get_qualified_table_name('event_types');
+    my $target_groups_table = $self->get_qualified_table_name('target_groups');
 
     my $query = <<~"STATEMENT";
 		SELECT events.*, branchcode, target_groups.name, event_types.name
-		FROM $table AS events
+		FROM $events_table AS events
 		LEFT JOIN branches AS branches ON events.branch = branches.branchcode 
-		LEFT JOIN $tabletargetgroups AS target_groups ON events.target_group = target_groups.id 
-		LEFT JOIN $tableeventtypes AS event_types ON events.event_type = event_types.id
+		LEFT JOIN $target_groups_table AS target_groups ON events.target_group = target_groups.id 
+		LEFT JOIN $event_types_table AS event_types ON events.event_type = event_types.id
 	STATEMENT
 
     my $dbh = C4::Context->dbh;
@@ -471,13 +480,13 @@ sub get_events {
 
     my @events;
     while ( my $row = $sth->fetchrow_hashref() ) {
-        if ( defined $row->{'imageid'} ) {
-            my $rec       = Koha::UploadedFiles->find( $row->{imageid} );
+        if ( defined $row->{'image'} ) {
+            my $rec       = Koha::UploadedFiles->find( $row->{'image'} );
             my $src_image = $rec->hashvalue . '_' . $rec->filename();
-            $row->{'imagefile'} = $src_image;
+            $row->{'image'} = $src_image;
         }
         else {
-            $row->{'imagefile'} = q{};
+            $row->{'image'} = q{};
         }
 
         push @events, $row;

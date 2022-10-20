@@ -57,7 +57,7 @@
                   <th scope="col">[% 'Max. Participants' | gettext %]</th>
                   <th scope="col">[% 'Allow puplic registration' | gettext %]</th>
                   <th scope="col">[% 'Description' | gettext %]</th>
-                  <th scope="col" style="width:10%;">[% 'Image' | gettext %]</th>
+                  <th scope="col" style="width: 10%;">[% 'Image' | gettext %]</th>
                   <th scope="col">[% 'Actions' | gettext %]</th>
                 </tr>
               </thead>
@@ -75,9 +75,12 @@
                     <td>[% event.max_participants %]</td>
                     <td>[% event.open_registration %]</td>
                     <td>[% event.description %]</td>
-                    [% IF event.imagefile != '' %]
+                    [% IF event.image %]
                       <td style="box-sizing:border-box;">
-                        <img src="/events/[% event.imagefile %]" style="max-width:100%">
+                        <img src="/lms-event-management/images/[% event.image %]" 
+                          alt="Diplayed image for [% event.name %] on [% event.start_time %]"
+                          style="width: 100%;"
+                        >
                       </td>
                     [% ELSE %]
                       <td></td>

@@ -15,7 +15,7 @@ VALUES (
         'Lesung',
         'CPL',
         'ERWACHSENE',
-        255,
+        255, 
         0,
         1,
         50,
