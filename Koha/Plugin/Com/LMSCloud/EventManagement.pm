@@ -83,7 +83,7 @@ sub tool {
     my $cgi      = $self->{'cgi'};
     my $op       = $cgi->param('op') || q{};
 
-    given ($op) {
+    for ($op) {
         when (q{}) {
             $template = $self->get_template( { file => 'tools/tool.tt' } );
 
@@ -101,6 +101,8 @@ sub tool {
         }
 
         when (q{add_event}) {
+
+            # Catch non-selected event type in choose_event_type view and redirect to it
             if ( !( scalar $cgi->param('event_type_id') ) ) {
                 $template = $template = $self->get_template( { file => 'tools/choose_event_type.tt' } );
 
@@ -166,6 +168,44 @@ sub tool {
 
             $template->param(
                 event         => $self->get_event( scalar $cgi->param('event_id') ),
+                branches      => Koha::Template::Plugin::Branches->all(),
+                target_groups => $self->get_target_groups(),
+            );
+
+            return $self->output_html( $template->output() );
+        }
+
+        when (q{submit_edit_event}) {
+            $self->delete_event( scalar $cgi->param('event_id') );
+
+            my $event_is_updated = $self->add_event(
+                {   name              => scalar $cgi->param('name'),
+                    event_type        => scalar $cgi->param('event_type'),
+                    branch            => scalar $cgi->param('branch'),
+                    target_group      => scalar $cgi->param('target_group'),
+                    max_age           => scalar $cgi->param('max_age'),
+                    open_registration => scalar $cgi->param('open_registration') eq 'on' ? 1 : 0,
+                    start_time        => scalar $cgi->param('start_time'),
+                    end_time          => scalar $cgi->param('end_time'),
+                    max_participants  => scalar $cgi->param('max_participants'),
+                    fee               => scalar $cgi->param('fee'),
+                    description       => scalar $cgi->param('description'),
+                    image             => scalar $cgi->param('uploaded_file_id'),
+                }
+            );
+
+            if ($event_is_updated) {
+                $self->get_template( { file => 'tools/tool.tt' } );
+
+                $template->param( events => $self->get_events() );
+
+                return $self->output_html( $template->output() );
+            }
+
+            $self->get_template( { file => 'tools/edit_event.tt' } );
+
+            $template->param(
+                event_type    => $self->get_event( scalar $cgi->param('event_id') ),
                 branches      => Koha::Template::Plugin::Branches->all(),
                 target_groups => $self->get_target_groups(),
             );
@@ -676,6 +716,34 @@ sub add_event_type {
     }
 }
 
+sub configure {
+    my ( $self, $args ) = @_;
+
+    my $cgi = $self->{'cgi'};
+
+    my $step = $cgi->param('step');
+    my $op   = $cgi->param('op');
+
+    my $submit_targets = ( $cgi->param('submit_new_target')    || $cgi->param('submit_edit_target') );
+    my $submit_events  = ( $cgi->param('submit_new_eventtype') || $cgi->param('submit_edit_eventtype') );
+
+    if ( $step eq 'targets' || $submit_targets ) {
+        return $self->configure_targets();
+    }
+    elsif ( $step eq 'events' || $submit_events ) {
+        return $self->configure_events();
+    }
+    else {
+        my $template = $self->get_template( { file => 'configure.tt' } );
+        $template->param(
+            op       => $op,
+            language => C4::Languages::getlanguage($cgi) || 'en',
+            mbf_path => abs_path( $self->mbf_path('translations') ),
+        );
+        return $self->output_html( $template->output() );
+    }
+}
+
 sub configure_targets {
     my ( $self, $args ) = @_;
 
@@ -708,7 +776,7 @@ sub configure_targets {
         }
         my $success = add_target_group(
             {   table       => $self->get_qualified_table_name('target_groups'),
-                code        => $code,
+                id          => $code,
                 target_code => scalar $cgi->param('target_group'),
                 min_age     => scalar $cgi->param('min_age'),
                 max_age     => scalar $cgi->param('max_age')
@@ -781,42 +849,6 @@ sub configure_events {
     return $self->output_html( $template->output() );
 }
 
-## If your tool is complicated enough to needs it's own setting/configuration
-## you will want to add a 'configure' method to your plugin like so.
-## Here I am throwing all the logic into the 'configure' method, but it could
-## be split up like the 'report' method is.
-sub configure {
-    my ( $self, $args ) = @_;
-
-    my $cgi = $self->{'cgi'};
-
-    my $step = $cgi->param('step');
-    my $op   = $cgi->param('op');
-
-    my $submit_targets = ( $cgi->param('submit_new_target')    || $cgi->param('submit_edit_target') );
-    my $submit_events  = ( $cgi->param('submit_new_eventtype') || $cgi->param('submit_edit_eventtype') );
-
-    if ( $step eq 'targets' || $submit_targets ) {
-        return $self->configure_targets();
-    }
-    elsif ( $step eq 'events' || $submit_events ) {
-        return $self->configure_events();
-    }
-    else {
-        my $template = $self->get_template( { file => 'configure.tt' } );
-        $template->param(
-            op       => $op,
-            language => C4::Languages::getlanguage($cgi) || 'en',
-            mbf_path => abs_path( $self->mbf_path('translations') ),
-        );
-        return $self->output_html( $template->output() );
-    }
-}
-
-## This is the 'install' method. Any database tables or other setup that should
-## be done when the plugin if first installed should be executed in this method.
-## The installation method should always return true if the installation succeeded
-## or false if it failed.
 sub install() {
     my ( $self, $args ) = @_;
 
@@ -903,8 +935,6 @@ sub install() {
     return 1;
 }
 
-## This is the 'upgrade' method. It will be triggered when a newer version of a
-## plugin is installed over an existing older version of a plugin
 sub upgrade {
     my ( $self, $args ) = @_;
 
@@ -914,9 +944,6 @@ sub upgrade {
     return 1;
 }
 
-## This method will be run just before the plugin files are deleted
-## when a plugin is uninstalled. It is good practice to clean up
-## after ourselves!
 sub uninstall() {
     my ( $self, $args ) = @_;
 
@@ -935,13 +962,6 @@ sub uninstall() {
     return 1;
 
 }
-
-## API methods
-# If your plugin implements API routes, then the 'api_routes' method needs
-# to be implemented, returning valid OpenAPI 2.0 paths serialized as a hashref.
-# It is a good practice to actually write OpenAPI 2.0 path specs in JSON on the
-# plugin and read it here. This allows to use the spec for mainline Koha later,
-# thus making this a good prototyping tool.
 
 sub api_routes {
     my ( $self, $args ) = @_;

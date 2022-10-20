@@ -5,7 +5,9 @@
 [% SET footerjs = 1 %]
 
 [% INCLUDE 'doc-head-open.inc' %]
- <title>[% 'Koha: Event Mangement Plugin: Configuration' | gettext %]</title>
+  <title>[% 'Koha: Event Mangement Plugin: Configuration' | gettext %]</title>
+  <link rel="stylesheet" href="/api/v1/contrib/eventmanagement/static/css/main.css">
+  <script type="text/javascript" src="/api/v1/contrib/eventmanagement/static/js/main.js"></script>
 [% INCLUDE 'doc-head-close.inc' %]
 
 </head>
@@ -138,49 +140,10 @@
       const fileUploadHint = document.getElementById('file_upload_hint');
       const uploadedFileIdInput = document.getElementById('uploaded_file_id');
 
-      async function uploadImage(e) {
-        let formData = new FormData();
-        formData.append('file', e.target.files[0]);
-        const response = await fetch('/cgi-bin/koha/tools/upload-file.pl?category=LMSEventManagement&public=1&temp=0', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-
-        if (result.status === 'done') {
-          uploadedFileIdInput.value = result.fileid;
-          
-          fileUploadHint.innerHTML = `
-            <i class="fa fa-check" aria-hidden="true">
-            </i><span>&nbsp;Upload succeeded</span>
-          `;
-          
-          return;
-        }
-
-        if (result.status === 'failed') {
-          /** We briefly check whether we've got an already existing file ('UPLERR_ALREADY_EXISTS')
-          *   and assign that id to the image form field to preserve the existing state of the event. */
-          const errors = result.errors
-            ? Object.entries(result.errors).reduce(
-              (accumulator, [ fileName, { code } ]) => `${accumulator}${accumulator ? '\n' : ''}${fileName}: ${code}`
-              , '')
-            : 'Upload aborted';
-
-            if (error.includes('UPLERR_ALREADY_EXISTS')) {
-              //TODO: Implement handling of already existing images
-              uploadedFileIdInput.value = '';
-            }
-
-          fileUploadHint.innerHTML = `
-            <i class="fa fa-exclamation" aria-hidden="true"></i>
-            <span>&nbsp;Upload had errors: ${errors}</span>
-          `;
-        }
-      }
-
-      fileUploadInput.addEventListener('change', (e) => uploadImage(e));
+      fileUploadInput.addEventListener(
+        'change',
+        (e) => EventManagementBundle.uploadImage(e, { uploadedFileIdInput, fileUploadHint })
+      );
     });
   </script>
 [% INCLUDE 'intranet-bottom.inc' %]
