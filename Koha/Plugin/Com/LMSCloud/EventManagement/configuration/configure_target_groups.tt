@@ -1,0 +1,133 @@
+[% USE gtx = Gettext('com.lmscloud.eventmanagement', language, 'utf-8', mbf_path) %]
+
+[% USE KohaDates %]
+[% USE TablesSettings %]
+[% SET footerjs = 1 %]
+
+[% INCLUDE 'doc-head-open.inc' %]
+  <title>[% 'Koha: Event Mangement Plugin: Configuration' | gettext %]</title>
+  <link rel="stylesheet" href="/api/v1/contrib/eventmanagement/static/css/main.css">
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+
+<body>
+  [% INCLUDE 'header.inc' %]
+  [% INCLUDE 'cat-search.inc' %]
+
+  <div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">[% 'Home' | gettext %]</a>
+    &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a>
+    &rsaquo; <a href="/cgi-bin/koha/plugins/run.pl?class=$CLASS&method=$METHOD">[% 'Event Management - Configuration' |
+      gettext %]</a>
+    &rsaquo; [% 'Target groups' | gettext %]</div>
+
+  <div class="main container-fluid">
+    <div class="row">
+      <div class="col-sm-10 col-sm-push-2">
+        <main>
+          <h2>[% 'Target groups' | gettext %]</h2>
+          [% IF added_group == 0 %]
+            <div class="dialog alert">[% 'Could not add the target group: Code already exists!' | gettext %]</div>
+          [% END %]
+          <div id="toolbar" class="btn-toolbar">
+            <form method="post">
+              <input type="hidden" name="class" value="[% CLASS %]" />
+              <input type="hidden" name="method" value="[% METHOD %]" />
+              <input type="hidden" name="op" value="add_target_group">
+              <input type="hidden" name="target_group_id" value="[% target_group.id %]">
+              <input type="submit" class="btn btn-default" value="+ [% 'Add target group' | gettext %]">
+            </form>
+          </div>
+          [% IF NOT target_groups %]
+            <p>[% 'There are no saved target groups.' | gettext %]</p>
+          [% ELSE %]
+            <table id="target_table">
+              <thead>
+                <tr>
+                  <th scope="col">[% 'Id' | gettext %]</th>
+                  <th scope="col">[% 'Name' | gettext %]</th>
+                  <th scope="col">[% 'Min. age' | gettext %]</th>
+                  <th scope="col">[% 'Max. age' | gettext %]</th>
+                  <th scope="col" class="noExport">[% 'Actions' | gettext %]</th>
+                </tr>
+              </thead>
+              <tbody>
+                [% FOREACH target_group = target_groups %]
+                  <tr>
+                    <td>[% target_group.id %]</td>
+                    <td>[% target_group.name %]</td>
+                    <td>[% target_group.min_age %]</td>
+                    <td>[% target_group.max_age %]</td>
+                    <td class="actions">
+                      <form method="post">
+                        <input type="hidden" name="class" value="[% CLASS %]" />
+                        <input type="hidden" name="method" value="[% METHOD %]" />
+                        <input type="hidden" name="op" value="edit_target_group">
+                        <input type="hidden" name="target_group_id" value="[% target_group.id %]">
+                        <input type="submit" class="btn btn-default btn-xs" value="[% 'Edit' | gettext %]">
+                      </form>
+                      <form method="post">
+                        <input type="hidden" name="class" value="[% CLASS %]" />
+                        <input type="hidden" name="method" value="[% METHOD %]" />
+                        <input type="hidden" name="op" value="delete_target_group">
+                        <input type="hidden" name="target_group_id" value="[% target_group.id %]">
+                        <input type="submit" class="btn btn-default btn-xs" value="[% 'Delete' | gettext %]">
+                      </form>
+                    </td>
+                  </tr>
+                [% END %]
+                <!-- FOREACH -->
+              </tbody>
+            </table>
+          [% END %]
+        </main>
+      </div> <!-- /.col-sm-10.col-sm-push-2 -->
+
+      <div class="col-sm-2 col-sm-pull-10">
+        <aside>
+          <div id="navmenu">
+            <div id="navmenulist">
+              <h5>[% 'Configuration' | gettext %]</h5>
+              <ul>
+                <li>
+                  <form method="post">
+                    <input type="hidden" name="class" value="[% CLASS %]" />
+                    <input type="hidden" name="method" value="[% METHOD %]" />
+                    <input type="hidden" name="op" value="configure_target_groups">
+                    <input type="submit" name="configure_target_groups" id="configure_target_groups" class="lmse-link"
+                      value="[% 'Target groups' | gettext %]">
+                  </form>
+                </li>
+                <li>
+                  <form method="post">
+                    <input type="hidden" name="class" value="[% CLASS %]" />
+                    <input type="hidden" name="method" value="[% METHOD %]" />
+                    <input type="hidden" name="op" value="configure_target_groups">
+                    <input type="submit" name="configure_event_types" id="configure_event_types" class="lmse-link"
+                      value="[% 'Event types' | gettext %]">
+                  </form>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div> <!-- /.col-sm-2.col-sm-pull-10 -->
+    </div> <!-- /.row -->
+  </div> <!-- /.main.container-fluid -->
+
+  [% MACRO jsinclude BLOCK %]
+    [% INCLUDE 'datatables.inc' %]
+    <script>
+      $(document).ready(function () {
+        var target_table = $("#target_table").DataTable($.extend(true, {}, dataTablesDefaults, {
+          "order": [[0, "asc"]],
+          "sPaginationType": "full_numbers"
+        }));
+
+        $(".delete_group").on("click", function () {
+          return confirmDelete(_("Are you sure you want to delete this target group? This cannot be undone."));
+        });
+      });
+    </script>
+  [% END %]
+
+[% INCLUDE 'intranet-bottom.inc' %]

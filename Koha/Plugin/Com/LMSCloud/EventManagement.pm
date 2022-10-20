@@ -720,28 +720,46 @@ sub configure {
     my ( $self, $args ) = @_;
 
     my $cgi = $self->{'cgi'};
+    my $op  = $cgi->param('op') || q{};
+    my $template;
 
-    my $step = $cgi->param('step');
-    my $op   = $cgi->param('op');
+    for ($op) {
+        when (q{}) {
+            $template = $self->get_template( { file => 'configuration/configure.tt' } );
 
-    my $submit_targets = ( $cgi->param('submit_new_target')    || $cgi->param('submit_edit_target') );
-    my $submit_events  = ( $cgi->param('submit_new_eventtype') || $cgi->param('submit_edit_eventtype') );
+            $template->param(
+                op       => $op,
+                language => C4::Languages::getlanguage($cgi) || 'en',
+                mbf_path => abs_path( $self->mbf_path('translations') ),
+            );
 
-    if ( $step eq 'targets' || $submit_targets ) {
-        return $self->configure_targets();
+            return $self->output_html( $template->output() );
+        }
+
+        when (q{configure_target_groups}) {
+            $template = $self->get_template( { file => 'configuration/configure_target_groups.tt' } );
+
+            return $self->output_html( $template->output() );
+
+        }
+
+        when (q{submit_config_target_groups}) {
+
+        }
+
+        when (q{configure_event_types}) {
+            $template = $self->get_template( { file => 'configuration/configure_event_types.tt' } );
+
+            return $self->output_html( $template->output() );
+
+        }
+
+        when (q{submit_config_event_types}) {
+
+        }
     }
-    elsif ( $step eq 'events' || $submit_events ) {
-        return $self->configure_events();
-    }
-    else {
-        my $template = $self->get_template( { file => 'configure.tt' } );
-        $template->param(
-            op       => $op,
-            language => C4::Languages::getlanguage($cgi) || 'en',
-            mbf_path => abs_path( $self->mbf_path('translations') ),
-        );
-        return $self->output_html( $template->output() );
-    }
+
+    return $self->output_html( $template->output() );
 }
 
 sub configure_targets {
@@ -753,7 +771,7 @@ sub configure_targets {
     my $submit_new_target  = $cgi->param('submit_new_target');
     my $submit_edit_target = $cgi->param('submit_edit_target');
 
-    my $template = $self->get_template( { file => 'configure_targets.tt' } );
+    my $template = $self->get_template( { file => 'configuration/configure_target_groups.tt' } );
 
     if ( !( $submit_new_target || $submit_edit_target ) ) {
 
@@ -805,7 +823,7 @@ sub configure_events {
     my $submit_new_eventtype  = $cgi->param('submit_new_eventtype');
     my $submit_edit_eventtype = $cgi->param('submit_edit_eventtype');
 
-    my $template = $self->get_template( { file => 'configure_events.tt' } );
+    my $template = $self->get_template( { file => 'configuration/configure_event_types.tt' } );
 
     if ( !( $submit_new_eventtype || $submit_edit_eventtype ) ) {
 

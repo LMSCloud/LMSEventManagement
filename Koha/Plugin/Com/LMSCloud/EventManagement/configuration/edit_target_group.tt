@@ -1,0 +1,33 @@
+<h2>Edit target group</h2>
+
+[% target_group %]
+<form class="validated" method="post">
+ <!-- <input type="hidden" name="op" value="[% confirm_op | html %]" /> -->
+  <input type="hidden" name="class" value="[% CLASS %]"/>
+  <input type="hidden" name="method" value="[% METHOD %]"/>
+  <fieldset class="rows">
+    <ol>
+      <li>						  
+          <span class="label">Target group code: </span>[% target_group.code | html %]
+          <input type="hidden" name="code" value="[% target_group.code | html %]" /><input type="hidden" name="is_a_modif" value="1" />
+       </li>
+       <li>
+           <label for="description">Target group: </label>
+           <input type="text" id="target_group" name="target_group" required="required" class="required" size="50" maxlength="250" value="[% target_group.targetgroup %]" />
+           <span class="required">Required</span>
+       </li>
+        <li>
+            <label for="min_age">Min age: </label>
+            <input type="text" name="min_age" id="min_age" value="[% target_group.min_age %]" size="3" maxlength="3" /> years
+        </li>
+        <li>
+            <label for="max_age">Min age: </label>
+            <input type="text" name="max_age" id="max_age" value="[% target_group.max_age %]" size="3" maxlength="3" /> years
+        </li>
+    </ol>
+  </fieldset>
+  <fieldset class="action">
+      <input type="submit" name="submit_edit_target" value="Save" />
+      <a class="cancel" href="[% URL %]">Cancel</a>
+  </fieldset>
+</form>
