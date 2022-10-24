@@ -87,24 +87,24 @@ sub tool {
     my $cgi      = $self->{'cgi'};
     my $op       = $cgi->param('op') || q{};
 
-    for ($op) {
-        when (q{}) {
+    my $responses = {
+        q{} => sub {
             $template = $self->get_template( { file => 'tools/tool.tt' } );
 
             $template->param( events => $self->get_events(), );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{choose_event_type}) {
+        q{choose_event_type} => sub {
             $template = $self->get_template( { file => 'tools/choose_event_type.tt' } );
 
             $template->param( event_types => $self->get_event_types(), );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{add_event}) {
+        q{add_event} => sub {
 
             # Catch non-selected event type in choose_event_type view and redirect to it
             if ( !( scalar $cgi->param('event_type_id') ) ) {
@@ -128,9 +128,9 @@ sub tool {
             );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{submit_add_event}) {
+        q{submit_add_event} => sub {
             my $event_is_added = $self->add_event(
                 {   name              => scalar $cgi->param('name'),
                     event_type        => scalar $cgi->param('event_type'),
@@ -165,9 +165,9 @@ sub tool {
 
             return $self->output_html( $template->output() );
 
-        }
+        },
 
-        when (q{edit_event}) {
+        q{edit_event} => sub {
             $template = $self->get_template( { file => 'tools/edit_event.tt' } );
 
             $template->param(
@@ -177,9 +177,9 @@ sub tool {
             );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{submit_edit_event}) {
+        q{submit_edit_event} => sub {
             my $id = $cgi->param('event_id');
 
             my $event_is_updated = $self->update_event(
@@ -216,9 +216,9 @@ sub tool {
             );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{submit_delete_event}) {
+        q{submit_delete_event} => sub {
             $template = $self->get_template( { file => 'tools/tool.tt' } );
 
             $self->delete_event( scalar $cgi->param('event_id') );
@@ -226,10 +226,11 @@ sub tool {
             $template->param( events => $self->get_events(), );
 
             return $self->output_html( $template->output() );
-        }
-    }
+        },
 
-    return $self->output_html( $template->output() );
+    };
+
+    return $responses->{$op}();
 }
 
 ## If your plugin can process payments online,
@@ -795,29 +796,29 @@ sub configure {
     my $op  = $cgi->param('op') || q{};
     my $template;
 
-    for ($op) {
-        when (q{}) {
+    my $responses = {
+        q{} => sub {
             $template = $self->get_template( { file => 'configuration/configure.tt' } );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{configure_target_groups}) {
+        q{configure_target_groups} => sub {
             $template = $self->get_template( { file => 'configuration/configure_target_groups.tt' } );
 
             $template->param( target_groups => $self->get_target_groups(), );
 
             return $self->output_html( $template->output() );
 
-        }
+        },
 
-        when (q{add_target_group}) {
+        q{add_target_group} => sub {
             $template = $self->get_template( { file => 'configuration/add_target_group.tt' } );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{submit_add_target_group}) {
+        q{submit_add_target_group} => sub {
             my $id = $cgi->param('id');
 
             my $target_group_is_added = $self->add_target_group(
@@ -845,17 +846,17 @@ sub configure {
             );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{edit_target_group}) {
+        q{edit_target_group} => sub {
             $template = $self->get_template( { file => 'configuration/edit_target_group.tt' } );
 
             $template->param( target_group => $self->get_target_group( scalar $cgi->param('target_group_id') ), );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{submit_edit_target_group}) {
+        q{submit_edit_target_group} => sub {
             my $id   = $cgi->param('id');
             my $name = $cgi->param('name');
 
@@ -883,9 +884,9 @@ sub configure {
             );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{delete_target_group}) {
+        q{delete_target_group} => sub {
             $self->delete_target_group( scalar $cgi->param('target_group_id') );
 
             $template = $self->get_template( { file => 'configuration/configure_target_groups.tt' } );
@@ -893,17 +894,17 @@ sub configure {
             $template->param( target_groups => $self->get_target_groups(), );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{configure_event_types}) {
+        q{configure_event_types} => sub {
             $template = $self->get_template( { file => 'configuration/configure_event_types.tt' } );
 
             $template->param( event_types => $self->get_event_types(), );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{add_event_type}) {
+        q{add_event_type} => sub {
             $template = $self->get_template( { file => 'configuration/add_event_type.tt' } );
 
             $template->param(
@@ -913,9 +914,9 @@ sub configure {
             );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{submit_add_event_type}) {
+        q{submit_add_event_type} => sub {
             my $event_type_is_added = $self->add_event_type(
                 {   id                => scalar $cgi->param('id'),
                     name              => scalar $cgi->param('name'),
@@ -943,9 +944,9 @@ sub configure {
             $template->param( event_types => $self->get_event_types(), );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{edit_event_type}) {
+        q{edit_event_type} => sub {
             $template = $self->get_template( { file => 'configuration/edit_event_type.tt' } );
 
             $template->param(
@@ -955,9 +956,9 @@ sub configure {
             );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{submit_edit_event_type}) {
+        q{submit_edit_event_type} => sub {
             my $id = $cgi->param('id');
 
             my $event_type_is_updated = $self->update_event_type(
@@ -991,9 +992,9 @@ sub configure {
             );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-        when (q{delete_event_type}) {
+        q{delete_event_type} => sub {
             $self->delete_event_type( scalar $cgi->param('event_type_id') );
 
             $template = $self->get_template( { file => 'configuration/configure_event_types.tt' } );
@@ -1001,11 +1002,11 @@ sub configure {
             $template->param( event_types => $self->get_event_types(), );
 
             return $self->output_html( $template->output() );
-        }
+        },
 
-    }
+    };
 
-    return $self->output_html( $template->output() );
+    return $responses->{$op}();
 }
 
 sub install() {
