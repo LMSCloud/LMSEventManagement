@@ -99,6 +99,7 @@
                     <input type="hidden" name="filetype" id="filetype" value="image"/>
                     <input type="hidden" name="uploaded_file_id" id="uploaded_file_id" value="[% event_type.image %]" />
                     <div class="hint" id="file_upload_hint"></div>
+                    <img src="[% event_type.image %]" alt="...">
                   </div>
                 </li>
               </ol>
@@ -109,35 +110,35 @@
             </fieldset>
           </form>
         </main>
+      </div>
 
-        <div class="col-sm-2 col-sm-pull-10">
-          <aside>
-            <div id="navmenu">
-              <div id="navmenulist">
-                <h5>[% 'Configuration' | gettext %]</h5>
-                <ul>
-                  <li>
-                    <form method="post">
-                      <input type="hidden" name="class" value="[% CLASS %]" />
-                      <input type="hidden" name="method" value="[% METHOD %]" />
-                      <input type="hidden" name="op" value="configure_target_groups">
-                      <input type="submit" class="lmse-link" value="[% 'Target groups' | gettext %]">
-                    </form>
-                  </li>
-                  <li>
-                    <form method="post">
-                      <input type="hidden" name="class" value="[% CLASS %]" />
-                      <input type="hidden" name="method" value="[% METHOD %]" />
-                      <input type="hidden" name="op" value="configure_event_types">
-                      <input type="submit" class="lmse-link" value="[% 'Event types' | gettext %]">
-                    </form>
-                  </li>
-                </ul>
-              </div>
+      <div class="col-sm-2 col-sm-pull-10">
+        <aside>
+          <div id="navmenu">
+            <div id="navmenulist">
+              <h5>[% 'Configuration' | gettext %]</h5>
+              <ul>
+                <li>
+                  <form method="post">
+                    <input type="hidden" name="class" value="[% CLASS %]" />
+                    <input type="hidden" name="method" value="[% METHOD %]" />
+                    <input type="hidden" name="op" value="configure_target_groups">
+                    <input type="submit" class="lmse-link" value="[% 'Target groups' | gettext %]">
+                  </form>
+                </li>
+                <li>
+                  <form method="post">
+                    <input type="hidden" name="class" value="[% CLASS %]" />
+                    <input type="hidden" name="method" value="[% METHOD %]" />
+                    <input type="hidden" name="op" value="configure_event_types">
+                    <input type="submit" class="lmse-link" value="[% 'Event types' | gettext %]">
+                  </form>
+                </li>
+              </ul>
             </div>
-          </aside>
-        </div>
-      </div> <!-- /.col-sm-2.col-sm-pull-10 -->
+          </div>
+        </aside>
+      </div>
     </div> <!-- /.row -->
   </div> <!-- /.main.container-fluid -->
 

@@ -1,32 +1,110 @@
-<h2>Add target group</h2>
-<form class="validated" method="post">
- <!-- <input type="hidden" name="op" value="[% confirm_op | html %]" /> -->
-  <input type="hidden" name="class" value="[% CLASS %]"/>
-  <input type="hidden" name="method" value="[% METHOD %]"/>
-  <fieldset class="rows">
-    <ol>
-      <li>
-          <label for="code">Target group code: </label>
-          <input type="text" id="code" name="code" required="required" class="required" size="10" maxlength="10" />
-          <span class="required">Required</span>
-       </li>
-       <li>
-           <label for="description">Target group: </label>
-           <input type="text" id="target_group" name="target_group" required="required" class="required" size="50" maxlength="250" value="" />
-           <span class="required">Required</span>
-       </li>
-        <li>
-            <label for="min_age">Min age: </label>
-            <input type="text" name="min_age" id="min_age" value="" size="3" maxlength="3" /> years
-        </li>
-        <li>
-            <label for="max_age">Max age: </label>
-            <input type="text" name="max_age" id="max_age" value="" size="3" maxlength="3" /> years
-        </li>
-    </ol>
-  </fieldset>
-  <fieldset class="action">
-      <input type="submit" name="submit_new_target" value="Save" />
-      <a class="cancel" href="[% URL %]">Cancel</a>
-  </fieldset>
-</form>
+[% USE gtx = Gettext('com.lmscloud.eventmanagement', language, 'utf-8', mbf_path) %]
+
+[% USE KohaDates %]
+[% USE TablesSettings %]
+[% SET footerjs = 1 %]
+
+[% INCLUDE 'doc-head-open.inc' %]
+  <title>[% 'Koha: Event Mangement Plugin: Configuration' | gettext %]</title>
+  <link rel="stylesheet" href="/api/v1/contrib/eventmanagement/static/css/main.css">
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+
+<body>
+  [% INCLUDE 'header.inc' %]
+  [% INCLUDE 'cat-search.inc' %]
+
+  <div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">[% 'Home' | gettext %]</a>
+    &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">[% 'Plugins' | gettext %]</a>
+    &rsaquo; <a href="/cgi-bin/koha/plugins/run.pl?class=$CLASS&method=$METHOD">[% 'Event Management - Configuration' |
+      gettext %]</a>
+    &rsaquo; [% 'Add target group' | gettext %]</div>
+
+  <div class="main container-fluid">
+    <div class="row">
+      <div class="col-sm-10 col-sm-push-2">
+        <main>
+          <h2>[% 'Add target group' | gettext %]</h2>
+          
+          <!-- TODO: This should be styles as a koha alert -->
+          <h3>[% message %]</h3> 
+
+          <form method="post">
+            <input type="hidden" name="class" value="[% CLASS %]" />
+            <input type="hidden" name="method" value="[% METHOD %]" />
+            <input type="hidden" name="op" value="submit_add_target_group" />
+            <fieldset class="rows">
+              <ol>
+                <li>
+                  <label for="id">[% 'Target group id' | gettext %]&colon;</label>
+                  <input type="text" id="id" name="id" size="10" maxlength="10" required>
+                  <span class="required">[% 'Required' | gettext %]</span>
+                </li>
+                <li>
+                  <label for="name">[% 'Target group' | gettext %]</label>
+                  <input type="text" id="name" name="name" size="50" maxlength="250" value="" required>
+                  <span class="required">[% 'Required' | gettext %]</span>
+                </li>
+                <li>
+                  <label for="min_age">[% 'Min. age' | gettext %]</label>
+                  <input type="text" name="min_age" id="min_age" value="" size="3" maxlength="3" />
+                  <span>[% 'years' | gettext %]</span>
+                </li>
+                <li>
+                  <label for="max_age">[% 'Max. age' | gettext %]</label>
+                  <input type="text" name="max_age" id="max_age" value="" size="3" maxlength="3" />
+                  <span>[% 'years' | gettext %]</span>
+                </li>
+              </ol>
+            </fieldset>
+            <fieldset class="action">
+              <input type="submit" value="Save" />
+              <a class="cancel" href="[% URL %]">Cancel</a>
+            </fieldset>
+          </form>
+        </main>
+      </div>
+
+      <div class="col-sm-2 col-sm-pull-10">
+        <aside>
+          <div id="navmenu">
+            <div id="navmenulist">
+              <h5>[% 'Configuration' | gettext %]</h5>
+              <ul>
+                <li>
+                  <form method="post">
+                    <input type="hidden" name="class" value="[% CLASS %]" />
+                    <input type="hidden" name="method" value="[% METHOD %]" />
+                    <input type="hidden" name="op" value="configure_target_groups">
+                    <input type="submit" class="lmse-link" value="[% 'Target groups' | gettext %]">
+                  </form>
+                </li>
+                <li>
+                  <form method="post">
+                    <input type="hidden" name="class" value="[% CLASS %]" />
+                    <input type="hidden" name="method" value="[% METHOD %]" />
+                    <input type="hidden" name="op" value="configure_event_types">
+                    <input type="submit" class="lmse-link" value="[% 'Event types' | gettext %]">
+                  </form>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const fileUploadInput = document.getElementById('file_to_upload');
+          const fileUploadHint = document.getElementById('file_upload_hint');
+          const uploadedFileIdInput = document.getElementById('uploaded_file_id');
+    
+          fileUploadInput.addEventListener(
+            'change',
+            (e) => EventManagementBundle.uploadImage(e, { uploadedFileIdInput, fileUploadHint })
+          );
+        });
+      </script>
+    </div> <!-- /.row -->
+  </div> <!-- /.main.container-fluid -->
+[% INCLUDE 'intranet-bottom.inc' %]

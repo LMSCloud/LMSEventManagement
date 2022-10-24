@@ -106,9 +106,9 @@
             </div>
           </div>
         </aside>
-      </div> <!-- /.col-sm-2.col-sm-pull-10 -->
-    </div> <!-- /.row -->
-  </div> <!-- /.main.container-fluid -->
+      </div> <!-- /.row -->
+    </div> <!-- /.main.container-fluid -->
+  </div>
 
   [% MACRO jsinclude BLOCK %]
     [% INCLUDE 'datatables.inc' %]

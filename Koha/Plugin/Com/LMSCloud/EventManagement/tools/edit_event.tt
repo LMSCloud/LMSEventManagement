@@ -125,6 +125,7 @@
                     <input type="hidden" name="filetype" id="filetype" value="image"/>
                     <input type="hidden" name="uploaded_file_id" id="uploaded_file_id" value="[% event.image %]" />
                     <div class="hint" id="file_upload_hint"></div>
+                    <img src="[% event_type.image %]" alt="...">
                   </div>
                 </li>
 
