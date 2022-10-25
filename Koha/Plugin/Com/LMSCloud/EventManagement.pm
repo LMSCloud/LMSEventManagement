@@ -34,7 +34,6 @@ use URI::Escape qw(uri_unescape);
 use Try::Tiny;
 
 use Readonly;
-Readonly my $TINYINT_LOWER_BOUNDARY => 0;
 Readonly my $TINYINT_UPPER_BOUNDARY => 255;
 
 use Locale::Messages;
@@ -233,18 +232,12 @@ sub tool {
     return $responses->{$op}();
 }
 
-## If your plugin can process payments online,
-## and that feature of the plugin is enabled,
-## this method will return true
 sub opac_online_payment {
     my ( $self, $args ) = @_;
 
     return $self->retrieve_data('enable_opac_payments') eq 'Yes';
 }
 
-## This method triggers the beginning of the payment process
-## It could result in a form displayed to the patron the is submitted
-## or go straight to a redirect to the payment service ala paypal
 sub opac_online_payment_begin {
     my ( $self, $args ) = @_;
     my $cgi = $self->{'cgi'};
@@ -273,9 +266,6 @@ sub opac_online_payment_begin {
     return $self->output_html( $template->output() );
 }
 
-## This method triggers the end of the payment process
-## Should should result in displaying a page indicating
-## the success or failure of the payment.
 sub opac_online_payment_end {
     my ( $self, $args ) = @_;
     my $cgi = $self->{'cgi'};
@@ -366,30 +356,32 @@ sub add_target_group {
     my $code_exists = $sth->fetchrow_hashref();
 
     if ( !$code_exists ) {
+        my $statement = <<~"STATEMENT";
+            INSERT INTO $table (
+                id,     name,   min_age,    max_age
+            ) VALUES (
+                ?,      ?,      ?,           ?
+            );
+        STATEMENT
 
-        $query = qq{INSERT INTO $table (id, name};
+        my @values = (
 
-        if ( $args->{'min_age'} ne q{} ) {
-            $query = $query . q{, min_age};
-        }
-        if ( $args->{'max_age'} ne q{} ) {
-            $query = $query . q{, max_age};
-        }
+            # Required in FE
+            $args->{'id'},
+            $args->{'name'},
 
-        $query = $query . ") VALUES ('$args->{'id'}', '$args->{'name'}'";
+            # Needs defaults, optional
+            ( $args->{'min_age'} || 0 ),
+            ( $args->{'max_age'} || $TINYINT_UPPER_BOUNDARY ),
+        );
 
-        if ( $args->{'min_age'} ne q{} ) {
-            $query = $query . ", $args->{'min_age'}";
-        }
-        if ( $args->{'max_age'} ne q{} ) {
-            $query = $query . ", $args->{'max_age'}";
-        }
+        $sth = $dbh->prepare($statement);
+        my $rv = $sth->execute(@values);
 
-        $query = $query . ')';
-
-        $sth = $dbh->prepare($query);
-        $sth->execute();
-        return 1;
+        return {
+            ok    => 1,
+            value => $rv,
+        };
     }
     else {
         return 0;
@@ -442,7 +434,17 @@ sub update_target_group {
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($statement);
 
-    my @values = ( $args->{'id'}, $args->{'name'}, ( $args->{'min_age'} || $TINYINT_LOWER_BOUNDARY ), ( $args->{'max_age'} || $TINYINT_UPPER_BOUNDARY ), $args->{'id'} );
+    my @values = (
+
+        # Required in FE
+        $args->{'id'}, $args->{'name'},
+
+        # Needs defaults, optional
+        ( $args->{'min_age'} || 0 ), ( $args->{'max_age'} || $TINYINT_UPPER_BOUNDARY ),
+
+        # WHERE value
+        $args->{'id'},
+    );
 
     my $rv = $sth->execute(@values);
 
@@ -459,9 +461,10 @@ sub delete_target_group {
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
-    $sth->execute($id);
 
-    return;
+    my $rv = $sth->execute($id);
+
+    return $rv;
 }
 
 # EVENTS
@@ -472,49 +475,41 @@ sub add_event {
     my $table = $self->get_qualified_table_name('events');
     my $dbh   = C4::Context->dbh;
 
-    my $src_image;
+    my $statement = <<~"STATEMENT";
+        INSERT INTO $table (
+            name,           event_type,         branch,             target_group, 
+            max_age,        open_registration,  max_participants,   fee,
+            description,    start_time,         end_time,           image   
+        ) VALUES (
+            ?,              ?,                  ?,                  ?,
+            ?,              ?,                  ?,                  ?,
+            ?,              ?,                  ?,                  ?
+        );
+    STATEMENT
 
-    my $query        = "INSERT INTO $table (name, event_type, branch, target_group";
-    my $query_values = "VALUES ('$args->{'name'}', '$args->{'event_type'}', '$args->{'branch'}', '$args->{'target_group'}'";
+    my @values = (
 
-    if ( $args->{'max_age'} ne q{} ) {
-        $query        = $query . q{, max_age};
-        $query_values = $query_values . ", '$args->{'max_age'}'";
-    }
-    if ( $args->{'open_registration'} ne q{} ) {
-        $query        = $query . q{, open_registration};
-        $query_values = $query_values . ", '$args->{'open_registration'}'";
-    }
-    if ( $args->{'max_participants'} ne q{} ) {
-        $query        = $query . q{, max_participants};
-        $query_values = $query_values . ", '$args->{'max_participants'}'";
-    }
-    if ( $args->{'fee'} ne q{} ) {
-        $query        = $query . q{, fee};
-        $query_values = $query_values . ", '$args->{'fee'}'";
-    }
-    if ( $args->{'description'} ne q{} ) {
-        $query        = $query . q{, description};
-        $query_values = $query_values . ", '$args->{'description'}'";
-    }
-    if ( $args->{'start_time'} ne q{} ) {
-        $query        = $query . q{, start_time};
-        $query_values = $query_values . ", '$args->{'start_time'}'";
-    }
-    if ( $args->{'end_time'} ne q{} ) {
-        $query        = $query . q{, end_time};
-        $query_values = $query_values . ", '$args->{'end_time'}'";
-    }
-    if ( $args->{'image'} ne q{} ) {
-        $query        = $query . q{, image};
-        $query_values = $query_values . ", '$args->{'image'}'";
-    }
+        # Required in FE
+        $args->{'name'},
+        $args->{'event_type'},
+        $args->{'branch'},
+        $args->{'target_group'},
 
-    $query = $query . qq{) $query_values)};
+        # Needs defaults, optional
+        ( $args->{'max_age'}           || $TINYINT_UPPER_BOUNDARY ),
+        ( $args->{'open_registration'} || 0 ),
+        ( $args->{'max_participants'}  || undef ),
+        ( $args->{'fee'}               || 0 ),
+        ( $args->{'description'}       || undef ),
+        ( $args->{'start_time'}        || undef ),
+        ( $args->{'end_time'}          || undef ),
+        ( $args->{'image'}             || undef ),
+    );
 
-    my $sth = $dbh->prepare($query);
-    $sth->execute();
-    return 1;
+    my $sth = $dbh->prepare($statement);
+    my $rv  = $sth->execute(@values);
+
+    return $rv;
 }
 
 sub get_event {
@@ -602,19 +597,25 @@ sub update_event {
     my $sth = $dbh->prepare($statement);
 
     my @values = (
+
+        # Required in FE
         $args->{'id'},
-        ( $args->{'name'}              || 'NULL' ),
-        ( $args->{'event_type'}        || 'NULL' ),
-        ( $args->{'branch'}            || 'NULL' ),
-        ( $args->{'target_group'}      || 'NULL' ),
+        $args->{'name'},
+        $args->{'event_type'},
+        $args->{'branch'},
+        $args->{'target_group'},
+
+        # Needs defaults, optional
         ( $args->{'max_age'}           || $TINYINT_UPPER_BOUNDARY ),
         ( $args->{'open_registration'} || 0 ),
-        ( $args->{'max_participants'}  || 0 ),
+        ( $args->{'max_participants'}  || undef ),
         ( $args->{'fee'}               || 0 ),
-        ( $args->{'description'}       || 'NULL' ),
-        ( $args->{'start_time'}        || 'NULL' ),
-        ( $args->{'end_time'}          || 'NULL' ),
-        ( $args->{'image'}             || 0 ),
+        ( $args->{'description'}       || undef ),
+        ( $args->{'start_time'}        || undef ),
+        ( $args->{'end_time'}          || undef ),
+        ( $args->{'image'}             || undef ),
+
+        # WHERE value
         $args->{'id'},
     );
 
@@ -631,9 +632,10 @@ sub delete_event {
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
-    $sth->execute($id);
 
-    return;
+    my $rv = $sth->execute($id);
+
+    return $rv;
 }
 
 # EVENT TYPES
@@ -652,42 +654,38 @@ sub add_event_type {
     my $id_exists = $sth->fetchrow_hashref();
 
     if ( !$id_exists ) {
-        $query = "INSERT INTO $table (id, branch, target_group";
-        my $query_values = "VALUES ('$args->{'id'}', '$args->{'branch'}', '$args->{'target_group'}'";
+        my $statement = <<~"STATEMENT";
+            INSERT INTO $table (
+                id,             name,               branch,             target_group,
+                max_age,        open_registration,  max_participants,   fee,
+                description,    image
+            ) VALUES (
+                ?,              ?,                  ?,                  ?,
+                ?,              ?,                  ?,                  ?, 
+                ?,              ?
+            );
+        STATEMENT
 
-        if ( $args->{'name'} ne q{} ) {
-            $query        = $query . ', name';
-            $query_values = $query_values . ", '$args->{'name'}'";
-        }
-        if ( $args->{'max_age'} ne q{} ) {
-            $query        = $query . ', max_age';
-            $query_values = $query_values . ", '$args->{'max_age'}'";
-        }
-        if ( $args->{'open_registration'} ne q{} ) {
-            $query        = $query . ', open_registration';
-            $query_values = $query_values . ", '$args->{'open_registration'}'";
-        }
-        if ( $args->{'max_participants'} ne q{} ) {
-            $query        = $query . ', max_participants';
-            $query_values = $query_values . ", '$args->{'max_participants'}'";
-        }
-        if ( $args->{'fee'} ne q{} ) {
-            $query        = $query . ', fee';
-            $query_values = $query_values . ", '$args->{'fee'}'";
-        }
-        if ( $args->{'description'} ne q{} ) {
-            $query        = $query . ', description';
-            $query_values = $query_values . ", '$args->{'description'}'";
-        }
-        if ( $args->{'image'} ne q{} ) {
-            $query        = $query . ', image';
-            $query_values = $query_values . ", '$args->{'image'}'";
-        }
+        my @values = (
 
-        $query = $query . ') ' . $query_values . ')';
+            # Required in FE
+            $args->{'id'},
+            $args->{'name'},
+            $args->{'branch'},
+            $args->{'target_group'},
 
-        $sth = $dbh->prepare($query);
-        $sth->execute();
+            # Needs defaults, optional
+            ( $args->{'max_age'}           || $TINYINT_UPPER_BOUNDARY ),
+            ( $args->{'open_registration'} || 0 ),
+            ( $args->{'max_participants'}  || undef ),
+            ( $args->{'fee'}               || 0 ),
+            ( $args->{'description'}       || undef ),
+            ( $args->{'image'}             || undef ),
+        );
+
+        $sth = $dbh->prepare($statement);
+
+        my $rv = $sth->execute(@values);
 
         return {
             ok => 1,
@@ -758,16 +756,22 @@ sub update_event_type {
     my $sth = $dbh->prepare($statement);
 
     my @values = (
+
+        # Required in FE
         $args->{'id'},
-        ( $args->{'branch'}            || 'NULL' ),
-        ( $args->{'target_group'}      || 'NULL' ),
-        ( $args->{'name'}              || 'NULL' ),
+        $args->{'branch'},
+        $args->{'target_group'},
+        $args->{'name'},
+
+        # Needs defaults, optional
         ( $args->{'max_age'}           || $TINYINT_UPPER_BOUNDARY ),
         ( $args->{'open_registration'} || 0 ),
-        ( $args->{'max_participants'}  || 0 ),
+        ( $args->{'max_participants'}  || undef ),
         ( $args->{'fee'}               || 0 ),
-        ( $args->{'description'}       || 'NULL' ),
-        ( $args->{'image'}             || 0 ),
+        ( $args->{'description'}       || undef ),
+        ( $args->{'image'}             || undef ),
+
+        # WHERE value
         $args->{'id'},
     );
 
@@ -784,9 +788,10 @@ sub delete_event_type {
 
     my $dbh = C4::Context->dbh;
     my $sth = $dbh->prepare($query);
-    $sth->execute($id);
 
-    return;
+    my $rv = $sth->execute($id);
+
+    return $rv;
 }
 
 sub configure {
