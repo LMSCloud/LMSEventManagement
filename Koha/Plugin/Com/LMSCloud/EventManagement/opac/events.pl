@@ -53,8 +53,7 @@ use Locale::Messages qw(:locale_h :libintl_h);
 
 no if ( $PERL_VERSION >= 5.018 ), 'warnings' => 'experimental';
 
-my $pluginDir     = dirname( abs_path($PROGRAM_NAME) );
-my $template_name = $pluginDir . '/events-grid.tt';
+my $plugin_dir = dirname( abs_path($PROGRAM_NAME) );
 
 my $cgi = CGI->new;
 
@@ -62,47 +61,51 @@ my $cgi = CGI->new;
 # otherwise one of the form pages is displayed
 my $op = $cgi->param('op');
 
-my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
-    {   template_name   => $template_name,
-        query           => $cgi,
-        type            => 'opac',
-        authnotrequired => 1,
-        is_plugin       => 1,
-    }
-);
+my $responses = {
+    q{} => sub {
+        my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
+            {   template_name   => $plugin_dir . '/events.tt',
+                query           => $cgi,
+                type            => 'opac',
+                authnotrequired => 1,
+                is_plugin       => 1,
+            }
+        );
 
-$template->param(
-    language => C4::Languages::getlanguage($cgi) || 'en',
-    mbf_path => abs_path('../translations')
-);
+        $template->param(
+            language           => C4::Languages::getlanguage($cgi) || 'en',
+            mbf_path           => abs_path('../translations'),
+            events             => get_events(),
+            used_target_groups => get_used_target_groups(),
+            used_event_types   => get_used_event_types(),
+            used_branches      => get_used_branches(),
+        );
 
-if ( !( defined $op ) ) {
+        return ( $template, $borrowernumber, $cookie );
 
-    my $used_target_groups = get_used_target_groups();
-    my $used_event_types   = get_used_event_types();
-    my $used_branches      = get_used_branches();
-    my $events             = get_events();
+    },
 
-    $template->param(
-        plugin_dir         => $pluginDir,
-        op                 => $op,
-        events             => $events,
-        used_target_groups => $used_target_groups,
-        used_event_types   => $used_event_types,
-        used_branches      => $used_branches,
-    );
-}
-elsif ( $op eq 'detail' ) {
+    q{detail} => sub {
+        my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
+            {   template_name   => $plugin_dir . '/event.tt',
+                query           => $cgi,
+                type            => 'opac',
+                authnotrequired => 1,
+                is_plugin       => 1,
+            }
+        );
 
-    my $id    = $cgi->param('id');
-    my $event = get_event($id);
+        $template->param(
+            language => C4::Languages::getlanguage($cgi) || 'en',
+            mbf_path => abs_path('../translations'),
+            event    => get_event( scalar $cgi->param('id') ),
+        );
 
-    $template->param(
-        plugin_dir => $pluginDir,
-        op         => $op,
-        event      => $event,
-    );
-}
+        return ( $template, $borrowernumber, $cookie );
+
+    },
+
+};
 
 sub get_used_target_groups {
 
@@ -175,43 +178,6 @@ sub get_used_branches {
     return \@branches;
 }
 
-sub get_events {
-
-    my $events_table        = 'koha_plugin_com_lmscloud_eventmanagement_events';
-    my $event_types_table   = 'koha_plugin_com_lmscloud_eventmanagement_event_types';
-    my $target_groups_table = 'koha_plugin_com_lmscloud_eventmanagement_target_groups';
-
-    my $query = <<~"QUERY";
-		SELECT events.*, branchname, target_groups.name, event_types.name 
-		FROM $events_table AS events
-		LEFT JOIN branches AS b ON events.branch = b.branchcode 
-		LEFT JOIN $target_groups_table AS target_groups ON events.target_group = target_groups.id 
-		LEFT JOIN $event_types_table AS event_types ON events.event_type = event_types.id
-	QUERY
-
-    my $dbh = C4::Context->dbh;
-    my $sth = $dbh->prepare($query);
-    $sth->execute();
-
-    my @events;
-    while ( my $row = $sth->fetchrow_hashref() ) {
-        if ( defined $row->{'image'} ) {
-            my $rec      = Koha::UploadedFiles->find( $row->{'image'} );
-            my $srcimage = $rec->hashvalue . '_' . $rec->filename();
-
-            $row->{'image'} = $srcimage;
-
-        }
-        else {
-            $row->{'image'} = q{};
-        }
-
-        push @events, $row;
-    }
-
-    return \@events;
-}
-
 sub get_event {
     my $id = shift;
 
@@ -222,7 +188,7 @@ sub get_event {
     my $query = <<~"QUERY";
 		SELECT events.*, branchname, target_groups.name, event_types.name 
 		FROM $events_table AS events 
-		LEFT JOIN branches AS b ON e.branch = b.branchcode 
+		LEFT JOIN branches AS b ON events.branch = b.branchcode 
 		LEFT JOIN $target_groups_table AS target_groups ON events.target_group = target_groups.id 
 		LEFT JOIN $event_types_table AS event_types ON events.event_type = event_types.id
 		WHERE events.id = $id
@@ -244,5 +210,44 @@ sub get_event {
 
     return $event;
 }
+
+sub get_events {
+
+    my $events_table        = 'koha_plugin_com_lmscloud_eventmanagement_events';
+    my $event_types_table   = 'koha_plugin_com_lmscloud_eventmanagement_event_types';
+    my $target_groups_table = 'koha_plugin_com_lmscloud_eventmanagement_target_groups';
+
+    my $query = <<~"QUERY";
+		SELECT events.*, branchname, target_groups.name, event_types.name 
+		FROM $events_table AS events
+		LEFT JOIN branches AS b ON events.branch = b.branchcode 
+		LEFT JOIN $target_groups_table AS target_groups ON events.target_group = target_groups.id 
+		LEFT JOIN $event_types_table AS event_types ON events.event_type = event_types.id
+	QUERY
+
+    my $dbh = C4::Context->dbh;
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my @events;
+    while ( my $row = $sth->fetchrow_hashref() ) {
+        if ( defined $row->{'image'} ) {
+            my $rec       = Koha::UploadedFiles->find( $row->{'image'} );
+            my $src_image = $rec->hashvalue . '_' . $rec->filename();
+
+            $row->{'image'} = $src_image;
+
+        }
+        else {
+            $row->{'image'} = q{};
+        }
+
+        push @events, $row;
+    }
+
+    return \@events;
+}
+
+my ( $template, $borrowernumber, $cookie ) = $responses->{$op}();
 
 output_html_with_http_headers $cgi, $cookie, $template->output;

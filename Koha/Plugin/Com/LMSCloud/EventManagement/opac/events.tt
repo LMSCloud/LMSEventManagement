@@ -1,0 +1,231 @@
+[% USE gtx = Gettext('com.lmscloud.eventmanagement', language, 'utf-8', mbf_path) %]
+
+[% USE Asset %]
+[% USE Koha %]
+[% USE Branches %]
+
+[% INCLUDE 'doc-head-open.inc' %]
+  <title>[% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %][% 'Koha online' | gettext %][% END %] [% 'Catalog' | gettext %] &rsaquo; [% 'Booking' | gettext %]</title>
+  <link rel="stylesheet" href="/api/v1/contrib/eventmanagement/static/css/main.css">
+  <script type="text/javascript" src="/api/v1/contrib/eventmanagement/static/js/main.js"></script>
+[% INCLUDE 'doc-head-close.inc' %]
+
+</head>
+
+[% BLOCK cssinclude %]
+[% END %]
+
+[% INCLUDE 'bodytag.inc' bodyid='opac-main' %]
+[% INCLUDE 'masthead.inc' %]
+
+<div class="main">
+  [% DEFAULT op = 'undef' %]
+  <ul class="breadcrumb">
+    <li>
+      <a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a>
+      <span class="divider">&rsaquo;</span>
+      <span>&nbsp;</span>
+    </li>
+    <li>
+      <a href="#">[% 'Upcoming events' | gettext %]</a>
+    </li>
+  </ul>
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span3">
+              
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-lg-2">
+              <div id="facetcontainer">
+                <div id="search-facets">
+                  <h2>
+                    <a href="#" class="menu-collapse-toggle">[% 'Filter events' | gettext %]</a>
+                  </h2>
+
+                  <ul>
+
+                    [% IF used_target_groups.size > 1 %]
+                      <li>
+                        <h3>[% 'Target group' | gettext %]</h3>
+                        <ul>
+                          [% FOREACH target_group IN used_target_groups %]
+                            <li>
+                              <div class="form-check">
+                                <input class="lms-facet form-check-input" 
+                                  type="checkbox" 
+                                  value="[% target_group.name %]" 
+                                  id="[% target_group.target_group %]"
+                                  name="targetGroup"
+                                >
+                                <label class="form-check-label" for="[% target_group.target_group %]">
+                                  [% target_group.name %]
+                                </label>
+                              </div>
+                            </li>
+                          [% END %] <!-- FOREACH -->
+                        </ul>
+                      </li>
+                    [% END %] <!-- IF -->
+
+                    [% IF used_event_types.size > 1 %]
+                      <li>
+                        <h3>[% 'Event type' | gettext %]</h3>
+                        <ul>
+                          [% FOREACH event_type IN used_event_types %]
+                            <li>
+                              <div class="form-check">
+                                <input class="lms-facet form-check-input" 
+                                  type="checkbox" 
+                                  value="[% event_type.name %]" 
+                                  id="[% event_type.event_type %]"
+                                  name="eventType"
+                                >
+                                <label class="form-check-label" for="[% event_type.event_type %]">
+                                  [% event_type.name %]
+                                </label>
+                              </div>
+                            </li>
+                          [% END %] <!-- FOREACH -->
+                        </ul>
+                      </li>
+                    [% END %] <!-- IF -->
+        
+                    [% IF used_branches.size > 1 %]
+                      <li>
+                        <h3>[% 'Branch' | gettext %]</h3>
+                        <ul>
+                          [% FOREACH branch IN used_branches %]
+                            <li>
+                              <div class="form-check">
+                                <input class="lms-facet form-check-input" 
+                                  type="checkbox" 
+                                  value="[% branch.branchname %]" 
+                                  id="[% branch.branch %]"
+                                  name="branch"
+                                >
+                                <label class="form-check-label" for="[% branch.branch %]">
+                                  [% branch.branchname %]
+                                </label>
+                              </div>
+                            </li>
+                          [% END %] <!-- FOREACH -->
+                        </ul>
+                      </li>
+                    [% END %] <!-- IF -->
+        
+                    <li>
+                      <h3>[% 'Date & Time' | gettext %]</h3>
+                      <ul>
+                        <li>
+                          <div class="form-group row pr-3 pl-1 my-0">
+                            <label for="start-time" class="col-3">[% 'From' | gettext %]</label>
+                            <input type="date" class="lms-facet form-control col-9" id="start-time" name="startTime" value="">
+                          </div>
+                        </li>
+                        <li>
+                          <div class="form-group row pr-3 pl-1 my-0">
+                            <label for="end-time" class="col-3">[% 'To' | gettext %]</label>
+                            <input type="date" class="lms-facet form-control col-9" id="end-time" name="endTime" value="">
+                          </div>
+                        </li>
+                      </ul>
+                    </li>
+        
+                    <li>
+                      <h3>[% 'Age' | gettext %]</h3>
+                      <ul>
+                        <li>
+                          <div class="row row pr-3 pl-1 my-0">
+                            <output class="col-3">99</output>
+                            <input type="range" class="lms-facet col-9" name="max_age" min="0" max="99" value="99" step="1">
+                          </div>
+                        </li>
+                      </ul>
+                    </li>
+        
+                    <li>
+                      <h3>[% 'Registration' | gettext %]</h3>
+                      <ul>
+                        <li>
+                          <div class="custom-control custom-switch">
+                            <input type="checkbox" class="lms-facet custom-control-input" id="public-reg" name="publicReg">
+                            <label class="custom-control-label" for="public-reg">
+                              [% 'Registration without library card' | gettext %]
+                            </label>
+                          </div>
+                        </li>
+                      </ul>
+                    </li>
+                    
+                  </ul>
+                  
+                  <hr>
+
+                  <div class="text-center">
+                    <button type="reset" class="btn btn-secondary mb-2" id="reset-filter" name="reset-filter" disabled>
+                      [% 'Reset filters' | gettext %]
+                    </button>
+                  </div>
+    
+                </div> <!-- search-facets -->
+              </div> <!-- facetcontainer -->
+            </div> <!-- col-lg-3 -->
+    
+            <div class="col-lg-10 order-first order-md-first order-lg-2 maincontent">
+              <h3>[% 'Upcoming events' | gettext %]</h3>	
+              <div id="lms-events" class="card-deck text-center mb-3">
+                [% FOREACH event IN events %]
+                  <div class="lms-event card" style="max-width: 18rem;"
+                    data-target-group="[% event.target_group %]"
+                    data-event-type="[% event.event_type %]"
+                    data-branch="[% event.branch %]"
+                    data-max-age="[% event.max_age %]"
+                    data-public-reg="[% event.open_registration %]"
+                    data-start-time="[% event.start_time %]"
+                    data-end-time="[% event.end_time %]"
+                    data-filtered-by=""
+                  >
+                    <a href="/opac-events?op=detail&id=[% event.id %]">
+                      <img src="/lms-event-management/images/[% event.image %]"
+                        class="card-img-top" 
+                        alt="..."
+                        height="210"
+                      >
+                    </a>
+                    <div class="card-body">
+                      <h5 class="card-title">[% event.name %]</h5>
+                      <p class="card-text">
+                        <time datetime="[% event.start_time %]">[% event.start_time %]</time>
+                      </p>
+                    </div>
+                  </div>
+                [% END %] <!-- FOREACH -->
+              </div>						
+
+              [% IF recurring_events %]
+                <h3>[% 'Recurring events' | gettext %]</h3>
+              [% END %]
+            </div> <!-- col-lg-10 -->
+          </div> <!-- row -->
+        </div> <!-- container-fluid -->					
+      </div>    
+    </div> <!-- / .row-fluid -->
+  </div> <!-- / .container-fluid -->
+</div> <!-- / .main -->
+
+[% INCLUDE 'opac-bottom.inc' %]
+
+[% BLOCK jsinclude %]
+
+  <script>
+    const resetFilterButton = document.getElementById('reset-filter');
+    const { LMSEvents } = EventManagementBundle;
+    const lmsEvents = new LMSEvents({
+      events: document.querySelectorAll('.lms-event'),
+      facets: document.querySelectorAll('.lms-facet'),
+    });
+    lmsEvents.init();
+  </script>
+
+[% END %]
