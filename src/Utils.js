@@ -1,4 +1,4 @@
-export default async function uploadImage(e, { uploadedFileIdInput, fileUploadHint }) {
+export async function uploadImage(e, { uploadedFileIdInput, fileUploadHint }) {
   const uploadedFileIdInputRef = uploadedFileIdInput;
   const fileUploadHintRef = fileUploadHint;
 
@@ -43,4 +43,9 @@ export default async function uploadImage(e, { uploadedFileIdInput, fileUploadHi
         <span>&nbsp;Upload had errors: ${errors}</span>
     `;
   }
+}
+
+export function updateRangeOutput({ rangeInput, rangeOutput }) {
+  const rangeOutputRef = rangeOutput;
+  rangeOutputRef.textContent = rangeInput.value === '120' ? '∞' : rangeInput.value;
 }

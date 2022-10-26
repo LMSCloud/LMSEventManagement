@@ -1,4 +1,4 @@
 import LMSEvents from './LMSEvents';
-import uploadImage from './Utils';
+import { uploadImage, updateRangeOutput } from './Utils';
 
-export default { LMSEvents, uploadImage };
+export default { LMSEvents, uploadImage, updateRangeOutput };

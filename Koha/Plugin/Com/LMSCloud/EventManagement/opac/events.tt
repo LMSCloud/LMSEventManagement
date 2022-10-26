@@ -114,15 +114,15 @@
                       <h3>[% 'Date & Time' | gettext %]</h3>
                       <ul>
                         <li>
-                          <div class="form-group row pr-3 pl-1 my-0">
-                            <label for="start-time" class="col-3">[% 'From' | gettext %]</label>
-                            <input type="date" class="lms-facet form-control col-9" id="start-time" name="startTime" value="">
+                          <div class="form-group row pr-3 pl-1 my-0 align-items-center" style="height: 1.5em;">
+                            <label for="start-time" class="col-3 my-0">[% 'From' | gettext %]</label>
+                            <input type="date" class="lms-facet form-control col-9 border-0" style="height: 1.25em; font-size: small;" id="start-time" name="startTime" value="">
                           </div>
                         </li>
                         <li>
-                          <div class="form-group row pr-3 pl-1 my-0">
-                            <label for="end-time" class="col-3">[% 'To' | gettext %]</label>
-                            <input type="date" class="lms-facet form-control col-9" id="end-time" name="endTime" value="">
+                          <div class="form-group row pr-3 pl-1 my-0 align-items-center" style="height: 1.5em;">
+                            <label for="end-time" class="col-3 my-0">[% 'To' | gettext %]</label>
+                            <input type="date" class="lms-facet form-control col-9 border-0" style="height: 1.25em; font-size: small;" id="end-time" name="endTime" value="">
                           </div>
                         </li>
                       </ul>
@@ -132,9 +132,9 @@
                       <h3>[% 'Age' | gettext %]</h3>
                       <ul>
                         <li>
-                          <div class="row row pr-3 pl-1 my-0">
-                            <output class="col-3">99</output>
-                            <input type="range" class="lms-facet col-9" name="max_age" min="0" max="99" value="99" step="1">
+                          <div class="row pr-3 pl-1 my-0">
+                            <output id="max-age-output" class="col-3">&infin;</output>
+                            <input type="range" class="lms-facet col-9" id="max_age" name="max_age" min="0" max="120" value="120" step="1">
                           </div>
                         </li>
                       </ul>
@@ -215,13 +215,18 @@
 [% BLOCK jsinclude %]
 
   <script>
-    const resetFilterButton = document.getElementById('reset-filter');
-    const { LMSEvents } = EventManagementBundle;
+    const { LMSEvents, updateRangeOutput } = EventManagementBundle;
     const lmsEvents = new LMSEvents({
       events: document.querySelectorAll('.lms-event'),
       facets: document.querySelectorAll('.lms-facet'),
     });
     lmsEvents.init();
+
+    const rangeInput = document.getElementById('max_age');
+    const rangeOutput = document.getElementById('max-age-output');
+
+    const resetButton = document.getElementById('reset-filter');
+    resetButton.disabled = false;
   </script>
 
 [% END %]

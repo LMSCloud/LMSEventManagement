@@ -4,6 +4,7 @@
  */
 
 import LMSEvent from './LMSEvent';
+import { updateRangeOutput } from './Utils';
 
 export default class LMSEvents {
   constructor({ events, facets }) {
@@ -18,10 +19,18 @@ export default class LMSEvents {
       this.lmsEventsArray.push(new LMSEvent({ element }));
     });
 
-    this.checkboxFacets = Array.from(this.facets).filter((facet) => facet.type === 'checkbox');
+    const facets = Array.from(this.facets);
 
-    this.facets.forEach((facet) => {
+    this.checkboxFacets = facets.filter((facet) => facet.type === 'checkbox');
+
+    this.checkboxFacets.forEach((facet) => {
       facet.addEventListener('change', (e) => this.handleCheckboxes(e));
+    });
+
+    this.rangeFacets = facets.filter((facet) => facet.type === 'range');
+
+    this.rangeFacets.forEach((facet) => {
+      facet.addEventListener('change', (e) => this.handleAgeRange(e));
     });
   }
 
@@ -39,16 +48,16 @@ export default class LMSEvents {
     if (checked) {
       this.getNonSelectedEvents({ name, value }).forEach((lmsEvent) => {
         lmsEvent.addFilter(name);
-        this.updateView();
       });
+      this.updateView();
       return;
     }
 
     if (!checked) {
       this.getSelectedEvents({ name, value }).forEach((lmsEvent) => {
         lmsEvent.removeFilter(name);
-        this.updateView();
       });
+      this.updateView();
     }
   }
 
@@ -56,9 +65,31 @@ export default class LMSEvents {
 
   // }
 
-  // handleAgeSlider() {
+  handleAgeRange(e) {
+    let { name } = e.target;
+    const { value } = e.target;
+    const rangeOutput = e.target.previousElementSibling;
 
-  // }
+    name = name
+      .split('_')
+      .reduce(
+        (accumulator, substring, index) => (index === 0
+          ? `${accumulator}${substring}`
+          : `${accumulator}${substring.charAt(0).toUpperCase()}${substring.slice(1)}`),
+        '',
+      );
+
+    updateRangeOutput({ rangeInput: e.target, rangeOutput });
+
+    this.lmsEventsArray.forEach((lmsEvent) => lmsEvent.removeFilter(name));
+
+    /** Normally you'd just use >= but I think it's more expressive to say NOT <= */
+    this.lmsEventsArray.filter((lmsEvent) => !(lmsEvent.maxAge <= parseInt(value, 10)))
+      .forEach((lmsEvent) => {
+        lmsEvent.addFilter(name);
+      });
+    this.updateView();
+  }
 
   updateView() {
     let checkedCheckboxFacets = this.checkboxFacets
@@ -74,12 +105,16 @@ export default class LMSEvents {
       return accumulator.set(name, [value]);
     }, new Map()).entries()]
       .map(([name, values]) => ({ name, values }));
+
+    const activeRangeInputs = this.rangeFacets
+      .filter((rangeFacet) => rangeFacet.value !== '120');
+
     this.lmsEventsArray.forEach((lmsEvent) => {
-      if (!checkedCheckboxFacets.length) { lmsEvent.show(); return; }
+      if (!checkedCheckboxFacets.length && !activeRangeInputs.length) { lmsEvent.show(); return; }
       if (checkedCheckboxFacets.every((checkedCheckboxFacet) => {
         const { name, values } = checkedCheckboxFacet;
         return values.some((value) => value === lmsEvent[name]);
-      })) { lmsEvent.show(); return; }
+      }) && !lmsEvent.getFilters().includes('maxAge')) { lmsEvent.show(); return; }
       lmsEvent.hide();
     });
   }
