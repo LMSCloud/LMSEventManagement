@@ -83,11 +83,14 @@ export default class LMSEvents {
 
     this.lmsEventsArray.forEach((lmsEvent) => lmsEvent.removeFilter(name));
 
-    /** Normally you'd just use >= but I think it's more expressive to say NOT <= */
-    this.lmsEventsArray.filter((lmsEvent) => !(lmsEvent.maxAge <= parseInt(value, 10)))
-      .forEach((lmsEvent) => {
-        lmsEvent.addFilter(name);
-      });
+    if (value !== '120') {
+      /** Normally you'd just use >= but in this case I think it's more expressive to say NOT <=
+       *  because we want to filter items that have a max age BIGGER than our value */
+      this.lmsEventsArray.filter((lmsEvent) => !(lmsEvent.maxAge <= parseInt(value, 10)))
+        .forEach((lmsEvent) => {
+          lmsEvent.addFilter(name);
+        });
+    }
     this.updateView();
   }
 
@@ -106,6 +109,7 @@ export default class LMSEvents {
     }, new Map()).entries()]
       .map(([name, values]) => ({ name, values }));
 
+    /** Needs to change if we ever get more range inputs */
     const activeRangeInputs = this.rangeFacets
       .filter((rangeFacet) => rangeFacet.value !== '120');
 

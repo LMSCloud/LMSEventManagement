@@ -174,26 +174,31 @@
       const { value } = e.target;
       const rangeOutput = e.target.previousElementSibling;
 
-      console.log(name, value);
-
-      name = name.split('_').reduce((accumulator, substring, index) => (index === 0 ? `${accumulator}${substring}` : `${accumulator}${substring.charAt(0).toUpperCase()}${substring.slice(1)}`), '');
-
-      console.log(name);
+      name = name
+        .split('_')
+        .reduce(
+          (accumulator, substring, index) => (index === 0
+            ? `${accumulator}${substring}`
+            : `${accumulator}${substring.charAt(0).toUpperCase()}${substring.slice(1)}`),
+          '',
+        );
 
       updateRangeOutput({ rangeInput: e.target, rangeOutput });
 
       this.lmsEventsArray.forEach((lmsEvent) => lmsEvent.removeFilter(name));
 
-      /** Normally you'd just use >= but I think it's more expressive to say NOT <= */
-      this.lmsEventsArray.filter((lmsEvent) => !(lmsEvent.maxAge <= parseInt(value, 10)))
-        .forEach((lmsEvent) => {
-          lmsEvent.addFilter(name);
-        });
+      if (value !== '120') {
+        /** Normally you'd just use >= but in this case I think it's more expressive to say NOT <=
+         *  because we want to filter items that have a max age BIGGER than our value */
+        this.lmsEventsArray.filter((lmsEvent) => !(lmsEvent.maxAge <= parseInt(value, 10)))
+          .forEach((lmsEvent) => {
+            lmsEvent.addFilter(name);
+          });
+      }
       this.updateView();
     }
 
     updateView() {
-      console.log('update view');
       let checkedCheckboxFacets = this.checkboxFacets
         .filter((checkboxFacet) => checkboxFacet.checked)
         .map((checkedCheckboxFacet) => (
@@ -208,6 +213,7 @@
       }, new Map()).entries()]
         .map(([name, values]) => ({ name, values }));
 
+      /** Needs to change if we ever get more range inputs */
       const activeRangeInputs = this.rangeFacets
         .filter((rangeFacet) => rangeFacet.value !== '120');
 
@@ -219,6 +225,7 @@
         }) && !lmsEvent.getFilters().includes('maxAge')) { lmsEvent.show(); return; }
         lmsEvent.hide();
       });
+      console.log(this.lmsEventsArray);
     }
   }
 
