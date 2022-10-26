@@ -20,16 +20,12 @@
 
 <div class="main">
   [% DEFAULT op = 'undef' %]
-  <ul class="breadcrumb">
-    <li>
-      <a href="/cgi-bin/koha/opac-main.pl">[% 'Home' | gettext %]</a>
-      <span class="divider">&rsaquo;</span>
-      <span>&nbsp;</span>
-    </li>
-    <li>
-      <a href="#">[% 'Upcoming events' | gettext %]</a>
-    </li>
-  </ul>
+  
+  [% WRAPPER "$PLUGIN_DIR/wrappers/breadcrumbs.tt"
+     breadcrumbs = [ gtx.gettext('Upcoming Events'), ]
+  %]
+  [% END %]
+
   <div class="container-fluid">
     <div class="row-fluid">
       <div class="span3">
@@ -54,7 +50,7 @@
                               <div class="form-check">
                                 <input class="lms-facet form-check-input" 
                                   type="checkbox" 
-                                  value="[% target_group.name %]" 
+                                  value="[% target_group.id %]" 
                                   id="[% target_group.target_group %]"
                                   name="targetGroup"
                                 >
@@ -77,7 +73,7 @@
                               <div class="form-check">
                                 <input class="lms-facet form-check-input" 
                                   type="checkbox" 
-                                  value="[% event_type.name %]" 
+                                  value="[% event_type.id %]" 
                                   id="[% event_type.event_type %]"
                                   name="eventType"
                                 >
@@ -100,7 +96,7 @@
                               <div class="form-check">
                                 <input class="lms-facet form-check-input" 
                                   type="checkbox" 
-                                  value="[% branch.branchname %]" 
+                                  value="[% branch.branchcode %]" 
                                   id="[% branch.branch %]"
                                   name="branch"
                                 >
@@ -181,7 +177,7 @@
                     data-event-type="[% event.event_type %]"
                     data-branch="[% event.branch %]"
                     data-max-age="[% event.max_age %]"
-                    data-public-reg="[% event.open_registration %]"
+                    data-open-registration="[% event.open_registration %]"
                     data-start-time="[% event.start_time %]"
                     data-end-time="[% event.end_time %]"
                     data-filtered-by=""

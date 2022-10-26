@@ -2,13 +2,13 @@ export default class LMSEvent {
   constructor({ element }) {
     this.elementRef = element;
     const {
-      targetGroup, eventType, branch, maxAge, publicReg, startTime, endTime, filteredBy,
+      targetGroup, eventType, branch, maxAge, openRegistration, startTime, endTime, filteredBy,
     } = element.dataset;
     this.targetGroup = targetGroup;
     this.eventType = eventType;
     this.branch = branch;
     this.maxAge = maxAge;
-    this.publicReg = publicReg;
+    this.openRegistration = openRegistration;
     this.startTime = startTime;
     this.endTime = endTime;
     this.filteredBy = filteredBy;

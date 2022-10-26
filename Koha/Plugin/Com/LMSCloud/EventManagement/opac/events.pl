@@ -79,6 +79,7 @@ my $responses = {
             used_target_groups => get_used_target_groups(),
             used_event_types   => get_used_event_types(),
             used_branches      => get_used_branches(),
+            PLUGIN_DIR         => $plugin_dir,
         );
 
         return ( $template, $borrowernumber, $cookie );
@@ -96,9 +97,10 @@ my $responses = {
         );
 
         $template->param(
-            language => C4::Languages::getlanguage($cgi) || 'en',
-            mbf_path => abs_path('../translations'),
-            event    => get_event( scalar $cgi->param('id') ),
+            language   => C4::Languages::getlanguage($cgi) || 'en',
+            mbf_path   => abs_path('../translations'),
+            event      => get_event( scalar $cgi->param('id') ),
+            PLUGIN_DIR => $plugin_dir,
         );
 
         return ( $template, $borrowernumber, $cookie );
@@ -113,10 +115,10 @@ sub get_used_target_groups {
     my $target_groups_table = 'koha_plugin_com_lmscloud_eventmanagement_target_groups';
 
     my $query = <<~"QUERY";
-		SELECT events.target_group, target_groups.name, count(*) AS count  
+		SELECT events.target_group, target_groups.id, target_groups.name, count(*) AS count  
 		FROM $events_table events, $target_groups_table target_groups 
 		WHERE events.target_group = target_groups.id
-		GROUP BY events.target_group, target_groups.name
+		GROUP BY events.target_group, target_groups.id, target_groups.name
 	QUERY
 
     my $dbh = C4::Context->dbh;
@@ -137,10 +139,10 @@ sub get_used_event_types {
     my $event_types_table = 'koha_plugin_com_lmscloud_eventmanagement_event_types';
 
     my $query = <<~"QUERY";
-		SELECT events.event_type, event_types.name, count(*) AS count 
+		SELECT events.event_type, event_types.id, event_types.name, count(*) AS count 
 		FROM $events_table events, $event_types_table event_types 
 		WHERE events.event_type = event_types.id
-		GROUP BY events.event_type, event_types.name
+		GROUP BY events.event_type, event_types.id, event_types.name
 	QUERY
 
     my $dbh = C4::Context->dbh;
@@ -160,10 +162,10 @@ sub get_used_branches {
     my $events_table = 'koha_plugin_com_lmscloud_eventmanagement_events';
 
     my $query = <<~"QUERY";
-		SELECT events.branch, branchname, count(*) AS count 
+		SELECT events.branch, branchcode, branchname, count(*) AS count 
 		FROM $events_table events, branches b 
 		WHERE events.branch = b.branchcode
-		GROUP BY events.branch, branchname
+		GROUP BY events.branch, branchcode, branchname
 	QUERY
 
     my $dbh = C4::Context->dbh;
