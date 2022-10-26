@@ -30,15 +30,11 @@ export default class LMSEvents {
   }
 
   getNonSelectedEvents({ name, value }) {
-    console.log(this.lmsEventsArray);
-    console.log(this.lmsEventsArray.filter((lmsEvent) => lmsEvent[name] === value));
     return this.lmsEventsArray.filter((lmsEvent) => lmsEvent[name] !== value);
   }
 
   handleCheckboxes(e) {
     const { name, checked, value } = e.target;
-
-    console.log(checked, name, value);
 
     if (checked) {
       this.getNonSelectedEvents({ name, value }).forEach((lmsEvent) => {
