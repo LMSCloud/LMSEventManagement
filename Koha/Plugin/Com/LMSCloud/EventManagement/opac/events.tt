@@ -145,8 +145,8 @@
                       <ul>
                         <li>
                           <div class="custom-control custom-switch">
-                            <input type="checkbox" class="lms-facet custom-control-input" id="public-reg" name="publicReg">
-                            <label class="custom-control-label" for="public-reg">
+                            <input type="checkbox" class="lms-facet custom-control-input" id="open_registration" name="open_registration" value="open_registration">
+                            <label class="custom-control-label" for="open_registration">
                               [% 'Registration without library card' | gettext %]
                             </label>
                           </div>
@@ -215,15 +215,12 @@
 [% BLOCK jsinclude %]
 
   <script>
-    const { LMSEvents, updateRangeOutput } = EventManagementBundle;
-    const lmsEvents = new LMSEvents({
-      events: document.querySelectorAll('.lms-event'),
-      facets: document.querySelectorAll('.lms-facet'),
-    });
-    lmsEvents.init();
+    const { LMSEventsFilter, updateRangeOutput } = EventManagementBundle;
 
     const rangeInput = document.getElementById('max_age');
     const rangeOutput = document.getElementById('max-age-output');
+
+    rangeInput.addEventListener('change', () => { updateRangeOutput({ rangeInput, rangeOutput }) });
 
     const resetButton = document.getElementById('reset-filter');
     resetButton.disabled = false;

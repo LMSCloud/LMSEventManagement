@@ -1,0 +1,129 @@
+{
+  "/lms_events": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::EventsController#get",
+      "operationId": "GetEvents",
+      "tags": ["events"],
+      "parameters": [
+        {
+          "name": "name",
+          "in": "query",
+          "description": "Title of the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "event_type",
+          "in": "query",
+          "description": "Type of the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "branch",
+          "in": "query",
+          "description": "Branch responsible for the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "target_group",
+          "in": "query",
+          "description": "Adressed target group of the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "max_age",
+          "in": "query",
+          "description": "Maximum required age for the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "open_registration",
+          "in": "query",
+          "description": "Whether the event is open for registration of non-patrons",
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "fee",
+          "in": "query",
+          "description": "Fee for the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "location",
+          "in": "query",
+          "description": "Location of the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "start_time",
+          "in": "query",
+          "description": "Starting time of the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "end_time",
+          "in": "query",
+          "description": "Ending time of the event",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Array of events",
+          "schema": {
+            "type": "object",
+            "properties": {
+              // continue here
+            }
+          }
+        },
+        "404": {
+          "description": "An error occured",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "borrowers": "1"
+        }
+      }
+    }
+  }
+}
+
+// `id` TINYINT(16) NOT NULL AUTO_INCREMENT,
+// `name` VARCHAR(255) DEFAULT '' COMMENT 'alphanumeric identifier, e.g. name of the event',
+// `event_type` VARCHAR(16) DEFAULT '' COMMENT 'the event type id from the event types table',
+// `branch` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT 'a branch id from the branches table',
+// `target_group` VARCHAR(16) DEFAULT '' COMMENT 'a target group id from the target groups table',
+// `max_age` TINYINT unsigned DEFAULT NULL COMMENT 'maximum age requirement',
+// `min_age` TINYINT unsigned DEFAULT NULL COMMENT 'minimum age requirement',
+// `open_registration` TINYINT(1) DEFAULT '0' COMMENT 'is the registration to non-patrons via email',
+// `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'maximum allowed number of participants',
+// `fee` SMALLINT unsigned DEFAULT NULL COMMENT 'fee for an event',
+// `location` VARCHAR(16) DEFAULT '' COMMENT 'id of a location from the locations table',
+// `description` TEXT(65535) DEFAULT '' COMMENT 'whats happening',
+// `image` INT(10) DEFAULT NULL COMMENT 'image from kohas image management',
+// `start_time` DATETIME DEFAULT NULL COMMENT 'date and time an event begins on',
+// `end_time` DATETIME DEFAULT NULL COMMENT 'date and time an event ends on',
+// `link_to_registration` TEXT(65535) DEFAULT '' COMMENT 'link to a local or an external page with details',
