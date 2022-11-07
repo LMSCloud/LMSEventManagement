@@ -23,7 +23,6 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use C4::Context;
 use Scalar::Util qw(looks_like_number);
-use List::Util qw(all);
 use Try::Tiny;
 
 our $VERSION = '1.0.0';
