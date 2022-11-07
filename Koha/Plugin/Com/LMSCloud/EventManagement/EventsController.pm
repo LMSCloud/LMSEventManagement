@@ -22,7 +22,7 @@ use 5.032;
 use Mojo::Base 'Mojolicious::Controller';
 
 use C4::Context;
-use Scalar::Util;
+use Scalar::Util qw(looks_like_number);
 use Try::Tiny;
 
 our $VERSION = '1.0.0';
@@ -55,29 +55,23 @@ sub get {
         end_time          => $c->validation->param('end_time'),
     };
 
-    # Check whether we got an empty hashref
-    my @defined_params;
-    foreach ( $params->%* ) {
-        push @defined_params, $_ if defined;
-    }
-
     return try {
         my $dbh   = C4::Context->dbh;
-        my $query = 'SELECT * FROM koha_plugin_com_lmscloud_eventmanagement_events AS events' . _get_conditions( $params, @defined_params );
+        my $query = 'SELECT * FROM koha_plugin_com_lmscloud_eventmanagement_events AS events' . _get_clause_conditions($params);
 
         my $sth    = $dbh->prepare($query);
         my $result = $sth->execute();
-
-        my @events;
-        while ( my $row = $sth->fetchrow_hashref() ) {
-            push @events, $row;
-        }
 
         if ( !$result ) {
             return $c->render(
                 status  => 404,
                 openapi => { error => 'Not found' }
             );
+        }
+
+        my @events;
+        while ( my $row = $sth->fetchrow_hashref() ) {
+            push @events, $row;
         }
 
         return $c->render(
@@ -90,22 +84,35 @@ sub get {
     };
 }
 
-sub _get_conditions {
-    my ( $params, @defined_params ) = @_;
+sub _get_clause_conditions {
+    my ($params) = @_;
 
-    if ( !@defined_params ) { return q{} }
+    # Filter for submitted params (ugly af imo)
+    my $submitted_params = {};
+    for my $key ( keys $params->%* ) {
+        if ( defined $params->{$key} ) {
+            $submitted_params->{$key} = $params->{$key};
+        }
+    }
+
+    my $submitted_params_quantity = scalar keys %{$submitted_params};
+    my $loop_counter              = 0;
 
     my $result;
-    for my ( $key, $value ) ($params){
-        $result
-            .= $value
-        ? qq{ events.$key = } . looks_like_number($value)
-                ? $value
-                : qq{'$value'} . q{AND} if !last
-        : q{};
-    };
+    for my $key ( keys $params->%* ) {
+        my $value = $submitted_params->{$key};
 
-    return $result;
+        if ( !( defined $value ) ) { next; }
+
+        $result .= qq{ events.$key = } . ( looks_like_number($value) ? qq{ $value } : qq{ '$value' } );
+
+        $loop_counter += 1;
+
+        if ( !( $loop_counter == $submitted_params_quantity ) ) { $result .= q{AND} }
+
+    }
+
+    return $result ? qq{ WHERE $result } : q{};
 }
 
 1;
