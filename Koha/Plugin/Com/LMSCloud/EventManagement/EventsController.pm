@@ -87,40 +87,33 @@ sub get {
 sub _get_clause_conditions {
     my ($params) = @_;
 
+    my @result;
     for my $key ( keys $params->%* ) {
-        if ( !( defined $params->{$key} ) ) {
-            delete $params->{$key};
+        if ( defined $params->{$key} ) {
+            push @result, _get_clause_condition( { key => $key, value => $params->{$key} } );
         }
     }
 
-    my $submitted_params_quantity = scalar keys %{$params};
-    my $loop_counter              = 0;
-    my $timeframe_is_defined      = ( defined $params->{'start_time'} && defined $params->{'end_time'} );
-
-    my $result;
-    for my $key ( keys $params->%* ) {
-        my $value = $params->{$key};
-
-        $result .= _get_clause_condition( { key => $key, value => $value } );
-
-        $loop_counter += 1;
-        if ( !( $loop_counter == $submitted_params_quantity ) ) { $result .= q{AND} }
-
+    if ( defined $params->{'start_time'} && defined $params->{'end_time'} ) {
+        push @result, qq{ events.start_time BETWEEN '$params->{'start_time'}' AND '$params->{'end_time'}' };
     }
 
-    $result .= $timeframe_is_defined ? qq{ AND events.start_time BETWEEN '$params->{'start_time'}' AND '$params->{'end_time'}' } : q{};
-
-    return $result ? qq{ WHERE $result } : q{};
+    return ( scalar grep {$_} @result ) ? q{ WHERE } . join 'AND', grep {$_} @result : q{};
 }
 
 sub _get_clause_condition {
     my ($args) = @_;
+
+    if ( $args->{'key'} eq q{start_time} || $args->{'key'} eq q{end_time} ) {
+        return q{};
+    }
 
     if ( $args->{'key'} eq q{fee} || $args->{'key'} eq q{max_age} ) {
         return qq{ events.$args->{'key'} <= $args->{'value'} };
     }
 
     return qq{ events.$args->{'key'} = } . ( looks_like_number( $args->{'value'} ) ? qq{ $args->{'value'} } : qq{ '$args->{'value'}' } );
+
 }
 
 1;
