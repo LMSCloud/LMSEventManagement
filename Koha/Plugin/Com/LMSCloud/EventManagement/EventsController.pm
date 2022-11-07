@@ -23,6 +23,7 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use C4::Context;
 use Scalar::Util qw(looks_like_number);
+use List::Util qw(all);
 use Try::Tiny;
 
 our $VERSION = '1.0.0';
@@ -62,16 +63,16 @@ sub get {
         my $sth    = $dbh->prepare($query);
         my $result = $sth->execute();
 
-        if ( !$result ) {
-            return $c->render(
-                status  => 404,
-                openapi => { error => 'Not found' }
-            );
-        }
-
         my @events;
         while ( my $row = $sth->fetchrow_hashref() ) {
             push @events, $row;
+        }
+
+        if ( !( scalar @events ) ) {
+            return $c->render(
+                status  => 404,
+                openapi => { error => 'Not Found' }
+            );
         }
 
         return $c->render(
@@ -87,32 +88,40 @@ sub get {
 sub _get_clause_conditions {
     my ($params) = @_;
 
-    # Filter for submitted params (ugly af imo)
-    my $submitted_params = {};
     for my $key ( keys $params->%* ) {
-        if ( defined $params->{$key} ) {
-            $submitted_params->{$key} = $params->{$key};
+        if ( !( defined $params->{$key} ) ) {
+            delete $params->{$key};
         }
     }
 
-    my $submitted_params_quantity = scalar keys %{$submitted_params};
+    my $submitted_params_quantity = scalar keys %{$params};
     my $loop_counter              = 0;
+    my $timeframe_is_defined      = ( defined $params->{'start_time'} && defined $params->{'end_time'} );
 
     my $result;
     for my $key ( keys $params->%* ) {
-        my $value = $submitted_params->{$key};
+        my $value = $params->{$key};
 
-        if ( !( defined $value ) ) { next; }
-
-        $result .= qq{ events.$key = } . ( looks_like_number($value) ? qq{ $value } : qq{ '$value' } );
+        $result .= _get_clause_condition( { key => $key, value => $value } );
 
         $loop_counter += 1;
-
         if ( !( $loop_counter == $submitted_params_quantity ) ) { $result .= q{AND} }
 
     }
 
+    $result .= $timeframe_is_defined ? qq{ AND events.start_time BETWEEN '$params->{'start_time'}' AND '$params->{'end_time'}' } : q{};
+
     return $result ? qq{ WHERE $result } : q{};
+}
+
+sub _get_clause_condition {
+    my ($args) = @_;
+
+    if ( $args->{'key'} eq q{fee} || $args->{'key'} eq q{max_age} ) {
+        return qq{ events.$args->{'key'} <= $args->{'value'} };
+    }
+
+    return qq{ events.$args->{'key'} = } . ( looks_like_number( $args->{'value'} ) ? qq{ $args->{'value'} } : qq{ '$args->{'value'}' } );
 }
 
 1;
