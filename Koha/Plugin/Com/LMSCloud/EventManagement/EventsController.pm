@@ -22,7 +22,7 @@ use 5.032;
 use Mojo::Base 'Mojolicious::Controller';
 
 use C4::Context;
-use Scalar::Util qw(looks_like_number);
+use Scalar::Util qw(looks_like_number reftype);
 use Try::Tiny;
 
 our $VERSION = '1.0.0';
@@ -44,13 +44,13 @@ sub get {
 
     my $params = {
         name              => $c->validation->param('name'),
-        event_type        => $c->validation->param('event_type'),
-        branch            => $c->validation->param('branch'),
-        target_group      => $c->validation->param('target_group'),
+        event_type        => ( $c->validation->param('event_type')   || $c->validation->every_param('event_types') ),
+        branch            => ( $c->validation->param('branch')       || $c->validation->every_param('branches') ),
+        target_group      => ( $c->validation->param('target_group') || $c->validation->every_param('target_groups') ),
         max_age           => $c->validation->param('max_age'),
         open_registration => $c->validation->param('open_registration'),
         fee               => $c->validation->param('fee'),
-        location          => $c->validation->param('location'),
+        location          => ( $c->validation->param('location') || $c->validation->every_param('locations') ),
         start_time        => $c->validation->param('start_time'),
         end_time          => $c->validation->param('end_time'),
     };
@@ -110,6 +110,12 @@ sub _get_clause_condition {
 
     if ( $args->{'key'} eq q{fee} || $args->{'key'} eq q{max_age} ) {
         return qq{ events.$args->{'key'} <= $args->{'value'} };
+    }
+
+    if ( reftype( $args->{'value'} ) eq 'ARRAY' ) {
+        return scalar $args->{'value'} > 0
+            ? join 'OR', map { qq{ events.$args->{'key'} = } . ( looks_like_number($_) ? qq{ $_ } : qq{ '$_' } ) } @{ $args->{'value'} }
+            : q{};
     }
 
     return qq{ events.$args->{'key'} = } . ( looks_like_number( $args->{'value'} ) ? qq{ $args->{'value'} } : qq{ '$args->{'value'}' } );

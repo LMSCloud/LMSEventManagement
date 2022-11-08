@@ -19,6 +19,16 @@
           "type": "string"
         },
         {
+          "name": "event_types",
+          "in": "query",
+          "description": "Array of multiple event types",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
           "name": "branch",
           "in": "query",
           "description": "Branch responsible for the event",
@@ -26,11 +36,31 @@
           "type": "string"
         },
         {
+          "name": "branches",
+          "in": "query",
+          "description": "Array of multiple branches",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
           "name": "target_group",
           "in": "query",
           "description": "Adressed target group of the event",
           "required": false,
           "type": "string"
+        },
+        {
+          "name": "target_groups",
+          "in": "query",
+          "description": "Array of multiple target groups",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         {
           "name": "max_age",
@@ -59,6 +89,16 @@
           "description": "Location of the event",
           "required": false,
           "type": "string"
+        },
+        {
+          "name": "locations",
+          "in": "query",
+          "description": "Array of multiple locations",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         {
           "name": "start_time",

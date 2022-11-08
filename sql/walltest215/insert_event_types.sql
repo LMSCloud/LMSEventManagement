@@ -13,9 +13,9 @@ INSERT INTO koha_plugin_com_lmscloud_eventmanagement_event_types (
 VALUES (
         'LESUNG',
         'Lesung',
-        'CPL',
+        'Zentrale',
         'ERWACHSENE',
-        255, 
+        255,
         0,
         1,
         50,
@@ -25,7 +25,7 @@ VALUES (
     (
         'MUSIK',
         'Musik',
-        'TPL',
+        'Win',
         'ERWACHSENE',
         255,
         0,
@@ -37,7 +37,7 @@ VALUES (
     (
         'THEATER',
         'Theater',
-        'UPL',
+        'Vog',
         'ERWACHSENE',
         255,
         0,
@@ -49,7 +49,7 @@ VALUES (
     (
         'SONST',
         'Sonstiges',
-        'SPL',
+        'Rosn',
         'ERWACHSENE',
         255,
         0,

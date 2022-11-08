@@ -1061,7 +1061,7 @@ sub install() {
                 `location` VARCHAR(16) DEFAULT '' COMMENT 'id of a location from the locations table',
                 PRIMARY KEY (`id`),
                 FOREIGN KEY (`branch`) REFERENCES branches(`branchcode`),
-                FOREIGN KEY (`target_group`) REFERENCES $target_groups_table(`id`),
+                FOREIGN KEY (`target_group`) REFERENCES $target_groups_table(`id`)
             ) ENGINE = INNODB;
         STATEMENT
         <<~"STATEMENT",
@@ -1085,7 +1085,7 @@ sub install() {
                 PRIMARY KEY (`id`),
                 FOREIGN KEY (`branch`) REFERENCES branches(`branchcode`),
                 FOREIGN KEY (`event_type`) REFERENCES $event_types_table(`id`),
-                FOREIGN KEY (`target_group`) REFERENCES $target_groups_table(`id`),
+                FOREIGN KEY (`target_group`) REFERENCES $target_groups_table(`id`)
             ) ENGINE=InnoDB;
         STATEMENT
     );
