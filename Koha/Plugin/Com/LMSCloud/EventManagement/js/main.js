@@ -7,10 +7,7 @@
   const template = document.createElement('template');
   // eslint-disable-next-line no-undef
   template.innerHTML = `
-  <div
-    class="lms-event card"
-    style="max-width: 18rem;"
-  >
+  <div class="lms-event card" style="max-width: 18rem;">
     <slot name="event-id">
       <slot name="event-image"></slot>
     </slot>
@@ -32,6 +29,26 @@
     }
   }
 
+  class Observable {
+    constructor() {
+      this.observers = [];
+    }
+
+    subscribe(func) {
+      this.observers.push(func);
+    }
+
+    unsubscribe(func) {
+      this.observers = this.observers.filter((observer) => observer !== func);
+    }
+
+    notify(data) {
+      this.observers.forEach((observer) => observer(data));
+    }
+  }
+
+  var Observable$1 = new Observable();
+
   class LmseEventsFilter {
     constructor(facets) {
       this.facets = facets;
@@ -41,26 +58,33 @@
     init() {
       this.facets.forEach((facet) => {
         if (facet.type === 'checkbox') {
-          this.filters[facet.value] = facet.checked;
+          if (!Object.prototype.hasOwnProperty.call(this.filters, facet.name)) {
+            this.filters[facet.name] = {};
+          }
+
+          this.filters[facet.name][facet.value] = facet.checked;
+
           facet.addEventListener('change', (e) => {
-            this.filters[e.target.value] = e.target.checked;
-            console.log(this.filters);
+            this.filters[e.target.name][e.target.value] = e.target.checked;
+            Observable$1.notify(this.getFilters());
           });
         }
 
         if (facet.type === 'date') {
           this.filters[facet.name] = facet.value;
+
           facet.addEventListener('change', (e) => {
             this.filters[e.target.name] = e.target.value;
-            console.log(this.filters);
+            Observable$1.notify(this.getFilters());
           });
         }
 
         if (facet.type === 'range') {
           this.filters[facet.name] = parseInt(facet.value, 10);
+
           facet.addEventListener('change', (e) => {
             this.filters[e.target.name] = parseInt(e.target.value, 10);
-            console.log(this.filters);
+            Observable$1.notify(this.getFilters());
           });
         }
       });
@@ -68,6 +92,24 @@
 
     getFilters() {
       return this.filters;
+    }
+  }
+
+  class LmseEventsView {
+    constructor({ entryPoint, facets }) {
+      this.entryPoint = entryPoint;
+      this.facets = facets;
+      this.lmseEventsFilter = new LmseEventsFilter(this.facets);
+      this.Observable = Observable$1;
+    }
+
+    init() {
+      this.lmseEventsFilter.init();
+      this.Observable.subscribe(this.updateView);
+    }
+
+    updateView(filters) {
+      console.log(filters);
     }
   }
 
@@ -88,17 +130,17 @@
       uploadedFileIdInputRef.value = result.fileid;
 
       fileUploadHintRef.innerHTML = `
-        <i class="fa fa-check" aria-hidden="true">
-        </i><span>&nbsp;Upload succeeded</span>
-    `;
+          <i class="fa fa-check" aria-hidden="true">
+          </i><span>&nbsp;Upload succeeded</span>
+      `;
 
       return;
     }
 
     if (result.status === 'failed') {
       /** We briefly check whether we've got an already existing file ('UPLERR_ALREADY_EXISTS')
-       *   and assign that id to the image form field to preserve the existing state of the event.
-       */
+         *   and assign that id to the image form field to preserve the existing state of the event.
+         */
       const errors = result.errors
         ? Object.entries(result.errors).reduce(
           (accumulator, [fileName, { code }]) => `${accumulator}${accumulator ? '\n' : ''}${fileName}: ${code}`,
@@ -112,9 +154,9 @@
       }
 
       fileUploadHintRef.innerHTML = `
-        <i class="fa fa-exclamation" aria-hidden="true"></i>
-        <span>&nbsp;Upload had errors: ${errors}</span>
-    `;
+          <i class="fa fa-exclamation" aria-hidden="true"></i>
+          <span>&nbsp;Upload had errors: ${errors}</span>
+      `;
     }
   }
 
@@ -127,7 +169,7 @@
   customElementRegistry.define('lmse-event', LmseEventCard);
 
   var main = {
-    LmseEventsFilter, uploadImage, updateRangeOutput,
+    LmseEventsView, uploadImage, updateRangeOutput,
   };
 
   return main;

@@ -1,4 +1,4 @@
-export async function uploadImage(e, { uploadedFileIdInput, fileUploadHint }) {
+export default async function uploadImage(e, { uploadedFileIdInput, fileUploadHint }) {
   const uploadedFileIdInputRef = uploadedFileIdInput;
   const fileUploadHintRef = fileUploadHint;
 
@@ -15,17 +15,17 @@ export async function uploadImage(e, { uploadedFileIdInput, fileUploadHint }) {
     uploadedFileIdInputRef.value = result.fileid;
 
     fileUploadHintRef.innerHTML = `
-        <i class="fa fa-check" aria-hidden="true">
-        </i><span>&nbsp;Upload succeeded</span>
-    `;
+          <i class="fa fa-check" aria-hidden="true">
+          </i><span>&nbsp;Upload succeeded</span>
+      `;
 
     return;
   }
 
   if (result.status === 'failed') {
     /** We briefly check whether we've got an already existing file ('UPLERR_ALREADY_EXISTS')
-     *   and assign that id to the image form field to preserve the existing state of the event.
-     */
+       *   and assign that id to the image form field to preserve the existing state of the event.
+       */
     const errors = result.errors
       ? Object.entries(result.errors).reduce(
         (accumulator, [fileName, { code }]) => `${accumulator}${accumulator ? '\n' : ''}${fileName}: ${code}`,
@@ -39,13 +39,8 @@ export async function uploadImage(e, { uploadedFileIdInput, fileUploadHint }) {
     }
 
     fileUploadHintRef.innerHTML = `
-        <i class="fa fa-exclamation" aria-hidden="true"></i>
-        <span>&nbsp;Upload had errors: ${errors}</span>
-    `;
+          <i class="fa fa-exclamation" aria-hidden="true"></i>
+          <span>&nbsp;Upload had errors: ${errors}</span>
+      `;
   }
-}
-
-export function updateRangeOutput({ rangeInput, rangeOutput }) {
-  const rangeOutputRef = rangeOutput;
-  rangeOutputRef.textContent = rangeInput.value === '120' ? '∞' : rangeInput.value;
 }

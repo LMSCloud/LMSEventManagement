@@ -1,10 +1,7 @@
 const template = document.createElement('template');
 // eslint-disable-next-line no-undef
 template.innerHTML = `
-  <div
-    class="lms-event card"
-    style="max-width: 18rem;"
-  >
+  <div class="lms-event card" style="max-width: 18rem;">
     <slot name="event-id">
       <slot name="event-image"></slot>
     </slot>

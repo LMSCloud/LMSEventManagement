@@ -52,7 +52,7 @@
                                   type="checkbox" 
                                   value="[% target_group.id %]" 
                                   id="[% target_group.target_group %]"
-                                  name="targetGroup"
+                                  name="target_group"
                                 >
                                 <label class="form-check-label" for="[% target_group.target_group %]">
                                   [% target_group.name %]
@@ -75,7 +75,7 @@
                                   type="checkbox" 
                                   value="[% event_type.id %]" 
                                   id="[% event_type.event_type %]"
-                                  name="eventType"
+                                  name="event_type"
                                 >
                                 <label class="form-check-label" for="[% event_type.event_type %]">
                                   [% event_type.name %]
@@ -170,34 +170,7 @@
     
             <div class="col-lg-10 order-first order-md-first order-lg-2 maincontent">
               <h3>[% 'Upcoming events' | gettext %]</h3>	
-              <div id="lms-events" class="card-deck text-center mb-3">
-                [% FOREACH event IN events %]
-                  <div class="lms-event card" style="max-width: 18rem;"
-                    data-target-group="[% event.target_group %]"
-                    data-event-type="[% event.event_type %]"
-                    data-branch="[% event.branch %]"
-                    data-max-age="[% event.max_age %]"
-                    data-open-registration="[% event.open_registration %]"
-                    data-start-time="[% event.start_time %]"
-                    data-end-time="[% event.end_time %]"
-                    data-filtered-by=""
-                  >
-                    <a href="/opac-events?op=detail&id=[% event.id %]">
-                      <img src="/lms-event-management/images/[% event.image %]"
-                        class="card-img-top" 
-                        alt="..."
-                        height="210"
-                      >
-                    </a>
-                    <div class="card-body">
-                      <h5 class="card-title">[% event.name %]</h5>
-                      <p class="card-text">
-                        <time datetime="[% event.start_time %]">[% event.start_time %]</time>
-                      </p>
-                    </div>
-                  </div>
-                [% END %] <!-- FOREACH -->
-              </div>						
+              <div id="lms-events" class="card-deck text-center mb-3"></div>						
 
               [% IF recurring_events %]
                 <h3>[% 'Recurring events' | gettext %]</h3>
@@ -215,15 +188,16 @@
 [% BLOCK jsinclude %]
 
   <script>
-    const { LmseEventsFilter, updateRangeOutput } = EventManagementBundle;
+    const { LmseEventsView, updateRangeOutput } = EventManagementBundle;
 
+    const lmsEventsContainer = document.getElementById('lms-events');
     const rangeInput = document.getElementById('max_age');
     const rangeOutput = document.getElementById('max-age-output');
 
     rangeInput.addEventListener('change', () => { updateRangeOutput({ rangeInput, rangeOutput }) });
 
-    const lmseEventsFilter = new LmseEventsFilter(document.querySelectorAll('.lms-facet'));
-    lmseEventsFilter.init();
+    const lmseEventsView = new LmseEventsView({ entryPoint: lmsEventsContainer, facets: document.querySelectorAll('.lms-facet') });
+    lmseEventsView.init();
 
     const resetButton = document.getElementById('reset-filter');
     resetButton.disabled = false;

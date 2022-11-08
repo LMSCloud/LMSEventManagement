@@ -27,15 +27,15 @@ use Try::Tiny;
 
 our $VERSION = '1.0.0';
 
-=head1 Koha::Plugin::FancyPlugin::Controller
+=head1 Koha::Plugin::Com::LMSCloud::EventManagement::EventsController
 
-A class implementing the controller code handling fancy words
+A communication layer between the EventManagement module and the front end
 
 =head2 Class methods
 
 =head3 get
 
-Controller function that handles retrieving a single Koha::FancyWord object
+Handles retrieving events, optionally filtered by query parameters
 
 =cut
 
