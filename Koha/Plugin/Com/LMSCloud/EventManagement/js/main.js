@@ -4,7 +4,35 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.EventManagementBundle = factory());
 })(this, (function () { 'use strict';
 
-  class LMSEventsFilter {
+  const template = document.createElement('template');
+  // eslint-disable-next-line no-undef
+  template.innerHTML = `
+  <div
+    class="lms-event card"
+    style="max-width: 18rem;"
+  >
+    <slot name="event-id">
+      <slot name="event-image"></slot>
+    </slot>
+    <div class="card-body">
+      <slot name="event-name"></slot>
+      <p class="card-text">
+        <slot name="start-time"></slot>
+      </p>
+    </div>
+  </div>
+`;
+
+  class LmseEventCard extends HTMLElement {
+    constructor() {
+      super();
+
+      this.attachShadow({ mode: 'open' });
+      this.shadowRoot.append(template.content.cloneNode(true));
+    }
+  }
+
+  class LmseEventsFilter {
     constructor(facets) {
       this.facets = facets;
       this.filters = {};
@@ -16,7 +44,7 @@
           this.filters[facet.value] = facet.checked;
           facet.addEventListener('change', (e) => {
             this.filters[e.target.value] = e.target.checked;
-            // console.table(this.filters);
+            console.log(this.filters);
           });
         }
 
@@ -24,7 +52,7 @@
           this.filters[facet.name] = facet.value;
           facet.addEventListener('change', (e) => {
             this.filters[e.target.name] = e.target.value;
-            // console.table(this.filters);
+            console.log(this.filters);
           });
         }
 
@@ -32,7 +60,7 @@
           this.filters[facet.name] = parseInt(facet.value, 10);
           facet.addEventListener('change', (e) => {
             this.filters[e.target.name] = parseInt(e.target.value, 10);
-            // console.table(this.filters);
+            console.log(this.filters);
           });
         }
       });
@@ -95,8 +123,11 @@
     rangeOutputRef.textContent = rangeInput.value === '120' ? '∞' : rangeInput.value;
   }
 
+  const customElementRegistry = window.customElements;
+  customElementRegistry.define('lmse-event', LmseEventCard);
+
   var main = {
-    LMSEventsFilter, uploadImage, updateRangeOutput,
+    LmseEventsFilter, uploadImage, updateRangeOutput,
   };
 
   return main;

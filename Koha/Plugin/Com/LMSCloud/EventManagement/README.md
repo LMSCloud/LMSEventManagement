@@ -47,4 +47,4 @@ Assuming koha-testing-docker..
  19    ScriptAlias /opac-events "/var/lib/koha/kohadev/plugins/Koha/Plugin/Com/LMSCloud/EventManagement/opac/events.pl"
  20    Alias /plugin "/var/lib/koha/kohadev/plugins"
  21    Alias /lms-event-management/images "/var/lib/koha/kohadev/uploads/LMSEventManagement/"
- ```
+```

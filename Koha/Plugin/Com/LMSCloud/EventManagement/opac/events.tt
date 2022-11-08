@@ -215,12 +215,15 @@
 [% BLOCK jsinclude %]
 
   <script>
-    const { LMSEventsFilter, updateRangeOutput } = EventManagementBundle;
+    const { LmseEventsFilter, updateRangeOutput } = EventManagementBundle;
 
     const rangeInput = document.getElementById('max_age');
     const rangeOutput = document.getElementById('max-age-output');
 
     rangeInput.addEventListener('change', () => { updateRangeOutput({ rangeInput, rangeOutput }) });
+
+    const lmseEventsFilter = new LmseEventsFilter(document.querySelectorAll('.lms-facet'));
+    lmseEventsFilter.init();
 
     const resetButton = document.getElementById('reset-filter');
     resetButton.disabled = false;

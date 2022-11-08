@@ -1,4 +1,4 @@
-export default class LMSEventsFilter {
+export default class LmseEventsFilter {
   constructor(facets) {
     this.facets = facets;
     this.filters = {};
@@ -10,7 +10,7 @@ export default class LMSEventsFilter {
         this.filters[facet.value] = facet.checked;
         facet.addEventListener('change', (e) => {
           this.filters[e.target.value] = e.target.checked;
-          // console.table(this.filters);
+          console.log(this.filters);
         });
       }
 
@@ -18,7 +18,7 @@ export default class LMSEventsFilter {
         this.filters[facet.name] = facet.value;
         facet.addEventListener('change', (e) => {
           this.filters[e.target.name] = e.target.value;
-          // console.table(this.filters);
+          console.log(this.filters);
         });
       }
 
@@ -26,7 +26,7 @@ export default class LMSEventsFilter {
         this.filters[facet.name] = parseInt(facet.value, 10);
         facet.addEventListener('change', (e) => {
           this.filters[e.target.name] = parseInt(e.target.value, 10);
-          // console.table(this.filters);
+          console.log(this.filters);
         });
       }
     });
