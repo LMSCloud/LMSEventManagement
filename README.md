@@ -7,6 +7,33 @@ This is a big one! This koha-plugin will make it easy for you to create, manage 
 - [ ] Some other goal
 - [ ] These are placeholders...
 
+## Setup
+
+### /etc/apache2/apache2.conf
+
+```conf
+176 <Directory /var/lib/koha/kohadev/plugins/>
+177     Options Indexes FollowSymLinks
+178     AllowOverride None
+179     Require all granted
+180 </Directory>
+181
+182
+183 <Directory /var/lib/koha/kohadev/uploads/LMSEventManagement>
+184     Options Indexes FollowSymLinks
+185     AllowOverride None
+186     Require all granted
+187 </Directory>
+```
+
+### /etc/apache2/sites-available/kohadev.conf
+
+```conf
+ 19    ScriptAlias /opac-events "/var/lib/koha/kohadev/plugins/Koha/Plugin/Com/LMSCloud/EventManagement/opac/events.pl"
+ 20    Alias /plugin "/var/lib/koha/kohadev/plugins"
+ 21    Alias /lms-event-management/images "/var/lib/koha/kohadev/uploads/LMSEventManagement/"
+```
+
 ## Usage
 TBA
 
