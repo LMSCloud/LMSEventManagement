@@ -27,7 +27,7 @@ The heart of communication for updating our main events view. Still work in prog
 
 #### Formatting & Linting
 
-For formatting we use perltidy for formatting with this config
+For formatting we use perltidy with this config
 
 ```conf
 # PBP .perltidyrc
