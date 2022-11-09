@@ -163,7 +163,7 @@
                   "type": ["string", "null"]
                 },
                 "image": {
-                  "type": ["integer", "null"]
+                  "type": ["string", "null"]
                 },
                 "start_time": {
                   "type": ["string", "null"]

@@ -1,9 +1,8 @@
-import Observable from './utils/Observable';
-
 export default class LmseEventsFilter {
-  constructor(facets) {
+  constructor(facets, Observable) {
     this.facets = facets;
     this.filters = {};
+    this.Observable = Observable;
   }
 
   init() {
@@ -18,7 +17,7 @@ export default class LmseEventsFilter {
 
         facet.addEventListener('change', (e) => {
           this.filters[e.target.name][e.target.value] = e.target.checked;
-          Observable.notify(this.getFilters());
+          this.Observable.notify(this.getFilters());
         });
       }
 
@@ -27,7 +26,7 @@ export default class LmseEventsFilter {
 
         facet.addEventListener('change', (e) => {
           this.filters[e.target.name] = e.target.value;
-          Observable.notify(this.getFilters());
+          this.Observable.notify(this.getFilters());
         });
       }
 
@@ -36,7 +35,7 @@ export default class LmseEventsFilter {
 
         facet.addEventListener('change', (e) => {
           this.filters[e.target.name] = parseInt(e.target.value, 10);
-          Observable.notify(this.getFilters());
+          this.Observable.notify(this.getFilters());
         });
       }
     });

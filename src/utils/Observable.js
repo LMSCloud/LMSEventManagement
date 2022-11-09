@@ -1,6 +1,7 @@
-class Observable {
-  constructor() {
+export default class Observable {
+  constructor(caller) {
     this.observers = [];
+    this.caller = caller;
   }
 
   subscribe(func) {
@@ -12,8 +13,9 @@ class Observable {
   }
 
   notify(data) {
-    this.observers.forEach((observer) => observer(data));
+    this.observers.forEach((observer) => {
+      const boundObserver = observer.bind(this.caller);
+      boundObserver(data);
+    });
   }
 }
-
-export default new Observable();

@@ -25,6 +25,8 @@ use C4::Context;
 use Scalar::Util qw(looks_like_number reftype);
 use Try::Tiny;
 
+use Koha::UploadedFiles;
+
 our $VERSION = '1.0.0';
 
 =head1 Koha::Plugin::Com::LMSCloud::EventManagement::EventsController
@@ -64,6 +66,11 @@ sub get {
 
         my @events;
         while ( my $row = $sth->fetchrow_hashref() ) {
+            if ( defined $row->{'image'} ) {
+                my $image = Koha::UploadedFiles->find( $row->{'image'} );
+                $row->{'image'} = $image->hashvalue . '_' . $image->filename();
+            }
+
             push @events, $row;
         }
 

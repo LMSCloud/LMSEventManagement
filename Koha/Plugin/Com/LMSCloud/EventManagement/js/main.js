@@ -4,55 +4,11 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.EventManagementBundle = factory());
 })(this, (function () { 'use strict';
 
-  const template = document.createElement('template');
-  // eslint-disable-next-line no-undef
-  template.innerHTML = `
-  <div class="lms-event card" style="max-width: 18rem;">
-    <slot name="event-id">
-      <slot name="event-image"></slot>
-    </slot>
-    <div class="card-body">
-      <slot name="event-name"></slot>
-      <p class="card-text">
-        <slot name="start-time"></slot>
-      </p>
-    </div>
-  </div>
-`;
-
-  class LmseEventCard extends HTMLElement {
-    constructor() {
-      super();
-
-      this.attachShadow({ mode: 'open' });
-      this.shadowRoot.append(template.content.cloneNode(true));
-    }
-  }
-
-  class Observable {
-    constructor() {
-      this.observers = [];
-    }
-
-    subscribe(func) {
-      this.observers.push(func);
-    }
-
-    unsubscribe(func) {
-      this.observers = this.observers.filter((observer) => observer !== func);
-    }
-
-    notify(data) {
-      this.observers.forEach((observer) => observer(data));
-    }
-  }
-
-  var Observable$1 = new Observable();
-
   class LmseEventsFilter {
-    constructor(facets) {
+    constructor(facets, Observable) {
       this.facets = facets;
       this.filters = {};
+      this.Observable = Observable;
     }
 
     init() {
@@ -67,7 +23,7 @@
 
           facet.addEventListener('change', (e) => {
             this.filters[e.target.name][e.target.value] = e.target.checked;
-            Observable$1.notify(this.getFilters());
+            this.Observable.notify(this.getFilters());
           });
         }
 
@@ -76,7 +32,7 @@
 
           facet.addEventListener('change', (e) => {
             this.filters[e.target.name] = e.target.value;
-            Observable$1.notify(this.getFilters());
+            this.Observable.notify(this.getFilters());
           });
         }
 
@@ -85,7 +41,7 @@
 
           facet.addEventListener('change', (e) => {
             this.filters[e.target.name] = parseInt(e.target.value, 10);
-            Observable$1.notify(this.getFilters());
+            this.Observable.notify(this.getFilters());
           });
         }
       });
@@ -93,6 +49,53 @@
 
     getFilters() {
       return this.filters;
+    }
+  }
+
+  function lmseEventCard({
+    id, image, name, startTime,
+  }) {
+    const element = document.createElement('div');
+    element.classList.add('lms-event', 'card');
+    element.style.maxWidth = '18rem';
+    element.innerHTML = `
+      <a href="/opac-events?op=detail&id=${id}">
+        <img src="/lms-event-management/images/${image}"
+          class="card-img-top" 
+          alt="..."
+          height="210"
+        >
+      </a>
+      <div class="card-body">
+        <h5 class="card-title">${name}</h5>
+        <p class="card-text">
+          <time datetime="${startTime}">${startTime}</time>
+        </p>
+      </div>
+  `;
+
+    return element;
+  }
+
+  class Observable {
+    constructor(caller) {
+      this.observers = [];
+      this.caller = caller;
+    }
+
+    subscribe(func) {
+      this.observers.push(func);
+    }
+
+    unsubscribe(func) {
+      this.observers = this.observers.filter((observer) => observer !== func);
+    }
+
+    notify(data) {
+      this.observers.forEach((observer) => {
+        const boundObserver = observer.bind(this.caller);
+        boundObserver(data);
+      });
     }
   }
 
@@ -127,18 +130,35 @@
     constructor({ entryPoint, facets }) {
       this.entryPoint = entryPoint;
       this.facets = facets;
-      this.lmseEventsFilter = new LmseEventsFilter(this.facets);
-      this.Observable = Observable$1;
+      this.Observable = new Observable(this);
+      this.lmseEventsFilter = new LmseEventsFilter(this.facets, this.Observable);
     }
 
     init() {
       this.lmseEventsFilter.init();
       this.Observable.subscribe(this.updateView);
+      this.updateView({});
     }
 
     async updateView(filters) {
-      const events = await LmseEventsView.getEvents(filters);
-      console.log(events);
+      const lmseEvents = await LmseEventsView.getEvents(filters);
+      this.entryPoint.innerHTML = '';
+
+      const eventCards = lmseEvents.reduce(
+        (accumulator, lmseEvent) => [
+          ...accumulator, lmseEventCard({
+            id: lmseEvent.id,
+            image: lmseEvent.image,
+            name: lmseEvent.name,
+            startTime: lmseEvent.start_time,
+          }),
+        ],
+        [],
+      );
+
+      eventCards.forEach((eventCard) => {
+        this.entryPoint.appendChild(eventCard);
+      });
     }
 
     static async getEvents(filters) {
@@ -200,9 +220,6 @@
     const rangeOutputRef = rangeOutput;
     rangeOutputRef.textContent = rangeInput.value === '120' ? '∞' : rangeInput.value;
   }
-
-  const customElementRegistry = window.customElements;
-  customElementRegistry.define('lmse-event', LmseEventCard);
 
   var main = {
     LmseEventsView, uploadImage, updateRangeOutput,
