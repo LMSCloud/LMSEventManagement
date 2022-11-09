@@ -116,13 +116,13 @@
                         <li>
                           <div class="form-group row pr-3 pl-1 my-0 align-items-center" style="height: 1.5em;">
                             <label for="start-time" class="col-3 my-0">[% 'From' | gettext %]</label>
-                            <input type="date" class="lms-facet form-control col-9 border-0" style="height: 1.25em; font-size: small;" id="start-time" name="startTime" value="">
+                            <input type="date" class="lms-facet form-control col-9 border-0" style="height: 1.25em; font-size: small;" id="start-time" name="start_time" value="">
                           </div>
                         </li>
                         <li>
                           <div class="form-group row pr-3 pl-1 my-0 align-items-center" style="height: 1.5em;">
                             <label for="end-time" class="col-3 my-0">[% 'To' | gettext %]</label>
-                            <input type="date" class="lms-facet form-control col-9 border-0" style="height: 1.25em; font-size: small;" id="end-time" name="endTime" value="">
+                            <input type="date" class="lms-facet form-control col-9 border-0" style="height: 1.25em; font-size: small;" id="end-time" name="end_time" value="">
                           </div>
                         </li>
                       </ul>

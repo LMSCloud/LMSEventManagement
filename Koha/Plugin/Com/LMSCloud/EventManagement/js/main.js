@@ -57,6 +57,7 @@
 
     init() {
       this.facets.forEach((facet) => {
+        // Have to change this to an object with arrays as property values instead of a nested object
         if (facet.type === 'checkbox') {
           if (!Object.prototype.hasOwnProperty.call(this.filters, facet.name)) {
             this.filters[facet.name] = {};
@@ -95,6 +96,33 @@
     }
   }
 
+  const fieldLookupTable = {
+    target_group: 'target_groups',
+    event_type: 'event_types',
+    branch: 'branches',
+    location: 'locations',
+  };
+
+  function getRequestParameters(filters) {
+    return Array.from(Object.entries(filters))
+      .reduce((accumulator, filter) => {
+        const [field, values] = filter;
+
+        if (['max_age', 'start_time', 'end_time'].includes(field)) { return values ? [...accumulator, `${field}=${values}`] : accumulator; }
+
+        const valuesArray = Array.from(Object.entries(values));
+        const isMultiParam = valuesArray.filter(([, value]) => value === true).length > 1;
+        return [
+          ...accumulator,
+          valuesArray.reduce((_accumulator, value) => {
+            const [name, isActive] = value;
+            return isActive ? [..._accumulator, `${isMultiParam ? fieldLookupTable[field] : field}=${name}`] : [..._accumulator];
+          }, []),
+        ].flat();
+      }, [])
+      .join('&');
+  }
+
   class LmseEventsView {
     constructor({ entryPoint, facets }) {
       this.entryPoint = entryPoint;
@@ -108,8 +136,16 @@
       this.Observable.subscribe(this.updateView);
     }
 
-    updateView(filters) {
-      console.log(filters);
+    async updateView(filters) {
+      const events = await LmseEventsView.getEvents(filters);
+      console.log(events);
+    }
+
+    static async getEvents(filters) {
+      const requestParameters = getRequestParameters(filters);
+      const response = await fetch(`/api/v1/contrib/eventmanagement/lms_events${requestParameters ? '?' : ''}${requestParameters}`);
+
+      return response.json();
     }
   }
 
