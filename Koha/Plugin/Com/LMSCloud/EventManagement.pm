@@ -534,7 +534,7 @@ sub get_event {
 
     my $event = $sth->fetchrow_hashref();
     if ( defined $event->{'imageid'} ) {
-        my $rec       = Koha::UploadedFiles->find( $event->{imageid} );
+        my $rec       = Koha::UploadedFiles->find( $event->{'imageid'} );
         my $src_image = $rec->hashvalue . '_' . $rec->filename();
         $event->{'imagefile'} = $src_image;
     }

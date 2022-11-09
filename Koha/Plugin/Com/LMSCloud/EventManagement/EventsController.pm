@@ -120,9 +120,12 @@ sub _get_clause_condition {
     }
 
     if ( reftype( $args->{'value'} ) eq 'ARRAY' ) {
-        return scalar $args->{'value'} > 0
+        my $condition =
+            scalar $args->{'value'} > 0
             ? join 'OR', map { qq{ events.$args->{'key'} = } . ( looks_like_number($_) ? qq{ $_ } : qq{ '$_' } ) } @{ $args->{'value'} }
             : q{};
+
+        return $condition ? qq{ ( $condition ) } : q{};
     }
 
     return qq{ events.$args->{'key'} = } . ( looks_like_number( $args->{'value'} ) ? qq{ $args->{'value'} } : qq{ '$args->{'value'}' } );

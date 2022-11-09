@@ -1,5 +1,4 @@
 import LmseEventsFilter from '../components/class/LmseEventsFilter';
-
 import lmseEventCard from '../components/function/lmseEventCard';
 
 import Observable from '../utils/Observable';
