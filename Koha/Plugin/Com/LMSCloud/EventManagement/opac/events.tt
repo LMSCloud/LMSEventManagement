@@ -155,8 +155,6 @@
                     </li>
                     
                   </ul>
-                  
-                  <hr>
 
                   <div class="text-center">
                     <button type="reset" class="btn btn-secondary mb-2" id="reset-filter" name="reset-filter" disabled>
@@ -193,13 +191,15 @@
     const lmsEventsContainer = document.getElementById('lms-events');
     const rangeInput = document.getElementById('max_age');
     const rangeOutput = document.getElementById('max-age-output');
+    const facets = document.querySelectorAll('.lms-facet')
 
     rangeInput.addEventListener('change', () => { updateRangeOutput({ rangeInput, rangeOutput }) });
 
-    const lmseEventsView = new LmseEventsView({ entryPoint: lmsEventsContainer, facets: document.querySelectorAll('.lms-facet') });
+    const lmseEventsView = new LmseEventsView({ entryPoint: lmsEventsContainer, facets });
     lmseEventsView.init();
 
     const resetButton = document.getElementById('reset-filter');
+    resetButton.addEventListener('click', () => { lmseEventsView.resetEventsFilter() });
     resetButton.disabled = false;
   </script>
 

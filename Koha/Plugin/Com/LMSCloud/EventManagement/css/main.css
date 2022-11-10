@@ -17,11 +17,24 @@
     "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
 }
 
+#reset-filter {
+  padding: 0.5em;
+  background: #f0f3f3;
+  color: #727272;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  width: calc(100% - 1.5em);
+}
+
 #lms-events {
   display: flex;
   flex-wrap: wrap;
   gap: 1em;
   font-family: "Helvetica";
+  /* max-height: 90vh;
+  overflow-y: scroll;
+  -webkit-mask-image: linear-gradient(180deg, #000 99%, transparent);
+  mask-image: linear-gradient(180deg, #000 99%, transparent); */
 }
 
 .lmse-card {

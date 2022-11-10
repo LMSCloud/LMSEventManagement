@@ -47,6 +47,24 @@
       });
     }
 
+    resetFacets() {
+      this.facets.forEach((facet) => {
+        const facetRef = facet;
+
+        if (facetRef.type === 'checkbox') {
+          facetRef.checked = false;
+        }
+
+        if (facetRef.type === 'date') {
+          facetRef.value = '';
+        }
+
+        if (facetRef.type === 'range') {
+          facetRef.value = 120;
+        }
+      });
+    }
+
     getFilters() {
       return this.filters;
     }
@@ -183,6 +201,14 @@
       eventCards.forEach((eventCard) => {
         this.entryPoint.appendChild(eventCard);
       });
+    }
+
+    resetEventsFilter() {
+      console.log(this.lmseEventsFilter);
+      this.lmseEventsFilter.resetFacets();
+      this.lmseEventsFilter.instance = null;
+      this.lmseEventsFilter = new LmseEventsFilter(this.facets, this.Observable);
+      this.updateView({});
     }
 
     static async getEvents(filters) {

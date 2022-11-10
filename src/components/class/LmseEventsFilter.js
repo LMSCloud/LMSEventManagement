@@ -41,6 +41,24 @@ export default class LmseEventsFilter {
     });
   }
 
+  resetFacets() {
+    this.facets.forEach((facet) => {
+      const facetRef = facet;
+
+      if (facetRef.type === 'checkbox') {
+        facetRef.checked = false;
+      }
+
+      if (facetRef.type === 'date') {
+        facetRef.value = '';
+      }
+
+      if (facetRef.type === 'range') {
+        facetRef.value = 120;
+      }
+    });
+  }
+
   getFilters() {
     return this.filters;
   }

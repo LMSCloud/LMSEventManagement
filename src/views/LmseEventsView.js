@@ -34,6 +34,13 @@ export default class LmseEventsView {
     });
   }
 
+  resetEventsFilter() {
+    this.lmseEventsFilter.resetFacets();
+    this.lmseEventsFilter.instance = null;
+    this.lmseEventsFilter = new LmseEventsFilter(this.facets, this.Observable);
+    this.updateView({});
+  }
+
   static async getEvents(filters) {
     const requestParameters = getRequestParameters(filters);
     const response = await fetch(`/api/v1/contrib/eventmanagement/lms_events${requestParameters ? '?' : ''}${requestParameters}`);
