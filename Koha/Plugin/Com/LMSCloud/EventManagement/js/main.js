@@ -204,7 +204,6 @@
     }
 
     resetEventsFilter() {
-      console.log(this.lmseEventsFilter);
       this.lmseEventsFilter.resetFacets();
       this.lmseEventsFilter.instance = null;
       this.lmseEventsFilter = new LmseEventsFilter(this.facets, this.Observable);
