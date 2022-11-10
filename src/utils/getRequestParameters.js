@@ -7,6 +7,8 @@ export default function getRequestParameters(filters) {
 
       if (['max_age', 'start_time', 'end_time'].includes(field)) { return values ? [...accumulator, `${field}=${values}`] : accumulator; }
 
+      if (field === 'open_registration') { return values.open_registration ? [...accumulator, `${field}=${true}`] : accumulator; }
+
       const valuesArray = Array.from(Object.entries(values));
       const isMultiParam = valuesArray.filter(([, value]) => value === true).length > 1;
       return [
