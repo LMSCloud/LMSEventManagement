@@ -24,12 +24,7 @@ export default class LmseEventsView {
 
     const eventCards = lmseEvents.reduce(
       (accumulator, lmseEvent) => [
-        ...accumulator, lmseEventCard({
-          id: lmseEvent.id,
-          image: lmseEvent.image,
-          name: lmseEvent.name,
-          startTime: lmseEvent.start_time,
-        }),
+        ...accumulator, lmseEventCard({ lmseEvent }),
       ],
       [],
     );

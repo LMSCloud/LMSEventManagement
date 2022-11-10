@@ -1,3 +1,46 @@
+:root {
+  --shadow-sm: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+  --shadow-md: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+  --shadow-lg: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+  --shadow-hv: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+
+  --breakpoint-xs: 425px;
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 1024px;
+
+  --border-radius-sm: 7px;
+  --border-radius-md: 12px;
+
+  --seperator-light: rgba(0, 0, 0, 0.1);
+
+  --system-ui: system, -apple-system, ".SFNSText-Regular", "San Francisco",
+    "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
+}
+
+#lms-events {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  font-family: "Helvetica";
+}
+
+.lmse-card {
+  -webkit-box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm);
+  margin: 1em 0;
+  border-radius: var(--border-radius-md);
+}
+
+.lmse-card-head > a > img {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+}
+
+.lmse-card-body {
+  padding: 0.5em 2em 0em;
+}
+
 .lmse-link {
   background: none !important;
   border: none !important;
@@ -14,4 +57,10 @@
 .lmse-link:hover {
   background: transparent !important;
   color: #538200 !important;
+}
+
+@media screen and (min-width: 768px) {
+  .lmse-card {
+    max-width: 18rem;
+  }
 }
