@@ -131,6 +131,25 @@
     return element;
   }
 
+  function lmseEventCardSkeleton() {
+    const element = document.createElement('div');
+    element.classList.add('lms-event', 'lmse-card', 'skeleton-card');
+    element.innerHTML = `
+      <div class="lmse-card-head">
+        <div class="skeleton-img skeleton"></div>
+      </div>
+      <div class="lmse-card-body">
+        <div class="skeleton-h5 skeleton"></div>
+        <ul>
+          <li class="skeleton-line skeleton"></li>
+          <li class="skeleton-line skeleton"></li>
+        </ul>
+      </div>
+    `;
+
+    return element;
+  }
+
   class Observable {
     constructor(caller) {
       this.observers = [];
@@ -191,6 +210,7 @@
     }
 
     init() {
+      this.showSkeleton();
       this.lmseEventsFilter.init();
       this.Observable.subscribe(this.updateView);
       this.updateView({});
@@ -210,6 +230,14 @@
       eventCards.forEach((eventCard) => {
         this.entryPoint.appendChild(eventCard);
       });
+    }
+
+    showSkeleton() {
+      this.entryPoint.innerHTML = '';
+
+      for (let index = 1; index <= 6; index += 1) {
+        this.entryPoint.appendChild(lmseEventCardSkeleton());
+      }
     }
 
     resetEventsFilter() {

@@ -1,5 +1,6 @@
 import LmseEventsFilter from '../components/class/LmseEventsFilter';
 import lmseEventCard from '../components/function/lmseEventCard';
+import lmseEventCardSkeleton from '../components/function/lmseEventCardSkeleton';
 
 import Observable from '../utils/Observable';
 import getRequestParameters from '../utils/getRequestParameters';
@@ -13,6 +14,7 @@ export default class LmseEventsView {
   }
 
   init() {
+    this.showSkeleton();
     this.lmseEventsFilter.init();
     this.Observable.subscribe(this.updateView);
     this.updateView({});
@@ -32,6 +34,14 @@ export default class LmseEventsView {
     eventCards.forEach((eventCard) => {
       this.entryPoint.appendChild(eventCard);
     });
+  }
+
+  showSkeleton() {
+    this.entryPoint.innerHTML = '';
+
+    for (let index = 1; index <= 6; index += 1) {
+      this.entryPoint.appendChild(lmseEventCardSkeleton());
+    }
   }
 
   resetEventsFilter() {
