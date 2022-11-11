@@ -47,7 +47,7 @@ use Koha::Plugin::Com::LMSCloud::EventManagement::Validators qw(validate_event v
 no if ( $PERL_VERSION >= 5.018 ), 'warnings' => 'experimental';
 
 ## Here we set our plugin version
-our $VERSION         = '0.0.1';
+our $VERSION         = '1.3.0';
 our $MINIMUM_VERSION = '18.05';
 
 ## Here is our metadata, some keys are required, some are optional
