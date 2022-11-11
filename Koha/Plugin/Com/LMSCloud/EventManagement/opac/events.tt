@@ -199,7 +199,7 @@
     lmseEventsView.init();
 
     const resetButton = document.getElementById('reset-filter');
-    resetButton.addEventListener('click', () => { lmseEventsView.resetEventsFilter() });
+    resetButton.addEventListener('click', () => { lmseEventsView.lmseEventsFilter.resetFacets(); });
     resetButton.disabled = false;
   </script>
 

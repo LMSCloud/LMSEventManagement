@@ -53,16 +53,25 @@
 
         if (facetRef.type === 'checkbox') {
           facetRef.checked = false;
+          if (!Object.prototype.hasOwnProperty.call(this.filters, facet.name)) {
+            this.filters[facet.name] = {};
+          }
+
+          this.filters[facet.name][facet.value] = facet.checked;
         }
 
         if (facetRef.type === 'date') {
           facetRef.value = '';
+          this.filters[facet.name] = facet.value;
         }
 
         if (facetRef.type === 'range') {
           facetRef.value = 120;
+          this.filters[facet.name] = parseInt(facet.value, 10);
         }
       });
+
+      this.Observable.notify(this.getFilters());
     }
 
     getFilters() {
@@ -205,9 +214,6 @@
 
     resetEventsFilter() {
       this.lmseEventsFilter.resetFacets();
-      this.lmseEventsFilter.instance = null;
-      this.lmseEventsFilter = new LmseEventsFilter(this.facets, this.Observable);
-      this.updateView({});
     }
 
     static async getEvents(filters) {

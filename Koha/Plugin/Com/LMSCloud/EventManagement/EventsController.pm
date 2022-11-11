@@ -102,7 +102,7 @@ sub _get_clause_conditions {
     }
 
     if ( defined $params->{'start_time'} && defined $params->{'end_time'} ) {
-        push @result, qq{ events.start_time BETWEEN '$params->{'start_time'}' AND '$params->{'end_time'}' };
+        push @result, qq{ events.start_time BETWEEN '$params->{'start_time'}' AND '$params->{'end_time'} 23:59:59' };
     }
 
     return ( scalar grep {$_} @result ) ? q{ WHERE } . join 'AND', grep {$_} @result : q{};

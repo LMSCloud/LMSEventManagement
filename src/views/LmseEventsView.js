@@ -36,9 +36,6 @@ export default class LmseEventsView {
 
   resetEventsFilter() {
     this.lmseEventsFilter.resetFacets();
-    this.lmseEventsFilter.instance = null;
-    this.lmseEventsFilter = new LmseEventsFilter(this.facets, this.Observable);
-    this.updateView({});
   }
 
   static async getEvents(filters) {
