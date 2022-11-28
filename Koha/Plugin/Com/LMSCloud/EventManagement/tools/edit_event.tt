@@ -43,8 +43,8 @@
                 </li>
 
                 <li>
-                  <label for="title">[% 'Title:' | gettext %]&nbsp;</label>
-                  <input type="text" id="title" name="title" size="100" maxlength="100" value="[% event.name %]" required>
+                  <label for="name">[% 'Title:' | gettext %]&nbsp;</label>
+                  <input type="text" id="name" name="name" size="100" maxlength="100" value="[% event.name %]" required>
                   <span class="required">[% 'Required' | gettext %]</span>
                 </li>
 
