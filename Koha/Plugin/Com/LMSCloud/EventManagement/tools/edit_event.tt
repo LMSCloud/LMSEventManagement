@@ -115,7 +115,7 @@
 
                 <li>
                   <label for="description">[% 'Description:' | gettext %]&nbsp;</label>
-                  <textarea id="description" name="description" rows="10" cols="120" value="[% event.description %]" placeholder="[% 'Write a description for your event.' | gettext %]"></textarea>
+                  <textarea id="description" name="description" rows="10" cols="120" placeholder="[% 'Write a description for your event.' | gettext %]">[% event.description %]</textarea>
                 </li>
 
                 <li>
