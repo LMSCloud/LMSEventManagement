@@ -78,7 +78,7 @@
 
                 <li>
                   <label for="max_age">[% 'Max. age:' | gettext %]&nbsp;</label>
-                  <input type="number" name="max_age" id="max_age" value="[% event.max_age %]" min="0" max="255" placeholder="0">
+                  <input type="number" name="max_age" id="max_age" value="[% event.max_age %]" min="0" max="120" placeholder="0">
                   <span>[% 'years' | gettext %]</span>
                 </li>
 
