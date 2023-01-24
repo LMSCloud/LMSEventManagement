@@ -1,4 +1,4 @@
-# 🎭 LMSEventManagement 🎤
+# 🎭 LMSEventManagement
 
 This is a big one! This koha-plugin will make it easy for you to create, manage and advertise events to your target audience.
 
