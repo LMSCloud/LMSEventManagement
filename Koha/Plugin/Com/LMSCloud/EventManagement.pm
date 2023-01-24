@@ -1017,25 +1017,26 @@ sub configure {
 sub install() {
     my ( $self, $args ) = @_;
 
-    my $dbh                 = C4::Context->dbh;
-    my $target_groups_table = $self->get_qualified_table_name('target_groups');
-    my $locations_table     = $self->get_qualified_table_name('locations');
-    my $event_types_table   = $self->get_qualified_table_name('event_types');
-    my $events_table        = $self->get_qualified_table_name('events');
+    eval {
+        my $dbh                 = C4::Context->dbh;
+        my $target_groups_table = $self->get_qualified_table_name('target_groups');
+        my $locations_table     = $self->get_qualified_table_name('locations');
+        my $event_types_table   = $self->get_qualified_table_name('event_types');
+        my $events_table        = $self->get_qualified_table_name('events');
 
-    my @statements = (
-        <<~"STATEMENT",
+        my @statements = (
+            <<~"STATEMENT",
             CREATE TABLE IF NOT EXISTS $target_groups_table (
-                `id` VARCHAR(16) NOT NULL,
+                `id` INT(11) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) DEFAULT '' COMMENT 'group from target_group table or any string',
-                `min_age` TINYINT(255) unsigned DEFAULT '0' COMMENT 'lower age boundary of group',
-                `max_age` TINYINT(255) unsigned DEFAULT '255' COMMENT 'upper age boundary for group',
+                `min_age` TINYINT(3) unsigned DEFAULT '0' COMMENT 'lower age boundary of group',
+                `max_age` TINYINT(3) unsigned DEFAULT '255' COMMENT 'upper age boundary for group',
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB;
         STATEMENT
-        <<~"STATEMENT",
+            <<~"STATEMENT",
             CREATE TABLE IF NOT EXISTS $locations_table (
-                `id` VARCHAR(16) NOT NULL,
+                `id` INT(11) NOT NULL AUTO_INCREMENT,
                 `street` VARCHAR(255) DEFAULT '' COMMENT 'street address',
                 `number` VARCHAR(255) DEFAULT '' COMMENT 'streetnumber',
                 `city` VARCHAR(255) DEFAULT '' COMMENT 'city',
@@ -1045,57 +1046,62 @@ sub install() {
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB;
         STATEMENT
-        <<~"STATEMENT",
+            <<~"STATEMENT",
             CREATE TABLE IF NOT EXISTS $event_types_table (
-                `id` VARCHAR(16) NOT NULL,
+                `id` INT(11) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) DEFAULT '' COMMENT 'alphanumeric identifier, e.g. name of the template',
                 `branch` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT 'a branch id from the branches table',
-                `target_group` VARCHAR(16) DEFAULT '' COMMENT 'a target group id from the target groups table',
+                `target_group` INT(11) DEFAULT NULL COMMENT 'a target group id from the target groups table',
                 `max_age` TINYINT unsigned DEFAULT NULL COMMENT 'maximum age requirement',
                 `min_age` TINYINT unsigned DEFAULT NULL COMMENT 'minimum age requirement',
                 `open_registration` TINYINT(1) DEFAULT '0' COMMENT 'is the registration to non-patrons via email',
                 `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'maximum allowed number of participants',
                 `fee` SMALLINT unsigned DEFAULT NULL COMMENT 'fee for an event',
-                `description` TEXT(65535) DEFAULT '' COMMENT 'what is happening',
+                `description` TEXT COMMENT 'what is happening',
                 `image` INT(10) DEFAULT NULL COMMENT 'image from kohas image management',
-                `location` VARCHAR(16) DEFAULT '' COMMENT 'id of a location from the locations table',
+                `location` INT(11) DEFAULT NULL COMMENT 'id of a location from the locations table',
                 PRIMARY KEY (`id`),
                 FOREIGN KEY (`branch`) REFERENCES branches(`branchcode`),
                 FOREIGN KEY (`target_group`) REFERENCES $target_groups_table(`id`)
             ) ENGINE = INNODB;
         STATEMENT
-        <<~"STATEMENT",
+            <<~"STATEMENT",
             CREATE TABLE IF NOT EXISTS $events_table (
-                `id` TINYINT(16) NOT NULL AUTO_INCREMENT,
+                `id` INT(11) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) DEFAULT '' COMMENT 'alphanumeric identifier, e.g. name of the event',
-                `event_type` VARCHAR(16) DEFAULT '' COMMENT 'the event type id from the event types table',
-                `branch` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT 'a branch id from the branches table',
-                `target_group` VARCHAR(16) DEFAULT '' COMMENT 'a target group id from the target groups table',
-                `max_age` TINYINT unsigned DEFAULT NULL COMMENT 'maximum age requirement',
-                `min_age` TINYINT unsigned DEFAULT NULL COMMENT 'minimum age requirement',
-                `open_registration` TINYINT(1) DEFAULT '0' COMMENT 'is the registration to non-patrons via email',
-                `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'maximum allowed number of participants',
-                `fee` SMALLINT unsigned DEFAULT NULL COMMENT 'fee for an event',
-                `location` VARCHAR(16) DEFAULT '' COMMENT 'id of a location from the locations table',
-                `description` TEXT(65535) DEFAULT '' COMMENT 'whats happening',
+                `event_type` INT(11) DEFAULT NULL COMMENT 'the event type id from the event types table',
+                `location` INT(11) DEFAULT NULL COMMENT 'the location id from the locations table',
+                `start_time` DATETIME DEFAULT NULL COMMENT 'start time of the event',
+                `end_time` DATETIME DEFAULT NULL COMMENT 'end time of the event',
+                `registration_start` DATETIME DEFAULT NULL COMMENT 'start time of the registration',
+                `registration_end` DATETIME DEFAULT NULL COMMENT 'end time of the registration',
+                `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'max number of participants',
+                `fee` SMALLINT unsigned DEFAULT NULL COMMENT 'fee for the event',
+                `age_restriction` TINYINT unsigned DEFAULT NULL COMMENT 'minimum age requirement',
                 `image` INT(10) DEFAULT NULL COMMENT 'image from kohas image management',
-                `start_time` DATETIME DEFAULT NULL COMMENT 'date and time an event begins on',
-                `end_time` DATETIME DEFAULT NULL COMMENT 'date and time an event ends on',
-                `link_to_registration` TEXT(65535) DEFAULT '' COMMENT 'link to a local or an external page with details',
+                `notes` TEXT(65535) DEFAULT NULL COMMENT 'notes',
+                `status` ENUM('pending','approved','cancelled') DEFAULT 'pending' COMMENT 'status of the event',
                 PRIMARY KEY (`id`),
-                FOREIGN KEY (`branch`) REFERENCES branches(`branchcode`),
                 FOREIGN KEY (`event_type`) REFERENCES $event_types_table(`id`),
-                FOREIGN KEY (`target_group`) REFERENCES $target_groups_table(`id`)
-            ) ENGINE=InnoDB;
+                FOREIGN KEY (`location`) REFERENCES $locations_table(`id`)
+            ) ENGINE = INNODB;
         STATEMENT
-    );
+        );
 
-    for my $statement (@statements) {
-        my $sth = $dbh->prepare($statement);
-        $sth->execute;
+        for my $statement (@statements) {
+            $dbh->do($statement);
+        }
+
+        return 1;
+    };
+
+    if ($EVAL_ERROR) {
+        my $error = $EVAL_ERROR;
+        use Data::Dumper;
+        warn Dumper($error);
+        warn "INSTALL ERROR: $error";
     }
 
-    return 1;
 }
 
 sub upgrade {
