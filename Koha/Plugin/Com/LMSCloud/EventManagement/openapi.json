@@ -1,10 +1,11 @@
 {
-  "/lms_events": {
+  "/events": {
     "get": {
-      "x-mojo-to": "Com::LMSCloud::EventManagement::EventsController#get",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Events#get",
       "operationId": "getEvents",
       "tags": ["events"],
-      "parameters": [{
+      "parameters": [
+        {
           "name": "name",
           "in": "query",
           "description": "Title of the event",
@@ -115,9 +116,7 @@
           "type": "string"
         }
       ],
-      "produces": [
-        "application/json"
-      ],
+      "produces": ["application/json"],
       "responses": {
         "200": {
           "description": "Array of events",
@@ -178,8 +177,68 @@
             }
           }
         },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
         "404": {
-          "description": "An error occured",
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
           "schema": {
             "type": "object",
             "properties": {

@@ -32,6 +32,7 @@ use MARC::Record;
 use Mojo::JSON qw(decode_json);
 use URI::Escape qw(uri_unescape);
 use Try::Tiny;
+use Carp;
 
 use Readonly;
 Readonly my $TINYINT_UPPER_BOUNDARY => 255;
@@ -1017,7 +1018,7 @@ sub configure {
 sub install() {
     my ( $self, $args ) = @_;
 
-    eval {
+    try {
         my $dbh                 = C4::Context->dbh;
         my $target_groups_table = $self->get_qualified_table_name('target_groups');
         my $locations_table     = $self->get_qualified_table_name('locations');
@@ -1077,7 +1078,8 @@ sub install() {
                 `registration_end` DATETIME DEFAULT NULL COMMENT 'end time of the registration',
                 `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'max number of participants',
                 `fee` SMALLINT unsigned DEFAULT NULL COMMENT 'fee for the event',
-                `age_restriction` TINYINT unsigned DEFAULT NULL COMMENT 'minimum age requirement',
+                `min_age` TINYINT unsigned DEFAULT NULL COMMENT 'minimum age requirement',
+                `max_age` TINYINT unsigned DEFAULT NULL COMMENT 'maximum age requirement',
                 `image` INT(10) DEFAULT NULL COMMENT 'image from kohas image management',
                 `notes` TEXT(65535) DEFAULT NULL COMMENT 'notes',
                 `status` ENUM('pending','approved','cancelled') DEFAULT 'pending' COMMENT 'status of the event',
@@ -1093,14 +1095,15 @@ sub install() {
         }
 
         return 1;
-    };
-
-    if ($EVAL_ERROR) {
-        my $error = $EVAL_ERROR;
-        use Data::Dumper;
-        warn Dumper($error);
-        warn "INSTALL ERROR: $error";
     }
+    catch {
+        my $error = $_;
+        use Data::Dumper;
+        carp Dumper($error);
+        carp "INSTALL ERROR: $error";
+
+        return 0;
+    };
 
 }
 

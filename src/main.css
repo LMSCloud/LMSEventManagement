@@ -1,0 +1,72 @@
+:root {
+  /* box shadows */
+  --shadow-sm: rgb(0 0 0 / 18%) 0 2px 4px;
+  --shadow-md: rgb(0 0 0 / 15%) 0 3px 3px 0;
+  --shadow-lg: rgb(0 0 0 / 15%) 0 2px 8px;
+  --shadow-hv: rgb(0 0 0 / 8%) 0 4px 12px;
+
+  /* separator colors; borders and other structuring ui elements */
+  --seperator-light: rgb(0 0 0 / 10%);
+  --seperator-mid: rgb(0 0 0 / 40%);
+  --seperator-dark: rgb(0 0 0 / 70%);
+
+  /* border radii */
+  --border-radius-sm: 5px;
+  --border-radius-md: 7px;
+  --border-radius-lg: 12px;
+
+  /* font */
+  --system-ui:
+    system,
+    -apple-system,
+    ".SFNSText-Regular",
+    "San Francisco",
+    "Roboto",
+    "Segoe UI",
+    "Helvetica Neue",
+    "Lucida Grande",
+    sans-serif;
+
+  /* color variables */
+  --primary-color: #0074c2;
+  --secondary-color: #f5a623;
+  --background-color: #fff;
+  --text-color: #333;
+  --link-color: #0074c2;
+  --hover-color: #f5a623;
+
+  /* font variables */
+  --base-font-size: 16px;
+  --base-line-height: 1.5;
+  --heading-font-size: 2em;
+
+  /* spacing variables */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
+
+  /* boostrap breakpoints */
+
+  /*
+  xs: 0;
+  sm: 576px;
+  md: 768px;
+  lg: 992px;
+  xl: 1200px;
+  */
+}
+
+#lmse {
+  margin-bottom: var(--spacing-md);
+}
+
+#lmse-heading-main {
+  padding: 0 var(--spacing-md);
+}
+
+.lmse-content-main {
+  padding: var(--spacing-md);
+  padding-top: 0;
+}

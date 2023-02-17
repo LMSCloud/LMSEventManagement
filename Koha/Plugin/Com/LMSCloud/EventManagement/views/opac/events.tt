@@ -1,0 +1,50 @@
+[%- USE JSON.Escape; -%]
+
+[% USE Koha %]
+[% USE Branches %]
+
+[% INCLUDE 'doc-head-open.inc' %]
+    <title>[% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %]Koha online[% END %] catalog &rsaquo; Room Reservations</title>
+    <link rel="stylesheet" href="/api/v1/contrib/eventmanagement/static/dist/main.css">
+    <script type="text/javascript" src="/api/v1/contrib/eventmanagement/static/dist/main.js"></script>
+    [% INCLUDE 'doc-head-close.inc' %]
+</head>
+[% BLOCK cssinclude %]
+
+[% END %]
+
+[% INCLUDE 'bodytag.inc' bodyid='opac-lms-event-management' %]
+    [% INCLUDE 'masthead.inc' %]
+
+    <div id="lmse" class="main">
+        <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/cgi-bin/koha/opac-main.pl" aria-current="page">Home</a>
+                </li>
+                <li class="breadcrumb-item active">
+                    <a href="#" aria-current="page">Loading...</a>
+                </li>
+            </ol>
+        </nav> <!-- /#breadcrumbs -->
+        <div class="lmse-content-main">
+            <div class="lmse-content-block">
+                <h1>Loading...</h1>
+                <lms-events-view borrowernumber="[% borrowernumber%]"></lms-events-view>
+            </div>
+        </div>
+    </div>
+
+[% INCLUDE 'opac-bottom.inc' %]
+[% BLOCK jsinclude %]
+    <script>
+        /**
+        const lmsrHeading = document.querySelector('.lmsr-content-block > h1');
+        const lastBreadcrumb = document.querySelector('.breadcrumb-item.active > a');
+        const { TranslationHandler } = RoomReservationBundle;
+        const translationHandler = new TranslationHandler();
+        lmsrHeading.textContent = translationHandler.templateTranslations.heading;
+        lastBreadcrumb.textContent = translationHandler.templateTranslations.heading;
+        */
+    </script>
+[% END %]
