@@ -1,0 +1,8 @@
+[% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
+[% INCLUDE "$PLUGIN_DIR/includes/body-header.inc" %]
+
+[% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
+    <div class="lmsr-content-block" id="entry-point">
+        <lms-event-types-table></lms-event-types-table>
+    </div>
+[% END %]
