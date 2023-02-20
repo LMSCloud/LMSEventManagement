@@ -1,8 +1,8 @@
 {
-  "/events": {
+  "/public/events": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Events#get",
-      "operationId": "getEvents",
+      "operationId": "getEventsPublic",
       "tags": ["events"],
       "parameters": [
         {
@@ -173,6 +173,2121 @@
                 "link_to_registration": {
                   "type": ["string", "null"]
                 }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/events": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Events#get",
+      "operationId": "getEvents",
+      "tags": ["events"],
+      "description": "Get all events",
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Array of events",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": ["string", "null"]
+                },
+                "event_type": {
+                  "type": ["string", "null"]
+                },
+                "branch": {
+                  "type": ["string", "null"]
+                },
+                "target_group": {
+                  "type": ["string", "null"]
+                },
+                "max_age": {
+                  "type": ["integer", "null"]
+                },
+                "min_age": {
+                  "type": ["integer", "null"]
+                },
+                "open_registration": {
+                  "type": ["boolean", "null"]
+                },
+                "max_participants": {
+                  "type": ["integer", "null"]
+                },
+                "fee": {
+                  "type": ["number", "null"]
+                },
+                "location": {
+                  "type": ["string", "null"]
+                },
+                "description": {
+                  "type": ["string", "null"]
+                },
+                "image": {
+                  "type": ["string", "null"]
+                },
+                "start_time": {
+                  "type": ["string", "null"]
+                },
+                "end_time": {
+                  "type": ["string", "null"]
+                },
+                "link_to_registration": {
+                  "type": ["string", "null"]
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/events/{id}": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Event#get",
+      "operationId": "getEvent",
+      "tags": ["events"],
+      "description": "Get a single event",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID of event to fetch",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Event",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": ["string", "null"]
+              },
+              "event_type": {
+                "type": ["string", "null"]
+              },
+              "branch": {
+                "type": ["string", "null"]
+              },
+              "target_group": {
+                "type": ["string", "null"]
+              },
+              "max_age": {
+                "type": ["integer", "null"]
+              },
+              "min_age": {
+                "type": ["integer", "null"]
+              },
+              "open_registration": {
+                "type": ["boolean", "null"]
+              },
+              "max_participants": {
+                "type": ["integer", "null"]
+              },
+              "fee": {
+                "type": ["integer", "null"]
+              },
+              "location": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "start_time": {
+                "type": ["string", "null"]
+              },
+              "end_time": {
+                "type": ["string", "null"]
+              },
+              "link_to_registration": {
+                "type": ["string", "null"]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Event#add",
+      "operationId": "addEvent",
+      "tags": ["events"],
+      "description": "Add an event",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "description": "Event object that needs to be added",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": ["string", "null"]
+              },
+              "event_type": {
+                "type": ["string", "null"]
+              },
+              "branch": {
+                "type": ["string", "null"]
+              },
+              "target_group": {
+                "type": ["string", "null"]
+              },
+              "max_age": {
+                "type": ["integer", "null"]
+              },
+              "min_age": {
+                "type": ["integer", "null"]
+              },
+              "open_registration": {
+                "type": ["boolean", "null"]
+              },
+              "max_participants": {
+                "type": ["integer", "null"]
+              },
+              "fee": {
+                "type": ["number", "null"]
+              },
+              "location": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "start_time": {
+                "type": ["string", "null"]
+              },
+              "end_time": {
+                "type": ["string", "null"]
+              },
+              "link_to_registration": {
+                "type": ["string", "null"]
+              }
+            }
+          }
+        }
+      ],
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Event",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": ["string", "null"]
+              },
+              "event_type": {
+                "type": ["string", "null"]
+              },
+              "branch": {
+                "type": ["string", "null"]
+              },
+              "target_group": {
+                "type": ["string", "null"]
+              },
+              "max_age": {
+                "type": ["integer", "null"]
+              },
+              "min_age": {
+                "type": ["integer", "null"]
+              },
+              "open_registration": {
+                "type": ["boolean", "null"]
+              },
+              "max_participants": {
+                "type": ["integer", "null"]
+              },
+              "fee": {
+                "type": ["integer", "null"]
+              },
+              "location": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "start_time": {
+                "type": ["string", "null"]
+              },
+              "end_time": {
+                "type": ["string", "null"]
+              },
+              "link_to_registration": {
+                "type": ["string", "null"]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Event#update",
+      "operationId": "updateEvent",
+      "tags": ["events"],
+      "description": "Update an event",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID of event to update",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "description": "Event object that needs to be added",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": ["string", "null"]
+              },
+              "event_type": {
+                "type": ["string", "null"]
+              },
+              "branch": {
+                "type": ["string", "null"]
+              },
+              "target_group": {
+                "type": ["string", "null"]
+              },
+              "max_age": {
+                "type": ["integer", "null"]
+              },
+              "min_age": {
+                "type": ["integer", "null"]
+              },
+              "open_registration": {
+                "type": ["boolean", "null"]
+              },
+              "max_participants": {
+                "type": ["integer", "null"]
+              },
+              "fee": {
+                "type": ["number", "null"]
+              },
+              "location": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "start_time": {
+                "type": ["string", "null"]
+              },
+              "end_time": {
+                "type": ["string", "null"]
+              },
+              "link_to_registration": {
+                "type": ["string", "null"]
+              }
+            }
+          }
+        }
+      ],
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Event",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": ["string", "null"]
+              },
+              "event_type": {
+                "type": ["string", "null"]
+              },
+              "branch": {
+                "type": ["string", "null"]
+              },
+              "target_group": {
+                "type": ["string", "null"]
+              },
+              "max_age": {
+                "type": ["integer", "null"]
+              },
+              "min_age": {
+                "type": ["integer", "null"]
+              },
+              "open_registration": {
+                "type": ["boolean", "null"]
+              },
+              "max_participants": {
+                "type": ["integer", "null"]
+              },
+              "fee": {
+                "type": ["integer", "null"]
+              },
+              "location": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "start_time": {
+                "type": ["string", "null"]
+              },
+              "end_time": {
+                "type": ["string", "null"]
+              },
+              "link_to_registration": {
+                "type": ["string", "null"]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Event#delete",
+      "operationId": "deleteEvent",
+      "tags": ["events"],
+      "description": "Delete an event",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID of event to delete",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Event",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": ["string", "null"]
+              },
+              "event_type": {
+                "type": ["string", "null"]
+              },
+              "branch": {
+                "type": ["string", "null"]
+              },
+              "target_group": {
+                "type": ["string", "null"]
+              },
+              "max_age": {
+                "type": ["integer", "null"]
+              },
+              "min_age": {
+                "type": ["integer", "null"]
+              },
+              "open_registration": {
+                "type": ["boolean", "null"]
+              },
+              "max_participants": {
+                "type": ["integer", "null"]
+              },
+              "fee": {
+                "type": ["integer", "null"]
+              },
+              "location": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "start_time": {
+                "type": ["string", "null"]
+              },
+              "end_time": {
+                "type": ["string", "null"]
+              },
+              "link_to_registration": {
+                "type": ["string", "null"]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/event_types": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::EventTypes#list",
+      "operationId": "listEventTypes",
+      "tags": ["event_types"],
+      "description": "List all event types",
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Event types",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "target_group": {
+                  "type": "integer"
+                },
+                "max_age": {
+                  "type": "integer"
+                },
+                "min_age": {
+                  "type": "integer"
+                },
+                "open_registration": {
+                  "type": "boolean"
+                },
+                "max_participants": {
+                  "type": "integer"
+                },
+                "fee": {
+                  "type": "number"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "image": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/event_types/{id}": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::EventType#get",
+      "operationId": "getEventType",
+      "tags": ["event_types"],
+      "description": "Get an event type",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Event type id",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Event type",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "target_group": {
+                "type": "integer"
+              },
+              "max_age": {
+                "type": "integer"
+              },
+              "min_age": {
+                "type": "integer"
+              },
+              "open_registration": {
+                "type": "boolean"
+              },
+              "max_participants": {
+                "type": "integer"
+              },
+              "fee": {
+                "type": "number"
+              },
+              "description": {
+                "type": "string"
+              },
+              "image": {
+                "type": "string"
+              },
+              "location": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::EventType#add",
+      "operationId": "addEventType",
+      "tags": ["event_types"],
+      "description": "Add an event type",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "description": "Event type data",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "target_group": {
+                "type": "integer"
+              },
+              "max_age": {
+                "type": "integer"
+              },
+              "min_age": {
+                "type": "integer"
+              },
+              "open_registration": {
+                "type": "boolean"
+              },
+              "max_participants": {
+                "type": "integer"
+              },
+              "fee": {
+                "type": "number"
+              },
+              "description": {
+                "type": "string"
+              },
+              "image": {
+                "type": "string"
+              },
+              "location": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ],
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Event type",
+          "schema": {
+            "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "target_group": {
+                  "type": "integer"
+                },
+                "max_age": {
+                  "type": "integer"
+                },
+                "min_age": {
+                  "type": "integer"
+                },
+                "open_registration": {
+                  "type": "boolean"
+                },
+                "max_participants": {
+                  "type": "integer"
+                },
+                "fee": {
+                  "type": "number"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "image": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "integer"
+                }
+              }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::EventType#update",
+      "operationId": "updateEventType",
+      "tags": ["event_types"],
+      "description": "Update an event type",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Event type id",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "description": "Event type data",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "target_group": {
+                "type": "integer"
+              },
+              "max_age": {
+                "type": "integer"
+              },
+              "min_age": {
+                "type": "integer"
+              },
+              "open_registration": {
+                "type": "boolean"
+              },
+              "max_participants": {
+                "type": "integer"
+              },
+              "fee": {
+                "type": "number"
+              },
+              "description": {
+                "type": "string"
+              },
+              "image": {
+                "type": "string"
+              },
+              "location": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ],
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Event type",
+          "schema": {
+            "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "target_group": {
+                  "type": "integer"
+                },
+                "max_age": {
+                  "type": "integer"
+                },
+                "min_age": {
+                  "type": "integer"
+                },
+                "open_registration": {
+                  "type": "boolean"
+                },
+                "max_participants": {
+                  "type": "integer"
+                },
+                "fee": {
+                  "type": "number"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "image": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "integer"
+                }
+              }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::EventType#delete",
+      "operationId": "deleteEventType",
+      "tags": ["event_types"],
+      "description": "Delete an event type",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Event type id",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Event type",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/target_groups": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::TargetGroups#list",
+      "operationId": "listTargetGroups",
+      "tags": ["target_groups"],
+      "description": "List target groups",
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "List of target groups",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "min_age": {
+                  "type": "integer"
+                },
+                "max_age": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/target_group/{id}": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::TargetGroup#get",
+      "operationId": "getTargetGroup",
+      "tags": ["target_groups"],
+      "description": "Get a target group",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Target group id",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Target group",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "min_age": {
+                "type": "integer"
+              },
+              "max_age": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::TargetGroup#add",
+      "operationId": "addTargetGroup",
+      "tags": ["target_groups"],
+      "description": "Add a target group",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "description": "Target group data",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "min_age": {
+                "type": "integer"
+              },
+              "max_age": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ],
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Target group",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "min_age": {
+                "type": "integer"
+              },
+              "max_age": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::TargetGroup#update",
+      "operationId": "updateTargetGroup",
+      "tags": ["target_groups"],
+      "description": "Update a target group",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Target group id",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "description": "Target group data",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "min_age": {
+                "type": "integer"
+              },
+              "max_age": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ],
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Target group",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "min_age": {
+                "type": "integer"
+              },
+              "max_age": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::TargetGroup#delete",
+      "operationId": "deleteTargetGroup",
+      "tags": ["target_groups"],
+      "description": "Delete a target group",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Target group id",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Target group",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
               }
             }
           }
