@@ -3,7 +3,6 @@ import { Event, Facets } from "../interfaces";
 export default class LMSEventsFilter extends LitElement {
     events: Event[];
     facets: Facets;
-    static styles: import("lit-element").CSSResult[];
-    render(): import("lit-html").TemplateResult<1>;
+    render(): import("lit-element").TemplateResult;
 }
 //# sourceMappingURL=LMSEventsFilter.d.ts.map
