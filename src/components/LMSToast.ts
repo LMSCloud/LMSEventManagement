@@ -1,7 +1,8 @@
 import { css, html, LitElement } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { property } from "lit/decorators";
+import { customElement, property } from "lit/decorators";
 
+@customElement("lms-toast")
 export default class LMSToast extends LitElement {
   @property({ type: String }) heading = "";
   @property({ type: String }) message = "";
@@ -82,5 +83,3 @@ export default class LMSToast extends LitElement {
     });
   }
 }
-
-customElements.define("lms-toast", LMSToast);
