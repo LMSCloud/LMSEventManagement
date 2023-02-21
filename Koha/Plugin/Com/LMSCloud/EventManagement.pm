@@ -208,6 +208,11 @@ sub configure {
 
     my $responses = {
         q{} => sub {
+            $template = $self->get_template( { file => 'views/configuration/settings.tt' } );
+
+            return $self->output_html( $template->output() );
+        },
+        q{event-types} => sub {
             $template = $self->get_template( { file => 'views/configuration/event-types.tt' } );
 
             return $self->output_html( $template->output() );
