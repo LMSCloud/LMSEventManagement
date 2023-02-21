@@ -17,7 +17,7 @@ export default class TranslationHandler {
   async loadTranslations() {
     if (this._locale.startsWith("en")) {
       this._i18n.setLocale("en");
-      return;
+      return this._i18n;
     }
 
     /** Loading translations via API */
@@ -29,7 +29,7 @@ export default class TranslationHandler {
       const translations = await response.json();
       this._i18n.loadJSON(translations, "messages");
       this._i18n.setLocale(this._locale);
-      return;
+      return this._i18n;
     }
 
     /** If there is no json for the locale we don't interpolate
@@ -38,9 +38,10 @@ export default class TranslationHandler {
       console.info(
         `No translations found for locale ${this._locale}. Using default locale.`
       );
+      this._i18n.setLocale("en");
     }
 
-    this._i18n.setLocale("en");
+    return this._i18n;
   }
 
   set locale(locale) {
