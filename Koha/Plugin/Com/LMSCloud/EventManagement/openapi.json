@@ -254,7 +254,7 @@
   },
   "/events": {
     "get": {
-      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Events#get",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Events#list",
       "operationId": "getEvents",
       "tags": ["events"],
       "description": "Get all events",
