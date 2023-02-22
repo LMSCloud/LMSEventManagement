@@ -1,16 +1,18 @@
 /* eslint-disable no-underscore-dangle */
 import { LitElement, html, css, TemplateResult } from "lit";
+import { ifDefined } from "lit/directives/if-defined";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
 import TranslationHandler from "../lib/TranslationHandler";
 import { customElement, property } from "lit/decorators";
 import { Gettext } from "gettext.js";
-import { CreateOpts, Field } from "../interfaces";
+import { CreateOpts, ModalField } from "../interfaces";
+import { InputType } from "../types";
 
 @customElement("lms-modal")
 export default class LMSModal extends LitElement {
-  @property({ type: Array }) fields: Field[] = [];
+  @property({ type: Array }) fields: ModalField[] = [];
   @property({ type: Object }) createOpts: CreateOpts = {
     endpoint: "",
   };
@@ -121,12 +123,13 @@ export default class LMSModal extends LitElement {
   async _create(e: Event) {
     e.preventDefault();
     const { endpoint, method } = this.createOpts;
+    console.log(this.fields);
     const response = await fetch(endpoint, {
       method,
       body: JSON.stringify({
         ...Object.assign(
           {},
-          ...this.fields.map((field: Field) => ({
+          ...this.fields.map((field: ModalField) => ({
             [field.name]: field.value,
           }))
         ),
@@ -239,7 +242,7 @@ export default class LMSModal extends LitElement {
     `;
   }
 
-  _getFieldMarkup(field: Field) {
+  _getFieldMarkup(field: ModalField) {
     if (!field.desc) return html``;
 
     const fieldTypes = new Map<string, () => TemplateResult>([
@@ -247,6 +250,7 @@ export default class LMSModal extends LitElement {
         "select",
         (): TemplateResult => {
           if (!field.entries) return html``;
+          [field.value] = field.entries.map((entry) => entry.value);
           return html`
             <div class="form-group">
               <label for=${field.name}>${field.desc}</label>
@@ -304,7 +308,7 @@ export default class LMSModal extends LitElement {
             <div class="form-group">
               <label for=${field.name}>${field.desc}</label>
               <input
-                type=${field.type}
+                type=${ifDefined(field.type) as InputType}
                 name=${field.name}
                 id=${field.name}
                 class="form-control"
@@ -313,6 +317,11 @@ export default class LMSModal extends LitElement {
                     (e.target as HTMLInputElement).value ?? field.value;
                 }}
                 ?required=${field.required}
+                step=${ifDefined(
+                  field.attributes
+                    ?.find(([attribute]) => attribute === "step")
+                    ?.at(-1) as number
+                )}
               />
             </div>
           `;
@@ -320,7 +329,9 @@ export default class LMSModal extends LitElement {
       ],
     ]);
 
-    return fieldTypes.get(field.type)?.() || fieldTypes.get("default")?.();
+    const fieldType =
+      field.type && fieldTypes.has(field.type) ? field.type : "default";
+    return fieldTypes.get(fieldType)?.() ?? fieldTypes.get("default")?.();
   }
 
   _moveOnOverlap() {
