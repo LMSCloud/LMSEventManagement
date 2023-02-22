@@ -44,36 +44,6 @@ sub get {
     };
 }
 
-sub add {
-    my $c = shift->openapi->valid_input or return;
-
-    return try {
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
-
-        # We get our data for the new event type from the request body
-        my $json           = $c->req->body;
-        my $new_event_type = decode_json($json);
-
-        my ( $stmt, @bind ) = $sql->insert( $EVENT_TYPES_TABLE, $new_event_type );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        my $id = $dbh->last_insert_id( undef, undef, $EVENT_TYPES_TABLE, undef );
-
-        ( $stmt, @bind ) = $sql->select( $EVENT_TYPES_TABLE, q{*}, { id => $id } );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        my $event_type = $sth->fetchrow_hashref;
-
-        return $c->render( status => 200, openapi => $event_type || {} );
-    }
-    catch {
-        return $c->unhandled_exception($_);
-    };
-}
-
 sub update {
     my $c = shift->openapi->valid_input or return;
 

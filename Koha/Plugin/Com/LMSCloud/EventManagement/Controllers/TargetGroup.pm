@@ -44,36 +44,6 @@ sub get {
     };
 }
 
-sub add {
-    my $c = shift->openapi->valid_input or return;
-
-    return try {
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
-
-        # We get our data for the new target group from the request body
-        my $json             = $c->req->body;
-        my $new_target_group = decode_json($json);
-
-        my ( $stmt, @bind ) = $sql->insert( $TARGET_GROUPS_TABLE, $new_target_group );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        my $id = $dbh->last_insert_id( undef, undef, $TARGET_GROUPS_TABLE, undef );
-
-        ( $stmt, @bind ) = $sql->select( $TARGET_GROUPS_TABLE, q{*}, { id => $id } );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        my $target_group = $sth->fetchrow_hashref;
-
-        return $c->render( status => 200, openapi => $target_group || {} );
-    }
-    catch {
-        return $c->unhandled_exception($_);
-    };
-}
-
 sub update {
     my $c = shift->openapi->valid_input or return;
 

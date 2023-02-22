@@ -43,4 +43,34 @@ sub list {
     };
 }
 
+sub add {
+    my $c = shift->openapi->valid_input or return;
+
+    return try {
+        my $sql = SQL::Abstract->new;
+        my $dbh = C4::Context->dbh;
+
+        # We get our data for the new event type from the request body
+        my $json         = $c->req->body;
+        my $new_location = decode_json($json);
+
+        my ( $stmt, @bind ) = $sql->insert( $LOCATIONS_TABLE, $new_location );
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        my $id = $dbh->last_insert_id( undef, undef, $LOCATIONS_TABLE, undef );
+
+        ( $stmt, @bind ) = $sql->select( $LOCATIONS_TABLE, q{*}, { id => $id } );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        my $event_type = $sth->fetchrow_hashref;
+
+        return $c->render( status => 200, openapi => $event_type || {} );
+    }
+    catch {
+        return $c->unhandled_exception($_);
+    };
+}
+
 1;
