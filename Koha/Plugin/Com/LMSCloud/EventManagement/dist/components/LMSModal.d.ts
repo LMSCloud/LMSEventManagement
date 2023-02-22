@@ -1,8 +1,8 @@
 import { LitElement, TemplateResult } from "lit";
 import { Gettext } from "gettext.js";
-import { CreateOpts, Field } from "../interfaces";
+import { CreateOpts, ModalField } from "../interfaces";
 export default class LMSModal extends LitElement {
-    fields: Field[];
+    fields: ModalField[];
     createOpts: CreateOpts;
     editable: boolean;
     isOpen: boolean;
@@ -16,7 +16,7 @@ export default class LMSModal extends LitElement {
     _create(e: Event): Promise<void>;
     _dismissAlert(): void;
     render(): TemplateResult<1>;
-    _getFieldMarkup(field: Field): TemplateResult<1 | 2> | undefined;
+    _getFieldMarkup(field: ModalField): TemplateResult<1 | 2> | undefined;
     _moveOnOverlap(): void;
 }
 //# sourceMappingURL=LMSModal.d.ts.map

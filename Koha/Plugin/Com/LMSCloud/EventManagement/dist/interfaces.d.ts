@@ -1,4 +1,5 @@
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { InputType } from "./types";
 declare enum Status {
     Pending = "Pending",
     Approved = "Approved",
@@ -52,9 +53,8 @@ export interface MenuEntry {
     url: string;
     method: string;
 }
-export interface Field {
+interface BaseField {
     name: string;
-    type: "text" | "password" | "checkbox" | "radio" | "number" | "date" | "time" | "datetime-local" | "email" | "search" | "tel" | "url" | "color";
     desc?: string;
     logic?: () => Promise<{
         value: string;
@@ -66,9 +66,16 @@ export interface Field {
         value: string;
         name: string;
     }[];
+    attributes?: [string, string | number][];
 }
-export interface SpecialField extends Omit<Field, "type"> {
+export interface Field extends BaseField {
+    type: InputType;
+}
+export interface SpecialField extends BaseField {
     type: "select" | "info" | "checkbox";
+}
+export interface ModalField extends BaseField {
+    type?: InputType | "select" | "info" | "checkbox";
 }
 export interface CreateOpts extends RequestInit {
     endpoint: string;

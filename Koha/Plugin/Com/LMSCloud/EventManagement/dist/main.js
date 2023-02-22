@@ -37,14 +37,14 @@
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var s$2;const e$3=window,r$1=e$3.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$2=e$3.reactiveElementPolyfillSupport,n$3={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$2={attribute:!0,type:String,converter:n$3,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$2){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$2}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$2){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$3).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$3;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$2||o$2({ReactiveElement:d$1}),(null!==(s$2=e$3.reactiveElementVersions)&&void 0!==s$2?s$2:e$3.reactiveElementVersions=[]).push("1.6.1");
+     */var s$2;const e$3=window,r$1=e$3.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$2=e$3.reactiveElementPolyfillSupport,n$3={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$3={attribute:!0,type:String,converter:n$3,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$3){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$3}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$3){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$3).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$3;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$2||o$2({ReactiveElement:d$1}),(null!==(s$2=e$3.reactiveElementVersions)&&void 0!==s$2?s$2:e$3.reactiveElementVersions=[]).push("1.6.1");
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    var t;const i$1=window,s$1=i$1.trustedTypes,e$2=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$1=`lit$${(Math.random()+"").slice(9)}$`,n$2="?"+o$1,l$1=`<${n$2}>`,h=document,r=(t="")=>h.createComment(t),d=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,c=t=>u(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,a=/-->/g,f=/>/g,_=RegExp(">|[ \t\n\f\r](?:([^\\s\"'>=/]+)([ \t\n\f\r]*=[ \t\n\f\r]*(?:[^ \t\n\f\r\"'`<>=]|(\"|')|))|$)","g"),m=/'/g,p=/"/g,$=/^(?:script|style|textarea|title)$/i,g=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),y=g(1),w=g(2),x=Symbol.for("lit-noChange"),b=Symbol.for("lit-nothing"),T=new WeakMap,A=h.createTreeWalker(h,129,null,!1),E=(t,i)=>{const s=t.length-1,n=[];let h,r=2===i?"<svg>":"",d=v;for(let i=0;i<s;i++){const s=t[i];let e,u,c=-1,g=0;for(;g<s.length&&(d.lastIndex=g,u=d.exec(s),null!==u);)g=d.lastIndex,d===v?"!--"===u[1]?d=a:void 0!==u[1]?d=f:void 0!==u[2]?($.test(u[2])&&(h=RegExp("</"+u[2],"g")),d=_):void 0!==u[3]&&(d=_):d===_?">"===u[0]?(d=null!=h?h:v,c=-1):void 0===u[1]?c=-2:(c=d.lastIndex-u[2].length,e=u[1],d=void 0===u[3]?_:'"'===u[3]?p:m):d===p||d===m?d=_:d===a||d===f?d=v:(d=_,h=void 0);const y=d===_&&t[i+1].startsWith("/>")?" ":"";r+=d===v?s+l$1:c>=0?(n.push(e),s.slice(0,c)+"$lit$"+s.slice(c)+o$1+y):s+o$1+(-2===c?(n.push(void 0),i):y);}const u=r+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$2?e$2.createHTML(u):u,n]};class C{constructor({strings:t,_$litType$:i},e){let l;this.parts=[];let h=0,d=0;const u=t.length-1,c=this.parts,[v,a]=E(t,i);if(this.el=C.createElement(v,e),A.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(l=A.nextNode())&&c.length<u;){if(1===l.nodeType){if(l.hasAttributes()){const t=[];for(const i of l.getAttributeNames())if(i.endsWith("$lit$")||i.startsWith(o$1)){const s=a[d++];if(t.push(i),void 0!==s){const t=l.getAttribute(s.toLowerCase()+"$lit$").split(o$1),i=/([.?@])?(.*)/.exec(s);c.push({type:1,index:h,name:i[2],strings:t,ctor:"."===i[1]?M:"?"===i[1]?k:"@"===i[1]?H:S});}else c.push({type:6,index:h});}for(const i of t)l.removeAttribute(i);}if($.test(l.tagName)){const t=l.textContent.split(o$1),i=t.length-1;if(i>0){l.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)l.append(t[s],r()),A.nextNode(),c.push({type:2,index:++h});l.append(t[i],r());}}}else if(8===l.nodeType)if(l.data===n$2)c.push({type:2,index:h});else {let t=-1;for(;-1!==(t=l.data.indexOf(o$1,t+1));)c.push({type:7,index:h}),t+=o$1.length-1;}h++;}}static createElement(t,i){const s=h.createElement("template");return s.innerHTML=t,s}}function P(t,i,s=t,e){var o,n,l,h;if(i===x)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=P(t,r._$AS(t,i.values),r,e)),i}class V{constructor(t,i){this.u=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}v(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:h).importNode(s,!0);A.currentNode=o;let n=A.nextNode(),l=0,r=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new N(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new I(n,this,t)),this.u.push(i),d=e[++r];}l!==(null==d?void 0:d.index)&&(n=A.nextNode(),l++);}return o}p(t){let i=0;for(const s of this.u)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class N{constructor(t,i,s,e){var o;this.type=2,this._$AH=b,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cm=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cm}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=P(this,t,i),d(t)?t===b||null==t||""===t?(this._$AH!==b&&this._$AR(),this._$AH=b):t!==this._$AH&&t!==x&&this.g(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):c(t)?this.k(t):this.g(t);}O(t,i=this._$AB){return this._$AA.parentNode.insertBefore(t,i)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}g(t){this._$AH!==b&&d(this._$AH)?this._$AA.nextSibling.data=t:this.T(h.createTextNode(t)),this._$AH=t;}$(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=C.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.p(s);else {const t=new V(o,this),i=t.v(this.options);t.p(s),this.T(i),this._$AH=t;}}_$AC(t){let i=T.get(t.strings);return void 0===i&&T.set(t.strings,i=new C(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new N(this.O(r()),this.O(r()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cm=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class S{constructor(t,i,s,e,o){this.type=1,this._$AH=b,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=b;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=P(this,t,i,0),n=!d(t)||t!==this._$AH&&t!==x,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=P(this,e[s+l],i,l),h===x&&(h=this._$AH[l]),n||(n=!d(h)||h!==this._$AH[l]),h===b?t=b:t!==b&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===b?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class M extends S{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===b?void 0:t;}}const R=s$1?s$1.emptyScript:"";class k extends S{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==b?this.element.setAttribute(this.name,R):this.element.removeAttribute(this.name);}}class H extends S{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=P(this,t,i,0))&&void 0!==s?s:b)===x)return;const e=this._$AH,o=t===b&&e!==b||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==b&&(e===b||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class I{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){P(this,t);}}const L={P:"$lit$",A:o$1,M:n$2,C:1,L:E,R:V,D:c,V:P,I:N,H:S,N:k,U:H,B:M,F:I},z=i$1.litHtmlPolyfillSupport;null==z||z(C,N),(null!==(t=i$1.litHtmlVersions)&&void 0!==t?t:i$1.litHtmlVersions=[]).push("2.6.1");const Z=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new N(i.insertBefore(r(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
+    var t;const i$1=window,s$1=i$1.trustedTypes,e$2=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$1=`lit$${(Math.random()+"").slice(9)}$`,n$2="?"+o$1,l$2=`<${n$2}>`,h=document,r=(t="")=>h.createComment(t),d=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,c=t=>u(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,a=/-->/g,f=/>/g,_=RegExp(">|[ \t\n\f\r](?:([^\\s\"'>=/]+)([ \t\n\f\r]*=[ \t\n\f\r]*(?:[^ \t\n\f\r\"'`<>=]|(\"|')|))|$)","g"),m=/'/g,p=/"/g,$=/^(?:script|style|textarea|title)$/i,g=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),y=g(1),w=g(2),x=Symbol.for("lit-noChange"),b=Symbol.for("lit-nothing"),T=new WeakMap,A=h.createTreeWalker(h,129,null,!1),E=(t,i)=>{const s=t.length-1,n=[];let h,r=2===i?"<svg>":"",d=v;for(let i=0;i<s;i++){const s=t[i];let e,u,c=-1,g=0;for(;g<s.length&&(d.lastIndex=g,u=d.exec(s),null!==u);)g=d.lastIndex,d===v?"!--"===u[1]?d=a:void 0!==u[1]?d=f:void 0!==u[2]?($.test(u[2])&&(h=RegExp("</"+u[2],"g")),d=_):void 0!==u[3]&&(d=_):d===_?">"===u[0]?(d=null!=h?h:v,c=-1):void 0===u[1]?c=-2:(c=d.lastIndex-u[2].length,e=u[1],d=void 0===u[3]?_:'"'===u[3]?p:m):d===p||d===m?d=_:d===a||d===f?d=v:(d=_,h=void 0);const y=d===_&&t[i+1].startsWith("/>")?" ":"";r+=d===v?s+l$2:c>=0?(n.push(e),s.slice(0,c)+"$lit$"+s.slice(c)+o$1+y):s+o$1+(-2===c?(n.push(void 0),i):y);}const u=r+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$2?e$2.createHTML(u):u,n]};class C{constructor({strings:t,_$litType$:i},e){let l;this.parts=[];let h=0,d=0;const u=t.length-1,c=this.parts,[v,a]=E(t,i);if(this.el=C.createElement(v,e),A.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(l=A.nextNode())&&c.length<u;){if(1===l.nodeType){if(l.hasAttributes()){const t=[];for(const i of l.getAttributeNames())if(i.endsWith("$lit$")||i.startsWith(o$1)){const s=a[d++];if(t.push(i),void 0!==s){const t=l.getAttribute(s.toLowerCase()+"$lit$").split(o$1),i=/([.?@])?(.*)/.exec(s);c.push({type:1,index:h,name:i[2],strings:t,ctor:"."===i[1]?M:"?"===i[1]?k:"@"===i[1]?H:S});}else c.push({type:6,index:h});}for(const i of t)l.removeAttribute(i);}if($.test(l.tagName)){const t=l.textContent.split(o$1),i=t.length-1;if(i>0){l.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)l.append(t[s],r()),A.nextNode(),c.push({type:2,index:++h});l.append(t[i],r());}}}else if(8===l.nodeType)if(l.data===n$2)c.push({type:2,index:h});else {let t=-1;for(;-1!==(t=l.data.indexOf(o$1,t+1));)c.push({type:7,index:h}),t+=o$1.length-1;}h++;}}static createElement(t,i){const s=h.createElement("template");return s.innerHTML=t,s}}function P(t,i,s=t,e){var o,n,l,h;if(i===x)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=P(t,r._$AS(t,i.values),r,e)),i}class V{constructor(t,i){this.u=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}v(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:h).importNode(s,!0);A.currentNode=o;let n=A.nextNode(),l=0,r=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new N(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new I(n,this,t)),this.u.push(i),d=e[++r];}l!==(null==d?void 0:d.index)&&(n=A.nextNode(),l++);}return o}p(t){let i=0;for(const s of this.u)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class N{constructor(t,i,s,e){var o;this.type=2,this._$AH=b,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cm=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cm}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=P(this,t,i),d(t)?t===b||null==t||""===t?(this._$AH!==b&&this._$AR(),this._$AH=b):t!==this._$AH&&t!==x&&this.g(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):c(t)?this.k(t):this.g(t);}O(t,i=this._$AB){return this._$AA.parentNode.insertBefore(t,i)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}g(t){this._$AH!==b&&d(this._$AH)?this._$AA.nextSibling.data=t:this.T(h.createTextNode(t)),this._$AH=t;}$(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=C.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.p(s);else {const t=new V(o,this),i=t.v(this.options);t.p(s),this.T(i),this._$AH=t;}}_$AC(t){let i=T.get(t.strings);return void 0===i&&T.set(t.strings,i=new C(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new N(this.O(r()),this.O(r()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cm=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class S{constructor(t,i,s,e,o){this.type=1,this._$AH=b,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=b;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=P(this,t,i,0),n=!d(t)||t!==this._$AH&&t!==x,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=P(this,e[s+l],i,l),h===x&&(h=this._$AH[l]),n||(n=!d(h)||h!==this._$AH[l]),h===b?t=b:t!==b&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===b?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class M extends S{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===b?void 0:t;}}const R=s$1?s$1.emptyScript:"";class k extends S{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==b?this.element.setAttribute(this.name,R):this.element.removeAttribute(this.name);}}class H extends S{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=P(this,t,i,0))&&void 0!==s?s:b)===x)return;const e=this._$AH,o=t===b&&e!==b||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==b&&(e===b||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class I{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){P(this,t);}}const L={P:"$lit$",A:o$1,M:n$2,C:1,L:E,R:V,D:c,V:P,I:N,H:S,N:k,U:H,B:M,F:I},z=i$1.litHtmlPolyfillSupport;null==z||z(C,N),(null!==(t=i$1.litHtmlVersions)&&void 0!==t?t:i$1.litHtmlVersions=[]).push("2.6.1");const Z=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new N(i.insertBefore(r(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
 
     var litHtml = /*#__PURE__*/Object.freeze({
         __proto__: null,
@@ -60,7 +60,7 @@
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var l,o;class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Z(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return x}}s.finalized=!0,s._$litElement$=!0,null===(l=globalThis.litElementHydrateSupport)||void 0===l||l.call(globalThis,{LitElement:s});const n$1=globalThis.litElementPolyfillSupport;null==n$1||n$1({LitElement:s});(null!==(o=globalThis.litElementVersions)&&void 0!==o?o:globalThis.litElementVersions=[]).push("3.2.2");
+     */var l$1,o;class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Z(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return x}}s.finalized=!0,s._$litElement$=!0,null===(l$1=globalThis.litElementHydrateSupport)||void 0===l$1||l$1.call(globalThis,{LitElement:s});const n$1=globalThis.litElementPolyfillSupport;null==n$1||n$1({LitElement:s});(null!==(o=globalThis.litElementVersions)&&void 0!==o?o:globalThis.litElementVersions=[]).push("3.2.2");
 
     /**
      * @license
@@ -3460,6 +3460,12 @@
     ], LMSFloatingMenu);
     var LMSFloatingMenu$1 = LMSFloatingMenu;
 
+    /**
+     * @license
+     * Copyright 2018 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */const l=l=>null!=l?l:b;
+
     var faList = {
       prefix: 'fas',
       iconName: 'list',
@@ -3498,6 +3504,11 @@
       icon: [512, 512, [9881, "cog"], "f013", "M481.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-30.9 28.1c-7.7 7.1-11.4 17.5-10.9 27.9c.1 2.9 .2 5.8 .2 8.8s-.1 5.9-.2 8.8c-.5 10.5 3.1 20.9 10.9 27.9l30.9 28.1c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-39.7-12.6c-10-3.2-20.8-1.1-29.7 4.6c-4.9 3.1-9.9 6.1-15.1 8.7c-9.3 4.8-16.5 13.2-18.8 23.4l-8.9 40.7c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-8.9-40.7c-2.2-10.2-9.5-18.6-18.8-23.4c-5.2-2.7-10.2-5.6-15.1-8.7c-8.8-5.7-19.7-7.8-29.7-4.6L69.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l30.9-28.1c7.7-7.1 11.4-17.5 10.9-27.9c-.1-2.9-.2-5.8-.2-8.8s.1-5.9 .2-8.8c.5-10.5-3.1-20.9-10.9-27.9L8.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l39.7 12.6c10 3.2 20.8 1.1 29.7-4.6c4.9-3.1 9.9-6.1 15.1-8.7c9.3-4.8 16.5-13.2 18.8-23.4l8.9-40.7c2-9.1 9-16.3 18.2-17.8C213.3 1.2 227.5 0 242 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l8.9 40.7c2.2 10.2 9.4 18.6 18.8 23.4c5.2 2.7 10.2 5.6 15.1 8.7c8.8 5.7 19.7 7.7 29.7 4.6l39.7-12.6c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM242 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"]
     };
     var faCog = faGear;
+    var faLocationDot = {
+      prefix: 'fas',
+      iconName: 'location-dot',
+      icon: [384, 512, ["map-marker-alt"], "f3c5", "M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
+    };
     var faPlus = {
       prefix: 'fas',
       iconName: 'plus',
@@ -3561,6 +3572,7 @@
         async _create(e) {
             e.preventDefault();
             const { endpoint, method } = this.createOpts;
+            console.log(this.fields);
             const response = await fetch(endpoint, {
                 method,
                 body: JSON.stringify({
@@ -3669,7 +3681,7 @@
     `;
         }
         _getFieldMarkup(field) {
-            var _a, _b;
+            var _a, _b, _c;
             if (!field.desc)
                 return y ``;
             const fieldTypes = new Map([
@@ -3678,6 +3690,7 @@
                     () => {
                         if (!field.entries)
                             return y ``;
+                        [field.value] = field.entries.map((entry) => entry.value);
                         return y `
             <div class="form-group">
               <label for=${field.name}>${field.desc}</label>
@@ -3730,11 +3743,12 @@
                 [
                     "default",
                     () => {
+                        var _a, _b;
                         return y `
             <div class="form-group">
               <label for=${field.name}>${field.desc}</label>
               <input
-                type=${field.type}
+                type=${l(field.type)}
                 name=${field.name}
                 id=${field.name}
                 class="form-control"
@@ -3744,13 +3758,15 @@
                             (_a = e.target.value) !== null && _a !== void 0 ? _a : field.value;
                     }}
                 ?required=${field.required}
+                step=${l((_b = (_a = field.attributes) === null || _a === void 0 ? void 0 : _a.find(([attribute]) => attribute === "step")) === null || _b === void 0 ? void 0 : _b.at(-1))}
               />
             </div>
           `;
                     },
                 ],
             ]);
-            return ((_a = fieldTypes.get(field.type)) === null || _a === void 0 ? void 0 : _a()) || ((_b = fieldTypes.get("default")) === null || _b === void 0 ? void 0 : _b());
+            const fieldType = field.type && fieldTypes.has(field.type) ? field.type : "default";
+            return (_b = (_a = fieldTypes.get(fieldType)) === null || _a === void 0 ? void 0 : _a()) !== null && _b !== void 0 ? _b : (_c = fieldTypes.get("default")) === null || _c === void 0 ? void 0 : _c();
         }
         _moveOnOverlap() {
             const fixedElement = this.renderRoot.querySelector(".btn-modal-wrapper");
@@ -3861,7 +3877,7 @@
             this.baseurl = "";
             this.pluginclass = "";
             this.menuEntries = (i18n) => {
-                var _a, _b, _c, _d;
+                var _a, _b, _c, _d, _e;
                 return [
                     {
                         name: (_a = i18n.gettext("Settings")) !== null && _a !== void 0 ? _a : "Settings",
@@ -3882,7 +3898,13 @@
                         method: "configure",
                     },
                     {
-                        name: (_d = i18n.gettext("Events")) !== null && _d !== void 0 ? _d : "Events",
+                        name: (_d = i18n.gettext("Locations")) !== null && _d !== void 0 ? _d : "Locations",
+                        icon: faLocationDot,
+                        url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=locations`,
+                        method: "configure",
+                    },
+                    {
+                        name: (_e = i18n.gettext("Events")) !== null && _e !== void 0 ? _e : "Events",
                         icon: faList,
                         url: `${this.baseurl}?class=${this.pluginclass}&method=tool`,
                         method: "tool",
@@ -3932,8 +3954,22 @@
                 },
                 {
                     name: "target_group",
-                    type: "text",
+                    type: "select",
                     desc: i18n.gettext("Target Group"),
+                    logic: async () => {
+                        const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
+                        const result = await response.json();
+                        return result.map((target_group) => ({
+                            value: target_group.id,
+                            name: target_group.name,
+                        }));
+                    },
+                    required: true,
+                },
+                {
+                    name: "max_participants",
+                    type: "number",
+                    desc: i18n.gettext("Max Participants"),
                     required: true,
                 },
                 {
@@ -3948,26 +3984,13 @@
                     desc: i18n.gettext("Min Age"),
                     required: true,
                 },
-                {
-                    name: "open_registration",
-                    type: "checkbox",
-                    desc: i18n.gettext("Open Registration"),
-                    required: false,
-                },
-                { name: "id", type: "number", required: true, },
+                { name: "id", type: "number", required: true },
                 {
                     name: "fee",
                     type: "number",
                     desc: i18n.gettext("Fee"),
                     required: false,
-                    // logic: async () => {
-                    //   const response = await fetch("/api/v1/libraries");
-                    //   const result = await response.json();
-                    //   return result.map((library: any) => ({
-                    //     value: library.library_id,
-                    //     name: library.name,
-                    //   }));
-                    // },
+                    attributes: [["step", 0.01]],
                 },
                 {
                     name: "description",
@@ -3983,10 +4006,24 @@
                 },
                 {
                     name: "location",
-                    type: "text",
+                    type: "select",
                     desc: i18n.gettext("Location"),
+                    logic: async () => {
+                        const response = await fetch("/api/v1/contrib/eventmanagement/locations");
+                        const result = await response.json();
+                        return result.map((location) => ({
+                            value: location.id,
+                            name: location.name,
+                        }));
+                    },
                     required: false,
                 },
+                {
+                    name: "open_registration",
+                    type: "checkbox",
+                    desc: i18n.gettext("Open Registration"),
+                    required: false,
+                }
             ];
         }
         connectedCallback() {
@@ -4016,6 +4053,8 @@
         constructor() {
             super(...arguments);
             this.data = [];
+            this.order = [];
+            this._headers = [];
             this._isEditable = false;
             this._isDeletable = false;
             this._toast = {
@@ -4025,21 +4064,21 @@
             this._i18n = {};
             this._notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
         }
-        async _init() {
-            const translationHandler = new TranslationHandler();
-            await translationHandler.loadTranslations();
-            this._i18n = translationHandler.i18n;
-        }
-        _handleEdit() {
+        // private async init() {
+        //   const translationHandler = new TranslationHandler();
+        //   await translationHandler.loadTranslations();
+        //   this._i18n = translationHandler.i18n;
+        // }
+        handleEdit() {
             console.info(this._notImplementedInBaseMessage);
         }
-        _handleSave() {
+        handleSave() {
             console.info(this._notImplementedInBaseMessage);
         }
-        _handleDelete() {
+        handleDelete() {
             console.info(this._notImplementedInBaseMessage);
         }
-        _renderToast(status, result) {
+        renderToast(status, result) {
             if (result.error) {
                 this._toast = {
                     heading: status,
@@ -4061,80 +4100,100 @@
             lmsToast.message = this._toast.message;
             this.renderRoot.appendChild(lmsToast);
         }
-        render() {
-            var _a, _b;
+        sortByOrder(data, order) {
+            if (!(data instanceof Array)) {
+                return data;
+            }
+            return data.sort((a, b) => order.reduce((result, column) => {
+                if (result !== 0) {
+                    return result;
+                }
+                const aValue = a[column];
+                const bValue = b[column];
+                if (aValue < bValue) {
+                    return -1;
+                }
+                if (aValue > bValue) {
+                    return 1;
+                }
+                return 0;
+            }, 0));
+        }
+        sortColumns() {
+            var _a;
             const { data } = this;
             const hasData = (_a = (data === null || data === void 0 ? void 0 : data.length) > 0) !== null && _a !== void 0 ? _a : false;
             const [headers] = hasData ? data : [];
+            this._headers = this.order.filter((key) => headers && Object.prototype.hasOwnProperty.call(headers, key));
             if (hasData) {
-                return !((_b = this._i18n) === null || _b === void 0 ? void 0 : _b.gettext)
-                    ? b
-                    : y `
-            <div class="container-fluid mx-0 px-0">
-              <table
-                class="table table-striped table-bordered table-hove table-responsive-xl"
-              >
-                <thead>
-                  <tr>
-                    ${Object.keys(headers).map((key) => y `<th scope="col">${this._i18n.gettext(key)}</th>`)}
-                    ${this._isEditable
-                    ? y `<th scope="col">
-                          ${this._i18n.gettext("actions")}
-                        </th>`
-                    : y ``}
-                  </tr>
-                </thead>
-                <tbody>
-                  ${data.map((item) => y `
-                      <tr>
-                        ${Object.keys(item).map((key) => y `<td>${item[key]}</td>`)}
-                        ${this._isEditable
-                    ? y `
-                              <td>
-                                <div class="d-flex">
-                                  <button
-                                    @click=${this._handleEdit}
-                                    type="button"
-                                    class="btn btn-dark mx-2"
-                                  >
-                                    ${litFontawesome_3(faEdit)}
-                                    <span
-                                      >&nbsp;${this._i18n.gettext("Edit")}</span
-                                    >
-                                  </button>
-                                  <button
-                                    @click=${this._handleSave}
-                                    type="button"
-                                    class="btn btn-dark mx-2"
-                                  >
-                                    ${litFontawesome_3(faSave)}
-                                    <span
-                                      >&nbsp;${this._i18n.gettext("Save")}</span
-                                    >
-                                  </button>
-                                  <button
-                                    @click=${this._handleDelete}
-                                    ?hidden=${!this._isDeletable}
-                                    type="button"
-                                    class="btn btn-danger mx-2"
-                                  >
-                                    ${litFontawesome_3(faTrash)}
-                                    <span
-                                      >&nbsp;${this._i18n.gettext("Delete")}</span
-                                    >
-                                  </button>
-                                </div>
-                              </td>
-                            `
-                    : y ``}
-                      </tr>
-                    `)}
-                </tbody>
-              </table>
-            </div>
-          `;
+                this.data = this.order.length
+                    ? this.sortByOrder(data, this.order)
+                    : data;
             }
-            return b;
+        }
+        willUpdate(_changedProperties) {
+            super.willUpdate(_changedProperties);
+            this.sortColumns();
+        }
+        render() {
+            return !this.data.length
+                ? b
+                : y `
+          <div class="container-fluid mx-0">
+            <table
+              class="table table-striped table-bordered table-hove table-responsive-xl"
+            >
+              <thead>
+                <tr>
+                  ${this._headers.map((key) => y `<th scope="col">${key}</th>`)}
+                  ${this._isEditable
+                ? y `<th scope="col">actions</th>`
+                : y ``}
+                </tr>
+              </thead>
+              <tbody>
+                ${this.data.map((item) => y `
+                    <tr>
+                      ${this._headers.map((key) => y `<td>${item[key]}</td>`)}
+                      ${this._isEditable
+                ? y `
+                            <td>
+                              <div class="d-flex">
+                                <button
+                                  @click=${this.handleEdit}
+                                  type="button"
+                                  class="btn btn-dark mx-2"
+                                >
+                                  ${litFontawesome_3(faEdit)}
+                                  <span>&nbsp;Edit</span>
+                                </button>
+                                <button
+                                  @click=${this.handleSave}
+                                  type="button"
+                                  class="btn btn-dark mx-2"
+                                >
+                                  ${litFontawesome_3(faSave)}
+                                  <span>&nbsp;Save</span>
+                                </button>
+                                <button
+                                  @click=${this.handleDelete}
+                                  ?hidden=${!this._isDeletable}
+                                  type="button"
+                                  class="btn btn-danger mx-2"
+                                >
+                                  ${litFontawesome_3(faTrash)}
+                                  <span>&nbsp;Delete</span>
+                                </button>
+                              </div>
+                            </td>
+                          `
+                : y ``}
+                    </tr>
+                  `)}
+              </tbody>
+            </table>
+          </div>
+        `;
         }
     };
     LMSTable.styles = [
@@ -4161,6 +4220,12 @@
         e({ type: Array })
     ], LMSTable.prototype, "data", void 0);
     __decorate([
+        e({ type: Array })
+    ], LMSTable.prototype, "order", void 0);
+    __decorate([
+        e({ type: Array, attribute: false })
+    ], LMSTable.prototype, "_headers", void 0);
+    __decorate([
         e({ type: Boolean, attribute: false })
     ], LMSTable.prototype, "_isEditable", void 0);
     __decorate([
@@ -4180,9 +4245,22 @@
     ], LMSTable);
     var LMSTable$1 = LMSTable;
 
-    let LMSEventTypesTable = class LMSEventTypesTable extends LMSTable$1 {
+    let LMSEventTypesTable$1 = class LMSEventTypesTable extends LMSTable$1 {
         connectedCallback() {
             super.connectedCallback();
+            this.order = [
+                "id",
+                "name",
+                "target_group",
+                "max_age",
+                "min_age",
+                "open_registration",
+                "max_participants",
+                "fee",
+                "description",
+                "image",
+                "location",
+            ];
             const events = fetch("/api/v1/contrib/eventmanagement/event_types");
             events
                 .then((response) => {
@@ -4199,10 +4277,191 @@
             });
         }
     };
-    LMSEventTypesTable = __decorate([
+    LMSEventTypesTable$1 = __decorate([
         e$1("lms-event-types-table")
+    ], LMSEventTypesTable$1);
+    var LMSEventTypesTable$2 = LMSEventTypesTable$1;
+
+    let LMSLocationsModal = class LMSLocationsModal extends LMSModal$1 {
+        constructor() {
+            super(...arguments);
+            this.createOpts = {
+                method: "POST",
+                endpoint: "/api/v1/contrib/eventmanagement/locations",
+            };
+            this.modalFields = (i18n) => [
+                {
+                    name: "name",
+                    type: "text",
+                    desc: i18n.gettext("Name"),
+                    required: true,
+                },
+                {
+                    name: "street",
+                    type: "text",
+                    desc: i18n.gettext("Street"),
+                    required: true,
+                },
+                {
+                    name: "number",
+                    type: "text",
+                    desc: i18n.gettext("Number"),
+                    required: false,
+                },
+                {
+                    name: "city",
+                    type: "text",
+                    desc: i18n.gettext("City"),
+                    required: false,
+                },
+                {
+                    name: "zip",
+                    type: "number",
+                    desc: i18n.gettext("Zip"),
+                    required: false,
+                },
+                {
+                    name: "country",
+                    type: "text",
+                    desc: i18n.gettext("Country"),
+                    required: false,
+                },
+                { name: "id", type: "number", required: true },
+            ];
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            if (this._i18n instanceof Promise) {
+                this.fields = [];
+                this._i18n.then((i18n) => {
+                    this.fields = this.modalFields(i18n);
+                });
+                return;
+            }
+            this.fields = this.modalFields(this._i18n);
+        }
+    };
+    __decorate([
+        e({ type: Object })
+    ], LMSLocationsModal.prototype, "createOpts", void 0);
+    __decorate([
+        e({ type: Function, attribute: false })
+    ], LMSLocationsModal.prototype, "modalFields", void 0);
+    LMSLocationsModal = __decorate([
+        e$1("lms-locations-modal")
+    ], LMSLocationsModal);
+    var LMSLocationsModal$1 = LMSLocationsModal;
+
+    let LMSLocationsTable = class LMSLocationsTable extends LMSTable$1 {
+        connectedCallback() {
+            super.connectedCallback();
+            this.order = [
+                "id",
+                "name",
+                "street",
+                "number",
+                "city",
+                "state",
+                "zip",
+                "country",
+            ];
+            const events = fetch("/api/v1/contrib/eventmanagement/locations");
+            events
+                .then((response) => {
+                if (response.status >= 200 && response.status <= 299) {
+                    return response.json();
+                }
+                throw new Error("Something went wrong");
+            })
+                .then((result) => {
+                this.data = result;
+            })
+                .catch((error) => {
+                console.error(error);
+            });
+        }
+    };
+    LMSLocationsTable = __decorate([
+        e$1("lms-locations-table")
+    ], LMSLocationsTable);
+    var LMSLocationsTable$1 = LMSLocationsTable;
+
+    let LMSTargetGroupsModal = class LMSTargetGroupsModal extends LMSModal$1 {
+        constructor() {
+            super(...arguments);
+            this.createOpts = {
+                method: "POST",
+                endpoint: "/api/v1/contrib/eventmanagement/target_groups",
+            };
+            this.modalFields = (i18n) => [
+                {
+                    name: "name",
+                    type: "text",
+                    desc: i18n.gettext("Name"),
+                    required: true,
+                },
+                {
+                    name: "min_age",
+                    type: "number",
+                    desc: i18n.gettext("Min Age"),
+                    required: true,
+                },
+                {
+                    name: "max_age",
+                    type: "number",
+                    desc: i18n.gettext("Max Age"),
+                    required: false,
+                },
+                { name: "id", type: "number", required: true },
+            ];
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            if (this._i18n instanceof Promise) {
+                this.fields = [];
+                this._i18n.then((i18n) => {
+                    this.fields = this.modalFields(i18n);
+                });
+                return;
+            }
+            this.fields = this.modalFields(this._i18n);
+        }
+    };
+    __decorate([
+        e({ type: Object })
+    ], LMSTargetGroupsModal.prototype, "createOpts", void 0);
+    __decorate([
+        e({ type: Function, attribute: false })
+    ], LMSTargetGroupsModal.prototype, "modalFields", void 0);
+    LMSTargetGroupsModal = __decorate([
+        e$1("lms-target-groups-modal")
+    ], LMSTargetGroupsModal);
+    var LMSTargetGroupsModal$1 = LMSTargetGroupsModal;
+
+    let LMSEventTypesTable = class LMSEventTypesTable extends LMSTable$1 {
+        connectedCallback() {
+            super.connectedCallback();
+            this.order = ["id", "name", "min_age", "max_age"];
+            const events = fetch("/api/v1/contrib/eventmanagement/target_groups");
+            events
+                .then((response) => {
+                if (response.status >= 200 && response.status <= 299) {
+                    return response.json();
+                }
+                throw new Error("Something went wrong");
+            })
+                .then((result) => {
+                this.data = result;
+            })
+                .catch((error) => {
+                console.error(error);
+            });
+        }
+    };
+    LMSEventTypesTable = __decorate([
+        e$1("lms-target-groups-table")
     ], LMSEventTypesTable);
-    var LMSEventTypesTable$1 = LMSEventTypesTable;
+    var LMSTargetGroupsTable = LMSEventTypesTable;
 
     let LMSEventsView = class LMSEventsView extends s {
         constructor() {
@@ -4274,7 +4533,7 @@
     ], LMSEventsView);
     var LMSEventsView$1 = LMSEventsView;
 
-    let StaffEventTypesView = class StaffEventTypesView extends s {
+    let StaffEventTypesView$1 = class StaffEventTypesView extends s {
         render() {
             return y `
       <lms-event-types-table></lms-event-types-table>
@@ -4282,20 +4541,47 @@
     `;
         }
     };
-    StaffEventTypesView = __decorate([
+    StaffEventTypesView$1 = __decorate([
         e$1("lms-staff-event-types-view")
-    ], StaffEventTypesView);
-    var StaffEventTypesView$1 = StaffEventTypesView;
+    ], StaffEventTypesView$1);
+    var StaffEventTypesView$2 = StaffEventTypesView$1;
+
+    let StaffLocationsView = class StaffLocationsView extends s {
+        render() {
+            return y `
+      <lms-locations-table></lms-locations-table>
+      <lms-locations-modal></lms-locations-modal>
+    `;
+        }
+    };
+    StaffLocationsView = __decorate([
+        e$1("lms-staff-locations-view")
+    ], StaffLocationsView);
+    var StaffLocationsView$1 = StaffLocationsView;
 
     let StaffSettingsView = class StaffSettingsView extends s {
         render() {
-            return y `<h1>Not implemented!</h1>`;
+            return y `<h1 class="text-center">Not implemented!</h1>`;
         }
     };
+    StaffSettingsView.styles = [bootstrapStyles];
     StaffSettingsView = __decorate([
         e$1("lms-staff-settings-view")
     ], StaffSettingsView);
     var StaffSettingsView$1 = StaffSettingsView;
+
+    let StaffEventTypesView = class StaffEventTypesView extends s {
+        render() {
+            return y `
+      <lms-target-groups-table></lms-target-groups-table>
+      <lms-target-groups-modal></lms-target-groups-modal>
+    `;
+        }
+    };
+    StaffEventTypesView = __decorate([
+        e$1("lms-staff-target-groups-view")
+    ], StaffEventTypesView);
+    var StaffTargetGroupsView = StaffEventTypesView;
 
     var main = {
         LMSCard: LMSCard$1,
@@ -4304,10 +4590,16 @@
         LMSModal: LMSModal$1,
         LMSEventMangementMenu: LMSEventMangementMenu$1,
         LMSEventTypesModal: LMSEventTypesModal$1,
-        LMSEventTypesTable: LMSEventTypesTable$1,
+        LMSEventTypesTable: LMSEventTypesTable$2,
+        LMSLocationsModal: LMSLocationsModal$1,
+        LMSLocationsTable: LMSLocationsTable$1,
+        LMSTargetGroupsModal: LMSTargetGroupsModal$1,
+        LMSTargetGroupsTable,
         LMSEventsView: LMSEventsView$1,
-        StaffEventTypesView: StaffEventTypesView$1,
+        StaffEventTypesView: StaffEventTypesView$2,
+        StaffLocationsView: StaffLocationsView$1,
         StaffSettingsView: StaffSettingsView$1,
+        StaffTargetGroupsView,
     };
 
     return main;
