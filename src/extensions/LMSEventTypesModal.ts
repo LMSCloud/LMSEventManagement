@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators";
 import LMSModal from "../components/LMSModal";
-import { CreateOpts, Field } from "../interfaces";
+import { CreateOpts, ModalField } from "../interfaces";
 import { Gettext } from "gettext.js";
 
 @customElement("lms-event-types-modal")
@@ -11,7 +11,7 @@ export default class LMSEventTypesModal extends LMSModal {
   };
   @property({ type: Function, attribute: false }) modalFields = (
     i18n: Gettext
-  ): Field[] => [
+  ): ModalField[] => [
     {
       name: "name",
       type: "text",
@@ -20,8 +20,24 @@ export default class LMSEventTypesModal extends LMSModal {
     },
     {
       name: "target_group",
-      type: "text",
+      type: "select",
       desc: i18n.gettext("Target Group"),
+      logic: async () => {
+        const response = await fetch(
+          "/api/v1/contrib/eventmanagement/target_groups"
+        );
+        const result = await response.json();
+        return result.map((target_group: any) => ({
+          value: target_group.id,
+          name: target_group.name,
+        }));
+      },
+      required: true,
+    },
+    {
+      name: "max_participants",
+      type: "number",
+      desc: i18n.gettext("Max Participants"),
       required: true,
     },
     {
@@ -36,26 +52,13 @@ export default class LMSEventTypesModal extends LMSModal {
       desc: i18n.gettext("Min Age"),
       required: true,
     },
-    {
-      name: "open_registration",
-      type: "checkbox",
-      desc: i18n.gettext("Open Registration"),
-      required: false,
-    },
-    { name: "id", type: "number", required: true, },
+    { name: "id", type: "number", required: true },
     {
       name: "fee",
       type: "number",
       desc: i18n.gettext("Fee"),
       required: false,
-      // logic: async () => {
-      //   const response = await fetch("/api/v1/libraries");
-      //   const result = await response.json();
-      //   return result.map((library: any) => ({
-      //     value: library.library_id,
-      //     name: library.name,
-      //   }));
-      // },
+      attributes: [["step", 0.01]],
     },
     {
       name: "description",
@@ -71,10 +74,26 @@ export default class LMSEventTypesModal extends LMSModal {
     },
     {
       name: "location",
-      type: "text",
+      type: "select",
       desc: i18n.gettext("Location"),
+      logic: async () => {
+        const response = await fetch(
+          "/api/v1/contrib/eventmanagement/locations"
+        );
+        const result = await response.json();
+        return result.map((location: any) => ({
+          value: location.id,
+          name: location.name,
+        }));
+      },
       required: false,
     },
+    {
+      name: "open_registration",
+      type: "checkbox",
+      desc: i18n.gettext("Open Registration"),
+      required: false,
+    }
   ];
 
   override connectedCallback() {
