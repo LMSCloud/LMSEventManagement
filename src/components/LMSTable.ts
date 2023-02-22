@@ -1,8 +1,8 @@
-import { html, css, LitElement, nothing } from "lit";
+import { html, css, LitElement, nothing, PropertyValueMap } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
-import TranslationHandler from "../lib/TranslationHandler";
+// import TranslationHandler from "../lib/TranslationHandler";
 import { customElement, property } from "lit/decorators";
 import LMSToast from "./LMSToast";
 import { Gettext } from "gettext.js";
@@ -10,6 +10,8 @@ import { Gettext } from "gettext.js";
 @customElement("lms-table")
 export default class LMSTable extends LitElement {
   @property({ type: Array }) data = [];
+  @property({ type: Array }) order: string[] = [];
+  @property({ type: Array, attribute: false }) _headers: string[] = [];
   @property({ type: Boolean, attribute: false }) _isEditable = false;
   @property({ type: Boolean, attribute: false }) _isDeletable = false;
   @property({ state: true }) _toast = {
@@ -41,25 +43,25 @@ export default class LMSTable extends LitElement {
     `,
   ];
 
-  async _init() {
-    const translationHandler = new TranslationHandler();
-    await translationHandler.loadTranslations();
-    this._i18n = translationHandler.i18n;
-  }
+  // private async init() {
+  //   const translationHandler = new TranslationHandler();
+  //   await translationHandler.loadTranslations();
+  //   this._i18n = translationHandler.i18n;
+  // }
 
-  _handleEdit() {
+  private handleEdit() {
     console.info(this._notImplementedInBaseMessage);
   }
 
-  _handleSave() {
+  private handleSave() {
     console.info(this._notImplementedInBaseMessage);
   }
 
-  _handleDelete() {
+  private handleDelete() {
     console.info(this._notImplementedInBaseMessage);
   }
 
-  _renderToast(status: string, result: { error: string; errors: ErrorEvent }) {
+  renderToast(status: string, result: { error: string; errors: ErrorEvent }) {
     if (result.error) {
       this._toast = {
         heading: status,
@@ -84,90 +86,114 @@ export default class LMSTable extends LitElement {
     this.renderRoot.appendChild(lmsToast);
   }
 
-  override render() {
+  private sortByOrder(data: unknown, order: string[]) {
+    if (!(data instanceof Array)) {
+      return data;
+    }
+
+    return data.sort((a, b) =>
+      order.reduce((result, column) => {
+        if (result !== 0) {
+          return result;
+        }
+        const aValue = a[column];
+        const bValue = b[column];
+        if (aValue < bValue) {
+          return -1;
+        }
+        if (aValue > bValue) {
+          return 1;
+        }
+        return 0;
+      }, 0)
+    );
+  }
+
+  private sortColumns() {
     const { data } = this;
 
     const hasData = data?.length > 0 ?? false;
     const [headers] = hasData ? data : [];
+    this._headers = this.order.filter(
+      (key) => headers && Object.prototype.hasOwnProperty.call(headers, key)
+    );
 
     if (hasData) {
-      return !this._i18n?.gettext
-        ? nothing
-        : html`
-            <div class="container-fluid mx-0 px-0">
-              <table
-                class="table table-striped table-bordered table-hove table-responsive-xl"
-              >
-                <thead>
-                  <tr>
-                    ${Object.keys(headers).map(
-                      (key) =>
-                        html`<th scope="col">${this._i18n.gettext(key)}</th>`
-                    )}
-                    ${this._isEditable
-                      ? html`<th scope="col">
-                          ${this._i18n.gettext("actions")}
-                        </th>`
-                      : html``}
-                  </tr>
-                </thead>
-                <tbody>
-                  ${data.map(
-                    (item) => html`
-                      <tr>
-                        ${Object.keys(item).map(
-                          (key) => html`<td>${item[key]}</td>`
-                        )}
-                        ${this._isEditable
-                          ? html`
-                              <td>
-                                <div class="d-flex">
-                                  <button
-                                    @click=${this._handleEdit}
-                                    type="button"
-                                    class="btn btn-dark mx-2"
-                                  >
-                                    ${litFontawesome(faEdit)}
-                                    <span
-                                      >&nbsp;${this._i18n.gettext("Edit")}</span
-                                    >
-                                  </button>
-                                  <button
-                                    @click=${this._handleSave}
-                                    type="button"
-                                    class="btn btn-dark mx-2"
-                                  >
-                                    ${litFontawesome(faSave)}
-                                    <span
-                                      >&nbsp;${this._i18n.gettext("Save")}</span
-                                    >
-                                  </button>
-                                  <button
-                                    @click=${this._handleDelete}
-                                    ?hidden=${!this._isDeletable}
-                                    type="button"
-                                    class="btn btn-danger mx-2"
-                                  >
-                                    ${litFontawesome(faTrash)}
-                                    <span
-                                      >&nbsp;${this._i18n.gettext(
-                                        "Delete"
-                                      )}</span
-                                    >
-                                  </button>
-                                </div>
-                              </td>
-                            `
-                          : html``}
-                      </tr>
-                    `
-                  )}
-                </tbody>
-              </table>
-            </div>
-          `;
+      this.data = this.order.length
+        ? (this.sortByOrder(data, this.order) as [])
+        : data;
     }
+  }
 
-    return nothing;
+  protected override willUpdate(
+    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
+    super.willUpdate(_changedProperties);
+    this.sortColumns();
+  }
+
+  override render() {
+    return !this.data.length
+      ? nothing
+      : html`
+          <div class="container-fluid mx-0">
+            <table
+              class="table table-striped table-bordered table-hove table-responsive-xl"
+            >
+              <thead>
+                <tr>
+                  ${this._headers.map(
+                    (key) => html`<th scope="col">${key}</th>`
+                  )}
+                  ${this._isEditable
+                    ? html`<th scope="col">actions</th>`
+                    : html``}
+                </tr>
+              </thead>
+              <tbody>
+                ${this.data.map(
+                  (item) => html`
+                    <tr>
+                      ${this._headers.map((key) => html`<td>${item[key]}</td>`)}
+                      ${this._isEditable
+                        ? html`
+                            <td>
+                              <div class="d-flex">
+                                <button
+                                  @click=${this.handleEdit}
+                                  type="button"
+                                  class="btn btn-dark mx-2"
+                                >
+                                  ${litFontawesome(faEdit)}
+                                  <span>&nbsp;Edit</span>
+                                </button>
+                                <button
+                                  @click=${this.handleSave}
+                                  type="button"
+                                  class="btn btn-dark mx-2"
+                                >
+                                  ${litFontawesome(faSave)}
+                                  <span>&nbsp;Save</span>
+                                </button>
+                                <button
+                                  @click=${this.handleDelete}
+                                  ?hidden=${!this._isDeletable}
+                                  type="button"
+                                  class="btn btn-danger mx-2"
+                                >
+                                  ${litFontawesome(faTrash)}
+                                  <span>&nbsp;Delete</span>
+                                </button>
+                              </div>
+                            </td>
+                          `
+                        : html``}
+                    </tr>
+                  `
+                )}
+              </tbody>
+            </table>
+          </div>
+        `;
   }
 }
