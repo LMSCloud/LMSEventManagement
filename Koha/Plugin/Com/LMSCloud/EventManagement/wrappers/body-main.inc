@@ -26,7 +26,7 @@
         document.title = document.title.replace('Loading...', translations[params.method][lang]);
         const lastBreadcrumb = document.querySelector('li.breadcrumb-item:last-child');
         lastBreadcrumb.textContent = lastBreadcrumb.textContent.replace('Loading...', translations[params.method][lang]);
-        const lmsrHeadingMain = document.getElementById('lmsr-heading-main');
-        lmsrHeadingMain.textContent = lmsrHeadingMain.textContent.replace('Loading...', translations[params.method][lang]);
+        const lmseHeadingMain = document.getElementById('lmse-heading-main');
+        lmseHeadingMain.textContent = lmseHeadingMain.textContent.replace('Loading...', translations[params.method][lang]);
     </script>
 [% INCLUDE 'intranet-bottom.inc' %]
