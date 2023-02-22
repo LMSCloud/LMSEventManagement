@@ -222,6 +222,11 @@ sub configure {
 
             return $self->output_html( $template->output() );
         },
+        q{locations} => sub {
+            $template = $self->get_template( { file => 'views/configuration/locations.tt' } );
+
+            return $self->output_html( $template->output() );
+        },
 
     };
 
