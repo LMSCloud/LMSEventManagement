@@ -6,10 +6,11 @@ import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { customElement, property } from "lit/decorators";
 import LMSToast from "./LMSToast";
 import { Gettext } from "gettext.js";
+import { Column } from "../interfaces";
 
 @customElement("lms-table")
 export default class LMSTable extends LitElement {
-  @property({ type: Array }) data = [];
+  @property({ type: Array }) data: Column[] = [];
   @property({ type: Array }) order: string[] = [];
   @property({ type: Array, attribute: false }) _headers: string[] = [];
   @property({ type: Boolean, attribute: false }) _isEditable = false;
@@ -49,16 +50,16 @@ export default class LMSTable extends LitElement {
   //   this._i18n = translationHandler.i18n;
   // }
 
-  private handleEdit() {
-    console.info(this._notImplementedInBaseMessage);
+  public handleEdit(e: Event) {
+    console.info(e, this._notImplementedInBaseMessage);
   }
 
-  private handleSave() {
-    console.info(this._notImplementedInBaseMessage);
+  public handleSave(e: Event) {
+    console.info(e, this._notImplementedInBaseMessage);
   }
 
-  private handleDelete() {
-    console.info(this._notImplementedInBaseMessage);
+  public handleDelete(e: Event) {
+    console.info(e, this._notImplementedInBaseMessage);
   }
 
   renderToast(status: string, result: { error: string; errors: ErrorEvent }) {
@@ -138,7 +139,7 @@ export default class LMSTable extends LitElement {
       : html`
           <div class="container-fluid mx-0">
             <table
-              class="table table-striped table-bordered table-hove table-responsive-xl"
+              class="table table-striped table-bordered table-hover table-responsive-xl"
             >
               <thead>
                 <tr>
