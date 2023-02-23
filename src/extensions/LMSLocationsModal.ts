@@ -12,6 +12,7 @@ export default class LMSLocationsModal extends LMSModal {
   @property({ type: Function, attribute: false }) modalFields = (
     i18n: Gettext
   ): Field[] => [
+    { name: "id", type: "number", required: true },
     {
       name: "name",
       type: "text",
@@ -48,7 +49,6 @@ export default class LMSLocationsModal extends LMSModal {
       desc: i18n.gettext("Country"),
       required: false,
     },
-    { name: "id", type: "number", required: true },
   ];
 
   override connectedCallback() {

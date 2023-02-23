@@ -12,6 +12,7 @@ export default class LMSEventTypesModal extends LMSModal {
   @property({ type: Function, attribute: false }) modalFields = (
     i18n: Gettext
   ): ModalField[] => [
+    { name: "id", type: "number", required: true },
     {
       name: "name",
       type: "text",
@@ -35,9 +36,9 @@ export default class LMSEventTypesModal extends LMSModal {
       required: true,
     },
     {
-      name: "max_participants",
+      name: "min_age",
       type: "number",
-      desc: i18n.gettext("Max Participants"),
+      desc: i18n.gettext("Min Age"),
       required: true,
     },
     {
@@ -47,30 +48,17 @@ export default class LMSEventTypesModal extends LMSModal {
       required: true,
     },
     {
-      name: "min_age",
+      name: "max_participants",
       type: "number",
-      desc: i18n.gettext("Min Age"),
+      desc: i18n.gettext("Max Participants"),
       required: true,
     },
-    { name: "id", type: "number", required: true },
     {
       name: "fee",
       type: "number",
       desc: i18n.gettext("Fee"),
       required: false,
       attributes: [["step", 0.01]],
-    },
-    {
-      name: "description",
-      type: "text",
-      desc: i18n.gettext("Description"),
-      required: false,
-    },
-    {
-      name: "image",
-      type: "text",
-      desc: i18n.gettext("Image"),
-      required: false,
     },
     {
       name: "location",
@@ -89,11 +77,23 @@ export default class LMSEventTypesModal extends LMSModal {
       required: false,
     },
     {
+      name: "image",
+      type: "text",
+      desc: i18n.gettext("Image"),
+      required: false,
+    },
+    {
+      name: "description",
+      type: "text",
+      desc: i18n.gettext("Description"),
+      required: false,
+    },
+    {
       name: "open_registration",
       type: "checkbox",
       desc: i18n.gettext("Open Registration"),
       required: false,
-    }
+    },
   ];
 
   override connectedCallback() {
