@@ -1,7 +1,7 @@
   [% INCLUDE "$PLUGIN_DIR/includes/breadcrumbs.inc" %]
 
   <div id="lmse">
-    <h3 id="lmse-heading-main">Koha: LMSRoomReservations: Loading...</h3>
+    <h3 id="lmse-heading-main">Koha: LMSEventManagement: Loading...</h3>
     <div class="lmse-content-main">
       [% INCLUDE "$PLUGIN_DIR/includes/menu.inc" %]
     
