@@ -21,7 +21,7 @@ if ( Koha::Plugin::Com::LMSCloud::EventManagement->can('new') ) {
     $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
 }
 
-my $EVENTS_TABLE = $self ? $self->get_qualified_table_name('event_types') : undef;
+my $EVENTS_TABLE = $self ? $self->get_qualified_table_name('events') : undef;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
