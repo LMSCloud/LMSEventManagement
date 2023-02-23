@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { LitElement, html, css, TemplateResult } from "lit";
+import { LitElement, html, css, TemplateResult, nothing } from "lit";
 import { ifDefined } from "lit/directives/if-defined";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
@@ -7,7 +7,7 @@ import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
 import TranslationHandler from "../lib/TranslationHandler";
 import { customElement, property } from "lit/decorators";
 import { Gettext } from "gettext.js";
-import { CreateOpts, ModalField } from "../interfaces";
+import { CreateOpts, ModalField, SelectOption } from "../interfaces";
 import { InputType } from "../types";
 
 @customElement("lms-modal")
@@ -100,7 +100,7 @@ export default class LMSModal extends LitElement {
         }
       })
       .then(() => {
-        this._moveOnOverlap();
+        this.moveOnOverlap();
       });
   }
 
@@ -116,11 +116,17 @@ export default class LMSModal extends LitElement {
     }
   }
 
-  _toggleModal() {
+  private toggleModal() {
+    const { renderRoot } = this;
     this.isOpen = !this.isOpen;
+    document.body.style.overflow = this.isOpen ? "hidden" : "auto";
+    const lmsModal = (renderRoot as ShadowRoot).getElementById("lms-modal");
+    if (lmsModal) {
+      lmsModal.style.overflowY = this.isOpen ? "scroll" : "auto";
+    }
   }
 
-  async _create(e: Event) {
+  private async create(e: Event) {
     e.preventDefault();
     const { endpoint, method } = this.createOpts;
     console.log(this.fields);
@@ -137,7 +143,7 @@ export default class LMSModal extends LitElement {
     });
 
     if (response.status >= 200 && response.status <= 299) {
-      this._toggleModal();
+      this.toggleModal();
 
       const event = new CustomEvent("created", { bubbles: true });
       this.dispatchEvent(event);
@@ -160,7 +166,7 @@ export default class LMSModal extends LitElement {
     }
   }
 
-  _dismissAlert() {
+  private dismissAlert() {
     this._alertMessage = "";
   }
 
@@ -168,7 +174,7 @@ export default class LMSModal extends LitElement {
     return html`
       <div class="btn-modal-wrapper">
         <button
-          @click=${this._toggleModal}
+          @click=${this.toggleModal}
           class="btn-modal ${this.isOpen && "tilted"}"
           type="button"
         >
@@ -191,7 +197,7 @@ export default class LMSModal extends LitElement {
                 ${this._modalTitle || "Add"}
               </h5>
               <button
-                @click=${this._toggleModal}
+                @click=${this.toggleModal}
                 type="button"
                 class="close"
                 aria-label="Close"
@@ -199,7 +205,7 @@ export default class LMSModal extends LitElement {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form @submit="${this._create}">
+            <form @submit="${this.create}">
               <div class="modal-body">
                 <div
                   role="alert"
@@ -209,7 +215,7 @@ export default class LMSModal extends LitElement {
                 >
                   ${this._alertMessage}
                   <button
-                    @click=${this._dismissAlert}
+                    @click=${this.dismissAlert}
                     type="button"
                     class="close"
                     data-dismiss="alert"
@@ -218,14 +224,14 @@ export default class LMSModal extends LitElement {
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                ${this.fields.map((field) => this._getFieldMarkup(field))}
+                ${this.fields.map((field) => this.getFieldMarkup(field))}
               </div>
               <div class="modal-footer">
                 <button
                   type="button"
                   class="btn btn-secondary"
                   data-dismiss="modal"
-                  @click=${this._toggleModal}
+                  @click=${this.toggleModal}
                 >
                   ${litFontawesome(faClose)}
                   <span>Close</span>
@@ -242,7 +248,7 @@ export default class LMSModal extends LitElement {
     `;
   }
 
-  _getFieldMarkup(field: ModalField) {
+  private getFieldMarkup(field: ModalField) {
     if (!field.desc) return html``;
 
     const fieldTypes = new Map<string, () => TemplateResult>([
@@ -250,7 +256,9 @@ export default class LMSModal extends LitElement {
         "select",
         (): TemplateResult => {
           if (!field.entries) return html``;
-          [field.value] = field.entries.map((entry) => entry.value);
+          [field.value] = field.default
+            ? field.default.value
+            : field.entries.map((entry) => entry.value);
           return html`
             <div class="form-group">
               <label for=${field.name}>${field.desc}</label>
@@ -264,9 +272,14 @@ export default class LMSModal extends LitElement {
                 }}
                 ?required=${field.required}
               >
+                ${field.default?.name
+                  ? html`<option value=${field.default.value}>
+                      ${field.default.name}
+                    </option>`
+                  : nothing}
                 ${field.entries.map(
-                  (entry) =>
-                    html`<option value=${entry.value}>${entry.name}</option>`
+                  ({ value, name }: SelectOption) =>
+                    html`<option value=${value}>${name}</option>`
                 )}
               </select>
             </div>
@@ -334,7 +347,7 @@ export default class LMSModal extends LitElement {
     return fieldTypes.get(fieldType)?.() ?? fieldTypes.get("default")?.();
   }
 
-  _moveOnOverlap() {
+  private moveOnOverlap() {
     const fixedElement = this.renderRoot.querySelector(".btn-modal-wrapper");
     if (!fixedElement) return;
 
