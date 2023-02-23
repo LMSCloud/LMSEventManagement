@@ -276,35 +276,17 @@
                 "event_type": {
                   "type": ["string", "null"]
                 },
-                "branch": {
-                  "type": ["string", "null"]
-                },
                 "target_group": {
                   "type": ["string", "null"]
-                },
-                "max_age": {
-                  "type": ["integer", "null"]
                 },
                 "min_age": {
                   "type": ["integer", "null"]
                 },
-                "open_registration": {
-                  "type": ["boolean", "null"]
+                "max_age": {
+                  "type": ["integer", "null"]
                 },
                 "max_participants": {
                   "type": ["integer", "null"]
-                },
-                "fee": {
-                  "type": ["number", "null"]
-                },
-                "location": {
-                  "type": ["string", "null"]
-                },
-                "description": {
-                  "type": ["string", "null"]
-                },
-                "image": {
-                  "type": ["string", "null"]
                 },
                 "start_time": {
                   "type": ["string", "null"]
@@ -312,8 +294,29 @@
                 "end_time": {
                   "type": ["string", "null"]
                 },
-                "link_to_registration": {
+                "registration_start": {
                   "type": ["string", "null"]
+                },
+                "registration_end": {
+                  "type": ["string", "null"]
+                },
+                "fee": {
+                  "type": ["number", "null"]
+                },
+                "location": {
+                  "type": ["string", "null"]
+                },
+                "image": {
+                  "type": ["string", "null"]
+                },
+                "description": {
+                  "type": ["string", "null"]
+                },
+                "registration_link": {
+                  "type": ["string", "null"]
+                },
+                "open_registration": {
+                  "type": ["boolean", "null"]
                 }
               }
             }
@@ -413,35 +416,17 @@
               "event_type": {
                 "type": ["string", "null"]
               },
-              "branch": {
-                "type": ["string", "null"]
-              },
               "target_group": {
                 "type": ["string", "null"]
-              },
-              "max_age": {
-                "type": ["integer", "null"]
               },
               "min_age": {
                 "type": ["integer", "null"]
               },
-              "open_registration": {
-                "type": ["boolean", "null"]
+              "max_age": {
+                "type": ["integer", "null"]
               },
               "max_participants": {
                 "type": ["integer", "null"]
-              },
-              "fee": {
-                "type": ["number", "null"]
-              },
-              "location": {
-                "type": ["string", "null"]
-              },
-              "description": {
-                "type": ["string", "null"]
-              },
-              "image": {
-                "type": ["string", "null"]
               },
               "start_time": {
                 "type": ["string", "null"]
@@ -449,8 +434,29 @@
               "end_time": {
                 "type": ["string", "null"]
               },
-              "link_to_registration": {
+              "registration_start": {
                 "type": ["string", "null"]
+              },
+              "registration_end": {
+                "type": ["string", "null"]
+              },
+              "fee": {
+                "type": ["number", "null"]
+              },
+              "location": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "registration_link": {
+                "type": ["string", "null"]
+              },
+              "open_registration": {
+                "type": ["boolean", "null"]
               }
             }
           }
@@ -620,35 +626,17 @@
               "event_type": {
                 "type": ["string", "null"]
               },
-              "branch": {
-                "type": ["string", "null"]
-              },
               "target_group": {
                 "type": ["string", "null"]
-              },
-              "max_age": {
-                "type": ["integer", "null"]
               },
               "min_age": {
                 "type": ["integer", "null"]
               },
-              "open_registration": {
-                "type": ["boolean", "null"]
+              "max_age": {
+                "type": ["integer", "null"]
               },
               "max_participants": {
                 "type": ["integer", "null"]
-              },
-              "fee": {
-                "type": ["integer", "null"]
-              },
-              "location": {
-                "type": ["string", "null"]
-              },
-              "description": {
-                "type": ["string", "null"]
-              },
-              "image": {
-                "type": ["string", "null"]
               },
               "start_time": {
                 "type": ["string", "null"]
@@ -656,8 +644,29 @@
               "end_time": {
                 "type": ["string", "null"]
               },
-              "link_to_registration": {
+              "registration_start": {
                 "type": ["string", "null"]
+              },
+              "registration_end": {
+                "type": ["string", "null"]
+              },
+              "fee": {
+                "type": ["number", "null"]
+              },
+              "location": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "registration_link": {
+                "type": ["string", "null"]
+              },
+              "open_registration": {
+                "type": ["boolean", "null"]
               }
             }
           }
@@ -763,35 +772,17 @@
               "event_type": {
                 "type": ["string", "null"]
               },
-              "branch": {
-                "type": ["string", "null"]
-              },
               "target_group": {
                 "type": ["string", "null"]
-              },
-              "max_age": {
-                "type": ["integer", "null"]
               },
               "min_age": {
                 "type": ["integer", "null"]
               },
-              "open_registration": {
-                "type": ["boolean", "null"]
+              "max_age": {
+                "type": ["integer", "null"]
               },
               "max_participants": {
                 "type": ["integer", "null"]
-              },
-              "fee": {
-                "type": ["number", "null"]
-              },
-              "location": {
-                "type": ["string", "null"]
-              },
-              "description": {
-                "type": ["string", "null"]
-              },
-              "image": {
-                "type": ["string", "null"]
               },
               "start_time": {
                 "type": ["string", "null"]
@@ -799,8 +790,29 @@
               "end_time": {
                 "type": ["string", "null"]
               },
-              "link_to_registration": {
+              "registration_start": {
                 "type": ["string", "null"]
+              },
+              "registration_end": {
+                "type": ["string", "null"]
+              },
+              "fee": {
+                "type": ["number", "null"]
+              },
+              "location": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "registration_link": {
+                "type": ["string", "null"]
+              },
+              "open_registration": {
+                "type": ["boolean", "null"]
               }
             }
           }
@@ -822,35 +834,17 @@
               "event_type": {
                 "type": ["string", "null"]
               },
-              "branch": {
-                "type": ["string", "null"]
-              },
               "target_group": {
                 "type": ["string", "null"]
-              },
-              "max_age": {
-                "type": ["integer", "null"]
               },
               "min_age": {
                 "type": ["integer", "null"]
               },
-              "open_registration": {
-                "type": ["boolean", "null"]
+              "max_age": {
+                "type": ["integer", "null"]
               },
               "max_participants": {
                 "type": ["integer", "null"]
-              },
-              "fee": {
-                "type": ["integer", "null"]
-              },
-              "location": {
-                "type": ["string", "null"]
-              },
-              "description": {
-                "type": ["string", "null"]
-              },
-              "image": {
-                "type": ["string", "null"]
               },
               "start_time": {
                 "type": ["string", "null"]
@@ -858,8 +852,29 @@
               "end_time": {
                 "type": ["string", "null"]
               },
-              "link_to_registration": {
+              "registration_start": {
                 "type": ["string", "null"]
+              },
+              "registration_end": {
+                "type": ["string", "null"]
+              },
+              "fee": {
+                "type": ["number", "null"]
+              },
+              "location": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "registration_link": {
+                "type": ["string", "null"]
+              },
+              "open_registration": {
+                "type": ["boolean", "null"]
               }
             }
           }
@@ -968,35 +983,17 @@
               "event_type": {
                 "type": ["string", "null"]
               },
-              "branch": {
-                "type": ["string", "null"]
-              },
               "target_group": {
                 "type": ["string", "null"]
-              },
-              "max_age": {
-                "type": ["integer", "null"]
               },
               "min_age": {
                 "type": ["integer", "null"]
               },
-              "open_registration": {
-                "type": ["boolean", "null"]
+              "max_age": {
+                "type": ["integer", "null"]
               },
               "max_participants": {
                 "type": ["integer", "null"]
-              },
-              "fee": {
-                "type": ["integer", "null"]
-              },
-              "location": {
-                "type": ["string", "null"]
-              },
-              "description": {
-                "type": ["string", "null"]
-              },
-              "image": {
-                "type": ["string", "null"]
               },
               "start_time": {
                 "type": ["string", "null"]
@@ -1004,8 +1001,29 @@
               "end_time": {
                 "type": ["string", "null"]
               },
-              "link_to_registration": {
+              "registration_start": {
                 "type": ["string", "null"]
+              },
+              "registration_end": {
+                "type": ["string", "null"]
+              },
+              "fee": {
+                "type": ["number", "null"]
+              },
+              "location": {
+                "type": ["string", "null"]
+              },
+              "image": {
+                "type": ["string", "null"]
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "registration_link": {
+                "type": ["string", "null"]
+              },
+              "open_registration": {
+                "type": ["boolean", "null"]
               }
             }
           }
