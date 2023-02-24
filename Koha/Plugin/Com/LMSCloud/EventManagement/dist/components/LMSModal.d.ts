@@ -12,11 +12,11 @@ export default class LMSModal extends LitElement {
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     updated(): void;
-    _toggleModal(): void;
-    _create(e: Event): Promise<void>;
-    _dismissAlert(): void;
+    private toggleModal;
+    private create;
+    private dismissAlert;
     render(): TemplateResult<1>;
-    _getFieldMarkup(field: ModalField): TemplateResult<1 | 2> | undefined;
-    _moveOnOverlap(): void;
+    private getFieldMarkup;
+    private moveOnOverlap;
 }
 //# sourceMappingURL=LMSModal.d.ts.map

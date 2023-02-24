@@ -1,1 +1,1 @@
-{"version":3,"file":"LMSEventTypesTable.d.ts","sourceRoot":"","sources":["../../../../../../../src/extensions/LMSEventTypesTable.ts"],"names":[],"mappings":"AACA,OAAO,QAAQ,MAAM,wBAAwB,CAAC;AAG9C,MAAM,CAAC,OAAO,OAAO,kBAAmB,SAAQ,QAAQ;IAC7C,iBAAiB;CA+B3B"}
+{"version":3,"file":"LMSEventTypesTable.d.ts","sourceRoot":"","sources":["../../../../../../../src/extensions/LMSEventTypesTable.ts"],"names":[],"mappings":"AACA,OAAO,QAAQ,MAAM,wBAAwB,CAAC;AAM9C,MAAM,CAAC,OAAO,OAAO,kBAAmB,SAAQ,QAAQ;IAC7C,UAAU,CAAC,CAAC,EAAE,KAAK;IAuBnB,UAAU;IAEV,YAAY;IAEZ,iBAAiB;YAuDZ,kBAAkB;CAwIjC"}

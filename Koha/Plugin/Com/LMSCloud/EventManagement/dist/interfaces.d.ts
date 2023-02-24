@@ -1,9 +1,14 @@
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { TemplateResult } from "lit";
 import { InputType } from "./types";
 declare enum Status {
     Pending = "Pending",
-    Approved = "Approved",
-    Cancelled = "Cancelled"
+    Confirmed = "Confirmed",
+    Canceled = "Canceled",
+    SoldOut = "Sold Out"
+}
+export interface Column {
+    [key: string]: string | number | TemplateResult;
 }
 export interface Event {
     id: number;
@@ -76,9 +81,20 @@ export interface SpecialField extends BaseField {
 }
 export interface ModalField extends BaseField {
     type?: InputType | "select" | "info" | "checkbox";
+    default?: SelectOption;
 }
 export interface CreateOpts extends RequestInit {
     endpoint: string;
+}
+export interface SelectOption {
+    value: string;
+    name: string;
+}
+export interface TargetGroup {
+    id: number;
+    name: string;
+    min_age: number;
+    max_age: number;
 }
 export {};
 //# sourceMappingURL=interfaces.d.ts.map

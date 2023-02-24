@@ -4,8 +4,11 @@ import LMSCard from "./components/LMSCard";
 import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
 import LMSModal from "./components/LMSModal";
+import LMSStaffEventCardForm from "./components/LMSStaffEventCardForm";
+import LMSStaffEventCardsDeck from "./components/LMSStaffEventCardDeck";
 /** extensions */
 import LMSEventMangementMenu from "./extensions/LMSEventManagementMenu";
+import LMSEventsModal from "./extensions/LMSEventsModal";
 import LMSEventTypesModal from "./extensions/LMSEventTypesModal";
 import LMSEventTypesTable from "./extensions/LMSEventTypesTable";
 import LMSLocationsModal from "./extensions/LMSLocationsModal";
@@ -14,6 +17,7 @@ import LMSTargetGroupsModal from "./extensions/LMSTargetGroupsModal";
 import LMSTargetGroupsTable from "./extensions/LMSTargetGroupsTable";
 /** views */
 import LMSEventsView from "./views/LMSEventsView";
+import StaffEventsView from "./views/StaffEventsView";
 import StaffEventTypesView from "./views/StaffEventTypesView";
 import StaffLocationsView from "./views/StaffLocationsView";
 import StaffSettingsView from "./views/StaffSettingsView";
@@ -23,7 +27,10 @@ declare const _default: {
     LMSEventsFilter: typeof LMSEventsFilter;
     LMSFloatingMenu: typeof LMSFloatingMenu;
     LMSModal: typeof LMSModal;
+    LMSStaffEventCardForm: typeof LMSStaffEventCardForm;
+    LMSStaffEventCardsDeck: typeof LMSStaffEventCardsDeck;
     LMSEventMangementMenu: typeof LMSEventMangementMenu;
+    LMSEventsModal: typeof LMSEventsModal;
     LMSEventTypesModal: typeof LMSEventTypesModal;
     LMSEventTypesTable: typeof LMSEventTypesTable;
     LMSLocationsModal: typeof LMSLocationsModal;
@@ -31,6 +38,7 @@ declare const _default: {
     LMSTargetGroupsModal: typeof LMSTargetGroupsModal;
     LMSTargetGroupsTable: typeof LMSTargetGroupsTable;
     LMSEventsView: typeof LMSEventsView;
+    StaffEventsView: typeof StaffEventsView;
     StaffEventTypesView: typeof StaffEventTypesView;
     StaffLocationsView: typeof StaffLocationsView;
     StaffSettingsView: typeof StaffSettingsView;

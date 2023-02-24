@@ -1,7 +1,8 @@
 import { LitElement, nothing, PropertyValueMap } from "lit";
 import { Gettext } from "gettext.js";
+import { Column } from "../interfaces";
 export default class LMSTable extends LitElement {
-    data: never[];
+    data: Column[];
     order: string[];
     _headers: string[];
     _isEditable: boolean;
@@ -13,9 +14,9 @@ export default class LMSTable extends LitElement {
     _i18n: Gettext;
     _notImplementedInBaseMessage: string;
     static styles: import("lit").CSSResult[];
-    private handleEdit;
-    private handleSave;
-    private handleDelete;
+    handleEdit(e: Event): void;
+    handleSave(e: Event): void;
+    handleDelete(e: Event): void;
     renderToast(status: string, result: {
         error: string;
         errors: ErrorEvent;

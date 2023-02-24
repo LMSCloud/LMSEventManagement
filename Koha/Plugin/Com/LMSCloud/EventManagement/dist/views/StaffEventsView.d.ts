@@ -1,12 +1,13 @@
 import { LitElement } from "lit";
-import LMSEventsTable from "../extensions/LMSEventsTable";
+import LMSStaffEventCardsDeck from "../components/LMSStaffEventCardDeck";
+import LMSEventsModal from "../extensions/LMSEventsModal";
 declare global {
     interface HTMLElementTagNameMap {
-        "lms-events-table": LMSEventsTable;
+        "lms-staff-event-card-deck": LMSStaffEventCardsDeck;
+        "lms-events-modal": LMSEventsModal;
     }
 }
-export declare class StaffEventsView extends LitElement {
-    static styles: import("lit").CSSResult[];
+export default class StaffEventsView extends LitElement {
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=StaffEventsView.d.ts.map
