@@ -1,19 +1,20 @@
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
-import LMSEventsTable from "../extensions/LMSEventsTable";
+import LMSStaffEventCardsDeck from "../components/LMSStaffEventCardDeck";
+import LMSEventsModal from "../extensions/LMSEventsModal";
 
 declare global {
   interface HTMLElementTagNameMap {
-    "lms-events-table": LMSEventsTable;
+    "lms-staff-event-card-deck": LMSStaffEventCardsDeck;
+    "lms-events-modal": LMSEventsModal;
   }
 }
 
 @customElement("lms-staff-events-view")
-export class StaffEventsView extends LitElement {
-  static override styles = [bootstrapStyles];
-
+export default class StaffEventsView extends LitElement {
   override render() {
-    return html`<lms-events-table></lms-events-table>`;
+    return html` <lms-staff-event-card-deck>
+      </lms-staff-event-card-deck>
+      <lms-events-modal></lms-events-modal>`;
   }
 }
