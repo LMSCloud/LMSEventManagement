@@ -1,22 +1,15 @@
-import { LitElement, html } from "lit";
+import { LitElement, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-
+import { Image, Link } from "../interfaces";
 @customElement("lms-card")
 export default class LMSCard extends LitElement {
   @property({ type: String }) override title = "Card title";
   @property({ type: String }) text =
     "Some quick example text to build on the card title and make up the bulk of the card's content.";
-  @property({ type: Object }) image = { src: "#", alt: "..." };
-  @property({ type: Array }) links = [
-    { href: "#", text: "Card link" },
-    { href: "#", text: "Another link" },
-  ];
-  @property({ type: Array }) listItems = [
-    "An item",
-    "A second item",
-    "A third item",
-  ];
+  @property({ type: Object }) image = {} as Image;
+  @property({ type: Array }) links = [] as Link[];
+  @property({ type: Array }) listItems = [];
 
   static override styles = [bootstrapStyles];
 
@@ -27,7 +20,7 @@ export default class LMSCard extends LitElement {
           src=${this.image.src}
           class="card-img-top"
           alt=${this.image.alt}
-          ?hidden=${!this.image}
+          ?hidden=${!this.image.src}
         />
         <div class="card-body">
           <h5 class="card-title" ?hidden=${!this.title}>${this.title}</h5>
@@ -42,10 +35,14 @@ export default class LMSCard extends LitElement {
           )}
         </ul>
         <div class="card-body" ?hidden=${!this.links.length}>
-          ${this.links.map(
-            (link) =>
-              html`<a href="${link.href}" class="card-link">${link.text}</a>`
-          )}
+          ${this.links.length
+            ? this.links.map(
+                (link) =>
+                  html`<a href="${link.href}" class="card-link"
+                    >${link.text}</a
+                  >`
+              )
+            : nothing}
         </div>
       </div>
     `;
