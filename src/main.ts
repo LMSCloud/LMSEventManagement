@@ -5,7 +5,9 @@ import LMSCard from "./components/LMSCard";
 import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
 import LMSModal from "./components/LMSModal";
-import LMSStaffEventCardForm from "./components/LMSStaffEventCardForm";
+import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffEventCardAttendees";
+import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEventCardPreview";
+import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventCardForm";
 import LMSStaffEventCardsDeck from "./components/LMSStaffEventCardDeck";
 
 /** extensions */
@@ -31,6 +33,8 @@ export default {
   LMSEventsFilter,
   LMSFloatingMenu,
   LMSModal,
+  LMSStaffEventCardAttendees,
+  LMSStaffEventCardPreview,
   LMSStaffEventCardForm,
   LMSStaffEventCardsDeck,
   LMSEventMangementMenu,
