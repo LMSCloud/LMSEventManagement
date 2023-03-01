@@ -8,6 +8,6 @@ declare global {
     }
 }
 export default class StaffEventTypesView extends LitElement {
-    render(): import("lit-html").TemplateResult<1>;
+    render(): import("lit").TemplateResult<1>;
 }
 //# sourceMappingURL=StaffTargetGroupsView.d.ts.map

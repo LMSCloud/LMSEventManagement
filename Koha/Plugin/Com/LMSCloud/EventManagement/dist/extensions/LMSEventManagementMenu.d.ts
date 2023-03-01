@@ -5,7 +5,7 @@ export default class LMSEventMangementMenu extends LMSFloatingMenu {
     pluginclass: string;
     menuEntries: (i18n: Gettext) => {
         name: string;
-        icon: import("@fortawesome/fontawesome-common-types").IconDefinition;
+        icon: import("@fortawesome/free-solid-svg-icons").IconDefinition;
         url: string;
         method: string;
     }[];

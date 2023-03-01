@@ -4,7 +4,7 @@ export default class LMSToast extends LitElement {
     message: string;
     _elapsedTime: number;
     static styles: import("lit").CSSResult[];
-    render(): import("lit-html").TemplateResult<1>;
+    render(): import("lit").TemplateResult<1>;
     connectedCallback(): void;
     disconnectedCallback(): void;
 }

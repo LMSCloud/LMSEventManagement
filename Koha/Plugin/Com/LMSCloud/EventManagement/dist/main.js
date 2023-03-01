@@ -1235,6 +1235,59 @@
     ], LMSModal);
     var LMSModal$1 = LMSModal;
 
+    // import { litFontawesome } from "@weavedev/lit-fontawesome";
+    // import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
+    // import { Gettext } from "gettext.js";
+    let LMSStaffEventCardAttendees = class LMSStaffEventCardAttendees extends s {
+        render() {
+            return y ` <h1 class="text-center">Not implemented!</h1> `;
+        }
+    };
+    LMSStaffEventCardAttendees.styles = [
+        bootstrapStyles,
+        i$2 `
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: #ffffff;
+      }
+
+      button {
+        white-space: nowrap;
+      }
+    `,
+    ];
+    LMSStaffEventCardAttendees = __decorate([
+        e$1("lms-staff-event-card-attendees")
+    ], LMSStaffEventCardAttendees);
+    var LMSStaffEventCardAttendees$1 = LMSStaffEventCardAttendees;
+
+    let LMSStaffEventCardPreview = class LMSStaffEventCardPreview extends s {
+        render() {
+            return y `<lms-card></lms-card>`;
+        }
+    };
+    LMSStaffEventCardPreview.styles = [
+        bootstrapStyles,
+        i$2 `
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: #ffffff;
+      }
+
+      button {
+        white-space: nowrap;
+      }
+    `,
+    ];
+    LMSStaffEventCardPreview = __decorate([
+        e$1("lms-staff-event-card-preview")
+    ], LMSStaffEventCardPreview);
+    var LMSStaffEventCardPreview$1 = LMSStaffEventCardPreview;
+
     let LMSStaffEventCardForm = class LMSStaffEventCardForm extends s {
         constructor() {
             super(...arguments);
@@ -1386,10 +1439,26 @@
     ], LMSStaffEventCardForm);
     var LMSStaffEventCardForm$1 = LMSStaffEventCardForm;
 
+    class TemplateResultConverter {
+        constructor(templateResult) {
+            this.templateResult = templateResult;
+        }
+        getRenderString(data = this.templateResult) {
+            const { strings, values } = data;
+            const v = [...values, ""].map((e) => typeof e === "object" ? this.getRenderString(e) : e);
+            return strings.reduce((acc, s, i) => acc + s + v[i], "");
+        }
+        getRenderValues(data = this.templateResult) {
+            const { values } = data;
+            return [...values, ""].map((e) => typeof e === "object" ? this.getRenderValues(e) : e);
+        }
+    }
+
     let LMSStaffEventCardDeck = class LMSStaffEventCardDeck extends s {
         constructor() {
             super(...arguments);
             this.data = [];
+            this.cardStates = new Map();
         }
         connectedCallback() {
             super.connectedCallback();
@@ -1410,14 +1479,24 @@
                  *  and remember that you have to resolve the Promise returned by
                  *  the previous call before you can continue with the next one. */
                 .then(async (result) => {
-                const data = await Promise.all(result.map(async (target_group) => {
-                    const entries = await Promise.all(Object.entries(target_group).map(async ([name, value]) => [
+                /** Here we initialize the card states so we can track them
+                 *  individually going forward. */
+                result.forEach(() => {
+                    this.cardStates.set(crypto.getRandomValues(new Uint32Array(2)).join("-"), ["data"]);
+                });
+                const data = await Promise.all(result.map(async (promisedTemplateResult) => {
+                    const entries = await Promise.all(Object.entries(promisedTemplateResult).map(async ([name, value]) => [
                         name,
                         await this.getInputFromColumn({ name, value }),
                     ]));
                     return Object.fromEntries(entries);
                 }));
-                this.data = data;
+                /** Here we tag every datum with the uuid we generated earlier. */
+                const cardStatesArray = Array.from(this.cardStates);
+                this.data = data.map((datum, index) => ({
+                    ...datum,
+                    uuid: cardStatesArray[index][0],
+                }));
             })
                 .catch((error) => {
                 console.error(error);
@@ -1591,45 +1670,110 @@ ${value}</textarea
             ]);
             return inputs.get(name) ? inputs.get(name)() : inputs.get("default")();
         }
+        handleTabClick(event) {
+            var _a, _b;
+            event.preventDefault();
+            const target = event.target;
+            const tab = target.closest("li");
+            if (!tab)
+                return;
+            const previousActiveTab = (_a = tab.closest("ul")) === null || _a === void 0 ? void 0 : _a.querySelector(".active");
+            if (!previousActiveTab)
+                return;
+            previousActiveTab.classList.remove("active");
+            (_b = tab.firstElementChild) === null || _b === void 0 ? void 0 : _b.classList.add("active");
+            const { content, uuid } = tab.dataset;
+            if (!content || !uuid)
+                return;
+            this.cardStates.set(uuid, [content]);
+            this.requestUpdate();
+        }
         render() {
             return y `
       <div class="container-fluid mx-0">
         <div class="card-deck">
-          ${this.data.map((datum) => y `
+          ${this.data.map((datum) => {
+            var _a, _b, _c, _d, _e, _f;
+            return y `
               <div class="card">
                 <div class="card-header">
                   <ul class="nav nav-tabs card-header-tabs">
-                    <li class="nav-item">
+                    <li
+                      class="nav-item"
+                      data-content="data"
+                      data-uuid=${datum.uuid}
+                      @click=${this.handleTabClick}
+                    >
                       <a class="nav-link active" href="#">Data</a>
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">Attendees</a>
+                    <li
+                      class="nav-item"
+                      data-content="attendees"
+                      data-uuid=${datum.uuid}
+                      @click=${this.handleTabClick}
+                    >
+                      <a
+                        class="nav-link"
+                        href="#"
+                        style="text-decoration: line-through;"
+                        >Attendees</a
+                      >
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">???</a>
-                    </li>
-                    <li class="nav-item">
+                    <li
+                      class="nav-item"
+                      data-content="preview"
+                      data-uuid=${datum.uuid}
+                      @click=${this.handleTabClick}
+                    >
                       <a class="nav-link">Preview</a>
                     </li>
                   </ul>
                 </div>
                 <div class="card-body">
-                  <h5 class="card-title">${datum.name}</h5>
+                  <h5 class="card-title">
+                    ${y `<span class="badge badge-primary"
+                      >${[
+                new TemplateResultConverter(datum.name).getRenderValues(),
+            ]}</span
+                    >`}
+                  </h5>
                   <lms-staff-event-card-form
                     .datum=${datum}
+                    ?hidden=${!(((_b = (_a = this.cardStates) === null || _a === void 0 ? void 0 : _a.get(datum.uuid)) === null || _b === void 0 ? void 0 : _b[0]) === "data")}
                   ></lms-staff-event-card-form>
+                  <lms-staff-event-card-attendees
+                    ?hidden=${!(((_d = (_c = this.cardStates) === null || _c === void 0 ? void 0 : _c.get(datum.uuid)) === null || _d === void 0 ? void 0 : _d[0]) ===
+                "attendees")}
+                  ></lms-staff-event-card-attendees>
+                  <lms-staff-event-card-preview
+                    ?hidden=${!(((_f = (_e = this.cardStates) === null || _e === void 0 ? void 0 : _e.get(datum.uuid)) === null || _f === void 0 ? void 0 : _f[0]) ===
+                "preview")}
+                  ></lms-staff-event-card-preview>
                 </div>
               </div>
-            `)}
+            `;
+        })}
         </div>
       </div>
     `;
         }
     };
-    LMSStaffEventCardDeck.styles = [bootstrapStyles];
+    LMSStaffEventCardDeck.styles = [
+        bootstrapStyles,
+        i$2 `
+      .card-deck {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
+        grid-gap: 0.5rem;
+      }
+    `,
+    ];
     __decorate([
         e({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "data", void 0);
+    __decorate([
+        e({ type: Object })
+    ], LMSStaffEventCardDeck.prototype, "cardStates", void 0);
     LMSStaffEventCardDeck = __decorate([
         e$1("lms-staff-event-card-deck")
     ], LMSStaffEventCardDeck);
@@ -2818,6 +2962,8 @@ ${value}</textarea
         LMSEventsFilter: LMSEventsFilter$1,
         LMSFloatingMenu: LMSFloatingMenu$1,
         LMSModal: LMSModal$1,
+        LMSStaffEventCardAttendees: LMSStaffEventCardAttendees$1,
+        LMSStaffEventCardPreview: LMSStaffEventCardPreview$1,
         LMSStaffEventCardForm: LMSStaffEventCardForm$1,
         LMSStaffEventCardsDeck,
         LMSEventMangementMenu: LMSEventMangementMenu$1,

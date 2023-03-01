@@ -12,6 +12,6 @@ export default class LMSCard extends LitElement {
     }[];
     listItems: string[];
     static styles: import("lit").CSSResult[];
-    render(): import("lit-html").TemplateResult<1>;
+    render(): import("lit").TemplateResult<1>;
 }
 //# sourceMappingURL=LMSCard.d.ts.map

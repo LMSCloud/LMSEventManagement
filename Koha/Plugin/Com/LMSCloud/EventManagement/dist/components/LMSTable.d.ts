@@ -24,6 +24,6 @@ export default class LMSTable extends LitElement {
     private sortByOrder;
     private sortColumns;
     protected willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): typeof nothing | import("lit").TemplateResult<1>;
 }
 //# sourceMappingURL=LMSTable.d.ts.map

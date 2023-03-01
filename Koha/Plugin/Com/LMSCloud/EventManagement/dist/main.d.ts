@@ -4,7 +4,9 @@ import LMSCard from "./components/LMSCard";
 import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
 import LMSModal from "./components/LMSModal";
-import LMSStaffEventCardForm from "./components/LMSStaffEventCardForm";
+import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffEventCardAttendees";
+import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEventCardPreview";
+import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventCardForm";
 import LMSStaffEventCardsDeck from "./components/LMSStaffEventCardDeck";
 /** extensions */
 import LMSEventMangementMenu from "./extensions/LMSEventManagementMenu";
@@ -27,6 +29,8 @@ declare const _default: {
     LMSEventsFilter: typeof LMSEventsFilter;
     LMSFloatingMenu: typeof LMSFloatingMenu;
     LMSModal: typeof LMSModal;
+    LMSStaffEventCardAttendees: typeof LMSStaffEventCardAttendees;
+    LMSStaffEventCardPreview: typeof LMSStaffEventCardPreview;
     LMSStaffEventCardForm: typeof LMSStaffEventCardForm;
     LMSStaffEventCardsDeck: typeof LMSStaffEventCardsDeck;
     LMSEventMangementMenu: typeof LMSEventMangementMenu;

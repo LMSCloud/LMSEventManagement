@@ -10,6 +10,6 @@ export default class LMSFloatingMenu extends LitElement {
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     updated(): void;
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): typeof nothing | import("lit").TemplateResult<1>;
 }
 //# sourceMappingURL=LMSFloatingMenu.d.ts.map
