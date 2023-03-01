@@ -97,16 +97,9 @@
             super(...arguments);
             this.title = "Card title";
             this.text = "Some quick example text to build on the card title and make up the bulk of the card's content.";
-            this.image = { src: "#", alt: "..." };
-            this.links = [
-                { href: "#", text: "Card link" },
-                { href: "#", text: "Another link" },
-            ];
-            this.listItems = [
-                "An item",
-                "A second item",
-                "A third item",
-            ];
+            this.image = {};
+            this.links = [];
+            this.listItems = [];
         }
         render() {
             return y `
@@ -115,7 +108,7 @@
           src=${this.image.src}
           class="card-img-top"
           alt=${this.image.alt}
-          ?hidden=${!this.image}
+          ?hidden=${!this.image.src}
         />
         <div class="card-body">
           <h5 class="card-title" ?hidden=${!this.title}>${this.title}</h5>
@@ -128,7 +121,11 @@
           ${this.listItems.map((listItem) => y `<li class="list-group-item">${listItem}</li>`)}
         </ul>
         <div class="card-body" ?hidden=${!this.links.length}>
-          ${this.links.map((link) => y `<a href="${link.href}" class="card-link">${link.text}</a>`)}
+          ${this.links.length
+            ? this.links.map((link) => y `<a href="${link.href}" class="card-link"
+                    >${link.text}</a
+                  >`)
+            : b}
         </div>
       </div>
     `;
@@ -1263,9 +1260,45 @@
     ], LMSStaffEventCardAttendees);
     var LMSStaffEventCardAttendees$1 = LMSStaffEventCardAttendees;
 
+    class TemplateResultConverter {
+        constructor(templateResult) {
+            this._templateResult = templateResult;
+        }
+        set templateResult(templateResult) {
+            this._templateResult = templateResult;
+        }
+        getRenderString(data = this._templateResult) {
+            const { strings, values } = data;
+            const v = [...values, ""].map((e) => typeof e === "object" ? this.getRenderString(e) : e);
+            return strings.reduce((acc, s, i) => acc + s + v[i], "");
+        }
+        getRenderValues(data = this._templateResult) {
+            const { values } = data;
+            return [...values, ""].map((e) => typeof e === "object" ? this.getRenderValues(e) : e);
+        }
+    }
+
     let LMSStaffEventCardPreview = class LMSStaffEventCardPreview extends s {
+        constructor() {
+            super(...arguments);
+            this.datum = {};
+            this.title = "";
+            this.text = "";
+            this.constants = {
+                FIRST_VALUE: 0,
+            };
+            this.templateResultConverter = new TemplateResultConverter(undefined);
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            const { name, description } = this.datum;
+            this.templateResultConverter.templateResult = name;
+            this.title = this.templateResultConverter.getRenderValues()[this.constants.FIRST_VALUE];
+            this.templateResultConverter.templateResult = description;
+            this.text = this.templateResultConverter.getRenderValues()[this.constants.FIRST_VALUE];
+        }
         render() {
-            return y `<lms-card></lms-card>`;
+            return y `<lms-card .title=${this.title} .text=${this.text}> </lms-card>`;
         }
     };
     LMSStaffEventCardPreview.styles = [
@@ -1283,6 +1316,21 @@
       }
     `,
     ];
+    __decorate([
+        e({ type: Array })
+    ], LMSStaffEventCardPreview.prototype, "datum", void 0);
+    __decorate([
+        e({ type: String })
+    ], LMSStaffEventCardPreview.prototype, "title", void 0);
+    __decorate([
+        e({ type: String })
+    ], LMSStaffEventCardPreview.prototype, "text", void 0);
+    __decorate([
+        e({ type: Object, attribute: false })
+    ], LMSStaffEventCardPreview.prototype, "constants", void 0);
+    __decorate([
+        e({ type: Object, attribute: false })
+    ], LMSStaffEventCardPreview.prototype, "templateResultConverter", void 0);
     LMSStaffEventCardPreview = __decorate([
         e$1("lms-staff-event-card-preview")
     ], LMSStaffEventCardPreview);
@@ -1297,13 +1345,22 @@
                 message: "",
             };
             this._i18n = {};
-            this._mediumEditor = {};
         }
-        //   private handleEdit() {}
+        handleEdit(e) {
+            var _a;
+            e.preventDefault();
+            const shadowRoot = this.renderRoot;
+            (_a = shadowRoot
+                .querySelector("form")) === null || _a === void 0 ? void 0 : _a.querySelectorAll("input, select, textarea").forEach((input) => {
+                input.removeAttribute("disabled");
+            });
+        }
         handleSave(e) {
             e.preventDefault();
         }
-        //   private handleDelete() {}
+        handleDelete(e) {
+            e.preventDefault();
+        }
         render() {
             const { datum } = this;
             return y `
@@ -1400,8 +1457,31 @@
           </div>
         </div>
 
-        <div class="button-group">
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+        <div class="form-row pt-5">
+          <div class="col">
+            <div class="d-flex">
+              <button
+                @click=${this.handleEdit}
+                type="button"
+                class="btn btn-dark mr-2"
+              >
+                ${litFontawesome_3(faEdit)}
+                <span>&nbsp;Edit</span>
+              </button>
+              <button type="submit" class="btn btn-dark mr-2">
+                ${litFontawesome_3(faSave)}
+                <span>&nbsp;Save</span>
+              </button>
+              <button
+                @click=${this.handleDelete}
+                type="button"
+                class="btn btn-danger mr-2"
+              >
+                ${litFontawesome_3(faTrash)}
+                <span>&nbsp;Delete</span>
+              </button>
+            </div>
+          </div>
         </div>
       </form>
     `;
@@ -1431,34 +1511,19 @@
     __decorate([
         e({ state: true })
     ], LMSStaffEventCardForm.prototype, "_i18n", void 0);
-    __decorate([
-        e({ type: Object, attribute: false })
-    ], LMSStaffEventCardForm.prototype, "_mediumEditor", void 0);
     LMSStaffEventCardForm = __decorate([
         e$1("lms-staff-event-card-form")
     ], LMSStaffEventCardForm);
     var LMSStaffEventCardForm$1 = LMSStaffEventCardForm;
-
-    class TemplateResultConverter {
-        constructor(templateResult) {
-            this.templateResult = templateResult;
-        }
-        getRenderString(data = this.templateResult) {
-            const { strings, values } = data;
-            const v = [...values, ""].map((e) => typeof e === "object" ? this.getRenderString(e) : e);
-            return strings.reduce((acc, s, i) => acc + s + v[i], "");
-        }
-        getRenderValues(data = this.templateResult) {
-            const { values } = data;
-            return [...values, ""].map((e) => typeof e === "object" ? this.getRenderValues(e) : e);
-        }
-    }
 
     let LMSStaffEventCardDeck = class LMSStaffEventCardDeck extends s {
         constructor() {
             super(...arguments);
             this.data = [];
             this.cardStates = new Map();
+            this.constants = {
+                ID: 0,
+            };
         }
         connectedCallback() {
             super.connectedCallback();
@@ -1628,10 +1693,9 @@
                 [
                     "description",
                     () => y `<textarea
-            class="form-control"
+            class="form-control overflow-hidden h-100"
             name="description"
             disabled
-            style="height: inherit;"
           >
 ${value}</textarea
           >`,
@@ -1739,15 +1803,14 @@ ${value}</textarea
                   </h5>
                   <lms-staff-event-card-form
                     .datum=${datum}
-                    ?hidden=${!(((_b = (_a = this.cardStates) === null || _a === void 0 ? void 0 : _a.get(datum.uuid)) === null || _b === void 0 ? void 0 : _b[0]) === "data")}
+                    ?hidden=${!(((_b = (_a = this.cardStates) === null || _a === void 0 ? void 0 : _a.get(datum.uuid)) === null || _b === void 0 ? void 0 : _b[this.constants.ID]) === "data")}
                   ></lms-staff-event-card-form>
                   <lms-staff-event-card-attendees
-                    ?hidden=${!(((_d = (_c = this.cardStates) === null || _c === void 0 ? void 0 : _c.get(datum.uuid)) === null || _d === void 0 ? void 0 : _d[0]) ===
-                "attendees")}
+                    ?hidden=${!(((_d = (_c = this.cardStates) === null || _c === void 0 ? void 0 : _c.get(datum.uuid)) === null || _d === void 0 ? void 0 : _d[this.constants.ID]) === "attendees")}
                   ></lms-staff-event-card-attendees>
                   <lms-staff-event-card-preview
-                    ?hidden=${!(((_f = (_e = this.cardStates) === null || _e === void 0 ? void 0 : _e.get(datum.uuid)) === null || _f === void 0 ? void 0 : _f[0]) ===
-                "preview")}
+                    ?hidden=${!(((_f = (_e = this.cardStates) === null || _e === void 0 ? void 0 : _e.get(datum.uuid)) === null || _f === void 0 ? void 0 : _f[this.constants.ID]) === "preview")}
+                    .datum=${datum}
                   ></lms-staff-event-card-preview>
                 </div>
               </div>
@@ -1772,8 +1835,11 @@ ${value}</textarea
         e({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "data", void 0);
     __decorate([
-        e({ type: Object })
+        e({ type: Object, attribute: false })
     ], LMSStaffEventCardDeck.prototype, "cardStates", void 0);
+    __decorate([
+        e({ type: Object, attribute: false })
+    ], LMSStaffEventCardDeck.prototype, "constants", void 0);
     LMSStaffEventCardDeck = __decorate([
         e$1("lms-staff-event-card-deck")
     ], LMSStaffEventCardDeck);

@@ -8,9 +8,10 @@ export default class LMSStaffEventCardForm extends LitElement {
         message: string;
     };
     _i18n: Gettext;
-    _mediumEditor: {};
     static styles: import("lit").CSSResult[];
+    private handleEdit;
     private handleSave;
+    private handleDelete;
     render(): import("lit").TemplateResult<1>;
 }
 //# sourceMappingURL=LMSStaffEventCardForm.d.ts.map

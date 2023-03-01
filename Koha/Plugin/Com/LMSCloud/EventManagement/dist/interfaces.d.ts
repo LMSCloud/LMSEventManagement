@@ -10,6 +10,14 @@ declare enum Status {
 export interface Column {
     [key: string]: string | number | TemplateResult;
 }
+export interface Image {
+    src: string;
+    alt: string;
+}
+export interface Link {
+    href: string;
+    text: string;
+}
 export interface Event {
     id: number;
     name: string;

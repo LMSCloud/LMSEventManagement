@@ -13,6 +13,9 @@ declare global {
 export default class LMSStaffEventCardDeck extends LitElement {
     data: Column[];
     cardStates: Map<string, string[]>;
+    constants: {
+        ID: number;
+    };
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     private getInputFromColumn;
