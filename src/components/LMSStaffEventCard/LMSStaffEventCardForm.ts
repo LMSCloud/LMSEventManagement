@@ -1,8 +1,8 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
-// import { litFontawesome } from "@weavedev/lit-fontawesome";
-// import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Column } from "../../interfaces";
 import { Gettext } from "gettext.js";
 
@@ -14,7 +14,6 @@ export default class LMSStaffEventCardForm extends LitElement {
     message: "",
   };
   @property({ state: true }) _i18n: Gettext = {} as Gettext;
-  @property({ type: Object, attribute: false }) _mediumEditor = {};
 
   static override styles = [
     bootstrapStyles,
@@ -32,13 +31,24 @@ export default class LMSStaffEventCardForm extends LitElement {
     `,
   ];
 
-  //   private handleEdit() {}
+  private handleEdit(e: Event) {
+    e.preventDefault();
+    const shadowRoot = this.renderRoot as HTMLElement;
+    shadowRoot
+      .querySelector("form")
+      ?.querySelectorAll("input, select, textarea")
+      .forEach((input) => {
+        input.removeAttribute("disabled");
+      });
+  }
 
   private handleSave(e: Event) {
     e.preventDefault();
   }
 
-  //   private handleDelete() {}
+  private handleDelete(e: Event) {
+    e.preventDefault();
+  }
 
   override render() {
     const { datum } = this;
@@ -136,8 +146,31 @@ export default class LMSStaffEventCardForm extends LitElement {
           </div>
         </div>
 
-        <div class="button-group">
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+        <div class="form-row pt-5">
+          <div class="col">
+            <div class="d-flex">
+              <button
+                @click=${this.handleEdit}
+                type="button"
+                class="btn btn-dark mr-2"
+              >
+                ${litFontawesome(faEdit)}
+                <span>&nbsp;Edit</span>
+              </button>
+              <button type="submit" class="btn btn-dark mr-2">
+                ${litFontawesome(faSave)}
+                <span>&nbsp;Save</span>
+              </button>
+              <button
+                @click=${this.handleDelete}
+                type="button"
+                class="btn btn-danger mr-2"
+              >
+                ${litFontawesome(faTrash)}
+                <span>&nbsp;Delete</span>
+              </button>
+            </div>
+          </div>
         </div>
       </form>
     `;
