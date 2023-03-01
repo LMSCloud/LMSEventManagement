@@ -19,7 +19,13 @@ declare global {
 @customElement("lms-staff-event-card-deck")
 export default class LMSStaffEventCardDeck extends LitElement {
   @property({ type: Array }) data: Column[] = [];
-  @property({ type: Object }) cardStates: Map<string, string[]> = new Map();
+  @property({ type: Object, attribute: false }) cardStates: Map<
+    string,
+    string[]
+  > = new Map();
+  @property({ type: Object, attribute: false }) constants = {
+    ID: 0,
+  };
 
   static override styles = [
     bootstrapStyles,
@@ -245,10 +251,9 @@ export default class LMSStaffEventCardDeck extends LitElement {
         "description",
         () =>
           html`<textarea
-            class="form-control"
+            class="form-control overflow-hidden h-100"
             name="description"
             disabled
-            style="height: inherit;"
           >
 ${value}</textarea
           >`,
@@ -363,20 +368,25 @@ ${value}</textarea
                   <lms-staff-event-card-form
                     .datum=${datum}
                     ?hidden=${!(
-                      this.cardStates?.get(datum.uuid as string)?.[0] === "data"
+                      this.cardStates?.get(datum.uuid as string)?.[
+                        this.constants.ID
+                      ] === "data"
                     )}
                   ></lms-staff-event-card-form>
                   <lms-staff-event-card-attendees
                     ?hidden=${!(
-                      this.cardStates?.get(datum.uuid as string)?.[0] ===
-                      "attendees"
+                      this.cardStates?.get(datum.uuid as string)?.[
+                        this.constants.ID
+                      ] === "attendees"
                     )}
                   ></lms-staff-event-card-attendees>
                   <lms-staff-event-card-preview
                     ?hidden=${!(
-                      this.cardStates?.get(datum.uuid as string)?.[0] ===
-                      "preview"
+                      this.cardStates?.get(datum.uuid as string)?.[
+                        this.constants.ID
+                      ] === "preview"
                     )}
+                    .datum=${datum}
                   ></lms-staff-event-card-preview>
                 </div>
               </div>
