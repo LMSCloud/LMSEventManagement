@@ -1,10 +1,9 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html, css } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import LMSCard from "../LMSCard";
-// import { litFontawesome } from "@weavedev/lit-fontawesome";
-// import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
-// import { Gettext } from "gettext.js";
+import { Column } from "../../interfaces";
+import TemplateResultConverter from "../../lib/TemplateResultConverter";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -14,6 +13,15 @@ declare global {
 
 @customElement("lms-staff-event-card-preview")
 export default class LMSStaffEventCardPreview extends LitElement {
+  @property({ type: Array }) datum: Column = {} as Column;
+  @property({ type: String }) override title = "";
+  @property({ type: String }) text = "";
+  @property({ type: Object, attribute: false }) constants = {
+    FIRST_VALUE: 0,
+  };
+  @property({ type: Object, attribute: false }) templateResultConverter =
+    new TemplateResultConverter(undefined);
+
   static override styles = [
     bootstrapStyles,
     css`
@@ -30,7 +38,23 @@ export default class LMSStaffEventCardPreview extends LitElement {
     `,
   ];
 
+  override connectedCallback() {
+    super.connectedCallback();
+
+    const { name, description } = this.datum;
+
+    this.templateResultConverter.templateResult = name;
+    this.title = this.templateResultConverter.getRenderValues()[
+      this.constants.FIRST_VALUE
+    ] as string;
+
+    this.templateResultConverter.templateResult = description;
+    this.text = this.templateResultConverter.getRenderValues()[
+      this.constants.FIRST_VALUE
+    ] as string;
+  }
+
   override render() {
-    return html`<lms-card></lms-card>`;
+    return html`<lms-card .title=${this.title} .text=${this.text}> </lms-card>`;
   }
 }
