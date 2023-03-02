@@ -94,9 +94,11 @@ export interface ModalField extends BaseField {
 export interface CreateOpts extends RequestInit {
     endpoint: string;
 }
-export interface SelectOption {
-    value: string;
+export interface Input {
     name: string;
+    value: string;
+}
+export interface SelectOption extends Input {
 }
 export interface TargetGroup {
     id: number;

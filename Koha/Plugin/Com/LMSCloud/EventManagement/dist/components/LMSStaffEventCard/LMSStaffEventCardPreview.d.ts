@@ -11,9 +11,6 @@ export default class LMSStaffEventCardPreview extends LitElement {
     datum: Column;
     title: string;
     text: string;
-    constants: {
-        FIRST_VALUE: number;
-    };
     templateResultConverter: TemplateResultConverter;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;

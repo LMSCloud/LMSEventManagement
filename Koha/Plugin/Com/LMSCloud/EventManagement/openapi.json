@@ -2695,7 +2695,7 @@
       }
     }
   },
-  "/target_group/{id}": {
+  "/target_groups/{id}": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::TargetGroup#get",
       "operationId": "getTargetGroup",

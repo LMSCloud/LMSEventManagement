@@ -1284,18 +1284,15 @@
             this.datum = {};
             this.title = "";
             this.text = "";
-            this.constants = {
-                FIRST_VALUE: 0,
-            };
             this.templateResultConverter = new TemplateResultConverter(undefined);
         }
         connectedCallback() {
             super.connectedCallback();
             const { name, description } = this.datum;
             this.templateResultConverter.templateResult = name;
-            this.title = this.templateResultConverter.getRenderValues()[this.constants.FIRST_VALUE];
+            this.title = this.templateResultConverter.getRenderValues()[0];
             this.templateResultConverter.templateResult = description;
-            this.text = this.templateResultConverter.getRenderValues()[this.constants.FIRST_VALUE];
+            this.text = this.templateResultConverter.getRenderValues()[0];
         }
         render() {
             return y `<lms-card .title=${this.title} .text=${this.text}> </lms-card>`;
@@ -1327,9 +1324,6 @@
     ], LMSStaffEventCardPreview.prototype, "text", void 0);
     __decorate([
         e({ type: Object, attribute: false })
-    ], LMSStaffEventCardPreview.prototype, "constants", void 0);
-    __decorate([
-        e({ type: Object, attribute: false })
     ], LMSStaffEventCardPreview.prototype, "templateResultConverter", void 0);
     LMSStaffEventCardPreview = __decorate([
         e$1("lms-staff-event-card-preview")
@@ -1355,11 +1349,50 @@
                 input.removeAttribute("disabled");
             });
         }
-        handleSave(e) {
+        async handleSave(e) {
             e.preventDefault();
+            const target = e.target;
+            const id = new TemplateResultConverter(this.datum.id).getRenderValues()[0];
+            if (!(target instanceof HTMLFormElement) || !id) {
+                return;
+            }
+            const keys = Object.keys(this.datum);
+            keys.splice(keys.indexOf("uuid"), 1);
+            const formData = new FormData(target);
+            const response = await fetch(`/api/v1/contrib/eventmanagement/events/${id}`, {
+                method: "PUT",
+                body: JSON.stringify(Array.from(formData).reduce((acc, [key, value]) => {
+                    if (keys.includes(key)) {
+                        acc[key] = value;
+                    }
+                    return acc;
+                }, {})),
+            });
+            if (response.status >= 200 && response.status <= 299) {
+                target === null || target === void 0 ? void 0 : target.querySelectorAll("input, select, textarea").forEach((input) => {
+                    input.setAttribute("disabled", "");
+                });
+                return;
+            }
+            if (response.status >= 400) {
+                const error = await response.json();
+                console.log(error);
+            }
         }
-        handleDelete(e) {
+        async handleDelete(e) {
             e.preventDefault();
+            const id = new TemplateResultConverter(this.datum.id).getRenderValues()[0];
+            if (!id) {
+                return;
+            }
+            const response = await fetch(`/api/v1/contrib/eventmanagement/events/${id}`, { method: "DELETE" });
+            if (response.status >= 200 && response.status <= 299) {
+                return;
+            }
+            if (response.status >= 400) {
+                const error = await response.json();
+                console.log(error);
+            }
         }
         render() {
             const { datum } = this;
@@ -1521,9 +1554,6 @@
             super(...arguments);
             this.data = [];
             this.cardStates = new Map();
-            this.constants = {
-                ID: 0,
-            };
         }
         connectedCallback() {
             super.connectedCallback();
@@ -1703,10 +1733,30 @@ ${value}</textarea
                 [
                     "status",
                     () => y `<select class="form-control" name="status" disabled>
-            <option value="pending">Pending</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="canceled">Canceled</option>
-            <option value="sold_out">Sold Out</option>
+            <option
+              value="pending"
+              ?selected=${value === "pending"}
+            >
+              Pending
+            </option>
+            <option
+              value="confirmed"
+              ?selected=${value === "confirmed"}
+            >
+              Confirmed
+            </option>
+            <option
+              value="canceled"
+              ?selected=${value === "canceled"}
+            >
+              Canceled
+            </option>
+            <option
+              value="sold_out"
+              ?selected=${value === "sold_out"}
+            >
+              Sold Out
+            </option>
           </select>`,
                 ],
                 [
@@ -1722,10 +1772,14 @@ ${value}</textarea
                 [
                     "open_registration",
                     () => y `<input
+            @change=${(e) => {
+                    const target = e.target;
+                    target.value = target.checked ? "1" : "0";
+                }}
             class="form-check-input"
             type="checkbox"
             name="open_registration"
-            value="1"
+            value=${value === "true" ? 1 : 0}
             ?checked=${value}
             disabled
           />`,
@@ -1803,13 +1857,15 @@ ${value}</textarea
                   </h5>
                   <lms-staff-event-card-form
                     .datum=${datum}
-                    ?hidden=${!(((_b = (_a = this.cardStates) === null || _a === void 0 ? void 0 : _a.get(datum.uuid)) === null || _b === void 0 ? void 0 : _b[this.constants.ID]) === "data")}
+                    ?hidden=${!(((_b = (_a = this.cardStates) === null || _a === void 0 ? void 0 : _a.get(datum.uuid)) === null || _b === void 0 ? void 0 : _b[0]) === "data")}
                   ></lms-staff-event-card-form>
                   <lms-staff-event-card-attendees
-                    ?hidden=${!(((_d = (_c = this.cardStates) === null || _c === void 0 ? void 0 : _c.get(datum.uuid)) === null || _d === void 0 ? void 0 : _d[this.constants.ID]) === "attendees")}
+                    ?hidden=${!(((_d = (_c = this.cardStates) === null || _c === void 0 ? void 0 : _c.get(datum.uuid)) === null || _d === void 0 ? void 0 : _d[0]) ===
+                "attendees")}
                   ></lms-staff-event-card-attendees>
                   <lms-staff-event-card-preview
-                    ?hidden=${!(((_f = (_e = this.cardStates) === null || _e === void 0 ? void 0 : _e.get(datum.uuid)) === null || _f === void 0 ? void 0 : _f[this.constants.ID]) === "preview")}
+                    ?hidden=${!(((_f = (_e = this.cardStates) === null || _e === void 0 ? void 0 : _e.get(datum.uuid)) === null || _f === void 0 ? void 0 : _f[0]) ===
+                "preview")}
                     .datum=${datum}
                   ></lms-staff-event-card-preview>
                 </div>
@@ -1837,9 +1893,6 @@ ${value}</textarea
     __decorate([
         e({ type: Object, attribute: false })
     ], LMSStaffEventCardDeck.prototype, "cardStates", void 0);
-    __decorate([
-        e({ type: Object, attribute: false })
-    ], LMSStaffEventCardDeck.prototype, "constants", void 0);
     LMSStaffEventCardDeck = __decorate([
         e$1("lms-staff-event-card-deck")
     ], LMSStaffEventCardDeck);
@@ -1860,21 +1913,21 @@ ${value}</textarea
                         method: "configure",
                     },
                     {
-                        name: (_b = i18n.gettext("Event Types")) !== null && _b !== void 0 ? _b : "Event Types",
-                        icon: faTag,
-                        url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=event-types`,
-                        method: "configure",
-                    },
-                    {
-                        name: (_c = i18n.gettext("Target Groups")) !== null && _c !== void 0 ? _c : "Target Groups",
+                        name: (_b = i18n.gettext("Target Groups")) !== null && _b !== void 0 ? _b : "Target Groups",
                         icon: faBullseye,
                         url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=target-groups`,
                         method: "configure",
                     },
                     {
-                        name: (_d = i18n.gettext("Locations")) !== null && _d !== void 0 ? _d : "Locations",
+                        name: (_c = i18n.gettext("Locations")) !== null && _c !== void 0 ? _c : "Locations",
                         icon: faLocationDot,
                         url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=locations`,
+                        method: "configure",
+                    },
+                    {
+                        name: (_d = i18n.gettext("Event Types")) !== null && _d !== void 0 ? _d : "Event Types",
+                        icon: faTag,
+                        url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=event-types`,
                         method: "configure",
                     },
                     {
@@ -2393,8 +2446,64 @@ ${value}</textarea
                 }
             }
         }
-        handleSave() { }
-        handleDelete() { }
+        async handleSave(e) {
+            var _a, _b;
+            const target = e.target;
+            let parent = target.parentElement;
+            while (parent && parent.tagName !== "TR") {
+                parent = parent.parentElement;
+            }
+            let id, inputs = undefined;
+            if (parent) {
+                id = (_b = (_a = parent.firstElementChild) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();
+                inputs = parent.querySelectorAll("input, select");
+            }
+            if (!id || !inputs) {
+                return;
+            }
+            const response = await fetch(`/api/v1/contrib/eventmanagement/event_types/${id}`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    ...Array.from(inputs).reduce((acc, input) => {
+                        acc[input.name] = input.value;
+                        return acc;
+                    }, {}),
+                }),
+            });
+            if (response.status >= 200 && response.status <= 299) {
+                inputs.forEach((input) => {
+                    input.disabled = true;
+                });
+                return;
+            }
+            if (response.status >= 400) {
+                const error = await response.json();
+                this.renderToast(response.statusText, error);
+            }
+        }
+        async handleDelete(e) {
+            var _a, _b;
+            const target = e.target;
+            let parent = target.parentElement;
+            while (parent && parent.tagName !== "TR") {
+                parent = parent.parentElement;
+            }
+            let id = undefined;
+            if (parent) {
+                id = (_b = (_a = parent.firstElementChild) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();
+            }
+            if (!id) {
+                return;
+            }
+            const response = await fetch(`/api/v1/contrib/eventmanagement/event_types/${id}`, { method: "DELETE" });
+            if (response.status >= 200 && response.status <= 299) {
+                return;
+            }
+            if (response.status >= 400) {
+                const error = await response.json();
+                this.renderToast(response.statusText, error);
+            }
+        }
         connectedCallback() {
             super.connectedCallback();
             this.order = [
@@ -2538,10 +2647,14 @@ ${value}</textarea
                 [
                     "open_registration",
                     () => y `<input
+            @change=${(e) => {
+                    const target = e.target;
+                    target.value = target.checked ? "1" : "0";
+                }}
             class="form-control"
             type="checkbox"
             name="open_registration"
-            value="1"
+            value=${value === "true" ? 1 : 0}
             ?checked=${value}
             disabled
           />`,
@@ -2646,8 +2759,64 @@ ${value}</textarea
                 }
             }
         }
-        handleSave() { }
-        handleDelete() { }
+        async handleSave(e) {
+            var _a, _b;
+            const target = e.target;
+            let parent = target.parentElement;
+            while (parent && parent.tagName !== "TR") {
+                parent = parent.parentElement;
+            }
+            let id, inputs = undefined;
+            if (parent) {
+                id = (_b = (_a = parent.firstElementChild) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();
+                inputs = parent.querySelectorAll("input");
+            }
+            if (!id || !inputs) {
+                return;
+            }
+            const response = await fetch(`/api/v1/contrib/eventmanagement/locations/${id}`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    ...Array.from(inputs).reduce((acc, input) => {
+                        acc[input.name] = input.value;
+                        return acc;
+                    }, {}),
+                }),
+            });
+            if (response.status >= 200 && response.status <= 299) {
+                inputs.forEach((input) => {
+                    input.disabled = true;
+                });
+                return;
+            }
+            if (response.status >= 400) {
+                const error = await response.json();
+                this.renderToast(response.statusText, error);
+            }
+        }
+        async handleDelete(e) {
+            var _a, _b;
+            const target = e.target;
+            let parent = target.parentElement;
+            while (parent && parent.tagName !== "TR") {
+                parent = parent.parentElement;
+            }
+            let id = undefined;
+            if (parent) {
+                id = (_b = (_a = parent.firstElementChild) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();
+            }
+            if (!id) {
+                return;
+            }
+            const response = await fetch(`/api/v1/contrib/eventmanagement/locations/${id}`, { method: "DELETE" });
+            if (response.status >= 200 && response.status <= 299) {
+                return;
+            }
+            if (response.status >= 400) {
+                const error = await response.json();
+                this.renderToast(response.statusText, error);
+            }
+        }
         connectedCallback() {
             super.connectedCallback();
             this.order = [
@@ -2824,8 +2993,64 @@ ${value}</textarea
                 }
             }
         }
-        handleSave() { }
-        handleDelete() { }
+        async handleSave(e) {
+            var _a, _b;
+            const target = e.target;
+            let parent = target.parentElement;
+            while (parent && parent.tagName !== "TR") {
+                parent = parent.parentElement;
+            }
+            let id, inputs = undefined;
+            if (parent) {
+                id = (_b = (_a = parent.firstElementChild) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();
+                inputs = parent.querySelectorAll("input");
+            }
+            if (!id || !inputs) {
+                return;
+            }
+            const response = await fetch(`/api/v1/contrib/eventmanagement/target_groups/${id}`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    ...Array.from(inputs).reduce((acc, input) => {
+                        acc[input.name] = input.value;
+                        return acc;
+                    }, {}),
+                }),
+            });
+            if (response.status >= 200 && response.status <= 299) {
+                inputs.forEach((input) => {
+                    input.disabled = true;
+                });
+                return;
+            }
+            if (response.status >= 400) {
+                const error = await response.json();
+                this.renderToast(response.statusText, error);
+            }
+        }
+        async handleDelete(e) {
+            var _a, _b;
+            const target = e.target;
+            let parent = target.parentElement;
+            while (parent && parent.tagName !== "TR") {
+                parent = parent.parentElement;
+            }
+            let id = undefined;
+            if (parent) {
+                id = (_b = (_a = parent.firstElementChild) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();
+            }
+            if (!id) {
+                return;
+            }
+            const response = await fetch(`/api/v1/contrib/eventmanagement/target_groups/${id}`, { method: "DELETE" });
+            if (response.status >= 200 && response.status <= 299) {
+                return;
+            }
+            if (response.status >= 400) {
+                const error = await response.json();
+                this.renderToast(response.statusText, error);
+            }
+        }
         connectedCallback() {
             super.connectedCallback();
             this.order = ["id", "name", "min_age", "max_age"];
