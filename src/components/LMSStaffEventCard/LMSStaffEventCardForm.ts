@@ -3,8 +3,9 @@ import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { Column } from "../../interfaces";
+import { Column /* Input */ } from "../../interfaces";
 import { Gettext } from "gettext.js";
+import TemplateResultConverter from "../../lib/TemplateResultConverter";
 
 @customElement("lms-staff-event-card-form")
 export default class LMSStaffEventCardForm extends LitElement {
@@ -42,12 +43,72 @@ export default class LMSStaffEventCardForm extends LitElement {
       });
   }
 
-  private handleSave(e: Event) {
+  private async handleSave(e: Event) {
     e.preventDefault();
+    const target = e.target;
+    const id = new TemplateResultConverter(this.datum.id).getRenderValues()[0];
+
+    if (!(target instanceof HTMLFormElement) || !id) {
+      return;
+    }
+
+    const keys = Object.keys(this.datum);
+    keys.splice(keys.indexOf("uuid"), 1);
+
+    const formData = new FormData(target);
+
+    const response = await fetch(
+      `/api/v1/contrib/eventmanagement/events/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(
+          Array.from(formData).reduce(
+            (acc: { [key: string]: unknown }, [key, value]) => {
+              if (keys.includes(key)) {
+                acc[key] = value;
+              }
+              return acc;
+            },
+            {}
+          )
+        ),
+      }
+    );
+
+    if (response.status >= 200 && response.status <= 299) {
+      target?.querySelectorAll("input, select, textarea").forEach((input) => {
+        input.setAttribute("disabled", "");
+      });
+      return;
+    }
+
+    if (response.status >= 400) {
+      const error = await response.json();
+      console.log(error);
+    }
   }
 
-  private handleDelete(e: Event) {
+  private async handleDelete(e: Event) {
     e.preventDefault();
+    const id = new TemplateResultConverter(this.datum.id).getRenderValues()[0];
+
+    if (!id) {
+      return;
+    }
+
+    const response = await fetch(
+      `/api/v1/contrib/eventmanagement/events/${id}`,
+      { method: "DELETE" }
+    );
+
+    if (response.status >= 200 && response.status <= 299) {
+      return;
+    }
+
+    if (response.status >= 400) {
+      const error = await response.json();
+      console.log(error);
+    }
   }
 
   override render() {
