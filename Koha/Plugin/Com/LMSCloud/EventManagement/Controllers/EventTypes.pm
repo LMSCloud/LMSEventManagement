@@ -21,7 +21,8 @@ if ( Koha::Plugin::Com::LMSCloud::EventManagement->can('new') ) {
     $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
 }
 
-my $EVENT_TYPES_TABLE = $self ? $self->get_qualified_table_name('event_types') : undef;
+my $EVENT_TYPES_TABLE                  = $self ? $self->get_qualified_table_name('event_types') : undef;
+my $EVENT_TYPE_TARGET_GROUP_FEES_TABLE = $self ? $self->get_qualified_table_name('et_tg_fees')  : undef;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
@@ -30,9 +31,25 @@ sub list {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my ( $stmt, @bind ) = $sql->select( $EVENT_TYPES_TABLE, q{*} );
+        my $stmt = <<~"QUERY";
+            SELECT $EVENT_TYPES_TABLE.*, GROUP_CONCAT($EVENT_TYPE_TARGET_GROUP_FEES_TABLE.fee) AS fees
+            FROM $EVENT_TYPES_TABLE
+            LEFT JOIN $EVENT_TYPE_TARGET_GROUP_FEES_TABLE ON $EVENT_TYPES_TABLE.id = $EVENT_TYPE_TARGET_GROUP_FEES_TABLE.event_type_id
+            GROUP BY 
+                $EVENT_TYPES_TABLE.id,
+                $EVENT_TYPES_TABLE.name, 
+                $EVENT_TYPES_TABLE.target_group, 
+                $EVENT_TYPES_TABLE.min_age, 
+                $EVENT_TYPES_TABLE.max_age, 
+                $EVENT_TYPES_TABLE.max_participants, 
+                $EVENT_TYPES_TABLE.location, 
+                $EVENT_TYPES_TABLE.image, 
+                $EVENT_TYPES_TABLE.description, 
+                $EVENT_TYPES_TABLE.open_registration
+        QUERY
+
         my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        $sth->execute();
 
         my $event_types = $sth->fetchall_arrayref( {} );
 
