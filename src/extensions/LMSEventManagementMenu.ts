@@ -23,12 +23,6 @@ export default class LMSEventMangementMenu extends LMSFloatingMenu {
       method: "configure",
     },
     {
-      name: i18n.gettext("Event Types") ?? "Event Types",
-      icon: faTag,
-      url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=event-types`,
-      method: "configure",
-    },
-    {
       name: i18n.gettext("Target Groups") ?? "Target Groups",
       icon: faBullseye,
       url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=target-groups`,
@@ -38,6 +32,12 @@ export default class LMSEventMangementMenu extends LMSFloatingMenu {
       name: i18n.gettext("Locations") ?? "Locations",
       icon: faLocationDot,
       url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=locations`,
+      method: "configure",
+    },
+    {
+      name: i18n.gettext("Event Types") ?? "Event Types",
+      icon: faTag,
+      url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=event-types`,
       method: "configure",
     },
     {
