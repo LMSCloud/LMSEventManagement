@@ -121,7 +121,7 @@ export default class LMSEventTypesTable extends LMSTable {
       "min_age",
       "max_age",
       "max_participants",
-      "fee",
+      "fees",
       "location",
       "image",
       "description",
@@ -237,7 +237,7 @@ export default class LMSEventTypesTable extends LMSTable {
           />`,
       ],
       [
-        "fee",
+        "fees",
         () =>
           html`<input
             class="form-control"
