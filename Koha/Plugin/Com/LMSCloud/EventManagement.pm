@@ -237,11 +237,15 @@ sub install() {
     my ( $self, $args ) = @_;
 
     try {
-        my $dbh                 = C4::Context->dbh;
-        my $target_groups_table = $self->get_qualified_table_name('target_groups');
-        my $locations_table     = $self->get_qualified_table_name('locations');
-        my $event_types_table   = $self->get_qualified_table_name('event_types');
-        my $events_table        = $self->get_qualified_table_name('events');
+        my $dbh                                = C4::Context->dbh;
+        my $target_groups_table                = $self->get_qualified_table_name('target_groups');
+        my $locations_table                    = $self->get_qualified_table_name('locations');
+        my $event_types_table                  = $self->get_qualified_table_name('event_types');
+        my $events_table                       = $self->get_qualified_table_name('events');
+        # Spelling those tables out exceeds the character
+        # limit for table names in MySQL.
+        my $event_target_group_fees_table      = $self->get_qualified_table_name('e_tg_fees');
+        my $event_type_target_group_fees_table = $self->get_qualified_table_name('et_tg_fees');
 
         my @statements = (
             <<~"STATEMENT",
@@ -273,7 +277,6 @@ sub install() {
                 `min_age` TINYINT unsigned DEFAULT NULL COMMENT 'minimum age requirement',
                 `max_age` TINYINT unsigned DEFAULT NULL COMMENT 'maximum age requirement',
                 `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'maximum allowed number of participants',
-                `fee` FLOAT unsigned DEFAULT NULL COMMENT 'fee for an event',
                 `location` INT(11) DEFAULT NULL COMMENT 'id of a location from the locations table',
                 `image` INT(10) DEFAULT NULL COMMENT 'image from kohas image management',
                 `description` TEXT COMMENT 'what is happening',
@@ -294,7 +297,6 @@ sub install() {
                 `end_time` DATETIME DEFAULT NULL COMMENT 'end time of the event',
                 `registration_start` DATETIME DEFAULT NULL COMMENT 'start time of the registration',
                 `registration_end` DATETIME DEFAULT NULL COMMENT 'end time of the registration',
-                `fee` FLOAT unsigned DEFAULT NULL COMMENT 'fee for the event',
                 `location` INT(11) DEFAULT NULL COMMENT 'the location id from the locations table',
                 `image` INT(10) DEFAULT NULL COMMENT 'image from kohas image management',
                 `description` TEXT(65535) DEFAULT NULL COMMENT 'description',
@@ -304,6 +306,28 @@ sub install() {
                 PRIMARY KEY (`id`),
                 FOREIGN KEY (`event_type`) REFERENCES $event_types_table(`id`),
                 FOREIGN KEY (`location`) REFERENCES $locations_table(`id`)
+            ) ENGINE = INNODB;
+        STATEMENT
+            <<~"STATEMENT",
+            CREATE TABLE IF NOT EXISTS $event_target_group_fees_table (
+                `id` INT(11) NOT NULL AUTO_INCREMENT,
+                `event_id` INT(11) DEFAULT NULL COMMENT 'the event id from the events table',
+                `target_group_id` INT(11) DEFAULT NULL COMMENT 'the target group id from the target groups table',
+                `fee` FLOAT unsigned DEFAULT NULL COMMENT 'fee for the event',
+                PRIMARY KEY (`id`),
+                FOREIGN KEY (`event_id`) REFERENCES $events_table(`id`),
+                FOREIGN KEY (`target_group_id`) REFERENCES $target_groups_table(`id`)
+            ) ENGINE = INNODB;
+        STATEMENT
+            <<~"STATEMENT",
+            CREATE TABLE IF NOT EXISTS $event_type_target_group_fees_table (
+                `id` INT(11) NOT NULL AUTO_INCREMENT,
+                `event_type_id` INT(11) DEFAULT NULL COMMENT 'the event type id from the event types table',
+                `target_group_id` INT(11) DEFAULT NULL COMMENT 'the target group id from the target groups table',
+                `fee` FLOAT unsigned DEFAULT NULL COMMENT 'fee for the event',
+                PRIMARY KEY (`id`),
+                FOREIGN KEY (`event_type_id`) REFERENCES $event_types_table(`id`),
+                FOREIGN KEY (`target_group_id`) REFERENCES $target_groups_table(`id`)
             ) ENGINE = INNODB;
         STATEMENT
         );
@@ -340,8 +364,14 @@ sub uninstall() {
     my $dbh = C4::Context->dbh;
 
     my @tables = (
-        $self->get_qualified_table_name('events'),        $self->get_qualified_table_name('event_types'),
-        $self->get_qualified_table_name('target_groups'), $self->get_qualified_table_name('locations'),
+        $self->get_qualified_table_name('events'),
+        $self->get_qualified_table_name('event_types'),
+        $self->get_qualified_table_name('target_groups'),
+        $self->get_qualified_table_name('locations'),
+        # Spelling those tables out exceeds the character
+        # limit for table names in MySQL.
+        $self->get_qualified_table_name('e_tg_fees'),
+        $self->get_qualified_table_name('et_tg_fees'),
     );
 
     for my $table (@tables) {
