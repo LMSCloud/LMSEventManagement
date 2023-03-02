@@ -81,7 +81,7 @@ interface BaseField {
   desc?: string;
   logic?: () => Promise<{ value: string; name: string }[]>;
   required?: boolean;
-  value?: string;
+  value?: string | { [key: string]: string | number };
   entries?: { value: string; name: string }[];
   attributes?: [string, string | number][];
 }
@@ -95,8 +95,9 @@ export interface SpecialField extends BaseField {
 }
 
 export interface ModalField extends BaseField {
-  type?: InputType | "select" | "info" | "checkbox";
+  type?: InputType | "select" | "info" | "checkbox" | "matrix";
   default?: SelectOption;
+  headers?: string[];
 }
 
 export interface CreateOpts extends RequestInit {

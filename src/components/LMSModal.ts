@@ -315,6 +315,62 @@ export default class LMSModal extends LitElement {
         },
       ],
       [
+        "matrix",
+        (): TemplateResult => {
+          if (!field.entries) return html``;
+          /** We reinitialise the value prop of the field to an empty object
+           *  so we can add the values of the matrix to it. */
+          field.value = {};
+
+          return html` <label for=${field.name}>${field.desc}</label>
+            <table class="table table-bordered" id=${field.name}>
+              <thead>
+                <tr>
+                  ${field.headers?.map(
+                    (header) => html`<th scope="col">${header}</th>`
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                ${field.entries.map(
+                  ({ value, name }) => html`
+                    <tr>
+                      <td id=${name}>${value}</td>
+                      <td>
+                        <input
+                          type="number"
+                          name=${name}
+                          id=${value}
+                          step="0.01"
+                          class="form-control"
+                          step=${ifDefined(
+                            field.attributes
+                              ?.find(([attribute]) => attribute === "step")
+                              ?.at(-1) as number
+                          )}
+                          @input=${(e: Event) => {
+                            if (
+                              !(e.target instanceof HTMLInputElement) ||
+                              !e.target?.value ||
+                              typeof field.value !== "object"
+                            ) {
+                              return;
+                            }
+                            const target = e.target as HTMLInputElement;
+                            (field.value as Record<string, string>)[value] =
+                              target.value;
+                          }}
+                          ?required=${field.required}
+                        />
+                      </td>
+                    </tr>
+                  `
+                )}
+              </tbody>
+            </table>`;
+        },
+      ],
+      [
         "default",
         (): TemplateResult => {
           return html`
@@ -330,11 +386,6 @@ export default class LMSModal extends LitElement {
                     (e.target as HTMLInputElement).value ?? field.value;
                 }}
                 ?required=${field.required}
-                step=${ifDefined(
-                  field.attributes
-                    ?.find(([attribute]) => attribute === "step")
-                    ?.at(-1) as number
-                )}
               />
             </div>
           `;
