@@ -74,7 +74,9 @@ interface BaseField {
         name: string;
     }[]>;
     required?: boolean;
-    value?: string;
+    value?: string | {
+        [key: string]: string | number;
+    };
     entries?: {
         value: string;
         name: string;
@@ -88,8 +90,9 @@ export interface SpecialField extends BaseField {
     type: "select" | "info" | "checkbox";
 }
 export interface ModalField extends BaseField {
-    type?: InputType | "select" | "info" | "checkbox";
+    type?: InputType | "select" | "info" | "checkbox" | "matrix";
     default?: SelectOption;
+    headers?: string[];
 }
 export interface CreateOpts extends RequestInit {
     endpoint: string;

@@ -1102,9 +1102,59 @@
                     },
                 ],
                 [
+                    "matrix",
+                    () => {
+                        var _a;
+                        if (!field.entries)
+                            return y ``;
+                        /** We reinitialise the value prop of the field to an empty object
+                         *  so we can add the values of the matrix to it. */
+                        field.value = {};
+                        return y ` <label for=${field.name}>${field.desc}</label>
+            <table class="table table-bordered" id=${field.name}>
+              <thead>
+                <tr>
+                  ${(_a = field.headers) === null || _a === void 0 ? void 0 : _a.map((header) => y `<th scope="col">${header}</th>`)}
+                </tr>
+              </thead>
+              <tbody>
+                ${field.entries.map(({ value, name }) => {
+                        var _a, _b;
+                        return y `
+                    <tr>
+                      <td id=${name}>${value}</td>
+                      <td>
+                        <input
+                          type="number"
+                          name=${name}
+                          id=${value}
+                          step="0.01"
+                          class="form-control"
+                          step=${l((_b = (_a = field.attributes) === null || _a === void 0 ? void 0 : _a.find(([attribute]) => attribute === "step")) === null || _b === void 0 ? void 0 : _b.at(-1))}
+                          @input=${(e) => {
+                            var _a;
+                            if (!(e.target instanceof HTMLInputElement) ||
+                                !((_a = e.target) === null || _a === void 0 ? void 0 : _a.value) ||
+                                typeof field.value !== "object") {
+                                return;
+                            }
+                            const target = e.target;
+                            field.value[value] =
+                                target.value;
+                        }}
+                          ?required=${field.required}
+                        />
+                      </td>
+                    </tr>
+                  `;
+                    })}
+              </tbody>
+            </table>`;
+                    },
+                ],
+                [
                     "default",
                     () => {
-                        var _a, _b;
                         return y `
             <div class="form-group">
               <label for=${field.name}>${field.desc}</label>
@@ -1119,7 +1169,6 @@
                             (_a = e.target.value) !== null && _a !== void 0 ? _a : field.value;
                     }}
                 ?required=${field.required}
-                step=${l((_b = (_a = field.attributes) === null || _a === void 0 ? void 0 : _a.find(([attribute]) => attribute === "step")) === null || _b === void 0 ? void 0 : _b.at(-1))}
               />
             </div>
           `;
@@ -2167,9 +2216,18 @@ ${value}</textarea
                     required: true,
                 },
                 {
-                    name: "fee",
-                    type: "number",
-                    desc: i18n.gettext("Fee"),
+                    name: "fees",
+                    type: "matrix",
+                    headers: ["target_group", "fee"],
+                    desc: i18n.gettext("Fees"),
+                    logic: async () => {
+                        const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
+                        const result = await response.json();
+                        return result.map((target_group) => ({
+                            value: target_group.id,
+                            name: target_group.name,
+                        }));
+                    },
                     required: false,
                     attributes: [["step", 0.01]],
                 },
@@ -2513,7 +2571,7 @@ ${value}</textarea
                 "min_age",
                 "max_age",
                 "max_participants",
-                "fee",
+                "fees",
                 "location",
                 "image",
                 "description",
@@ -2604,7 +2662,7 @@ ${value}</textarea
           />`,
                 ],
                 [
-                    "fee",
+                    "fees",
                     () => y `<input
             class="form-control"
             type="number"
