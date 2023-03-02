@@ -23,9 +23,6 @@ export default class LMSStaffEventCardDeck extends LitElement {
     string,
     string[]
   > = new Map();
-  @property({ type: Object, attribute: false }) constants = {
-    ID: 0,
-  };
 
   static override styles = [
     bootstrapStyles,
@@ -262,10 +259,30 @@ ${value}</textarea
         "status",
         () =>
           html`<select class="form-control" name="status" disabled>
-            <option value="pending">Pending</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="canceled">Canceled</option>
-            <option value="sold_out">Sold Out</option>
+            <option
+              value="pending"
+              ?selected=${(value as string) === "pending"}
+            >
+              Pending
+            </option>
+            <option
+              value="confirmed"
+              ?selected=${(value as string) === "confirmed"}
+            >
+              Confirmed
+            </option>
+            <option
+              value="canceled"
+              ?selected=${(value as string) === "canceled"}
+            >
+              Canceled
+            </option>
+            <option
+              value="sold_out"
+              ?selected=${(value as string) === "sold_out"}
+            >
+              Sold Out
+            </option>
           </select>`,
       ],
       [
@@ -283,10 +300,14 @@ ${value}</textarea
         "open_registration",
         () =>
           html`<input
+            @change=${(e: Event) => {
+              const target = e.target as HTMLInputElement;
+              target.value = target.checked ? "1" : "0";
+            }}
             class="form-check-input"
             type="checkbox"
             name="open_registration"
-            value="1"
+            value=${(value as unknown as string) === "true" ? 1 : 0}
             ?checked=${value as unknown as boolean}
             disabled
           />`,
@@ -368,23 +389,19 @@ ${value}</textarea
                   <lms-staff-event-card-form
                     .datum=${datum}
                     ?hidden=${!(
-                      this.cardStates?.get(datum.uuid as string)?.[
-                        this.constants.ID
-                      ] === "data"
+                      this.cardStates?.get(datum.uuid as string)?.[0] === "data"
                     )}
                   ></lms-staff-event-card-form>
                   <lms-staff-event-card-attendees
                     ?hidden=${!(
-                      this.cardStates?.get(datum.uuid as string)?.[
-                        this.constants.ID
-                      ] === "attendees"
+                      this.cardStates?.get(datum.uuid as string)?.[0] ===
+                      "attendees"
                     )}
                   ></lms-staff-event-card-attendees>
                   <lms-staff-event-card-preview
                     ?hidden=${!(
-                      this.cardStates?.get(datum.uuid as string)?.[
-                        this.constants.ID
-                      ] === "preview"
+                      this.cardStates?.get(datum.uuid as string)?.[0] ===
+                      "preview"
                     )}
                     .datum=${datum}
                   ></lms-staff-event-card-preview>

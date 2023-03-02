@@ -16,9 +16,6 @@ export default class LMSStaffEventCardPreview extends LitElement {
   @property({ type: Array }) datum: Column = {} as Column;
   @property({ type: String }) override title = "";
   @property({ type: String }) text = "";
-  @property({ type: Object, attribute: false }) constants = {
-    FIRST_VALUE: 0,
-  };
   @property({ type: Object, attribute: false }) templateResultConverter =
     new TemplateResultConverter(undefined);
 
@@ -44,14 +41,10 @@ export default class LMSStaffEventCardPreview extends LitElement {
     const { name, description } = this.datum;
 
     this.templateResultConverter.templateResult = name;
-    this.title = this.templateResultConverter.getRenderValues()[
-      this.constants.FIRST_VALUE
-    ] as string;
+    this.title = this.templateResultConverter.getRenderValues()[0] as string;
 
     this.templateResultConverter.templateResult = description;
-    this.text = this.templateResultConverter.getRenderValues()[
-      this.constants.FIRST_VALUE
-    ] as string;
+    this.text = this.templateResultConverter.getRenderValues()[0] as string;
   }
 
   override render() {
