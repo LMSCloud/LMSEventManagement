@@ -273,7 +273,6 @@ sub install() {
             CREATE TABLE IF NOT EXISTS $event_types_table (
                 `id` INT(11) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) DEFAULT '' COMMENT 'alphanumeric identifier, e.g. name of the template',
-                `target_group` INT(11) DEFAULT NULL COMMENT 'a target group id from the target groups table',
                 `min_age` TINYINT unsigned DEFAULT NULL COMMENT 'minimum age requirement',
                 `max_age` TINYINT unsigned DEFAULT NULL COMMENT 'maximum age requirement',
                 `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'maximum allowed number of participants',
