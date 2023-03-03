@@ -238,15 +238,41 @@ export default class LMSEventTypesTable extends LMSTable {
       ],
       [
         "fees",
-        () =>
-          html`<input
-            class="form-control"
-            type="number"
-            step="0.01"
-            name="fee"
-            value=${value}
-            disabled
-          />`,
+        async () => {
+          const response = await fetch(
+            "/api/v1/contrib/eventmanagement/target_groups"
+          );
+          const result = await response.json();
+          const fees = value as unknown as { [key: string]: number }[];
+
+          return html` <table class="table table-sm mb-0">
+            <tbody>
+              ${fees.map(
+                ({ target_group_id, fee }) => html`
+                  <tr>
+                    <td id=${target_group_id} class="align-middle">
+                      ${result.find(
+                        (target_group: TargetGroup) =>
+                          target_group.id === target_group_id
+                      ).name}
+                    </td>
+                    <td class="align-middle">
+                      <input
+                        type="number"
+                        name=${target_group_id}
+                        id=${target_group_id}
+                        step="0.01"
+                        class="form-control"
+                        value=${fee}
+                        disabled
+                      />
+                    </td>
+                  </tr>
+                `
+              )}
+            </tbody>
+          </table>`;
+        },
       ],
       [
         "location",

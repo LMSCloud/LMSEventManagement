@@ -155,10 +155,10 @@ export default class LMSTable extends LitElement {
                 ${this.data.map(
                   (item) => html`
                     <tr>
-                      ${this._headers.map((key) => html`<td>${item[key]}</td>`)}
+                      ${this._headers.map((key) => html`<td class="align-middle">${item[key]}</td>`)}
                       ${this._isEditable
                         ? html`
-                            <td>
+                            <td class="align-middle">
                               <div class="d-flex">
                                 <button
                                   @click=${this.handleEdit}
