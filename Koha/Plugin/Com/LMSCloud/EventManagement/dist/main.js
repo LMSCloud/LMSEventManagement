@@ -925,7 +925,6 @@
         async create(e) {
             e.preventDefault();
             const { endpoint, method } = this.createOpts;
-            console.log(this.fields);
             const response = await fetch(endpoint, {
                 method,
                 body: JSON.stringify({
@@ -1109,42 +1108,21 @@
                             return y ``;
                         /** We reinitialise the value prop of the field to an empty object
                          *  so we can add the values of the matrix to it. */
-                        field.value = {};
+                        field.value = [];
                         return y ` <label for=${field.name}>${field.desc}</label>
             <table class="table table-bordered" id=${field.name}>
               <thead>
                 <tr>
-                  ${(_a = field.headers) === null || _a === void 0 ? void 0 : _a.map((header) => y `<th scope="col">${header}</th>`)}
+                  ${(_a = field.headers) === null || _a === void 0 ? void 0 : _a.map(([name]) => y `<th scope="col">${name}</th>`)}
                 </tr>
               </thead>
               <tbody>
                 ${field.entries.map(({ value, name }) => {
-                        var _a, _b;
+                        var _a;
                         return y `
                     <tr>
-                      <td id=${name}>${value}</td>
-                      <td>
-                        <input
-                          type="number"
-                          name=${name}
-                          id=${value}
-                          step="0.01"
-                          class="form-control"
-                          step=${l((_b = (_a = field.attributes) === null || _a === void 0 ? void 0 : _a.find(([attribute]) => attribute === "step")) === null || _b === void 0 ? void 0 : _b.at(-1))}
-                          @input=${(e) => {
-                            var _a;
-                            if (!(e.target instanceof HTMLInputElement) ||
-                                !((_a = e.target) === null || _a === void 0 ? void 0 : _a.value) ||
-                                typeof field.value !== "object") {
-                                return;
-                            }
-                            const target = e.target;
-                            field.value[value] =
-                                target.value;
-                        }}
-                          ?required=${field.required}
-                        />
-                      </td>
+                      <td class="align-middle" id=${value}>${name}</td>
+                      ${(_a = field.headers /* Tuples: [name, type] */) === null || _a === void 0 ? void 0 : _a.slice(1).map((header) => this.getMatrixInputMarkup(field, { value, name }, header))}
                     </tr>
                   `;
                     })}
@@ -1177,6 +1155,74 @@
             ]);
             const fieldType = field.type && fieldTypes.has(field.type) ? field.type : "default";
             return (_b = (_a = fieldTypes.get(fieldType)) === null || _a === void 0 ? void 0 : _a()) !== null && _b !== void 0 ? _b : (_c = fieldTypes.get("default")) === null || _c === void 0 ? void 0 : _c();
+        }
+        handleMatrixInput(e, field, name, target_group_id) {
+            var _a;
+            const target = e.target;
+            if (!(target instanceof HTMLInputElement) ||
+                !(field.value instanceof Array) ||
+                !(target === null || target === void 0 ? void 0 : target.value)) {
+                return;
+            }
+            /** Here we have to check if an object with a key equaling
+             *  the name variable already exists in the field.value array.
+             */
+            const index = field.value.findIndex((obj) => obj[name]);
+            if (index !== -1) {
+                field.value[index][name] = target.value;
+                /** Then we have to push the name of the target_group as an
+                 *  identifier. */
+                field.value[index].target_group = target_group_id;
+                return;
+            }
+            field.value.push({
+                [name]: (_a = new Map([
+                    ["number", target.value],
+                    ["checkbox", target.checked ? "1" : "0"],
+                ]).get(target.type)) !== null && _a !== void 0 ? _a : target.value,
+            });
+        }
+        getMatrixInputMarkup(field, entry, [name, type]) {
+            var _a, _b, _c, _d, _e;
+            const inputTypes = new Map([
+                [
+                    "number",
+                    () => {
+                        var _a, _b;
+                        return y `<td class="align-middle">
+            <input
+              type="number"
+              name=${entry.name}
+              id=${entry.value}
+              step="0.01"
+              class="form-control"
+              step=${l((_b = (_a = field.attributes) === null || _a === void 0 ? void 0 : _a.find(([attribute]) => attribute === "step")) === null || _b === void 0 ? void 0 : _b.at(-1))}
+              @input=${(e) => this.handleMatrixInput(e, field, name, entry.value)}
+              ?required=${field.required}
+            />
+          </td>`;
+                    },
+                ],
+                [
+                    "checkbox",
+                    () => {
+                        return y ` <td class="align-middle">
+            <input
+              type="checkbox"
+              name=${entry.name}
+              id=${entry.value}
+              value="1"
+              class="form-control"
+              @input=${(e) => this.handleMatrixInput(e, field, name, entry.value)}
+              ?required=${field.required}
+            />
+          </td>`;
+                    },
+                ],
+            ]);
+            if (!((_a = field.headers) === null || _a === void 0 ? void 0 : _a.length))
+                return (_b = inputTypes.get("default")) === null || _b === void 0 ? void 0 : _b();
+            return (_d = (_c = inputTypes.get(type)) === null || _c === void 0 ? void 0 : _c()) !== null && _d !== void 0 ? _d : (_e = inputTypes.get("default")) === null || _e === void 0 ? void 0 : _e();
         }
         moveOnOverlap() {
             const fixedElement = this.renderRoot.querySelector(".btn-modal-wrapper");
@@ -1252,6 +1298,9 @@
       }
       button.btn-modal > svg {
         color: var(--text-color);
+      }
+      input[type="checkbox"].form-control {
+        font-size: 0.375rem;
       }
     `,
     ];
@@ -2184,9 +2233,10 @@ ${value}</textarea
                     required: true,
                 },
                 {
-                    name: "target_group",
-                    type: "select",
-                    desc: i18n.gettext("Target Group"),
+                    name: "target_groups",
+                    type: "matrix",
+                    headers: [["target_group", "default"], ["selected", "checkbox"], ["fee", "number"]],
+                    desc: i18n.gettext("Target Groups"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
                         const result = await response.json();
@@ -2195,7 +2245,7 @@ ${value}</textarea
                             name: target_group.name,
                         }));
                     },
-                    required: true,
+                    required: false,
                 },
                 {
                     name: "min_age",
@@ -2214,22 +2264,6 @@ ${value}</textarea
                     type: "number",
                     desc: i18n.gettext("Max Participants"),
                     required: true,
-                },
-                {
-                    name: "fees",
-                    type: "matrix",
-                    headers: ["target_group", "fee"],
-                    desc: i18n.gettext("Fees"),
-                    logic: async () => {
-                        const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
-                        const result = await response.json();
-                        return result.map((target_group) => ({
-                            value: target_group.id,
-                            name: target_group.name,
-                        }));
-                    },
-                    required: false,
-                    attributes: [["step", 0.01]],
                 },
                 {
                     name: "location",
@@ -2393,10 +2427,10 @@ ${value}</textarea
               <tbody>
                 ${this.data.map((item) => y `
                     <tr>
-                      ${this._headers.map((key) => y `<td>${item[key]}</td>`)}
+                      ${this._headers.map((key) => y `<td class="align-middle">${item[key]}</td>`)}
                       ${this._isEditable
                 ? y `
-                            <td>
+                            <td class="align-middle">
                               <div class="d-flex">
                                 <button
                                   @click=${this.handleEdit}
@@ -2663,14 +2697,33 @@ ${value}</textarea
                 ],
                 [
                     "fees",
-                    () => y `<input
-            class="form-control"
-            type="number"
-            step="0.01"
-            name="fee"
-            value=${value}
-            disabled
-          />`,
+                    async () => {
+                        const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
+                        const result = await response.json();
+                        const fees = value;
+                        return y ` <table class="table table-sm mb-0">
+            <tbody>
+              ${fees.map(({ target_group_id, fee }) => y `
+                  <tr>
+                    <td id=${target_group_id} class="align-middle">
+                      ${result.find((target_group) => target_group.id === target_group_id).name}
+                    </td>
+                    <td class="align-middle">
+                      <input
+                        type="number"
+                        name=${target_group_id}
+                        id=${target_group_id}
+                        step="0.01"
+                        class="form-control"
+                        value=${fee}
+                        disabled
+                      />
+                    </td>
+                  </tr>
+                `)}
+            </tbody>
+          </table>`;
+                    },
                 ],
                 [
                     "location",

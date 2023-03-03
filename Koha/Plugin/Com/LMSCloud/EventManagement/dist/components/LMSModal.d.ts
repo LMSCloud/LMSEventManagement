@@ -17,6 +17,8 @@ export default class LMSModal extends LitElement {
     private dismissAlert;
     render(): TemplateResult<1>;
     private getFieldMarkup;
+    private handleMatrixInput;
+    private getMatrixInputMarkup;
     private moveOnOverlap;
 }
 //# sourceMappingURL=LMSModal.d.ts.map
