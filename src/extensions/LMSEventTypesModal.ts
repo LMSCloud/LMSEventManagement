@@ -20,9 +20,10 @@ export default class LMSEventTypesModal extends LMSModal {
       required: true,
     },
     {
-      name: "target_group",
-      type: "select",
-      desc: i18n.gettext("Target Group"),
+      name: "target_groups",
+      type: "matrix",
+      headers: [["target_group", "default"], ["selected", "checkbox"], ["fee", "number"]],
+      desc: i18n.gettext("Target Groups"),
       logic: async () => {
         const response = await fetch(
           "/api/v1/contrib/eventmanagement/target_groups"
@@ -33,7 +34,7 @@ export default class LMSEventTypesModal extends LMSModal {
           name: target_group.name,
         }));
       },
-      required: true,
+      required: false,
     },
     {
       name: "min_age",
@@ -52,24 +53,6 @@ export default class LMSEventTypesModal extends LMSModal {
       type: "number",
       desc: i18n.gettext("Max Participants"),
       required: true,
-    },
-    {
-      name: "fees",
-      type: "matrix",
-      headers: ["target_group", "fee"],
-      desc: i18n.gettext("Fees"),
-      logic: async () => {
-        const response = await fetch(
-          "/api/v1/contrib/eventmanagement/target_groups"
-        );
-        const result = await response.json();
-        return result.map((target_group: any) => ({
-          value: target_group.id,
-          name: target_group.name,
-        }));
-      },
-      required: false,
-      attributes: [["step", 0.01]],
     },
     {
       name: "location",

@@ -7,7 +7,7 @@ import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
 import TranslationHandler from "../lib/TranslationHandler";
 import { customElement, property } from "lit/decorators";
 import { Gettext } from "gettext.js";
-import { CreateOpts, ModalField, SelectOption } from "../interfaces";
+import { CreateOpts, Input, ModalField, SelectOption } from "../interfaces";
 import { InputType } from "../types";
 
 @customElement("lms-modal")
@@ -79,6 +79,9 @@ export default class LMSModal extends LitElement {
       button.btn-modal > svg {
         color: var(--text-color);
       }
+      input[type="checkbox"].form-control {
+        font-size: 0.375rem;
+      }
     `,
   ];
 
@@ -129,7 +132,6 @@ export default class LMSModal extends LitElement {
   private async create(e: Event) {
     e.preventDefault();
     const { endpoint, method } = this.createOpts;
-    console.log(this.fields);
     const response = await fetch(endpoint, {
       method,
       body: JSON.stringify({
@@ -320,14 +322,14 @@ export default class LMSModal extends LitElement {
           if (!field.entries) return html``;
           /** We reinitialise the value prop of the field to an empty object
            *  so we can add the values of the matrix to it. */
-          field.value = {};
+          field.value = [];
 
           return html` <label for=${field.name}>${field.desc}</label>
             <table class="table table-bordered" id=${field.name}>
               <thead>
                 <tr>
                   ${field.headers?.map(
-                    (header) => html`<th scope="col">${header}</th>`
+                    ([name]) => html`<th scope="col">${name}</th>`
                   )}
                 </tr>
               </thead>
@@ -335,34 +337,16 @@ export default class LMSModal extends LitElement {
                 ${field.entries.map(
                   ({ value, name }) => html`
                     <tr>
-                      <td id=${name}>${value}</td>
-                      <td>
-                        <input
-                          type="number"
-                          name=${name}
-                          id=${value}
-                          step="0.01"
-                          class="form-control"
-                          step=${ifDefined(
-                            field.attributes
-                              ?.find(([attribute]) => attribute === "step")
-                              ?.at(-1) as number
-                          )}
-                          @input=${(e: Event) => {
-                            if (
-                              !(e.target instanceof HTMLInputElement) ||
-                              !e.target?.value ||
-                              typeof field.value !== "object"
-                            ) {
-                              return;
-                            }
-                            const target = e.target as HTMLInputElement;
-                            (field.value as Record<string, string>)[value] =
-                              target.value;
-                          }}
-                          ?required=${field.required}
-                        />
-                      </td>
+                      <td class="align-middle" id=${value}>${name}</td>
+                      ${field.headers /* Tuples: [name, type] */
+                        ?.slice(1)
+                        .map((header) =>
+                          this.getMatrixInputMarkup(
+                            field,
+                            { value, name },
+                            header
+                          )
+                        )}
                     </tr>
                   `
                 )}
@@ -396,6 +380,94 @@ export default class LMSModal extends LitElement {
     const fieldType =
       field.type && fieldTypes.has(field.type) ? field.type : "default";
     return fieldTypes.get(fieldType)?.() ?? fieldTypes.get("default")?.();
+  }
+
+  private handleMatrixInput(
+    e: Event,
+    field: ModalField,
+    name: string,
+    target_group_id: string
+  ) {
+    const target = e.target;
+    if (
+      !(target instanceof HTMLInputElement) ||
+      !(field.value instanceof Array) ||
+      !target?.value
+    ) {
+      return;
+    }
+
+    /** Here we have to check if an object with a key equaling
+     *  the name variable already exists in the field.value array.
+     */
+    const index = field.value.findIndex((obj) => obj[name]);
+    if (index !== -1) {
+      field.value[index][name] = target.value;
+      /** Then we have to push the name of the target_group as an
+       *  identifier. */
+      field.value[index].target_group = target_group_id;
+      return;
+    }
+
+    field.value.push({
+      [name]:
+        new Map<string, string>([
+          ["number", target.value],
+          ["checkbox", target.checked ? "1" : "0"],
+        ]).get(target.type) ?? target.value,
+    });
+  }
+
+  private getMatrixInputMarkup(
+    field: ModalField,
+    entry: Input,
+    [name, type]: string[]
+  ) {
+    const inputTypes = new Map<string, () => TemplateResult>([
+      [
+        "number",
+        (): TemplateResult => {
+          return html`<td class="align-middle">
+            <input
+              type="number"
+              name=${entry.name}
+              id=${entry.value}
+              step="0.01"
+              class="form-control"
+              step=${ifDefined(
+                field.attributes
+                  ?.find(([attribute]) => attribute === "step")
+                  ?.at(-1) as number
+              )}
+              @input=${(e: Event) =>
+                this.handleMatrixInput(e, field, name, entry.value)}
+              ?required=${field.required}
+            />
+          </td>`;
+        },
+      ],
+      [
+        "checkbox",
+        (): TemplateResult => {
+          return html` <td class="align-middle">
+            <input
+              type="checkbox"
+              name=${entry.name}
+              id=${entry.value}
+              value="1"
+              class="form-control"
+              @input=${(e: Event) =>
+                this.handleMatrixInput(e, field, name, entry.value)}
+              ?required=${field.required}
+            />
+          </td>`;
+        },
+      ],
+    ]);
+
+    if (!field.headers?.length) return inputTypes.get("default")?.();
+
+    return inputTypes.get(type)?.() ?? inputTypes.get("default")?.();
   }
 
   private moveOnOverlap() {
