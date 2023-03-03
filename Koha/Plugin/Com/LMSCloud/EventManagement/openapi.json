@@ -1125,7 +1125,18 @@
                   "type": "string"
                 },
                 "target_group": {
-                  "type": "integer"
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "selected": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
                 },
                 "max_age": {
                   "type": "integer"
@@ -1139,8 +1150,19 @@
                 "max_participants": {
                   "type": "integer"
                 },
-                "fee": {
-                  "type": "number"
+                "fees": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "target_group": {
+                        "type": "integer"
+                      },
+                      "fee": {
+                        "type": "number"
+                      }
+                    }
+                  }
                 },
                 "description": {
                   "type": "string"
@@ -1247,7 +1269,15 @@
                 "type": "string"
               },
               "target_group": {
-                "type": "integer"
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "selected": {
+                    "type": "boolean"
+                  }
+                }
               },
               "max_age": {
                 "type": "integer"
@@ -1261,8 +1291,16 @@
               "max_participants": {
                 "type": "integer"
               },
-              "fee": {
-                "type": "number"
+              "fees": {
+                "type": "object",
+                "properties": {
+                  "target_group": {
+                    "type": "integer"
+                  },
+                  "fee": {
+                    "type": "number"
+                  }
+                }
               },
               "description": {
                 "type": "string"
@@ -1291,7 +1329,18 @@
                 "type": "string"
               },
               "target_group": {
-                "type": "integer"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "selected": {
+                      "type": "boolean"
+                    }
+                  }
+                }
               },
               "max_age": {
                 "type": "integer"
@@ -1305,8 +1354,19 @@
               "max_participants": {
                 "type": "integer"
               },
-              "fee": {
-                "type": "number"
+              "fees": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "target_group": {
+                      "type": "integer"
+                    },
+                    "fee": {
+                      "type": "number"
+                    }
+                  }
+                }
               },
               "description": {
                 "type": "string"
@@ -1424,7 +1484,18 @@
                 "type": "string"
               },
               "target_group": {
-                "type": "integer"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "selected": {
+                      "type": "boolean"
+                    }
+                  }
+                }
               },
               "max_age": {
                 "type": "integer"
@@ -1438,8 +1509,19 @@
               "max_participants": {
                 "type": "integer"
               },
-              "fee": {
-                "type": "number"
+              "fees": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "target_group": {
+                      "type": "integer"
+                    },
+                    "fee": {
+                      "type": "number"
+                    }
+                  }
+                }
               },
               "description": {
                 "type": "string"
@@ -1552,7 +1634,18 @@
                 "type": "string"
               },
               "target_group": {
-                "type": "integer"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "selected": {
+                      "type": "boolean"
+                    }
+                  }
+                }
               },
               "max_age": {
                 "type": "integer"
@@ -1566,8 +1659,19 @@
               "max_participants": {
                 "type": "integer"
               },
-              "fee": {
-                "type": "number"
+              "fees": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "target_group": {
+                      "type": "integer"
+                    },
+                    "fee": {
+                      "type": "number"
+                    }
+                  }
+                }
               },
               "description": {
                 "type": "string"
@@ -1596,7 +1700,18 @@
                 "type": "string"
               },
               "target_group": {
-                "type": "integer"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "selected": {
+                      "type": "boolean"
+                    }
+                  }
+                }
               },
               "max_age": {
                 "type": "integer"
