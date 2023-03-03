@@ -37,6 +37,13 @@ sub get {
 
         my $event_type = $sth->fetchrow_hashref;
 
+        ( $stmt, @bind ) = $sql->select( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, [qw/target_group fee/], { event_type_id => $id }, );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        my $fees = $sth->fetchall_arrayref( {} );
+        $event_type->{fees} = $fees;
+
         return $c->render( status => 200, openapi => $event_type || {} );
     }
     catch {
@@ -56,10 +63,33 @@ sub update {
         my $json           = $c->req->body;
         my $new_event_type = decode_json($json);
 
+        # Extract the fees from the new event type
+        my $fees = delete $new_event_type->{fees};
+
+        # Update the event type record
         my ( $stmt, @bind ) = $sql->update( $EVENT_TYPES_TABLE, $new_event_type, { id => $id } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
+        # If there are fees, update the target group fees records
+        if ($fees) {
+
+            # Delete existing target group fees records for the event type
+            ( $stmt, @bind ) = $sql->delete( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, { event_type_id => $id } );
+            $sth = $dbh->prepare($stmt);
+            $sth->execute(@bind);
+
+            # Insert new target group fees records
+            for my $target_group ( keys %{$fees} ) {
+                my $fee    = $fees->{$target_group};
+                my $record = { event_type_id => $id, target_group => $target_group, fee => $fee };
+                ( $stmt, @bind ) = $sql->insert( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, $record );
+                $sth = $dbh->prepare($stmt);
+                $sth->execute(@bind);
+            }
+        }
+
+        # Fetch the updated event type record
         ( $stmt, @bind ) = $sql->select( $EVENT_TYPES_TABLE, q{*}, { id => $id } );
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
@@ -81,7 +111,13 @@ sub delete {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        my ( $stmt, @bind ) = $sql->delete( $EVENT_TYPES_TABLE, { id => $id } );
+        # delete the entries from the junction table first
+        ( my $junction_stmt, @junction_bind ) = $sql->delete( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, { event_type_id => $id } );
+        my $junction_sth = $dbh->prepare($junction_stmt);
+        $junction_sth->execute(@junction_bind);
+
+        # then delete the event type
+        ( my $stmt, @bind ) = $sql->delete( $EVENT_TYPES_TABLE, { id => $id } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
