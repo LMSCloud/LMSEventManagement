@@ -1124,7 +1124,7 @@
                 "name": {
                   "type": "string"
                 },
-                "target_group": {
+                "target_groups": {
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -1134,6 +1134,9 @@
                       },
                       "selected": {
                         "type": "boolean"
+                      },
+                      "fee": {
+                        "type": "number"
                       }
                     }
                   }
@@ -1149,20 +1152,6 @@
                 },
                 "max_participants": {
                   "type": "integer"
-                },
-                "fees": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "target_group": {
-                        "type": "integer"
-                      },
-                      "fee": {
-                        "type": "number"
-                      }
-                    }
-                  }
                 },
                 "description": {
                   "type": "string"
@@ -1268,14 +1257,20 @@
               "name": {
                 "type": "string"
               },
-              "target_group": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "integer"
-                  },
-                  "selected": {
-                    "type": "boolean"
+              "target_groups": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "selected": {
+                      "type": "boolean"
+                    },
+                    "fee": {
+                      "type": "number"
+                    }
                   }
                 }
               },
@@ -1290,17 +1285,6 @@
               },
               "max_participants": {
                 "type": "integer"
-              },
-              "fees": {
-                "type": "object",
-                "properties": {
-                  "target_group": {
-                    "type": "integer"
-                  },
-                  "fee": {
-                    "type": "number"
-                  }
-                }
               },
               "description": {
                 "type": "string"
@@ -1328,7 +1312,7 @@
               "name": {
                 "type": "string"
               },
-              "target_group": {
+              "target_groups": {
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -1338,6 +1322,9 @@
                     },
                     "selected": {
                       "type": "boolean"
+                    },
+                    "fee": {
+                      "type": "number"
                     }
                   }
                 }
@@ -1353,20 +1340,6 @@
               },
               "max_participants": {
                 "type": "integer"
-              },
-              "fees": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "target_group": {
-                      "type": "integer"
-                    },
-                    "fee": {
-                      "type": "number"
-                    }
-                  }
-                }
               },
               "description": {
                 "type": "string"
@@ -1483,7 +1456,7 @@
               "name": {
                 "type": "string"
               },
-              "target_group": {
+              "target_groups": {
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -1493,6 +1466,9 @@
                     },
                     "selected": {
                       "type": "boolean"
+                    },
+                    "fee": {
+                      "type": "number"
                     }
                   }
                 }
@@ -1508,20 +1484,6 @@
               },
               "max_participants": {
                 "type": "integer"
-              },
-              "fees": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "target_group": {
-                      "type": "integer"
-                    },
-                    "fee": {
-                      "type": "number"
-                    }
-                  }
-                }
               },
               "description": {
                 "type": "string"
@@ -1633,7 +1595,7 @@
               "name": {
                 "type": "string"
               },
-              "target_group": {
+              "target_groups": {
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -1643,6 +1605,9 @@
                     },
                     "selected": {
                       "type": "boolean"
+                    },
+                    "fee": {
+                      "type": "number"
                     }
                   }
                 }
@@ -1658,20 +1623,6 @@
               },
               "max_participants": {
                 "type": "integer"
-              },
-              "fees": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "target_group": {
-                      "type": "integer"
-                    },
-                    "fee": {
-                      "type": "number"
-                    }
-                  }
-                }
               },
               "description": {
                 "type": "string"
@@ -1699,7 +1650,7 @@
               "name": {
                 "type": "string"
               },
-              "target_group": {
+              "target_groups": {
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -1709,6 +1660,9 @@
                     },
                     "selected": {
                       "type": "boolean"
+                    },
+                    "fee": {
+                      "type": "number"
                     }
                   }
                 }
@@ -1724,9 +1678,6 @@
               },
               "max_participants": {
                 "type": "integer"
-              },
-              "fee": {
-                "type": "number"
               },
               "description": {
                 "type": "string"
@@ -1839,10 +1790,45 @@
                 "type": "integer"
               },
               "name": {
-                "type": ["string", "null"]
+                "type": "string"
+              },
+              "target_groups": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "selected": {
+                      "type": "boolean"
+                    },
+                    "fee": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              "max_age": {
+                "type": "integer"
+              },
+              "min_age": {
+                "type": "integer"
+              },
+              "open_registration": {
+                "type": "boolean"
+              },
+              "max_participants": {
+                "type": "integer"
               },
               "description": {
-                "type": ["string", "null"]
+                "type": "string"
+              },
+              "image": {
+                "type": "string"
+              },
+              "location": {
+                "type": "integer"
               }
             }
           }
