@@ -320,9 +320,28 @@ export default class LMSModal extends LitElement {
         "matrix",
         (): TemplateResult => {
           if (!field.entries) return html``;
-          /** We reinitialise the value prop of the field to an empty object
-           *  so we can add the values of the matrix to it. */
+          /** We reinitialise the value prop of the field to a prefilled
+           *  array with default values so that we have a state that we
+           *  can write to the DB if the respective item doesn't get selected. */
           field.value = [];
+          const fieldValueRef: { [key: string]: string }[] = field.value;
+          field.entries.forEach(({ value }) => {
+            let id = value;
+
+            fieldValueRef.push({ id });
+            console.log(field.headers, id)
+            field.headers?.slice(1).forEach((header) => {
+              const [name] = header;
+              const currentObjIndex = fieldValueRef.findIndex(
+                (item) => item.id === id
+              );
+
+              if (!currentObjIndex) {
+                return;
+              }
+              fieldValueRef[currentObjIndex][name] = "0";
+            });
+          });
 
           return html` <label for=${field.name}>${field.desc}</label>
             <table class="table table-bordered" id=${field.name}>
@@ -386,7 +405,7 @@ export default class LMSModal extends LitElement {
     e: Event,
     field: ModalField,
     name: string,
-    target_group_id: string
+    entry: { value: string; name: string }
   ) {
     const target = e.target;
     if (
@@ -397,25 +416,27 @@ export default class LMSModal extends LitElement {
       return;
     }
 
-    /** Here we have to check if an object with a key equaling
-     *  the name variable already exists in the field.value array.
-     */
-    const index = field.value.findIndex((obj) => obj[name]);
-    if (index !== -1) {
-      field.value[index][name] = target.value;
-      /** Then we have to push the name of the target_group as an
-       *  identifier. */
-      field.value[index].target_group = target_group_id;
+    /** This handler transforms the input we receive from an Event into
+     *  the appropriate format within the field.value array.
+     *  The field.value array is an array of objects, each object
+     *  representing a row in the matrix. Each object has an id, set by
+     *  the entry.value property, a boolean attribute that comes from the
+     *  checkbox input, and a number attribute that comes from the number
+     *  input. */
+    const index = field.value.findIndex((row) => row.id === entry.value);
+    if (index === -1) {
+      field.value.push({
+        id: entry.value,
+        [name]:
+          new Map<string, string>([
+            ["number", target.value],
+            ["checkbox", target.checked ? "1" : "0"],
+          ]).get(target.type) ?? target.value,
+      });
       return;
     }
 
-    field.value.push({
-      [name]:
-        new Map<string, string>([
-          ["number", target.value],
-          ["checkbox", target.checked ? "1" : "0"],
-        ]).get(target.type) ?? target.value,
-    });
+    field.value[index][name] = target.value;
   }
 
   private getMatrixInputMarkup(
@@ -440,7 +461,7 @@ export default class LMSModal extends LitElement {
                   ?.at(-1) as number
               )}
               @input=${(e: Event) =>
-                this.handleMatrixInput(e, field, name, entry.value)}
+                this.handleMatrixInput(e, field, name, entry)}
               ?required=${field.required}
             />
           </td>`;
@@ -457,7 +478,7 @@ export default class LMSModal extends LitElement {
               value="1"
               class="form-control"
               @input=${(e: Event) =>
-                this.handleMatrixInput(e, field, name, entry.value)}
+                this.handleMatrixInput(e, field, name, entry)}
               ?required=${field.required}
             />
           </td>`;
