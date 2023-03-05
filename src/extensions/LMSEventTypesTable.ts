@@ -2,7 +2,7 @@ import { customElement } from "lit/decorators";
 import LMSTable from "../components/LMSTable";
 import { html, TemplateResult } from "lit";
 import { InputType } from "../types";
-import { TargetGroup, Input } from "../interfaces";
+import { EventType, TargetGroup, TargetGroupFee } from "../interfaces";
 
 @customElement("lms-event-types-table")
 export default class LMSEventTypesTable extends LMSTable {
@@ -27,6 +27,14 @@ export default class LMSEventTypesTable extends LMSTable {
         });
       }
     }
+  }
+
+  handleInput(input: HTMLInputElement | HTMLSelectElement, value: unknown) {
+    if (input instanceof HTMLInputElement && input.type === "checkbox") {
+      return input.checked ? "1" : "0";
+    }
+
+    return value;
   }
 
   override async handleSave(e: Event) {
@@ -55,13 +63,33 @@ export default class LMSEventTypesTable extends LMSTable {
       {
         method: "PUT",
         body: JSON.stringify({
-          ...Array.from(inputs).reduce(
-            (acc: { [key: string]: number | string }, input: Input) => {
-              acc[input.name] = input.value;
+          ...Array.from(inputs).reduce((acc, input) => {
+            if (input.dataset.group && input instanceof HTMLInputElement) {
+              const group = input.dataset.group;
+              if (!(group in acc)) {
+                acc[group] = [];
+              }
+
+              const { id, name, value } = input;
+
+              const groupArray = acc[group] as Array<Record<string, unknown>>;
+              const groupIndex = groupArray.findIndex((item) => item.id === id);
+
+              if (groupIndex === -1) {
+                groupArray.push({
+                  id,
+                  [name]: this.handleInput(input, value),
+                });
+                return acc;
+              }
+
+              groupArray[groupIndex][name] = this.handleInput(input, value);
               return acc;
-            },
-            {}
-          ),
+            }
+
+            acc[input.name] = this.handleInput(input, input.value);
+            return acc;
+          }, {} as Record<string, unknown>),
         }),
       }
     );
@@ -117,11 +145,10 @@ export default class LMSEventTypesTable extends LMSTable {
     this.order = [
       "id",
       "name",
-      "target_group",
+      "target_groups",
       "min_age",
       "max_age",
       "max_participants",
-      "fees",
       "location",
       "image",
       "description",
@@ -149,9 +176,9 @@ export default class LMSEventTypesTable extends LMSTable {
        *  the previous call before you can continue with the next one. */
       .then(async (result) => {
         const data = await Promise.all(
-          result.map(async (target_group: TargetGroup) => {
+          result.map(async (event_type: EventType) => {
             const entries = await Promise.all(
-              Object.entries(target_group).map(async ([name, value]) => [
+              Object.entries(event_type).map(async ([name, value]) => [
                 name,
                 await this.getInputFromColumn({ name, value }),
               ])
@@ -189,18 +216,51 @@ export default class LMSEventTypesTable extends LMSTable {
           />`,
       ],
       [
-        "target_group",
+        "target_groups",
         async () => {
           const response = await fetch(
             "/api/v1/contrib/eventmanagement/target_groups"
           );
           const result = await response.json();
-          return html`<select class="form-control" name="target_group" disabled>
-            ${result.map(
-              ({ id, name }: { id: number; name: string }) =>
-                html`<option value=${id}>${name}</option>`
-            )};
-          </select>`;
+          return html` <table class="table table-sm mb-0">
+            <tbody>
+              ${(value as unknown as TargetGroupFee[]).map(
+                ({ target_group_id, selected, fee }) => html`
+                  <tr>
+                    <td id=${target_group_id} class="align-middle">
+                      ${result.find(
+                        (target_group: TargetGroup) =>
+                          target_group.id === target_group_id
+                      ).name}
+                    </td>
+                    <td class="align-middle">
+                      <input
+                        type="checkbox"
+                        data-group="target_groups"
+                        name="selected"
+                        id=${target_group_id}
+                        class="form-control"
+                        ?checked=${selected}
+                        disabled
+                      />
+                    </td>
+                    <td class="align-middle">
+                      <input
+                        type="number"
+                        data-group="target_groups"
+                        name="fee"
+                        id=${target_group_id}
+                        step="0.01"
+                        class="form-control"
+                        value=${fee}
+                        disabled
+                      />
+                    </td>
+                  </tr>
+                `
+              )}
+            </tbody>
+          </table>`;
         },
       ],
       [
@@ -235,44 +295,6 @@ export default class LMSEventTypesTable extends LMSTable {
             value=${value}
             disabled
           />`,
-      ],
-      [
-        "fees",
-        async () => {
-          const response = await fetch(
-            "/api/v1/contrib/eventmanagement/target_groups"
-          );
-          const result = await response.json();
-          const fees = value as unknown as { [key: string]: number }[];
-
-          return html` <table class="table table-sm mb-0">
-            <tbody>
-              ${fees.map(
-                ({ target_group_id, fee }) => html`
-                  <tr>
-                    <td id=${target_group_id} class="align-middle">
-                      ${result.find(
-                        (target_group: TargetGroup) =>
-                          target_group.id === target_group_id
-                      ).name}
-                    </td>
-                    <td class="align-middle">
-                      <input
-                        type="number"
-                        name=${target_group_id}
-                        id=${target_group_id}
-                        step="0.01"
-                        class="form-control"
-                        value=${fee}
-                        disabled
-                      />
-                    </td>
-                  </tr>
-                `
-              )}
-            </tbody>
-          </table>`;
-        },
       ],
       [
         "location",
@@ -315,14 +337,9 @@ export default class LMSEventTypesTable extends LMSTable {
         "open_registration",
         () =>
           html`<input
-            @change=${(e: Event) => {
-              const target = e.target as HTMLInputElement;
-              target.value = target.checked ? "1" : "0";
-            }}
             class="form-control"
             type="checkbox"
             name="open_registration"
-            value=${(value as unknown as string) === "true" ? 1 : 0}
             ?checked=${value as unknown as boolean}
             disabled
           />`,

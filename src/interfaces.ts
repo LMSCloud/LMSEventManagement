@@ -118,3 +118,23 @@ export interface TargetGroup {
   min_age: number;
   max_age: number;
 }
+
+export interface TargetGroupFee {
+  id: number;
+  target_group_id: number;
+  selected: boolean;
+  fee: number;
+}
+
+export interface EventType {
+  id: number;
+  name: string;
+  target_groups: TargetGroupFee[];
+  min_age: number;
+  max_age: number;
+  max_participants: number;
+  location: number;
+  image: number;
+  description: string;
+  open_registration: boolean;
+}
