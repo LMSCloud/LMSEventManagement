@@ -1106,9 +1106,25 @@
                         var _a;
                         if (!field.entries)
                             return y ``;
-                        /** We reinitialise the value prop of the field to an empty object
-                         *  so we can add the values of the matrix to it. */
+                        /** We reinitialise the value prop of the field to a prefilled
+                         *  array with default values so that we have a state that we
+                         *  can write to the DB if the respective item doesn't get selected. */
                         field.value = [];
+                        const fieldValueRef = field.value;
+                        field.entries.forEach(({ value }) => {
+                            var _a;
+                            let id = value;
+                            fieldValueRef.push({ id });
+                            console.log(field.headers, id);
+                            (_a = field.headers) === null || _a === void 0 ? void 0 : _a.slice(1).forEach((header) => {
+                                const [name] = header;
+                                const currentObjIndex = fieldValueRef.findIndex((item) => item.id === id);
+                                if (!currentObjIndex) {
+                                    return;
+                                }
+                                fieldValueRef[currentObjIndex][name] = "0";
+                            });
+                        });
                         return y ` <label for=${field.name}>${field.desc}</label>
             <table class="table table-bordered" id=${field.name}>
               <thead>
@@ -1156,7 +1172,7 @@
             const fieldType = field.type && fieldTypes.has(field.type) ? field.type : "default";
             return (_b = (_a = fieldTypes.get(fieldType)) === null || _a === void 0 ? void 0 : _a()) !== null && _b !== void 0 ? _b : (_c = fieldTypes.get("default")) === null || _c === void 0 ? void 0 : _c();
         }
-        handleMatrixInput(e, field, name, target_group_id) {
+        handleMatrixInput(e, field, name, entry) {
             var _a;
             const target = e.target;
             if (!(target instanceof HTMLInputElement) ||
@@ -1164,23 +1180,25 @@
                 !(target === null || target === void 0 ? void 0 : target.value)) {
                 return;
             }
-            /** Here we have to check if an object with a key equaling
-             *  the name variable already exists in the field.value array.
-             */
-            const index = field.value.findIndex((obj) => obj[name]);
-            if (index !== -1) {
-                field.value[index][name] = target.value;
-                /** Then we have to push the name of the target_group as an
-                 *  identifier. */
-                field.value[index].target_group = target_group_id;
+            /** This handler transforms the input we receive from an Event into
+             *  the appropriate format within the field.value array.
+             *  The field.value array is an array of objects, each object
+             *  representing a row in the matrix. Each object has an id, set by
+             *  the entry.value property, a boolean attribute that comes from the
+             *  checkbox input, and a number attribute that comes from the number
+             *  input. */
+            const index = field.value.findIndex((row) => row.id === entry.value);
+            if (index === -1) {
+                field.value.push({
+                    id: entry.value,
+                    [name]: (_a = new Map([
+                        ["number", target.value],
+                        ["checkbox", target.checked ? "1" : "0"],
+                    ]).get(target.type)) !== null && _a !== void 0 ? _a : target.value,
+                });
                 return;
             }
-            field.value.push({
-                [name]: (_a = new Map([
-                    ["number", target.value],
-                    ["checkbox", target.checked ? "1" : "0"],
-                ]).get(target.type)) !== null && _a !== void 0 ? _a : target.value,
-            });
+            field.value[index][name] = target.value;
         }
         getMatrixInputMarkup(field, entry, [name, type]) {
             var _a, _b, _c, _d, _e;
@@ -1197,7 +1215,7 @@
               step="0.01"
               class="form-control"
               step=${l((_b = (_a = field.attributes) === null || _a === void 0 ? void 0 : _a.find(([attribute]) => attribute === "step")) === null || _b === void 0 ? void 0 : _b.at(-1))}
-              @input=${(e) => this.handleMatrixInput(e, field, name, entry.value)}
+              @input=${(e) => this.handleMatrixInput(e, field, name, entry)}
               ?required=${field.required}
             />
           </td>`;
@@ -1213,7 +1231,7 @@
               id=${entry.value}
               value="1"
               class="form-control"
-              @input=${(e) => this.handleMatrixInput(e, field, name, entry.value)}
+              @input=${(e) => this.handleMatrixInput(e, field, name, entry)}
               ?required=${field.required}
             />
           </td>`;
@@ -2487,6 +2505,10 @@ ${value}</textarea
       button {
         white-space: nowrap;
       }
+
+      input[type="checkbox"].form-control {
+        font-size: 0.375rem;
+      }
     `,
     ];
     __decorate([
@@ -2538,6 +2560,12 @@ ${value}</textarea
                 }
             }
         }
+        handleInput(input, value) {
+            if (input instanceof HTMLInputElement && input.type === "checkbox") {
+                return input.checked ? "1" : "0";
+            }
+            return value;
+        }
         async handleSave(e) {
             var _a, _b;
             const target = e.target;
@@ -2557,7 +2585,25 @@ ${value}</textarea
                 method: "PUT",
                 body: JSON.stringify({
                     ...Array.from(inputs).reduce((acc, input) => {
-                        acc[input.name] = input.value;
+                        if (input.dataset.group && input instanceof HTMLInputElement) {
+                            const group = input.dataset.group;
+                            if (!(group in acc)) {
+                                acc[group] = [];
+                            }
+                            const { id, name, value } = input;
+                            const groupArray = acc[group];
+                            const groupIndex = groupArray.findIndex((item) => item.id === id);
+                            if (groupIndex === -1) {
+                                groupArray.push({
+                                    id,
+                                    [name]: this.handleInput(input, value),
+                                });
+                                return acc;
+                            }
+                            groupArray[groupIndex][name] = this.handleInput(input, value);
+                            return acc;
+                        }
+                        acc[input.name] = this.handleInput(input, input.value);
                         return acc;
                     }, {}),
                 }),
@@ -2601,11 +2647,10 @@ ${value}</textarea
             this.order = [
                 "id",
                 "name",
-                "target_group",
+                "target_groups",
                 "min_age",
                 "max_age",
                 "max_participants",
-                "fees",
                 "location",
                 "image",
                 "description",
@@ -2630,8 +2675,8 @@ ${value}</textarea
                  *  and remember that you have to resolve the Promise returned by
                  *  the previous call before you can continue with the next one. */
                 .then(async (result) => {
-                const data = await Promise.all(result.map(async (target_group) => {
-                    const entries = await Promise.all(Object.entries(target_group).map(async ([name, value]) => [
+                const data = await Promise.all(result.map(async (event_type) => {
+                    const entries = await Promise.all(Object.entries(event_type).map(async ([name, value]) => [
                         name,
                         await this.getInputFromColumn({ name, value }),
                     ]));
@@ -2656,13 +2701,44 @@ ${value}</textarea
           />`,
                 ],
                 [
-                    "target_group",
+                    "target_groups",
                     async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
                         const result = await response.json();
-                        return y `<select class="form-control" name="target_group" disabled>
-            ${result.map(({ id, name }) => y `<option value=${id}>${name}</option>`)};
-          </select>`;
+                        return y ` <table class="table table-sm mb-0">
+            <tbody>
+              ${value.map(({ target_group_id, selected, fee }) => y `
+                  <tr>
+                    <td id=${target_group_id} class="align-middle">
+                      ${result.find((target_group) => target_group.id === target_group_id).name}
+                    </td>
+                    <td class="align-middle">
+                      <input
+                        type="checkbox"
+                        data-group="target_groups"
+                        name="selected"
+                        id=${target_group_id}
+                        class="form-control"
+                        ?checked=${selected}
+                        disabled
+                      />
+                    </td>
+                    <td class="align-middle">
+                      <input
+                        type="number"
+                        data-group="target_groups"
+                        name="fee"
+                        id=${target_group_id}
+                        step="0.01"
+                        class="form-control"
+                        value=${fee}
+                        disabled
+                      />
+                    </td>
+                  </tr>
+                `)}
+            </tbody>
+          </table>`;
                     },
                 ],
                 [
@@ -2694,36 +2770,6 @@ ${value}</textarea
             value=${value}
             disabled
           />`,
-                ],
-                [
-                    "fees",
-                    async () => {
-                        const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
-                        const result = await response.json();
-                        const fees = value;
-                        return y ` <table class="table table-sm mb-0">
-            <tbody>
-              ${fees.map(({ target_group_id, fee }) => y `
-                  <tr>
-                    <td id=${target_group_id} class="align-middle">
-                      ${result.find((target_group) => target_group.id === target_group_id).name}
-                    </td>
-                    <td class="align-middle">
-                      <input
-                        type="number"
-                        name=${target_group_id}
-                        id=${target_group_id}
-                        step="0.01"
-                        class="form-control"
-                        value=${fee}
-                        disabled
-                      />
-                    </td>
-                  </tr>
-                `)}
-            </tbody>
-          </table>`;
-                    },
                 ],
                 [
                     "location",
@@ -2758,14 +2804,9 @@ ${value}</textarea
                 [
                     "open_registration",
                     () => y `<input
-            @change=${(e) => {
-                    const target = e.target;
-                    target.value = target.checked ? "1" : "0";
-                }}
             class="form-control"
             type="checkbox"
             name="open_registration"
-            value=${value === "true" ? 1 : 0}
             ?checked=${value}
             disabled
           />`,
