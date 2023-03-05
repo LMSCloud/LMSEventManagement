@@ -237,11 +237,12 @@ sub install() {
     my ( $self, $args ) = @_;
 
     try {
-        my $dbh                                = C4::Context->dbh;
-        my $target_groups_table                = $self->get_qualified_table_name('target_groups');
-        my $locations_table                    = $self->get_qualified_table_name('locations');
-        my $event_types_table                  = $self->get_qualified_table_name('event_types');
-        my $events_table                       = $self->get_qualified_table_name('events');
+        my $dbh                 = C4::Context->dbh;
+        my $target_groups_table = $self->get_qualified_table_name('target_groups');
+        my $locations_table     = $self->get_qualified_table_name('locations');
+        my $event_types_table   = $self->get_qualified_table_name('event_types');
+        my $events_table        = $self->get_qualified_table_name('events');
+
         # Spelling those tables out exceeds the character
         # limit for table names in MySQL.
         my $event_target_group_fees_table      = $self->get_qualified_table_name('e_tg_fees');
@@ -280,8 +281,7 @@ sub install() {
                 `image` INT(10) DEFAULT NULL COMMENT 'image from kohas image management',
                 `description` TEXT COMMENT 'what is happening',
                 `open_registration` TINYINT(1) DEFAULT '0' COMMENT 'is the registration to non-patrons via email',
-                PRIMARY KEY (`id`),
-                FOREIGN KEY (`target_group`) REFERENCES $target_groups_table(`id`)
+                PRIMARY KEY (`id`)
             ) ENGINE = INNODB;
         STATEMENT
             <<~"STATEMENT",
@@ -312,6 +312,7 @@ sub install() {
                 `id` INT(11) NOT NULL AUTO_INCREMENT,
                 `event_id` INT(11) DEFAULT NULL COMMENT 'the event id from the events table',
                 `target_group_id` INT(11) DEFAULT NULL COMMENT 'the target group id from the target groups table',
+                `selected` TINYINT(1) DEFAULT '0' COMMENT 'is the target group selected for the event',
                 `fee` FLOAT unsigned DEFAULT NULL COMMENT 'fee for the event',
                 PRIMARY KEY (`id`),
                 FOREIGN KEY (`event_id`) REFERENCES $events_table(`id`),
@@ -323,6 +324,7 @@ sub install() {
                 `id` INT(11) NOT NULL AUTO_INCREMENT,
                 `event_type_id` INT(11) DEFAULT NULL COMMENT 'the event type id from the event types table',
                 `target_group_id` INT(11) DEFAULT NULL COMMENT 'the target group id from the target groups table',
+                `selected` TINYINT(1) DEFAULT '0' COMMENT 'is the target group selected for the event',
                 `fee` FLOAT unsigned DEFAULT NULL COMMENT 'fee for the event',
                 PRIMARY KEY (`id`),
                 FOREIGN KEY (`event_type_id`) REFERENCES $event_types_table(`id`),
@@ -363,14 +365,9 @@ sub uninstall() {
     my $dbh = C4::Context->dbh;
 
     my @tables = (
-        $self->get_qualified_table_name('events'),
-        $self->get_qualified_table_name('event_types'),
-        $self->get_qualified_table_name('target_groups'),
-        $self->get_qualified_table_name('locations'),
-        # Spelling those tables out exceeds the character
-        # limit for table names in MySQL.
-        $self->get_qualified_table_name('e_tg_fees'),
-        $self->get_qualified_table_name('et_tg_fees'),
+        $self->get_qualified_table_name('e_tg_fees'),     $self->get_qualified_table_name('events'),
+        $self->get_qualified_table_name('et_tg_fees'),    $self->get_qualified_table_name('event_types'),
+        $self->get_qualified_table_name('target_groups'), $self->get_qualified_table_name('locations'),
     );
 
     for my $table (@tables) {
