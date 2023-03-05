@@ -41,6 +41,10 @@ export default class LMSTable extends LitElement {
       button {
         white-space: nowrap;
       }
+
+      input[type="checkbox"].form-control {
+        font-size: 0.375rem;
+      }
     `,
   ];
 
@@ -155,7 +159,10 @@ export default class LMSTable extends LitElement {
                 ${this.data.map(
                   (item) => html`
                     <tr>
-                      ${this._headers.map((key) => html`<td class="align-middle">${item[key]}</td>`)}
+                      ${this._headers.map(
+                        (key) =>
+                          html`<td class="align-middle">${item[key]}</td>`
+                      )}
                       ${this._isEditable
                         ? html`
                             <td class="align-middle">
