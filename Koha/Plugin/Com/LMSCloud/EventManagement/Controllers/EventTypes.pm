@@ -38,12 +38,12 @@ sub list {
         my $event_types = $sth->fetchall_arrayref( {} );
 
         foreach my $event_type ( @{$event_types} ) {
-            ( $stmt, @bind ) = $sql->select( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'fee' ], { event_type_id => $event_type->{id} } );
+            ( $stmt, @bind ) = $sql->select( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_type_id => $event_type->{id} } );
             $sth = $dbh->prepare($stmt);
             $sth->execute(@bind);
 
-            my $fees = $sth->fetchall_arrayref( {} );
-            $event_type->{fees} = $fees;
+            my $target_groups = $sth->fetchall_arrayref( {} );
+            $event_type->{'target_groups'} = $target_groups;
         }
 
         return $c->render( status => 200, openapi => $event_types || [] );
@@ -73,13 +73,13 @@ sub add {
         my $id = $dbh->last_insert_id( undef, undef, $EVENT_TYPES_TABLE, undef );
 
         if ($target_groups) {
-            for my $target_group ( keys %{$target_groups} ) {
-                my $fee = $target_groups->{$target_group};
+            for my $target_group ( $target_groups->@* ) {
                 ( $stmt, @bind ) = $sql->insert(
                     $EVENT_TYPE_TARGET_GROUP_FEES_TABLE,
                     {   event_type_id   => $id,
-                        target_group_id => $target_group,
-                        fee             => $fee,
+                        target_group_id => $target_group->{'id'},
+                        selected        => $target_group->{'selected'},
+                        fee             => $target_group->{'fee'},
                     }
                 );
                 $sth = $dbh->prepare($stmt);

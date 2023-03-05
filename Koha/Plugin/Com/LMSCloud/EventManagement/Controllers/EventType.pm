@@ -21,7 +21,8 @@ if ( Koha::Plugin::Com::LMSCloud::EventManagement->can('new') ) {
     $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
 }
 
-my $EVENT_TYPES_TABLE = $self ? $self->get_qualified_table_name('event_types') : undef;
+my $EVENT_TYPES_TABLE                  = $self ? $self->get_qualified_table_name('event_types') : undef;
+my $EVENT_TYPE_TARGET_GROUP_FEES_TABLE = $self ? $self->get_qualified_table_name('et_tg_fees')  : undef;
 
 sub get {
     my $c = shift->openapi->valid_input or return;
@@ -64,25 +65,23 @@ sub update {
         my $new_event_type = decode_json($json);
 
         # Extract the fees from the new event type
-        my $fees = delete $new_event_type->{fees};
+        my $target_groups = delete $new_event_type->{'target_groups'};
 
         # Update the event type record
         my ( $stmt, @bind ) = $sql->update( $EVENT_TYPES_TABLE, $new_event_type, { id => $id } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
-        # If there are fees, update the target group fees records
-        if ($fees) {
+        if ($target_groups) {
 
-            # Delete existing target group fees records for the event type
+            # Delete existing target group fees records
             ( $stmt, @bind ) = $sql->delete( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, { event_type_id => $id } );
             $sth = $dbh->prepare($stmt);
             $sth->execute(@bind);
 
             # Insert new target group fees records
-            for my $target_group ( keys %{$fees} ) {
-                my $fee    = $fees->{$target_group};
-                my $record = { event_type_id => $id, target_group => $target_group, fee => $fee };
+            for my $target_group ( $target_groups->@* ) {
+                my $record = { event_type_id => $id, target_group_id => $target_group->{'id'}, selected => $target_group->{'selected'}, fee => $target_group->{'fee'} };
                 ( $stmt, @bind ) = $sql->insert( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, $record );
                 $sth = $dbh->prepare($stmt);
                 $sth->execute(@bind);
@@ -112,12 +111,12 @@ sub delete {
         my $dbh = C4::Context->dbh;
 
         # delete the entries from the junction table first
-        ( my $junction_stmt, @junction_bind ) = $sql->delete( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, { event_type_id => $id } );
+        my ( $junction_stmt, @junction_bind ) = $sql->delete( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, { event_type_id => $id } );
         my $junction_sth = $dbh->prepare($junction_stmt);
         $junction_sth->execute(@junction_bind);
 
         # then delete the event type
-        ( my $stmt, @bind ) = $sql->delete( $EVENT_TYPES_TABLE, { id => $id } );
+        my ( $stmt, @bind ) = $sql->delete( $EVENT_TYPES_TABLE, { id => $id } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
