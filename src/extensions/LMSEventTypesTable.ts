@@ -222,45 +222,47 @@ export default class LMSEventTypesTable extends LMSTable {
             "/api/v1/contrib/eventmanagement/target_groups"
           );
           const result = await response.json();
-          return html` <table class="table table-sm mb-0">
-            <tbody>
-              ${(value as unknown as TargetGroupFee[]).map(
-                ({ target_group_id, selected, fee }) => html`
-                  <tr>
-                    <td id=${target_group_id} class="align-middle">
-                      ${result.find(
-                        (target_group: TargetGroup) =>
-                          target_group.id === target_group_id
-                      ).name}
-                    </td>
-                    <td class="align-middle">
-                      <input
-                        type="checkbox"
-                        data-group="target_groups"
-                        name="selected"
-                        id=${target_group_id}
-                        class="form-control"
-                        ?checked=${selected}
-                        disabled
-                      />
-                    </td>
-                    <td class="align-middle">
-                      <input
-                        type="number"
-                        data-group="target_groups"
-                        name="fee"
-                        id=${target_group_id}
-                        step="0.01"
-                        class="form-control"
-                        value=${fee}
-                        disabled
-                      />
-                    </td>
-                  </tr>
-                `
-              )}
-            </tbody>
-          </table>`;
+          return html`
+            <table class="table table-sm mb-0">
+              <tbody>
+                ${result.map(({ id, name }: TargetGroup) => {
+                  const target_group = (
+                    value as unknown as TargetGroupFee[]
+                  ).find((target_group) => target_group.target_group_id === id);
+                  const selected = target_group?.selected ?? false;
+                  const fee = target_group?.fee ?? 0;
+                  return html`
+                    <tr>
+                      <td id=${id} class="align-middle">${name}</td>
+                      <td class="align-middle">
+                        <input
+                          type="checkbox"
+                          data-group="target_groups"
+                          name="selected"
+                          id=${id}
+                          class="form-control"
+                          ?checked=${selected}
+                          disabled
+                        />
+                      </td>
+                      <td class="align-middle">
+                        <input
+                          type="number"
+                          data-group="target_groups"
+                          name="fee"
+                          id=${id}
+                          step="0.01"
+                          class="form-control"
+                          value=${fee}
+                          disabled
+                        />
+                      </td>
+                    </tr>
+                  `;
+                })}
+              </tbody>
+            </table>
+          `;
         },
       ],
       [
