@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators";
 import LMSModal from "../components/LMSModal";
-import { CreateOpts, ModalField } from "../interfaces";
+import { CreateOpts, EventType, ModalField } from "../interfaces";
 import { Gettext } from "gettext.js";
 
 @customElement("lms-events-modal")
@@ -33,6 +33,49 @@ export default class LMSEventsModal extends LMSModal {
           name: event_type.name,
         }));
       },
+      handler: async ({ e, fields }: { e: Event; fields: ModalField[] }) => {
+        const target = e.target;
+        if (!(target instanceof HTMLSelectElement)) {
+          return;
+        }
+        const selectedEventType = target?.value;
+        const response = await fetch(
+          "/api/v1/contrib/eventmanagement/event_types"
+        );
+        const result = await response.json();
+        const newEventType: EventType = result.find(
+          (event_type: EventType) =>
+            event_type.id === parseInt(selectedEventType, 10)
+        );
+        Array.from(Object.entries(newEventType)).forEach((entry) => {
+          const [key, value] = entry;
+          const field = fields.find((field) => field.name === key);
+          if (field) {
+            field.value = value;
+          }
+        });
+      },
+    },
+    {
+      name: "target_groups",
+      type: "matrix",
+      headers: [
+        ["target_group", "default"],
+        ["selected", "checkbox"],
+        ["fee", "number"],
+      ],
+      desc: i18n.gettext("Target Groups"),
+      logic: async () => {
+        const response = await fetch(
+          "/api/v1/contrib/eventmanagement/target_groups"
+        );
+        const result = await response.json();
+        return result.map((target_group: any) => ({
+          value: target_group.id,
+          name: target_group.name,
+        }));
+      },
+      required: false,
     },
     {
       name: "min_age",
@@ -75,13 +118,6 @@ export default class LMSEventsModal extends LMSModal {
       type: "datetime-local",
       desc: i18n.gettext("Registration End"),
       required: true,
-    },
-    {
-      name: "fee",
-      type: "number",
-      desc: i18n.gettext("Fee"),
-      required: false,
-      attributes: [["step", 0.01]],
     },
     {
       name: "location",

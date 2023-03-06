@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators";
 import LMSModal from "../components/LMSModal";
-import { CreateOpts, ModalField } from "../interfaces";
+import { CreateOpts, ModalField, TargetGroup } from "../interfaces";
 import { Gettext } from "gettext.js";
 
 @customElement("lms-event-types-modal")
@@ -22,7 +22,11 @@ export default class LMSEventTypesModal extends LMSModal {
     {
       name: "target_groups",
       type: "matrix",
-      headers: [["target_group", "default"], ["selected", "checkbox"], ["fee", "number"]],
+      headers: [
+        ["target_group", "default"],
+        ["selected", "checkbox"],
+        ["fee", "number"],
+      ],
       desc: i18n.gettext("Target Groups"),
       logic: async () => {
         const response = await fetch(
@@ -33,6 +37,31 @@ export default class LMSEventTypesModal extends LMSModal {
           value: target_group.id,
           name: target_group.name,
         }));
+      },
+      handler: async ({ e, fields }: { e: Event; fields: ModalField[] }) => {
+        const target = e.target as HTMLInputElement;
+        const selectedTargetGroups = Array.from(
+          target.closest("table")?.querySelectorAll("input:checked") || []
+        ).map((input) => input.parentElement?.previousElementSibling?.id);
+        const response = await fetch(
+          "/api/v1/contrib/eventmanagement/target_groups"
+        );
+        const result = await response.json();
+        const newTargetGroups: TargetGroup[] = result.filter(
+          (target_group: TargetGroup) =>
+            selectedTargetGroups.includes(target_group.id.toString())
+        );
+        const [minAgeField, maxAgeField] = fields.filter(({ name }) =>
+          ["min_age", "max_age"].includes(name)
+        );
+        if (minAgeField)
+          minAgeField.value = Math.min(
+            ...newTargetGroups.map(({ min_age }) => min_age)
+          ).toString();
+        if (maxAgeField)
+          maxAgeField.value = Math.max(
+            ...newTargetGroups.map(({ max_age }) => max_age)
+          ).toString();
       },
       required: false,
     },

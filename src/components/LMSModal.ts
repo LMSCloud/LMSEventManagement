@@ -8,7 +8,7 @@ import TranslationHandler from "../lib/TranslationHandler";
 import { customElement, property } from "lit/decorators";
 import { Gettext } from "gettext.js";
 import { CreateOpts, Input, ModalField, SelectOption } from "../interfaces";
-import { InputType } from "../types";
+import { Handler, InputType } from "../types";
 
 @customElement("lms-modal")
 export default class LMSModal extends LitElement {
@@ -207,7 +207,7 @@ export default class LMSModal extends LitElement {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form @submit="${this.create}">
+            <form @submit=${this.create}>
               <div class="modal-body">
                 <div
                   role="alert"
@@ -250,6 +250,16 @@ export default class LMSModal extends LitElement {
     `;
   }
 
+  private executeHandler({
+    handler,
+    event,
+  }: {
+    handler: Handler;
+    event: Event;
+  }) {
+    handler({ e: event, fields: this.fields }).then(() => this.requestUpdate());
+  }
+
   private getFieldMarkup(field: ModalField) {
     if (!field.desc) return html``;
 
@@ -271,6 +281,9 @@ export default class LMSModal extends LitElement {
                 @change=${(e: Event) => {
                   field.value =
                     (e.target as HTMLSelectElement).value ?? field.value;
+                  if (field.handler) {
+                    this.executeHandler({ handler: field.handler, event: e });
+                  }
                 }}
                 ?required=${field.required}
               >
@@ -297,7 +310,7 @@ export default class LMSModal extends LitElement {
                 type="checkbox"
                 name=${field.name}
                 id=${field.name}
-                value="1"
+                value=${(field.value as string) ?? "1"}
                 class="form-check-input"
                 @input=${(e: Event) => {
                   field.value =
@@ -329,7 +342,6 @@ export default class LMSModal extends LitElement {
             let id = value;
 
             fieldValueRef.push({ id });
-            console.log(field.headers, id)
             field.headers?.slice(1).forEach((header) => {
               const [name] = header;
               const currentObjIndex = fieldValueRef.findIndex(
@@ -383,6 +395,7 @@ export default class LMSModal extends LitElement {
                 type=${ifDefined(field.type) as InputType}
                 name=${field.name}
                 id=${field.name}
+                value=${ifDefined(field.value) as string}
                 class="form-control"
                 @input=${(e: Event) => {
                   field.value =
@@ -437,6 +450,10 @@ export default class LMSModal extends LitElement {
     }
 
     field.value[index][name] = target.value;
+
+    if (field.handler) {
+      this.executeHandler({ handler: field.handler, event: e });
+    }
   }
 
   private getMatrixInputMarkup(
