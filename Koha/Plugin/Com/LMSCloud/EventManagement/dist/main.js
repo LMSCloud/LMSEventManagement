@@ -1095,6 +1095,7 @@
                             (_a = e.target.value) !== null && _a !== void 0 ? _a : field.value;
                     }}
                 ?required=${field.required}
+                ?checked=${[true, "true", "1"].includes(field.value)}
               />
               <label for="${field.name}">&nbsp;${field.desc}</label>
             </div>
@@ -1187,13 +1188,6 @@
                 !(target === null || target === void 0 ? void 0 : target.value)) {
                 return;
             }
-            /** This handler transforms the input we receive from an Event into
-             *  the appropriate format within the field.value array.
-             *  The field.value array is an array of objects, each object
-             *  representing a row in the matrix. Each object has an id, set by
-             *  the entry.value property, a boolean attribute that comes from the
-             *  checkbox input, and a number attribute that comes from the number
-             *  input. */
             const index = field.value.findIndex((row) => row.id === entry.value);
             if (index === -1) {
                 field.value.push({
@@ -1206,9 +1200,6 @@
                 return;
             }
             field.value[index][name] = target.value;
-            if (field.handler) {
-                this.executeHandler({ handler: field.handler, event: e });
-            }
         }
         getMatrixInputMarkup(field, entry, [name, type]) {
             var _a, _b, _c, _d, _e;
@@ -1225,7 +1216,13 @@
               step="0.01"
               class="form-control"
               step=${l((_b = (_a = field.attributes) === null || _a === void 0 ? void 0 : _a.find(([attribute]) => attribute === "step")) === null || _b === void 0 ? void 0 : _b.at(-1))}
-              @input=${(e) => this.handleMatrixInput(e, field, name, entry)}
+              @input=${(e) => {
+                        if (field.handler) {
+                            this.executeHandler({ handler: field.handler, event: e });
+                        }
+                        this.handleMatrixInput(e, field, name, entry);
+                        console.log(field);
+                    }}
               ?required=${field.required}
             />
           </td>`;
@@ -1241,7 +1238,14 @@
               id=${entry.value}
               value="1"
               class="form-control"
-              @input=${(e) => this.handleMatrixInput(e, field, name, entry)}
+              @input=${(e) => {
+                        console.log(field);
+                        if (field.handler) {
+                            this.executeHandler({ handler: field.handler, event: e });
+                        }
+                        this.handleMatrixInput(e, field, name, entry);
+                        console.log(field);
+                    }}
               ?required=${field.required}
             />
           </td>`;
@@ -2309,27 +2313,15 @@ ${value}</textarea
                     handler: async ({ e, fields }) => {
                         var _a;
                         const target = e.target;
-                        if (!(target instanceof HTMLInputElement)) {
-                            return;
-                        }
-                        const selectedTargetGroups = Array.from(((_a = target.closest("table")) === null || _a === void 0 ? void 0 : _a.querySelectorAll("input:checked")) || []).map((input) => {
-                            var _a, _b;
-                            return (_b = (_a = input.parentElement) === null || _a === void 0 ? void 0 : _a.previousElementSibling) === null || _b === void 0 ? void 0 : _b.id;
-                        });
-                        console.log(selectedTargetGroups);
+                        const selectedTargetGroups = Array.from(((_a = target.closest("table")) === null || _a === void 0 ? void 0 : _a.querySelectorAll("input:checked")) || []).map((input) => { var _a, _b; return (_b = (_a = input.parentElement) === null || _a === void 0 ? void 0 : _a.previousElementSibling) === null || _b === void 0 ? void 0 : _b.id; });
                         const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
                         const result = await response.json();
                         const newTargetGroups = result.filter((target_group) => selectedTargetGroups.includes(target_group.id.toString()));
-                        const minAge = Math.min(...newTargetGroups.map((tg) => tg.min_age));
-                        const maxAge = Math.max(...newTargetGroups.map((tg) => tg.max_age));
-                        const minAgeField = fields.find((field) => field.name === "min_age");
-                        const maxAgeField = fields.find((field) => field.name === "max_age");
-                        if (minAgeField) {
-                            minAgeField.value = minAge.toString();
-                        }
-                        if (maxAgeField) {
-                            maxAgeField.value = maxAge.toString();
-                        }
+                        const [minAgeField, maxAgeField] = fields.filter(({ name }) => ["min_age", "max_age"].includes(name));
+                        if (minAgeField)
+                            minAgeField.value = Math.min(...newTargetGroups.map(({ min_age }) => min_age)).toString();
+                        if (maxAgeField)
+                            maxAgeField.value = Math.max(...newTargetGroups.map(({ max_age }) => max_age)).toString();
                     },
                     required: false,
                 },
