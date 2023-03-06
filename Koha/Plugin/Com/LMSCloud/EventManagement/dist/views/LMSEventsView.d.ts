@@ -1,7 +1,7 @@
 import { LitElement } from "lit";
 import LMSCard from "../components/LMSCard";
 import LMSEventsFilter from "../components/LMSEventsFilter";
-import { Event } from "../interfaces";
+import { LMSEvent } from "../interfaces";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-card": LMSCard;
@@ -10,7 +10,7 @@ declare global {
 }
 export default class LMSEventsView extends LitElement {
     borrowernumber: undefined;
-    events: Event[];
+    events: LMSEvent[];
     static styles: import("lit").CSSResult[];
     private _getEvents;
     connectedCallback(): void;

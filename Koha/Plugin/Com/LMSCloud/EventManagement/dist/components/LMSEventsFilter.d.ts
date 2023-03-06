@@ -1,7 +1,7 @@
 import { LitElement } from "lit";
-import { Event, Facets } from "../interfaces";
+import { LMSEvent, Facets } from "../interfaces";
 export default class LMSEventsFilter extends LitElement {
-    events: Event[];
+    events: LMSEvent[];
     facets: Facets;
     static styles: import("lit").CSSResult[];
     render(): import("lit").TemplateResult<1>;

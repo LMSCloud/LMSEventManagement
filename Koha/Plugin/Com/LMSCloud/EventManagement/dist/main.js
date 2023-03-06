@@ -990,7 +990,7 @@
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form @submit="${this.create}">
+            <form @submit=${this.create}>
               <div class="modal-body">
                 <div
                   role="alert"
@@ -1032,6 +1032,9 @@
       </div>
     `;
         }
+        executeHandler({ handler, event, }) {
+            handler({ e: event, fields: this.fields }).then(() => this.requestUpdate());
+        }
         getFieldMarkup(field) {
             var _a, _b, _c;
             if (!field.desc)
@@ -1057,6 +1060,9 @@
                         var _a;
                         field.value =
                             (_a = e.target.value) !== null && _a !== void 0 ? _a : field.value;
+                        if (field.handler) {
+                            this.executeHandler({ handler: field.handler, event: e });
+                        }
                     }}
                 ?required=${field.required}
               >
@@ -1074,13 +1080,14 @@
                 [
                     "checkbox",
                     () => {
+                        var _a;
                         return y `
             <div class="form-check">
               <input
                 type="checkbox"
                 name=${field.name}
                 id=${field.name}
-                value="1"
+                value=${(_a = field.value) !== null && _a !== void 0 ? _a : "1"}
                 class="form-check-input"
                 @input=${(e) => {
                         var _a;
@@ -1115,7 +1122,6 @@
                             var _a;
                             let id = value;
                             fieldValueRef.push({ id });
-                            console.log(field.headers, id);
                             (_a = field.headers) === null || _a === void 0 ? void 0 : _a.slice(1).forEach((header) => {
                                 const [name] = header;
                                 const currentObjIndex = fieldValueRef.findIndex((item) => item.id === id);
@@ -1156,6 +1162,7 @@
                 type=${l(field.type)}
                 name=${field.name}
                 id=${field.name}
+                value=${l(field.value)}
                 class="form-control"
                 @input=${(e) => {
                         var _a;
@@ -1199,6 +1206,9 @@
                 return;
             }
             field.value[index][name] = target.value;
+            if (field.handler) {
+                this.executeHandler({ handler: field.handler, event: e });
+            }
         }
         getMatrixInputMarkup(field, entry, [name, type]) {
             var _a, _b, _c, _d, _e;
@@ -2108,6 +2118,42 @@ ${value}</textarea
                             name: event_type.name,
                         }));
                     },
+                    handler: async ({ e, fields }) => {
+                        const target = e.target;
+                        if (!(target instanceof HTMLSelectElement)) {
+                            return;
+                        }
+                        const selectedEventType = target === null || target === void 0 ? void 0 : target.value;
+                        const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
+                        const result = await response.json();
+                        const newEventType = result.find((event_type) => event_type.id === parseInt(selectedEventType, 10));
+                        Array.from(Object.entries(newEventType)).forEach((entry) => {
+                            const [key, value] = entry;
+                            const field = fields.find((field) => field.name === key);
+                            if (field) {
+                                field.value = value;
+                            }
+                        });
+                    },
+                },
+                {
+                    name: "target_groups",
+                    type: "matrix",
+                    headers: [
+                        ["target_group", "default"],
+                        ["selected", "checkbox"],
+                        ["fee", "number"],
+                    ],
+                    desc: i18n.gettext("Target Groups"),
+                    logic: async () => {
+                        const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
+                        const result = await response.json();
+                        return result.map((target_group) => ({
+                            value: target_group.id,
+                            name: target_group.name,
+                        }));
+                    },
+                    required: false,
                 },
                 {
                     name: "min_age",
@@ -2150,13 +2196,6 @@ ${value}</textarea
                     type: "datetime-local",
                     desc: i18n.gettext("Registration End"),
                     required: true,
-                },
-                {
-                    name: "fee",
-                    type: "number",
-                    desc: i18n.gettext("Fee"),
-                    required: false,
-                    attributes: [["step", 0.01]],
                 },
                 {
                     name: "location",
@@ -2253,7 +2292,11 @@ ${value}</textarea
                 {
                     name: "target_groups",
                     type: "matrix",
-                    headers: [["target_group", "default"], ["selected", "checkbox"], ["fee", "number"]],
+                    headers: [
+                        ["target_group", "default"],
+                        ["selected", "checkbox"],
+                        ["fee", "number"],
+                    ],
                     desc: i18n.gettext("Target Groups"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
@@ -2262,6 +2305,31 @@ ${value}</textarea
                             value: target_group.id,
                             name: target_group.name,
                         }));
+                    },
+                    handler: async ({ e, fields }) => {
+                        var _a;
+                        const target = e.target;
+                        if (!(target instanceof HTMLInputElement)) {
+                            return;
+                        }
+                        const selectedTargetGroups = Array.from(((_a = target.closest("table")) === null || _a === void 0 ? void 0 : _a.querySelectorAll("input:checked")) || []).map((input) => {
+                            var _a, _b;
+                            return (_b = (_a = input.parentElement) === null || _a === void 0 ? void 0 : _a.previousElementSibling) === null || _b === void 0 ? void 0 : _b.id;
+                        });
+                        console.log(selectedTargetGroups);
+                        const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
+                        const result = await response.json();
+                        const newTargetGroups = result.filter((target_group) => selectedTargetGroups.includes(target_group.id.toString()));
+                        const minAge = Math.min(...newTargetGroups.map((tg) => tg.min_age));
+                        const maxAge = Math.max(...newTargetGroups.map((tg) => tg.max_age));
+                        const minAgeField = fields.find((field) => field.name === "min_age");
+                        const maxAgeField = fields.find((field) => field.name === "max_age");
+                        if (minAgeField) {
+                            minAgeField.value = minAge.toString();
+                        }
+                        if (maxAgeField) {
+                            maxAgeField.value = maxAge.toString();
+                        }
                     },
                     required: false,
                 },
@@ -3299,30 +3367,24 @@ ${value}</textarea
           <div class="col-12" ?hidden=${this.events.length > 0}>
             <div class="alert alert-info" role="alert">
               There are no events to display!
-            </div>  
+            </div>
           </div>
-          <div class="col-lg-3 col-md-2 col-sm-12" ?hidden=${!this.events.length}>
+          <div
+            class="col-lg-3 col-md-2 col-sm-12"
+            ?hidden=${!this.events.length}
+          >
             <lms-events-filter></lms-events-filter>
           </div>
-          <div class="col-lg-9 col-md-10 col-sm-12" ?hidden=${!this.events.length}>
+          <div
+            class="col-lg-9 col-md-10 col-sm-12"
+            ?hidden=${!this.events.length}
+          >
             <div class="card-deck">
               ${(_b = (_a = this.events) === null || _a === void 0 ? void 0 : _a.map((event) => y `
                   <lms-card
                     .title=${event.name}
                     .text=${event.notes}
                     .image=${{ src: event.image, alt: event.name }}
-                    .listItems=${[
-            `Event type: ${event.event_type}`,
-            `Location: ${event.location.name}`,
-            `Start time: ${event.start_time}`,
-            `End time: ${event.end_time}`,
-            `Registration start: ${event.registration_start}`,
-            `Registration end: ${event.registration_end}`,
-            `Max participants: ${event.max_participants}`,
-            `Fee: ${event.fee}`,
-            `Age restriction: ${event.age_restriction}`,
-            `Status: ${event.status}`,
-        ]}
                   ></lms-card>
                 `)) !== null && _b !== void 0 ? _b : b}
             </div>

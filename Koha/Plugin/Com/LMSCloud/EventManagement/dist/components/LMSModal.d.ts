@@ -16,6 +16,7 @@ export default class LMSModal extends LitElement {
     private create;
     private dismissAlert;
     render(): TemplateResult<1>;
+    private executeHandler;
     private getFieldMarkup;
     private handleMatrixInput;
     private getMatrixInputMarkup;
