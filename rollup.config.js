@@ -3,6 +3,7 @@ import nodeResolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import postcss from "rollup-plugin-postcss";
 import autoprefixer from "autoprefixer";
+import analyze from "rollup-plugin-analyzer";
 import path from "path";
 
 export default {
@@ -26,6 +27,7 @@ export default {
       minimize: true,
       sourceMap: true,
     }),
-    typescript()
+    typescript(),
+    analyze(),
   ],
 };
