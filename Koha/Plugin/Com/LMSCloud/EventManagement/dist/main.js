@@ -2705,40 +2705,46 @@ ${value}</textarea
                     async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
                         const result = await response.json();
-                        return y ` <table class="table table-sm mb-0">
-            <tbody>
-              ${value.map(({ target_group_id, selected, fee }) => y `
-                  <tr>
-                    <td id=${target_group_id} class="align-middle">
-                      ${result.find((target_group) => target_group.id === target_group_id).name}
-                    </td>
-                    <td class="align-middle">
-                      <input
-                        type="checkbox"
-                        data-group="target_groups"
-                        name="selected"
-                        id=${target_group_id}
-                        class="form-control"
-                        ?checked=${selected}
-                        disabled
-                      />
-                    </td>
-                    <td class="align-middle">
-                      <input
-                        type="number"
-                        data-group="target_groups"
-                        name="fee"
-                        id=${target_group_id}
-                        step="0.01"
-                        class="form-control"
-                        value=${fee}
-                        disabled
-                      />
-                    </td>
-                  </tr>
-                `)}
-            </tbody>
-          </table>`;
+                        return y `
+            <table class="table table-sm mb-0">
+              <tbody>
+                ${result.map(({ id, name }) => {
+                        var _a, _b;
+                        const target_group = value.find((target_group) => target_group.target_group_id === id);
+                        const selected = (_a = target_group === null || target_group === void 0 ? void 0 : target_group.selected) !== null && _a !== void 0 ? _a : false;
+                        const fee = (_b = target_group === null || target_group === void 0 ? void 0 : target_group.fee) !== null && _b !== void 0 ? _b : 0;
+                        return y `
+                    <tr>
+                      <td id=${id} class="align-middle">${name}</td>
+                      <td class="align-middle">
+                        <input
+                          type="checkbox"
+                          data-group="target_groups"
+                          name="selected"
+                          id=${id}
+                          class="form-control"
+                          ?checked=${selected}
+                          disabled
+                        />
+                      </td>
+                      <td class="align-middle">
+                        <input
+                          type="number"
+                          data-group="target_groups"
+                          name="fee"
+                          id=${id}
+                          step="0.01"
+                          class="form-control"
+                          value=${fee}
+                          disabled
+                        />
+                      </td>
+                    </tr>
+                  `;
+                    })}
+              </tbody>
+            </table>
+          `;
                     },
                 ],
                 [
