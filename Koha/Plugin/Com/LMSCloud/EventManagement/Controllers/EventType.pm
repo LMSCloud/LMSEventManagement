@@ -42,10 +42,15 @@ sub get {
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
-        my $fees = $sth->fetchall_arrayref( {} );
-        $event_type->{fees} = $fees;
+        my $target_groups = $sth->fetchall_arrayref( {} );
 
-        return $c->render( status => 200, openapi => $event_type || {} );
+        ( $stmt, @bind ) = $sql->select( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_type_id => $event_type->{id} } );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        $target_groups = $sth->fetchall_arrayref( {} );
+
+        return $c->render( status => 200, openapi => { %{$event_type}, target_groups => $target_groups } || {} );
     }
     catch {
         return $c->unhandled_exception($_);
@@ -95,7 +100,13 @@ sub update {
 
         my $event_type = $sth->fetchrow_hashref;
 
-        return $c->render( status => 200, openapi => $event_type || {} );
+        ( $stmt, @bind ) = $sql->select( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_type_id => $event_type->{id} } );
+        $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
+
+        $target_groups = $sth->fetchall_arrayref( {} );
+
+        return $c->render( status => 200, openapi => { %{$event_type}, target_groups => $target_groups } || {} );
     }
     catch {
         return $c->unhandled_exception($_);
