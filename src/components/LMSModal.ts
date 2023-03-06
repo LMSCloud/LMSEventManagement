@@ -317,6 +317,7 @@ export default class LMSModal extends LitElement {
                     (e.target as HTMLInputElement).value ?? field.value;
                 }}
                 ?required=${field.required}
+                ?checked=${[true, "true", "1"].includes(field.value as string)}
               />
               <label for="${field.name}">&nbsp;${field.desc}</label>
             </div>
@@ -429,13 +430,6 @@ export default class LMSModal extends LitElement {
       return;
     }
 
-    /** This handler transforms the input we receive from an Event into
-     *  the appropriate format within the field.value array.
-     *  The field.value array is an array of objects, each object
-     *  representing a row in the matrix. Each object has an id, set by
-     *  the entry.value property, a boolean attribute that comes from the
-     *  checkbox input, and a number attribute that comes from the number
-     *  input. */
     const index = field.value.findIndex((row) => row.id === entry.value);
     if (index === -1) {
       field.value.push({
@@ -450,10 +444,6 @@ export default class LMSModal extends LitElement {
     }
 
     field.value[index][name] = target.value;
-
-    if (field.handler) {
-      this.executeHandler({ handler: field.handler, event: e });
-    }
   }
 
   private getMatrixInputMarkup(
@@ -477,8 +467,12 @@ export default class LMSModal extends LitElement {
                   ?.find(([attribute]) => attribute === "step")
                   ?.at(-1) as number
               )}
-              @input=${(e: Event) =>
-                this.handleMatrixInput(e, field, name, entry)}
+              @input=${(e: Event) => {
+                // if (field.handler) {
+                //   this.executeHandler({ handler: field.handler, event: e });
+                // }
+                this.handleMatrixInput(e, field, name, entry);
+              }}
               ?required=${field.required}
             />
           </td>`;
@@ -494,8 +488,13 @@ export default class LMSModal extends LitElement {
               id=${entry.value}
               value="1"
               class="form-control"
-              @input=${(e: Event) =>
-                this.handleMatrixInput(e, field, name, entry)}
+              @input=${(e: Event) => {
+                console.log(field);
+                // if (field.handler) {
+                //   this.executeHandler({ handler: field.handler, event: e });
+                // }
+                this.handleMatrixInput(e, field, name, entry);
+              }}
               ?required=${field.required}
             />
           </td>`;
