@@ -1,3 +1,5 @@
+import { ModalField } from "./interfaces";
+
 export type InputType =
   | "hidden"
   | "text"
@@ -22,3 +24,11 @@ export type InputType =
   | "image"
   | "reset"
   | "button";
+
+export type Handler = ({
+  e,
+  fields,
+}: {
+  e: Event;
+  fields: ModalField[];
+}) => Promise<void>;

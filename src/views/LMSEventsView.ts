@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 import LMSCard from "../components/LMSCard";
 import LMSEventsFilter from "../components/LMSEventsFilter";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { Event } from "../interfaces";
+import { LMSEvent } from "../interfaces";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -15,7 +15,7 @@ declare global {
 @customElement("lms-events-view")
 export default class LMSEventsView extends LitElement {
   @property({ type: String }) borrowernumber = undefined;
-  @property({ type: Array, attribute: false }) events: Event[] = [];
+  @property({ type: Array, attribute: false }) events: LMSEvent[] = [];
 
   static override styles = [bootstrapStyles];
 
@@ -39,12 +39,18 @@ export default class LMSEventsView extends LitElement {
           <div class="col-12" ?hidden=${this.events.length > 0}>
             <div class="alert alert-info" role="alert">
               There are no events to display!
-            </div>  
+            </div>
           </div>
-          <div class="col-lg-3 col-md-2 col-sm-12" ?hidden=${!this.events.length}>
+          <div
+            class="col-lg-3 col-md-2 col-sm-12"
+            ?hidden=${!this.events.length}
+          >
             <lms-events-filter></lms-events-filter>
           </div>
-          <div class="col-lg-9 col-md-10 col-sm-12" ?hidden=${!this.events.length}>
+          <div
+            class="col-lg-9 col-md-10 col-sm-12"
+            ?hidden=${!this.events.length}
+          >
             <div class="card-deck">
               ${this.events?.map(
                 (event) => html`
@@ -52,18 +58,6 @@ export default class LMSEventsView extends LitElement {
                     .title=${event.name}
                     .text=${event.notes}
                     .image=${{ src: event.image, alt: event.name }}
-                    .listItems=${[
-                      `Event type: ${event.event_type}`,
-                      `Location: ${event.location.name}`,
-                      `Start time: ${event.start_time}`,
-                      `End time: ${event.end_time}`,
-                      `Registration start: ${event.registration_start}`,
-                      `Registration end: ${event.registration_end}`,
-                      `Max participants: ${event.max_participants}`,
-                      `Fee: ${event.fee}`,
-                      `Age restriction: ${event.age_restriction}`,
-                      `Status: ${event.status}`,
-                    ]}
                   ></lms-card>
                 `
               ) ?? nothing}

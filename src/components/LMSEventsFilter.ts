@@ -1,11 +1,11 @@
 import { LitElement, html } from "lit";
-import { Event, Facets } from "../interfaces";
+import { LMSEvent, Facets } from "../interfaces";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { customElement, property } from "lit/decorators";
 
 @customElement("lms-events-filter")
 export default class LMSEventsFilter extends LitElement {
-  @property({ type: Array }) events: Event[] = [];
+  @property({ type: Array }) events: LMSEvent[] = [];
   @property({ type: Array, attribute: false }) facets: Facets = {
     event_types: [],
     target_groups: [],

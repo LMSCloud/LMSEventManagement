@@ -1,6 +1,6 @@
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { TemplateResult } from "lit";
-import { InputType } from "./types";
+import { Handler, InputType } from "./types";
 
 enum Status {
   Pending = "Pending",
@@ -23,7 +23,7 @@ export interface Link {
   text: string;
 }
 
-export interface Event {
+export interface LMSEvent {
   id: number;
   name: string;
   event_type: string;
@@ -99,6 +99,7 @@ export interface ModalField extends BaseField {
   default?: SelectOption;
   headers?: string[][];
   matrixInputType?: InputType;
+  handler?: Handler;
 }
 
 export interface CreateOpts extends RequestInit {
