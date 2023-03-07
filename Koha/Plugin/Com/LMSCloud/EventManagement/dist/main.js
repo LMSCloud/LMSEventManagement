@@ -895,6 +895,18 @@
                     if (field.logic) {
                         const entries = await field.logic();
                         field.entries = entries;
+                        if (field.type === "select") {
+                            [field.value] = field.default
+                                ? field.default.value
+                                : field.entries.map((entry) => entry.value);
+                            if (field.handler) {
+                                this.executeHandler({
+                                    handler: field.handler,
+                                    value: field.value,
+                                    requestUpdate: false,
+                                });
+                            }
+                        }
                     }
                 }
             })
@@ -1032,8 +1044,20 @@
       </div>
     `;
         }
-        executeHandler({ handler, event, }) {
-            handler({ e: event, fields: this.fields }).then(() => this.requestUpdate());
+        executeHandler({ handler, event, value, requestUpdate, }) {
+            if (event) {
+                handler({ e: event, fields: this.fields }).then(() => {
+                    if (requestUpdate)
+                        this.requestUpdate();
+                });
+                return;
+            }
+            if (value) {
+                handler({ value, fields: this.fields }).then(() => {
+                    if (requestUpdate)
+                        this.requestUpdate();
+                });
+            }
         }
         getFieldMarkup(field) {
             var _a, _b, _c;
@@ -1046,9 +1070,6 @@
                         var _a;
                         if (!field.entries)
                             return y ``;
-                        [field.value] = field.default
-                            ? field.default.value
-                            : field.entries.map((entry) => entry.value);
                         return y `
             <div class="form-group">
               <label for=${field.name}>${field.desc}</label>
@@ -1061,7 +1082,11 @@
                         field.value =
                             (_a = e.target.value) !== null && _a !== void 0 ? _a : field.value;
                         if (field.handler) {
-                            this.executeHandler({ handler: field.handler, event: e });
+                            this.executeHandler({
+                                handler: field.handler,
+                                event: e,
+                                requestUpdate: true,
+                            });
                         }
                     }}
                 ?required=${field.required}
@@ -1111,32 +1136,45 @@
                 [
                     "matrix",
                     () => {
-                        var _a;
+                        var _a, _b;
                         if (!field.entries)
                             return y ``;
                         /** We reinitialise the value prop of the field to a prefilled
                          *  array with default values so that we have a state that we
                          *  can write to the DB if the respective item doesn't get selected. */
-                        field.value = [];
+                        field.value = ((_a = field.value) === null || _a === void 0 ? void 0 : _a.length) ? field.value : [];
                         const fieldValueRef = field.value;
-                        field.entries.forEach(({ value }) => {
-                            var _a;
-                            let id = value;
-                            fieldValueRef.push({ id });
-                            (_a = field.headers) === null || _a === void 0 ? void 0 : _a.slice(1).forEach((header) => {
-                                const [name] = header;
-                                const currentObjIndex = fieldValueRef.findIndex((item) => item.id === id);
-                                if (!currentObjIndex) {
-                                    return;
-                                }
-                                fieldValueRef[currentObjIndex][name] = "0";
+                        if (!fieldValueRef.length) {
+                            field.entries.forEach(({ value }) => {
+                                var _a;
+                                let id = value;
+                                fieldValueRef.push({ id });
+                                (_a = field.headers) === null || _a === void 0 ? void 0 : _a.slice(1).forEach((header) => {
+                                    const [name] = header;
+                                    const currentObjIndex = fieldValueRef.findIndex((item) => item.id === id);
+                                    if (!currentObjIndex) {
+                                        return;
+                                    }
+                                    fieldValueRef[currentObjIndex][name] = "0";
+                                });
                             });
-                        });
+                        }
+                        if (fieldValueRef.length) {
+                            field.value = fieldValueRef.map(({ target_group_id, fee, selected }) => {
+                                return {
+                                    id: target_group_id,
+                                    fee: fee.toString(),
+                                    selected: selected ? "1" : "0",
+                                };
+                            });
+                        }
+                        console.log(field.entries);
+                        console.log(fieldValueRef);
                         return y ` <label for=${field.name}>${field.desc}</label>
             <table class="table table-bordered" id=${field.name}>
               <thead>
                 <tr>
-                  ${(_a = field.headers) === null || _a === void 0 ? void 0 : _a.map(([name]) => y `<th scope="col">${name}</th>`)}
+                  ${(_b = field.headers) === null || _b === void 0 ? void 0 : _b.map(([name]) => y `<th scope="col">${name}</th>`)}
                 </tr>
               </thead>
               <tbody>
@@ -1156,6 +1194,7 @@
                 [
                     "default",
                     () => {
+                        var _a;
                         return y `
             <div class="form-group">
               <label for=${field.name}>${field.desc}</label>
@@ -1163,7 +1202,9 @@
                 type=${l(field.type)}
                 name=${field.name}
                 id=${field.name}
-                value=${l(field.value)}
+                value=${l(typeof field.value === "string"
+                        ? field.value
+                        : (_a = field.value) === null || _a === void 0 ? void 0 : _a.toString())}
                 class="form-control"
                 @input=${(e) => {
                         var _a;
@@ -1179,6 +1220,65 @@
             ]);
             const fieldType = field.type && fieldTypes.has(field.type) ? field.type : "default";
             return (_b = (_a = fieldTypes.get(fieldType)) === null || _a === void 0 ? void 0 : _a()) !== null && _b !== void 0 ? _b : (_c = fieldTypes.get("default")) === null || _c === void 0 ? void 0 : _c();
+        }
+        getMatrixInputMarkup(field, entry, [name, type]) {
+            var _a, _b, _c, _d, _e;
+            const inputTypes = new Map([
+                [
+                    "number",
+                    () => {
+                        var _a, _b, _c, _d;
+                        return y `<td class="align-middle">
+            <input
+              type="number"
+              name=${entry.name}
+              id=${entry.value}
+              value=${l(field.value instanceof Array
+                        ? (_b = (_a = field.value) === null || _a === void 0 ? void 0 : _a.find((item) => item.id === entry.value)) === null || _b === void 0 ? void 0 : _b[name]
+                        : undefined)}
+              step="0.01"
+              class="form-control"
+              step=${l((_d = (_c = field.attributes) === null || _c === void 0 ? void 0 : _c.find(([attribute]) => attribute === "step")) === null || _d === void 0 ? void 0 : _d.at(-1))}
+              @input=${(e) => {
+                        // if (field.handler) {
+                        //   this.executeHandler({ handler: field.handler, event: e });
+                        // }
+                        this.handleMatrixInput(e, field, name, entry);
+                    }}
+              ?required=${field.required}
+            />
+          </td>`;
+                    },
+                ],
+                [
+                    "checkbox",
+                    () => {
+                        var _a, _b;
+                        return y ` <td class="align-middle">
+            <input
+              type="checkbox"
+              name=${entry.name}
+              id=${entry.value}
+              value="1"
+              class="form-control"
+              @input=${(e) => {
+                        // if (field.handler) {
+                        //   this.executeHandler({ handler: field.handler, event: e });
+                        // }
+                        this.handleMatrixInput(e, field, name, entry);
+                    }}
+              ?required=${field.required}
+              ?checked=${field.value instanceof Array
+                        ? ((_b = (_a = field.value) === null || _a === void 0 ? void 0 : _a.find((item) => item.id === entry.value)) === null || _b === void 0 ? void 0 : _b[name]) === "1"
+                        : undefined}
+            />
+          </td>`;
+                    },
+                ],
+            ]);
+            if (!((_a = field.headers) === null || _a === void 0 ? void 0 : _a.length))
+                return (_b = inputTypes.get("default")) === null || _b === void 0 ? void 0 : _b();
+            return (_d = (_c = inputTypes.get(type)) === null || _c === void 0 ? void 0 : _c()) !== null && _d !== void 0 ? _d : (_e = inputTypes.get("default")) === null || _e === void 0 ? void 0 : _e();
         }
         handleMatrixInput(e, field, name, entry) {
             var _a;
@@ -1200,61 +1300,6 @@
                 return;
             }
             field.value[index][name] = target.value;
-        }
-        getMatrixInputMarkup(field, entry, [name, type]) {
-            var _a, _b, _c, _d, _e;
-            const inputTypes = new Map([
-                [
-                    "number",
-                    () => {
-                        var _a, _b;
-                        return y `<td class="align-middle">
-            <input
-              type="number"
-              name=${entry.name}
-              id=${entry.value}
-              step="0.01"
-              class="form-control"
-              step=${l((_b = (_a = field.attributes) === null || _a === void 0 ? void 0 : _a.find(([attribute]) => attribute === "step")) === null || _b === void 0 ? void 0 : _b.at(-1))}
-              @input=${(e) => {
-                        if (field.handler) {
-                            this.executeHandler({ handler: field.handler, event: e });
-                        }
-                        this.handleMatrixInput(e, field, name, entry);
-                        console.log(field);
-                    }}
-              ?required=${field.required}
-            />
-          </td>`;
-                    },
-                ],
-                [
-                    "checkbox",
-                    () => {
-                        return y ` <td class="align-middle">
-            <input
-              type="checkbox"
-              name=${entry.name}
-              id=${entry.value}
-              value="1"
-              class="form-control"
-              @input=${(e) => {
-                        console.log(field);
-                        if (field.handler) {
-                            this.executeHandler({ handler: field.handler, event: e });
-                        }
-                        this.handleMatrixInput(e, field, name, entry);
-                        console.log(field);
-                    }}
-              ?required=${field.required}
-            />
-          </td>`;
-                    },
-                ],
-            ]);
-            if (!((_a = field.headers) === null || _a === void 0 ? void 0 : _a.length))
-                return (_b = inputTypes.get("default")) === null || _b === void 0 ? void 0 : _b();
-            return (_d = (_c = inputTypes.get(type)) === null || _c === void 0 ? void 0 : _c()) !== null && _d !== void 0 ? _d : (_e = inputTypes.get("default")) === null || _e === void 0 ? void 0 : _e();
         }
         moveOnOverlap() {
             const fixedElement = this.renderRoot.querySelector(".btn-modal-wrapper");
@@ -1579,10 +1624,6 @@
 
         <div class="form-row">
           <div class="col">
-            <div class="form-group">
-              <label for="fee">Fee</label>
-              ${datum.fee}
-            </div>
 
             <div class="form-group">
               <label for="location">Location</label>
@@ -2122,21 +2163,32 @@ ${value}</textarea
                             name: event_type.name,
                         }));
                     },
-                    handler: async ({ e, fields }) => {
-                        const target = e.target;
-                        if (!(target instanceof HTMLSelectElement)) {
+                    handler: async ({ e, value, fields }) => {
+                        const selectedEventType = e && e.target instanceof HTMLSelectElement
+                            ? parseInt(e.target.value, 10)
+                            : value && typeof value === "number"
+                                ? value
+                                : undefined;
+                        if (selectedEventType === undefined) {
                             return;
                         }
-                        const selectedEventType = target === null || target === void 0 ? void 0 : target.value;
                         const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
                         const result = await response.json();
-                        const newEventType = result.find((event_type) => event_type.id === parseInt(selectedEventType, 10));
-                        Array.from(Object.entries(newEventType)).forEach((entry) => {
-                            const [key, value] = entry;
+                        const newEventType = result.find((event_type) => event_type.id === selectedEventType);
+                        Object.entries(newEventType).forEach(([key, value]) => {
                             const field = fields.find((field) => field.name === key);
-                            if (field) {
-                                field.value = value;
+                            if (!field) {
+                                return;
                             }
+                            if (typeof value === "number") {
+                                field.value = value.toString();
+                                return;
+                            }
+                            if (typeof value === "object" && value !== null) {
+                                field.value = value;
+                                return;
+                            }
+                            field.value = value;
                         });
                     },
                 },
@@ -2312,6 +2364,9 @@ ${value}</textarea
                     },
                     handler: async ({ e, fields }) => {
                         var _a;
+                        if (!e) {
+                            return;
+                        }
                         const target = e.target;
                         const selectedTargetGroups = Array.from(((_a = target.closest("table")) === null || _a === void 0 ? void 0 : _a.querySelectorAll("input:checked")) || []).map((input) => { var _a, _b; return (_b = (_a = input.parentElement) === null || _a === void 0 ? void 0 : _a.previousElementSibling) === null || _b === void 0 ? void 0 : _b.id; });
                         const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
