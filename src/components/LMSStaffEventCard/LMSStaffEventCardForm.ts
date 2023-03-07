@@ -166,10 +166,6 @@ export default class LMSStaffEventCardForm extends LitElement {
 
         <div class="form-row">
           <div class="col">
-            <div class="form-group">
-              <label for="fee">Fee</label>
-              ${datum.fee}
-            </div>
 
             <div class="form-group">
               <label for="location">Location</label>
