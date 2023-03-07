@@ -38,17 +38,11 @@ sub get {
 
         my $event_type = $sth->fetchrow_hashref;
 
-        ( $stmt, @bind ) = $sql->select( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, [qw/target_group fee/], { event_type_id => $id }, );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        my $target_groups = $sth->fetchall_arrayref( {} );
-
         ( $stmt, @bind ) = $sql->select( $EVENT_TYPE_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_type_id => $event_type->{id} } );
         $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
 
-        $target_groups = $sth->fetchall_arrayref( {} );
+        my $target_groups = $sth->fetchall_arrayref( {} );
 
         return $c->render( status => 200, openapi => { %{$event_type}, target_groups => $target_groups } || {} );
     }
