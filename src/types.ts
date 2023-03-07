@@ -25,10 +25,12 @@ export type InputType =
   | "reset"
   | "button";
 
-export type Handler = ({
+export type HandlerCallbackFunction = ({
   e,
+  value,
   fields,
 }: {
-  e: Event;
+  e?: Event;
+  value?: string | number;
   fields: ModalField[];
 }) => Promise<void>;

@@ -33,26 +33,44 @@ export default class LMSEventsModal extends LMSModal {
           name: event_type.name,
         }));
       },
-      handler: async ({ e, fields }: { e: Event; fields: ModalField[] }) => {
-        const target = e.target;
-        if (!(target instanceof HTMLSelectElement)) {
+      handler: async ({ e, value, fields }) => {
+        const selectedEventType =
+          e && e.target instanceof HTMLSelectElement
+            ? parseInt(e.target.value, 10)
+            : value && typeof value === "number"
+            ? value
+            : undefined;
+
+        if (selectedEventType === undefined) {
           return;
         }
-        const selectedEventType = target?.value;
+
         const response = await fetch(
           "/api/v1/contrib/eventmanagement/event_types"
         );
         const result = await response.json();
-        const newEventType: EventType = result.find(
-          (event_type: EventType) =>
-            event_type.id === parseInt(selectedEventType, 10)
+
+        const newEventType = result.find(
+          (event_type: EventType) => event_type.id === selectedEventType
         );
-        Array.from(Object.entries(newEventType)).forEach((entry) => {
-          const [key, value] = entry;
+
+        Object.entries(newEventType).forEach(([key, value]) => {
           const field = fields.find((field) => field.name === key);
-          if (field) {
-            field.value = value;
+          if (!field) {
+            return;
           }
+
+          if (typeof value === "number") {
+            field.value = value.toString();
+            return;
+          }
+
+          if (typeof value === "object" && value !== null) {
+            field.value = value as [];
+            return;
+          }
+
+          field.value = value as string;
         });
       },
     },

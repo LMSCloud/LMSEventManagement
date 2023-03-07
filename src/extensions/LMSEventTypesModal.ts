@@ -38,21 +38,29 @@ export default class LMSEventTypesModal extends LMSModal {
           name: target_group.name,
         }));
       },
-      handler: async ({ e, fields }: { e: Event; fields: ModalField[] }) => {
+      handler: async ({ e, fields }) => {
+        if (!e) {
+          return;
+        
+        }
         const target = e.target as HTMLInputElement;
+
         const selectedTargetGroups = Array.from(
           target.closest("table")?.querySelectorAll("input:checked") || []
         ).map((input) => input.parentElement?.previousElementSibling?.id);
+
         const response = await fetch(
           "/api/v1/contrib/eventmanagement/target_groups"
         );
         const result = await response.json();
+
         const newTargetGroups: TargetGroup[] = result.filter(
           (target_group: TargetGroup) =>
             selectedTargetGroups.includes(target_group.id.toString())
         );
-        const [minAgeField, maxAgeField] = fields.filter(({ name }) =>
-          ["min_age", "max_age"].includes(name)
+
+        const [minAgeField, maxAgeField] = fields.filter(
+          ({ name }: { name: string }) => ["min_age", "max_age"].includes(name)
         );
         if (minAgeField)
           minAgeField.value = Math.min(

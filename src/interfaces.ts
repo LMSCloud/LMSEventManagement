@@ -1,6 +1,6 @@
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { TemplateResult } from "lit";
-import { Handler, InputType } from "./types";
+import { HandlerCallbackFunction, InputType } from "./types";
 
 enum Status {
   Pending = "Pending",
@@ -99,7 +99,14 @@ export interface ModalField extends BaseField {
   default?: SelectOption;
   headers?: string[][];
   matrixInputType?: InputType;
-  handler?: Handler;
+  handler?: HandlerCallbackFunction;
+}
+
+export interface HandlerExecutorArgs {
+  handler: HandlerCallbackFunction;
+  event?: Event;
+  value?: string | number;
+  requestUpdate: boolean;
 }
 
 export interface CreateOpts extends RequestInit {
