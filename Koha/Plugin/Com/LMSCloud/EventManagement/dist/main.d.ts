@@ -8,6 +8,11 @@ import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffE
 import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventCardForm";
 import LMSStaffEventCardsDeck from "./components/LMSStaffEventCardDeck";
+/** Inputs */
+import LMSCheckboxInput from "./components/Inputs/LMSCheckboxInput";
+import LMSMatrix from "./components/Inputs/LMSMatrix";
+import LMSPrimitivesInput from "./components/Inputs/LMSPrimitivesInput";
+import LMSSelect from "./components/Inputs/LMSSelect";
 /** extensions */
 import LMSEventMangementMenu from "./extensions/LMSEventManagementMenu";
 import LMSEventsModal from "./extensions/LMSEventsModal";
@@ -33,6 +38,10 @@ declare const _default: {
     LMSStaffEventCardPreview: typeof LMSStaffEventCardPreview;
     LMSStaffEventCardForm: typeof LMSStaffEventCardForm;
     LMSStaffEventCardsDeck: typeof LMSStaffEventCardsDeck;
+    LMSCheckboxInput: typeof LMSCheckboxInput;
+    LMSMatrix: typeof LMSMatrix;
+    LMSPrimitivesInput: typeof LMSPrimitivesInput;
+    LMSSelect: typeof LMSSelect;
     LMSEventMangementMenu: typeof LMSEventMangementMenu;
     LMSEventsModal: typeof LMSEventsModal;
     LMSEventTypesModal: typeof LMSEventTypesModal;

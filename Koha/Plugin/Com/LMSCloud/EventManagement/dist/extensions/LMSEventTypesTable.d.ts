@@ -5,6 +5,7 @@ export default class LMSEventTypesTable extends LMSTable {
     handleSave(e: Event): Promise<void>;
     handleDelete(e: Event): Promise<void>;
     connectedCallback(): void;
+    private isInputType;
     private getInputFromColumn;
 }
 //# sourceMappingURL=LMSEventTypesTable.d.ts.map

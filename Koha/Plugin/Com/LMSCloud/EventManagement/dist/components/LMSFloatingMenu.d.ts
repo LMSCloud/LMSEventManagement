@@ -1,6 +1,12 @@
 import { LitElement, nothing } from "lit";
 import { Gettext } from "gettext.js";
-import { MenuEntry } from "../interfaces.js";
+import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+type MenuEntry = {
+    name: string;
+    icon: IconDefinition;
+    url: string;
+    method: string;
+};
 export default class LMSFloatingMenu extends LitElement {
     brand: string;
     items: MenuEntry[];
@@ -12,4 +18,5 @@ export default class LMSFloatingMenu extends LitElement {
     updated(): void;
     render(): typeof nothing | import("lit").TemplateResult<1>;
 }
+export {};
 //# sourceMappingURL=LMSFloatingMenu.d.ts.map
