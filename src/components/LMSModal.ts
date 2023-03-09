@@ -6,11 +6,22 @@ import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
 import TranslationHandler from "../lib/TranslationHandler";
 import { customElement, property } from "lit/decorators";
 import { Gettext } from "gettext.js";
-import { CreateOpts, HandlerExecutorArgs, ModalField } from "../interfaces";
+import {
+  CreateOpts,
+  HandlerCallbackFunction,
+  ModalField,
+} from "../sharedDeclarations";
 import LMSSelect from "./Inputs/LMSSelect";
 import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
 import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
+
+type HandlerExecutorArgs = {
+  handler: HandlerCallbackFunction;
+  event?: Event;
+  value?: string | number;
+  requestUpdate: boolean;
+};
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -206,81 +217,84 @@ export default class LMSModal extends LitElement {
   }
 
   override render() {
-    return html`
-      <div class="btn-modal-wrapper">
-        <button
-          @click=${this.toggleModal}
-          class="btn-modal ${this.isOpen && "tilted"}"
-          type="button"
-        >
-          ${litFontawesome(faPlus)}
-        </button>
-      </div>
-      <div class="backdrop" ?hidden=${!this.isOpen}></div>
-      <div
-        class="modal fade ${this.isOpen && "d-block show"}"
-        id="lms-modal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="lms-modal-title"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="lms-modal-title">
-                ${this._modalTitle || "Add"}
-              </h5>
-              <button
-                @click=${this.toggleModal}
-                type="button"
-                class="close"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <form @submit=${this.create}>
-              <div class="modal-body">
-                <div
-                  role="alert"
-                  ?hidden=${!this._alertMessage}
-                  class="alert alert-${this._alertMessage.includes("Sorry!") &&
-                  "danger"} alert-dismissible fade show"
-                >
-                  ${this._alertMessage}
+    return this.fields.every((field) => field.value === undefined)
+      ? nothing
+      : html`
+          <div class="btn-modal-wrapper">
+            <button
+              @click=${this.toggleModal}
+              class="btn-modal ${this.isOpen && "tilted"}"
+              type="button"
+            >
+              ${litFontawesome(faPlus)}
+            </button>
+          </div>
+          <div class="backdrop" ?hidden=${!this.isOpen}></div>
+          <div
+            class="modal fade ${this.isOpen && "d-block show"}"
+            id="lms-modal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="lms-modal-title"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="lms-modal-title">
+                    ${this._modalTitle || "Add"}
+                  </h5>
                   <button
-                    @click=${this.dismissAlert}
+                    @click=${this.toggleModal}
                     type="button"
                     class="close"
-                    data-dismiss="alert"
                     aria-label="Close"
                   >
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                ${this.fields.map((field) => this.getFieldMarkup(field))}
+                <form @submit=${this.create}>
+                  <div class="modal-body">
+                    <div
+                      role="alert"
+                      ?hidden=${!this._alertMessage}
+                      class="alert alert-${this._alertMessage.includes(
+                        "Sorry!"
+                      ) && "danger"} alert-dismissible fade show"
+                    >
+                      ${this._alertMessage}
+                      <button
+                        @click=${this.dismissAlert}
+                        type="button"
+                        class="close"
+                        data-dismiss="alert"
+                        aria-label="Close"
+                      >
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    ${this.fields.map((field) => this.getFieldMarkup(field))}
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                      @click=${this.toggleModal}
+                    >
+                      ${litFontawesome(faClose)}
+                      <span>Close</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                      ${litFontawesome(faPlus)}
+                      <span>Create</span>
+                    </button>
+                  </div>
+                </form>
               </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-dismiss="modal"
-                  @click=${this.toggleModal}
-                >
-                  ${litFontawesome(faClose)}
-                  <span>Close</span>
-                </button>
-                <button type="submit" class="btn btn-primary">
-                  ${litFontawesome(faPlus)}
-                  <span>Create</span>
-                </button>
-              </div>
-            </form>
+            </div>
           </div>
-        </div>
-      </div>
-    `;
+        `;
   }
 
   public executeHandler({
@@ -306,13 +320,7 @@ export default class LMSModal extends LitElement {
   private getFieldMarkup(field: ModalField) {
     if (!field.desc) return nothing;
 
-    console.log(field, field.value);
-
     const { value } = field;
-    if (!value) {
-      return nothing;
-    }
-
     const fieldTypes = new Map<string, TemplateResult>([
       [
         "select",

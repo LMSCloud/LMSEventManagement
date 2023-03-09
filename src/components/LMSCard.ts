@@ -1,7 +1,17 @@
 import { LitElement, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { Image, Link } from "../interfaces";
+
+type Image = {
+  src: string;
+  alt: string;
+};
+
+type Link = {
+  href: string;
+  text: string;
+};
+
 @customElement("lms-card")
 export default class LMSCard extends LitElement {
   @property({ type: String }) override title = "Card title";

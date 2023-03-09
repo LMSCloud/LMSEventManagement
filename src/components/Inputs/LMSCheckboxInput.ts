@@ -1,7 +1,7 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { ModalField } from "../../interfaces";
+import { ModalField } from "../../sharedDeclarations";
 
 @customElement("lms-checkbox-input")
 export default class LMSCheckboxInput extends LitElement {
@@ -20,8 +20,9 @@ export default class LMSCheckboxInput extends LitElement {
           value=${(this.field.value as string) ?? "1"}
           class="form-check-input"
           @input=${(e: Event) => {
-            this.field.value =
-              (e.target as HTMLInputElement).value ?? this.field.value;
+            this.field.value = (e.target as HTMLInputElement).checked
+              ? "1"
+              : "0";
           }}
           ?required=${this.field.required}
           ?checked=${[true, "true", "1"].includes(this.value as string)}

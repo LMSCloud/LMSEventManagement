@@ -1,7 +1,28 @@
 import { LitElement, html } from "lit";
-import { LMSEvent, Facets } from "../interfaces";
+import { LMSEvent } from "../sharedDeclarations";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { customElement, property } from "lit/decorators";
+
+type FacetType = "checkbox" | "date" | "range";
+
+type Facet = {
+  type: FacetType;
+  name: string;
+  value: string;
+  checked?: boolean;
+};
+
+type Facets = {
+  event_types: Facet[];
+  target_groups: Facet[];
+  locations: Facet[];
+  min_age: Facet;
+  max_age: Facet;
+  open_registration: Facet;
+  start_date: Facet;
+  end_date: Facet;
+  fee: Facet;
+};
 
 @customElement("lms-events-filter")
 export default class LMSEventsFilter extends LitElement {

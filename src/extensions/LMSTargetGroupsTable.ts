@@ -1,8 +1,10 @@
 import { customElement } from "lit/decorators";
 import LMSTable from "../components/LMSTable";
 import { html, TemplateResult } from "lit";
-import { InputType } from "../types";
-import { Input, TargetGroup, TargetGroupValue } from "../interfaces";
+import { InputType } from "../sharedDeclarations";
+import { Input, TargetGroup } from "../sharedDeclarations";
+
+type TargetGroupValue = string | number | boolean;
 
 @customElement("lms-target-groups-table")
 export default class LMSEventTypesTable extends LMSTable {

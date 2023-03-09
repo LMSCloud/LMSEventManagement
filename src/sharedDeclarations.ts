@@ -1,8 +1,39 @@
-import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { TemplateResult } from "lit";
-import { InputType } from "./types";
 
-export type HandlerCallbackFunction = (args: any) => any;
+export type InputType =
+  | "hidden"
+  | "text"
+  | "search"
+  | "tel"
+  | "url"
+  | "email"
+  | "password"
+  | "datetime"
+  | "date"
+  | "month"
+  | "week"
+  | "time"
+  | "datetime-local"
+  | "number"
+  | "range"
+  | "color"
+  | "checkbox"
+  | "radio"
+  | "file"
+  | "submit"
+  | "image"
+  | "reset"
+  | "button";
+
+export type HandlerCallbackFunction = ({
+  e,
+  value,
+  fields,
+}: {
+  e?: Event;
+  value?: string | number;
+  fields: ModalField[];
+}) => Promise<void>;
 
 export enum Status {
   Pending = "Pending",
@@ -15,14 +46,14 @@ export type Column = {
   [key: string]: string | number | TemplateResult;
 };
 
-export type Image = {
-  src: string;
-  alt: string;
-};
-
-export type Link = {
-  href: string;
-  text: string;
+export type LMSLocation = {
+  id: number;
+  street: string;
+  number: string;
+  city: string;
+  zip: string;
+  country: string;
+  name: string;
 };
 
 export type LMSEvent = {
@@ -42,45 +73,12 @@ export type LMSEvent = {
   status: Status;
 };
 
-export type FacetType = "checkbox" | "date" | "range";
-
-export type Facet = {
-  type: FacetType;
+export type Input = {
   name: string;
   value: string;
-  checked?: boolean;
 };
 
-export type Facets = {
-  event_types: Facet[];
-  target_groups: Facet[];
-  locations: Facet[];
-  min_age: Facet;
-  max_age: Facet;
-  open_registration: Facet;
-  start_date: Facet;
-  end_date: Facet;
-  fee: Facet;
-};
-
-export type LMSLocation = {
-  id: number;
-  street: string;
-  number: string;
-  city: string;
-  zip: string;
-  country: string;
-  name: string;
-};
-
-export type LMSLocationValue = string | number;
-
-export type MenuEntry = {
-  name: string;
-  icon: IconDefinition;
-  url: string;
-  method: string;
-};
+export type SelectOption = Input;
 
 export type BaseField = {
   name: string;
@@ -108,23 +106,9 @@ export type ModalField = BaseField & {
   handler?: HandlerCallbackFunction;
 };
 
-export type HandlerExecutorArgs = {
-  handler: HandlerCallbackFunction;
-  event?: Event;
-  value?: string | number;
-  requestUpdate: boolean;
-};
-
 export type CreateOpts = RequestInit & {
   endpoint: string;
 };
-
-export type Input = {
-  name: string;
-  value: string;
-};
-
-export type SelectOption = Input;
 
 export type TargetGroup = {
   id: number;
@@ -140,8 +124,6 @@ export type TargetGroupFee = {
   fee: number;
 };
 
-export type TargetGroupValue = string | number | boolean;
-
 export type EventType = {
   id: number;
   name: string;
@@ -154,5 +136,3 @@ export type EventType = {
   description: string;
   open_registration: boolean;
 };
-
-export type EventTypeValue = string | number | boolean | TargetGroupFee[];

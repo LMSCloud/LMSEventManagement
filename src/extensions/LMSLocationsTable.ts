@@ -1,8 +1,9 @@
 import { customElement } from "lit/decorators";
 import LMSTable from "../components/LMSTable";
 import { html, TemplateResult } from "lit";
-import { Input, LMSLocation, LMSLocationValue } from "../interfaces";
-import { InputType } from "../types";
+import { Input, InputType, LMSLocation } from "../sharedDeclarations";
+
+type LMSLocationValue = string | number;
 
 @customElement("lms-locations-table")
 export default class LMSLocationsTable extends LMSTable {

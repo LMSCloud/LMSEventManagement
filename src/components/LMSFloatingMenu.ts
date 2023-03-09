@@ -4,7 +4,14 @@ import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { customElement, property } from "lit/decorators.js";
 import TranslationHandler from "../lib/TranslationHandler.js";
 import { Gettext } from "gettext.js";
-import { MenuEntry } from "../interfaces.js";
+import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+
+type MenuEntry = {
+  name: string;
+  icon: IconDefinition;
+  url: string;
+  method: string;
+};
 
 @customElement("lms-floating-menu")
 export default class LMSFloatingMenu extends LitElement {

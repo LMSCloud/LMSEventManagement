@@ -3,7 +3,7 @@ import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { Column /* Input */ } from "../../interfaces";
+import { Column /* Input */ } from "../../sharedDeclarations";
 import { Gettext } from "gettext.js";
 import TemplateResultConverter from "../../lib/TemplateResultConverter";
 
@@ -28,6 +28,10 @@ export default class LMSStaffEventCardForm extends LitElement {
 
       button {
         white-space: nowrap;
+      }
+
+      input[type="checkbox"].form-control {
+        font-size: 0.375rem;
       }
     `,
   ];
@@ -126,6 +130,9 @@ export default class LMSStaffEventCardForm extends LitElement {
           </div>
         </div>
 
+        <label for="target_groups">Target Groups</label>
+        ${datum.target_groups}
+
         <div class="form-row">
           <div class="form-group col">
             <label for="min_age">Min Age</label>
@@ -166,7 +173,6 @@ export default class LMSStaffEventCardForm extends LitElement {
 
         <div class="form-row">
           <div class="col">
-
             <div class="form-group">
               <label for="location">Location</label>
               ${datum.location}

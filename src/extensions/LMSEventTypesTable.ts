@@ -1,13 +1,14 @@
 import { customElement } from "lit/decorators";
 import LMSTable from "../components/LMSTable";
 import { html, TemplateResult } from "lit";
-import { InputType } from "../types";
 import {
+  InputType,
   EventType,
-  EventTypeValue,
   TargetGroup,
   TargetGroupFee,
-} from "../interfaces";
+} from "../sharedDeclarations";
+
+type EventTypeValue = string | number | boolean | TargetGroupFee[];
 
 @customElement("lms-event-types-table")
 export default class LMSEventTypesTable extends LMSTable {

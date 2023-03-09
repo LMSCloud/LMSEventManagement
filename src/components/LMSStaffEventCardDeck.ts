@@ -2,8 +2,12 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { LitElement, html, TemplateResult, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import LMSStaffEventCardForm from "./LMSStaffEventCard/LMSStaffEventCardForm";
-import { Column } from "../interfaces";
-import { InputType } from "../types";
+import {
+  InputType,
+  Column,
+  TargetGroup,
+  TargetGroupFee,
+} from "../sharedDeclarations";
 import LMSStaffEventCardAttendees from "./LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPreview";
 import TemplateResultConverter from "../lib/TemplateResultConverter";
@@ -127,6 +131,63 @@ export default class LMSStaffEventCardDeck extends LitElement {
                 html`<option value=${id}>${name}</option>`
             )};
           </select>`;
+        },
+      ],
+      [
+        "target_groups",
+        async () => {
+          const response = await fetch(
+            "/api/v1/contrib/eventmanagement/target_groups"
+          );
+          const result = await response.json();
+          return html`
+            <table class="table table-sm table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">target_group</th>
+                  <th scope="col">selected</th>
+                  <th scope="col">fee</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${result.map(({ id, name }: TargetGroup) => {
+                  const target_group = (
+                    value as unknown as TargetGroupFee[]
+                  ).find((target_group) => target_group.target_group_id === id);
+                  const selected = target_group?.selected ?? false;
+                  const fee = target_group?.fee ?? 0;
+                  return html`
+                    <tr>
+                      <td id=${id} class="align-middle">${name}</td>
+                      <td class="align-middle">
+                        <input
+                          type="checkbox"
+                          data-group="target_groups"
+                          name="selected"
+                          id=${id}
+                          class="form-control"
+                          ?checked=${selected}
+                          disabled
+                        />
+                      </td>
+                      <td class="align-middle">
+                        <input
+                          type="number"
+                          data-group="target_groups"
+                          name="fee"
+                          id=${id}
+                          step="0.01"
+                          class="form-control"
+                          value=${fee}
+                          disabled
+                        />
+                      </td>
+                    </tr>
+                  `;
+                })}
+              </tbody>
+            </table>
+          `;
         },
       ],
       [
@@ -359,12 +420,7 @@ ${value}</textarea
                       data-uuid=${datum.uuid}
                       @click=${this.handleTabClick}
                     >
-                      <a
-                        class="nav-link"
-                        href="#"
-                        style="text-decoration: line-through;"
-                        >Attendees</a
-                      >
+                      <a class="nav-link" href="#">Waitlist</a>
                     </li>
                     <li
                       class="nav-item"

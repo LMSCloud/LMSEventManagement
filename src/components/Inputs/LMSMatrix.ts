@@ -2,7 +2,7 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { LitElement, html, TemplateResult, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined";
-import { ModalField } from "../../interfaces";
+import { ModalField } from "../../sharedDeclarations";
 
 type MatrixInputHandlerArgs = {
   e: Event;
@@ -27,6 +27,8 @@ export default class LMSMatrix extends LitElement {
   @property({ type: Array }) value: { [key: string]: string }[] = [];
   @property({ type: Boolean }) hasResolvedEntries = false;
   @property({ type: Array, attribute: false }) private group: GroupItem[] = [];
+  @property({ type: Boolean, attribute: false }) private hasTransformedField =
+    false;
 
   static override styles = [
     bootstrapStyles,
@@ -44,24 +46,53 @@ export default class LMSMatrix extends LitElement {
     this.group = this.value.length
       ? this.value
           .map((obj: Record<string, unknown>) => {
-            const idKey = Object.keys(obj).find((key) =>
+            const clone = { ...obj };
+            const idKey = Object.keys(clone).find((key) =>
               key.toLowerCase().includes("id")
             );
             if (!idKey) {
               return undefined;
             }
-            const idValue = obj[idKey];
+            const idValue = clone[idKey];
             if (!idValue) {
               return undefined;
             }
-            delete obj[idKey];
+            delete clone[idKey];
             return {
               id: idValue,
-              ...obj,
+              ...clone,
             };
           })
           .filter((groupItem): groupItem is GroupItem => Boolean(groupItem))
       : [];
+    /** We have to update the value on the field with the expected format
+     *  as the form can be submitted without the user interacting with the
+     *  matrix input. We only do this on the first update though. */
+    if (!this.hasTransformedField) {
+      this.field.value = this.group.map(({ id, ...rest }) => {
+        rest = Object.fromEntries(
+          Object.entries(rest).map(([key, value]) => {
+            let _value;
+            switch (typeof value) {
+              case "boolean":
+                _value = value ? "1" : "0";
+                break;
+              case "number":
+                _value = value.toString();
+                break;
+              default:
+                break;
+            }
+            return [key, _value];
+          })
+        );
+        return {
+          id,
+          ...rest,
+        };
+      }) as unknown as { [key: string]: string }[];
+      this.hasTransformedField = true;
+    }
     super.performUpdate();
   }
 
@@ -149,20 +180,16 @@ export default class LMSMatrix extends LitElement {
     }
 
     if (!(field.value instanceof Array)) {
-      field.value = [];
+      return;
     }
 
-    const index = field.value.findIndex((row) => row.id === entry.value);
-    if (index === -1) {
-      field.value.push({
-        id: entry.value,
-        [name]:
-          new Map<string, string>([
-            ["number", target.value],
-            ["checkbox", target.checked ? "1" : "0"],
-          ]).get(target.type) ?? target.value,
-      });
-      return;
+    const index = field.value?.findIndex((value) => value.id === entry.value);
+    if (target.type === "checkbox") {
+      field.value[index][name] = target.checked ? "1" : "0";
+    }
+
+    if (target.type === "number") {
+      field.value[index][name] = target.value.toString();
     }
 
     field.value[index][name] = target.value;
