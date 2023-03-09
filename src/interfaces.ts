@@ -1,33 +1,35 @@
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { TemplateResult } from "lit";
-import { HandlerCallbackFunction, InputType } from "./types";
+import { InputType } from "./types";
 
-enum Status {
+export type HandlerCallbackFunction = (args: any) => any;
+
+export enum Status {
   Pending = "Pending",
   Confirmed = "Confirmed",
   Canceled = "Canceled",
   SoldOut = "Sold Out",
 }
 
-export interface Column {
+export type Column = {
   [key: string]: string | number | TemplateResult;
-}
+};
 
-export interface Image {
+export type Image = {
   src: string;
   alt: string;
-}
+};
 
-export interface Link {
+export type Link = {
   href: string;
   text: string;
-}
+};
 
-export interface LMSEvent {
+export type LMSEvent = {
   id: number;
   name: string;
   event_type: string;
-  location: Location;
+  location: LMSLocation;
   start_time: string;
   end_time: string;
   registration_start: string;
@@ -38,16 +40,18 @@ export interface LMSEvent {
   image: string;
   notes: string;
   status: Status;
-}
+};
 
-export interface Facet {
-  type: "checkbox" | "date" | "range";
+export type FacetType = "checkbox" | "date" | "range";
+
+export type Facet = {
+  type: FacetType;
   name: string;
   value: string;
   checked?: boolean;
-}
+};
 
-export interface Facets {
+export type Facets = {
   event_types: Facet[];
   target_groups: Facet[];
   locations: Facet[];
@@ -57,9 +61,9 @@ export interface Facets {
   start_date: Facet;
   end_date: Facet;
   fee: Facet;
-}
+};
 
-export interface Location {
+export type LMSLocation = {
   id: number;
   street: string;
   number: string;
@@ -67,16 +71,18 @@ export interface Location {
   zip: string;
   country: string;
   name: string;
-}
+};
 
-export interface MenuEntry {
+export type LMSLocationValue = string | number;
+
+export type MenuEntry = {
   name: string;
   icon: IconDefinition;
   url: string;
   method: string;
-}
+};
 
-interface BaseField {
+export type BaseField = {
   name: string;
   desc?: string;
   logic?: () => Promise<{ value: string; name: string }[]>;
@@ -84,57 +90,59 @@ interface BaseField {
   value?: string | { [key: string]: string }[];
   entries?: { value: string; name: string }[];
   attributes?: [string, string | number][];
-}
+};
 
-export interface Field extends BaseField {
+export type Field = BaseField & {
   type: InputType;
-}
+};
 
-export interface SpecialField extends BaseField {
+export type SpecialField = BaseField & {
   type: "select" | "info" | "checkbox";
-}
+};
 
-export interface ModalField extends BaseField {
+export type ModalField = BaseField & {
   type?: InputType | "select" | "info" | "checkbox" | "matrix";
   default?: SelectOption;
   headers?: string[][];
   matrixInputType?: InputType;
   handler?: HandlerCallbackFunction;
-}
+};
 
-export interface HandlerExecutorArgs {
+export type HandlerExecutorArgs = {
   handler: HandlerCallbackFunction;
   event?: Event;
   value?: string | number;
   requestUpdate: boolean;
-}
+};
 
-export interface CreateOpts extends RequestInit {
+export type CreateOpts = RequestInit & {
   endpoint: string;
-}
+};
 
-export interface Input {
+export type Input = {
   name: string;
   value: string;
-}
+};
 
-export interface SelectOption extends Input {}
+export type SelectOption = Input;
 
-export interface TargetGroup {
+export type TargetGroup = {
   id: number;
   name: string;
   min_age: number;
   max_age: number;
-}
+};
 
-export interface TargetGroupFee {
+export type TargetGroupFee = {
   id: number;
   target_group_id: number;
   selected: boolean;
   fee: number;
-}
+};
 
-export interface EventType {
+export type TargetGroupValue = string | number | boolean;
+
+export type EventType = {
   id: number;
   name: string;
   target_groups: TargetGroupFee[];
@@ -145,4 +153,6 @@ export interface EventType {
   image: number;
   description: string;
   open_registration: boolean;
-}
+};
+
+export type EventTypeValue = string | number | boolean | TargetGroupFee[];
