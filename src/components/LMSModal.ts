@@ -1,20 +1,25 @@
 /* eslint-disable no-underscore-dangle */
 import { LitElement, html, css, TemplateResult, nothing } from "lit";
-import { ifDefined } from "lit/directives/if-defined";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
 import TranslationHandler from "../lib/TranslationHandler";
 import { customElement, property } from "lit/decorators";
 import { Gettext } from "gettext.js";
-import {
-  CreateOpts,
-  HandlerExecutorArgs,
-  Input,
-  ModalField,
-  SelectOption,
-} from "../interfaces";
-import { InputType } from "../types";
+import { CreateOpts, HandlerExecutorArgs, ModalField } from "../interfaces";
+import LMSSelect from "./Inputs/LMSSelect";
+import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
+import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
+import LMSMatrix from "./Inputs/LMSMatrix";
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "lms-select": LMSSelect;
+    "lms-checkbox-input": LMSCheckboxInput;
+    "lms-primitives-input": LMSPrimitivesInput;
+    "lms-matrix": LMSMatrix;
+  }
+}
 
 @customElement("lms-modal")
 export default class LMSModal extends LitElement {
@@ -29,6 +34,7 @@ export default class LMSModal extends LitElement {
   @property({ type: Object, attribute: false }) _i18n:
     | Gettext
     | Promise<Gettext> = {} as Gettext;
+  @property({ type: Boolean, attribute: false }) hasResolvedEntries = false;
 
   static override styles = [
     bootstrapStyles,
@@ -85,9 +91,6 @@ export default class LMSModal extends LitElement {
       button.btn-modal > svg {
         color: var(--text-color);
       }
-      input[type="checkbox"].form-control {
-        font-size: 0.375rem;
-      }
     `,
   ];
 
@@ -99,31 +102,41 @@ export default class LMSModal extends LitElement {
       .then((i18n) => {
         this._i18n = i18n;
       })
-      .then(async () => {
-        for (let index = 0; index < this.fields.length; index += 1) {
-          const field = this.fields[index];
-          if (field.logic) {
-            const entries = await field.logic();
-            field.entries = entries;
-
-            if (field.type === "select") {
-              [field.value] = field.default
-                ? field.default.value
-                : field.entries.map((entry) => entry.value);
-
-              if (field.handler) {
-                this.executeHandler({
-                  handler: field.handler,
-                  value: field.value,
-                  requestUpdate: false,
-                });
-              }
-            }
-          }
-        }
-      })
       .then(() => {
-        this.moveOnOverlap();
+        /** Here we declare an array of Promises for each field in this.fields.
+         *  The Promises themselves resolve to tuples of the form [index, field.logic ? false : true].
+         *  When the then after the call to the logic function is executed,
+         *  the second element of the tuple is set to true. */
+        const logicResolved = this.fields.map((field, index) => {
+          if (field.logic) {
+            return field.logic().then((entries) => {
+              field.entries = entries;
+
+              if (field.type === "select") {
+                [field.value] = field.default
+                  ? field.default.value
+                  : field.entries.map((entry) => entry.value);
+
+                if (field.handler) {
+                  this.executeHandler({
+                    handler: field.handler,
+                    value: field.value,
+                    requestUpdate: false,
+                  });
+                }
+              }
+
+              return [index, true];
+            });
+          }
+          return Promise.resolve([index, true]);
+        });
+
+        /** We then wait for all the Promises to resolve and then set the
+         * hasResolvedEntries property to true. */
+        Promise.all(logicResolved).then(() => {
+          this.hasResolvedEntries = true;
+        });
       });
   }
 
@@ -270,7 +283,7 @@ export default class LMSModal extends LitElement {
     `;
   }
 
-  private executeHandler({
+  public executeHandler({
     handler,
     event,
     value,
@@ -291,301 +304,55 @@ export default class LMSModal extends LitElement {
   }
 
   private getFieldMarkup(field: ModalField) {
-    if (!field.desc) return html``;
+    if (!field.desc) return nothing;
 
-    const fieldTypes = new Map<string, () => TemplateResult>([
+    console.log(field, field.value);
+
+    const { value } = field;
+    if (!value) {
+      return nothing;
+    }
+
+    const fieldTypes = new Map<string, TemplateResult>([
       [
         "select",
-        (): TemplateResult => {
-          if (!field.entries) return html``;
-          return html`
-            <div class="form-group">
-              <label for=${field.name}>${field.desc}</label>
-              <select
-                name=${field.name}
-                id=${field.name}
-                class="form-control"
-                @change=${(e: Event) => {
-                  field.value =
-                    (e.target as HTMLSelectElement).value ?? field.value;
-                  if (field.handler) {
-                    this.executeHandler({
-                      handler: field.handler,
-                      event: e,
-                      requestUpdate: true,
-                    });
-                  }
-                }}
-                ?required=${field.required}
-              >
-                ${field.default?.name
-                  ? html`<option value=${field.default.value}>
-                      ${field.default.name}
-                    </option>`
-                  : nothing}
-                ${field.entries.map(
-                  ({ value, name }: SelectOption) =>
-                    html`<option value=${value}>${name}</option>`
-                )}
-              </select>
-            </div>
-          `;
-        },
+        html`<lms-select
+          .field=${field}
+          .outerScope=${this}
+          .hasResolvedEntries=${this.hasResolvedEntries}
+        ></lms-select>`,
       ],
       [
         "checkbox",
-        (): TemplateResult => {
-          return html`
-            <div class="form-check">
-              <input
-                type="checkbox"
-                name=${field.name}
-                id=${field.name}
-                value=${(field.value as string) ?? "1"}
-                class="form-check-input"
-                @input=${(e: Event) => {
-                  field.value =
-                    (e.target as HTMLInputElement).value ?? field.value;
-                }}
-                ?required=${field.required}
-                ?checked=${[true, "true", "1"].includes(field.value as string)}
-              />
-              <label for="${field.name}">&nbsp;${field.desc}</label>
-            </div>
-          `;
-        },
+        html`<lms-checkbox-input
+          .field=${field}
+          .value=${value as string}
+        ></lms-checkbox-input>`,
       ],
-      [
-        "info",
-        (): TemplateResult => {
-          return html`<p>${field.desc}</p>`;
-        },
-      ],
+      ["info", html`<p>${field.desc}</p>`],
       [
         "matrix",
-        (): TemplateResult => {
-          if (!field.entries) return html``;
-          /** We reinitialise the value prop of the field to a prefilled
-           *  array with default values so that we have a state that we
-           *  can write to the DB if the respective item doesn't get selected. */
-          field.value = field.value?.length ? field.value : [];
-          const fieldValueRef: { [key: string]: string }[] = field.value as [];
-
-          if (!fieldValueRef.length) {
-            field.entries.forEach(({ value }) => {
-              let id = value;
-
-              fieldValueRef.push({ id });
-              field.headers?.slice(1).forEach((header) => {
-                const [name] = header;
-                const currentObjIndex = fieldValueRef.findIndex(
-                  (item) => item.id === id
-                );
-
-                if (!currentObjIndex) {
-                  return;
-                }
-                fieldValueRef[currentObjIndex][name] = "0";
-              });
-            });
-          }
-
-          if (fieldValueRef.length) {
-            field.value = fieldValueRef.map(
-              ({ target_group_id, fee, selected }) => {
-                return {
-                  id: target_group_id,
-                  fee: fee.toString(),
-                  selected: selected ? "1" : "0",
-                };
-              }
-            );
-          }
-
-          return html` <label for=${field.name}>${field.desc}</label>
-            <table class="table table-bordered" id=${field.name}>
-              <thead>
-                <tr>
-                  ${field.headers?.map(
-                    ([name]) => html`<th scope="col">${name}</th>`
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                ${field.entries.map(
-                  ({ value, name }) => html`
-                    <tr>
-                      <td class="align-middle" id=${value}>${name}</td>
-                      ${field.headers /* Tuples: [name, type] */
-                        ?.slice(1)
-                        .map((header) =>
-                          this.getMatrixInputMarkup(
-                            field,
-                            { value, name },
-                            header
-                          )
-                        )}
-                    </tr>
-                  `
-                )}
-              </tbody>
-            </table>`;
-        },
+        html`<lms-matrix
+          .field=${field}
+          .value=${value as { [key: string]: string }[]}
+          .hasResolvedEntries=${this.hasResolvedEntries}
+        ></lms-matrix>`,
       ],
       [
         "default",
-        (): TemplateResult => {
-          return html`
-            <div class="form-group">
-              <label for=${field.name}>${field.desc}</label>
-              <input
-                type=${ifDefined(field.type) as InputType}
-                name=${field.name}
-                id=${field.name}
-                value=${ifDefined(
-                  typeof field.value === "string"
-                    ? field.value
-                    : field.value?.toString()
-                )}
-                class="form-control"
-                @input=${(e: Event) => {
-                  field.value =
-                    (e.target as HTMLInputElement).value ?? field.value;
-                }}
-                ?required=${field.required}
-              />
-            </div>
-          `;
-        },
+        html`<lms-primitives-input
+          .field=${field}
+          .value=${value as string | number}
+        ></lms-primitives-input>`,
       ],
     ]);
 
-    const fieldType =
-      field.type && fieldTypes.has(field.type) ? field.type : "default";
-    return fieldTypes.get(fieldType)?.() ?? fieldTypes.get("default")?.();
-  }
-
-  private getMatrixInputMarkup(
-    field: ModalField,
-    entry: Input,
-    [name, type]: string[]
-  ) {
-    const inputTypes = new Map<string, () => TemplateResult>([
-      [
-        "number",
-        (): TemplateResult => {
-          return html`<td class="align-middle">
-            <input
-              type="number"
-              name=${entry.name}
-              id=${entry.value}
-              value=${ifDefined(
-                field.value instanceof Array
-                  ? field.value?.find((item) => item.id === entry.value)?.[name]
-                  : undefined
-              )}
-              step="0.01"
-              class="form-control"
-              step=${ifDefined(
-                field.attributes
-                  ?.find(([attribute]) => attribute === "step")
-                  ?.at(-1) as number
-              )}
-              @input=${(e: Event) => {
-                // if (field.handler) {
-                //   this.executeHandler({ handler: field.handler, event: e });
-                // }
-                this.handleMatrixInput(e, field, name, entry);
-              }}
-              ?required=${field.required}
-            />
-          </td>`;
-        },
-      ],
-      [
-        "checkbox",
-        (): TemplateResult => {
-          return html` <td class="align-middle">
-            <input
-              type="checkbox"
-              name=${entry.name}
-              id=${entry.value}
-              value="1"
-              class="form-control"
-              @input=${(e: Event) => {
-                // if (field.handler) {
-                //   this.executeHandler({ handler: field.handler, event: e });
-                // }
-                this.handleMatrixInput(e, field, name, entry);
-              }}
-              ?required=${field.required}
-              ?checked=${field.value instanceof Array
-                ? field.value?.find((item) => item.id === entry.value)?.[
-                    name
-                  ] === "1"
-                : undefined}
-            />
-          </td>`;
-        },
-      ],
-    ]);
-
-    if (!field.headers?.length) return inputTypes.get("default")?.();
-
-    return inputTypes.get(type)?.() ?? inputTypes.get("default")?.();
-  }
-
-  private handleMatrixInput(
-    e: Event,
-    field: ModalField,
-    name: string,
-    entry: { value: string; name: string }
-  ) {
-    const target = e.target;
-    if (
-      !(target instanceof HTMLInputElement) ||
-      !(field.value instanceof Array) ||
-      !target?.value
-    ) {
-      return;
+    if (!field.type) {
+      return nothing;
     }
 
-    const index = field.value.findIndex((row) => row.id === entry.value);
-    if (index === -1) {
-      field.value.push({
-        id: entry.value,
-        [name]:
-          new Map<string, string>([
-            ["number", target.value],
-            ["checkbox", target.checked ? "1" : "0"],
-          ]).get(target.type) ?? target.value,
-      });
-      return;
-    }
-
-    field.value[index][name] = target.value;
-  }
-
-  private moveOnOverlap() {
-    const fixedElement = this.renderRoot.querySelector(".btn-modal-wrapper");
-    if (!fixedElement) return;
-
-    const fixedRect = fixedElement.getBoundingClientRect();
-    if (
-      [...document.querySelectorAll("body *")].some((element) => {
-        if (element === fixedElement) return false;
-        const otherRect = element.getBoundingClientRect();
-        // Check if the fixedRect and otherRect overlap by comparing their positions
-        return (
-          fixedRect.right < otherRect.left &&
-          fixedRect.left > otherRect.right &&
-          fixedRect.bottom < otherRect.top &&
-          fixedRect.top > otherRect.bottom
-        );
-      })
-    ) {
-      (fixedElement as HTMLElement).style.top =
-        parseFloat(getComputedStyle(fixedElement).top) - 1 + "em";
-    }
+    return fieldTypes.has(field.type)
+      ? fieldTypes.get(field.type)
+      : fieldTypes.get("default");
   }
 }
