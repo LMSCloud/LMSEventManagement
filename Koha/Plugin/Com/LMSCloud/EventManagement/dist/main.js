@@ -1320,16 +1320,51 @@
             }
             const keys = Object.keys(this.datum);
             keys.splice(keys.indexOf("uuid"), 1);
-            const formData = new FormData(target);
-            const response = await fetch(`/api/v1/contrib/eventmanagement/events/${id}`, {
-                method: "PUT",
-                body: JSON.stringify(Array.from(formData).reduce((acc, [key, value]) => {
-                    if (keys.includes(key)) {
-                        acc[key] = value;
+            const targetGroupElements = Array.from(target.querySelectorAll(`[data-group="target_groups"]`));
+            console.log(targetGroupElements);
+            if (!targetGroupElements.length) {
+                return;
+            }
+            // const target_groups: { [key: string]: string }[] = [];
+            // for (let i = 0; i < targetGroupElements.length; i += 1) {
+            //   const element = targetGroupElements[i];
+            //   const { name } = element.dataset;
+            //   let value;
+            //   if (element instanceof HTMLInputElement) {
+            //     value = element.value;
+            //   }
+            //   const { id } = element;
+            //   const index = target_groups.findIndex((target_group) => {
+            //     target_group.id === id;
+            //   });
+            // }
+            const target_groups = targetGroupElements.reduce((target_groups, element) => {
+                const { name } = element.dataset;
+                const { id } = element;
+                if (!target_groups[id]) {
+                    target_groups[id] = { id, selected: "0", fee: "0" };
+                }
+                if (element instanceof HTMLInputElement) {
+                    switch (name) {
+                        case "selected":
+                            target_groups[id].selected = element.checked ? "1" : "0";
+                            break;
+                        case "fee":
+                            target_groups[id].fee = element.value;
+                            break;
                     }
-                    return acc;
-                }, {})),
-            });
+                }
+                return target_groups;
+            }, {});
+            const formData = new FormData(target);
+            const requestBody = Array.from(formData).reduce((acc, [key, value]) => {
+                if (keys.includes(key)) {
+                    acc[key] = value;
+                }
+                return acc;
+            }, {});
+            requestBody.target_groups = Object.values(target_groups);
+            const response = await fetch(`/api/v1/contrib/eventmanagement/events/${id}`, { method: "PUT", body: JSON.stringify(requestBody) });
             if (response.status >= 200 && response.status <= 299) {
                 target === null || target === void 0 ? void 0 : target.querySelectorAll("input, select, textarea").forEach((input) => {
                     input.setAttribute("disabled", "");
@@ -1605,12 +1640,19 @@
                         const fee = (_b = target_group === null || target_group === void 0 ? void 0 : target_group.fee) !== null && _b !== void 0 ? _b : 0;
                         return y `
                     <tr>
-                      <td id=${id} class="align-middle">${name}</td>
+                      <td
+                        id=${id}
+                        data-group="target_groups"
+                        data-name="id"
+                        class="align-middle"
+                      >
+                        ${name}
+                      </td>
                       <td class="align-middle">
                         <input
                           type="checkbox"
                           data-group="target_groups"
-                          name="selected"
+                          data-name="selected"
                           id=${id}
                           class="form-control"
                           ?checked=${selected}
@@ -1621,7 +1663,7 @@
                         <input
                           type="number"
                           data-group="target_groups"
-                          name="fee"
+                          data-name="fee"
                           id=${id}
                           step="0.01"
                           class="form-control"
