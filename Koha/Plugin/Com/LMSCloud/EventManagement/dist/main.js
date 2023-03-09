@@ -1321,23 +1321,9 @@
             const keys = Object.keys(this.datum);
             keys.splice(keys.indexOf("uuid"), 1);
             const targetGroupElements = Array.from(target.querySelectorAll(`[data-group="target_groups"]`));
-            console.log(targetGroupElements);
             if (!targetGroupElements.length) {
                 return;
             }
-            // const target_groups: { [key: string]: string }[] = [];
-            // for (let i = 0; i < targetGroupElements.length; i += 1) {
-            //   const element = targetGroupElements[i];
-            //   const { name } = element.dataset;
-            //   let value;
-            //   if (element instanceof HTMLInputElement) {
-            //     value = element.value;
-            //   }
-            //   const { id } = element;
-            //   const index = target_groups.findIndex((target_group) => {
-            //     target_group.id === id;
-            //   });
-            // }
             const target_groups = targetGroupElements.reduce((target_groups, element) => {
                 const { name } = element.dataset;
                 const { id } = element;
