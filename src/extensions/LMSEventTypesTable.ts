@@ -2,7 +2,12 @@ import { customElement } from "lit/decorators";
 import LMSTable from "../components/LMSTable";
 import { html, TemplateResult } from "lit";
 import { InputType } from "../types";
-import { EventType, TargetGroup, TargetGroupFee } from "../interfaces";
+import {
+  EventType,
+  EventTypeValue,
+  TargetGroup,
+  TargetGroupFee,
+} from "../interfaces";
 
 @customElement("lms-event-types-table")
 export default class LMSEventTypesTable extends LMSTable {
@@ -178,10 +183,12 @@ export default class LMSEventTypesTable extends LMSTable {
         const data = await Promise.all(
           result.map(async (event_type: EventType) => {
             const entries = await Promise.all(
-              Object.entries(event_type).map(async ([name, value]) => [
-                name,
-                await this.getInputFromColumn({ name, value }),
-              ])
+              Object.entries(event_type).map(
+                async ([name, value]: [string, InputType | EventTypeValue]) => [
+                  name,
+                  await this.getInputFromColumn({ name, value }),
+                ]
+              )
             );
             return Object.fromEntries(entries);
           })
@@ -193,12 +200,16 @@ export default class LMSEventTypesTable extends LMSTable {
       });
   }
 
+  private isInputType(value: InputType | EventTypeValue): value is InputType {
+    return typeof value === "string" || typeof value === "number";
+  }
+
   private async getInputFromColumn({
     name,
     value,
   }: {
     name: string;
-    value: InputType;
+    value: InputType | EventTypeValue;
   }) {
     const inputs = new Map<
       string,
@@ -211,7 +222,7 @@ export default class LMSEventTypesTable extends LMSTable {
             class="form-control"
             type="text"
             name="name"
-            value=${value}
+            value=${this.isInputType(value) ? value : ""}
             disabled
           />`,
       ],
@@ -272,7 +283,7 @@ export default class LMSEventTypesTable extends LMSTable {
             class="form-control"
             type="number"
             name="min_age"
-            value=${value}
+            value=${this.isInputType(value) ? value : ""}
             disabled
           />`,
       ],
@@ -283,7 +294,7 @@ export default class LMSEventTypesTable extends LMSTable {
             class="form-control"
             type="number"
             name="max_age"
-            value=${value}
+            value=${this.isInputType(value) ? value : ""}
             disabled
           />`,
       ],
@@ -294,7 +305,7 @@ export default class LMSEventTypesTable extends LMSTable {
             class="form-control"
             type="number"
             name="max_participants"
-            value=${value}
+            value=${this.isInputType(value) ? value : ""}
             disabled
           />`,
       ],
@@ -320,7 +331,7 @@ export default class LMSEventTypesTable extends LMSTable {
             class="form-control"
             type="number"
             name="image"
-            value=${value}
+            value=${this.isInputType(value) ? value : ""}
             disabled
           />`,
       ],
@@ -331,7 +342,7 @@ export default class LMSEventTypesTable extends LMSTable {
             class="form-control"
             type="text"
             name="description"
-            value=${value}
+            value=${this.isInputType(value) ? value : ""}
             disabled
           />`,
       ],

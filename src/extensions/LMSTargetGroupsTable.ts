@@ -2,7 +2,7 @@ import { customElement } from "lit/decorators";
 import LMSTable from "../components/LMSTable";
 import { html, TemplateResult } from "lit";
 import { InputType } from "../types";
-import { Input, TargetGroup } from "../interfaces";
+import { Input, TargetGroup, TargetGroupValue } from "../interfaces";
 
 @customElement("lms-target-groups-table")
 export default class LMSEventTypesTable extends LMSTable {
@@ -128,10 +128,12 @@ export default class LMSEventTypesTable extends LMSTable {
       .then((result: TargetGroup[]) => {
         this.data = result.map((target_group: TargetGroup) =>
           Object.fromEntries(
-            Object.entries(target_group).map(([name, value]) => [
-              name,
-              this.getInputFromColumn({ name, value }),
-            ])
+            Object.entries(target_group).map(
+              ([name, value]: [string, TargetGroupValue]) => [
+                name,
+                this.getInputFromColumn({ name, value }),
+              ]
+            )
           )
         );
       })
@@ -145,7 +147,7 @@ export default class LMSEventTypesTable extends LMSTable {
     value,
   }: {
     name: string;
-    value: InputType;
+    value: InputType | TargetGroupValue;
   }) {
     const inputs = new Map<string, () => TemplateResult>([
       [

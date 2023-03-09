@@ -1,7 +1,7 @@
 import { customElement } from "lit/decorators";
 import LMSTable from "../components/LMSTable";
 import { html, TemplateResult } from "lit";
-import { TargetGroup, Input } from "../interfaces";
+import { Input, LMSLocation, LMSLocationValue } from "../interfaces";
 import { InputType } from "../types";
 
 @customElement("lms-locations-table")
@@ -135,12 +135,14 @@ export default class LMSLocationsTable extends LMSTable {
         throw new Error("Something went wrong");
       })
       .then((result) => {
-        this.data = result.map((target_group: TargetGroup) =>
+        this.data = result.map((location: LMSLocation) =>
           Object.fromEntries(
-            Object.entries(target_group).map(([name, value]) => [
-              name,
-              this.getInputFromColumn({ name, value }),
-            ])
+            Object.entries(location).map(
+              ([name, value]: [string, LMSLocationValue]) => [
+                name,
+                this.getInputFromColumn({ name, value }),
+              ]
+            )
           )
         );
       })
@@ -154,7 +156,7 @@ export default class LMSLocationsTable extends LMSTable {
     value,
   }: {
     name: string;
-    value: InputType;
+    value: InputType | LMSLocationValue;
   }) {
     const inputs = new Map<string, () => TemplateResult>([
       [
