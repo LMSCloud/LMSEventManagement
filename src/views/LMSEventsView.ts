@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 import LMSCard from "../components/LMSCard";
 import LMSEventsFilter from "../components/LMSEventsFilter";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LMSEvent } from "../interfaces";
+import { LMSEvent } from "../sharedDeclarations";
 
 declare global {
   interface HTMLElementTagNameMap {

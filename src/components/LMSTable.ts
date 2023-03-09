@@ -6,7 +6,7 @@ import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { customElement, property } from "lit/decorators";
 import LMSToast from "./LMSToast";
 import { Gettext } from "gettext.js";
-import { Column } from "../interfaces";
+import { Column } from "../sharedDeclarations";
 
 @customElement("lms-table")
 export default class LMSTable extends LitElement {

@@ -1,5 +1,5 @@
 import { LitElement } from "lit";
-import { Column } from "../../interfaces";
+import { Column } from "../../sharedDeclarations";
 import { Gettext } from "gettext.js";
 export default class LMSStaffEventCardForm extends LitElement {
     datum: Column;

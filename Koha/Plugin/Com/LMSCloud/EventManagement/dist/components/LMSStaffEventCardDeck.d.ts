@@ -1,6 +1,6 @@
 import { LitElement, TemplateResult } from "lit";
 import LMSStaffEventCardForm from "./LMSStaffEventCard/LMSStaffEventCardForm";
-import { Column } from "../interfaces";
+import { Column } from "../sharedDeclarations";
 import LMSStaffEventCardAttendees from "./LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPreview";
 declare global {

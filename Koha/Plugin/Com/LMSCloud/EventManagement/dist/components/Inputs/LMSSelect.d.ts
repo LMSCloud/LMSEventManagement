@@ -1,5 +1,5 @@
 import { LitElement, nothing } from "lit";
-import { ModalField } from "../../interfaces";
+import { ModalField } from "../../sharedDeclarations";
 import LMSModal from "../LMSModal";
 export default class LMSSelect extends LitElement {
     field: ModalField;

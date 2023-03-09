@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators";
 import LMSModal from "../components/LMSModal";
-import { CreateOpts, EventType, ModalField } from "../interfaces";
+import { CreateOpts, EventType, ModalField } from "../sharedDeclarations";
 import { Gettext } from "gettext.js";
 
 @customElement("lms-events-modal")

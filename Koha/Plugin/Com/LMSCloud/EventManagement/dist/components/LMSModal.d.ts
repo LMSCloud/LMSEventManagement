@@ -1,6 +1,6 @@
 import { LitElement, TemplateResult, nothing } from "lit";
 import { Gettext } from "gettext.js";
-import { CreateOpts, HandlerCallbackFunction, ModalField } from "../interfaces";
+import { CreateOpts, HandlerCallbackFunction, ModalField } from "../sharedDeclarations";
 import LMSSelect from "./Inputs/LMSSelect";
 import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
 import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";

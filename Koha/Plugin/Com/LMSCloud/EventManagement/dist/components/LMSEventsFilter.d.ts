@@ -1,5 +1,5 @@
 import { LitElement } from "lit";
-import { LMSEvent } from "../interfaces";
+import { LMSEvent } from "../sharedDeclarations";
 type FacetType = "checkbox" | "date" | "range";
 type Facet = {
     type: FacetType;

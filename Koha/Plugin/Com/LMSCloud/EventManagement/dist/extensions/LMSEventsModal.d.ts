@@ -1,5 +1,5 @@
 import LMSModal from "../components/LMSModal";
-import { CreateOpts, ModalField } from "../interfaces";
+import { CreateOpts, ModalField } from "../sharedDeclarations";
 import { Gettext } from "gettext.js";
 export default class LMSEventsModal extends LMSModal {
     createOpts: CreateOpts;

@@ -1,5 +1,5 @@
 import { LitElement } from "lit";
-import { ModalField } from "../../interfaces";
+import { ModalField } from "../../sharedDeclarations";
 export default class LMSPrimitivesInput extends LitElement {
     field: ModalField;
     value: number | string;

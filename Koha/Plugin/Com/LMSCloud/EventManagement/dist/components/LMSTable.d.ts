@@ -1,6 +1,6 @@
 import { LitElement, nothing, PropertyValueMap } from "lit";
 import { Gettext } from "gettext.js";
-import { Column } from "../interfaces";
+import { Column } from "../sharedDeclarations";
 export default class LMSTable extends LitElement {
     data: Column[];
     order: string[];

@@ -2,7 +2,7 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import LMSCard from "../LMSCard";
-import { Column } from "../../interfaces";
+import { Column } from "../../sharedDeclarations";
 import TemplateResultConverter from "../../lib/TemplateResultConverter";
 
 declare global {

@@ -1,5 +1,5 @@
 import { LitElement, TemplateResult } from "lit";
-import { ModalField } from "../../interfaces";
+import { ModalField } from "../../sharedDeclarations";
 export default class LMSMatrix extends LitElement {
     field: ModalField;
     value: {

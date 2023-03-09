@@ -1,7 +1,7 @@
 import { LitElement } from "lit";
 import LMSCard from "../components/LMSCard";
 import LMSEventsFilter from "../components/LMSEventsFilter";
-import { LMSEvent } from "../interfaces";
+import { LMSEvent } from "../sharedDeclarations";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-card": LMSCard;
