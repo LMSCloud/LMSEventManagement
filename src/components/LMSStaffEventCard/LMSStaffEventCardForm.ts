@@ -51,7 +51,6 @@ export default class LMSStaffEventCardForm extends LitElement {
     e.preventDefault();
     const target = e.target;
     const id = new TemplateResultConverter(this.datum.id).getRenderValues()[0];
-
     if (!(target instanceof HTMLFormElement) || !id) {
       return;
     }
@@ -59,24 +58,69 @@ export default class LMSStaffEventCardForm extends LitElement {
     const keys = Object.keys(this.datum);
     keys.splice(keys.indexOf("uuid"), 1);
 
-    const formData = new FormData(target);
+    const targetGroupElements: Array<HTMLTableCellElement | HTMLInputElement> =
+      Array.from(target.querySelectorAll(`[data-group="target_groups"]`));
+    console.log(targetGroupElements);
+    if (!targetGroupElements.length) {
+      return;
+    }
 
+    // const target_groups: { [key: string]: string }[] = [];
+    // for (let i = 0; i < targetGroupElements.length; i += 1) {
+    //   const element = targetGroupElements[i];
+    //   const { name } = element.dataset;
+
+    //   let value;
+    //   if (element instanceof HTMLInputElement) {
+    //     value = element.value;
+    //   }
+    //   const { id } = element;
+
+    //   const index = target_groups.findIndex((target_group) => {
+    //     target_group.id === id;
+    //   });
+    // }
+    const target_groups = targetGroupElements.reduce(
+      (target_groups: any, element) => {
+        const { name } = element.dataset;
+        const { id } = element;
+
+        if (!target_groups[id]) {
+          target_groups[id] = { id, selected: "0", fee: "0" };
+        }
+
+        if (element instanceof HTMLInputElement) {
+          switch (name) {
+            case "selected":
+              target_groups[id].selected = element.checked ? "1" : "0";
+              break;
+            case "fee":
+              target_groups[id].fee = element.value;
+              break;
+            default:
+              break;
+          }
+        }
+
+        return target_groups;
+      },
+      {}
+    );
+
+    const formData = new FormData(target);
+    const requestBody = Array.from(formData).reduce(
+      (acc: { [key: string]: unknown }, [key, value]) => {
+        if (keys.includes(key)) {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {}
+    );
+    requestBody.target_groups = Object.values(target_groups);
     const response = await fetch(
       `/api/v1/contrib/eventmanagement/events/${id}`,
-      {
-        method: "PUT",
-        body: JSON.stringify(
-          Array.from(formData).reduce(
-            (acc: { [key: string]: unknown }, [key, value]) => {
-              if (keys.includes(key)) {
-                acc[key] = value;
-              }
-              return acc;
-            },
-            {}
-          )
-        ),
-      }
+      { method: "PUT", body: JSON.stringify(requestBody) }
     );
 
     if (response.status >= 200 && response.status <= 299) {

@@ -158,12 +158,19 @@ export default class LMSStaffEventCardDeck extends LitElement {
                   const fee = target_group?.fee ?? 0;
                   return html`
                     <tr>
-                      <td id=${id} class="align-middle">${name}</td>
+                      <td
+                        id=${id}
+                        data-group="target_groups"
+                        data-name="id"
+                        class="align-middle"
+                      >
+                        ${name}
+                      </td>
                       <td class="align-middle">
                         <input
                           type="checkbox"
                           data-group="target_groups"
-                          name="selected"
+                          data-name="selected"
                           id=${id}
                           class="form-control"
                           ?checked=${selected}
@@ -174,7 +181,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
                         <input
                           type="number"
                           data-group="target_groups"
-                          name="fee"
+                          data-name="fee"
                           id=${id}
                           step="0.01"
                           class="form-control"
