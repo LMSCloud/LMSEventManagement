@@ -60,26 +60,10 @@ export default class LMSStaffEventCardForm extends LitElement {
 
     const targetGroupElements: Array<HTMLTableCellElement | HTMLInputElement> =
       Array.from(target.querySelectorAll(`[data-group="target_groups"]`));
-    console.log(targetGroupElements);
     if (!targetGroupElements.length) {
       return;
     }
 
-    // const target_groups: { [key: string]: string }[] = [];
-    // for (let i = 0; i < targetGroupElements.length; i += 1) {
-    //   const element = targetGroupElements[i];
-    //   const { name } = element.dataset;
-
-    //   let value;
-    //   if (element instanceof HTMLInputElement) {
-    //     value = element.value;
-    //   }
-    //   const { id } = element;
-
-    //   const index = target_groups.findIndex((target_group) => {
-    //     target_group.id === id;
-    //   });
-    // }
     const target_groups = targetGroupElements.reduce(
       (target_groups: any, element) => {
         const { name } = element.dataset;
