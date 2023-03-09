@@ -12,7 +12,6 @@ export default class LMSTargetGroupsModal extends LMSModal {
   @property({ type: Function, attribute: false }) modalFields = (
     i18n: Gettext
   ): Field[] => [
-    { name: "id", type: "number", required: true },
     {
       name: "name",
       type: "text",

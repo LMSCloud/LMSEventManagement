@@ -12,7 +12,6 @@ export default class LMSEventsModal extends LMSModal {
   @property({ type: Function, attribute: false }) modalFields = (
     i18n: Gettext
   ): ModalField[] => [
-    { name: "id", type: "number", required: true },
     {
       name: "name",
       type: "text",
@@ -55,7 +54,7 @@ export default class LMSEventsModal extends LMSModal {
         );
 
         Object.entries(newEventType).forEach(([key, value]) => {
-          const field = fields.find((field) => field.name === key);
+          const field = fields.find((field: ModalField) => field.name === key);
           if (!field) {
             return;
           }
