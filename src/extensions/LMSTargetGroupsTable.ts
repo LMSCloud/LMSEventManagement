@@ -115,8 +115,8 @@ export default class LMSEventTypesTable extends LMSTable {
     super.connectedCallback();
 
     this.order = ["id", "name", "min_age", "max_age"];
-    this._isEditable = true;
-    this._isDeletable = true;
+    this.isEditable = true;
+    this.isDeletable = true;
 
     const events = fetch("/api/v1/contrib/eventmanagement/target_groups");
     events
@@ -128,12 +128,12 @@ export default class LMSEventTypesTable extends LMSTable {
         throw new Error("Something went wrong");
       })
       .then((result: TargetGroup[]) => {
-        this.data = result.map((target_group: TargetGroup) =>
+        this.data = result?.map((target_group: TargetGroup) =>
           Object.fromEntries(
             Object.entries(target_group).map(
               ([name, value]: [string, TargetGroupValue]) => [
                 name,
-                this.getInputFromColumn({ name, value }),
+                this.getInputFromColumn({ name, value }) ?? "",
               ]
             )
           )
@@ -151,43 +151,40 @@ export default class LMSEventTypesTable extends LMSTable {
     name: string;
     value: InputType | TargetGroupValue;
   }) {
-    const inputs = new Map<string, () => TemplateResult>([
+    const inputs = new Map<string, TemplateResult>([
       [
         "name",
-        () =>
-          html`<input
-            class="form-control"
-            type="text"
-            name="name"
-            value=${value}
-            disabled
-          />`,
+        html`<input
+          class="form-control"
+          type="text"
+          name="name"
+          value=${value}
+          disabled
+        />`,
       ],
       [
         "min_age",
-        () =>
-          html`<input
-            class="form-control"
-            type="number"
-            name="min_age"
-            value=${value}
-            disabled
-          />`,
+        html`<input
+          class="form-control"
+          type="number"
+          name="min_age"
+          value=${value}
+          disabled
+        />`,
       ],
       [
         "max_age",
-        () =>
-          html`<input
-            class="form-control"
-            type="number"
-            name="max_age"
-            value=${value}
-            disabled
-          />`,
+        html`<input
+          class="form-control"
+          type="number"
+          name="max_age"
+          value=${value}
+          disabled
+        />`,
       ],
-      ["default", () => html`${value}`],
+      ["default", html`${value}`],
     ]);
 
-    return inputs.get(name) ? inputs.get(name)!() : inputs.get("default")!();
+    return inputs.get(name) ? inputs.get(name) : inputs.get("default");
   }
 }

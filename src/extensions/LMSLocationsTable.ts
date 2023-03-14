@@ -123,8 +123,8 @@ export default class LMSLocationsTable extends LMSTable {
       "zip",
       "country",
     ];
-    this._isEditable = true;
-    this._isDeletable = true;
+    this.isEditable = true;
+    this.isDeletable = true;
 
     const locations = fetch("/api/v1/contrib/eventmanagement/locations");
     locations
