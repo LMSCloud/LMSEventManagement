@@ -136,3 +136,10 @@ export type EventType = {
   description: string;
   open_registration: boolean;
 };
+
+export type URIComponents = {
+  path?: string;
+  query?: boolean;
+  params?: Record<string, string>;
+  fragment?: string;
+};

@@ -1,4 +1,4 @@
-import { customElement } from "lit/decorators";
+import { customElement, property } from "lit/decorators";
 import LMSTable from "../components/LMSTable";
 import { html, TemplateResult } from "lit";
 import {
@@ -6,12 +6,29 @@ import {
   EventType,
   TargetGroup,
   TargetGroupFee,
+  URIComponents,
 } from "../sharedDeclarations";
+import LMSAnchor from "../components/LMSAnchor";
 
 type EventTypeValue = string | number | boolean | TargetGroupFee[];
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "lms-anchor": LMSAnchor;
+  }
+}
+
 @customElement("lms-event-types-table")
 export default class LMSEventTypesTable extends LMSTable {
+  @property({ type: Object, attribute: false }) href: URIComponents = {
+    path: "/cgi-bin/koha/plugins/run.pl",
+    query: true,
+    params: {
+      class: "Koha::Plugin::Com::LMSCloud::EventManagement",
+      method: "configure",
+    },
+  };
+
   override handleEdit(e: Event) {
     if (e.target) {
       let inputs: NodeListOf<HTMLInputElement | HTMLSelectElement> =
@@ -160,8 +177,32 @@ export default class LMSEventTypesTable extends LMSTable {
       "description",
       "open_registration",
     ];
-    this._isEditable = true;
-    this._isDeletable = true;
+    this.isEditable = true;
+    this.isDeletable = true;
+    this.emptyTableMessage = html`You have to create a
+      <lms-anchor
+        .href=${{
+          ...this.href,
+          params: {
+            ...this.href.params,
+            op: "target-groups",
+          },
+        }}
+        data-text="target group"
+        >target group</lms-anchor
+      >, a
+      <lms-anchor
+        .href=${{
+          ...this.href,
+          params: {
+            ...this.href.params,
+            op: "locations",
+          },
+        }}
+        data-text="location"
+        >location</lms-anchor
+      >
+      first.`;
 
     const eventTypes = fetch("/api/v1/contrib/eventmanagement/event_types");
     eventTypes

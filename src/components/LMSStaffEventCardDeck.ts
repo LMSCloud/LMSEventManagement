@@ -7,9 +7,11 @@ import {
   Column,
   TargetGroup,
   TargetGroupFee,
+  URIComponents,
 } from "../sharedDeclarations";
 import LMSStaffEventCardAttendees from "./LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPreview";
+import LMSAnchor from "./LMSAnchor";
 import TemplateResultConverter from "../lib/TemplateResultConverter";
 
 declare global {
@@ -17,6 +19,7 @@ declare global {
     "lms-staff-event-card-form": LMSStaffEventCardForm;
     "lms-staff-event-card-attendees": LMSStaffEventCardAttendees;
     "lms-staff-event-card-preview": LMSStaffEventCardPreview;
+    "lms-anchor": LMSAnchor;
   }
 }
 
@@ -27,6 +30,14 @@ export default class LMSStaffEventCardDeck extends LitElement {
     string,
     string[]
   > = new Map();
+  @property({ type: Object, attribute: false }) href: URIComponents = {
+    path: "/cgi-bin/koha/plugins/run.pl",
+    query: true,
+    params: {
+      class: "Koha::Plugin::Com::LMSCloud::EventManagement",
+      method: "configure",
+    },
+  };
 
   static override styles = [
     bootstrapStyles,
@@ -405,75 +416,115 @@ ${value}</textarea
   }
 
   override render() {
-    return html`
-      <div class="container-fluid mx-0">
-        <div class="card-deck">
-          ${this.data.map(
-            (datum) => html`
-              <div class="card">
-                <div class="card-header">
-                  <ul class="nav nav-tabs card-header-tabs">
-                    <li
-                      class="nav-item"
-                      data-content="data"
-                      data-uuid=${datum.uuid}
-                      @click=${this.handleTabClick}
-                    >
-                      <a class="nav-link active" href="#">Data</a>
-                    </li>
-                    <li
-                      class="nav-item"
-                      data-content="attendees"
-                      data-uuid=${datum.uuid}
-                      @click=${this.handleTabClick}
-                    >
-                      <a class="nav-link" href="#">Waitlist</a>
-                    </li>
-                    <li
-                      class="nav-item"
-                      data-content="preview"
-                      data-uuid=${datum.uuid}
-                      @click=${this.handleTabClick}
-                    >
-                      <a class="nav-link">Preview</a>
-                    </li>
-                  </ul>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title">
-                    ${html`<span class="badge badge-primary"
-                      >${[
-                        new TemplateResultConverter(
-                          datum.name
-                        ).getRenderValues(),
-                      ]}</span
-                    >`}
-                  </h5>
-                  <lms-staff-event-card-form
-                    .datum=${datum}
-                    ?hidden=${!(
-                      this.cardStates?.get(datum.uuid as string)?.[0] === "data"
-                    )}
-                  ></lms-staff-event-card-form>
-                  <lms-staff-event-card-attendees
-                    ?hidden=${!(
-                      this.cardStates?.get(datum.uuid as string)?.[0] ===
-                      "attendees"
-                    )}
-                  ></lms-staff-event-card-attendees>
-                  <lms-staff-event-card-preview
-                    ?hidden=${!(
-                      this.cardStates?.get(datum.uuid as string)?.[0] ===
-                      "preview"
-                    )}
-                    .datum=${datum}
-                  ></lms-staff-event-card-preview>
-                </div>
-              </div>
-            `
-          )}
-        </div>
-      </div>
-    `;
+    return !this.data.length
+      ? html`<h1 class="text-center">
+          You have to create a
+          <lms-anchor
+            .href=${{
+              ...this.href,
+              params: {
+                ...this.href.params,
+                op: "target-groups",
+              },
+            }}
+            data-text="target group"
+            >target group</lms-anchor
+          >, a
+          <lms-anchor
+            .href=${{
+              ...this.href,
+              params: {
+                ...this.href.params,
+                op: "locations",
+              },
+            }}
+            data-text="location"
+            >location</lms-anchor
+          >
+          and an
+          <lms-anchor
+            .href=${{
+              ...this.href,
+              params: {
+                ...this.href.params,
+                op: "event-types",
+              },
+            }}
+            data-text="event type"
+            >event type</lms-anchor
+          >
+          first.
+        </h1>`
+      : html`
+          <div class="container-fluid mx-0">
+            <div class="card-deck">
+              ${this.data.map(
+                (datum) => html`
+                  <div class="card">
+                    <div class="card-header">
+                      <ul class="nav nav-tabs card-header-tabs">
+                        <li
+                          class="nav-item"
+                          data-content="data"
+                          data-uuid=${datum.uuid}
+                          @click=${this.handleTabClick}
+                        >
+                          <a class="nav-link active" href="#">Data</a>
+                        </li>
+                        <li
+                          class="nav-item"
+                          data-content="attendees"
+                          data-uuid=${datum.uuid}
+                          @click=${this.handleTabClick}
+                        >
+                          <a class="nav-link" href="#">Waitlist</a>
+                        </li>
+                        <li
+                          class="nav-item"
+                          data-content="preview"
+                          data-uuid=${datum.uuid}
+                          @click=${this.handleTabClick}
+                        >
+                          <a class="nav-link">Preview</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="card-body">
+                      <h5 class="card-title">
+                        ${html`<span class="badge badge-primary"
+                          >${[
+                            new TemplateResultConverter(
+                              datum.name
+                            ).getRenderValues(),
+                          ]}</span
+                        >`}
+                      </h5>
+                      <lms-staff-event-card-form
+                        .datum=${datum}
+                        ?hidden=${!(
+                          this.cardStates?.get(datum.uuid as string)?.[0] ===
+                          "data"
+                        )}
+                      ></lms-staff-event-card-form>
+                      <lms-staff-event-card-attendees
+                        ?hidden=${!(
+                          this.cardStates?.get(datum.uuid as string)?.[0] ===
+                          "attendees"
+                        )}
+                      ></lms-staff-event-card-attendees>
+                      <lms-staff-event-card-preview
+                        ?hidden=${!(
+                          this.cardStates?.get(datum.uuid as string)?.[0] ===
+                          "preview"
+                        )}
+                        .datum=${datum}
+                      ></lms-staff-event-card-preview>
+                    </div>
+                  </div>
+                `
+              )}
+            </div>
+          </div>
+        `;
   }
 }
