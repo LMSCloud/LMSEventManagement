@@ -1,27 +1,29 @@
-import { html, css, LitElement, nothing, PropertyValueMap } from "lit";
+import { html, css, LitElement, PropertyValueMap } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 // import TranslationHandler from "../lib/TranslationHandler";
 import { customElement, property } from "lit/decorators";
 import LMSToast from "./LMSToast";
-import { Gettext } from "gettext.js";
+// import { Gettext } from "gettext.js";
 import { Column } from "../sharedDeclarations";
 
 @customElement("lms-table")
 export default class LMSTable extends LitElement {
   @property({ type: Array }) data: Column[] = [];
   @property({ type: Array }) order: string[] = [];
-  @property({ type: Array, attribute: false }) _headers: string[] = [];
-  @property({ type: Boolean, attribute: false }) _isEditable = false;
-  @property({ type: Boolean, attribute: false }) _isDeletable = false;
-  @property({ state: true }) _toast = {
+  @property({ type: Array, attribute: false }) private headers: string[] = [];
+  @property({ type: Boolean, attribute: false }) protected isEditable = false;
+  @property({ type: Boolean, attribute: false }) protected isDeletable = false;
+  @property({ state: true }) private toast = {
     heading: "",
     message: "",
   };
-  @property({ state: true }) _i18n: Gettext = {} as Gettext;
-  @property({ state: true }) _notImplementedInBaseMessage =
+  // @property({ state: true }) private i18n: Gettext = {} as Gettext;
+  @property({ state: true }) private notImplementedInBaseMessage =
     "Implement this method in your extended LMSTable component.";
+  @property({ state: true }) protected emptyTableMessage = html`No data to
+  display.`;
 
   static override styles = [
     bootstrapStyles,
@@ -51,31 +53,31 @@ export default class LMSTable extends LitElement {
   // private async init() {
   //   const translationHandler = new TranslationHandler();
   //   await translationHandler.loadTranslations();
-  //   this._i18n = translationHandler.i18n;
+  //   this.i18n = translationHandler.i18n;
   // }
 
   public handleEdit(e: Event) {
-    console.info(e, this._notImplementedInBaseMessage);
+    console.info(e, this.notImplementedInBaseMessage);
   }
 
   public handleSave(e: Event) {
-    console.info(e, this._notImplementedInBaseMessage);
+    console.info(e, this.notImplementedInBaseMessage);
   }
 
   public handleDelete(e: Event) {
-    console.info(e, this._notImplementedInBaseMessage);
+    console.info(e, this.notImplementedInBaseMessage);
   }
 
   renderToast(status: string, result: { error: string; errors: ErrorEvent }) {
     if (result.error) {
-      this._toast = {
+      this.toast = {
         heading: status,
         message: result.error,
       };
     }
 
     if (result.errors) {
-      this._toast = {
+      this.toast = {
         heading: status,
         message: Object.values(result.errors)
           .map(({ message, path }) => `Sorry! ${message} at ${path}`)
@@ -86,8 +88,8 @@ export default class LMSTable extends LitElement {
     const lmsToast = document.createElement("lms-toast", {
       is: "lms-toast",
     }) as LMSToast;
-    lmsToast.heading = this._toast.heading;
-    lmsToast.message = this._toast.message;
+    lmsToast.heading = this.toast.heading;
+    lmsToast.message = this.toast.message;
     this.renderRoot.appendChild(lmsToast);
   }
 
@@ -119,7 +121,7 @@ export default class LMSTable extends LitElement {
 
     const hasData = data?.length > 0 ?? false;
     const [headers] = hasData ? data : [];
-    this._headers = this.order.filter(
+    this.headers = this.order.filter(
       (key) => headers && Object.prototype.hasOwnProperty.call(headers, key)
     );
 
@@ -139,7 +141,7 @@ export default class LMSTable extends LitElement {
 
   override render() {
     return !this.data.length
-      ? nothing
+      ? html`<h1 class="text-center">${this.emptyTableMessage}</h1>`
       : html`
           <div class="container-fluid mx-0">
             <table
@@ -147,10 +149,10 @@ export default class LMSTable extends LitElement {
             >
               <thead>
                 <tr>
-                  ${this._headers.map(
+                  ${this.headers.map(
                     (key) => html`<th scope="col">${key}</th>`
                   )}
-                  ${this._isEditable
+                  ${this.isEditable
                     ? html`<th scope="col">actions</th>`
                     : html``}
                 </tr>
@@ -159,11 +161,11 @@ export default class LMSTable extends LitElement {
                 ${this.data.map(
                   (item) => html`
                     <tr>
-                      ${this._headers.map(
+                      ${this.headers.map(
                         (key) =>
                           html`<td class="align-middle">${item[key]}</td>`
                       )}
-                      ${this._isEditable
+                      ${this.isEditable
                         ? html`
                             <td class="align-middle">
                               <div class="d-flex">
@@ -185,7 +187,7 @@ export default class LMSTable extends LitElement {
                                 </button>
                                 <button
                                   @click=${this.handleDelete}
-                                  ?hidden=${!this._isDeletable}
+                                  ?hidden=${!this.isDeletable}
                                   type="button"
                                   class="btn btn-danger mx-2"
                                 >
