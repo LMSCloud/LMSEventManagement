@@ -5,10 +5,10 @@ export default class LMSMatrix extends LitElement {
     value: {
         [key: string]: string;
     }[];
-    hasResolvedEntries: boolean;
     private group;
     private hasTransformedField;
     static styles: import("lit").CSSResult[];
+    connectedCallback(): void;
     performUpdate(): void;
     render(): TemplateResult<1>;
     private getMatrixInputMarkup;

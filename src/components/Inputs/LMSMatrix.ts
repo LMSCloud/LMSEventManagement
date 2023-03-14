@@ -1,8 +1,9 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html, TemplateResult, css } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined";
-import { ModalField } from "../../sharedDeclarations";
+import { MatrixGroup, ModalField } from "../../sharedDeclarations";
+import { map } from "lit/directives/map.js";
 
 type MatrixInputHandlerArgs = {
   e: Event;
@@ -24,11 +25,9 @@ type GroupItem = {
 @customElement("lms-matrix")
 export default class LMSMatrix extends LitElement {
   @property({ type: Object }) field: ModalField = {} as ModalField;
-  @property({ type: Array }) value: { [key: string]: string }[] = [];
-  @property({ type: Boolean }) hasResolvedEntries = false;
-  @property({ type: Array, attribute: false }) private group: GroupItem[] = [];
-  @property({ type: Boolean, attribute: false }) private hasTransformedField =
-    false;
+  @property({ type: Array }) value: MatrixGroup[] = [];
+  @state() private group: GroupItem[] = [];
+  @state() private hasTransformedField = false;
 
   static override styles = [
     bootstrapStyles,
@@ -39,7 +38,11 @@ export default class LMSMatrix extends LitElement {
     `,
   ];
 
-  override performUpdate(): void {
+  override connectedCallback(): void {
+    super.connectedCallback();
+  }
+
+  override willUpdate(): void {
     if (!this.value) {
       return;
     }
@@ -69,6 +72,7 @@ export default class LMSMatrix extends LitElement {
      *  as the form can be submitted without the user interacting with the
      *  matrix input. We only do this on the first update though. */
     if (!this.hasTransformedField) {
+      console.log(this.group);
       this.field.value = this.group.map(({ id, ...rest }) => {
         rest = Object.fromEntries(
           Object.entries(rest).map(([key, value]) => {
@@ -98,20 +102,23 @@ export default class LMSMatrix extends LitElement {
 
   override render() {
     const { field } = this;
+
     return html` <label for=${field.name}>${field.desc}</label>
       <table class="table table-bordered" id=${field.name}>
         <thead>
           <tr>
-            ${field.headers?.map(
+            ${map(
+              field.headers,
               ([name]) => html`<th scope="col">${name}</th>`
             )}
           </tr>
         </thead>
         <tbody>
-          ${field.entries?.map(
+          ${map(
+            field.entries,
             (entry) => html`<tr>
               <td class="align-middle">${entry.name}</td>
-              ${field.headers?.map((header) =>
+              ${map(field.headers, (header) =>
                 this.getMatrixInputMarkup({ field, entry, header })
               )}
             </tr>`

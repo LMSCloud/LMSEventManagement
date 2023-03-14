@@ -1,7 +1,6 @@
 import { customElement, property } from "lit/decorators";
 import LMSModal from "../components/LMSModal";
 import { CreateOpts, EventType, ModalField } from "../sharedDeclarations";
-import { Gettext } from "gettext.js";
 
 @customElement("lms-events-modal")
 export default class LMSEventsModal extends LMSModal {
@@ -9,200 +8,189 @@ export default class LMSEventsModal extends LMSModal {
     method: "POST",
     endpoint: "/api/v1/contrib/eventmanagement/events",
   };
-  @property({ type: Function, attribute: false }) modalFields = (
-    i18n: Gettext
-  ): ModalField[] => [
-    {
-      name: "name",
-      type: "text",
-      desc: i18n.gettext("Name"),
-      required: true,
-    },
-    {
-      name: "event_type",
-      type: "select",
-      desc: i18n.gettext("Event Type"),
-      logic: async () => {
-        const response = await fetch(
-          "/api/v1/contrib/eventmanagement/event_types"
-        );
-        const result = await response.json();
-        return result.map((event_type: any) => ({
-          value: event_type.id,
-          name: event_type.name,
-        }));
-      },
-      handler: async ({ e, value, fields }) => {
-        const selectedEventType =
-          e && e.target instanceof HTMLSelectElement
-            ? parseInt(e.target.value, 10)
-            : value && typeof value === "number"
-            ? value
-            : undefined;
-
-        if (selectedEventType === undefined) {
-          return;
-        }
-
-        const response = await fetch(
-          "/api/v1/contrib/eventmanagement/event_types"
-        );
-        const result = await response.json();
-
-        const newEventType = result.find(
-          (event_type: EventType) => event_type.id === selectedEventType
-        );
-
-        Object.entries(newEventType).forEach(([key, value]) => {
-          const field = fields.find((field: ModalField) => field.name === key);
-          if (!field) {
-            return;
-          }
-
-          if (typeof value === "number") {
-            field.value = value.toString();
-            return;
-          }
-
-          if (typeof value === "object" && value !== null) {
-            field.value = value as [];
-            return;
-          }
-
-          field.value = value as string;
-        });
-      },
-    },
-    {
-      name: "target_groups",
-      type: "matrix",
-      headers: [
-        ["target_group", "default"],
-        ["selected", "checkbox"],
-        ["fee", "number"],
-      ],
-      desc: i18n.gettext("Target Groups"),
-      logic: async () => {
-        const response = await fetch(
-          "/api/v1/contrib/eventmanagement/target_groups"
-        );
-        const result = await response.json();
-        return result.map((target_group: any) => ({
-          value: target_group.id,
-          name: target_group.name,
-        }));
-      },
-      required: false,
-    },
-    {
-      name: "min_age",
-      type: "number",
-      desc: i18n.gettext("Min Age"),
-      required: true,
-    },
-    {
-      name: "max_age",
-      type: "number",
-      desc: i18n.gettext("Max Age"),
-      required: true,
-    },
-    {
-      name: "max_participants",
-      type: "number",
-      desc: i18n.gettext("Max Participants"),
-      required: true,
-    },
-    {
-      name: "start_time",
-      type: "datetime-local",
-      desc: i18n.gettext("Start Time"),
-      required: true,
-    },
-    {
-      name: "end_time",
-      type: "datetime-local",
-      desc: i18n.gettext("End Time"),
-      required: true,
-    },
-    {
-      name: "registration_start",
-      type: "datetime-local",
-      desc: i18n.gettext("Registration Start"),
-      required: true,
-    },
-    {
-      name: "registration_end",
-      type: "datetime-local",
-      desc: i18n.gettext("Registration End"),
-      required: true,
-    },
-    {
-      name: "location",
-      type: "select",
-      desc: i18n.gettext("Location"),
-      logic: async () => {
-        const response = await fetch(
-          "/api/v1/contrib/eventmanagement/locations"
-        );
-        const result = await response.json();
-        return result.map((location: any) => ({
-          value: location.id,
-          name: location.name,
-        }));
-      },
-      required: false,
-    },
-    {
-      name: "image",
-      type: "text",
-      desc: i18n.gettext("Image"),
-      required: false,
-    },
-    {
-      name: "description",
-      type: "text",
-      desc: i18n.gettext("Description"),
-      required: false,
-    },
-    {
-      name: "status",
-      type: "select",
-      desc: i18n.gettext("Status"),
-      logic: async () => {
-        return [
-          { value: "pending", name: "Pending" },
-          { value: "confirmed", name: "Confirmed" },
-          { value: "canceled", name: "Canceled" },
-          { value: "sold_out", name: "Sold Out" },
-        ];
-      },
-      required: true,
-    },
-    {
-      name: "registration_link",
-      type: "text",
-      desc: i18n.gettext("Registration Link"),
-      required: false,
-    },
-    {
-      name: "open_registration",
-      type: "checkbox",
-      desc: i18n.gettext("Open Registration"),
-      required: false,
-    },
-  ];
 
   override connectedCallback() {
-    super.connectedCallback();
+    this.fields = [
+      {
+        name: "name",
+        type: "text",
+        desc: "Name",
+        required: true,
+      },
+      {
+        name: "event_type",
+        type: "select",
+        desc: "Event Type",
+        logic: async () => {
+          const response = await fetch(
+            "/api/v1/contrib/eventmanagement/event_types"
+          );
+          const result = await response.json();
+          return result.map((event_type: any) => ({
+            value: event_type.id,
+            name: event_type.name,
+          }));
+        },
+        handler: async ({ e, value, fields }) => {
+          const selectedEventType =
+            e && e.target instanceof HTMLSelectElement
+              ? parseInt(e.target.value, 10)
+              : value && typeof value === "number"
+              ? value
+              : undefined;
 
-    if (this._i18n instanceof Promise) {
-      this.fields = [];
-      this._i18n.then((i18n) => {
-        this.fields = this.modalFields(i18n);
-      });
-      return;
-    }
+          if (selectedEventType === undefined) {
+            return;
+          }
 
-    this.fields = this.modalFields(this._i18n);
+          const response = await fetch(
+            "/api/v1/contrib/eventmanagement/event_types"
+          );
+          const result = await response.json();
+
+          const newEventType = result.find(
+            (event_type: EventType) => event_type.id === selectedEventType
+          );
+
+          Object.entries(newEventType).forEach(([key, value]) => {
+            const field = fields.find(
+              (field: ModalField) => field.name === key
+            );
+            if (!field) {
+              return;
+            }
+
+            if (typeof value === "number") {
+              field.value = value.toString();
+              return;
+            }
+
+            if (typeof value === "object" && value !== null) {
+              field.value = value as [];
+              return;
+            }
+
+            field.value = value as string;
+          });
+        },
+      },
+      {
+        name: "target_groups",
+        type: "matrix",
+        headers: [
+          ["target_group", "default"],
+          ["selected", "checkbox"],
+          ["fee", "number"],
+        ],
+        desc: "Target Groups",
+        logic: async () => {
+          const response = await fetch(
+            "/api/v1/contrib/eventmanagement/target_groups"
+          );
+          const result = await response.json();
+          return result.map((target_group: any) => ({
+            value: target_group.id,
+            name: target_group.name,
+          }));
+        },
+        required: false,
+      },
+      {
+        name: "min_age",
+        type: "number",
+        desc: "Min Age",
+        required: true,
+      },
+      {
+        name: "max_age",
+        type: "number",
+        desc: "Max Age",
+        required: true,
+      },
+      {
+        name: "max_participants",
+        type: "number",
+        desc: "Max Participants",
+        required: true,
+      },
+      {
+        name: "start_time",
+        type: "datetime-local",
+        desc: "Start Time",
+        required: true,
+      },
+      {
+        name: "end_time",
+        type: "datetime-local",
+        desc: "End Time",
+        required: true,
+      },
+      {
+        name: "registration_start",
+        type: "datetime-local",
+        desc: "Registration Start",
+        required: true,
+      },
+      {
+        name: "registration_end",
+        type: "datetime-local",
+        desc: "Registration End",
+        required: true,
+      },
+      {
+        name: "location",
+        type: "select",
+        desc: "Location",
+        logic: async () => {
+          const response = await fetch(
+            "/api/v1/contrib/eventmanagement/locations"
+          );
+          const result = await response.json();
+          return result.map((location: any) => ({
+            value: location.id,
+            name: location.name,
+          }));
+        },
+        required: false,
+      },
+      {
+        name: "image",
+        type: "text",
+        desc: "Image",
+        required: false,
+      },
+      {
+        name: "description",
+        type: "text",
+        desc: "Description",
+        required: false,
+      },
+      {
+        name: "status",
+        type: "select",
+        desc: "Status",
+        logic: async () => {
+          return [
+            { value: "pending", name: "Pending" },
+            { value: "confirmed", name: "Confirmed" },
+            { value: "canceled", name: "Canceled" },
+            { value: "sold_out", name: "Sold Out" },
+          ];
+        },
+        required: true,
+      },
+      {
+        name: "registration_link",
+        type: "text",
+        desc: "Registration Link",
+        required: false,
+      },
+      {
+        name: "open_registration",
+        type: "checkbox",
+        desc: "Open Registration",
+        required: false,
+      },
+    ];
   }
 }

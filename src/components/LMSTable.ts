@@ -1,12 +1,23 @@
 import { html, css, LitElement, PropertyValueMap } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEdit,
+  faSave,
+  faTrash,
+  faSortDown,
+  faSortUp,
+} from "@fortawesome/free-solid-svg-icons";
 // import TranslationHandler from "../lib/TranslationHandler";
 import { customElement, property } from "lit/decorators";
 import LMSToast from "./LMSToast";
 // import { Gettext } from "gettext.js";
 import { Column } from "../sharedDeclarations";
+
+type sortTask = {
+  column: string;
+  direction: "asc" | "desc";
+};
 
 @customElement("lms-table")
 export default class LMSTable extends LitElement {
@@ -132,6 +143,29 @@ export default class LMSTable extends LitElement {
     }
   }
 
+  private sortByColumn({ column, direction }: sortTask) {
+    const { data } = this;
+    const hasData = data?.length > 0 ?? false;
+
+    console.log(JSON.stringify(this.data, null, 2));
+
+    if (hasData) {
+      this.data = data.sort((a, b) => {
+        const aValue = a[column];
+        const bValue = b[column];
+        if (aValue < bValue) {
+          return direction === "asc" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return direction === "asc" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+
+    console.log(JSON.stringify(this.data, null, 2));
+  }
+
   protected override willUpdate(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
@@ -150,7 +184,30 @@ export default class LMSTable extends LitElement {
               <thead>
                 <tr>
                   ${this.headers.map(
-                    (key) => html`<th scope="col">${key}</th>`
+                    (key) =>
+                      html`<th scope="col">
+                        ${key}
+                        <button
+                          class="btn btn-sm"
+                          @click=${() =>
+                            this.sortByColumn({
+                              column: key,
+                              direction: "asc",
+                            })}
+                        >
+                          ${litFontawesome(faSortDown)}
+                        </button>
+                        <button
+                          class="btn btn-sm"
+                          @click=${() =>
+                            this.sortByColumn({
+                              column: key,
+                              direction: "desc",
+                            })}
+                        >
+                          ${litFontawesome(faSortUp)}
+                        </button>
+                      </th>`
                   )}
                   ${this.isEditable
                     ? html`<th scope="col">actions</th>`

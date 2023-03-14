@@ -2,13 +2,10 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { LitElement, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ModalField, SelectOption } from "../../sharedDeclarations";
-import LMSModal from "../LMSModal";
 
 @customElement("lms-select")
 export default class LMSSelect extends LitElement {
   @property({ type: Object }) field: ModalField = {} as ModalField;
-  @property({ type: Object }) outerScope: LMSModal = {} as LMSModal;
-  @property({ type: Boolean }) hasResolvedEntries = false;
   static override styles = [bootstrapStyles];
 
   override render() {
@@ -23,13 +20,6 @@ export default class LMSSelect extends LitElement {
           @change=${(e: Event) => {
             this.field.value =
               (e.target as HTMLSelectElement).value ?? this.field.value;
-            if (this.field.handler) {
-              this.outerScope.executeHandler({
-                handler: this.field.handler,
-                event: e,
-                requestUpdate: true,
-              });
-            }
           }}
           ?required=${this.field.required}
         >

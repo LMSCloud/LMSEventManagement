@@ -38,6 +38,7 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
     "@granite-elements/granite-lit-bootstrap": "^4.6.0-0",
+    "@lit-labs/task": "^2.0.0",
     "@types/gettext.js": "^1.0.0",
     "@weavedev/lit-fontawesome": "^0.3.2",
     "gettext.js": "^1.2.0",

@@ -1,5 +1,6 @@
 import "./main.css";
 /** components */
+import LMSAnchor from "./components/LMSAnchor";
 import LMSCard from "./components/LMSCard";
 import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
@@ -30,6 +31,7 @@ import StaffLocationsView from "./views/StaffLocationsView";
 import StaffSettingsView from "./views/StaffSettingsView";
 import StaffTargetGroupsView from "./views/StaffTargetGroupsView";
 declare const _default: {
+    LMSAnchor: typeof LMSAnchor;
     LMSCard: typeof LMSCard;
     LMSEventsFilter: typeof LMSEventsFilter;
     LMSFloatingMenu: typeof LMSFloatingMenu;

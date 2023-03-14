@@ -143,3 +143,7 @@ export type URIComponents = {
   params?: Record<string, string>;
   fragment?: string;
 };
+
+export type MatrixGroup = {
+  [key: string]: string;
+};

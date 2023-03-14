@@ -1,14 +1,23 @@
 /* eslint-disable no-underscore-dangle */
-import { LitElement, html, css, TemplateResult, nothing } from "lit";
+import {
+  LitElement,
+  html,
+  css,
+  // PropertyValues,
+  nothing,
+  TemplateResult,
+} from "lit";
+import { map } from "lit/directives/map.js";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
-import TranslationHandler from "../lib/TranslationHandler";
-import { customElement, property } from "lit/decorators";
-import { Gettext } from "gettext.js";
+// import TranslationHandler from "../lib/TranslationHandler";
+import { customElement, property, state } from "lit/decorators";
+// import { Gettext } from "gettext.js";
 import {
   CreateOpts,
-  HandlerCallbackFunction,
+  MatrixGroup,
+  // HandlerCallbackFunction,
   ModalField,
 } from "../sharedDeclarations";
 import LMSSelect from "./Inputs/LMSSelect";
@@ -16,12 +25,12 @@ import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
 import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
 
-type HandlerExecutorArgs = {
-  handler: HandlerCallbackFunction;
-  event?: Event;
-  value?: string | number;
-  requestUpdate: boolean;
-};
+// type HandlerExecutorArgs = {
+//   handler: HandlerCallbackFunction;
+//   event?: Event;
+//   value?: string | number;
+//   requestUpdate: boolean;
+// };
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -39,13 +48,10 @@ export default class LMSModal extends LitElement {
     endpoint: "",
   };
   @property({ type: Boolean }) editable = false;
-  @property({ type: Boolean }) isOpen = false;
-  @property({ type: String, attribute: false }) _alertMessage = "";
-  @property({ type: String, attribute: false }) _modalTitle = "";
-  @property({ type: Object, attribute: false }) _i18n:
-    | Gettext
-    | Promise<Gettext> = {} as Gettext;
-  @property({ type: Boolean, attribute: false }) hasResolvedEntries = false;
+  @state() protected isOpen = false;
+  @state() protected alertMessage = "";
+  @state() protected modalTitle = "";
+  // @state() protected i18n: Gettext | Promise<Gettext> = {} as Gettext;
 
   static override styles = [
     bootstrapStyles,
@@ -90,6 +96,9 @@ export default class LMSModal extends LitElement {
         transition-timing-function: ease-in-out;
         transform: translateX(2px) translateY(1px) rotate(45deg);
       }
+      .btn-modal-wrapper:has(.tilted) {
+        z-index: 1051;
+      }
       svg {
         display: inline-block;
         width: 1em;
@@ -105,63 +114,12 @@ export default class LMSModal extends LitElement {
     `,
   ];
 
-  override connectedCallback() {
-    super.connectedCallback();
-    const translationHandler = new TranslationHandler();
-    this._i18n = translationHandler.loadTranslations();
-    this._i18n
-      .then((i18n) => {
-        this._i18n = i18n;
-      })
-      .then(() => {
-        /** Here we declare an array of Promises for each field in this.fields.
-         *  The Promises themselves resolve to tuples of the form [index, field.logic ? false : true].
-         *  When the then after the call to the logic function is executed,
-         *  the second element of the tuple is set to true. */
-        const logicResolved = this.fields.map((field, index) => {
-          if (field.logic) {
-            return field.logic().then((entries) => {
-              field.entries = entries;
-
-              if (field.type === "select") {
-                [field.value] = field.default
-                  ? field.default.value
-                  : field.entries.map((entry) => entry.value);
-
-                if (field.handler) {
-                  this.executeHandler({
-                    handler: field.handler,
-                    value: field.value,
-                    requestUpdate: false,
-                  });
-                }
-              }
-
-              return [index, true];
-            });
-          }
-          return Promise.resolve([index, true]);
-        });
-
-        /** We then wait for all the Promises to resolve and then set the
-         * hasResolvedEntries property to true. */
-        Promise.all(logicResolved).then(() => {
-          this.hasResolvedEntries = true;
-        });
-      });
-  }
-
-  override updated() {
-    /** We have to set the _i18n attribute to the actual
-     *  class after the promise has been resolved.
-     *  We also want to cover the case were this._i18n
-     *  is defined but not yet a Promise. */
-    if (this._i18n instanceof Promise) {
-      this._i18n.then((i18n) => {
-        this._i18n = i18n;
-      });
-    }
-  }
+  // hasChanged() {
+  //   return (newValues: PropertyValues, oldValues: PropertyValues) =>
+  //     Object.keys(newValues).some(
+  //       (key) => newValues.get(key) !== oldValues.get(key)
+  //     );
+  // }
 
   private toggleModal() {
     const { renderRoot } = this;
@@ -188,21 +146,18 @@ export default class LMSModal extends LitElement {
       }),
     });
 
-    if (response.status >= 200 && response.status <= 299) {
+    if (response.ok) {
       this.toggleModal();
 
       const event = new CustomEvent("created", { bubbles: true });
       this.dispatchEvent(event);
     }
 
-    if (response.status >= 400) {
+    if (!response.ok) {
       const result = await response.json();
 
-      /** We have to check whether we get a single error or an
-       *  errors object. If we get an errors object, we have to
-       *  loop through it and display each error message. */
       if (result.error) {
-        this._alertMessage = `Sorry! ${result.error}`;
+        this.alertMessage = `Sorry! ${result.error}`;
         return;
       }
 
@@ -213,123 +168,94 @@ export default class LMSModal extends LitElement {
   }
 
   private dismissAlert() {
-    this._alertMessage = "";
+    this.alertMessage = "";
   }
 
   override render() {
-    return this.fields.every((field) => field.value === undefined)
-      ? nothing
-      : html`
-          <div class="btn-modal-wrapper">
-            <button
-              @click=${this.toggleModal}
-              class="btn-modal ${this.isOpen && "tilted"}"
-              type="button"
-            >
-              ${litFontawesome(faPlus)}
-            </button>
-          </div>
-          <div class="backdrop" ?hidden=${!this.isOpen}></div>
-          <div
-            class="modal fade ${this.isOpen && "d-block show"}"
-            id="lms-modal"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="lms-modal-title"
-            aria-hidden="true"
-          >
-            <div class="modal-dialog modal-dialog-centered" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="lms-modal-title">
-                    ${this._modalTitle || "Add"}
-                  </h5>
+    return html`
+      <div class="btn-modal-wrapper">
+        <button
+          @click=${this.toggleModal}
+          class="btn-modal ${this.isOpen && "tilted"}"
+          type="button"
+        >
+          ${litFontawesome(faPlus)}
+        </button>
+      </div>
+      <div class="backdrop" ?hidden=${!this.isOpen}></div>
+      <div
+        class="modal fade ${this.isOpen && "d-block show"}"
+        id="lms-modal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="lms-modal-title"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="lms-modal-title">
+                ${this.modalTitle || "Add"}
+              </h5>
+              <button
+                @click=${this.toggleModal}
+                type="button"
+                class="close"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form @submit=${this.create}>
+              <div class="modal-body">
+                <div
+                  role="alert"
+                  ?hidden=${!this.alertMessage}
+                  class="alert alert-${this.alertMessage.includes("Sorry!") &&
+                  "danger"} alert-dismissible fade show"
+                >
+                  ${this.alertMessage}
                   <button
-                    @click=${this.toggleModal}
+                    @click=${this.dismissAlert}
                     type="button"
                     class="close"
+                    data-dismiss="alert"
                     aria-label="Close"
                   >
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <form @submit=${this.create}>
-                  <div class="modal-body">
-                    <div
-                      role="alert"
-                      ?hidden=${!this._alertMessage}
-                      class="alert alert-${this._alertMessage.includes(
-                        "Sorry!"
-                      ) && "danger"} alert-dismissible fade show"
-                    >
-                      ${this._alertMessage}
-                      <button
-                        @click=${this.dismissAlert}
-                        type="button"
-                        class="close"
-                        data-dismiss="alert"
-                        aria-label="Close"
-                      >
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    ${this.fields.map((field) => this.getFieldMarkup(field))}
-                  </div>
-                  <div class="modal-footer">
-                    <button
-                      type="button"
-                      class="btn btn-secondary"
-                      data-dismiss="modal"
-                      @click=${this.toggleModal}
-                    >
-                      ${litFontawesome(faClose)}
-                      <span>Close</span>
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                      ${litFontawesome(faPlus)}
-                      <span>Create</span>
-                    </button>
-                  </div>
-                </form>
+                ${map(this.fields, (value) => this.getFieldMarkup(value))}
               </div>
-            </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+                  @click=${this.toggleModal}
+                >
+                  ${litFontawesome(faClose)}
+                  <span>Close</span>
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  ${litFontawesome(faPlus)}
+                  <span>Create</span>
+                </button>
+              </div>
+            </form>
           </div>
-        `;
-  }
-
-  public executeHandler({
-    handler,
-    event,
-    value,
-    requestUpdate,
-  }: HandlerExecutorArgs) {
-    if (event) {
-      handler({ e: event, fields: this.fields }).then(() => {
-        if (requestUpdate) this.requestUpdate();
-      });
-      return;
-    }
-
-    if (value) {
-      handler({ value, fields: this.fields }).then(() => {
-        if (requestUpdate) this.requestUpdate();
-      });
-    }
+        </div>
+      </div>
+    `;
   }
 
   private getFieldMarkup(field: ModalField) {
-    if (!field.desc) return nothing;
+    const { type, desc } = field;
+    if (!type || !desc) return nothing;
 
     const { value } = field;
     const fieldTypes = new Map<string, TemplateResult>([
-      [
-        "select",
-        html`<lms-select
-          .field=${field}
-          .outerScope=${this}
-          .hasResolvedEntries=${this.hasResolvedEntries}
-        ></lms-select>`,
-      ],
+      ["select", html`<lms-select .field=${field}></lms-select>`],
       [
         "checkbox",
         html`<lms-checkbox-input
@@ -337,13 +263,12 @@ export default class LMSModal extends LitElement {
           .value=${value as string}
         ></lms-checkbox-input>`,
       ],
-      ["info", html`<p>${field.desc}</p>`],
+      ["info", html`<p>${desc}</p>`],
       [
         "matrix",
         html`<lms-matrix
           .field=${field}
-          .value=${value as { [key: string]: string }[]}
-          .hasResolvedEntries=${this.hasResolvedEntries}
+          .value=${value as MatrixGroup[]}
         ></lms-matrix>`,
       ],
       [
@@ -355,12 +280,8 @@ export default class LMSModal extends LitElement {
       ],
     ]);
 
-    if (!field.type) {
-      return nothing;
-    }
-
-    return fieldTypes.has(field.type)
-      ? fieldTypes.get(field.type)
+    return fieldTypes.has(type)
+      ? fieldTypes.get(type)
       : fieldTypes.get("default");
   }
 }

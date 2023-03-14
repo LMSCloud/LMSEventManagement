@@ -1,18 +1,14 @@
-import { LitElement, nothing, PropertyValueMap } from "lit";
-import { Gettext } from "gettext.js";
+import { LitElement, PropertyValueMap } from "lit";
 import { Column } from "../sharedDeclarations";
 export default class LMSTable extends LitElement {
     data: Column[];
     order: string[];
-    _headers: string[];
-    _isEditable: boolean;
-    _isDeletable: boolean;
-    _toast: {
-        heading: string;
-        message: string;
-    };
-    _i18n: Gettext;
-    _notImplementedInBaseMessage: string;
+    private headers;
+    protected isEditable: boolean;
+    protected isDeletable: boolean;
+    private toast;
+    private notImplementedInBaseMessage;
+    protected emptyTableMessage: import("lit").TemplateResult<1>;
     static styles: import("lit").CSSResult[];
     handleEdit(e: Event): void;
     handleSave(e: Event): void;
@@ -23,7 +19,8 @@ export default class LMSTable extends LitElement {
     }): void;
     private sortByOrder;
     private sortColumns;
+    private sortByColumn;
     protected willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
-    render(): typeof nothing | import("lit").TemplateResult<1>;
+    render(): import("lit").TemplateResult<1>;
 }
 //# sourceMappingURL=LMSTable.d.ts.map
