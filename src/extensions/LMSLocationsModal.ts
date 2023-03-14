@@ -17,36 +17,42 @@ export default class LMSLocationsModal extends LMSModal {
       type: "text",
       desc: i18n.gettext("Name"),
       required: true,
+      value: "",
     },
     {
       name: "street",
       type: "text",
       desc: i18n.gettext("Street"),
       required: true,
+      value: "",
     },
     {
       name: "number",
       type: "text",
       desc: i18n.gettext("Number"),
       required: false,
+      value: "",
     },
     {
       name: "city",
       type: "text",
       desc: i18n.gettext("City"),
       required: false,
+      value: "",
     },
     {
       name: "zip",
       type: "number",
       desc: i18n.gettext("Zip"),
       required: false,
+      value: "0",
     },
     {
       name: "country",
       type: "text",
       desc: i18n.gettext("Country"),
       required: false,
+      value: "",
     },
   ];
 

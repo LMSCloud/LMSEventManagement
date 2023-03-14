@@ -17,18 +17,21 @@ export default class LMSTargetGroupsModal extends LMSModal {
       type: "text",
       desc: i18n.gettext("Name"),
       required: true,
+      value: "",
     },
     {
       name: "min_age",
       type: "number",
       desc: i18n.gettext("Min Age"),
       required: true,
+      value: "0",
     },
     {
       name: "max_age",
       type: "number",
       desc: i18n.gettext("Max Age"),
       required: false,
+      value: "0",
     },
   ];
 

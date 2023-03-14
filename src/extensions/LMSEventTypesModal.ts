@@ -17,6 +17,7 @@ export default class LMSEventTypesModal extends LMSModal {
       type: "text",
       desc: i18n.gettext("Name"),
       required: true,
+      value: "",
     },
     {
       name: "target_groups",
@@ -40,7 +41,6 @@ export default class LMSEventTypesModal extends LMSModal {
       handler: async ({ e, fields }) => {
         if (!e) {
           return;
-        
         }
         const target = e.target as HTMLInputElement;
 
@@ -71,24 +71,28 @@ export default class LMSEventTypesModal extends LMSModal {
           ).toString();
       },
       required: false,
+      value: [],
     },
     {
       name: "min_age",
       type: "number",
       desc: i18n.gettext("Min Age"),
       required: true,
+      value: "0",
     },
     {
       name: "max_age",
       type: "number",
       desc: i18n.gettext("Max Age"),
       required: true,
+      value: "0",
     },
     {
       name: "max_participants",
       type: "number",
       desc: i18n.gettext("Max Participants"),
       required: true,
+      value: "0",
     },
     {
       name: "location",
@@ -105,24 +109,28 @@ export default class LMSEventTypesModal extends LMSModal {
         }));
       },
       required: false,
+      value: [],
     },
     {
       name: "image",
       type: "text",
       desc: i18n.gettext("Image"),
       required: false,
+      value: "0",
     },
     {
       name: "description",
       type: "text",
       desc: i18n.gettext("Description"),
       required: false,
+      value: "",
     },
     {
       name: "open_registration",
       type: "checkbox",
       desc: i18n.gettext("Open Registration"),
       required: false,
+      value: "0",
     },
   ];
 
