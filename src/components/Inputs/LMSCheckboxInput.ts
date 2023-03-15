@@ -11,23 +11,24 @@ export default class LMSCheckboxInput extends LitElement {
   static override styles = [bootstrapStyles];
 
   override render() {
+    const { name, value, desc, required } = this.field;
     return html`
       <div class="form-check">
         <input
           type="checkbox"
-          name=${this.field.name}
-          id=${this.field.name}
-          value=${(this.field.value as string) ?? "1"}
+          name=${name}
+          id=${name}
+          value=${(value as string) ?? "1"}
           class="form-check-input"
           @input=${(e: Event) => {
-            this.field.value = (e.target as HTMLInputElement).checked
-              ? "1"
-              : "0";
+            this.field.value = (
+              (e.target as HTMLInputElement).checked ? 1 : 0
+            ).toString();
           }}
-          ?required=${this.field.required}
+          ?required=${required}
           ?checked=${[true, "true", "1"].includes(this.value as string)}
         />
-        <label for="${this.field.name}">&nbsp;${this.field.desc}</label>
+        <label for="${name}">&nbsp;${desc}</label>
       </div>
     `;
   }

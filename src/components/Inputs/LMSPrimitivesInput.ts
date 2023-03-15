@@ -12,21 +12,21 @@ export default class LMSPrimitivesInput extends LitElement {
   static override styles = [bootstrapStyles];
 
   override render() {
+    const { name, value, desc, type, required } = this.field;
     return html` <div class="form-group">
-      <label for=${this.field.name}>${this.field.desc}</label>
+      <label for=${name}>${desc}</label>
       <input
-        type=${ifDefined(this.field.type) as InputType}
-        name=${this.field.name}
-        id=${this.field.name}
+        type=${ifDefined(type) as InputType}
+        name=${name}
+        id=${name}
         value=${ifDefined(
           typeof this.value === "string" ? this.value : this.value?.toString()
         )}
         class="form-control"
         @input=${(e: Event) => {
-          this.field.value =
-            (e.target as HTMLInputElement).value ?? this.field.value;
+          this.field.value = (e.target as HTMLInputElement).value ?? value;
         }}
-        ?required=${this.field.required}
+        ?required=${required}
       />
     </div>`;
   }

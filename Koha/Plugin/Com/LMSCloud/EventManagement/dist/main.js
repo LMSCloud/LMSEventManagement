@@ -2034,23 +2034,22 @@ ${value}</textarea
         }
         render() {
             var _a;
+            const { name, value, desc, required } = this.field;
             return y `
       <div class="form-check">
         <input
           type="checkbox"
-          name=${this.field.name}
-          id=${this.field.name}
-          value=${(_a = this.field.value) !== null && _a !== void 0 ? _a : "1"}
+          name=${name}
+          id=${name}
+          value=${(_a = value) !== null && _a !== void 0 ? _a : "1"}
           class="form-check-input"
           @input=${(e) => {
-            this.field.value = e.target.checked
-                ? "1"
-                : "0";
+            this.field.value = (e.target.checked ? 1 : 0).toString();
         }}
-          ?required=${this.field.required}
+          ?required=${required}
           ?checked=${[true, "true", "1"].includes(this.value)}
         />
-        <label for="${this.field.name}">&nbsp;${this.field.desc}</label>
+        <label for="${name}">&nbsp;${desc}</label>
       </div>
     `;
         }
@@ -2206,20 +2205,20 @@ ${value}</textarea
         }
         render() {
             var _a;
+            const { name, value, desc, type, required } = this.field;
             return y ` <div class="form-group">
-      <label for=${this.field.name}>${this.field.desc}</label>
+      <label for=${name}>${desc}</label>
       <input
-        type=${l(this.field.type)}
-        name=${this.field.name}
-        id=${this.field.name}
+        type=${l(type)}
+        name=${name}
+        id=${name}
         value=${l(typeof this.value === "string" ? this.value : (_a = this.value) === null || _a === void 0 ? void 0 : _a.toString())}
         class="form-control"
         @input=${(e) => {
             var _a;
-            this.field.value =
-                (_a = e.target.value) !== null && _a !== void 0 ? _a : this.field.value;
+            this.field.value = (_a = e.target.value) !== null && _a !== void 0 ? _a : value;
         }}
-        ?required=${this.field.required}
+        ?required=${required}
       />
     </div>`;
         }
