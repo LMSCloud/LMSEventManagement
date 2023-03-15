@@ -1073,7 +1073,7 @@
                 <div
                   role="alert"
                   ?hidden=${!this.alertMessage}
-                  class="alert  ${o({
+                  class="alert ${o({
             "alert-danger": this.alertMessage.includes("Sorry!"),
         })} alert-dismissible fade show"
                 >
@@ -1663,7 +1663,7 @@
                 </tr>
               </thead>
               <tbody>
-                ${result.map(({ id, name }) => {
+                ${o$1(result, ({ id, name }) => {
                         var _a, _b;
                         const target_group = value.find((target_group) => target_group.target_group_id === id);
                         const selected = (_a = target_group === null || target_group === void 0 ? void 0 : target_group.selected) !== null && _a !== void 0 ? _a : false;
@@ -1796,7 +1796,7 @@
                         const response = await fetch("/api/v1/contrib/eventmanagement/locations");
                         const result = await response.json();
                         return y `<select class="form-control" name="location" disabled>
-            ${result.map(({ id, name }) => y `<option value=${id}>${name}</option>`)};
+            ${o$1(result, ({ id, name }) => y `<option value=${id}>${name}</option>`)};
           </select>`;
                     },
                 ],
@@ -1864,7 +1864,7 @@ ${value}</textarea
                     () => y `<input
             @change=${(e) => {
                     const target = e.target;
-                    target.value = target.checked ? "1" : "0";
+                    target.value = (target.checked ? 1 : 0).toString();
                 }}
             class="form-check-input"
             type="checkbox"
@@ -1939,7 +1939,7 @@ ${value}</textarea
                 : y `
           <div class="container-fluid mx-0">
             <div class="card-deck">
-              ${this.data.map((datum) => {
+              ${o$1(this.data, (datum) => {
                 var _a, _b, _c, _d, _e, _f;
                 return y `
                   <div class="card">
@@ -2016,10 +2016,10 @@ ${value}</textarea
         e$1({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "data", void 0);
     __decorate([
-        e$1({ type: Object, attribute: false })
+        t$1()
     ], LMSStaffEventCardDeck.prototype, "cardStates", void 0);
     __decorate([
-        e$1({ type: Object, attribute: false })
+        t$1()
     ], LMSStaffEventCardDeck.prototype, "href", void 0);
     LMSStaffEventCardDeck = __decorate([
         e$2("lms-staff-event-card-deck")
@@ -2265,12 +2265,12 @@ ${value}</textarea
         }}
           ?required=${required}
         >
-          ${this.defaultOption.name
-            ? y `<option value=${this.defaultOption.id} selected>
-                ${this.defaultOption.name}
-              </option>`
-            : b}
-          ${o$1(dbData, ({ id, name }) => y `<option value=${id}>${name}</option>`)}
+          ${o$1(dbData, ({ id, name }) => y `<option
+                value=${id}
+                ?selected=${id === this.defaultOption.id}
+              >
+                ${name}
+              </option>`)}
         </select>
       </div>
     `;
@@ -2380,34 +2380,6 @@ ${value}</textarea
                             id: event_type.id,
                             name: event_type.name,
                         }));
-                    },
-                    handler: async ({ e, value, fields }) => {
-                        const selectedEventType = e && e.target instanceof HTMLSelectElement
-                            ? parseInt(e.target.value, 10)
-                            : value && typeof value === "number"
-                                ? value
-                                : undefined;
-                        if (selectedEventType === undefined) {
-                            return;
-                        }
-                        const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
-                        const result = await response.json();
-                        const newEventType = result.find((event_type) => event_type.id === selectedEventType);
-                        Object.entries(newEventType).forEach(([key, value]) => {
-                            const field = fields.find((field) => field.name === key);
-                            if (!field) {
-                                return;
-                            }
-                            if (typeof value === "number") {
-                                field.value = value.toString();
-                                return;
-                            }
-                            if (typeof value === "object" && value !== null) {
-                                field.value = value;
-                                return;
-                            }
-                            field.value = value;
-                        });
                     },
                 },
                 {
@@ -2524,6 +2496,43 @@ ${value}</textarea
                     required: false,
                 },
             ];
+        }
+        willUpdate() {
+            const { fields } = this;
+            const eventType = fields.find((field) => field.name === "event_type");
+            if (eventType) {
+                const { dbData } = eventType;
+                if (dbData) {
+                    const [event_type] = dbData;
+                    const { id } = event_type;
+                    const result = async () => {
+                        const response = await fetch(`/api/v1/contrib/eventmanagement/event_types/${id}`);
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        const error = await response.json();
+                        return error;
+                    };
+                    result()
+                        .then((event_type) => {
+                        if (event_type instanceof Error) {
+                            return;
+                        }
+                        console.log(event_type);
+                        // Object.entries(event_type as EventType).forEach(
+                        //   ([property, value]) => {
+                        //     const field = fields[property];
+                        //     if (field) {
+                        //       field.value = value;
+                        //     }
+                        //   }
+                        // );
+                    })
+                        .catch((error) => {
+                        console.error(error);
+                    });
+                }
+            }
         }
     };
     __decorate([
@@ -2723,7 +2732,7 @@ ${value}</textarea
                     : data;
             }
         }
-        sortByColumn({ column, direction }) {
+        sortColumnByValue({ column, direction }) {
             var _a;
             const { data } = this;
             const hasData = (_a = (data === null || data === void 0 ? void 0 : data.length) > 0) !== null && _a !== void 0 ? _a : false;
@@ -2761,7 +2770,7 @@ ${value}</textarea
                         ${key}
                         <button
                           class="btn btn-sm"
-                          @click=${() => this.sortByColumn({
+                          @click=${() => this.sortColumnByValue({
                 column: key,
                 direction: "asc",
             })}
@@ -2770,7 +2779,7 @@ ${value}</textarea
                         </button>
                         <button
                           class="btn btn-sm"
-                          @click=${() => this.sortByColumn({
+                          @click=${() => this.sortColumnByValue({
                 column: key,
                 direction: "desc",
             })}

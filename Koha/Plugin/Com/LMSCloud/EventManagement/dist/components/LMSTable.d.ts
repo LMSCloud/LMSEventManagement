@@ -19,7 +19,7 @@ export default class LMSTable extends LitElement {
     }): void;
     private sortByOrder;
     private sortColumns;
-    private sortByColumn;
+    private sortColumnByValue;
     protected willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     render(): import("lit").TemplateResult<1>;
 }
