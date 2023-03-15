@@ -2362,6 +2362,7 @@ ${value}</textarea
             };
         }
         connectedCallback() {
+            super.connectedCallback();
             this.fields = [
                 {
                     name: "name",
