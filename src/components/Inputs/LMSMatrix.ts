@@ -59,50 +59,45 @@ export default class LMSMatrix extends LitElement {
   }
 
   handleInput({ e, id, header }: InputHandlerArgs) {
-    if (e.target instanceof HTMLInputElement) {
-      const { field } = this;
-      const { type } = e.target;
-      const [name] = header;
+    if (!(e.target instanceof HTMLInputElement)) return;
 
-      switch (type) {
-        case "number":
-          const { value } = e.target;
-          if (field?.value instanceof Array) {
-            const item = field.value.find((item) => item.id == id);
-            if (item) {
-              item[name] = value.toString();
-              break;
-            }
+    const { field } = this;
+    const { type } = e.target;
+    const [name] = header;
 
-            field.value.push({ id: id.toString(), [name]: value.toString() });
-            break;
-          }
-
-          field.value = [{ id: id.toString(), [name]: value.toString() }];
-          break;
-        case "checkbox":
-          const { checked } = e.target;
-          if (field?.value instanceof Array) {
-            const item = field.value.find((item) => item.id == id);
-            if (item) {
-              item[name] = (checked ? 1 : 0).toString();
-              break;
-            }
-
-            field.value.push({
-              id: id.toString(),
-              [name]: (checked ? 1 : 0).toString(),
-            });
-            break;
-          }
-
-          field.value = [
-            { id: id.toString(), [name]: (checked ? 1 : 0).toString() },
-          ];
-          break;
-        default:
-          break;
+    const updateOrCreateItem = (value: string) => {
+      /** If there's no Array present in field.value
+       *  we create one and add the item to it. */
+      if (!(field?.value instanceof Array)) {
+        field.value = [{ id: id.toString(), [name]: value }];
+        return;
       }
+
+      /** Now it must be an array because the guard clause
+       *  didn't return in the previous step. We check if
+       *  the item exists and update it if it does. */
+      const item = field.value.find((item) => item.id == id);
+      if (item) {
+        item[name] = value;
+        return;
+      }
+
+      /** If it is an Array but we didn't find an item  we
+       *  have to add a new one. */
+      field.value.push({ id: id.toString(), [name]: value });
+    };
+
+    switch (type) {
+      case "number":
+        const { value } = e.target;
+        updateOrCreateItem(value.toString());
+        break;
+      case "checkbox":
+        const { checked } = e.target;
+        updateOrCreateItem((checked ? 1 : 0).toString());
+        break;
+      default:
+        break;
     }
   }
 
