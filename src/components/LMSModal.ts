@@ -24,6 +24,7 @@ import LMSSelect from "./Inputs/LMSSelect";
 import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
 import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
+import { classMap } from "lit/directives/class-map.js";
 
 // type HandlerExecutorArgs = {
 //   handler: HandlerCallbackFunction;
@@ -121,6 +122,8 @@ export default class LMSModal extends LitElement {
   //     );
   // }
 
+  /** What's the best place to fetch data asynchronously before a render in a LitElement */
+
   private toggleModal() {
     const { renderRoot } = this;
     this.isOpen = !this.isOpen;
@@ -171,12 +174,28 @@ export default class LMSModal extends LitElement {
     this.alertMessage = "";
   }
 
+  override firstUpdated() {
+    const dbDataPopulated = this.fields.map(async (field: ModalField) => {
+      if (field.logic) {
+        return {
+          ...field,
+          dbData: await field.logic(),
+        };
+      }
+      return field;
+    });
+
+    Promise.all(dbDataPopulated).then((fields: ModalField[]) => {
+      this.fields = fields;
+    });
+  }
+
   override render() {
     return html`
       <div class="btn-modal-wrapper">
         <button
           @click=${this.toggleModal}
-          class="btn-modal ${this.isOpen && "tilted"}"
+          class="btn-modal ${classMap({ tilted: this.isOpen })}"
           type="button"
         >
           ${litFontawesome(faPlus)}
@@ -184,7 +203,10 @@ export default class LMSModal extends LitElement {
       </div>
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
-        class="modal fade ${this.isOpen && "d-block show"}"
+        class="modal fade ${classMap({
+          "d-block": this.isOpen,
+          show: this.isOpen,
+        })}"
         id="lms-modal"
         tabindex="-1"
         role="dialog"
@@ -195,7 +217,7 @@ export default class LMSModal extends LitElement {
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="lms-modal-title">
-                ${this.modalTitle || "Add"}
+                ${this.modalTitle ?? "Add"}
               </h5>
               <button
                 @click=${this.toggleModal}
@@ -211,8 +233,9 @@ export default class LMSModal extends LitElement {
                 <div
                   role="alert"
                   ?hidden=${!this.alertMessage}
-                  class="alert alert-${this.alertMessage.includes("Sorry!") &&
-                  "danger"} alert-dismissible fade show"
+                  class="alert  ${classMap({
+                    "alert-danger": this.alertMessage.includes("Sorry!"),
+                  })} alert-dismissible fade show"
                 >
                   ${this.alertMessage}
                   <button
