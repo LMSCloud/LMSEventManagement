@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators";
 import LMSModal from "../components/LMSModal";
-import { CreateOpts, EventType, ModalField } from "../sharedDeclarations";
+import { CreateOpts, EventType } from "../sharedDeclarations";
 
 @customElement("lms-events-modal")
 export default class LMSEventsModal extends LMSModal {
@@ -31,48 +31,6 @@ export default class LMSEventsModal extends LMSModal {
             id: event_type.id,
             name: event_type.name,
           }));
-        },
-        handler: async ({ e, value, fields }) => {
-          const selectedEventType =
-            e && e.target instanceof HTMLSelectElement
-              ? parseInt(e.target.value, 10)
-              : value && typeof value === "number"
-              ? value
-              : undefined;
-
-          if (selectedEventType === undefined) {
-            return;
-          }
-
-          const response = await fetch(
-            "/api/v1/contrib/eventmanagement/event_types"
-          );
-          const result = await response.json();
-
-          const newEventType = result.find(
-            (event_type: EventType) => event_type.id === selectedEventType
-          );
-
-          Object.entries(newEventType).forEach(([key, value]) => {
-            const field = fields.find(
-              (field: ModalField) => field.name === key
-            );
-            if (!field) {
-              return;
-            }
-
-            if (typeof value === "number") {
-              field.value = value.toString();
-              return;
-            }
-
-            if (typeof value === "object" && value !== null) {
-              field.value = value as [];
-              return;
-            }
-
-            field.value = value as string;
-          });
         },
       },
       {
@@ -193,5 +151,51 @@ export default class LMSEventsModal extends LMSModal {
         required: false,
       },
     ];
+  }
+
+  override willUpdate() {
+    const { fields } = this;
+    const eventType = fields.find((field) => field.name === "event_type");
+    if (eventType) {
+      const { dbData } = eventType;
+      if (dbData) {
+        const [event_type] = dbData;
+        const { id } = event_type;
+
+        const result = async () => {
+          const response = await fetch(
+            `/api/v1/contrib/eventmanagement/event_types/${id}`
+          );
+
+          if (response.ok) {
+            return response.json() as unknown as EventType;
+          }
+
+          const error = await response.json();
+          return error as Error;
+        };
+
+        result()
+          .then((event_type) => {
+            if (event_type instanceof Error) {
+              return;
+            }
+
+            console.log(event_type);
+
+            // Object.entries(event_type as EventType).forEach(
+            //   ([property, value]) => {
+            //     const field = fields[property];
+            //     if (field) {
+            //       field.value = value;
+            //     }
+            //   }
+            // );
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    }
   }
 }
