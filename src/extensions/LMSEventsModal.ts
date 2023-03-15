@@ -10,6 +10,7 @@ export default class LMSEventsModal extends LMSModal {
   };
 
   override connectedCallback() {
+    super.connectedCallback();
     this.fields = [
       {
         name: "name",
