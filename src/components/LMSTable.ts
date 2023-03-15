@@ -9,10 +9,11 @@ import {
   faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
 // import TranslationHandler from "../lib/TranslationHandler";
-import { customElement, property } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators";
 import LMSToast from "./LMSToast";
 // import { Gettext } from "gettext.js";
 import { Column } from "../sharedDeclarations";
+import { map } from "lit/directives/map";
 
 type sortTask = {
   column: string;
@@ -23,18 +24,19 @@ type sortTask = {
 export default class LMSTable extends LitElement {
   @property({ type: Array }) data: Column[] = [];
   @property({ type: Array }) order: string[] = [];
-  @property({ type: Array, attribute: false }) private headers: string[] = [];
-  @property({ type: Boolean, attribute: false }) protected isEditable = false;
-  @property({ type: Boolean, attribute: false }) protected isDeletable = false;
-  @property({ state: true }) private toast = {
+  @property({ type: Array }) private headers: string[] = [];
+  @property({ type: Boolean, attribute: "is-editable" }) protected isEditable =
+    false;
+  @property({ type: Boolean, attribute: "is-deletable" })
+  protected isDeletable = false;
+  @state() private toast = {
     heading: "",
     message: "",
   };
   // @property({ state: true }) private i18n: Gettext = {} as Gettext;
-  @property({ state: true }) private notImplementedInBaseMessage =
+  @state() private notImplementedInBaseMessage =
     "Implement this method in your extended LMSTable component.";
-  @property({ state: true }) protected emptyTableMessage = html`No data to
-  display.`;
+  @state() protected emptyTableMessage = html`No data to display.`;
 
   static override styles = [
     bootstrapStyles,
@@ -133,7 +135,8 @@ export default class LMSTable extends LitElement {
     const hasData = data?.length > 0 ?? false;
     const [headers] = hasData ? data : [];
     this.headers = this.order.filter(
-      (key) => headers && Object.prototype.hasOwnProperty.call(headers, key)
+      (header) =>
+        headers && Object.prototype.hasOwnProperty.call(headers, header)
     );
 
     if (hasData) {
@@ -215,12 +218,14 @@ export default class LMSTable extends LitElement {
                 </tr>
               </thead>
               <tbody>
-                ${this.data.map(
-                  (item) => html`
+                ${map(
+                  this.data,
+                  (datum) => html`
                     <tr>
-                      ${this.headers.map(
-                        (key) =>
-                          html`<td class="align-middle">${item[key]}</td>`
+                      ${map(
+                        this.headers,
+                        (header) =>
+                          html`<td class="align-middle">${datum[header]}</td>`
                       )}
                       ${this.isEditable
                         ? html`
