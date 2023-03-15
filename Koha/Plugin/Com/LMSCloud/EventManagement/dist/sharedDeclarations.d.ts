@@ -43,20 +43,23 @@ export type Input = {
     name: string;
     value: string;
 };
-export type SelectOption = Input;
+export type SelectOption = {
+    id: string | number;
+    name: string;
+};
 export type BaseField = {
     name: string;
     desc?: string;
     logic?: () => Promise<{
-        value: string;
+        id: string | number;
         name: string;
     }[]>;
     required?: boolean;
     value?: string | {
         [key: string]: string;
     }[];
-    entries?: {
-        value: string;
+    dbData?: {
+        id: string | number;
         name: string;
     }[];
     attributes?: [string, string | number][];
@@ -69,7 +72,6 @@ export type SpecialField = BaseField & {
 };
 export type ModalField = BaseField & {
     type?: InputType | "select" | "info" | "checkbox" | "matrix";
-    default?: SelectOption;
     headers?: string[][];
     matrixInputType?: InputType;
     handler?: HandlerCallbackFunction;
@@ -106,5 +108,8 @@ export type URIComponents = {
     query?: boolean;
     params?: Record<string, string>;
     fragment?: string;
+};
+export type MatrixGroup = {
+    [key: string]: string;
 };
 //# sourceMappingURL=sharedDeclarations.d.ts.map

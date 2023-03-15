@@ -1,17 +1,17 @@
 import { LitElement, TemplateResult } from "lit";
-import { ModalField } from "../../sharedDeclarations";
+import { MatrixGroup, ModalField } from "../../sharedDeclarations";
+type InputHandlerArgs = {
+    e: Event;
+    id: string | number;
+    header: string[];
+};
 export default class LMSMatrix extends LitElement {
     field: ModalField;
-    value: {
-        [key: string]: string;
-    }[];
-    private group;
-    private hasTransformedField;
+    value: MatrixGroup[];
     static styles: import("lit").CSSResult[];
-    connectedCallback(): void;
-    performUpdate(): void;
     render(): TemplateResult<1>;
+    handleInput({ e, id, header }: InputHandlerArgs): void;
     private getMatrixInputMarkup;
-    private handleMatrixInput;
 }
+export {};
 //# sourceMappingURL=LMSMatrix.d.ts.map

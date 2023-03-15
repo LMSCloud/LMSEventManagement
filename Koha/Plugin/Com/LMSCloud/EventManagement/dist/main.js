@@ -31,20 +31,20 @@
      * Copyright 2019 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const t$2=window,e$4=t$2.ShadowRoot&&(void 0===t$2.ShadyCSS||t$2.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$4=new WeakMap;class o$4{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$4&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$4.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$4.set(s,t));}return t}toString(){return this.cssText}}const r$2=t=>new o$4("string"==typeof t?t:t+"",void 0,s$3),i$2=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$4(n,t,s$3)},S$1=(s,n)=>{e$4?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$2.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$4?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
+    const t$3=window,e$5=t$3.ShadowRoot&&(void 0===t$3.ShadyCSS||t$3.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$4=new WeakMap;class o$5{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$5&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$4.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$4.set(s,t));}return t}toString(){return this.cssText}}const r$2=t=>new o$5("string"==typeof t?t:t+"",void 0,s$3),i$3=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$5(n,t,s$3)},S$1=(s,n)=>{e$5?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$3.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$5?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var s$2;const e$3=window,r$1=e$3.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$3=e$3.reactiveElementPolyfillSupport,n$3={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$3={attribute:!0,type:String,converter:n$3,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$3){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$3}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$3){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$3).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$3;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$3||o$3({ReactiveElement:d$1}),(null!==(s$2=e$3.reactiveElementVersions)&&void 0!==s$2?s$2:e$3.reactiveElementVersions=[]).push("1.6.1");
+     */var s$2;const e$4=window,r$1=e$4.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$4=e$4.reactiveElementPolyfillSupport,n$3={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$3={attribute:!0,type:String,converter:n$3,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$3){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$3}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$3){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$3).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$3;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$4||o$4({ReactiveElement:d$1}),(null!==(s$2=e$4.reactiveElementVersions)&&void 0!==s$2?s$2:e$4.reactiveElementVersions=[]).push("1.6.1");
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    var t$1;const i$1=window,s$1=i$1.trustedTypes,e$2=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$2=`lit$${(Math.random()+"").slice(9)}$`,n$2="?"+o$2,l$2=`<${n$2}>`,h=document,r=(t="")=>h.createComment(t),d=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,c=t=>u(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,a=/-->/g,f=/>/g,_=RegExp(">|[ \t\n\f\r](?:([^\\s\"'>=/]+)([ \t\n\f\r]*=[ \t\n\f\r]*(?:[^ \t\n\f\r\"'`<>=]|(\"|')|))|$)","g"),m=/'/g,p=/"/g,$=/^(?:script|style|textarea|title)$/i,g=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),y=g(1),w=g(2),x=Symbol.for("lit-noChange"),b=Symbol.for("lit-nothing"),T=new WeakMap,A=h.createTreeWalker(h,129,null,!1),E=(t,i)=>{const s=t.length-1,n=[];let h,r=2===i?"<svg>":"",d=v;for(let i=0;i<s;i++){const s=t[i];let e,u,c=-1,g=0;for(;g<s.length&&(d.lastIndex=g,u=d.exec(s),null!==u);)g=d.lastIndex,d===v?"!--"===u[1]?d=a:void 0!==u[1]?d=f:void 0!==u[2]?($.test(u[2])&&(h=RegExp("</"+u[2],"g")),d=_):void 0!==u[3]&&(d=_):d===_?">"===u[0]?(d=null!=h?h:v,c=-1):void 0===u[1]?c=-2:(c=d.lastIndex-u[2].length,e=u[1],d=void 0===u[3]?_:'"'===u[3]?p:m):d===p||d===m?d=_:d===a||d===f?d=v:(d=_,h=void 0);const y=d===_&&t[i+1].startsWith("/>")?" ":"";r+=d===v?s+l$2:c>=0?(n.push(e),s.slice(0,c)+"$lit$"+s.slice(c)+o$2+y):s+o$2+(-2===c?(n.push(void 0),i):y);}const u=r+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$2?e$2.createHTML(u):u,n]};class C{constructor({strings:t,_$litType$:i},e){let l;this.parts=[];let h=0,d=0;const u=t.length-1,c=this.parts,[v,a]=E(t,i);if(this.el=C.createElement(v,e),A.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(l=A.nextNode())&&c.length<u;){if(1===l.nodeType){if(l.hasAttributes()){const t=[];for(const i of l.getAttributeNames())if(i.endsWith("$lit$")||i.startsWith(o$2)){const s=a[d++];if(t.push(i),void 0!==s){const t=l.getAttribute(s.toLowerCase()+"$lit$").split(o$2),i=/([.?@])?(.*)/.exec(s);c.push({type:1,index:h,name:i[2],strings:t,ctor:"."===i[1]?M:"?"===i[1]?k:"@"===i[1]?H:S});}else c.push({type:6,index:h});}for(const i of t)l.removeAttribute(i);}if($.test(l.tagName)){const t=l.textContent.split(o$2),i=t.length-1;if(i>0){l.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)l.append(t[s],r()),A.nextNode(),c.push({type:2,index:++h});l.append(t[i],r());}}}else if(8===l.nodeType)if(l.data===n$2)c.push({type:2,index:h});else {let t=-1;for(;-1!==(t=l.data.indexOf(o$2,t+1));)c.push({type:7,index:h}),t+=o$2.length-1;}h++;}}static createElement(t,i){const s=h.createElement("template");return s.innerHTML=t,s}}function P(t,i,s=t,e){var o,n,l,h;if(i===x)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=P(t,r._$AS(t,i.values),r,e)),i}class V{constructor(t,i){this.u=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}v(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:h).importNode(s,!0);A.currentNode=o;let n=A.nextNode(),l=0,r=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new N(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new I(n,this,t)),this.u.push(i),d=e[++r];}l!==(null==d?void 0:d.index)&&(n=A.nextNode(),l++);}return o}p(t){let i=0;for(const s of this.u)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class N{constructor(t,i,s,e){var o;this.type=2,this._$AH=b,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cm=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cm}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=P(this,t,i),d(t)?t===b||null==t||""===t?(this._$AH!==b&&this._$AR(),this._$AH=b):t!==this._$AH&&t!==x&&this.g(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):c(t)?this.k(t):this.g(t);}O(t,i=this._$AB){return this._$AA.parentNode.insertBefore(t,i)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}g(t){this._$AH!==b&&d(this._$AH)?this._$AA.nextSibling.data=t:this.T(h.createTextNode(t)),this._$AH=t;}$(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=C.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.p(s);else {const t=new V(o,this),i=t.v(this.options);t.p(s),this.T(i),this._$AH=t;}}_$AC(t){let i=T.get(t.strings);return void 0===i&&T.set(t.strings,i=new C(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new N(this.O(r()),this.O(r()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cm=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class S{constructor(t,i,s,e,o){this.type=1,this._$AH=b,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=b;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=P(this,t,i,0),n=!d(t)||t!==this._$AH&&t!==x,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=P(this,e[s+l],i,l),h===x&&(h=this._$AH[l]),n||(n=!d(h)||h!==this._$AH[l]),h===b?t=b:t!==b&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===b?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class M extends S{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===b?void 0:t;}}const R=s$1?s$1.emptyScript:"";class k extends S{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==b?this.element.setAttribute(this.name,R):this.element.removeAttribute(this.name);}}class H extends S{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=P(this,t,i,0))&&void 0!==s?s:b)===x)return;const e=this._$AH,o=t===b&&e!==b||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==b&&(e===b||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class I{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){P(this,t);}}const L={P:"$lit$",A:o$2,M:n$2,C:1,L:E,R:V,D:c,V:P,I:N,H:S,N:k,U:H,B:M,F:I},z=i$1.litHtmlPolyfillSupport;null==z||z(C,N),(null!==(t$1=i$1.litHtmlVersions)&&void 0!==t$1?t$1:i$1.litHtmlVersions=[]).push("2.6.1");const Z=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new N(i.insertBefore(r(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
+    var t$2;const i$2=window,s$1=i$2.trustedTypes,e$3=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$3=`lit$${(Math.random()+"").slice(9)}$`,n$2="?"+o$3,l$2=`<${n$2}>`,h=document,r=(t="")=>h.createComment(t),d=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,c=t=>u(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,a=/-->/g,f=/>/g,_=RegExp(">|[ \t\n\f\r](?:([^\\s\"'>=/]+)([ \t\n\f\r]*=[ \t\n\f\r]*(?:[^ \t\n\f\r\"'`<>=]|(\"|')|))|$)","g"),m=/'/g,p=/"/g,$=/^(?:script|style|textarea|title)$/i,g=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),y=g(1),w=g(2),x=Symbol.for("lit-noChange"),b=Symbol.for("lit-nothing"),T=new WeakMap,A=h.createTreeWalker(h,129,null,!1),E=(t,i)=>{const s=t.length-1,n=[];let h,r=2===i?"<svg>":"",d=v;for(let i=0;i<s;i++){const s=t[i];let e,u,c=-1,g=0;for(;g<s.length&&(d.lastIndex=g,u=d.exec(s),null!==u);)g=d.lastIndex,d===v?"!--"===u[1]?d=a:void 0!==u[1]?d=f:void 0!==u[2]?($.test(u[2])&&(h=RegExp("</"+u[2],"g")),d=_):void 0!==u[3]&&(d=_):d===_?">"===u[0]?(d=null!=h?h:v,c=-1):void 0===u[1]?c=-2:(c=d.lastIndex-u[2].length,e=u[1],d=void 0===u[3]?_:'"'===u[3]?p:m):d===p||d===m?d=_:d===a||d===f?d=v:(d=_,h=void 0);const y=d===_&&t[i+1].startsWith("/>")?" ":"";r+=d===v?s+l$2:c>=0?(n.push(e),s.slice(0,c)+"$lit$"+s.slice(c)+o$3+y):s+o$3+(-2===c?(n.push(void 0),i):y);}const u=r+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$3?e$3.createHTML(u):u,n]};class C{constructor({strings:t,_$litType$:i},e){let l;this.parts=[];let h=0,d=0;const u=t.length-1,c=this.parts,[v,a]=E(t,i);if(this.el=C.createElement(v,e),A.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(l=A.nextNode())&&c.length<u;){if(1===l.nodeType){if(l.hasAttributes()){const t=[];for(const i of l.getAttributeNames())if(i.endsWith("$lit$")||i.startsWith(o$3)){const s=a[d++];if(t.push(i),void 0!==s){const t=l.getAttribute(s.toLowerCase()+"$lit$").split(o$3),i=/([.?@])?(.*)/.exec(s);c.push({type:1,index:h,name:i[2],strings:t,ctor:"."===i[1]?M:"?"===i[1]?k:"@"===i[1]?H:S});}else c.push({type:6,index:h});}for(const i of t)l.removeAttribute(i);}if($.test(l.tagName)){const t=l.textContent.split(o$3),i=t.length-1;if(i>0){l.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)l.append(t[s],r()),A.nextNode(),c.push({type:2,index:++h});l.append(t[i],r());}}}else if(8===l.nodeType)if(l.data===n$2)c.push({type:2,index:h});else {let t=-1;for(;-1!==(t=l.data.indexOf(o$3,t+1));)c.push({type:7,index:h}),t+=o$3.length-1;}h++;}}static createElement(t,i){const s=h.createElement("template");return s.innerHTML=t,s}}function P(t,i,s=t,e){var o,n,l,h;if(i===x)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=P(t,r._$AS(t,i.values),r,e)),i}class V{constructor(t,i){this.u=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}v(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:h).importNode(s,!0);A.currentNode=o;let n=A.nextNode(),l=0,r=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new N(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new I(n,this,t)),this.u.push(i),d=e[++r];}l!==(null==d?void 0:d.index)&&(n=A.nextNode(),l++);}return o}p(t){let i=0;for(const s of this.u)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class N{constructor(t,i,s,e){var o;this.type=2,this._$AH=b,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cm=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cm}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=P(this,t,i),d(t)?t===b||null==t||""===t?(this._$AH!==b&&this._$AR(),this._$AH=b):t!==this._$AH&&t!==x&&this.g(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):c(t)?this.k(t):this.g(t);}O(t,i=this._$AB){return this._$AA.parentNode.insertBefore(t,i)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}g(t){this._$AH!==b&&d(this._$AH)?this._$AA.nextSibling.data=t:this.T(h.createTextNode(t)),this._$AH=t;}$(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=C.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.p(s);else {const t=new V(o,this),i=t.v(this.options);t.p(s),this.T(i),this._$AH=t;}}_$AC(t){let i=T.get(t.strings);return void 0===i&&T.set(t.strings,i=new C(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new N(this.O(r()),this.O(r()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cm=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class S{constructor(t,i,s,e,o){this.type=1,this._$AH=b,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=b;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=P(this,t,i,0),n=!d(t)||t!==this._$AH&&t!==x,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=P(this,e[s+l],i,l),h===x&&(h=this._$AH[l]),n||(n=!d(h)||h!==this._$AH[l]),h===b?t=b:t!==b&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===b?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class M extends S{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===b?void 0:t;}}const R=s$1?s$1.emptyScript:"";class k extends S{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==b?this.element.setAttribute(this.name,R):this.element.removeAttribute(this.name);}}class H extends S{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=P(this,t,i,0))&&void 0!==s?s:b)===x)return;const e=this._$AH,o=t===b&&e!==b||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==b&&(e===b||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class I{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){P(this,t);}}const L={P:"$lit$",A:o$3,M:n$2,C:1,L:E,R:V,D:c,V:P,I:N,H:S,N:k,U:H,B:M,F:I},z=i$2.litHtmlPolyfillSupport;null==z||z(C,N),(null!==(t$2=i$2.litHtmlVersions)&&void 0!==t$2?t$2:i$2.litHtmlVersions=[]).push("2.6.1");const Z=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new N(i.insertBefore(r(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
 
     var litHtml = /*#__PURE__*/Object.freeze({
         __proto__: null,
@@ -60,9 +60,9 @@
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var l$1,o$1;class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Z(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return x}}s.finalized=!0,s._$litElement$=!0,null===(l$1=globalThis.litElementHydrateSupport)||void 0===l$1||l$1.call(globalThis,{LitElement:s});const n$1=globalThis.litElementPolyfillSupport;null==n$1||n$1({LitElement:s});(null!==(o$1=globalThis.litElementVersions)&&void 0!==o$1?o$1:globalThis.litElementVersions=[]).push("3.2.2");
+     */var l$1,o$2;class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Z(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return x}}s.finalized=!0,s._$litElement$=!0,null===(l$1=globalThis.litElementHydrateSupport)||void 0===l$1||l$1.call(globalThis,{LitElement:s});const n$1=globalThis.litElementPolyfillSupport;null==n$1||n$1({LitElement:s});(null!==(o$2=globalThis.litElementVersions)&&void 0!==o$2?o$2:globalThis.litElementVersions=[]).push("3.2.2");
 
-    const bootstrapStyles = i$2`
+    const bootstrapStyles = i$3`
 /*!
  * Bootstrap v4.6.0 (https://getbootstrap.com/)
  * Copyright 2011-2021 The Bootstrap Authors
@@ -77,20 +77,20 @@
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const e$1=e=>n=>"function"==typeof n?((e,n)=>(customElements.define(e,n),n))(e,n):((e,n)=>{const{kind:t,elements:s}=n;return {kind:t,elements:s,finisher(n){customElements.define(e,n);}}})(e,n);
+    const e$2=e=>n=>"function"==typeof n?((e,n)=>(customElements.define(e,n),n))(e,n):((e,n)=>{const{kind:t,elements:s}=n;return {kind:t,elements:s,finisher(n){customElements.define(e,n);}}})(e,n);
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const i=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}};function e(e){return (n,t)=>void 0!==t?((i,e,n)=>{e.constructor.createProperty(n,i);})(e,n,t):i(e,n)}
+    const i$1=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}};function e$1(e){return (n,t)=>void 0!==t?((i,e,n)=>{e.constructor.createProperty(n,i);})(e,n,t):i$1(e,n)}
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */function t(t){return e({...t,state:!0})}
+     */function t$1(t){return e$1({...t,state:!0})}
 
     /**
      * @license
@@ -140,20 +140,20 @@
     };
     LMSAnchor.styles = [
         bootstrapStyles,
-        i$2 `
+        i$3 `
       :host {
         display: inline-flex;
       }
     `,
     ];
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSAnchor.prototype, "href", void 0);
     __decorate([
-        e({ type: String })
+        e$1({ type: String })
     ], LMSAnchor.prototype, "text", void 0);
     LMSAnchor = __decorate([
-        e$1("lms-anchor")
+        e$2("lms-anchor")
     ], LMSAnchor);
     var LMSAnchor$1 = LMSAnchor;
 
@@ -198,22 +198,22 @@
     };
     LMSCard.styles = [bootstrapStyles];
     __decorate([
-        e({ type: String })
+        e$1({ type: String })
     ], LMSCard.prototype, "title", void 0);
     __decorate([
-        e({ type: String })
+        e$1({ type: String })
     ], LMSCard.prototype, "text", void 0);
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSCard.prototype, "image", void 0);
     __decorate([
-        e({ type: Array })
+        e$1({ type: Array })
     ], LMSCard.prototype, "links", void 0);
     __decorate([
-        e({ type: Array })
+        e$1({ type: Array })
     ], LMSCard.prototype, "listItems", void 0);
     LMSCard = __decorate([
-        e$1("lms-card")
+        e$2("lms-card")
     ], LMSCard);
     var LMSCard$1 = LMSCard;
 
@@ -364,13 +364,13 @@
     };
     LMSEventsFilter.styles = [bootstrapStyles];
     __decorate([
-        e({ type: Array })
+        e$1({ type: Array })
     ], LMSEventsFilter.prototype, "events", void 0);
     __decorate([
-        e({ type: Array, attribute: false })
+        e$1({ type: Array, attribute: false })
     ], LMSEventsFilter.prototype, "facets", void 0);
     LMSEventsFilter = __decorate([
-        e$1("lms-events-filter")
+        e$2("lms-events-filter")
     ], LMSEventsFilter);
     var LMSEventsFilter$1 = LMSEventsFilter;
 
@@ -836,7 +836,7 @@
     };
     LMSFloatingMenu.styles = [
         bootstrapStyles,
-        i$2 `
+        i$3 `
       svg {
         width: 1rem;
         height: 1rem;
@@ -850,25 +850,25 @@
     `,
     ];
     __decorate([
-        e({ type: String })
+        e$1({ type: String })
     ], LMSFloatingMenu.prototype, "brand", void 0);
     __decorate([
-        e({
+        e$1({
             type: Array,
             converter: (value) => (value ? JSON.parse(value) : []),
         })
     ], LMSFloatingMenu.prototype, "items", void 0);
     __decorate([
-        e({ type: String, attribute: false })
+        e$1({ type: String, attribute: false })
     ], LMSFloatingMenu.prototype, "_currentUrl", void 0);
     __decorate([
-        e({ type: String, attribute: false })
+        e$1({ type: String, attribute: false })
     ], LMSFloatingMenu.prototype, "_currentSearchParams", void 0);
     __decorate([
-        e({ type: Object, attribute: false })
+        e$1({ type: Object, attribute: false })
     ], LMSFloatingMenu.prototype, "_i18n", void 0);
     LMSFloatingMenu = __decorate([
-        e$1("lms-floating-menu")
+        e$2("lms-floating-menu")
     ], LMSFloatingMenu);
     var LMSFloatingMenu$1 = LMSFloatingMenu;
 
@@ -877,7 +877,7 @@
      * Copyright 2021 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    function*o(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
+    function*o$1(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
 
     var faSortDown = {
       prefix: 'fas',
@@ -944,6 +944,19 @@
     };
     var faClose = faXmark;
 
+    /**
+     * @license
+     * Copyright 2017 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */
+    const t={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e=t=>(...e)=>({_$litDirective$:t,values:e});class i{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
+
+    /**
+     * @license
+     * Copyright 2018 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */const o=e(class extends i{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.nt){this.nt=new Set,void 0!==i.strings&&(this.st=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.st)||void 0===r?void 0:r.has(t))&&this.nt.add(t);return this.render(s)}const e=i.element.classList;this.nt.forEach((t=>{t in s||(e.remove(t),this.nt.delete(t));}));for(const t in s){const i=!!s[t];i===this.nt.has(t)||(null===(o=this.st)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.nt.add(t)):(e.remove(t),this.nt.delete(t)));}return x}});
+
     let LMSModal = class LMSModal extends s {
         constructor() {
             super(...arguments);
@@ -962,6 +975,7 @@
         //       (key) => newValues.get(key) !== oldValues.get(key)
         //     );
         // }
+        /** What's the best place to fetch data asynchronously before a render in a LitElement */
         toggleModal() {
             const { renderRoot } = this;
             this.isOpen = !this.isOpen;
@@ -1001,12 +1015,27 @@
         dismissAlert() {
             this.alertMessage = "";
         }
+        firstUpdated() {
+            const dbDataPopulated = this.fields.map(async (field) => {
+                if (field.logic) {
+                    return {
+                        ...field,
+                        dbData: await field.logic(),
+                    };
+                }
+                return field;
+            });
+            Promise.all(dbDataPopulated).then((fields) => {
+                this.fields = fields;
+            });
+        }
         render() {
+            var _a;
             return y `
       <div class="btn-modal-wrapper">
         <button
           @click=${this.toggleModal}
-          class="btn-modal ${this.isOpen && "tilted"}"
+          class="btn-modal ${o({ tilted: this.isOpen })}"
           type="button"
         >
           ${litFontawesome_3(faPlus)}
@@ -1014,7 +1043,10 @@
       </div>
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
-        class="modal fade ${this.isOpen && "d-block show"}"
+        class="modal fade ${o({
+            "d-block": this.isOpen,
+            show: this.isOpen,
+        })}"
         id="lms-modal"
         tabindex="-1"
         role="dialog"
@@ -1025,7 +1057,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="lms-modal-title">
-                ${this.modalTitle || "Add"}
+                ${(_a = this.modalTitle) !== null && _a !== void 0 ? _a : "Add"}
               </h5>
               <button
                 @click=${this.toggleModal}
@@ -1041,8 +1073,9 @@
                 <div
                   role="alert"
                   ?hidden=${!this.alertMessage}
-                  class="alert alert-${this.alertMessage.includes("Sorry!") &&
-            "danger"} alert-dismissible fade show"
+                  class="alert  ${o({
+            "alert-danger": this.alertMessage.includes("Sorry!"),
+        })} alert-dismissible fade show"
                 >
                   ${this.alertMessage}
                   <button
@@ -1055,7 +1088,7 @@
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                ${o(this.fields, (value) => this.getFieldMarkup(value))}
+                ${o$1(this.fields, (value) => this.getFieldMarkup(value))}
               </div>
               <div class="modal-footer">
                 <button
@@ -1116,7 +1149,7 @@
     // @state() protected i18n: Gettext | Promise<Gettext> = {} as Gettext;
     LMSModal.styles = [
         bootstrapStyles,
-        i$2 `
+        i$3 `
       .btn-modal-wrapper {
         position: fixed;
         bottom: 1em;
@@ -1175,25 +1208,25 @@
     `,
     ];
     __decorate([
-        e({ type: Array })
+        e$1({ type: Array })
     ], LMSModal.prototype, "fields", void 0);
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSModal.prototype, "createOpts", void 0);
     __decorate([
-        e({ type: Boolean })
+        e$1({ type: Boolean })
     ], LMSModal.prototype, "editable", void 0);
     __decorate([
-        t()
+        t$1()
     ], LMSModal.prototype, "isOpen", void 0);
     __decorate([
-        t()
+        t$1()
     ], LMSModal.prototype, "alertMessage", void 0);
     __decorate([
-        t()
+        t$1()
     ], LMSModal.prototype, "modalTitle", void 0);
     LMSModal = __decorate([
-        e$1("lms-modal")
+        e$2("lms-modal")
     ], LMSModal);
     var LMSModal$1 = LMSModal;
 
@@ -1207,7 +1240,7 @@
     };
     LMSStaffEventCardAttendees.styles = [
         bootstrapStyles,
-        i$2 `
+        i$3 `
       svg {
         display: inline-block;
         width: 1em;
@@ -1221,7 +1254,7 @@
     `,
     ];
     LMSStaffEventCardAttendees = __decorate([
-        e$1("lms-staff-event-card-attendees")
+        e$2("lms-staff-event-card-attendees")
     ], LMSStaffEventCardAttendees);
     var LMSStaffEventCardAttendees$1 = LMSStaffEventCardAttendees;
 
@@ -1265,7 +1298,7 @@
     };
     LMSStaffEventCardPreview.styles = [
         bootstrapStyles,
-        i$2 `
+        i$3 `
       svg {
         display: inline-block;
         width: 1em;
@@ -1279,19 +1312,19 @@
     `,
     ];
     __decorate([
-        e({ type: Array })
+        e$1({ type: Array })
     ], LMSStaffEventCardPreview.prototype, "datum", void 0);
     __decorate([
-        e({ type: String })
+        e$1({ type: String })
     ], LMSStaffEventCardPreview.prototype, "title", void 0);
     __decorate([
-        e({ type: String })
+        e$1({ type: String })
     ], LMSStaffEventCardPreview.prototype, "text", void 0);
     __decorate([
-        e({ type: Object, attribute: false })
+        e$1({ type: Object, attribute: false })
     ], LMSStaffEventCardPreview.prototype, "templateResultConverter", void 0);
     LMSStaffEventCardPreview = __decorate([
-        e$1("lms-staff-event-card-preview")
+        e$2("lms-staff-event-card-preview")
     ], LMSStaffEventCardPreview);
     var LMSStaffEventCardPreview$1 = LMSStaffEventCardPreview;
 
@@ -1506,7 +1539,7 @@
     };
     LMSStaffEventCardForm.styles = [
         bootstrapStyles,
-        i$2 `
+        i$3 `
       svg {
         display: inline-block;
         width: 1em;
@@ -1524,16 +1557,16 @@
     `,
     ];
     __decorate([
-        e({ type: Array })
+        e$1({ type: Array })
     ], LMSStaffEventCardForm.prototype, "datum", void 0);
     __decorate([
-        e({ state: true })
+        e$1({ state: true })
     ], LMSStaffEventCardForm.prototype, "_toast", void 0);
     __decorate([
-        e({ state: true })
+        e$1({ state: true })
     ], LMSStaffEventCardForm.prototype, "_i18n", void 0);
     LMSStaffEventCardForm = __decorate([
-        e$1("lms-staff-event-card-form")
+        e$2("lms-staff-event-card-form")
     ], LMSStaffEventCardForm);
     var LMSStaffEventCardForm$1 = LMSStaffEventCardForm;
 
@@ -1971,7 +2004,7 @@ ${value}</textarea
     };
     LMSStaffEventCardDeck.styles = [
         bootstrapStyles,
-        i$2 `
+        i$3 `
       .card-deck {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
@@ -1980,16 +2013,16 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e({ type: Array })
+        e$1({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "data", void 0);
     __decorate([
-        e({ type: Object, attribute: false })
+        e$1({ type: Object, attribute: false })
     ], LMSStaffEventCardDeck.prototype, "cardStates", void 0);
     __decorate([
-        e({ type: Object, attribute: false })
+        e$1({ type: Object, attribute: false })
     ], LMSStaffEventCardDeck.prototype, "href", void 0);
     LMSStaffEventCardDeck = __decorate([
-        e$1("lms-staff-event-card-deck")
+        e$2("lms-staff-event-card-deck")
     ], LMSStaffEventCardDeck);
     var LMSStaffEventCardsDeck = LMSStaffEventCardDeck;
 
@@ -2024,13 +2057,13 @@ ${value}</textarea
     };
     LMSCheckboxInput.styles = [bootstrapStyles];
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSCheckboxInput.prototype, "field", void 0);
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSCheckboxInput.prototype, "value", void 0);
     LMSCheckboxInput = __decorate([
-        e$1("lms-checkbox-input")
+        e$2("lms-checkbox-input")
     ], LMSCheckboxInput);
     var LMSCheckboxInput$1 = LMSCheckboxInput;
 
@@ -2045,62 +2078,6 @@ ${value}</textarea
             super(...arguments);
             this.field = {};
             this.value = [];
-            this.group = [];
-            this.hasTransformedField = false;
-        }
-        connectedCallback() {
-            super.connectedCallback();
-        }
-        performUpdate() {
-            if (!this.value) {
-                return;
-            }
-            this.group = this.value.length
-                ? this.value
-                    .map((obj) => {
-                    const clone = { ...obj };
-                    const idKey = Object.keys(clone).find((key) => key.toLowerCase().includes("id"));
-                    if (!idKey) {
-                        return undefined;
-                    }
-                    const idValue = clone[idKey];
-                    if (!idValue) {
-                        return undefined;
-                    }
-                    delete clone[idKey];
-                    return {
-                        id: idValue,
-                        ...clone,
-                    };
-                })
-                    .filter((groupItem) => Boolean(groupItem))
-                : [];
-            /** We have to update the value on the field with the expected format
-             *  as the form can be submitted without the user interacting with the
-             *  matrix input. We only do this on the first update though. */
-            if (!this.hasTransformedField) {
-                console.log(this.group);
-                this.field.value = this.group.map(({ id, ...rest }) => {
-                    rest = Object.fromEntries(Object.entries(rest).map(([key, value]) => {
-                        let _value;
-                        switch (typeof value) {
-                            case "boolean":
-                                _value = value ? "1" : "0";
-                                break;
-                            case "number":
-                                _value = value.toString();
-                                break;
-                        }
-                        return [key, _value];
-                    }));
-                    return {
-                        id,
-                        ...rest,
-                    };
-                });
-                this.hasTransformedField = true;
-            }
-            super.performUpdate();
         }
         render() {
             const { field } = this;
@@ -2108,19 +2085,59 @@ ${value}</textarea
       <table class="table table-bordered" id=${field.name}>
         <thead>
           <tr>
-            ${o(field.headers, ([name]) => y `<th scope="col">${name}</th>`)}
+            ${o$1(field.headers, ([name]) => y `<th scope="col">${name}</th>`)}
           </tr>
         </thead>
         <tbody>
-          ${o(field.entries, (entry) => y `<tr>
-              <td class="align-middle">${entry.name}</td>
-              ${o(field.headers, (header) => this.getMatrixInputMarkup({ field, entry, header }))}
+          ${o$1(field.dbData, (row) => y `<tr>
+              <td class="align-middle">${row.name}</td>
+              ${o$1(field.headers, (header) => this.getMatrixInputMarkup({ field, row, header }))}
             </tr>`)}
         </tbody>
       </table>`;
         }
-        getMatrixInputMarkup({ field, entry, header }) {
-            var _a, _b, _c, _d;
+        handleInput({ e, id, header }) {
+            if (e.target instanceof HTMLInputElement) {
+                const { field } = this;
+                const { type } = e.target;
+                const [name] = header;
+                switch (type) {
+                    case "number":
+                        const { value } = e.target;
+                        if ((field === null || field === void 0 ? void 0 : field.value) instanceof Array) {
+                            const item = field.value.find((item) => item.id == id);
+                            if (item) {
+                                item[name] = value.toString();
+                                break;
+                            }
+                            field.value.push({ id: id.toString(), [name]: value.toString() });
+                            break;
+                        }
+                        field.value = [{ id: id.toString(), [name]: value.toString() }];
+                        break;
+                    case "checkbox":
+                        const { checked } = e.target;
+                        if ((field === null || field === void 0 ? void 0 : field.value) instanceof Array) {
+                            const item = field.value.find((item) => item.id == id);
+                            if (item) {
+                                item[name] = (checked ? 1 : 0).toString();
+                                break;
+                            }
+                            field.value.push({
+                                id: id.toString(),
+                                [name]: (checked ? 1 : 0).toString(),
+                            });
+                            break;
+                        }
+                        field.value = [
+                            { id: id.toString(), [name]: (checked ? 1 : 0).toString() },
+                        ];
+                        break;
+                }
+            }
+        }
+        getMatrixInputMarkup({ field, row, header }) {
+            var _a, _b, _c, _d, _e;
             const [name, type] = header;
             const inputTypes = new Map([
                 [
@@ -2128,15 +2145,15 @@ ${value}</textarea
                     y `<td class="align-middle">
           <input
             type="number"
-            name=${entry.name}
-            id=${entry.value}
-            .value=${(_a = this.group.find((groupItem) => groupItem.id === parseInt(entry.value, 10))) === null || _a === void 0 ? void 0 : _a[name]}
+            name=${row.name}
+            id=${row.id}
+            .value=${field.value instanceof Array
+                    ? (_b = (_a = field.value.find((item) => item.id === row.id)) === null || _a === void 0 ? void 0 : _a[name]) !== null && _b !== void 0 ? _b : ""
+                    : ""}
             step="0.01"
             class="form-control"
-            step=${l((_c = (_b = field.attributes) === null || _b === void 0 ? void 0 : _b.find(([attribute]) => attribute === "step")) === null || _c === void 0 ? void 0 : _c.at(-1))}
-            @input=${(e) => {
-                    this.handleMatrixInput({ e, field, name, entry });
-                }}
+            step=${l((_d = (_c = field.attributes) === null || _c === void 0 ? void 0 : _c.find(([attribute]) => attribute === "step")) === null || _d === void 0 ? void 0 : _d.at(-1))}
+            @input=${(e) => this.handleInput({ e, id: row.id, header })}
             ?required=${field.required}
           />
         </td>`,
@@ -2146,15 +2163,16 @@ ${value}</textarea
                     y ` <td class="align-middle">
           <input
             type="checkbox"
-            name=${entry.name}
-            id=${entry.value}
-            value="1"
+            name=${row.name}
+            id=${row.id}
             class="form-control"
-            @input=${(e) => {
-                    this.handleMatrixInput({ e, field, name, entry });
-                }}
+            @input=${(e) => this.handleInput({ e, id: row.id, header })}
             ?required=${field.required}
-            .checked=${(_d = this.group.find((groupItem) => groupItem.id === parseInt(entry.value, 10))) === null || _d === void 0 ? void 0 : _d[name]}
+            .checked=${field.value instanceof Array
+                    ? ((_e = field.value.find((item) => item.id === row.id)) === null || _e === void 0 ? void 0 : _e[name]) === "1"
+                        ? true
+                        : false
+                    : false}
           />
         </td>`,
                 ],
@@ -2163,47 +2181,24 @@ ${value}</textarea
                 ? inputTypes.get(type)
                 : inputTypes.get("default");
         }
-        handleMatrixInput({ e, field, name, entry }) {
-            var _a;
-            const target = e.target;
-            if (!(target instanceof HTMLInputElement)) {
-                return;
-            }
-            if (!(field.value instanceof Array)) {
-                return;
-            }
-            const index = (_a = field.value) === null || _a === void 0 ? void 0 : _a.findIndex((value) => value.id === entry.value);
-            if (target.type === "checkbox") {
-                field.value[index][name] = target.checked ? "1" : "0";
-            }
-            if (target.type === "number") {
-                field.value[index][name] = target.value.toString();
-            }
-            field.value[index][name] = target.value;
-        }
     };
+    // @state() private hasTransformedField = false;
     LMSMatrix.styles = [
         bootstrapStyles,
-        i$2 `
+        i$3 `
       input[type="checkbox"].form-control {
         font-size: 0.375rem;
       }
     `,
     ];
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSMatrix.prototype, "field", void 0);
     __decorate([
-        e({ type: Array })
+        e$1({ type: Array })
     ], LMSMatrix.prototype, "value", void 0);
-    __decorate([
-        e({ type: Array, attribute: false })
-    ], LMSMatrix.prototype, "group", void 0);
-    __decorate([
-        e({ type: Boolean, attribute: false })
-    ], LMSMatrix.prototype, "hasTransformedField", void 0);
     LMSMatrix = __decorate([
-        e$1("lms-matrix")
+        e$2("lms-matrix")
     ], LMSMatrix);
     var LMSMatrix$1 = LMSMatrix;
 
@@ -2235,45 +2230,52 @@ ${value}</textarea
     };
     LMSPrimitivesInput.styles = [bootstrapStyles];
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSPrimitivesInput.prototype, "field", void 0);
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSPrimitivesInput.prototype, "value", void 0);
     LMSPrimitivesInput = __decorate([
-        e$1("lms-primitives-input")
+        e$2("lms-primitives-input")
     ], LMSPrimitivesInput);
     var LMSPrimitivesInput$1 = LMSPrimitivesInput;
 
     let LMSSelect = class LMSSelect extends s {
         constructor() {
             super(...arguments);
+            this.defaultOption = {};
             this.field = {};
         }
+        willUpdate() {
+            const { dbData } = this.field;
+            if (dbData === null || dbData === void 0 ? void 0 : dbData.length) {
+                const [defaultOption] = dbData;
+                const { id } = defaultOption;
+                this.field.value = id.toString();
+                this.defaultOption = defaultOption;
+            }
+        }
         render() {
-            var _a;
-            if (!this.field.entries)
-                return b;
+            const { name, desc, value, required, dbData } = this.field;
             return y `
       <div class="form-group">
-        <label for=${this.field.name}>${this.field.desc}</label>
+        <label for=${name}>${desc}</label>
         <select
-          name=${this.field.name}
-          id=${this.field.name}
+          name=${name}
+          id=${name}
           class="form-control"
           @change=${(e) => {
             var _a;
-            this.field.value =
-                (_a = e.target.value) !== null && _a !== void 0 ? _a : this.field.value;
+            this.field.value = (_a = e.target.value) !== null && _a !== void 0 ? _a : value;
         }}
-          ?required=${this.field.required}
+          ?required=${required}
         >
-          ${((_a = this.field.default) === null || _a === void 0 ? void 0 : _a.name)
-            ? y `<option value=${this.field.default.value}>
-                ${this.field.default.name}
+          ${this.defaultOption.name
+            ? y `<option value=${this.defaultOption.id} selected>
+                ${this.defaultOption.name}
               </option>`
             : b}
-          ${this.field.entries.map(({ value, name }) => y `<option value=${value}>${name}</option>`)}
+          ${o$1(dbData, ({ id, name }) => y `<option value=${id}>${name}</option>`)}
         </select>
       </div>
     `;
@@ -2281,10 +2283,10 @@ ${value}</textarea
     };
     LMSSelect.styles = [bootstrapStyles];
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSSelect.prototype, "field", void 0);
     LMSSelect = __decorate([
-        e$1("lms-select")
+        e$2("lms-select")
     ], LMSSelect);
     var LMSSelect$1 = LMSSelect;
 
@@ -2342,16 +2344,16 @@ ${value}</textarea
         }
     };
     __decorate([
-        e({ type: String })
+        e$1({ type: String })
     ], LMSEventMangementMenu.prototype, "baseurl", void 0);
     __decorate([
-        e({ type: String })
+        e$1({ type: String })
     ], LMSEventMangementMenu.prototype, "pluginclass", void 0);
     __decorate([
-        e({ type: Function, attribute: false })
+        e$1({ type: Function, attribute: false })
     ], LMSEventMangementMenu.prototype, "menuEntries", void 0);
     LMSEventMangementMenu = __decorate([
-        e$1("lms-event-management-menu")
+        e$2("lms-event-management-menu")
     ], LMSEventMangementMenu);
     var LMSEventMangementMenu$1 = LMSEventMangementMenu;
 
@@ -2379,7 +2381,7 @@ ${value}</textarea
                         const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
                         const result = await response.json();
                         return result.map((event_type) => ({
-                            value: event_type.id,
+                            id: event_type.id,
                             name: event_type.name,
                         }));
                     },
@@ -2425,7 +2427,7 @@ ${value}</textarea
                         const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
                         const result = await response.json();
                         return result.map((target_group) => ({
-                            value: target_group.id,
+                            id: target_group.id,
                             name: target_group.name,
                         }));
                     },
@@ -2481,7 +2483,7 @@ ${value}</textarea
                         const response = await fetch("/api/v1/contrib/eventmanagement/locations");
                         const result = await response.json();
                         return result.map((location) => ({
-                            value: location.id,
+                            id: location.id,
                             name: location.name,
                         }));
                     },
@@ -2505,10 +2507,10 @@ ${value}</textarea
                     desc: "Status",
                     logic: async () => {
                         return [
-                            { value: "pending", name: "Pending" },
-                            { value: "confirmed", name: "Confirmed" },
-                            { value: "canceled", name: "Canceled" },
-                            { value: "sold_out", name: "Sold Out" },
+                            { id: "pending", name: "Pending" },
+                            { id: "confirmed", name: "Confirmed" },
+                            { id: "canceled", name: "Canceled" },
+                            { id: "sold_out", name: "Sold Out" },
                         ];
                     },
                     required: true,
@@ -2529,10 +2531,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSEventsModal.prototype, "createOpts", void 0);
     LMSEventsModal = __decorate([
-        e$1("lms-events-modal")
+        e$2("lms-events-modal")
     ], LMSEventsModal);
     var LMSEventsModal$1 = LMSEventsModal;
 
@@ -2567,7 +2569,7 @@ ${value}</textarea
                         const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
                         const result = await response.json();
                         return result.map((target_group) => ({
-                            value: target_group.id,
+                            id: target_group.id,
                             name: target_group.name,
                         }));
                     },
@@ -2603,7 +2605,7 @@ ${value}</textarea
                         const response = await fetch("/api/v1/contrib/eventmanagement/locations");
                         const result = await response.json();
                         return result.map((location) => ({
-                            value: location.id,
+                            id: location.id,
                             name: location.name,
                         }));
                     },
@@ -2635,10 +2637,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSEventTypesModal.prototype, "createOpts", void 0);
     LMSEventTypesModal = __decorate([
-        e$1("lms-event-types-modal")
+        e$2("lms-event-types-modal")
     ], LMSEventTypesModal);
     var LMSEventTypesModal$1 = LMSEventTypesModal;
 
@@ -2656,8 +2658,7 @@ ${value}</textarea
             };
             // @property({ state: true }) private i18n: Gettext = {} as Gettext;
             this.notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
-            this.emptyTableMessage = y `No data to
-  display.`;
+            this.emptyTableMessage = y `No data to display.`;
         }
         // private async init() {
         //   const translationHandler = new TranslationHandler();
@@ -2719,7 +2720,7 @@ ${value}</textarea
             const { data } = this;
             const hasData = (_a = (data === null || data === void 0 ? void 0 : data.length) > 0) !== null && _a !== void 0 ? _a : false;
             const [headers] = hasData ? data : [];
-            this.headers = this.order.filter((key) => headers && Object.prototype.hasOwnProperty.call(headers, key));
+            this.headers = this.order.filter((header) => headers && Object.prototype.hasOwnProperty.call(headers, header));
             if (hasData) {
                 this.data = this.order.length
                     ? this.sortByOrder(data, this.order)
@@ -2787,9 +2788,9 @@ ${value}</textarea
                 </tr>
               </thead>
               <tbody>
-                ${this.data.map((item) => y `
+                ${o$1(this.data, (datum) => y `
                     <tr>
-                      ${this.headers.map((key) => y `<td class="align-middle">${item[key]}</td>`)}
+                      ${o$1(this.headers, (header) => y `<td class="align-middle">${datum[header]}</td>`)}
                       ${this.isEditable
                 ? y `
                             <td class="align-middle">
@@ -2833,7 +2834,7 @@ ${value}</textarea
     };
     LMSTable.styles = [
         bootstrapStyles,
-        i$2 `
+        i$3 `
       table {
         background: white;
         padding: 1em;
@@ -2856,31 +2857,31 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e({ type: Array })
+        e$1({ type: Array })
     ], LMSTable.prototype, "data", void 0);
     __decorate([
-        e({ type: Array })
+        e$1({ type: Array })
     ], LMSTable.prototype, "order", void 0);
     __decorate([
-        e({ type: Array, attribute: false })
+        e$1({ type: Array })
     ], LMSTable.prototype, "headers", void 0);
     __decorate([
-        e({ type: Boolean, attribute: false })
+        e$1({ type: Boolean, attribute: "is-editable" })
     ], LMSTable.prototype, "isEditable", void 0);
     __decorate([
-        e({ type: Boolean, attribute: false })
+        e$1({ type: Boolean, attribute: "is-deletable" })
     ], LMSTable.prototype, "isDeletable", void 0);
     __decorate([
-        e({ state: true })
+        t$1()
     ], LMSTable.prototype, "toast", void 0);
     __decorate([
-        e({ state: true })
+        t$1()
     ], LMSTable.prototype, "notImplementedInBaseMessage", void 0);
     __decorate([
-        e({ state: true })
+        t$1()
     ], LMSTable.prototype, "emptyTableMessage", void 0);
     LMSTable = __decorate([
-        e$1("lms-table")
+        e$2("lms-table")
     ], LMSTable);
     var LMSTable$1 = LMSTable;
 
@@ -3205,10 +3206,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e({ type: Object, attribute: false })
+        e$1({ type: Object, attribute: false })
     ], LMSEventTypesTable$1.prototype, "href", void 0);
     LMSEventTypesTable$1 = __decorate([
-        e$1("lms-event-types-table")
+        e$2("lms-event-types-table")
     ], LMSEventTypesTable$1);
     var LMSEventTypesTable$2 = LMSEventTypesTable$1;
 
@@ -3270,10 +3271,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSLocationsModal.prototype, "createOpts", void 0);
     LMSLocationsModal = __decorate([
-        e$1("lms-locations-modal")
+        e$2("lms-locations-modal")
     ], LMSLocationsModal);
     var LMSLocationsModal$1 = LMSLocationsModal;
 
@@ -3455,7 +3456,7 @@ ${value}</textarea
         }
     };
     LMSLocationsTable = __decorate([
-        e$1("lms-locations-table")
+        e$2("lms-locations-table")
     ], LMSLocationsTable);
     var LMSLocationsTable$1 = LMSLocationsTable;
 
@@ -3495,10 +3496,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e({ type: Object })
+        e$1({ type: Object })
     ], LMSTargetGroupsModal.prototype, "createOpts", void 0);
     LMSTargetGroupsModal = __decorate([
-        e$1("lms-target-groups-modal")
+        e$2("lms-target-groups-modal")
     ], LMSTargetGroupsModal);
     var LMSTargetGroupsModal$1 = LMSTargetGroupsModal;
 
@@ -3644,7 +3645,7 @@ ${value}</textarea
         }
     };
     LMSEventTypesTable = __decorate([
-        e$1("lms-target-groups-table")
+        e$2("lms-target-groups-table")
     ], LMSEventTypesTable);
     var LMSTargetGroupsTable = LMSEventTypesTable;
 
@@ -3702,13 +3703,13 @@ ${value}</textarea
     };
     LMSEventsView.styles = [bootstrapStyles];
     __decorate([
-        e({ type: String })
+        e$1({ type: String })
     ], LMSEventsView.prototype, "borrowernumber", void 0);
     __decorate([
-        e({ type: Array, attribute: false })
+        e$1({ type: Array, attribute: false })
     ], LMSEventsView.prototype, "events", void 0);
     LMSEventsView = __decorate([
-        e$1("lms-events-view")
+        e$2("lms-events-view")
     ], LMSEventsView);
     var LMSEventsView$1 = LMSEventsView;
 
@@ -3720,7 +3721,7 @@ ${value}</textarea
         }
     };
     StaffEventsView = __decorate([
-        e$1("lms-staff-events-view")
+        e$2("lms-staff-events-view")
     ], StaffEventsView);
     var StaffEventsView$1 = StaffEventsView;
 
@@ -3733,7 +3734,7 @@ ${value}</textarea
         }
     };
     StaffEventTypesView$1 = __decorate([
-        e$1("lms-staff-event-types-view")
+        e$2("lms-staff-event-types-view")
     ], StaffEventTypesView$1);
     var StaffEventTypesView$2 = StaffEventTypesView$1;
 
@@ -3746,7 +3747,7 @@ ${value}</textarea
         }
     };
     StaffLocationsView = __decorate([
-        e$1("lms-staff-locations-view")
+        e$2("lms-staff-locations-view")
     ], StaffLocationsView);
     var StaffLocationsView$1 = StaffLocationsView;
 
@@ -3757,7 +3758,7 @@ ${value}</textarea
     };
     StaffSettingsView.styles = [bootstrapStyles];
     StaffSettingsView = __decorate([
-        e$1("lms-staff-settings-view")
+        e$2("lms-staff-settings-view")
     ], StaffSettingsView);
     var StaffSettingsView$1 = StaffSettingsView;
 
@@ -3783,10 +3784,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e({ type: Array })
+        e$1({ type: Array })
     ], StaffEventTypesView.prototype, "data", void 0);
     StaffEventTypesView = __decorate([
-        e$1("lms-staff-target-groups-view")
+        e$2("lms-staff-target-groups-view")
     ], StaffEventTypesView);
     var StaffTargetGroupsView = StaffEventTypesView;
 
