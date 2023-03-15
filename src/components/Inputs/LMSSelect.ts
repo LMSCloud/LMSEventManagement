@@ -1,5 +1,5 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html, nothing } from "lit";
+import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map";
 import { ModalField, SelectOption } from "../../sharedDeclarations";
@@ -35,15 +35,15 @@ export default class LMSSelect extends LitElement {
           }}
           ?required=${required}
         >
-          ${this.defaultOption.name
-            ? html`<option value=${this.defaultOption.id} selected>
-                ${this.defaultOption.name}
-              </option>`
-            : nothing}
           ${map(
             dbData,
             ({ id, name }: SelectOption) =>
-              html`<option value=${id}>${name}</option>`
+              html`<option
+                value=${id}
+                ?selected=${id === this.defaultOption.id}
+              >
+                ${name}
+              </option>`
           )}
         </select>
       </div>
