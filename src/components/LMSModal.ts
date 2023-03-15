@@ -233,7 +233,7 @@ export default class LMSModal extends LitElement {
                 <div
                   role="alert"
                   ?hidden=${!this.alertMessage}
-                  class="alert  ${classMap({
+                  class="alert ${classMap({
                     "alert-danger": this.alertMessage.includes("Sorry!"),
                   })} alert-dismissible fade show"
                 >
