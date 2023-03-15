@@ -78,15 +78,18 @@ export type Input = {
   value: string;
 };
 
-export type SelectOption = Input;
+export type SelectOption = {
+  id: string | number;
+  name: string;
+};
 
 export type BaseField = {
   name: string;
   desc?: string;
-  logic?: () => Promise<{ value: string; name: string }[]>;
+  logic?: () => Promise<{ id: string | number; name: string }[]>;
   required?: boolean;
   value?: string | { [key: string]: string }[];
-  entries?: { value: string; name: string }[];
+  dbData?: { id: string | number; name: string }[];
   attributes?: [string, string | number][];
 };
 
@@ -100,7 +103,6 @@ export type SpecialField = BaseField & {
 
 export type ModalField = BaseField & {
   type?: InputType | "select" | "info" | "checkbox" | "matrix";
-  default?: SelectOption;
   headers?: string[][];
   matrixInputType?: InputType;
   handler?: HandlerCallbackFunction;

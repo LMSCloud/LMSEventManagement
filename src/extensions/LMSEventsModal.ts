@@ -27,7 +27,7 @@ export default class LMSEventsModal extends LMSModal {
           );
           const result = await response.json();
           return result.map((event_type: any) => ({
-            value: event_type.id,
+            id: event_type.id,
             name: event_type.name,
           }));
         },
@@ -89,7 +89,7 @@ export default class LMSEventsModal extends LMSModal {
           );
           const result = await response.json();
           return result.map((target_group: any) => ({
-            value: target_group.id,
+            id: target_group.id,
             name: target_group.name,
           }));
         },
@@ -147,7 +147,7 @@ export default class LMSEventsModal extends LMSModal {
           );
           const result = await response.json();
           return result.map((location: any) => ({
-            value: location.id,
+            id: location.id,
             name: location.name,
           }));
         },
@@ -171,10 +171,10 @@ export default class LMSEventsModal extends LMSModal {
         desc: "Status",
         logic: async () => {
           return [
-            { value: "pending", name: "Pending" },
-            { value: "confirmed", name: "Confirmed" },
-            { value: "canceled", name: "Canceled" },
-            { value: "sold_out", name: "Sold Out" },
+            { id: "pending", name: "Pending" },
+            { id: "confirmed", name: "Confirmed" },
+            { id: "canceled", name: "Canceled" },
+            { id: "sold_out", name: "Sold Out" },
           ];
         },
         required: true,
