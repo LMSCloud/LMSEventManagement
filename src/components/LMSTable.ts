@@ -146,7 +146,7 @@ export default class LMSTable extends LitElement {
     }
   }
 
-  private sortByColumn({ column, direction }: sortTask) {
+  private sortColumnByValue({ column, direction }: sortTask) {
     const { data } = this;
     const hasData = data?.length > 0 ?? false;
 
@@ -193,7 +193,7 @@ export default class LMSTable extends LitElement {
                         <button
                           class="btn btn-sm"
                           @click=${() =>
-                            this.sortByColumn({
+                            this.sortColumnByValue({
                               column: key,
                               direction: "asc",
                             })}
@@ -203,7 +203,7 @@ export default class LMSTable extends LitElement {
                         <button
                           class="btn btn-sm"
                           @click=${() =>
-                            this.sortByColumn({
+                            this.sortColumnByValue({
                               column: key,
                               direction: "desc",
                             })}
