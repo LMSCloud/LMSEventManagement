@@ -1,6 +1,6 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html, TemplateResult, css } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import LMSStaffEventCardForm from "./LMSStaffEventCard/LMSStaffEventCardForm";
 import {
   InputType,
@@ -13,6 +13,7 @@ import LMSStaffEventCardAttendees from "./LMSStaffEventCard/LMSStaffEventCardAtt
 import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSAnchor from "./LMSAnchor";
 import TemplateResultConverter from "../lib/TemplateResultConverter";
+import { map } from "lit/directives/map";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -26,11 +27,8 @@ declare global {
 @customElement("lms-staff-event-card-deck")
 export default class LMSStaffEventCardDeck extends LitElement {
   @property({ type: Array }) data: Column[] = [];
-  @property({ type: Object, attribute: false }) cardStates: Map<
-    string,
-    string[]
-  > = new Map();
-  @property({ type: Object, attribute: false }) href: URIComponents = {
+  @state() cardStates: Map<string, string[]> = new Map();
+  @state() href: URIComponents = {
     path: "/cgi-bin/koha/plugins/run.pl",
     query: true,
     params: {
@@ -161,7 +159,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
                 </tr>
               </thead>
               <tbody>
-                ${result.map(({ id, name }: TargetGroup) => {
+                ${map(result, ({ id, name }: TargetGroup) => {
                   const target_group = (
                     value as unknown as TargetGroupFee[]
                   ).find((target_group) => target_group.target_group_id === id);
@@ -305,7 +303,8 @@ export default class LMSStaffEventCardDeck extends LitElement {
           );
           const result = await response.json();
           return html`<select class="form-control" name="location" disabled>
-            ${result.map(
+            ${map(
+              result,
               ({ id, name }: { id: number; name: string }) =>
                 html`<option value=${id}>${name}</option>`
             )};
@@ -381,7 +380,7 @@ ${value}</textarea
           html`<input
             @change=${(e: Event) => {
               const target = e.target as HTMLInputElement;
-              target.value = target.checked ? "1" : "0";
+              target.value = (target.checked ? 1 : 0).toString();
             }}
             class="form-check-input"
             type="checkbox"
@@ -458,7 +457,8 @@ ${value}</textarea
       : html`
           <div class="container-fluid mx-0">
             <div class="card-deck">
-              ${this.data.map(
+              ${map(
+                this.data,
                 (datum) => html`
                   <div class="card">
                     <div class="card-header">
