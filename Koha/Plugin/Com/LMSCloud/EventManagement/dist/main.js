@@ -1024,7 +1024,6 @@
         }
         render() {
             var _a;
-            // console.table(this.fields);
             return y `
       <div class="btn-modal-wrapper">
         <button
@@ -1658,7 +1657,12 @@
                         const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
                         const result = await response.json();
                         return y `<select class="form-control" name="event_type" disabled>
-            ${result.map(({ id, name }) => y `<option value=${id}>${name}</option>`)};
+            ${o$1(result, ({ id, name }) => y `<option
+                  value=${id}
+                  ?selected=${id === parseInt(value, 10)}
+                >
+                  ${name}
+                </option>`)};
           </select>`;
                     },
                 ],
@@ -2527,11 +2531,13 @@ ${value}</textarea
             if (eventTypeField) {
                 const { dbData } = eventTypeField;
                 if (dbData) {
-                    console.log("selectedEventTypeId", this.selectedEventTypeId);
+                    /** We destructure the default event_type out of the dbData array
+                     *  to set the selectedEventTypeId state variable. */
                     const [event_type] = dbData;
                     let { id } = event_type;
+                    /** If the eventTypeField value has changed due to a select element
+                     *  change event, we use it instead of the default. */
                     id = (_a = eventTypeField === null || eventTypeField === void 0 ? void 0 : eventTypeField.value) !== null && _a !== void 0 ? _a : id;
-                    console.log("id", id);
                     const result = async () => {
                         const response = await fetch(`/api/v1/contrib/eventmanagement/event_types/${id}`);
                         if (response.ok) {
@@ -2546,7 +2552,6 @@ ${value}</textarea
                             return;
                         }
                         if (!this.selectedEventTypeId || this.selectedEventTypeId != id) {
-                            console.log("test");
                             Object.entries(event_type).forEach(([property, value]) => {
                                 const field = fields.find((field) => field.name === property);
                                 if (field) {
