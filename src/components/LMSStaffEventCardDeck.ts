@@ -391,7 +391,6 @@ ${value}</textarea
             class="form-check-input"
             type="checkbox"
             name="open_registration"
-            value=${(value as unknown as string) === "true" ? 1 : 0}
             ?checked=${value as unknown as boolean}
             disabled
           />`,

@@ -58,6 +58,9 @@ export default class LMSStaffEventCardForm extends LitElement {
     const keys = Object.keys(this.datum);
     keys.splice(keys.indexOf("uuid"), 1);
 
+    /** Here we have custom handling for the target_group field to assure
+     *  that this property is always an array of objects containing all
+     *  configured target_groups. */
     const targetGroupElements: Array<HTMLTableCellElement | HTMLInputElement> =
       Array.from(target.querySelectorAll(`[data-group="target_groups"]`));
     if (!targetGroupElements.length) {
@@ -91,6 +94,20 @@ export default class LMSStaffEventCardForm extends LitElement {
       {}
     );
 
+    /** Here we have some custom handling for the open_registration field because
+     *  we need to check the state of the checked attribute instead of using the value. */
+    const openRegistrationElement: HTMLInputElement | undefined =
+      (target?.querySelector(
+        '[name="open_registration"]'
+      ) as HTMLInputElement) ?? undefined;
+    if (!openRegistrationElement) {
+      return;
+    }
+
+    const openRegistration = (
+      openRegistrationElement.checked ? 1 : 0
+    ).toString();
+
     const formData = new FormData(target);
     const requestBody = Array.from(formData).reduce(
       (acc: { [key: string]: unknown }, [key, value]) => {
@@ -101,7 +118,9 @@ export default class LMSStaffEventCardForm extends LitElement {
       },
       {}
     );
+
     requestBody.target_groups = Object.values(target_groups);
+    requestBody.open_registration = openRegistration;
     const response = await fetch(
       `/api/v1/contrib/eventmanagement/events/${id}`,
       { method: "PUT", body: JSON.stringify(requestBody) }
