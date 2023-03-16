@@ -1361,6 +1361,7 @@
             });
         }
         async handleSave(e) {
+            var _a;
             e.preventDefault();
             const target = e.target;
             const id = new TemplateResultConverter(this.datum.id).getRenderValues()[0];
@@ -1369,6 +1370,9 @@
             }
             const keys = Object.keys(this.datum);
             keys.splice(keys.indexOf("uuid"), 1);
+            /** Here we have custom handling for the target_group field to assure
+             *  that this property is always an array of objects containing all
+             *  configured target_groups. */
             const targetGroupElements = Array.from(target.querySelectorAll(`[data-group="target_groups"]`));
             if (!targetGroupElements.length) {
                 return;
@@ -1391,6 +1395,13 @@
                 }
                 return target_groups;
             }, {});
+            /** Here we have some custom handling for the open_registration field because
+             *  we need to check the state of the checked attribute instead of using the value. */
+            const openRegistrationElement = (_a = target === null || target === void 0 ? void 0 : target.querySelector('[name="open_registration"]')) !== null && _a !== void 0 ? _a : undefined;
+            if (!openRegistrationElement) {
+                return;
+            }
+            const openRegistration = (openRegistrationElement.checked ? 1 : 0).toString();
             const formData = new FormData(target);
             const requestBody = Array.from(formData).reduce((acc, [key, value]) => {
                 if (keys.includes(key)) {
@@ -1399,6 +1410,7 @@
                 return acc;
             }, {});
             requestBody.target_groups = Object.values(target_groups);
+            requestBody.open_registration = openRegistration;
             const response = await fetch(`/api/v1/contrib/eventmanagement/events/${id}`, { method: "PUT", body: JSON.stringify(requestBody) });
             if (response.status >= 200 && response.status <= 299) {
                 target === null || target === void 0 ? void 0 : target.querySelectorAll("input, select, textarea").forEach((input) => {
@@ -1887,7 +1899,6 @@ ${value}</textarea
             class="form-check-input"
             type="checkbox"
             name="open_registration"
-            value=${value === "true" ? 1 : 0}
             ?checked=${value}
             disabled
           />`,
