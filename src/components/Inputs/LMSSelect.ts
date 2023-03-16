@@ -9,6 +9,7 @@ export default class LMSSelect extends LitElement {
   private defaultOption = {} as SelectOption;
 
   @property({ type: Object }) field: ModalField = {} as ModalField;
+
   static override styles = [bootstrapStyles];
 
   override firstUpdated() {

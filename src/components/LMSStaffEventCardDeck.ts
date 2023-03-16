@@ -135,9 +135,15 @@ export default class LMSStaffEventCardDeck extends LitElement {
           );
           const result = await response.json();
           return html`<select class="form-control" name="event_type" disabled>
-            ${result.map(
+            ${map(
+              result,
               ({ id, name }: { id: number; name: string }) =>
-                html`<option value=${id}>${name}</option>`
+                html`<option
+                  value=${id}
+                  ?selected=${id === parseInt(value, 10)}
+                >
+                  ${name}
+                </option>`
             )};
           </select>`;
         },
