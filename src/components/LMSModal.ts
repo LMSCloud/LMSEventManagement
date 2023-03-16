@@ -14,24 +14,12 @@ import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
 // import TranslationHandler from "../lib/TranslationHandler";
 import { customElement, property, state } from "lit/decorators";
 // import { Gettext } from "gettext.js";
-import {
-  CreateOpts,
-  MatrixGroup,
-  // HandlerCallbackFunction,
-  ModalField,
-} from "../sharedDeclarations";
+import { CreateOpts, MatrixGroup, ModalField } from "../sharedDeclarations";
 import LMSSelect from "./Inputs/LMSSelect";
 import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
 import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
 import { classMap } from "lit/directives/class-map.js";
-
-// type HandlerExecutorArgs = {
-//   handler: HandlerCallbackFunction;
-//   event?: Event;
-//   value?: string | number;
-//   requestUpdate: boolean;
-// };
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -114,15 +102,6 @@ export default class LMSModal extends LitElement {
       }
     `,
   ];
-
-  // hasChanged() {
-  //   return (newValues: PropertyValues, oldValues: PropertyValues) =>
-  //     Object.keys(newValues).some(
-  //       (key) => newValues.get(key) !== oldValues.get(key)
-  //     );
-  // }
-
-  /** What's the best place to fetch data asynchronously before a render in a LitElement */
 
   private toggleModal() {
     const { renderRoot } = this;
@@ -272,13 +251,34 @@ export default class LMSModal extends LitElement {
     `;
   }
 
+  protected mediateChange(e: CustomEvent) {
+    const { name, value } = e.detail;
+    this.fields = [
+      ...this.fields.map((field) => {
+        if (field.name === name) {
+          return {
+            ...field,
+            value,
+          };
+        }
+        return field;
+      }),
+    ];
+  }
+
   private getFieldMarkup(field: ModalField) {
     const { type, desc } = field;
     if (!type || !desc) return nothing;
 
     const { value } = field;
     const fieldTypes = new Map<string, TemplateResult>([
-      ["select", html`<lms-select .field=${field}></lms-select>`],
+      [
+        "select",
+        html`<lms-select
+          @change=${this.mediateChange}
+          .field=${field}
+        ></lms-select>`,
+      ],
       [
         "checkbox",
         html`<lms-checkbox-input

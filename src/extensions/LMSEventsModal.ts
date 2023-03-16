@@ -1,4 +1,4 @@
-import { customElement, property } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators";
 import LMSModal from "../components/LMSModal";
 import { CreateOpts, EventType } from "../sharedDeclarations";
 
@@ -8,6 +8,7 @@ export default class LMSEventsModal extends LMSModal {
     method: "POST",
     endpoint: "/api/v1/contrib/eventmanagement/events",
   };
+  @state() private selectedEventTypeId: number | undefined = undefined;
 
   override connectedCallback() {
     super.connectedCallback();
@@ -155,12 +156,18 @@ export default class LMSEventsModal extends LMSModal {
 
   override willUpdate() {
     const { fields } = this;
-    const eventType = fields.find((field) => field.name === "event_type");
-    if (eventType) {
-      const { dbData } = eventType;
+    const eventTypeField = fields.find((field) => field.name === "event_type");
+    if (eventTypeField) {
+      const { dbData } = eventTypeField;
       if (dbData) {
+        /** We destructure the default event_type out of the dbData array
+         *  to set the selectedEventTypeId state variable. */
         const [event_type] = dbData;
-        const { id } = event_type;
+        let { id } = event_type;
+
+        /** If the eventTypeField value has changed due to a select element
+         *  change event, we use it instead of the default. */
+        id = (eventTypeField?.value as string) ?? id;
 
         const result = async () => {
           const response = await fetch(
@@ -181,16 +188,35 @@ export default class LMSEventsModal extends LMSModal {
               return;
             }
 
-            console.log(event_type);
+            if (!this.selectedEventTypeId || this.selectedEventTypeId != id) {
+              Object.entries(event_type).forEach(([property, value]) => {
+                const field = fields.find((field) => field.name === property);
+                if (field) {
+                  switch (typeof value) {
+                    case "number":
+                      field.value = value.toString();
+                      break;
+                    case "boolean":
+                      field.value = (value ? 1 : 0).toString();
+                      break;
+                    case "object":
+                      if (value instanceof Array) {
+                        field.value = value.map((item) => ({
+                          id: item.target_group_id.toString(),
+                          selected: (item.selected ? 1 : 0).toString(),
+                          fee: item.fee.toString(),
+                        }));
+                      }
+                      break;
+                    default:
+                      field.value = value;
+                  }
+                }
+              });
 
-            // Object.entries(event_type as EventType).forEach(
-            //   ([property, value]) => {
-            //     const field = fields[property];
-            //     if (field) {
-            //       field.value = value;
-            //     }
-            //   }
-            // );
+              this.selectedEventTypeId =
+                typeof id === "string" ? parseInt(id, 10) : id;
+            }
           })
           .catch((error) => {
             console.error(error);

@@ -969,13 +969,6 @@
             this.alertMessage = "";
             this.modalTitle = "";
         }
-        // hasChanged() {
-        //   return (newValues: PropertyValues, oldValues: PropertyValues) =>
-        //     Object.keys(newValues).some(
-        //       (key) => newValues.get(key) !== oldValues.get(key)
-        //     );
-        // }
-        /** What's the best place to fetch data asynchronously before a render in a LitElement */
         toggleModal() {
             const { renderRoot } = this;
             this.isOpen = !this.isOpen;
@@ -1031,6 +1024,7 @@
         }
         render() {
             var _a;
+            // console.table(this.fields);
             return y `
       <div class="btn-modal-wrapper">
         <button
@@ -1111,13 +1105,33 @@
       </div>
     `;
         }
+        mediateChange(e) {
+            const { name, value } = e.detail;
+            this.fields = [
+                ...this.fields.map((field) => {
+                    if (field.name === name) {
+                        return {
+                            ...field,
+                            value,
+                        };
+                    }
+                    return field;
+                }),
+            ];
+        }
         getFieldMarkup(field) {
             const { type, desc } = field;
             if (!type || !desc)
                 return b;
             const { value } = field;
             const fieldTypes = new Map([
-                ["select", y `<lms-select .field=${field}></lms-select>`],
+                [
+                    "select",
+                    y `<lms-select
+          @change=${this.mediateChange}
+          .field=${field}
+        ></lms-select>`,
+                ],
                 [
                     "checkbox",
                     y `<lms-checkbox-input
@@ -2143,7 +2157,7 @@ ${value}</textarea
             name=${row.name}
             id=${row.id}
             .value=${field.value instanceof Array
-                    ? (_b = (_a = field.value.find((item) => item.id === row.id)) === null || _a === void 0 ? void 0 : _a[name]) !== null && _b !== void 0 ? _b : ""
+                    ? (_b = (_a = field.value.find((item) => item.id == row.id)) === null || _a === void 0 ? void 0 : _a[name]) !== null && _b !== void 0 ? _b : ""
                     : ""}
             step="0.01"
             class="form-control"
@@ -2164,7 +2178,7 @@ ${value}</textarea
             @input=${(e) => this.handleInput({ e, id: row.id, header })}
             ?required=${field.required}
             .checked=${field.value instanceof Array
-                    ? ((_e = field.value.find((item) => item.id === row.id)) === null || _e === void 0 ? void 0 : _e[name]) === "1"
+                    ? ((_e = field.value.find((item) => item.id == row.id)) === null || _e === void 0 ? void 0 : _e[name]) === "1"
                         ? true
                         : false
                     : false}
@@ -2241,7 +2255,7 @@ ${value}</textarea
             this.defaultOption = {};
             this.field = {};
         }
-        willUpdate() {
+        firstUpdated() {
             const { dbData } = this.field;
             if (dbData === null || dbData === void 0 ? void 0 : dbData.length) {
                 const [defaultOption] = dbData;
@@ -2262,6 +2276,14 @@ ${value}</textarea
           @change=${(e) => {
             var _a;
             this.field.value = (_a = e.target.value) !== null && _a !== void 0 ? _a : value;
+            this.dispatchEvent(new CustomEvent("change", {
+                detail: {
+                    name,
+                    value: this.field.value,
+                },
+                composed: true,
+                bubbles: true,
+            }));
         }}
           ?required=${required}
         >
@@ -2359,6 +2381,7 @@ ${value}</textarea
                 method: "POST",
                 endpoint: "/api/v1/contrib/eventmanagement/events",
             };
+            this.selectedEventTypeId = undefined;
         }
         connectedCallback() {
             super.connectedCallback();
@@ -2498,13 +2521,17 @@ ${value}</textarea
             ];
         }
         willUpdate() {
+            var _a;
             const { fields } = this;
-            const eventType = fields.find((field) => field.name === "event_type");
-            if (eventType) {
-                const { dbData } = eventType;
+            const eventTypeField = fields.find((field) => field.name === "event_type");
+            if (eventTypeField) {
+                const { dbData } = eventTypeField;
                 if (dbData) {
+                    console.log("selectedEventTypeId", this.selectedEventTypeId);
                     const [event_type] = dbData;
-                    const { id } = event_type;
+                    let { id } = event_type;
+                    id = (_a = eventTypeField === null || eventTypeField === void 0 ? void 0 : eventTypeField.value) !== null && _a !== void 0 ? _a : id;
+                    console.log("id", id);
                     const result = async () => {
                         const response = await fetch(`/api/v1/contrib/eventmanagement/event_types/${id}`);
                         if (response.ok) {
@@ -2518,15 +2545,35 @@ ${value}</textarea
                         if (event_type instanceof Error) {
                             return;
                         }
-                        console.log(event_type);
-                        // Object.entries(event_type as EventType).forEach(
-                        //   ([property, value]) => {
-                        //     const field = fields[property];
-                        //     if (field) {
-                        //       field.value = value;
-                        //     }
-                        //   }
-                        // );
+                        if (!this.selectedEventTypeId || this.selectedEventTypeId != id) {
+                            console.log("test");
+                            Object.entries(event_type).forEach(([property, value]) => {
+                                const field = fields.find((field) => field.name === property);
+                                if (field) {
+                                    switch (typeof value) {
+                                        case "number":
+                                            field.value = value.toString();
+                                            break;
+                                        case "boolean":
+                                            field.value = (value ? 1 : 0).toString();
+                                            break;
+                                        case "object":
+                                            if (value instanceof Array) {
+                                                field.value = value.map((item) => ({
+                                                    id: item.target_group_id.toString(),
+                                                    selected: (item.selected ? 1 : 0).toString(),
+                                                    fee: item.fee.toString(),
+                                                }));
+                                            }
+                                            break;
+                                        default:
+                                            field.value = value;
+                                    }
+                                }
+                            });
+                            this.selectedEventTypeId =
+                                typeof id === "string" ? parseInt(id, 10) : id;
+                        }
                     })
                         .catch((error) => {
                         console.error(error);
@@ -2538,6 +2585,9 @@ ${value}</textarea
     __decorate([
         e$1({ type: Object })
     ], LMSEventsModal.prototype, "createOpts", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsModal.prototype, "selectedEventTypeId", void 0);
     LMSEventsModal = __decorate([
         e$2("lms-events-modal")
     ], LMSEventsModal);

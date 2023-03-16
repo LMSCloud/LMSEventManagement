@@ -11,7 +11,7 @@ export default class LMSSelect extends LitElement {
   @property({ type: Object }) field: ModalField = {} as ModalField;
   static override styles = [bootstrapStyles];
 
-  override willUpdate() {
+  override firstUpdated() {
     const { dbData } = this.field;
     if (dbData?.length) {
       const [defaultOption] = dbData;
@@ -32,6 +32,16 @@ export default class LMSSelect extends LitElement {
           class="form-control"
           @change=${(e: Event) => {
             this.field.value = (e.target as HTMLSelectElement).value ?? value;
+            this.dispatchEvent(
+              new CustomEvent("change", {
+                detail: {
+                  name,
+                  value: this.field.value,
+                },
+                composed: true,
+                bubbles: true,
+              })
+            );
           }}
           ?required=${required}
         >

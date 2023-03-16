@@ -20,12 +20,12 @@ export default class LMSModal extends LitElement {
     protected alertMessage: string;
     protected modalTitle: string;
     static styles: import("lit").CSSResult[];
-    /** What's the best place to fetch data asynchronously before a render in a LitElement */
     private toggleModal;
     private create;
     private dismissAlert;
     firstUpdated(): void;
     render(): TemplateResult<1>;
+    protected mediateChange(e: CustomEvent): void;
     private getFieldMarkup;
 }
 //# sourceMappingURL=LMSModal.d.ts.map

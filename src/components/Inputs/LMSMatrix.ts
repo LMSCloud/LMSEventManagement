@@ -112,7 +112,7 @@ export default class LMSMatrix extends LitElement {
             name=${row.name}
             id=${row.id}
             .value=${field.value instanceof Array
-              ? field.value.find((item) => item.id === row.id)?.[name] ?? ""
+              ? field.value.find((item) => item.id == row.id)?.[name] ?? ""
               : ""}
             step="0.01"
             class="form-control"
@@ -137,7 +137,7 @@ export default class LMSMatrix extends LitElement {
             @input=${(e: Event) => this.handleInput({ e, id: row.id, header })}
             ?required=${field.required}
             .checked=${field.value instanceof Array
-              ? field.value.find((item) => item.id === row.id)?.[name] === "1"
+              ? field.value.find((item) => item.id == row.id)?.[name] === "1"
                 ? true
                 : false
               : false}
