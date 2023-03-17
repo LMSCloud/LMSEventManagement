@@ -431,7 +431,6 @@ ${value}</textarea
                 op: "target-groups",
               },
             }}
-            data-text="target group"
             >target group</lms-anchor
           >, a
           <lms-anchor
@@ -442,7 +441,6 @@ ${value}</textarea
                 op: "locations",
               },
             }}
-            data-text="location"
             >location</lms-anchor
           >
           and an
@@ -454,7 +452,6 @@ ${value}</textarea
                 op: "event-types",
               },
             }}
-            data-text="event type"
             >event type</lms-anchor
           >
           first.

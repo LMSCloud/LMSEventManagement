@@ -5,8 +5,9 @@ import { URIComponents } from "../sharedDeclarations";
 
 @customElement("lms-anchor")
 export default class LMSAnchor extends LitElement {
-  @property({ type: Object }) href: URIComponents = {};
-  @property({ type: String }) text = "";
+  @property({ type: Object, attribute: "data-href" })
+  href: URIComponents = {};
+
   static override styles = [
     bootstrapStyles,
     css`
@@ -33,12 +34,6 @@ export default class LMSAnchor extends LitElement {
     return uri;
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-    const { text } = this.dataset;
-    this.text = text ?? "";
-  }
-
   hasChanged() {
     return (newValues: PropertyValues, oldValues: PropertyValues) => {
       return Object.keys(newValues).some(
@@ -48,11 +43,16 @@ export default class LMSAnchor extends LitElement {
   }
 
   override render() {
+    console.log(this.href);
     if (Object.values(this.href).every((value) => value === undefined)) {
       console.error("href is not a valid URIComponents object");
       return nothing;
     }
 
-    return html` <a .href=${this.assembleURI()}>${this.text}</a> `;
+    return html`
+      <a .href=${this.assembleURI()}>
+        <slot></slot>
+      </a>
+    `;
   }
 }

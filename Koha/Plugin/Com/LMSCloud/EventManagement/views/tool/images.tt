@@ -3,6 +3,13 @@
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
     <div class="lmse-content-block" id="entry-point">
-        <lms-image-browser></lms-image-browser>        
+        <lms-image-browser></lms-image-browser>    
+    </div>
+    <div class="lmse-content-block" id="entry-point">
+        <div class="text-center">
+            <lms-anchor data-href='{ "path": "/cgi-bin/koha/tools/upload.pl" }'>
+                <i class="fa fa-upload"></i>&nbsp;Upload images
+            </lms-anchor>
+        </div>
     </div>
 [% END %]

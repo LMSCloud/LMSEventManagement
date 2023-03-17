@@ -188,7 +188,6 @@ export default class LMSEventTypesTable extends LMSTable {
             op: "target-groups",
           },
         }}
-        data-text="target group"
         >target group</lms-anchor
       >, a
       <lms-anchor
@@ -199,7 +198,6 @@ export default class LMSEventTypesTable extends LMSTable {
             op: "locations",
           },
         }}
-        data-text="location"
         >location</lms-anchor
       >
       first.`;

@@ -115,7 +115,6 @@
         constructor() {
             super(...arguments);
             this.href = {};
-            this.text = "";
         }
         assembleURI() {
             const { path, query, params, fragment } = this.href;
@@ -133,22 +132,22 @@
             }
             return uri;
         }
-        connectedCallback() {
-            super.connectedCallback();
-            const { text } = this.dataset;
-            this.text = text !== null && text !== void 0 ? text : "";
-        }
         hasChanged() {
             return (newValues, oldValues) => {
                 return Object.keys(newValues).some((key) => newValues.get(key) !== oldValues.get(key));
             };
         }
         render() {
+            console.log(this.href);
             if (Object.values(this.href).every((value) => value === undefined)) {
                 console.error("href is not a valid URIComponents object");
                 return b;
             }
-            return y ` <a .href=${this.assembleURI()}>${this.text}</a> `;
+            return y `
+      <a .href=${this.assembleURI()}>
+        <slot></slot>
+      </a>
+    `;
         }
     };
     LMSAnchor.styles = [
@@ -160,11 +159,8 @@
     `,
     ];
     __decorate([
-        e$2({ type: Object })
+        e$2({ type: Object, attribute: "data-href" })
     ], LMSAnchor.prototype, "href", void 0);
-    __decorate([
-        e$2({ type: String })
-    ], LMSAnchor.prototype, "text", void 0);
     LMSAnchor = __decorate([
         e$3("lms-anchor")
     ], LMSAnchor);
@@ -2120,7 +2116,6 @@ ${value}</textarea
                     op: "target-groups",
                 },
             }}
-            data-text="target group"
             >target group</lms-anchor
           >, a
           <lms-anchor
@@ -2131,7 +2126,6 @@ ${value}</textarea
                     op: "locations",
                 },
             }}
-            data-text="location"
             >location</lms-anchor
           >
           and an
@@ -2143,7 +2137,6 @@ ${value}</textarea
                     op: "event-types",
                 },
             }}
-            data-text="event type"
             >event type</lms-anchor
           >
           first.
@@ -3393,7 +3386,6 @@ ${value}</textarea
                 op: "target-groups",
             },
         }}
-        data-text="target group"
         >target group</lms-anchor
       >, a
       <lms-anchor
@@ -3404,7 +3396,6 @@ ${value}</textarea
                 op: "locations",
             },
         }}
-        data-text="location"
         >location</lms-anchor
       >
       first.`;
