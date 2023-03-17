@@ -12,8 +12,6 @@ use JSON;
 use SQL::Abstract;
 use Scalar::Util qw(looks_like_number reftype);
 
-use Koha::UploadedFiles;
-
 our $VERSION = '1.0.0';
 
 my $self = undef;

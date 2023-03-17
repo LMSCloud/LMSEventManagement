@@ -4,11 +4,13 @@ import LMSAnchor from "./components/LMSAnchor";
 import LMSCard from "./components/LMSCard";
 import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
+import LMSImageBrowser from "./components/LMSImageBrowser";
 import LMSModal from "./components/LMSModal";
 import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventCardForm";
 import LMSStaffEventCardsDeck from "./components/LMSStaffEventCardDeck";
+import LMSTooltip from "./components/LMSTooltip";
 /** Inputs */
 import LMSCheckboxInput from "./components/Inputs/LMSCheckboxInput";
 import LMSMatrix from "./components/Inputs/LMSMatrix";
@@ -35,11 +37,13 @@ declare const _default: {
     LMSCard: typeof LMSCard;
     LMSEventsFilter: typeof LMSEventsFilter;
     LMSFloatingMenu: typeof LMSFloatingMenu;
+    LMSImageBrowser: typeof LMSImageBrowser;
     LMSModal: typeof LMSModal;
     LMSStaffEventCardAttendees: typeof LMSStaffEventCardAttendees;
     LMSStaffEventCardPreview: typeof LMSStaffEventCardPreview;
     LMSStaffEventCardForm: typeof LMSStaffEventCardForm;
     LMSStaffEventCardsDeck: typeof LMSStaffEventCardsDeck;
+    LMSTooltip: typeof LMSTooltip;
     LMSCheckboxInput: typeof LMSCheckboxInput;
     LMSMatrix: typeof LMSMatrix;
     LMSPrimitivesInput: typeof LMSPrimitivesInput;

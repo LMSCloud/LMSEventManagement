@@ -23,7 +23,6 @@ use Koha::Patron::Categories;
 use Koha::Patron;
 use Koha::Patrons;
 use Koha::Template::Plugin::Branches;
-use Koha::UploadedFiles;
 
 use GD::Image;
 use Cwd qw(abs_path);
@@ -33,6 +32,7 @@ use Mojo::JSON qw(decode_json);
 use URI::Escape qw(uri_unescape);
 use Try::Tiny;
 use Carp;
+use MIME::Base64;
 
 use Readonly;
 Readonly my $TINYINT_UPPER_BOUNDARY => 255;
@@ -85,7 +85,12 @@ sub tool {
 
             return $self->output_html( $template->output() );
         },
+        q{images} => sub {
+            $template = $self->get_template( { file => 'views/tool/images.tt' } );
 
+            return $self->output_html( $template->output() );
+
+        },
     };
 
     return $responses->{$op}();
@@ -278,7 +283,7 @@ sub install() {
                 `max_age` TINYINT unsigned DEFAULT NULL COMMENT 'maximum age requirement',
                 `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'maximum allowed number of participants',
                 `location` INT(11) DEFAULT NULL COMMENT 'id of a location from the locations table',
-                `image` INT(10) DEFAULT NULL COMMENT 'image from kohas image management',
+                `image` TEXT(65535) DEFAULT NULL COMMENT 'image from kohas image management',
                 `description` TEXT COMMENT 'what is happening',
                 `open_registration` TINYINT(1) DEFAULT '0' COMMENT 'is the registration to non-patrons via email',
                 PRIMARY KEY (`id`)
@@ -297,7 +302,7 @@ sub install() {
                 `registration_start` DATETIME DEFAULT NULL COMMENT 'start time of the registration',
                 `registration_end` DATETIME DEFAULT NULL COMMENT 'end time of the registration',
                 `location` INT(11) DEFAULT NULL COMMENT 'the location id from the locations table',
-                `image` INT(10) DEFAULT NULL COMMENT 'image from kohas image management',
+                `image` TEXT(65535) DEFAULT NULL COMMENT 'image from kohas image management',
                 `description` TEXT(65535) DEFAULT NULL COMMENT 'description',
                 `status` ENUM('pending','confirmed','canceled', 'sold_out') DEFAULT 'pending' COMMENT 'status of the event',
                 `registration_link` TEXT(65535) COMMENT 'link to the registration form',

@@ -99,7 +99,7 @@ export type EventType = {
     max_age: number;
     max_participants: number;
     location: number;
-    image: number;
+    image: string;
     description: string;
     open_registration: boolean;
 };

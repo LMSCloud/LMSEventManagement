@@ -322,7 +322,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
         () =>
           html`<input
             class="form-control"
-            type="number"
+            type="text"
             name="image"
             value=${value}
             disabled

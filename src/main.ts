@@ -5,11 +5,13 @@ import LMSAnchor from "./components/LMSAnchor";
 import LMSCard from "./components/LMSCard";
 import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
+import LMSImageBrowser from "./components/LMSImageBrowser";
 import LMSModal from "./components/LMSModal";
 import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventCardForm";
 import LMSStaffEventCardsDeck from "./components/LMSStaffEventCardDeck";
+import LMSTooltip from "./components/LMSTooltip";
 
 /** Inputs */
 import LMSCheckboxInput from "./components/Inputs/LMSCheckboxInput";
@@ -31,6 +33,7 @@ import LMSTargetGroupsTable from "./extensions/LMSTargetGroupsTable";
 import LMSEventsView from "./views/LMSEventsView";
 import StaffEventsView from "./views/StaffEventsView";
 import StaffEventTypesView from "./views/StaffEventTypesView";
+
 import StaffLocationsView from "./views/StaffLocationsView";
 import StaffSettingsView from "./views/StaffSettingsView";
 import StaffTargetGroupsView from "./views/StaffTargetGroupsView";
@@ -40,11 +43,13 @@ export default {
   LMSCard,
   LMSEventsFilter,
   LMSFloatingMenu,
+  LMSImageBrowser,
   LMSModal,
   LMSStaffEventCardAttendees,
   LMSStaffEventCardPreview,
   LMSStaffEventCardForm,
   LMSStaffEventCardsDeck,
+  LMSTooltip,
   LMSCheckboxInput,
   LMSMatrix,
   LMSPrimitivesInput,

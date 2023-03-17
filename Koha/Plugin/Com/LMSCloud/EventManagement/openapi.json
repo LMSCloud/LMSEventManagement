@@ -1157,7 +1157,7 @@
                   "type": "string"
                 },
                 "image": {
-                  "type": "string"
+                  "type": ["string", "null"]
                 },
                 "location": {
                   "type": "integer"
@@ -1290,7 +1290,7 @@
                 "type": "string"
               },
               "image": {
-                "type": "string"
+                "type": ["string", "null"]
               },
               "location": {
                 "type": "integer"
@@ -1489,7 +1489,7 @@
                 "type": "string"
               },
               "image": {
-                "type": "string"
+                "type": ["string", "null"]
               },
               "location": {
                 "type": "integer"
@@ -1628,7 +1628,7 @@
                 "type": "string"
               },
               "image": {
-                "type": "string"
+                "type": ["string", "null"]
               },
               "location": {
                 "type": "integer"
@@ -1829,6 +1829,138 @@
               },
               "location": {
                 "type": "integer"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/images": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Images#list",
+      "operationId": "listImages",
+      "tags": ["images"],
+      "description": "List all uploaded files in formats: jpeg, jpg, png, webp, avif, gif. These are returned as base64 encoded strings.",
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Images",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "image": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "object",
+                  "properties": {
+                    "dtcreated": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "permanent": {
+                      "type": "integer"
+                    },
+                    "dir": {
+                      "type": "string"
+                    },
+                    "public": {
+                      "type": "integer"
+                    },
+                    "filename": {
+                      "type": "string"
+                    },
+                    "uploadcategorycode": {
+                      "type": "string"
+                    },
+                    "owner": {
+                      "type": "integer"
+                    },
+                    "hashvalue": {
+                      "type": "string"
+                    },
+                    "filesize": {
+                      "type": "integer"
+                    }
+                  }
+                }
               }
             }
           }

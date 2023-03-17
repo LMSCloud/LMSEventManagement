@@ -5,6 +5,7 @@ import {
   faList,
   faBullseye,
   faLocationDot,
+  faImage,
 } from "@fortawesome/free-solid-svg-icons";
 import { customElement, property } from "lit/decorators";
 import { Gettext } from "gettext.js";
@@ -44,6 +45,12 @@ export default class LMSEventMangementMenu extends LMSFloatingMenu {
       name: i18n.gettext("Events") ?? "Events",
       icon: faList,
       url: `${this.baseurl}?class=${this.pluginclass}&method=tool`,
+      method: "tool",
+    },
+    {
+      name: i18n.gettext("Images") ?? "Images",
+      icon: faImage,
+      url: `${this.baseurl}?class=${this.pluginclass}&method=tool&op=images`,
       method: "tool",
     },
   ];

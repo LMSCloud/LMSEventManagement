@@ -31,20 +31,20 @@
      * Copyright 2019 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const t$3=window,e$5=t$3.ShadowRoot&&(void 0===t$3.ShadyCSS||t$3.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$4=new WeakMap;class o$5{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$5&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$4.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$4.set(s,t));}return t}toString(){return this.cssText}}const r$2=t=>new o$5("string"==typeof t?t:t+"",void 0,s$3),i$3=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$5(n,t,s$3)},S$1=(s,n)=>{e$5?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$3.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$5?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
+    const t$3=window,e$6=t$3.ShadowRoot&&(void 0===t$3.ShadyCSS||t$3.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$4=new WeakMap;class o$6{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$6&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$4.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$4.set(s,t));}return t}toString(){return this.cssText}}const r$2=t=>new o$6("string"==typeof t?t:t+"",void 0,s$3),i$3=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$6(n,t,s$3)},S$1=(s,n)=>{e$6?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$3.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$6?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var s$2;const e$4=window,r$1=e$4.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$4=e$4.reactiveElementPolyfillSupport,n$3={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$3={attribute:!0,type:String,converter:n$3,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$3){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$3}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$3){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$3).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$3;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$4||o$4({ReactiveElement:d$1}),(null!==(s$2=e$4.reactiveElementVersions)&&void 0!==s$2?s$2:e$4.reactiveElementVersions=[]).push("1.6.1");
+     */var s$2;const e$5=window,r$1=e$5.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$5=e$5.reactiveElementPolyfillSupport,n$3={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$3={attribute:!0,type:String,converter:n$3,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$3){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$3}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$3){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$3).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$3;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$5||o$5({ReactiveElement:d$1}),(null!==(s$2=e$5.reactiveElementVersions)&&void 0!==s$2?s$2:e$5.reactiveElementVersions=[]).push("1.6.1");
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    var t$2;const i$2=window,s$1=i$2.trustedTypes,e$3=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$3=`lit$${(Math.random()+"").slice(9)}$`,n$2="?"+o$3,l$2=`<${n$2}>`,h=document,r=(t="")=>h.createComment(t),d=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,c=t=>u(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,a=/-->/g,f=/>/g,_=RegExp(">|[ \t\n\f\r](?:([^\\s\"'>=/]+)([ \t\n\f\r]*=[ \t\n\f\r]*(?:[^ \t\n\f\r\"'`<>=]|(\"|')|))|$)","g"),m=/'/g,p=/"/g,$=/^(?:script|style|textarea|title)$/i,g=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),y=g(1),w=g(2),x=Symbol.for("lit-noChange"),b=Symbol.for("lit-nothing"),T=new WeakMap,A=h.createTreeWalker(h,129,null,!1),E=(t,i)=>{const s=t.length-1,n=[];let h,r=2===i?"<svg>":"",d=v;for(let i=0;i<s;i++){const s=t[i];let e,u,c=-1,g=0;for(;g<s.length&&(d.lastIndex=g,u=d.exec(s),null!==u);)g=d.lastIndex,d===v?"!--"===u[1]?d=a:void 0!==u[1]?d=f:void 0!==u[2]?($.test(u[2])&&(h=RegExp("</"+u[2],"g")),d=_):void 0!==u[3]&&(d=_):d===_?">"===u[0]?(d=null!=h?h:v,c=-1):void 0===u[1]?c=-2:(c=d.lastIndex-u[2].length,e=u[1],d=void 0===u[3]?_:'"'===u[3]?p:m):d===p||d===m?d=_:d===a||d===f?d=v:(d=_,h=void 0);const y=d===_&&t[i+1].startsWith("/>")?" ":"";r+=d===v?s+l$2:c>=0?(n.push(e),s.slice(0,c)+"$lit$"+s.slice(c)+o$3+y):s+o$3+(-2===c?(n.push(void 0),i):y);}const u=r+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$3?e$3.createHTML(u):u,n]};class C{constructor({strings:t,_$litType$:i},e){let l;this.parts=[];let h=0,d=0;const u=t.length-1,c=this.parts,[v,a]=E(t,i);if(this.el=C.createElement(v,e),A.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(l=A.nextNode())&&c.length<u;){if(1===l.nodeType){if(l.hasAttributes()){const t=[];for(const i of l.getAttributeNames())if(i.endsWith("$lit$")||i.startsWith(o$3)){const s=a[d++];if(t.push(i),void 0!==s){const t=l.getAttribute(s.toLowerCase()+"$lit$").split(o$3),i=/([.?@])?(.*)/.exec(s);c.push({type:1,index:h,name:i[2],strings:t,ctor:"."===i[1]?M:"?"===i[1]?k:"@"===i[1]?H:S});}else c.push({type:6,index:h});}for(const i of t)l.removeAttribute(i);}if($.test(l.tagName)){const t=l.textContent.split(o$3),i=t.length-1;if(i>0){l.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)l.append(t[s],r()),A.nextNode(),c.push({type:2,index:++h});l.append(t[i],r());}}}else if(8===l.nodeType)if(l.data===n$2)c.push({type:2,index:h});else {let t=-1;for(;-1!==(t=l.data.indexOf(o$3,t+1));)c.push({type:7,index:h}),t+=o$3.length-1;}h++;}}static createElement(t,i){const s=h.createElement("template");return s.innerHTML=t,s}}function P(t,i,s=t,e){var o,n,l,h;if(i===x)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=P(t,r._$AS(t,i.values),r,e)),i}class V{constructor(t,i){this.u=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}v(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:h).importNode(s,!0);A.currentNode=o;let n=A.nextNode(),l=0,r=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new N(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new I(n,this,t)),this.u.push(i),d=e[++r];}l!==(null==d?void 0:d.index)&&(n=A.nextNode(),l++);}return o}p(t){let i=0;for(const s of this.u)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class N{constructor(t,i,s,e){var o;this.type=2,this._$AH=b,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cm=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cm}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=P(this,t,i),d(t)?t===b||null==t||""===t?(this._$AH!==b&&this._$AR(),this._$AH=b):t!==this._$AH&&t!==x&&this.g(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):c(t)?this.k(t):this.g(t);}O(t,i=this._$AB){return this._$AA.parentNode.insertBefore(t,i)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}g(t){this._$AH!==b&&d(this._$AH)?this._$AA.nextSibling.data=t:this.T(h.createTextNode(t)),this._$AH=t;}$(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=C.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.p(s);else {const t=new V(o,this),i=t.v(this.options);t.p(s),this.T(i),this._$AH=t;}}_$AC(t){let i=T.get(t.strings);return void 0===i&&T.set(t.strings,i=new C(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new N(this.O(r()),this.O(r()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cm=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class S{constructor(t,i,s,e,o){this.type=1,this._$AH=b,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=b;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=P(this,t,i,0),n=!d(t)||t!==this._$AH&&t!==x,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=P(this,e[s+l],i,l),h===x&&(h=this._$AH[l]),n||(n=!d(h)||h!==this._$AH[l]),h===b?t=b:t!==b&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===b?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class M extends S{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===b?void 0:t;}}const R=s$1?s$1.emptyScript:"";class k extends S{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==b?this.element.setAttribute(this.name,R):this.element.removeAttribute(this.name);}}class H extends S{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=P(this,t,i,0))&&void 0!==s?s:b)===x)return;const e=this._$AH,o=t===b&&e!==b||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==b&&(e===b||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class I{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){P(this,t);}}const L={P:"$lit$",A:o$3,M:n$2,C:1,L:E,R:V,D:c,V:P,I:N,H:S,N:k,U:H,B:M,F:I},z=i$2.litHtmlPolyfillSupport;null==z||z(C,N),(null!==(t$2=i$2.litHtmlVersions)&&void 0!==t$2?t$2:i$2.litHtmlVersions=[]).push("2.6.1");const Z=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new N(i.insertBefore(r(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
+    var t$2;const i$2=window,s$1=i$2.trustedTypes,e$4=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$4=`lit$${(Math.random()+"").slice(9)}$`,n$2="?"+o$4,l$2=`<${n$2}>`,h=document,r=(t="")=>h.createComment(t),d=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,c=t=>u(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,a=/-->/g,f=/>/g,_=RegExp(">|[ \t\n\f\r](?:([^\\s\"'>=/]+)([ \t\n\f\r]*=[ \t\n\f\r]*(?:[^ \t\n\f\r\"'`<>=]|(\"|')|))|$)","g"),m=/'/g,p=/"/g,$=/^(?:script|style|textarea|title)$/i,g=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),y=g(1),w=g(2),x=Symbol.for("lit-noChange"),b=Symbol.for("lit-nothing"),T=new WeakMap,A=h.createTreeWalker(h,129,null,!1),E=(t,i)=>{const s=t.length-1,n=[];let h,r=2===i?"<svg>":"",d=v;for(let i=0;i<s;i++){const s=t[i];let e,u,c=-1,g=0;for(;g<s.length&&(d.lastIndex=g,u=d.exec(s),null!==u);)g=d.lastIndex,d===v?"!--"===u[1]?d=a:void 0!==u[1]?d=f:void 0!==u[2]?($.test(u[2])&&(h=RegExp("</"+u[2],"g")),d=_):void 0!==u[3]&&(d=_):d===_?">"===u[0]?(d=null!=h?h:v,c=-1):void 0===u[1]?c=-2:(c=d.lastIndex-u[2].length,e=u[1],d=void 0===u[3]?_:'"'===u[3]?p:m):d===p||d===m?d=_:d===a||d===f?d=v:(d=_,h=void 0);const y=d===_&&t[i+1].startsWith("/>")?" ":"";r+=d===v?s+l$2:c>=0?(n.push(e),s.slice(0,c)+"$lit$"+s.slice(c)+o$4+y):s+o$4+(-2===c?(n.push(void 0),i):y);}const u=r+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$4?e$4.createHTML(u):u,n]};class C{constructor({strings:t,_$litType$:i},e){let l;this.parts=[];let h=0,d=0;const u=t.length-1,c=this.parts,[v,a]=E(t,i);if(this.el=C.createElement(v,e),A.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(l=A.nextNode())&&c.length<u;){if(1===l.nodeType){if(l.hasAttributes()){const t=[];for(const i of l.getAttributeNames())if(i.endsWith("$lit$")||i.startsWith(o$4)){const s=a[d++];if(t.push(i),void 0!==s){const t=l.getAttribute(s.toLowerCase()+"$lit$").split(o$4),i=/([.?@])?(.*)/.exec(s);c.push({type:1,index:h,name:i[2],strings:t,ctor:"."===i[1]?M:"?"===i[1]?k:"@"===i[1]?H:S});}else c.push({type:6,index:h});}for(const i of t)l.removeAttribute(i);}if($.test(l.tagName)){const t=l.textContent.split(o$4),i=t.length-1;if(i>0){l.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)l.append(t[s],r()),A.nextNode(),c.push({type:2,index:++h});l.append(t[i],r());}}}else if(8===l.nodeType)if(l.data===n$2)c.push({type:2,index:h});else {let t=-1;for(;-1!==(t=l.data.indexOf(o$4,t+1));)c.push({type:7,index:h}),t+=o$4.length-1;}h++;}}static createElement(t,i){const s=h.createElement("template");return s.innerHTML=t,s}}function P(t,i,s=t,e){var o,n,l,h;if(i===x)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=P(t,r._$AS(t,i.values),r,e)),i}class V{constructor(t,i){this.u=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}v(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:h).importNode(s,!0);A.currentNode=o;let n=A.nextNode(),l=0,r=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new N(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new I(n,this,t)),this.u.push(i),d=e[++r];}l!==(null==d?void 0:d.index)&&(n=A.nextNode(),l++);}return o}p(t){let i=0;for(const s of this.u)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class N{constructor(t,i,s,e){var o;this.type=2,this._$AH=b,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cm=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cm}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=P(this,t,i),d(t)?t===b||null==t||""===t?(this._$AH!==b&&this._$AR(),this._$AH=b):t!==this._$AH&&t!==x&&this.g(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):c(t)?this.k(t):this.g(t);}O(t,i=this._$AB){return this._$AA.parentNode.insertBefore(t,i)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}g(t){this._$AH!==b&&d(this._$AH)?this._$AA.nextSibling.data=t:this.T(h.createTextNode(t)),this._$AH=t;}$(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=C.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.p(s);else {const t=new V(o,this),i=t.v(this.options);t.p(s),this.T(i),this._$AH=t;}}_$AC(t){let i=T.get(t.strings);return void 0===i&&T.set(t.strings,i=new C(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new N(this.O(r()),this.O(r()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cm=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class S{constructor(t,i,s,e,o){this.type=1,this._$AH=b,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=b;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=P(this,t,i,0),n=!d(t)||t!==this._$AH&&t!==x,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=P(this,e[s+l],i,l),h===x&&(h=this._$AH[l]),n||(n=!d(h)||h!==this._$AH[l]),h===b?t=b:t!==b&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===b?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class M extends S{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===b?void 0:t;}}const R=s$1?s$1.emptyScript:"";class k extends S{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==b?this.element.setAttribute(this.name,R):this.element.removeAttribute(this.name);}}class H extends S{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=P(this,t,i,0))&&void 0!==s?s:b)===x)return;const e=this._$AH,o=t===b&&e!==b||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==b&&(e===b||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class I{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){P(this,t);}}const L={P:"$lit$",A:o$4,M:n$2,C:1,L:E,R:V,D:c,V:P,I:N,H:S,N:k,U:H,B:M,F:I},z=i$2.litHtmlPolyfillSupport;null==z||z(C,N),(null!==(t$2=i$2.litHtmlVersions)&&void 0!==t$2?t$2:i$2.litHtmlVersions=[]).push("2.6.1");const Z=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new N(i.insertBefore(r(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
 
     var litHtml = /*#__PURE__*/Object.freeze({
         __proto__: null,
@@ -60,7 +60,7 @@
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var l$1,o$2;class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Z(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return x}}s.finalized=!0,s._$litElement$=!0,null===(l$1=globalThis.litElementHydrateSupport)||void 0===l$1||l$1.call(globalThis,{LitElement:s});const n$1=globalThis.litElementPolyfillSupport;null==n$1||n$1({LitElement:s});(null!==(o$2=globalThis.litElementVersions)&&void 0!==o$2?o$2:globalThis.litElementVersions=[]).push("3.2.2");
+     */var l$1,o$3;class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Z(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return x}}s.finalized=!0,s._$litElement$=!0,null===(l$1=globalThis.litElementHydrateSupport)||void 0===l$1||l$1.call(globalThis,{LitElement:s});const n$1=globalThis.litElementPolyfillSupport;null==n$1||n$1({LitElement:s});(null!==(o$3=globalThis.litElementVersions)&&void 0!==o$3?o$3:globalThis.litElementVersions=[]).push("3.2.2");
 
     const bootstrapStyles = i$3`
 /*!
@@ -77,20 +77,33 @@
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const e$2=e=>n=>"function"==typeof n?((e,n)=>(customElements.define(e,n),n))(e,n):((e,n)=>{const{kind:t,elements:s}=n;return {kind:t,elements:s,finisher(n){customElements.define(e,n);}}})(e,n);
+    const e$3=e=>n=>"function"==typeof n?((e,n)=>(customElements.define(e,n),n))(e,n):((e,n)=>{const{kind:t,elements:s}=n;return {kind:t,elements:s,finisher(n){customElements.define(e,n);}}})(e,n);
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const i$1=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}};function e$1(e){return (n,t)=>void 0!==t?((i,e,n)=>{e.constructor.createProperty(n,i);})(e,n,t):i$1(e,n)}
+    const i$1=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}};function e$2(e){return (n,t)=>void 0!==t?((i,e,n)=>{e.constructor.createProperty(n,i);})(e,n,t):i$1(e,n)}
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */function t$1(t){return e$1({...t,state:!0})}
+     */function t$1(t){return e$2({...t,state:!0})}
+
+    /**
+     * @license
+     * Copyright 2017 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */
+    const o$2=({finisher:e,descriptor:t})=>(o,n)=>{var r;if(void 0===n){const n=null!==(r=o.originalKey)&&void 0!==r?r:o.key,i=null!=t?{kind:"method",placement:"prototype",key:n,descriptor:t(o.key)}:{...o,key:n};return null!=e&&(i.finisher=function(t){e(t,n);}),i}{const r=o.constructor;void 0!==t&&Object.defineProperty(o,n,t(n)),null==e||e(r,n);}};
+
+    /**
+     * @license
+     * Copyright 2017 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */function e$1(e){return o$2({descriptor:r=>({get(){var r,o;return null!==(o=null===(r=this.renderRoot)||void 0===r?void 0:r.querySelectorAll(e))&&void 0!==o?o:[]},enumerable:!0,configurable:!0})})}
 
     /**
      * @license
@@ -147,13 +160,13 @@
     `,
     ];
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSAnchor.prototype, "href", void 0);
     __decorate([
-        e$1({ type: String })
+        e$2({ type: String })
     ], LMSAnchor.prototype, "text", void 0);
     LMSAnchor = __decorate([
-        e$2("lms-anchor")
+        e$3("lms-anchor")
     ], LMSAnchor);
     var LMSAnchor$1 = LMSAnchor;
 
@@ -198,22 +211,22 @@
     };
     LMSCard.styles = [bootstrapStyles];
     __decorate([
-        e$1({ type: String })
+        e$2({ type: String })
     ], LMSCard.prototype, "title", void 0);
     __decorate([
-        e$1({ type: String })
+        e$2({ type: String })
     ], LMSCard.prototype, "text", void 0);
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSCard.prototype, "image", void 0);
     __decorate([
-        e$1({ type: Array })
+        e$2({ type: Array })
     ], LMSCard.prototype, "links", void 0);
     __decorate([
-        e$1({ type: Array })
+        e$2({ type: Array })
     ], LMSCard.prototype, "listItems", void 0);
     LMSCard = __decorate([
-        e$2("lms-card")
+        e$3("lms-card")
     ], LMSCard);
     var LMSCard$1 = LMSCard;
 
@@ -364,13 +377,13 @@
     };
     LMSEventsFilter.styles = [bootstrapStyles];
     __decorate([
-        e$1({ type: Array })
+        e$2({ type: Array })
     ], LMSEventsFilter.prototype, "events", void 0);
     __decorate([
-        e$1({ type: Array, attribute: false })
+        e$2({ type: Array, attribute: false })
     ], LMSEventsFilter.prototype, "facets", void 0);
     LMSEventsFilter = __decorate([
-        e$2("lms-events-filter")
+        e$3("lms-events-filter")
     ], LMSEventsFilter);
     var LMSEventsFilter$1 = LMSEventsFilter;
 
@@ -850,25 +863,25 @@
     `,
     ];
     __decorate([
-        e$1({ type: String })
+        e$2({ type: String })
     ], LMSFloatingMenu.prototype, "brand", void 0);
     __decorate([
-        e$1({
+        e$2({
             type: Array,
             converter: (value) => (value ? JSON.parse(value) : []),
         })
     ], LMSFloatingMenu.prototype, "items", void 0);
     __decorate([
-        e$1({ type: String, attribute: false })
+        e$2({ type: String, attribute: false })
     ], LMSFloatingMenu.prototype, "_currentUrl", void 0);
     __decorate([
-        e$1({ type: String, attribute: false })
+        e$2({ type: String, attribute: false })
     ], LMSFloatingMenu.prototype, "_currentSearchParams", void 0);
     __decorate([
-        e$1({ type: Object, attribute: false })
+        e$2({ type: Object, attribute: false })
     ], LMSFloatingMenu.prototype, "_i18n", void 0);
     LMSFloatingMenu = __decorate([
-        e$2("lms-floating-menu")
+        e$3("lms-floating-menu")
     ], LMSFloatingMenu);
     var LMSFloatingMenu$1 = LMSFloatingMenu;
 
@@ -899,6 +912,11 @@
       prefix: 'fas',
       iconName: 'bullseye',
       icon: [512, 512, [], "f140", "M448 256A192 192 0 1 0 64 256a192 192 0 1 0 384 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 80a80 80 0 1 0 0-160 80 80 0 1 0 0 160zm0-224a144 144 0 1 1 0 288 144 144 0 1 1 0-288zM224 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"]
+    };
+    var faImage = {
+      prefix: 'fas',
+      iconName: 'image',
+      icon: [512, 512, [], "f03e", "M0 96C0 60.7 28.7 32 64 32H448c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM323.8 202.5c-4.5-6.6-11.9-10.5-19.8-10.5s-15.4 3.9-19.8 10.5l-87 127.6L170.7 297c-4.6-5.7-11.5-9-18.7-9s-14.2 3.3-18.7 9l-64 80c-5.8 7.2-6.9 17.1-2.9 25.4s12.4 13.6 21.6 13.6h96 32H424c8.9 0 17.1-4.9 21.2-12.8s3.6-17.4-1.4-24.7l-120-176zM112 192a48 48 0 1 0 0-96 48 48 0 1 0 0 96z"]
     };
     var faFloppyDisk = {
       prefix: 'fas',
@@ -932,6 +950,11 @@
       iconName: 'location-dot',
       icon: [384, 512, ["map-marker-alt"], "f3c5", "M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
     };
+    var faCopy = {
+      prefix: 'fas',
+      iconName: 'copy',
+      icon: [512, 512, [], "f0c5", "M224 0c-35.3 0-64 28.7-64 64V288c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H224zM64 160c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H288c35.3 0 64-28.7 64-64V384H288v64H64V224h64V160H64z"]
+    };
     var faPlus = {
       prefix: 'fas',
       iconName: 'plus',
@@ -943,6 +966,166 @@
       icon: [320, 512, [128473, 10005, 10006, 10060, 215, "close", "multiply", "remove", "times"], "f00d", "M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"]
     };
     var faClose = faXmark;
+
+    let LMSImageBrowser = class LMSImageBrowser extends s {
+        constructor() {
+            super(...arguments);
+            this.uploadedImages = [];
+        }
+        handleClipboardCopy(hashvalue) {
+            navigator.clipboard.writeText(`/cgi-bin/koha/opac-retrieve-file.pl?id=${hashvalue}`);
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            const uploadedImages = async () => await fetch("/api/v1/contrib/eventmanagement/images");
+            uploadedImages()
+                .then(async (response) => await response.json())
+                .then((uploadedImages) => {
+                this.uploadedImages = uploadedImages;
+            })
+                .catch((error) => {
+                console.error(error);
+            });
+        }
+        updated(changedProperties) {
+            const shouldUpdateTooltipTargets = changedProperties.has("uploadedImages") &&
+                this.buttonReferences &&
+                this.tooltipReferences;
+            if (shouldUpdateTooltipTargets) {
+                this.tooltipReferences.forEach((tooltipReference) => {
+                    const { id } = tooltipReference;
+                    const tooltipHashvalue = id.split("-").pop();
+                    tooltipReference.target = Array.from(this.buttonReferences).find((buttonReference) => {
+                        const { id } = buttonReference;
+                        const buttonHashvalue = id.split("-").pop();
+                        return buttonHashvalue === tooltipHashvalue
+                            ? buttonReference
+                            : null;
+                    });
+                });
+            }
+        }
+        render() {
+            return y `
+      <div class="container-fluid">
+        ${o$1(this.uploadedImages, (uploadedImage) => {
+            const { image, metadata } = uploadedImage;
+            const { dtcreated, filename, hashvalue } = metadata;
+            const filetype = filename.split(".").pop();
+            let isValidFiletype;
+            if (filetype) {
+                isValidFiletype = [
+                    "png",
+                    "jpg",
+                    "jpeg",
+                    "webp",
+                    "avif",
+                    "gif",
+                ].includes(filetype);
+            }
+            return y `
+            <div class="card">
+              <img
+                ?hidden=${!isValidFiletype}
+                src="data:image/${filetype};base64,${image}"
+                class="card-img-top"
+                alt=${filename}
+              />
+              <div class="card-body">
+                <p
+                  data-placement="top"
+                  title="Link constructed!"
+                  @click=${() => {
+                this.handleClipboardCopy(hashvalue);
+            }}
+                  class="font-weight-bold p-2 border border-secondary rounded text-center"
+                >
+                  ${hashvalue}
+                </p>
+                <div class="text-center">
+                  <lms-tooltip
+                    id="tooltip-${hashvalue}"
+                    data-placement="top"
+                    data-text="Link constructed!"
+                    data-timeout="1000"
+                  >
+                    <button
+                      id="button-${hashvalue}"
+                      data-placement="bottom"
+                      title="Link constructed!"
+                      @click=${() => {
+                this.handleClipboardCopy(hashvalue);
+            }}
+                      class="btn btn-primary text-center"
+                    >
+                      ${litFontawesome_3(faCopy)}
+                      <span>Copy to clipboard</span>
+                    </button>
+                  </lms-tooltip>
+                </div>
+              </div>
+              <div class="card-footer">
+                <p class="font-weight-light text-muted font-size-sm">
+                  ${filename}&nbsp;-&nbsp;${dtcreated}
+                </p>
+              </div>
+            </div>
+          `;
+        })}
+      </div>
+    `;
+        }
+    };
+    LMSImageBrowser.styles = [
+        bootstrapStyles,
+        i$3 `
+      img {
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+      }
+
+      img,
+      .card {
+        max-width: 300px;
+      }
+
+      .font-size-sm {
+        font-size: 1rem;
+      }
+
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: #ffffff;
+      }
+
+      button {
+        white-space: nowrap;
+      }
+
+      button.btn-modal > svg {
+        color: var(--text-color);
+      }
+    `,
+    ];
+    __decorate([
+        e$2({
+            type: Array,
+            attribute: "uploaded-images",
+            converter: { fromAttribute: (value) => (value ? JSON.parse(value) : []) },
+        })
+    ], LMSImageBrowser.prototype, "uploadedImages", void 0);
+    __decorate([
+        e$1('[id^="button-"]')
+    ], LMSImageBrowser.prototype, "buttonReferences", void 0);
+    __decorate([
+        e$1('[id^="tooltip-"]')
+    ], LMSImageBrowser.prototype, "tooltipReferences", void 0);
+    LMSImageBrowser = __decorate([
+        e$3("lms-image-browser")
+    ], LMSImageBrowser);
+    var LMSImageBrowser$1 = LMSImageBrowser;
 
     /**
      * @license
@@ -1221,13 +1404,13 @@
     `,
     ];
     __decorate([
-        e$1({ type: Array })
+        e$2({ type: Array })
     ], LMSModal.prototype, "fields", void 0);
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSModal.prototype, "createOpts", void 0);
     __decorate([
-        e$1({ type: Boolean })
+        e$2({ type: Boolean })
     ], LMSModal.prototype, "editable", void 0);
     __decorate([
         t$1()
@@ -1239,7 +1422,7 @@
         t$1()
     ], LMSModal.prototype, "modalTitle", void 0);
     LMSModal = __decorate([
-        e$2("lms-modal")
+        e$3("lms-modal")
     ], LMSModal);
     var LMSModal$1 = LMSModal;
 
@@ -1267,7 +1450,7 @@
     `,
     ];
     LMSStaffEventCardAttendees = __decorate([
-        e$2("lms-staff-event-card-attendees")
+        e$3("lms-staff-event-card-attendees")
     ], LMSStaffEventCardAttendees);
     var LMSStaffEventCardAttendees$1 = LMSStaffEventCardAttendees;
 
@@ -1325,19 +1508,19 @@
     `,
     ];
     __decorate([
-        e$1({ type: Array })
+        e$2({ type: Array })
     ], LMSStaffEventCardPreview.prototype, "datum", void 0);
     __decorate([
-        e$1({ type: String })
+        e$2({ type: String })
     ], LMSStaffEventCardPreview.prototype, "title", void 0);
     __decorate([
-        e$1({ type: String })
+        e$2({ type: String })
     ], LMSStaffEventCardPreview.prototype, "text", void 0);
     __decorate([
-        e$1({ type: Object, attribute: false })
+        e$2({ type: Object, attribute: false })
     ], LMSStaffEventCardPreview.prototype, "templateResultConverter", void 0);
     LMSStaffEventCardPreview = __decorate([
-        e$2("lms-staff-event-card-preview")
+        e$3("lms-staff-event-card-preview")
     ], LMSStaffEventCardPreview);
     var LMSStaffEventCardPreview$1 = LMSStaffEventCardPreview;
 
@@ -1582,16 +1765,16 @@
     `,
     ];
     __decorate([
-        e$1({ type: Array })
+        e$2({ type: Array })
     ], LMSStaffEventCardForm.prototype, "datum", void 0);
     __decorate([
-        e$1({ state: true })
+        e$2({ state: true })
     ], LMSStaffEventCardForm.prototype, "_toast", void 0);
     __decorate([
-        e$1({ state: true })
+        e$2({ state: true })
     ], LMSStaffEventCardForm.prototype, "_i18n", void 0);
     LMSStaffEventCardForm = __decorate([
-        e$2("lms-staff-event-card-form")
+        e$3("lms-staff-event-card-form")
     ], LMSStaffEventCardForm);
     var LMSStaffEventCardForm$1 = LMSStaffEventCardForm;
 
@@ -1834,7 +2017,7 @@
                     "image",
                     () => y `<input
             class="form-control"
-            type="number"
+            type="text"
             name="image"
             value=${value}
             disabled
@@ -2042,7 +2225,7 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$1({ type: Array })
+        e$2({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "data", void 0);
     __decorate([
         t$1()
@@ -2051,9 +2234,119 @@ ${value}</textarea
         t$1()
     ], LMSStaffEventCardDeck.prototype, "href", void 0);
     LMSStaffEventCardDeck = __decorate([
-        e$2("lms-staff-event-card-deck")
+        e$3("lms-staff-event-card-deck")
     ], LMSStaffEventCardDeck);
     var LMSStaffEventCardsDeck = LMSStaffEventCardDeck;
+
+    let LMSTooltip = class LMSTooltip extends s {
+        constructor() {
+            super(...arguments);
+            this.text = "";
+            this.target = null;
+            this.placement = "bottom";
+            this.timeout = 3000;
+            this.showTooltipBound = this.showTooltip.bind(this);
+        }
+        willUpdate(changedProperties) {
+            if (changedProperties.has("target")) {
+                const previousTarget = changedProperties.get("target");
+                if (previousTarget) {
+                    previousTarget.removeEventListener("click", this.showTooltipBound);
+                }
+                if (this.target) {
+                    this.target.addEventListener("click", this.showTooltipBound);
+                }
+            }
+        }
+        showTooltip(event) {
+            const target = event.target;
+            if (target) {
+                const targetElement = target;
+                const targetRect = targetElement.getBoundingClientRect();
+                const tooltipSpan = this.shadowRoot.querySelector("span.tooltip");
+                switch (this.placement) {
+                    case "top":
+                        tooltipSpan.style.top = `${window.scrollY + targetRect.top - tooltipSpan.offsetHeight}px`;
+                        tooltipSpan.style.left = `${window.scrollX +
+                        targetRect.left +
+                        (targetRect.width - tooltipSpan.offsetWidth) / 2}px`;
+                        break;
+                    case "bottom":
+                        tooltipSpan.style.top = `${window.scrollY + targetRect.top + targetRect.height}px`;
+                        tooltipSpan.style.left = `${window.scrollX +
+                        targetRect.left +
+                        (targetRect.width - tooltipSpan.offsetWidth) / 2}px`;
+                        break;
+                    case "left":
+                        tooltipSpan.style.top = `${window.scrollY +
+                        targetRect.top +
+                        (targetRect.height - tooltipSpan.offsetHeight) / 2}px`;
+                        tooltipSpan.style.left = `${window.scrollX + targetRect.left - tooltipSpan.offsetWidth}px`;
+                        break;
+                    case "right":
+                        tooltipSpan.style.top = `${window.scrollY +
+                        targetRect.top +
+                        (targetRect.height - tooltipSpan.offsetHeight) / 2}px`;
+                        tooltipSpan.style.left = `${window.scrollX + targetRect.left + targetRect.width}px`;
+                        break;
+                }
+                tooltipSpan.style.visibility = "visible";
+                setTimeout(() => this.hideTooltip(), this.timeout);
+            }
+        }
+        hideTooltip() {
+            const tooltipSpan = this.shadowRoot.querySelector("span.tooltip");
+            tooltipSpan.style.visibility = "hidden";
+        }
+        handleSlotChange(event) {
+            const slot = event.target;
+            const assignedElements = slot.assignedElements({ flatten: true });
+            if (assignedElements.length > 0) {
+                const [assignedElement] = assignedElements;
+                this.target = assignedElement;
+                return;
+            }
+            this.target = null;
+        }
+        render() {
+            return y `
+      <slot @slotchange=${this.handleSlotChange}></slot>
+      <span class="tooltip">${this.text}</span>
+    `;
+        }
+    };
+    LMSTooltip.styles = i$3 `
+    :host {
+      display: inline-block;
+    }
+
+    span.tooltip {
+      position: fixed;
+      background-color: var(--tooltip-background-color, #333);
+      color: var(--tooltip-text-color, #fff);
+      border-radius: 3px;
+      padding: 5px;
+      font-size: 14px;
+      z-index: 1000;
+      visibility: hidden;
+    }
+  `;
+    __decorate([
+        e$2({ type: String, attribute: "data-text" })
+    ], LMSTooltip.prototype, "text", void 0);
+    __decorate([
+        e$2({ type: Object })
+    ], LMSTooltip.prototype, "target", void 0);
+    __decorate([
+        e$2({ type: String, attribute: "data-placement" })
+    ], LMSTooltip.prototype, "placement", void 0);
+    __decorate([
+        e$2({ type: Number, attribute: "data-timeout" })
+    ], LMSTooltip.prototype, "timeout", void 0);
+    LMSTooltip = __decorate([
+        e$3("lms-tooltip")
+    ], LMSTooltip);
+    var LMSTooltip$1 = LMSTooltip;
 
     let LMSCheckboxInput = class LMSCheckboxInput extends s {
         constructor() {
@@ -2085,13 +2378,13 @@ ${value}</textarea
     };
     LMSCheckboxInput.styles = [bootstrapStyles];
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSCheckboxInput.prototype, "field", void 0);
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSCheckboxInput.prototype, "value", void 0);
     LMSCheckboxInput = __decorate([
-        e$2("lms-checkbox-input")
+        e$3("lms-checkbox-input")
     ], LMSCheckboxInput);
     var LMSCheckboxInput$1 = LMSCheckboxInput;
 
@@ -2216,13 +2509,13 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSMatrix.prototype, "field", void 0);
     __decorate([
-        e$1({ type: Array })
+        e$2({ type: Array })
     ], LMSMatrix.prototype, "value", void 0);
     LMSMatrix = __decorate([
-        e$2("lms-matrix")
+        e$3("lms-matrix")
     ], LMSMatrix);
     var LMSMatrix$1 = LMSMatrix;
 
@@ -2254,13 +2547,13 @@ ${value}</textarea
     };
     LMSPrimitivesInput.styles = [bootstrapStyles];
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSPrimitivesInput.prototype, "field", void 0);
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSPrimitivesInput.prototype, "value", void 0);
     LMSPrimitivesInput = __decorate([
-        e$2("lms-primitives-input")
+        e$3("lms-primitives-input")
     ], LMSPrimitivesInput);
     var LMSPrimitivesInput$1 = LMSPrimitivesInput;
 
@@ -2315,10 +2608,10 @@ ${value}</textarea
     };
     LMSSelect.styles = [bootstrapStyles];
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSSelect.prototype, "field", void 0);
     LMSSelect = __decorate([
-        e$2("lms-select")
+        e$3("lms-select")
     ], LMSSelect);
     var LMSSelect$1 = LMSSelect;
 
@@ -2328,7 +2621,7 @@ ${value}</textarea
             this.baseurl = "";
             this.pluginclass = "";
             this.menuEntries = (i18n) => {
-                var _a, _b, _c, _d, _e;
+                var _a, _b, _c, _d, _e, _f;
                 return [
                     {
                         name: (_a = i18n.gettext("Settings")) !== null && _a !== void 0 ? _a : "Settings",
@@ -2360,6 +2653,12 @@ ${value}</textarea
                         url: `${this.baseurl}?class=${this.pluginclass}&method=tool`,
                         method: "tool",
                     },
+                    {
+                        name: (_f = i18n.gettext("Images")) !== null && _f !== void 0 ? _f : "Images",
+                        icon: faImage,
+                        url: `${this.baseurl}?class=${this.pluginclass}&method=tool&op=images`,
+                        method: "tool",
+                    },
                 ];
             };
         }
@@ -2376,16 +2675,16 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$1({ type: String })
+        e$2({ type: String })
     ], LMSEventMangementMenu.prototype, "baseurl", void 0);
     __decorate([
-        e$1({ type: String })
+        e$2({ type: String })
     ], LMSEventMangementMenu.prototype, "pluginclass", void 0);
     __decorate([
-        e$1({ type: Function, attribute: false })
+        e$2({ type: Function, attribute: false })
     ], LMSEventMangementMenu.prototype, "menuEntries", void 0);
     LMSEventMangementMenu = __decorate([
-        e$2("lms-event-management-menu")
+        e$3("lms-event-management-menu")
     ], LMSEventMangementMenu);
     var LMSEventMangementMenu$1 = LMSEventMangementMenu;
 
@@ -2599,13 +2898,13 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSEventsModal.prototype, "createOpts", void 0);
     __decorate([
         t$1()
     ], LMSEventsModal.prototype, "selectedEventTypeId", void 0);
     LMSEventsModal = __decorate([
-        e$2("lms-events-modal")
+        e$3("lms-events-modal")
     ], LMSEventsModal);
     var LMSEventsModal$1 = LMSEventsModal;
 
@@ -2708,10 +3007,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSEventTypesModal.prototype, "createOpts", void 0);
     LMSEventTypesModal = __decorate([
-        e$2("lms-event-types-modal")
+        e$3("lms-event-types-modal")
     ], LMSEventTypesModal);
     var LMSEventTypesModal$1 = LMSEventTypesModal;
 
@@ -2928,19 +3227,19 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$1({ type: Array })
+        e$2({ type: Array })
     ], LMSTable.prototype, "data", void 0);
     __decorate([
-        e$1({ type: Array })
+        e$2({ type: Array })
     ], LMSTable.prototype, "order", void 0);
     __decorate([
-        e$1({ type: Array })
+        e$2({ type: Array })
     ], LMSTable.prototype, "headers", void 0);
     __decorate([
-        e$1({ type: Boolean, attribute: "is-editable" })
+        e$2({ type: Boolean, attribute: "is-editable" })
     ], LMSTable.prototype, "isEditable", void 0);
     __decorate([
-        e$1({ type: Boolean, attribute: "is-deletable" })
+        e$2({ type: Boolean, attribute: "is-deletable" })
     ], LMSTable.prototype, "isDeletable", void 0);
     __decorate([
         t$1()
@@ -2952,7 +3251,7 @@ ${value}</textarea
         t$1()
     ], LMSTable.prototype, "emptyTableMessage", void 0);
     LMSTable = __decorate([
-        e$2("lms-table")
+        e$3("lms-table")
     ], LMSTable);
     var LMSTable$1 = LMSTable;
 
@@ -3277,10 +3576,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$1({ type: Object, attribute: false })
+        e$2({ type: Object, attribute: false })
     ], LMSEventTypesTable$1.prototype, "href", void 0);
     LMSEventTypesTable$1 = __decorate([
-        e$2("lms-event-types-table")
+        e$3("lms-event-types-table")
     ], LMSEventTypesTable$1);
     var LMSEventTypesTable$2 = LMSEventTypesTable$1;
 
@@ -3342,10 +3641,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSLocationsModal.prototype, "createOpts", void 0);
     LMSLocationsModal = __decorate([
-        e$2("lms-locations-modal")
+        e$3("lms-locations-modal")
     ], LMSLocationsModal);
     var LMSLocationsModal$1 = LMSLocationsModal;
 
@@ -3527,7 +3826,7 @@ ${value}</textarea
         }
     };
     LMSLocationsTable = __decorate([
-        e$2("lms-locations-table")
+        e$3("lms-locations-table")
     ], LMSLocationsTable);
     var LMSLocationsTable$1 = LMSLocationsTable;
 
@@ -3567,10 +3866,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$1({ type: Object })
+        e$2({ type: Object })
     ], LMSTargetGroupsModal.prototype, "createOpts", void 0);
     LMSTargetGroupsModal = __decorate([
-        e$2("lms-target-groups-modal")
+        e$3("lms-target-groups-modal")
     ], LMSTargetGroupsModal);
     var LMSTargetGroupsModal$1 = LMSTargetGroupsModal;
 
@@ -3716,7 +4015,7 @@ ${value}</textarea
         }
     };
     LMSEventTypesTable = __decorate([
-        e$2("lms-target-groups-table")
+        e$3("lms-target-groups-table")
     ], LMSEventTypesTable);
     var LMSTargetGroupsTable = LMSEventTypesTable;
 
@@ -3774,13 +4073,13 @@ ${value}</textarea
     };
     LMSEventsView.styles = [bootstrapStyles];
     __decorate([
-        e$1({ type: String })
+        e$2({ type: String })
     ], LMSEventsView.prototype, "borrowernumber", void 0);
     __decorate([
-        e$1({ type: Array, attribute: false })
+        e$2({ type: Array, attribute: false })
     ], LMSEventsView.prototype, "events", void 0);
     LMSEventsView = __decorate([
-        e$2("lms-events-view")
+        e$3("lms-events-view")
     ], LMSEventsView);
     var LMSEventsView$1 = LMSEventsView;
 
@@ -3792,7 +4091,7 @@ ${value}</textarea
         }
     };
     StaffEventsView = __decorate([
-        e$2("lms-staff-events-view")
+        e$3("lms-staff-events-view")
     ], StaffEventsView);
     var StaffEventsView$1 = StaffEventsView;
 
@@ -3805,7 +4104,7 @@ ${value}</textarea
         }
     };
     StaffEventTypesView$1 = __decorate([
-        e$2("lms-staff-event-types-view")
+        e$3("lms-staff-event-types-view")
     ], StaffEventTypesView$1);
     var StaffEventTypesView$2 = StaffEventTypesView$1;
 
@@ -3818,7 +4117,7 @@ ${value}</textarea
         }
     };
     StaffLocationsView = __decorate([
-        e$2("lms-staff-locations-view")
+        e$3("lms-staff-locations-view")
     ], StaffLocationsView);
     var StaffLocationsView$1 = StaffLocationsView;
 
@@ -3829,7 +4128,7 @@ ${value}</textarea
     };
     StaffSettingsView.styles = [bootstrapStyles];
     StaffSettingsView = __decorate([
-        e$2("lms-staff-settings-view")
+        e$3("lms-staff-settings-view")
     ], StaffSettingsView);
     var StaffSettingsView$1 = StaffSettingsView;
 
@@ -3855,10 +4154,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$1({ type: Array })
+        e$2({ type: Array })
     ], StaffEventTypesView.prototype, "data", void 0);
     StaffEventTypesView = __decorate([
-        e$2("lms-staff-target-groups-view")
+        e$3("lms-staff-target-groups-view")
     ], StaffEventTypesView);
     var StaffTargetGroupsView = StaffEventTypesView;
 
@@ -3867,11 +4166,13 @@ ${value}</textarea
         LMSCard: LMSCard$1,
         LMSEventsFilter: LMSEventsFilter$1,
         LMSFloatingMenu: LMSFloatingMenu$1,
+        LMSImageBrowser: LMSImageBrowser$1,
         LMSModal: LMSModal$1,
         LMSStaffEventCardAttendees: LMSStaffEventCardAttendees$1,
         LMSStaffEventCardPreview: LMSStaffEventCardPreview$1,
         LMSStaffEventCardForm: LMSStaffEventCardForm$1,
         LMSStaffEventCardsDeck,
+        LMSTooltip: LMSTooltip$1,
         LMSCheckboxInput: LMSCheckboxInput$1,
         LMSMatrix: LMSMatrix$1,
         LMSPrimitivesInput: LMSPrimitivesInput$1,
