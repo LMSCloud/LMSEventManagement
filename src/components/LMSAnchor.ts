@@ -3,10 +3,14 @@ import { LitElement, html, nothing, PropertyValues, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { URIComponents } from "../sharedDeclarations";
 
+/** We don't allow iframes */
+type AnchorTarget = "_self" | "_blank" | "_parent" | "_top";
+
 @customElement("lms-anchor")
 export default class LMSAnchor extends LitElement {
   @property({ type: Object, attribute: "data-href" })
   href: URIComponents = {};
+  @property({ type: String }) target: AnchorTarget = "_self";
 
   static override styles = [
     bootstrapStyles,
@@ -43,14 +47,13 @@ export default class LMSAnchor extends LitElement {
   }
 
   override render() {
-    console.log(this.href);
     if (Object.values(this.href).every((value) => value === undefined)) {
       console.error("href is not a valid URIComponents object");
       return nothing;
     }
 
     return html`
-      <a .href=${this.assembleURI()}>
+      <a .href=${this.assembleURI()} .target=${this.target}>
         <slot></slot>
       </a>
     `;
