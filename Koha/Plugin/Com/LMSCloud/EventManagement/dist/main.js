@@ -115,6 +115,7 @@
         constructor() {
             super(...arguments);
             this.href = {};
+            this.target = "_self";
         }
         assembleURI() {
             const { path, query, params, fragment } = this.href;
@@ -138,13 +139,12 @@
             };
         }
         render() {
-            console.log(this.href);
             if (Object.values(this.href).every((value) => value === undefined)) {
                 console.error("href is not a valid URIComponents object");
                 return b;
             }
             return y `
-      <a .href=${this.assembleURI()}>
+      <a .href=${this.assembleURI()} .target=${this.target}>
         <slot></slot>
       </a>
     `;
@@ -161,6 +161,9 @@
     __decorate([
         e$2({ type: Object, attribute: "data-href" })
     ], LMSAnchor.prototype, "href", void 0);
+    __decorate([
+        e$2({ type: String })
+    ], LMSAnchor.prototype, "target", void 0);
     LMSAnchor = __decorate([
         e$3("lms-anchor")
     ], LMSAnchor);
@@ -968,11 +971,7 @@
             super(...arguments);
             this.uploadedImages = [];
         }
-        handleClipboardCopy(hashvalue) {
-            navigator.clipboard.writeText(`/cgi-bin/koha/opac-retrieve-file.pl?id=${hashvalue}`);
-        }
-        connectedCallback() {
-            super.connectedCallback();
+        loadImages() {
             const uploadedImages = async () => await fetch("/api/v1/contrib/eventmanagement/images");
             uploadedImages()
                 .then(async (response) => await response.json())
@@ -982,6 +981,25 @@
                 .catch((error) => {
                 console.error(error);
             });
+        }
+        handleClipboardCopy(hashvalue) {
+            navigator.clipboard.writeText(`/cgi-bin/koha/opac-retrieve-file.pl?id=${hashvalue}`);
+        }
+        handleMessageEvent(event) {
+            console.log(event.data);
+            if (event.data === "reloaded") {
+                this.loadImages();
+            }
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            /** This is the counterpart to the script in the intranet_js hook */
+            window.addEventListener("message", this.handleMessageEvent);
+            this.loadImages();
+        }
+        disconnectedCallback() {
+            super.disconnectedCallback();
+            window.removeEventListener("message", this.handleMessageEvent);
         }
         updated(changedProperties) {
             const shouldUpdateTooltipTargets = changedProperties.has("uploadedImages") &&
@@ -1004,7 +1022,8 @@
         render() {
             return y `
       <div class="container-fluid">
-        ${o$1(this.uploadedImages, (uploadedImage) => {
+        <div class="card-deck">
+          ${o$1(this.uploadedImages, (uploadedImage) => {
             const { image, metadata } = uploadedImage;
             const { dtcreated, filename, hashvalue } = metadata;
             const filetype = filename.split(".").pop();
@@ -1020,54 +1039,55 @@
                 ].includes(filetype);
             }
             return y `
-            <div class="card">
-              <img
-                ?hidden=${!isValidFiletype}
-                src="data:image/${filetype};base64,${image}"
-                class="card-img-top"
-                alt=${filename}
-              />
-              <div class="card-body">
-                <p
-                  data-placement="top"
-                  title="Link constructed!"
-                  @click=${() => {
-                this.handleClipboardCopy(hashvalue);
-            }}
-                  class="font-weight-bold p-2 border border-secondary rounded text-center"
-                >
-                  ${hashvalue}
-                </p>
-                <div class="text-center">
-                  <lms-tooltip
-                    id="tooltip-${hashvalue}"
+              <div class="card">
+                <img
+                  ?hidden=${!isValidFiletype}
+                  src="data:image/${filetype};base64,${image}"
+                  class="card-img-top"
+                  alt=${filename}
+                />
+                <div class="card-body">
+                  <p
                     data-placement="top"
-                    data-text="Link constructed!"
-                    data-timeout="1000"
-                  >
-                    <button
-                      id="button-${hashvalue}"
-                      data-placement="bottom"
-                      title="Link constructed!"
-                      @click=${() => {
+                    title="Link constructed!"
+                    @click=${() => {
                 this.handleClipboardCopy(hashvalue);
             }}
-                      class="btn btn-primary text-center"
+                    class="font-weight-bold p-2 border border-secondary rounded text-center"
+                  >
+                    ${hashvalue}
+                  </p>
+                  <div class="text-center">
+                    <lms-tooltip
+                      id="tooltip-${hashvalue}"
+                      data-placement="top"
+                      data-text="Link constructed!"
+                      data-timeout="1000"
                     >
-                      ${litFontawesome_3(faCopy)}
-                      <span>Copy to clipboard</span>
-                    </button>
-                  </lms-tooltip>
+                      <button
+                        id="button-${hashvalue}"
+                        data-placement="bottom"
+                        title="Link constructed!"
+                        @click=${() => {
+                this.handleClipboardCopy(hashvalue);
+            }}
+                        class="btn btn-primary text-center"
+                      >
+                        ${litFontawesome_3(faCopy)}
+                        <span>Copy to clipboard</span>
+                      </button>
+                    </lms-tooltip>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <p class="font-weight-light text-muted font-size-sm">
+                    ${filename}&nbsp;-&nbsp;${dtcreated}
+                  </p>
                 </div>
               </div>
-              <div class="card-footer">
-                <p class="font-weight-light text-muted font-size-sm">
-                  ${filename}&nbsp;-&nbsp;${dtcreated}
-                </p>
-              </div>
-            </div>
-          `;
+            `;
         })}
+        </div>
       </div>
     `;
         }
