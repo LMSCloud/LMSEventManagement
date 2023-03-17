@@ -16,16 +16,8 @@
   --border-radius-lg: 12px;
 
   /* font */
-  --system-ui:
-    system,
-    -apple-system,
-    ".SFNSText-Regular",
-    "San Francisco",
-    "Roboto",
-    "Segoe UI",
-    "Helvetica Neue",
-    "Lucida Grande",
-    sans-serif;
+  --system-ui: system, -apple-system, ".SFNSText-Regular", "San Francisco",
+    "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
 
   /* color variables */
   --primary-color: #0074c2;
@@ -69,4 +61,17 @@
 .lmse-content-main {
   padding: var(--spacing-md);
   padding-top: 0;
+}
+
+.lmse-footer {
+  position: fixed;
+  bottom: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  padding-top: 0;
+  border-radius: var(--border-radius-md);
+  width: calc(100% - var(--spacing-md) * 2);
+}
+
+.lmse-footer > div {
+  background-color: var(--background-color);
 }
