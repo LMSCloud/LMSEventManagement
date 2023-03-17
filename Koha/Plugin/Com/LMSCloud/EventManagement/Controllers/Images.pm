@@ -14,6 +14,7 @@ use Scalar::Util qw(looks_like_number reftype);
 
 use Koha::UploadedFiles;
 use MIME::Base64;
+use File::Slurp 'slurp';
 
 our $VERSION = '1.0.0';
 
@@ -25,12 +26,8 @@ sub list {
 
         my $images = [];
         while ( my $upload = $uploads->next ) {
-            my $file_handle = $upload->file_handle;
-            my $buffer;
-            my $file_contents;
-            while ( my $bytes_read = $file_handle->read( $buffer, 1024 ) ) {
-                $file_contents .= $buffer;
-            }
+            my $file_handle   = $upload->file_handle;
+            my $file_contents = slurp($file_handle);
             push @{$images},
                 {
                 image    => encode_base64($file_contents),
