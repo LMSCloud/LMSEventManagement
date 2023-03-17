@@ -200,7 +200,34 @@ sub intranet_head {
 sub intranet_js {
     my ($self) = @_;
 
-    return q{};
+    return <<~'JS';
+        <script>
+            $(document).ready(function () {
+                // Get the PerformanceNavigationTiming object
+                const navigationInfo = window.performance.getEntriesByType("navigation")[0];
+
+                // Check if the page is being reloaded due to a form submission (POST event)
+                const isFormSubmission = navigationInfo.type === "reload" && navigationInfo.navigationType === "form_submission";
+                console.log(window.opener);
+                if (isFormSubmission) {
+                    // Get the current URL
+                    const currentUrl = window.location.href;
+
+
+                    // Check if the URL contains 'upload.pl'
+                    if (currentUrl.indexOf("upload.pl") !== -1) {
+                        // Send a message to the parent window (the opener)
+                        if (window.opener) {
+                            window.opener.postMessage("reloaded", "*");
+                        }
+
+                        // Close the current window
+                        window.close();
+                    }
+                }
+            });
+        </script>
+    JS
 
 }
 

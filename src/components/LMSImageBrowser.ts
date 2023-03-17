@@ -77,14 +77,7 @@ export default class LMSImageBrowser extends LitElement {
     `,
   ];
 
-  handleClipboardCopy(hashvalue: string) {
-    navigator.clipboard.writeText(
-      `/cgi-bin/koha/opac-retrieve-file.pl?id=${hashvalue}`
-    );
-  }
-
-  override connectedCallback(): void {
-    super.connectedCallback();
+  loadImages() {
     const uploadedImages = async () =>
       await fetch("/api/v1/contrib/eventmanagement/images");
 
@@ -96,6 +89,32 @@ export default class LMSImageBrowser extends LitElement {
       .catch((error) => {
         console.error(error);
       });
+  }
+
+  handleClipboardCopy(hashvalue: string) {
+    navigator.clipboard.writeText(
+      `/cgi-bin/koha/opac-retrieve-file.pl?id=${hashvalue}`
+    );
+  }
+
+  handleMessageEvent(event: MessageEvent) {
+    console.log(event.data);
+    if (event.data === "reloaded") {
+      this.loadImages();
+    }
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+
+    /** This is the counterpart to the script in the intranet_js hook */
+    window.addEventListener("message", this.handleMessageEvent);
+    this.loadImages();
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    window.removeEventListener("message", this.handleMessageEvent);
   }
 
   override updated(changedProperties: PropertyValues<this>) {
@@ -124,70 +143,72 @@ export default class LMSImageBrowser extends LitElement {
   override render() {
     return html`
       <div class="container-fluid">
-        ${map(this.uploadedImages, (uploadedImage) => {
-          const { image, metadata } = uploadedImage;
-          const { dtcreated, filename, hashvalue } = metadata;
-          const filetype = filename.split(".").pop();
-          let isValidFiletype;
-          if (filetype) {
-            isValidFiletype = [
-              "png",
-              "jpg",
-              "jpeg",
-              "webp",
-              "avif",
-              "gif",
-            ].includes(filetype);
-          }
-          return html`
-            <div class="card">
-              <img
-                ?hidden=${!isValidFiletype}
-                src="data:image/${filetype};base64,${image}"
-                class="card-img-top"
-                alt=${filename}
-              />
-              <div class="card-body">
-                <p
-                  data-placement="top"
-                  title="Link constructed!"
-                  @click=${() => {
-                    this.handleClipboardCopy(hashvalue);
-                  }}
-                  class="font-weight-bold p-2 border border-secondary rounded text-center"
-                >
-                  ${hashvalue}
-                </p>
-                <div class="text-center">
-                  <lms-tooltip
-                    id="tooltip-${hashvalue}"
+        <div class="card-deck">
+          ${map(this.uploadedImages, (uploadedImage) => {
+            const { image, metadata } = uploadedImage;
+            const { dtcreated, filename, hashvalue } = metadata;
+            const filetype = filename.split(".").pop();
+            let isValidFiletype;
+            if (filetype) {
+              isValidFiletype = [
+                "png",
+                "jpg",
+                "jpeg",
+                "webp",
+                "avif",
+                "gif",
+              ].includes(filetype);
+            }
+            return html`
+              <div class="card">
+                <img
+                  ?hidden=${!isValidFiletype}
+                  src="data:image/${filetype};base64,${image}"
+                  class="card-img-top"
+                  alt=${filename}
+                />
+                <div class="card-body">
+                  <p
                     data-placement="top"
-                    data-text="Link constructed!"
-                    data-timeout="1000"
+                    title="Link constructed!"
+                    @click=${() => {
+                      this.handleClipboardCopy(hashvalue);
+                    }}
+                    class="font-weight-bold p-2 border border-secondary rounded text-center"
                   >
-                    <button
-                      id="button-${hashvalue}"
-                      data-placement="bottom"
-                      title="Link constructed!"
-                      @click=${() => {
-                        this.handleClipboardCopy(hashvalue);
-                      }}
-                      class="btn btn-primary text-center"
+                    ${hashvalue}
+                  </p>
+                  <div class="text-center">
+                    <lms-tooltip
+                      id="tooltip-${hashvalue}"
+                      data-placement="top"
+                      data-text="Link constructed!"
+                      data-timeout="1000"
                     >
-                      ${litFontawesome(faCopy)}
-                      <span>Copy to clipboard</span>
-                    </button>
-                  </lms-tooltip>
+                      <button
+                        id="button-${hashvalue}"
+                        data-placement="bottom"
+                        title="Link constructed!"
+                        @click=${() => {
+                          this.handleClipboardCopy(hashvalue);
+                        }}
+                        class="btn btn-primary text-center"
+                      >
+                        ${litFontawesome(faCopy)}
+                        <span>Copy to clipboard</span>
+                      </button>
+                    </lms-tooltip>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <p class="font-weight-light text-muted font-size-sm">
+                    ${filename}&nbsp;-&nbsp;${dtcreated}
+                  </p>
                 </div>
               </div>
-              <div class="card-footer">
-                <p class="font-weight-light text-muted font-size-sm">
-                  ${filename}&nbsp;-&nbsp;${dtcreated}
-                </p>
-              </div>
-            </div>
-          `;
-        })}
+            `;
+          })}
+        </div>
       </div>
     `;
   }
