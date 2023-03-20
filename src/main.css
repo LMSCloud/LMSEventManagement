@@ -72,6 +72,8 @@
   width: calc(100% - var(--spacing-md) * 2);
 }
 
-.lmse-footer > div {
+.lmse-footer lms-anchor {
   background-color: var(--background-color);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-lg);
 }

@@ -992,6 +992,29 @@
     };
     var faClose = faXmark;
 
+    function createWrapper(breakpoints) {
+        const [block, none] = breakpoints;
+        return y `
+    <div
+      class="w-100 d-none ${`d-${block}-block`} ${none
+        ? `d-${none}-none`
+        : `d-none`}"
+    ></div>
+  `;
+    }
+    function insertResponsiveWrapper(index) {
+        const breakpoints = [
+            { n: 2, breakpoints: ["sm", "md"] },
+            { n: 3, breakpoints: ["md", "lg"] },
+            { n: 4, breakpoints: ["lg", "xl"] },
+            { n: 5, breakpoints: ["xl", ""] },
+        ];
+        const wrappers = breakpoints
+            .filter(({ n }) => (index + 1) % n === 0)
+            .map(({ breakpoints }) => createWrapper(breakpoints));
+        return wrappers;
+    }
+
     let LMSImageBrowser = class LMSImageBrowser extends s {
         constructor() {
             super(...arguments);
@@ -1051,7 +1074,7 @@
             return y `
       <div class="container-fluid">
         <div class="card-deck">
-          ${o$1(this.uploadedImages, (uploadedImage) => {
+          ${o$1(this.uploadedImages, (uploadedImage, index) => {
             const { image, metadata } = uploadedImage;
             const { dtcreated, filename, hashvalue } = metadata;
             const filetype = filename.split(".").pop();
@@ -1067,7 +1090,7 @@
                 ].includes(filetype);
             }
             return y `
-              <div class="card">
+              <div class="card mb-5">
                 <img
                   ?hidden=${!isValidFiletype}
                   src="data:image/${filetype};base64,${image}"
@@ -1113,6 +1136,7 @@
                   </p>
                 </div>
               </div>
+              ${insertResponsiveWrapper(index)}
             `;
         })}
         </div>
@@ -2192,10 +2216,10 @@ ${value}</textarea
                 : y `
           <div class="container-fluid mx-0">
             <div class="card-deck">
-              ${o$1(this.data, (datum) => {
+              ${o$1(this.data, (datum, index) => {
                 var _a, _b, _c, _d, _e, _f;
                 return y `
-                  <div class="card">
+                  <div class="card mt-5">
                     <div class="card-header">
                       <ul class="nav nav-tabs card-header-tabs">
                         <li
@@ -2248,6 +2272,7 @@ ${value}</textarea
                       ></lms-staff-event-card-preview>
                     </div>
                   </div>
+                  ${insertResponsiveWrapper(index)}
                 `;
             })}
             </div>
@@ -2257,13 +2282,13 @@ ${value}</textarea
     };
     LMSStaffEventCardDeck.styles = [
         bootstrapStyles,
-        i$3 `
-      .card-deck {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
-        grid-gap: 0.5rem;
-      }
-    `,
+        // css`
+        //   .card-deck {
+        //     display: grid;
+        //     grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
+        //     grid-gap: 0.5rem;
+        //   }
+        // `,
     ];
     __decorate([
         e$2({ type: Array })

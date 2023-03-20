@@ -1,5 +1,5 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html, TemplateResult, css } from "lit";
+import { LitElement, html, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import LMSStaffEventCardForm from "./LMSStaffEventCard/LMSStaffEventCardForm";
 import {
@@ -14,6 +14,7 @@ import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPrevi
 import LMSAnchor from "./LMSAnchor";
 import TemplateResultConverter from "../lib/TemplateResultConverter";
 import { map } from "lit/directives/map";
+import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -39,13 +40,13 @@ export default class LMSStaffEventCardDeck extends LitElement {
 
   static override styles = [
     bootstrapStyles,
-    css`
-      .card-deck {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
-        grid-gap: 0.5rem;
-      }
-    `,
+    // css`
+    //   .card-deck {
+    //     display: grid;
+    //     grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
+    //     grid-gap: 0.5rem;
+    //   }
+    // `,
   ];
 
   override connectedCallback() {
@@ -461,8 +462,8 @@ ${value}</textarea
             <div class="card-deck">
               ${map(
                 this.data,
-                (datum) => html`
-                  <div class="card">
+                (datum, index) => html`
+                  <div class="card mt-5">
                     <div class="card-header">
                       <ul class="nav nav-tabs card-header-tabs">
                         <li
@@ -523,6 +524,7 @@ ${value}</textarea
                       ></lms-staff-event-card-preview>
                     </div>
                   </div>
+                  ${insertResponsiveWrapper(index)}
                 `
               )}
             </div>

@@ -9,6 +9,7 @@ import { map } from "lit/directives/map";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import LMSTooltip from "./LMSTooltip";
+import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
 
 type UploadedImage = {
   image: string;
@@ -148,7 +149,7 @@ export default class LMSImageBrowser extends LitElement {
     return html`
       <div class="container-fluid">
         <div class="card-deck">
-          ${map(this.uploadedImages, (uploadedImage) => {
+          ${map(this.uploadedImages, (uploadedImage, index) => {
             const { image, metadata } = uploadedImage;
             const { dtcreated, filename, hashvalue } = metadata;
             const filetype = filename.split(".").pop();
@@ -164,7 +165,7 @@ export default class LMSImageBrowser extends LitElement {
               ].includes(filetype);
             }
             return html`
-              <div class="card">
+              <div class="card mb-5">
                 <img
                   ?hidden=${!isValidFiletype}
                   src="data:image/${filetype};base64,${image}"
@@ -210,6 +211,7 @@ export default class LMSImageBrowser extends LitElement {
                   </p>
                 </div>
               </div>
+              ${insertResponsiveWrapper(index)}
             `;
           })}
         </div>
