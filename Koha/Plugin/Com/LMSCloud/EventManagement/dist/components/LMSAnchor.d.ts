@@ -8,6 +8,7 @@ export default class LMSAnchor extends LitElement {
     static styles: import("lit").CSSResult[];
     assembleURI(): string;
     hasChanged(): (newValues: PropertyValues, oldValues: PropertyValues) => boolean;
+    handleClick(e: Event): void;
     render(): typeof nothing | import("lit").TemplateResult<1>;
 }
 export {};

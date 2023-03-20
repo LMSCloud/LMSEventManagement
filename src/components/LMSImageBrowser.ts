@@ -43,6 +43,8 @@ export default class LMSImageBrowser extends LitElement {
   @queryAll('[id^="button-"]') buttonReferences!: NodeListOf<HTMLButtonElement>;
   @queryAll('[id^="tooltip-"]') tooltipReferences!: NodeListOf<LMSTooltip>;
 
+  private boundEventHandler: (event: MessageEvent) => void = () => {};
+
   static override styles = [
     bootstrapStyles,
     css`
@@ -98,7 +100,6 @@ export default class LMSImageBrowser extends LitElement {
   }
 
   handleMessageEvent(event: MessageEvent) {
-    console.log(event.data);
     if (event.data === "reloaded") {
       this.loadImages();
     }
@@ -108,13 +109,16 @@ export default class LMSImageBrowser extends LitElement {
     super.connectedCallback();
 
     /** This is the counterpart to the script in the intranet_js hook */
-    window.addEventListener("message", this.handleMessageEvent);
+    this.boundEventHandler = this.handleMessageEvent.bind(this);
+    window.addEventListener("message", this.boundEventHandler);
+
+    /** This loadImages call is independent of the eventListener. */
     this.loadImages();
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    window.removeEventListener("message", this.handleMessageEvent);
+    window.removeEventListener("message", this.boundEventHandler);
   }
 
   override updated(changedProperties: PropertyValues<this>) {

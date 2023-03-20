@@ -138,13 +138,39 @@
                 return Object.keys(newValues).some((key) => newValues.get(key) !== oldValues.get(key));
             };
         }
+        handleClick(e) {
+            e.preventDefault();
+            const assembledURI = this.assembleURI();
+            switch (this.target) {
+                case "_blank":
+                    window.open(assembledURI, "_blank");
+                    break;
+                case "_parent":
+                    if (window.parent) {
+                        window.parent.location.href = assembledURI;
+                    }
+                    break;
+                case "_top":
+                    if (window.top) {
+                        window.top.location.href = assembledURI;
+                    }
+                    break;
+                case "_self":
+                default:
+                    window.location.href = assembledURI;
+            }
+        }
         render() {
             if (Object.values(this.href).every((value) => value === undefined)) {
                 console.error("href is not a valid URIComponents object");
                 return b;
             }
             return y `
-      <a .href=${this.assembleURI()} .target=${this.target}>
+      <a
+        @click=${this.handleClick}
+        .href=${this.assembleURI()}
+        .target=${this.target}
+      >
         <slot></slot>
       </a>
     `;
@@ -970,6 +996,7 @@
         constructor() {
             super(...arguments);
             this.uploadedImages = [];
+            this.boundEventHandler = () => { };
         }
         loadImages() {
             const uploadedImages = async () => await fetch("/api/v1/contrib/eventmanagement/images");
@@ -986,7 +1013,6 @@
             navigator.clipboard.writeText(`/cgi-bin/koha/opac-retrieve-file.pl?id=${hashvalue}`);
         }
         handleMessageEvent(event) {
-            console.log(event.data);
             if (event.data === "reloaded") {
                 this.loadImages();
             }
@@ -994,12 +1020,14 @@
         connectedCallback() {
             super.connectedCallback();
             /** This is the counterpart to the script in the intranet_js hook */
-            window.addEventListener("message", this.handleMessageEvent);
+            this.boundEventHandler = this.handleMessageEvent.bind(this);
+            window.addEventListener("message", this.boundEventHandler);
+            /** This loadImages call is independent of the eventListener. */
             this.loadImages();
         }
         disconnectedCallback() {
             super.disconnectedCallback();
-            window.removeEventListener("message", this.handleMessageEvent);
+            window.removeEventListener("message", this.boundEventHandler);
         }
         updated(changedProperties) {
             const shouldUpdateTooltipTargets = changedProperties.has("uploadedImages") &&

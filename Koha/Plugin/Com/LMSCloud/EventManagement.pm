@@ -203,16 +203,12 @@ sub intranet_js {
     return <<~'JS';
         <script>
             $(document).ready(function () {
-                // Get the PerformanceNavigationTiming object
-                const navigationInfo = window.performance.getEntriesByType("navigation")[0];
+                // Check if a flag 'formSubmitted' exists in sessionStorage
+                const formSubmitted = sessionStorage.getItem("formSubmitted");
 
-                // Check if the page is being reloaded due to a form submission (POST event)
-                const isFormSubmission = navigationInfo.type === "reload" && navigationInfo.navigationType === "form_submission";
-                console.log(window.opener);
-                if (isFormSubmission) {
+                if (formSubmitted) {
                     // Get the current URL
                     const currentUrl = window.location.href;
-
 
                     // Check if the URL contains 'upload.pl'
                     if (currentUrl.indexOf("upload.pl") !== -1) {
@@ -224,8 +220,18 @@ sub intranet_js {
                         // Close the current window
                         window.close();
                     }
+
+                    // Clear the formSubmitted flag from sessionStorage
+                    sessionStorage.removeItem("formSubmitted");
                 }
             });
+
+            // Add a submit event listener to your form
+            $("form").on("submit", function () {
+                // Set the 'formSubmitted' flag in sessionStorage when the form is submitted
+                sessionStorage.setItem("formSubmitted", "true");
+            });
+
         </script>
     JS
 

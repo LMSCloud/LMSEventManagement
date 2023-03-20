@@ -46,6 +46,29 @@ export default class LMSAnchor extends LitElement {
     };
   }
 
+  handleClick(e: Event): void {
+    e.preventDefault();
+    const assembledURI = this.assembleURI();
+    switch (this.target) {
+      case "_blank":
+        window.open(assembledURI, "_blank");
+        break;
+      case "_parent":
+        if (window.parent) {
+          window.parent.location.href = assembledURI;
+        }
+        break;
+      case "_top":
+        if (window.top) {
+          window.top.location.href = assembledURI;
+        }
+        break;
+      case "_self":
+      default:
+        window.location.href = assembledURI;
+    }
+  }
+
   override render() {
     if (Object.values(this.href).every((value) => value === undefined)) {
       console.error("href is not a valid URIComponents object");
@@ -53,7 +76,11 @@ export default class LMSAnchor extends LitElement {
     }
 
     return html`
-      <a .href=${this.assembleURI()} .target=${this.target}>
+      <a
+        @click=${this.handleClick}
+        .href=${this.assembleURI()}
+        .target=${this.target}
+      >
         <slot></slot>
       </a>
     `;

@@ -24,6 +24,7 @@ export default class LMSImageBrowser extends LitElement {
     uploadedImages: UploadedImage[];
     buttonReferences: NodeListOf<HTMLButtonElement>;
     tooltipReferences: NodeListOf<LMSTooltip>;
+    private boundEventHandler;
     static styles: import("lit").CSSResult[];
     loadImages(): void;
     handleClipboardCopy(hashvalue: string): void;
