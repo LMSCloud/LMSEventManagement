@@ -1,27 +1,37 @@
 import { LitElement } from "lit";
-import { LMSEvent } from "../sharedDeclarations";
-type FacetType = "checkbox" | "date" | "range";
-type Facet = {
-    type: FacetType;
-    name: string;
-    value: string;
-    checked?: boolean;
-};
+import { EventType, LMSEvent, LMSLocation, TargetGroup } from "../sharedDeclarations";
 type Facets = {
-    event_types: Facet[];
-    target_groups: Facet[];
-    locations: Facet[];
-    min_age: Facet;
-    max_age: Facet;
-    open_registration: Facet;
-    start_date: Facet;
-    end_date: Facet;
-    fee: Facet;
+    eventTypeIds: string[];
+    targetGroupIds: number[];
+    locationIds: string[];
+    description: string;
+    end_time: Date;
+    id: number;
+    image: string;
+    max_age: number;
+    max_participants: number;
+    min_age: number;
+    name: string;
+    open_registration: boolean;
+    registration_end: Date;
+    registration_link: string;
+    registration_start: Date;
+    start_time: Date;
+    status: "pending" | "confirmed" | "canceled" | "sold_out";
 };
 export default class LMSEventsFilter extends LitElement {
     events: LMSEvent[];
-    facets: Facets;
+    facets: Partial<Facets>;
+    event_types: EventType[];
+    target_groups: TargetGroup[];
+    locations: LMSLocation[];
     static styles: import("lit").CSSResult[];
+    connectedCallback(): void;
+    willUpdate(): void;
+    handleReset(): void;
+    handleChange(e: Event): void;
+    throttle(callbackFn: Function, delay?: number): (...args: unknown[]) => void;
+    emitChange(e: Event): void;
     render(): import("lit").TemplateResult<1>;
 }
 export {};

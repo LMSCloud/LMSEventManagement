@@ -27,17 +27,19 @@ export type LMSEvent = {
     id: number;
     name: string;
     event_type: string;
-    location: LMSLocation;
+    target_groups: TargetGroupState[];
+    min_age: string;
+    max_age: string;
+    max_participants: number;
     start_time: string;
     end_time: string;
     registration_start: string;
     registration_end: string;
-    max_participants: number;
-    fee: number;
-    age_restriction: string;
+    location: string;
     image: string;
-    notes: string;
+    description: string;
     status: Status;
+    registration_link: string;
 };
 export type Input = {
     name: string;
@@ -84,6 +86,11 @@ export type TargetGroup = {
     name: string;
     min_age: number;
     max_age: number;
+};
+export type TargetGroupState = {
+    target_group_id: number;
+    selected: boolean;
+    fee: number;
 };
 export type TargetGroupFee = {
     id: number;

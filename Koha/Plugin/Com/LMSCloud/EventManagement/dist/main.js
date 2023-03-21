@@ -255,136 +255,221 @@
     ], LMSCard);
     var LMSCard$1 = LMSCard;
 
+    /**
+     * @license
+     * Copyright 2021 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */
+    function*o$1(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
+
     let LMSEventsFilter = class LMSEventsFilter extends s {
         constructor() {
             super(...arguments);
             this.events = [];
-            this.facets = {
-                event_types: [],
-                target_groups: [],
-                locations: [],
-                min_age: { type: "range", name: "min_age", value: "0" },
-                max_age: { type: "range", name: "max_age", value: "120" },
-                open_registration: {
-                    type: "checkbox",
-                    name: "open_registration",
-                    value: "true",
-                },
-                start_date: { type: "date", name: "start_date", value: "" },
-                end_date: { type: "date", name: "end_date", value: "" },
-                fee: { type: "range", name: "fee", value: "0" },
+            this.facets = {};
+            this.event_types = [];
+            this.target_groups = [];
+            this.locations = [];
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            const event_types = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
+                return response.json();
             };
+            event_types().then((event_types) => (this.event_types = event_types));
+            const target_groups = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
+                return response.json();
+            };
+            target_groups().then((target_groups) => (this.target_groups = target_groups));
+            const locations = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/locations");
+                return response.json();
+            };
+            locations().then((locations) => (this.locations = locations));
+        }
+        willUpdate() {
+            this.facets = {
+                eventTypeIds: this.events.map((event) => event.event_type),
+                targetGroupIds: [
+                    ...new Set(this.events.flatMap((event) => event.target_groups.map((target_group) => target_group.selected ? target_group.target_group_id : NaN))),
+                ].filter(Number.isInteger),
+                locationIds: this.events.map((event) => event.location),
+                ...this.events
+                    .map((event) => {
+                    const { event_type, location, target_groups, ...rest } = event;
+                    return rest;
+                })
+                    .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+            };
+        }
+        handleReset() {
+            var _a;
+            const inputs = (_a = this.shadowRoot) === null || _a === void 0 ? void 0 : _a.querySelectorAll("input");
+            inputs === null || inputs === void 0 ? void 0 : inputs.forEach((input) => {
+                switch (input.type) {
+                    case "checkbox":
+                        input.checked = false;
+                        break;
+                    case "date":
+                        input.value = "";
+                        break;
+                    case "number":
+                        input.value = input.min;
+                        break;
+                }
+            });
+        }
+        handleChange(e) {
+            const target = e.target;
+            console.log(target.type);
+        }
+        throttle(callbackFn, delay = 1000) {
+            let shouldWait = false;
+            let waitingArgs = null;
+            const timeoutFunc = () => {
+                if (waitingArgs == null) {
+                    shouldWait = false;
+                }
+                else {
+                    callbackFn(...waitingArgs);
+                    waitingArgs = null;
+                    setTimeout(timeoutFunc, delay);
+                }
+            };
+            return (...args) => {
+                if (shouldWait) {
+                    waitingArgs = args;
+                    return;
+                }
+                callbackFn(...args);
+                shouldWait = true;
+                setTimeout(timeoutFunc, delay);
+            };
+        }
+        emitChange(e) {
+            const target = e.target;
+            if (target) {
+                target.dispatchEvent(new Event("change", { composed: true, bubbles: true }));
+            }
         }
         render() {
             return y `
-      <div class="card">
+      <div class="card" @change=${this.handleChange}>
         <div class="card-header">
-          <h5 class="card-title">Filter</h5>
-          <button type="button" class="btn btn-sm btn-outline-secondary">
+          <h5 class="card-title d-inline">Filter</h5>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary"
+            @click=${this.handleReset}
+          >
             Reset
           </button>
         </div>
         <div class="card-body">
           <div class="form-group">
-            <label for="event-type">Event Type</label>
-            <select
-              class="form-control form-control-sm"
-              id="event-type"
-              name="event-type"
-            >
-              <option value="all">All</option>
-              ${this.facets.event_types.map((event_type) => {
+            <label for="event_type">Event Type</label>
+            ${o$1(this.facets.eventTypeIds, (eventTypeId) => {
+            var _a;
             return y `
-                  <option value="${event_type.value}">
-                    ${event_type.name}
-                  </option>
-                `;
+                <div class="form-group form-check">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    id=${eventTypeId}
+                  />
+                  <label class="form-check-label" for=${eventTypeId}
+                    >${(_a = this.event_types.find((event_type) => event_type.id === parseInt(eventTypeId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
+                  >
+                </div>
+              `;
         })}
-            </select>
           </div>
           <div class="form-group">
-            <label for="target-group">Target Group</label>
-            <select
-              class="form-control form-control-sm"
-              id="target-group"
-              name="target-group"
-            >
-              <option value="all">All</option>
-              ${this.facets.target_groups.map((target_group) => {
-            return y ` <option value="${target_group.value}">
-                  ${target_group.name}
-                </option>`;
+            <label for="target_group">Target Group</label>
+            ${o$1(this.facets.targetGroupIds, (targetGroupId) => {
+            var _a;
+            return y ` <div class="form-group form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id=${targetGroupId}
+                />
+                <label class="form-check-label" for=${targetGroupId}
+                  >${(_a = this.target_groups.find((target_group) => target_group.id === targetGroupId)) === null || _a === void 0 ? void 0 : _a.name}</label
+                >
+              </div>`;
         })}
-            </select>
           </div>
           <div class="form-group">
-            <label for="min-age">Min Age</label>
+            <label for="min_age">Min Age</label>
             <input
-              type="range"
-              class="form-control-range"
-              id="min-age"
-              name="min-age"
+              type="number"
+              class="form-control form-control-sm"
+              id="min_age"
+              name="min_age"
               min="0"
               max="120"
               value="0"
+              @input=${this.throttle((e) => {
+            this.emitChange(e);
+        }, 500)}
             />
-
-            <label for="max-age">Max Age</label>
+            <label for="max_age">Max Age</label>
             <input
-              type="range"
-              class="form-control-range"
-              id="max-age"
-              name="max-age"
+              type="number"
+              class="form-control form-control-sm"
+              id="max_age"
+              name="max_age"
               min="0"
               max="120"
               value="120"
+              @input=${this.throttle((e) => {
+            this.emitChange(e);
+        }, 500)}
             />
           </div>
           <div class="form-check">
             <input
               type="checkbox"
               class="form-check-input"
-              id="open-registration"
-              name="open-registration"
-              value="true"
+              id="open_registration"
+              name="open_registration"
             />
-            <label for="open-registration">Open Registration</label>
+            <label for="open_registration">Open Registration</label>
           </div>
           <div class="form-group">
-            <label for="start-date">Start Date</label>
+            <label for="start_date">Start Date</label>
             <input
               type="date"
               class="form-control form-control-sm"
-              id="start-date"
-              name="start-date"
+              id="start_date"
+              name="start_date"
             />
-
-            <label for="end-date">End Date</label>
+            <label for="end_date">End Date</label>
             <input
               type="date"
               class="form-control form-control-sm"
-              id="end-date"
-              name="end-date"
+              id="end_date"
+              name="end_date"
             />
           </div>
           <div class="form-group">
             <label for="location">Location</label>
-            ${this.facets.locations.map((location) => y `
-                <div class="form-check">
-                  <label
-                    class="form-check-label"
-                    for="location-${location.name}"
+            ${o$1(this.facets.locationIds, (locationId) => {
+            var _a;
+            return y ` <div class="form-group form-check">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    id=${locationId}
+                  />
+                  <label class="form-check-label" for=${locationId}
+                    >${(_a = this.locations.find((location) => location.id === parseInt(locationId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
                   >
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      value="${location.value}"
-                      id="location-${location.name}"
-                      name="location"
-                    />
-                  </label>
-                </div>
-              `)}
+                </div>`;
+        })}
           </div>
           <div class="form-group">
             <label for="fee">Fee</label>
@@ -393,6 +478,9 @@
               class="form-control form-control-sm"
               id="fee"
               name="fee"
+              @input=${this.throttle((e) => {
+            this.emitChange(e);
+        }, 500)}
             />
           </div>
         </div>
@@ -405,8 +493,17 @@
         e$2({ type: Array })
     ], LMSEventsFilter.prototype, "events", void 0);
     __decorate([
-        e$2({ type: Array, attribute: false })
+        t$1()
     ], LMSEventsFilter.prototype, "facets", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "event_types", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "target_groups", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "locations", void 0);
     LMSEventsFilter = __decorate([
         e$3("lms-events-filter")
     ], LMSEventsFilter);
@@ -909,13 +1006,6 @@
         e$3("lms-floating-menu")
     ], LMSFloatingMenu);
     var LMSFloatingMenu$1 = LMSFloatingMenu;
-
-    /**
-     * @license
-     * Copyright 2021 Google LLC
-     * SPDX-License-Identifier: BSD-3-Clause
-     */
-    function*o$1(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
 
     var faSortDown = {
       prefix: 'fas',
@@ -4089,19 +4179,25 @@ ${value}</textarea
             this.borrowernumber = undefined;
             this.events = [];
         }
-        _getEvents() {
-            fetch("/api/v1/contrib/eventmanagement/events")
-                .then((response) => response.json())
-                .then((events) => {
-                this.events = events;
-            });
-        }
         connectedCallback() {
             super.connectedCallback();
-            this._getEvents();
+            const response = async () => await fetch("/api/v1/contrib/eventmanagement/events");
+            response()
+                .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Something went wrong");
+            })
+                .then((events) => {
+                this.events = events;
+            })
+                .catch((error) => {
+                console.error(error);
+            });
         }
         render() {
-            var _a, _b;
+            var _a;
             return y `
       <div class="container-fluid px-0">
         <div class="row">
@@ -4114,20 +4210,20 @@ ${value}</textarea
             class="col-lg-3 col-md-2 col-sm-12"
             ?hidden=${!this.events.length}
           >
-            <lms-events-filter></lms-events-filter>
+            <lms-events-filter .events=${this.events}></lms-events-filter>
           </div>
           <div
             class="col-lg-9 col-md-10 col-sm-12"
             ?hidden=${!this.events.length}
           >
             <div class="card-deck">
-              ${(_b = (_a = this.events) === null || _a === void 0 ? void 0 : _a.map((event) => y `
+              ${(_a = o$1(this.events, (event) => y `
                   <lms-card
                     .title=${event.name}
-                    .text=${event.notes}
+                    .text=${event.description}
                     .image=${{ src: event.image, alt: event.name }}
                   ></lms-card>
-                `)) !== null && _b !== void 0 ? _b : b}
+                `)) !== null && _a !== void 0 ? _a : b}
             </div>
           </div>
         </div>
@@ -4140,7 +4236,7 @@ ${value}</textarea
         e$2({ type: String })
     ], LMSEventsView.prototype, "borrowernumber", void 0);
     __decorate([
-        e$2({ type: Array, attribute: false })
+        t$1()
     ], LMSEventsView.prototype, "events", void 0);
     LMSEventsView = __decorate([
         e$3("lms-events-view")

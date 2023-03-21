@@ -1,9 +1,10 @@
 import { LitElement, html, nothing } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import LMSCard from "../components/LMSCard";
 import LMSEventsFilter from "../components/LMSEventsFilter";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LMSEvent } from "../sharedDeclarations";
+import { map } from "lit/directives/map";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -15,21 +16,30 @@ declare global {
 @customElement("lms-events-view")
 export default class LMSEventsView extends LitElement {
   @property({ type: String }) borrowernumber = undefined;
-  @property({ type: Array, attribute: false }) events: LMSEvent[] = [];
+  @state() events: LMSEvent[] = [];
 
   static override styles = [bootstrapStyles];
 
-  private _getEvents() {
-    fetch("/api/v1/contrib/eventmanagement/events")
-      .then((response) => response.json())
-      .then((events) => {
-        this.events = events;
-      });
-  }
-
   override connectedCallback() {
     super.connectedCallback();
-    this._getEvents();
+
+    const response = async () =>
+      await fetch("/api/v1/contrib/eventmanagement/events");
+
+    response()
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+
+        throw new Error("Something went wrong");
+      })
+      .then((events: LMSEvent[]) => {
+        this.events = events;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   override render() {
@@ -45,18 +55,19 @@ export default class LMSEventsView extends LitElement {
             class="col-lg-3 col-md-2 col-sm-12"
             ?hidden=${!this.events.length}
           >
-            <lms-events-filter></lms-events-filter>
+            <lms-events-filter .events=${this.events}></lms-events-filter>
           </div>
           <div
             class="col-lg-9 col-md-10 col-sm-12"
             ?hidden=${!this.events.length}
           >
             <div class="card-deck">
-              ${this.events?.map(
+              ${map(
+                this.events,
                 (event) => html`
                   <lms-card
                     .title=${event.name}
-                    .text=${event.notes}
+                    .text=${event.description}
                     .image=${{ src: event.image, alt: event.name }}
                   ></lms-card>
                 `

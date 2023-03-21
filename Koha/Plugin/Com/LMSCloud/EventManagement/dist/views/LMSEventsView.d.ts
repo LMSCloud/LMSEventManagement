@@ -12,7 +12,6 @@ export default class LMSEventsView extends LitElement {
     borrowernumber: undefined;
     events: LMSEvent[];
     static styles: import("lit").CSSResult[];
-    private _getEvents;
     connectedCallback(): void;
     render(): import("lit").TemplateResult<1>;
 }
