@@ -15,31 +15,7 @@
         {
           "name": "event_type",
           "in": "query",
-          "description": "Type of the event",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "event_types",
-          "in": "query",
           "description": "Array of multiple event types",
-          "required": false,
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "branch",
-          "in": "query",
-          "description": "Branch responsible for the event",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "branches",
-          "in": "query",
-          "description": "Array of multiple branches",
           "required": false,
           "type": "array",
           "items": {
@@ -49,19 +25,19 @@
         {
           "name": "target_group",
           "in": "query",
-          "description": "Adressed target group of the event",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "target_groups",
-          "in": "query",
           "description": "Array of multiple target groups",
           "required": false,
           "type": "array",
           "items": {
             "type": "string"
           }
+        },
+        {
+          "name": "min_age",
+          "in": "query",
+          "description": "Minimum required age for the event",
+          "required": false,
+          "type": "string"
         },
         {
           "name": "max_age",
@@ -86,13 +62,6 @@
         },
         {
           "name": "location",
-          "in": "query",
-          "description": "Location of the event",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "locations",
           "in": "query",
           "description": "Array of multiple locations",
           "required": false,
@@ -172,6 +141,365 @@
                 },
                 "link_to_registration": {
                   "type": ["string", "null"]
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/public/event_types": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::EventTypes#list",
+      "operationId": "listEventTypesPublic",
+      "tags": ["event_types"],
+      "description": "List all event types",
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Event types",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "target_groups": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "selected": {
+                        "type": "boolean"
+                      },
+                      "fee": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "max_age": {
+                  "type": "integer"
+                },
+                "min_age": {
+                  "type": "integer"
+                },
+                "open_registration": {
+                  "type": "boolean"
+                },
+                "max_participants": {
+                  "type": "integer"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "image": {
+                  "type": ["string", "null"]
+                },
+                "location": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/public/locations": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Locations#list",
+      "operationId": "listLocationsPublic",
+      "tags": ["locations"],
+      "description": "List all locations",
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "Locations",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "street": {
+                  "type": "string"
+                },
+                "number": {
+                  "type": "string"
+                },
+                "city": {
+                  "type": "string"
+                },
+                "zip": {
+                  "type": "string"
+                },
+                "country": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/public/target_groups": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::TargetGroups#list",
+      "operationId": "listTargetGroupsPublic",
+      "tags": ["target_groups"],
+      "description": "List target groups",
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "List of target groups",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "min_age": {
+                  "type": "integer"
+                },
+                "max_age": {
+                  "type": "integer"
                 }
               }
             }
@@ -2071,7 +2399,7 @@
                   "type": "string"
                 },
                 "zip": {
-                  "type": "number"
+                  "type": "string"
                 },
                 "country": {
                   "type": "string"
@@ -2181,7 +2509,7 @@
                 "type": "string"
               },
               "zip": {
-                "type": "number"
+                "type": "string"
               },
               "country": {
                 "type": "string"
@@ -2213,7 +2541,7 @@
                 "type": "string"
               },
               "zip": {
-                "type": "number"
+                "type": "string"
               },
               "country": {
                 "type": "string"
@@ -2334,7 +2662,7 @@
                 "type": "string"
               },
               "zip": {
-                "type": "number"
+                "type": "string"
               },
               "country": {
                 "type": "string"
@@ -2453,7 +2781,7 @@
                 "type": "string"
               },
               "zip": {
-                "type": "number"
+                "type": "string"
               },
               "country": {
                 "type": "string"
@@ -2475,32 +2803,20 @@
               "name": {
                 "type": "string"
               },
-              "target_group": {
-                "type": "integer"
-              },
-              "max_age": {
-                "type": "integer"
-              },
-              "min_age": {
-                "type": "integer"
-              },
-              "open_registration": {
-                "type": "boolean"
-              },
-              "max_participants": {
-                "type": "integer"
-              },
-              "fee": {
-                "type": "number"
-              },
-              "description": {
+              "street": {
                 "type": "string"
               },
-              "image": {
+              "number": {
                 "type": "string"
               },
-              "location": {
-                "type": "integer"
+              "city": {
+                "type": "string"
+              },
+              "zip": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
               }
             }
           }
@@ -2616,7 +2932,7 @@
                 "type": "string"
               },
               "zip": {
-                "type": "number"
+                "type": "string"
               },
               "country": {
                 "type": "string"

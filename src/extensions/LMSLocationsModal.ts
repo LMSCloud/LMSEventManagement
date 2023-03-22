@@ -43,7 +43,7 @@ export default class LMSLocationsModal extends LMSModal {
       },
       {
         name: "zip",
-        type: "number",
+        type: "text",
         desc: "Zip",
         required: false,
         value: "0",

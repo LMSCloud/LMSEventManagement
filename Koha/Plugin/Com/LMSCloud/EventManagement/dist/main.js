@@ -274,28 +274,31 @@
         connectedCallback() {
             super.connectedCallback();
             const event_types = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
                 return response.json();
             };
             event_types().then((event_types) => (this.event_types = event_types));
             const target_groups = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/target_groups");
                 return response.json();
             };
             target_groups().then((target_groups) => (this.target_groups = target_groups));
             const locations = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/locations");
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/locations");
                 return response.json();
             };
             locations().then((locations) => (this.locations = locations));
         }
         willUpdate() {
+            if (!this.events.length)
+                return;
+            console.log(this.event_types, this.target_groups, this.locations);
             this.facets = {
-                eventTypeIds: this.events.map((event) => event.event_type),
+                eventTypeIds: [...new Set(this.events.map((event) => event.event_type))],
                 targetGroupIds: [
                     ...new Set(this.events.flatMap((event) => event.target_groups.map((target_group) => target_group.selected ? target_group.target_group_id : NaN))),
                 ].filter(Number.isInteger),
-                locationIds: this.events.map((event) => event.location),
+                locationIds: [...new Set(this.events.map((event) => event.location))],
                 ...this.events
                     .map((event) => {
                     const { event_type, location, target_groups, ...rest } = event;
@@ -321,39 +324,52 @@
                 }
             });
         }
-        handleChange(e) {
-            const target = e.target;
-            console.log(target.type);
+        handleChange() {
+            var _a;
+            const inputHandlers = new Map([
+                ["checkbox", (input) => (input.checked ? input.id : false)],
+                ["date", (input) => input.value],
+                ["number", (input) => input.value],
+                ["default", (input) => input.value],
+            ]);
+            const params = [...((_a = this.inputs) !== null && _a !== void 0 ? _a : [])]
+                .filter((input) => input.value || input.checked)
+                .map((input) => {
+                const handler = inputHandlers.get(input.type) || inputHandlers.get("default");
+                if (!handler)
+                    return [input.name, undefined];
+                const value = handler(input);
+                return [input.name, value];
+            })
+                .filter(([name, value]) => !((name === "event_type" ||
+                name === "target_group" ||
+                name === "location") &&
+                value === false));
+            console.log(params);
+            const query = new URLSearchParams(Object.fromEntries(params)).toString();
+            console.log(query);
+            this.dispatchEvent(new CustomEvent("filter", {
+                detail: query,
+                composed: true,
+                bubbles: true,
+            }));
         }
-        throttle(callbackFn, delay = 1000) {
-            let shouldWait = false;
-            let waitingArgs = null;
-            const timeoutFunc = () => {
-                if (waitingArgs == null) {
-                    shouldWait = false;
-                }
-                else {
-                    callbackFn(...waitingArgs);
-                    waitingArgs = null;
-                    setTimeout(timeoutFunc, delay);
-                }
-            };
-            return (...args) => {
-                if (shouldWait) {
-                    waitingArgs = args;
-                    return;
-                }
-                callbackFn(...args);
-                shouldWait = true;
-                setTimeout(timeoutFunc, delay);
-            };
-        }
+        // debounce(callbackFunction: Function, delay = 10) {
+        //   let timeout: ReturnType<typeof setTimeout>;
+        //   return (...args: unknown[]) => {
+        //     clearTimeout(timeout);
+        //     timeout = setTimeout(() => {
+        //       callbackFunction(...args);
+        //     }, delay);
+        //   };
+        // }
         emitChange(e) {
             const target = e.target;
             if (target) {
                 target.dispatchEvent(new Event("change", { composed: true, bubbles: true }));
             }
         }
+        // debouncedEmitChange = this.debounce(this.emitChange);
         render() {
             return y `
       <div class="card" @change=${this.handleChange}>
@@ -377,6 +393,7 @@
                   <input
                     type="checkbox"
                     class="form-check-input"
+                    name="event_type"
                     id=${eventTypeId}
                   />
                   <label class="form-check-label" for=${eventTypeId}
@@ -394,6 +411,7 @@
                 <input
                   type="checkbox"
                   class="form-check-input"
+                  name="target_group"
                   id=${targetGroupId}
                 />
                 <label class="form-check-label" for=${targetGroupId}
@@ -412,9 +430,7 @@
               min="0"
               max="120"
               value="0"
-              @input=${this.throttle((e) => {
-            this.emitChange(e);
-        }, 500)}
+              @input=${this.emitChange}
             />
             <label for="max_age">Max Age</label>
             <input
@@ -425,9 +441,7 @@
               min="0"
               max="120"
               value="120"
-              @input=${this.throttle((e) => {
-            this.emitChange(e);
-        }, 500)}
+              @input=${this.emitChange}
             />
           </div>
           <div class="form-check">
@@ -463,6 +477,7 @@
                   <input
                     type="checkbox"
                     class="form-check-input"
+                    name="location"
                     id=${locationId}
                   />
                   <label class="form-check-label" for=${locationId}
@@ -478,9 +493,7 @@
               class="form-control form-control-sm"
               id="fee"
               name="fee"
-              @input=${this.throttle((e) => {
-            this.emitChange(e);
-        }, 500)}
+              @input=${this.emitChange}
             />
           </div>
         </div>
@@ -504,6 +517,9 @@
     __decorate([
         t$1()
     ], LMSEventsFilter.prototype, "locations", void 0);
+    __decorate([
+        e$1("input")
+    ], LMSEventsFilter.prototype, "inputs", void 0);
     LMSEventsFilter = __decorate([
         e$3("lms-events-filter")
     ], LMSEventsFilter);
@@ -3779,7 +3795,7 @@ ${value}</textarea
                 },
                 {
                     name: "zip",
-                    type: "number",
+                    type: "text",
                     desc: "Zip",
                     required: false,
                     value: "0",
@@ -4178,10 +4194,28 @@ ${value}</textarea
             super(...arguments);
             this.borrowernumber = undefined;
             this.events = [];
+            this.handleFilter = (event) => {
+                const query = event.detail;
+                console.log("query in ev: ", query);
+                const response = async () => await fetch(`/api/v1/contrib/eventmanagement/public/events?${new URLSearchParams(query)}`);
+                response()
+                    .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error("Something went wrong");
+                })
+                    .then((events) => {
+                    this.events = events;
+                })
+                    .catch((error) => {
+                    console.error(error);
+                });
+            };
         }
         connectedCallback() {
             super.connectedCallback();
-            const response = async () => await fetch("/api/v1/contrib/eventmanagement/events");
+            const response = async () => await fetch("/api/v1/contrib/eventmanagement/public/events");
             response()
                 .then((response) => {
                 if (response.ok) {
@@ -4210,7 +4244,10 @@ ${value}</textarea
             class="col-lg-3 col-md-2 col-sm-12"
             ?hidden=${!this.events.length}
           >
-            <lms-events-filter .events=${this.events}></lms-events-filter>
+            <lms-events-filter
+              @filter=${this.handleFilter}
+              .events=${this.events}
+            ></lms-events-filter>
           </div>
           <div
             class="col-lg-9 col-md-10 col-sm-12"

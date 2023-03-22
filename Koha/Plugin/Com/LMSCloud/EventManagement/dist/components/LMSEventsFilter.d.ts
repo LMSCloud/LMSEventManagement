@@ -25,12 +25,12 @@ export default class LMSEventsFilter extends LitElement {
     event_types: EventType[];
     target_groups: TargetGroup[];
     locations: LMSLocation[];
+    inputs: NodeListOf<HTMLInputElement> | undefined;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     willUpdate(): void;
     handleReset(): void;
-    handleChange(e: Event): void;
-    throttle(callbackFn: Function, delay?: number): (...args: unknown[]) => void;
+    handleChange(): void;
     emitChange(e: Event): void;
     render(): import("lit").TemplateResult<1>;
 }

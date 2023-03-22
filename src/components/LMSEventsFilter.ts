@@ -6,7 +6,7 @@ import {
   TargetGroup,
 } from "../sharedDeclarations";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { customElement, property, state } from "lit/decorators";
+import { customElement, property, queryAll, state } from "lit/decorators";
 import { map } from "lit/directives/map";
 
 type Facets = {
@@ -36,6 +36,7 @@ export default class LMSEventsFilter extends LitElement {
   @state() event_types: EventType[] = [];
   @state() target_groups: TargetGroup[] = [];
   @state() locations: LMSLocation[] = [];
+  @queryAll("input") inputs: NodeListOf<HTMLInputElement> | undefined;
 
   static override styles = [bootstrapStyles];
 
@@ -44,7 +45,7 @@ export default class LMSEventsFilter extends LitElement {
 
     const event_types = async () => {
       const response = await fetch(
-        "/api/v1/contrib/eventmanagement/event_types"
+        "/api/v1/contrib/eventmanagement/public/event_types"
       );
       return response.json();
     };
@@ -53,7 +54,7 @@ export default class LMSEventsFilter extends LitElement {
     );
     const target_groups = async () => {
       const response = await fetch(
-        "/api/v1/contrib/eventmanagement/target_groups"
+        "/api/v1/contrib/eventmanagement/public/target_groups"
       );
       return response.json();
     };
@@ -62,7 +63,9 @@ export default class LMSEventsFilter extends LitElement {
     );
 
     const locations = async () => {
-      const response = await fetch("/api/v1/contrib/eventmanagement/locations");
+      const response = await fetch(
+        "/api/v1/contrib/eventmanagement/public/locations"
+      );
       return response.json();
     };
     locations().then(
@@ -71,8 +74,10 @@ export default class LMSEventsFilter extends LitElement {
   }
 
   override willUpdate() {
+    if (!this.events.length) return;
+    console.log(this.event_types, this.target_groups, this.locations);
     this.facets = {
-      eventTypeIds: this.events.map((event) => event.event_type),
+      eventTypeIds: [...new Set(this.events.map((event) => event.event_type))],
       targetGroupIds: [
         ...new Set(
           this.events.flatMap((event) =>
@@ -82,7 +87,7 @@ export default class LMSEventsFilter extends LitElement {
           )
         ),
       ].filter(Number.isInteger),
-      locationIds: this.events.map((event) => event.location),
+      locationIds: [...new Set(this.events.map((event) => event.location))],
       ...this.events
         .map((event) => {
           const { event_type, location, target_groups, ...rest } = event;
@@ -111,35 +116,61 @@ export default class LMSEventsFilter extends LitElement {
     });
   }
 
-  handleChange(e: Event) {
-    const target = e.target as HTMLInputElement;
-    console.log(target.type);
+  handleChange() {
+    const inputHandlers = new Map<
+      string,
+      (input: HTMLInputElement) => string | boolean | undefined
+    >([
+      ["checkbox", (input) => (input.checked ? input.id : false)],
+      ["date", (input) => input.value],
+      ["number", (input) => input.value],
+      ["default", (input) => input.value],
+    ]);
+
+    const params = [...(this.inputs ?? [])]
+      .filter((input) => input.value || input.checked)
+      .map((input) => {
+        const handler =
+          inputHandlers.get(input.type) || inputHandlers.get("default");
+        if (!handler) return [input.name, undefined];
+        const value = handler(input);
+        return [input.name, value];
+      })
+      .filter(
+        ([name, value]) =>
+          !(
+            (name === "event_type" ||
+              name === "target_group" ||
+              name === "location") &&
+            value === false
+          )
+      );
+
+    console.log(params);
+
+    const query = new URLSearchParams(Object.fromEntries(params)).toString();
+
+    console.log(query);
+
+    this.dispatchEvent(
+      new CustomEvent("filter", {
+        detail: query,
+        composed: true,
+        bubbles: true,
+      })
+    );
   }
 
-  throttle(callbackFn: Function, delay = 1000) {
-    let shouldWait = false;
-    let waitingArgs: unknown[] | null = null;
-    const timeoutFunc = () => {
-      if (waitingArgs == null) {
-        shouldWait = false;
-      } else {
-        callbackFn(...waitingArgs);
-        waitingArgs = null;
-        setTimeout(timeoutFunc, delay);
-      }
-    };
+  // debounce(callbackFunction: Function, delay = 10) {
+  //   let timeout: ReturnType<typeof setTimeout>;
 
-    return (...args: unknown[]) => {
-      if (shouldWait) {
-        waitingArgs = args;
-        return;
-      }
-
-      callbackFn(...args);
-      shouldWait = true;
-      setTimeout(timeoutFunc, delay);
-    };
-  }
+  //   return (...args: unknown[]) => {
+  //     clearTimeout(timeout);
+  //     timeout = setTimeout(() => {
+  //       callbackFunction(...args);
+  //     }, delay);
+  //   };
+  // }
 
   emitChange(e: Event) {
     const target = e.target as HTMLInputElement;
@@ -149,6 +180,8 @@ export default class LMSEventsFilter extends LitElement {
       );
     }
   }
+
+  // debouncedEmitChange = this.debounce(this.emitChange);
 
   override render() {
     return html`
@@ -173,6 +206,7 @@ export default class LMSEventsFilter extends LitElement {
                   <input
                     type="checkbox"
                     class="form-check-input"
+                    name="event_type"
                     id=${eventTypeId}
                   />
                   <label class="form-check-label" for=${eventTypeId}
@@ -193,6 +227,7 @@ export default class LMSEventsFilter extends LitElement {
                 <input
                   type="checkbox"
                   class="form-check-input"
+                  name="target_group"
                   id=${targetGroupId}
                 />
                 <label class="form-check-label" for=${targetGroupId}
@@ -213,9 +248,7 @@ export default class LMSEventsFilter extends LitElement {
               min="0"
               max="120"
               value="0"
-              @input=${(e: Event) => {
-                this.emitChange(e);
-              }}
+              @input=${this.emitChange}
             />
             <label for="max_age">Max Age</label>
             <input
@@ -226,9 +259,7 @@ export default class LMSEventsFilter extends LitElement {
               min="0"
               max="120"
               value="120"
-              @input=${(e: Event) => {
-                this.emitChange(e);
-              }}
+              @input=${this.emitChange}
             />
           </div>
           <div class="form-check">
@@ -265,6 +296,7 @@ export default class LMSEventsFilter extends LitElement {
                   <input
                     type="checkbox"
                     class="form-check-input"
+                    name="location"
                     id=${locationId}
                   />
                   <label class="form-check-label" for=${locationId}
@@ -282,9 +314,7 @@ export default class LMSEventsFilter extends LitElement {
               class="form-control form-control-sm"
               id="fee"
               name="fee"
-              @input=${(e: Event) => {
-                this.emitChange(e);
-              }}
+              @input=${this.emitChange}
             />
           </div>
         </div>

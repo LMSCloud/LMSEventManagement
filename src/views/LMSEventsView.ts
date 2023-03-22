@@ -24,7 +24,7 @@ export default class LMSEventsView extends LitElement {
     super.connectedCallback();
 
     const response = async () =>
-      await fetch("/api/v1/contrib/eventmanagement/events");
+      await fetch("/api/v1/contrib/eventmanagement/public/events");
 
     response()
       .then((response) => {
@@ -42,6 +42,30 @@ export default class LMSEventsView extends LitElement {
       });
   }
 
+  handleFilter = (event: CustomEvent) => {
+    const query = event.detail;
+    console.log("query in ev: ", query);
+    const response = async () =>
+      await fetch(
+        `/api/v1/contrib/eventmanagement/public/events?${new URLSearchParams(query)}`
+      );
+
+    response()
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+
+        throw new Error("Something went wrong");
+      })
+      .then((events: LMSEvent[]) => {
+        this.events = events;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   override render() {
     return html`
       <div class="container-fluid px-0">
@@ -55,7 +79,10 @@ export default class LMSEventsView extends LitElement {
             class="col-lg-3 col-md-2 col-sm-12"
             ?hidden=${!this.events.length}
           >
-            <lms-events-filter .events=${this.events}></lms-events-filter>
+            <lms-events-filter
+              @filter=${this.handleFilter}
+              .events=${this.events}
+            ></lms-events-filter>
           </div>
           <div
             class="col-lg-9 col-md-10 col-sm-12"
