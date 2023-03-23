@@ -75,13 +75,13 @@ sub get {
         # Build the WHERE clause based on the specified parameters
         my $where = {};
         $where->{name}              = $params->{name}                            if defined $params->{name} && $params->{name} ne q{};
-        $where->{event_type}        = { -in => $params->{event_type} }           if ( defined $params->{event_type} && @{ $params->{event_type} } );
-        $where->{target_group}      = { -in => $params->{target_group} }         if ( defined $params->{target_group} && @{ $params->{target_group} } );
+        $where->{event_type}        = { q{=} => $params->{event_type} }          if ( defined $params->{event_type} && @{ $params->{event_type} } );
+        $where->{target_group}      = { q{=} => $params->{target_group} }        if ( defined $params->{target_group} && @{ $params->{target_group} } );
         $where->{min_age}           = { '>=' => $params->{min_age} }             if defined $params->{min_age};
         $where->{max_age}           = { '<=' => $params->{max_age} }             if defined $params->{max_age};
         $where->{open_registration} = $params->{open_registration}               if defined $params->{open_registration} && !$params->{open_registration};
         $where->{fee}               = { '<=' => $params->{fee} }                 if defined $params->{fee};
-        $where->{location}          = { -in => $params->{location} }             if ( defined $params->{location} && @{ $params->{location} } );
+        $where->{location}          = { q{=} => $params->{location} }            if ( defined $params->{location} && @{ $params->{location} } );
         $where->{start_time}        = { '>=' => $params->{start_time} }          if defined $params->{start_time};
         $where->{end_time}          = { '<=' => "$params->{end_time} 23:59:59" } if defined $params->{end_time} && $params->{end_time} ne q{};
 
@@ -90,6 +90,16 @@ sub get {
         $sth->execute(@bind);
 
         my $events = $sth->fetchall_arrayref( {} );
+
+        # Next block depends on discussion about the behaviour of the facets component.
+        foreach my $event ( @{$events} ) {
+            ( $stmt, @bind ) = $sql->select( $EVENT_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_id => $event->{id} } );
+            $sth = $dbh->prepare($stmt);
+            $sth->execute(@bind);
+
+            my $target_groups = $sth->fetchall_arrayref( {} );
+            $event->{'target_groups'} = $target_groups;
+        }
 
         if ( !( scalar @{$events} ) ) {
             return $c->render(

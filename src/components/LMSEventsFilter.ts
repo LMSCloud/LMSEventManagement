@@ -75,7 +75,6 @@ export default class LMSEventsFilter extends LitElement {
 
   override willUpdate() {
     if (!this.events.length) return;
-    console.log(this.event_types, this.target_groups, this.locations);
     this.facets = {
       eventTypeIds: [...new Set(this.events.map((event) => event.event_type))],
       targetGroupIds: [
@@ -102,18 +101,35 @@ export default class LMSEventsFilter extends LitElement {
     inputs?.forEach((input) => {
       switch (input.type) {
         case "checkbox":
+          if (input.id === "open_registration") {
+            input.checked = true;
+            break;
+          }
           input.checked = false;
           break;
         case "date":
           input.value = "";
           break;
         case "number":
+          if (["min_age", "max_age"].includes(input.id)) {
+            input.value = "";
+            break;
+          }
           input.value = input.min;
           break;
         default:
           break;
       }
     });
+
+    /** This basically works. Feels a bit ugly, though. */
+    this.dispatchEvent(
+      new CustomEvent("filter", {
+        detail: "",
+        composed: true,
+        bubbles: true,
+      })
+    );
   }
 
   handleChange() {
@@ -150,34 +166,30 @@ export default class LMSEventsFilter extends LitElement {
       .filter(
         ([name, value]) =>
           !(
-            (name === "event_type" ||
-              name === "target_group" ||
-              name === "location") &&
+            name &&
+            ["event_type", "target_group", "location"].includes(
+              name.toString()
+            ) &&
             value === false
           )
       );
 
-    const query = new URLSearchParams(Object.fromEntries(params)).toString();
+    /** TODO: This could be shortened */
+    const query = new URLSearchParams();
+    params.forEach(([name, value]) => {
+      if (typeof name === "string" && value !== undefined) {
+        query.append(name, value?.toString());
+      }
+    });
 
     this.dispatchEvent(
       new CustomEvent("filter", {
-        detail: query,
+        detail: query.toString(),
         composed: true,
         bubbles: true,
       })
     );
   }
-
-  // debounce(callbackFunction: Function, delay = 10) {
-  //   let timeout: ReturnType<typeof setTimeout>;
-
-  //   return (...args: unknown[]) => {
-  //     clearTimeout(timeout);
-  //     timeout = setTimeout(() => {
-  //       callbackFunction(...args);
-  //     }, delay);
-  //   };
-  // }
 
   emitChange(e: Event) {
     const target = e.target as HTMLInputElement;
@@ -188,12 +200,12 @@ export default class LMSEventsFilter extends LitElement {
     }
   }
 
-  // debouncedEmitChange = this.debounce(this.emitChange);
-
   override render() {
     return html`
       <div class="card" @change=${this.handleChange}>
-        <div class="card-header d-flex justify-content-between">
+        <div
+          class="card-header d-flex justify-content-between sticky-top bg-white"
+        >
           <h5 class="card-title d-inline">Filter</h5>
           <button
             type="button"
@@ -280,19 +292,19 @@ export default class LMSEventsFilter extends LitElement {
             <label for="open_registration">Open Registration</label>
           </div>
           <div class="form-group">
-            <label for="start_date">Start Date</label>
+            <label for="start_time">Start Date</label>
             <input
               type="date"
               class="form-control form-control-sm"
-              id="start_date"
-              name="start_date"
+              id="start_time"
+              name="start_time"
             />
-            <label for="end_date">End Date</label>
+            <label for="end_time">End Date</label>
             <input
               type="date"
               class="form-control form-control-sm"
-              id="end_date"
-              name="end_date"
+              id="end_time"
+              name="end_time"
             />
           </div>
           <div class="form-group">
