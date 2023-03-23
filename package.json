@@ -4,8 +4,10 @@
   "description": "Managing events just got easier!",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx rollup -c && npx gulp build"
+    "package-kpz:test": "test -x ./node_modules/package-kpz/target/release/package-kpz",
+    "package-kpz:build": "cd package-kpz && cargo build --release && cd ../ && ln -s ./package-kpz/target/release/package-kpz ./p-kpz",
+    "lint": "eslint \"src/**/*.{js,ts}\"",
+    "build": "npx rollup -c && ./p-kpz -r \"lms-event-management\" -p \"Koha/Plugin/Com/LMSCloud/EventManagement.pm\""
   },
   "repository": {
     "type": "git",
@@ -19,32 +21,34 @@
   },
   "homepage": "https://github.com/lms-tobias/lms-koha-plugin-event-management#readme",
   "devDependencies": {
-    "autoprefixer": "^10.4.13",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-base": "^15.0.0",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.36.0",
+    "eslint-plugin-lit": "^1.8.2",
     "gulp": "^4.0.2",
     "gulp-github-release": "^1.2.1",
     "gulp-run": "^1.7.1",
     "node-datetime": "^2.1.2",
     "rollup": "^2.79.1",
     "rollup-plugin-analyzer": "^4.0.0",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-postcss": "^4.0.2",
-    "rollup-plugin-typescript2": "^0.34.1",
     "ts-lit-plugin": "^1.2.1",
+    "tslib": "^2.5.0",
     "typescript": "^4.9.5"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
-    "@granite-elements/granite-lit-bootstrap": "^4.6.0-0",
-    "@lit-labs/task": "^2.0.0",
+    "@granite-elements/granite-lit-bootstrap": "4.6.0-0",
+    "@lit-labs/task": "^2.1.0",
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-node-resolve": "^15.0.1",
     "@types/gettext.js": "^1.0.0",
     "@weavedev/lit-fontawesome": "^0.3.2",
     "gettext.js": "^1.2.0",
     "jsonfile": "^6.1.0",
-    "lit": "^2.6.1",
-    "lit-element-state": "^1.7.0"
+    "lit": "^2.7.0"
   },
   "previous_version": "1.3.0"
 }
