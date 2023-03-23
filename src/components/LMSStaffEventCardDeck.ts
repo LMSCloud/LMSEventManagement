@@ -423,7 +423,7 @@ ${value}</textarea
   override render() {
     return !this.data.length
       ? html`<h1 class="text-center">
-          You have to create a
+          You have to create a&nbsp;
           <lms-anchor
             .href=${{
               ...this.href,
@@ -433,7 +433,7 @@ ${value}</textarea
               },
             }}
             >target group</lms-anchor
-          >, a
+          >, a&nbsp;
           <lms-anchor
             .href=${{
               ...this.href,
@@ -444,7 +444,7 @@ ${value}</textarea
             }}
             >location</lms-anchor
           >
-          and an
+          &nbsp;and an&nbsp;
           <lms-anchor
             .href=${{
               ...this.href,
@@ -455,7 +455,7 @@ ${value}</textarea
             }}
             >event type</lms-anchor
           >
-          first.
+          &nbsp;first.
         </h1>`
       : html`
           <div class="container-fluid mx-0">

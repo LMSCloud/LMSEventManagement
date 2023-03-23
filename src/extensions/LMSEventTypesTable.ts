@@ -179,7 +179,7 @@ export default class LMSEventTypesTable extends LMSTable {
     ];
     this.isEditable = true;
     this.isDeletable = true;
-    this.emptyTableMessage = html`You have to create a
+    this.emptyTableMessage = html`You have to create a&nbsp;
       <lms-anchor
         .href=${{
           ...this.href,
@@ -189,7 +189,7 @@ export default class LMSEventTypesTable extends LMSTable {
           },
         }}
         >target group</lms-anchor
-      >, a
+      >&nbsp;and a&nbsp;
       <lms-anchor
         .href=${{
           ...this.href,
@@ -200,7 +200,7 @@ export default class LMSEventTypesTable extends LMSTable {
         }}
         >location</lms-anchor
       >
-      first.`;
+      &nbsp;first.`;
 
     const eventTypes = fetch("/api/v1/contrib/eventmanagement/event_types");
     eventTypes
