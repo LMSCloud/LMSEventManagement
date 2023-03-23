@@ -4,7 +4,7 @@ import LMSCard from "../components/LMSCard";
 import LMSEventsFilter from "../components/LMSEventsFilter";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LMSEvent } from "../sharedDeclarations";
-import { map } from "lit/directives/map";
+import { map } from "lit/directives/map.js";
 
 declare global {
   interface HTMLElementTagNameMap {

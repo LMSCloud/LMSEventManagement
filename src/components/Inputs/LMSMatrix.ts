@@ -1,7 +1,7 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html, TemplateResult, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { ifDefined } from "lit/directives/if-defined";
+import { ifDefined } from "lit/directives/if-defined.js";
 import { MatrixGroup, ModalField } from "../../sharedDeclarations";
 import { map } from "lit/directives/map.js";
 
@@ -119,7 +119,7 @@ export default class LMSMatrix extends LitElement {
             step=${ifDefined(
               field.attributes
                 ?.find(([attribute]) => attribute === "step")
-                ?.at(-1) as number
+                ?.slice(-1)[0] as number
             )}
             @input=${(e: Event) => this.handleInput({ e, id: row.id, header })}
             ?required=${field.required}

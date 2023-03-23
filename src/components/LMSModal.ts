@@ -12,7 +12,7 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
 // import TranslationHandler from "../lib/TranslationHandler";
-import { customElement, property, state } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators.js";
 // import { Gettext } from "gettext.js";
 import { CreateOpts, MatrixGroup, ModalField } from "../sharedDeclarations";
 import LMSSelect from "./Inputs/LMSSelect";

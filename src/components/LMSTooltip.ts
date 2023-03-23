@@ -1,5 +1,5 @@
 import { LitElement, html, css, PropertyValues } from "lit";
-import { customElement, property } from "lit/decorators";
+import { customElement, property } from "lit/decorators.js";
 
 @customElement("lms-tooltip")
 export default class LMSTooltip extends LitElement {

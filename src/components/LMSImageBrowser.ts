@@ -5,7 +5,7 @@ import {
   property /* state */,
   queryAll,
 } from "lit/decorators.js";
-import { map } from "lit/directives/map";
+import { map } from "lit/directives/map.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import LMSTooltip from "./LMSTooltip";

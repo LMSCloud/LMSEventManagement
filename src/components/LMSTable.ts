@@ -9,11 +9,11 @@ import {
   faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
 // import TranslationHandler from "../lib/TranslationHandler";
-import { customElement, property, state } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators.js";
 import LMSToast from "./LMSToast";
 // import { Gettext } from "gettext.js";
 import { Column } from "../sharedDeclarations";
-import { map } from "lit/directives/map";
+import { map } from "lit/directives/map.js";
 
 type sortTask = {
   column: string;

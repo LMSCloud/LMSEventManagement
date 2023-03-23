@@ -6,8 +6,8 @@ import {
   TargetGroup,
 } from "../sharedDeclarations";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { customElement, property, queryAll, state } from "lit/decorators";
-import { map } from "lit/directives/map";
+import { customElement, property, queryAll, state } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
 
 type Facets = {
   eventTypeIds: string[];

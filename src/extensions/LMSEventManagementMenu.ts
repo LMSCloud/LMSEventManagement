@@ -7,7 +7,7 @@ import {
   faLocationDot,
   faImage,
 } from "@fortawesome/free-solid-svg-icons";
-import { customElement, property } from "lit/decorators";
+import { customElement, property } from "lit/decorators.js";
 import { Gettext } from "gettext.js";
 
 @customElement("lms-event-management-menu")

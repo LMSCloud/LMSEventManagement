@@ -1,4 +1,4 @@
-import { customElement, property } from "lit/decorators";
+import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
 import { html, TemplateResult } from "lit";
 import {

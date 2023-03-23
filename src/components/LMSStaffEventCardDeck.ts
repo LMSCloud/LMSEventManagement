@@ -13,7 +13,7 @@ import LMSStaffEventCardAttendees from "./LMSStaffEventCard/LMSStaffEventCardAtt
 import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSAnchor from "./LMSAnchor";
 import TemplateResultConverter from "../lib/TemplateResultConverter";
-import { map } from "lit/directives/map";
+import { map } from "lit/directives/map.js";
 import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
 
 declare global {

@@ -1,4 +1,4 @@
-import { customElement, property } from "lit/decorators";
+import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { CreateOpts, LMSLocation } from "../sharedDeclarations";
 
