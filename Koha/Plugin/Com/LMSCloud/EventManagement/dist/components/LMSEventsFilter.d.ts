@@ -25,6 +25,7 @@ export default class LMSEventsFilter extends LitElement {
     event_types: EventType[];
     target_groups: TargetGroup[];
     locations: LMSLocation[];
+    isHidden: boolean;
     inputs: NodeListOf<HTMLInputElement> | undefined;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
@@ -32,6 +33,7 @@ export default class LMSEventsFilter extends LitElement {
     handleReset(): void;
     handleChange(): void;
     emitChange(e: Event): void;
+    handleHideToggle(): void;
     render(): import("lit").TemplateResult<1>;
 }
 export {};

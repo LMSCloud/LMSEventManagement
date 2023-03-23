@@ -11,9 +11,11 @@ declare global {
 export default class LMSEventsView extends LitElement {
     borrowernumber: undefined;
     events: LMSEvent[];
+    hasHiddenFacets: boolean;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
-    handleFilter: (event: CustomEvent) => void;
+    handleFilter(event: CustomEvent): void;
+    handleHide(e: CustomEvent): void;
     render(): import("lit").TemplateResult<1>;
 }
 //# sourceMappingURL=LMSEventsView.d.ts.map

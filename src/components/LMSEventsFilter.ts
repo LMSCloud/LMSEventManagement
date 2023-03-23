@@ -8,6 +8,7 @@ import {
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
+import { classMap } from "lit/directives/class-map.js";
 
 type Facets = {
   eventTypeIds: string[];
@@ -36,6 +37,7 @@ export default class LMSEventsFilter extends LitElement {
   @state() event_types: EventType[] = [];
   @state() target_groups: TargetGroup[] = [];
   @state() locations: LMSLocation[] = [];
+  @state() isHidden = false;
   @queryAll("input") inputs: NodeListOf<HTMLInputElement> | undefined;
 
   static override styles = [bootstrapStyles];
@@ -200,22 +202,55 @@ export default class LMSEventsFilter extends LitElement {
     }
   }
 
+  handleHideToggle() {
+    this.isHidden = !this.isHidden;
+    this.dispatchEvent(
+      new CustomEvent("hide", {
+        detail: this.isHidden,
+        composed: true,
+        bubbles: true,
+      })
+    );
+  }
+
   override render() {
     return html`
       <div class="card" @change=${this.handleChange}>
         <div
-          class="card-header d-flex justify-content-between sticky-top bg-white"
+          class="card-header d-flex ${classMap({
+            "justify-content-between": !this.isHidden,
+            "justify-content-center": this.isHidden,
+          })} sticky-top bg-white"
         >
-          <h5 class="card-title d-inline">Filter</h5>
-          <button
-            type="button"
-            class="btn btn-sm btn-outline-secondary"
-            @click=${this.handleReset}
+          <h5
+            class="card-title ${classMap({
+              "d-inline": !this.isHidden,
+              "d-none": this.isHidden,
+            })}"
           >
-            Reset
-          </button>
+            Filter
+          </h5>
+          <div>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary me-2"
+              @click=${this.handleHideToggle}
+              aria-label=${this.isHidden ? "Show filters" : "Hide filters"}
+            >
+              ${this.isHidden ? "Show" : "Hide"}
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary ${classMap({
+                "d-none": this.isHidden,
+              })}"
+              @click=${this.handleReset}
+            >
+              Reset
+            </button>
+          </div>
         </div>
-        <div class="card-body">
+        <div class="card-body ${classMap({ "d-none": this.isHidden })}">
           <div class="form-group">
             <label for="event_type">Event Type</label>
             ${map(

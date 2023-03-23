@@ -5,6 +5,7 @@ import LMSEventsFilter from "../components/LMSEventsFilter";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LMSEvent } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
+import { classMap } from "lit/directives/class-map.js";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -17,6 +18,7 @@ declare global {
 export default class LMSEventsView extends LitElement {
   @property({ type: String }) borrowernumber = undefined;
   @state() events: LMSEvent[] = [];
+  @state() hasHiddenFacets = false;
 
   static override styles = [bootstrapStyles];
 
@@ -42,12 +44,14 @@ export default class LMSEventsView extends LitElement {
       });
   }
 
-  handleFilter = (event: CustomEvent) => {
+  handleFilter(event: CustomEvent) {
     const query = event.detail;
     console.log("query in ev: ", query);
     const response = async () =>
       await fetch(
-        `/api/v1/contrib/eventmanagement/public/events?${new URLSearchParams(query)}`
+        `/api/v1/contrib/eventmanagement/public/events?${new URLSearchParams(
+          query
+        )}`
       );
 
     response()
@@ -64,7 +68,12 @@ export default class LMSEventsView extends LitElement {
       .catch((error) => {
         console.error(error);
       });
-  };
+  }
+
+  handleHide(e: CustomEvent) {
+    const isHidden = e.detail;
+    this.hasHiddenFacets = isHidden;
+  }
 
   override render() {
     return html`
@@ -76,16 +85,31 @@ export default class LMSEventsView extends LitElement {
             </div>
           </div>
           <div
-            class="col-lg-3 col-md-2 col-sm-12"
+            class="${classMap({
+              "col-xl-3": !this.hasHiddenFacets,
+              "col-xl-1": this.hasHiddenFacets,
+              "col-lg-4": !this.hasHiddenFacets,
+              "col-lg-2": this.hasHiddenFacets,
+              "col-md-5": !this.hasHiddenFacets,
+              "col-md-2": this.hasHiddenFacets,
+            })} col-12"
             ?hidden=${!this.events.length}
           >
             <lms-events-filter
+              @hide=${this.handleHide}
               @filter=${this.handleFilter}
               .events=${this.events}
             ></lms-events-filter>
           </div>
           <div
-            class="col-lg-9 col-md-10 col-sm-12"
+            class="${classMap({
+              "col-xl-9": !this.hasHiddenFacets,
+              "col-xl-11": this.hasHiddenFacets,
+              "col-lg-8": !this.hasHiddenFacets,
+              "col-lg-10": this.hasHiddenFacets,
+              "col-md-7": !this.hasHiddenFacets,
+              "col-md-10": this.hasHiddenFacets,
+            })} col-12"
             ?hidden=${!this.events.length}
           >
             <div class="card-deck">

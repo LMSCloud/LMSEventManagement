@@ -262,6 +262,19 @@
      */
     function*o$1(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
 
+    /**
+     * @license
+     * Copyright 2017 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */
+    const t={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e=t=>(...e)=>({_$litDirective$:t,values:e});class i{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
+
+    /**
+     * @license
+     * Copyright 2018 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */const o=e(class extends i{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.nt){this.nt=new Set,void 0!==i.strings&&(this.st=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.st)||void 0===r?void 0:r.has(t))&&this.nt.add(t);return this.render(s)}const e=i.element.classList;this.nt.forEach((t=>{t in s||(e.remove(t),this.nt.delete(t));}));for(const t in s){const i=!!s[t];i===this.nt.has(t)||(null===(o=this.st)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.nt.add(t)):(e.remove(t),this.nt.delete(t)));}return T}});
+
     let LMSEventsFilter = class LMSEventsFilter extends s {
         constructor() {
             super(...arguments);
@@ -270,6 +283,7 @@
             this.event_types = [];
             this.target_groups = [];
             this.locations = [];
+            this.isHidden = false;
         }
         connectedCallback() {
             super.connectedCallback();
@@ -387,22 +401,52 @@
                 target.dispatchEvent(new Event("change", { composed: true, bubbles: true }));
             }
         }
+        handleHideToggle() {
+            this.isHidden = !this.isHidden;
+            this.dispatchEvent(new CustomEvent("hide", {
+                detail: this.isHidden,
+                composed: true,
+                bubbles: true,
+            }));
+        }
         render() {
             return x `
       <div class="card" @change=${this.handleChange}>
         <div
-          class="card-header d-flex justify-content-between sticky-top bg-white"
+          class="card-header d-flex ${o({
+            "justify-content-between": !this.isHidden,
+            "justify-content-center": this.isHidden,
+        })} sticky-top bg-white"
         >
-          <h5 class="card-title d-inline">Filter</h5>
-          <button
-            type="button"
-            class="btn btn-sm btn-outline-secondary"
-            @click=${this.handleReset}
+          <h5
+            class="card-title ${o({
+            "d-inline": !this.isHidden,
+            "d-none": this.isHidden,
+        })}"
           >
-            Reset
-          </button>
+            Filter
+          </h5>
+          <div>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary me-2"
+              @click=${this.handleHideToggle}
+              aria-label=${this.isHidden ? "Show filters" : "Hide filters"}
+            >
+              ${this.isHidden ? "Show" : "Hide"}
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary ${o({
+            "d-none": this.isHidden,
+        })}"
+              @click=${this.handleReset}
+            >
+              Reset
+            </button>
+          </div>
         </div>
-        <div class="card-body">
+        <div class="card-body ${o({ "d-none": this.isHidden })}">
           <div class="form-group">
             <label for="event_type">Event Type</label>
             ${o$1(this.facets.eventTypeIds, (eventTypeId) => {
@@ -537,6 +581,9 @@
     __decorate([
         t$1()
     ], LMSEventsFilter.prototype, "locations", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "isHidden", void 0);
     __decorate([
         e$1("input")
     ], LMSEventsFilter.prototype, "inputs", void 0);
@@ -1337,19 +1384,6 @@
         e$3("lms-image-browser")
     ], LMSImageBrowser);
     var LMSImageBrowser$1 = LMSImageBrowser;
-
-    /**
-     * @license
-     * Copyright 2017 Google LLC
-     * SPDX-License-Identifier: BSD-3-Clause
-     */
-    const t={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e=t=>(...e)=>({_$litDirective$:t,values:e});class i{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
-
-    /**
-     * @license
-     * Copyright 2018 Google LLC
-     * SPDX-License-Identifier: BSD-3-Clause
-     */const o=e(class extends i{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.nt){this.nt=new Set,void 0!==i.strings&&(this.st=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.st)||void 0===r?void 0:r.has(t))&&this.nt.add(t);return this.render(s)}const e=i.element.classList;this.nt.forEach((t=>{t in s||(e.remove(t),this.nt.delete(t));}));for(const t in s){const i=!!s[t];i===this.nt.has(t)||(null===(o=this.st)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.nt.add(t)):(e.remove(t),this.nt.delete(t)));}return T}});
 
     let LMSModal = class LMSModal extends s {
         constructor() {
@@ -4231,24 +4265,7 @@ ${value}</textarea
             super(...arguments);
             this.borrowernumber = undefined;
             this.events = [];
-            this.handleFilter = (event) => {
-                const query = event.detail;
-                console.log("query in ev: ", query);
-                const response = async () => await fetch(`/api/v1/contrib/eventmanagement/public/events?${new URLSearchParams(query)}`);
-                response()
-                    .then((response) => {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                    throw new Error("Something went wrong");
-                })
-                    .then((events) => {
-                    this.events = events;
-                })
-                    .catch((error) => {
-                    console.error(error);
-                });
-            };
+            this.hasHiddenFacets = false;
         }
         connectedCallback() {
             super.connectedCallback();
@@ -4267,6 +4284,28 @@ ${value}</textarea
                 console.error(error);
             });
         }
+        handleFilter(event) {
+            const query = event.detail;
+            console.log("query in ev: ", query);
+            const response = async () => await fetch(`/api/v1/contrib/eventmanagement/public/events?${new URLSearchParams(query)}`);
+            response()
+                .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Something went wrong");
+            })
+                .then((events) => {
+                this.events = events;
+            })
+                .catch((error) => {
+                console.error(error);
+            });
+        }
+        handleHide(e) {
+            const isHidden = e.detail;
+            this.hasHiddenFacets = isHidden;
+        }
         render() {
             var _a;
             return x `
@@ -4278,16 +4317,31 @@ ${value}</textarea
             </div>
           </div>
           <div
-            class="col-lg-3 col-md-2 col-sm-12"
+            class="${o({
+            "col-xl-3": !this.hasHiddenFacets,
+            "col-xl-1": this.hasHiddenFacets,
+            "col-lg-4": !this.hasHiddenFacets,
+            "col-lg-2": this.hasHiddenFacets,
+            "col-md-5": !this.hasHiddenFacets,
+            "col-md-2": this.hasHiddenFacets,
+        })} col-12"
             ?hidden=${!this.events.length}
           >
             <lms-events-filter
+              @hide=${this.handleHide}
               @filter=${this.handleFilter}
               .events=${this.events}
             ></lms-events-filter>
           </div>
           <div
-            class="col-lg-9 col-md-10 col-sm-12"
+            class="${o({
+            "col-xl-9": !this.hasHiddenFacets,
+            "col-xl-11": this.hasHiddenFacets,
+            "col-lg-8": !this.hasHiddenFacets,
+            "col-lg-10": this.hasHiddenFacets,
+            "col-md-7": !this.hasHiddenFacets,
+            "col-md-10": this.hasHiddenFacets,
+        })} col-12"
             ?hidden=${!this.events.length}
           >
             <div class="card-deck">
@@ -4312,6 +4366,9 @@ ${value}</textarea
     __decorate([
         t$1()
     ], LMSEventsView.prototype, "events", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsView.prototype, "hasHiddenFacets", void 0);
     LMSEventsView = __decorate([
         e$3("lms-events-view")
     ], LMSEventsView);
