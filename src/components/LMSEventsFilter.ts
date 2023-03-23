@@ -121,7 +121,18 @@ export default class LMSEventsFilter extends LitElement {
       string,
       (input: HTMLInputElement) => string | boolean | undefined
     >([
-      ["checkbox", (input) => (input.checked ? input.id : false)],
+      [
+        "checkbox",
+        (input) => {
+          if (input.id === "open_registration") {
+            return input.checked;
+          }
+          if (input.checked) {
+            return input.id;
+          }
+          return false;
+        },
+      ],
       ["date", (input) => input.value],
       ["number", (input) => input.value],
       ["default", (input) => input.value],
@@ -146,11 +157,7 @@ export default class LMSEventsFilter extends LitElement {
           )
       );
 
-    console.log(params);
-
     const query = new URLSearchParams(Object.fromEntries(params)).toString();
-
-    console.log(query);
 
     this.dispatchEvent(
       new CustomEvent("filter", {
@@ -247,7 +254,7 @@ export default class LMSEventsFilter extends LitElement {
               name="min_age"
               min="0"
               max="120"
-              value="0"
+              value=""
               @input=${this.emitChange}
             />
             <label for="max_age">Max Age</label>
@@ -258,7 +265,7 @@ export default class LMSEventsFilter extends LitElement {
               name="max_age"
               min="0"
               max="120"
-              value="120"
+              value=""
               @input=${this.emitChange}
             />
           </div>
@@ -268,6 +275,7 @@ export default class LMSEventsFilter extends LitElement {
               class="form-check-input"
               id="open_registration"
               name="open_registration"
+              checked
             />
             <label for="open_registration">Open Registration</label>
           </div>

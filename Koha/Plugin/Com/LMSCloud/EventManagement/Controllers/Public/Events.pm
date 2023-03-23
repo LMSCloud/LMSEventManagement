@@ -52,9 +52,6 @@ sub get {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
-        use Data::Dumper;
-        warn Dumper $params;
-
         # If the values of all the parameters are undef, we return all the events.
         if ( !any {defined} values $params->%* ) {
             my ( $stmt, @bind ) = $sql->select( $EVENTS_TABLE, q{*}, { start_time => { '>=' => 'CURDATE()' } } );
@@ -82,17 +79,15 @@ sub get {
         $where->{target_group}      = { -in => $params->{target_group} }         if ( defined $params->{target_group} && @{ $params->{target_group} } );
         $where->{min_age}           = { '>=' => $params->{min_age} }             if defined $params->{min_age};
         $where->{max_age}           = { '<=' => $params->{max_age} }             if defined $params->{max_age};
-        $where->{open_registration} = $params->{open_registration}               if defined $params->{open_registration};
+        $where->{open_registration} = $params->{open_registration}               if defined $params->{open_registration} && !$params->{open_registration};
         $where->{fee}               = { '<=' => $params->{fee} }                 if defined $params->{fee};
         $where->{location}          = { -in => $params->{location} }             if ( defined $params->{location} && @{ $params->{location} } );
         $where->{start_time}        = { '>=' => $params->{start_time} }          if defined $params->{start_time};
         $where->{end_time}          = { '<=' => "$params->{end_time} 23:59:59" } if defined $params->{end_time} && $params->{end_time} ne q{};
 
-        my ( $stmt, @bind ) = $sql->select( $EVENTS_TABLE, q{*}, $where );
+        my ( $stmt, @bind ) = $sql->select( $EVENTS_TABLE, q{*}, { -and => [ $where, { start_time => { '>=' => 'CURDATE()' } } ] } );
         my $sth = $dbh->prepare($stmt);
         $sth->execute(@bind);
-
-        warn Dumper $stmt;
 
         my $events = $sth->fetchall_arrayref( {} );
 
