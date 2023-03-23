@@ -186,7 +186,7 @@ export default class LMSEventsFilter extends LitElement {
   override render() {
     return html`
       <div class="card" @change=${this.handleChange}>
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between">
           <h5 class="card-title d-inline">Filter</h5>
           <button
             type="button"
