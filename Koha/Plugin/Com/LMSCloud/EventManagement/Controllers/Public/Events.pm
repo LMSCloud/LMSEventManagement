@@ -52,8 +52,22 @@ sub get {
         my $sql = SQL::Abstract->new;
         my $dbh = C4::Context->dbh;
 
+        my @event_ids;
+
+        if ( defined $params->{target_group} && @{ $params->{target_group} } || defined $params->{fee} ) {
+            my $tg_fee_where = { selected => 1, };
+            $tg_fee_where->{target_group_id} = { q{=} => $params->{target_group} } if ( defined $params->{target_group} && @{ $params->{target_group} } );
+            $tg_fee_where->{fee}             = { '<=' => $params->{fee} }          if defined $params->{fee};
+
+            my ( $stmt, @bind ) = $sql->select( $EVENT_TARGET_GROUP_FEES_TABLE, 'event_id', $tg_fee_where );
+            my $sth = $dbh->prepare($stmt);
+            $sth->execute(@bind);
+
+            @event_ids = map { $_->{event_id} } @{ $sth->fetchall_arrayref( {} ) };
+        }
+
         # If the values of all the parameters are undef, we return all the events.
-        if ( !any {defined} values $params->%* ) {
+        if ( !any {defined} values %{$params} && !@event_ids ) {
             my ( $stmt, @bind ) = $sql->select( $EVENTS_TABLE, q{*}, { start_time => { '>=' => 'CURDATE()' } } );
             my $sth = $dbh->prepare($stmt);
             $sth->execute(@bind);
@@ -76,14 +90,16 @@ sub get {
         my $where = {};
         $where->{name}              = $params->{name}                            if defined $params->{name} && $params->{name} ne q{};
         $where->{event_type}        = { q{=} => $params->{event_type} }          if ( defined $params->{event_type} && @{ $params->{event_type} } );
-        $where->{target_group}      = { q{=} => $params->{target_group} }        if ( defined $params->{target_group} && @{ $params->{target_group} } );
         $where->{min_age}           = { '>=' => $params->{min_age} }             if defined $params->{min_age};
         $where->{max_age}           = { '<=' => $params->{max_age} }             if defined $params->{max_age};
         $where->{open_registration} = $params->{open_registration}               if defined $params->{open_registration} && !$params->{open_registration};
-        $where->{fee}               = { '<=' => $params->{fee} }                 if defined $params->{fee};
         $where->{location}          = { q{=} => $params->{location} }            if ( defined $params->{location} && @{ $params->{location} } );
         $where->{start_time}        = { '>=' => $params->{start_time} }          if defined $params->{start_time};
         $where->{end_time}          = { '<=' => "$params->{end_time} 23:59:59" } if defined $params->{end_time} && $params->{end_time} ne q{};
+
+        if (@event_ids) {
+            $where->{id} = { q{=} => \@event_ids };
+        }
 
         my ( $stmt, @bind ) = $sql->select( $EVENTS_TABLE, q{*}, { -and => [ $where, { start_time => { '>=' => 'CURDATE()' } } ] } );
         my $sth = $dbh->prepare($stmt);
@@ -91,9 +107,8 @@ sub get {
 
         my $events = $sth->fetchall_arrayref( {} );
 
-        # Next block depends on discussion about the behaviour of the facets component.
         foreach my $event ( @{$events} ) {
-            ( $stmt, @bind ) = $sql->select( $EVENT_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_id => $event->{id} } );
+            ( $stmt, @bind ) = $sql->select( $EVENT_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_id => $event->{id}, selected => 1 } );
             $sth = $dbh->prepare($stmt);
             $sth->execute(@bind);
 
