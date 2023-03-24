@@ -21,6 +21,7 @@ type Facets = {
 };
 export default class LMSEventsFilter extends LitElement {
     events: LMSEvent[];
+    facetsStrategy: "preserve" | "update";
     facets: Partial<Facets>;
     event_types: EventType[];
     target_groups: TargetGroup[];
@@ -29,6 +30,12 @@ export default class LMSEventsFilter extends LitElement {
     inputs: NodeListOf<HTMLInputElement> | undefined;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
+    private facetsStrategyManager;
+    private updateFacets;
+    private deepCopy;
+    private _eventsDeepCopy;
+    private get eventsDeepCopy();
+    private set eventsDeepCopy(value);
     willUpdate(): void;
     handleReset(): void;
     handleChange(): void;

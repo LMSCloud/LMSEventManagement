@@ -33,6 +33,8 @@ type Facets = {
 @customElement("lms-events-filter")
 export default class LMSEventsFilter extends LitElement {
   @property({ type: Array }) events: LMSEvent[] = [];
+  @property({ type: String }) facetsStrategy: "preserve" | "update" =
+    "preserve";
   @state() facets: Partial<Facets> = {};
   @state() event_types: EventType[] = [];
   @state() target_groups: TargetGroup[] = [];
@@ -75,27 +77,76 @@ export default class LMSEventsFilter extends LitElement {
     );
   }
 
-  override willUpdate() {
-    if (!this.events.length) return;
+  private facetsStrategyManager() {
+    switch (this.facetsStrategy) {
+      case "preserve":
+        return this.eventsDeepCopy;
+      case "update":
+        return this.events;
+      default:
+        throw new Error("Invalid facetsStrategy");
+    }
+  }
+
+  private updateFacets() {
+    const events = this.facetsStrategyManager();
+    console.log("updateFacets", events);
+    if (!events.length) return;
     this.facets = {
-      eventTypeIds: [...new Set(this.events.map((event) => event.event_type))],
+      eventTypeIds: [...new Set(events.map((event) => event.event_type))],
       targetGroupIds: [
         ...new Set(
-          this.events.flatMap((event) =>
+          events.flatMap((event) =>
             event.target_groups.map((target_group) =>
               target_group.selected ? target_group.target_group_id : NaN
             )
           )
         ),
       ].filter(Number.isInteger),
-      locationIds: [...new Set(this.events.map((event) => event.location))],
-      ...this.events
+      locationIds: [...new Set(events.map((event) => event.location))],
+      ...events
         .map((event) => {
           const { event_type, location, target_groups, ...rest } = event;
           return rest;
         })
         .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
     };
+  }
+
+  private deepCopy<T>(obj: T): T {
+    if (obj === null || typeof obj !== "object") return obj as T;
+    if (obj instanceof Date) return new Date(obj.getTime()) as T;
+    if (Array.isArray(obj))
+      return obj.map((item) => this.deepCopy(item)) as unknown as T;
+
+    const newObj = Object.create(Object.getPrototypeOf(obj)) as T;
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        (newObj as Record<string, unknown>)[key] = this.deepCopy(
+          (obj as Record<string, unknown>)[key]
+        );
+      }
+    }
+
+    return newObj;
+  }
+
+  private _eventsDeepCopy: LMSEvent[] = [];
+
+  private get eventsDeepCopy(): LMSEvent[] {
+    return this._eventsDeepCopy;
+  }
+
+  private set eventsDeepCopy(value: LMSEvent[]) {
+    if (this._eventsDeepCopy.length === 0) {
+      this._eventsDeepCopy = value;
+    }
+  }
+  
+  override willUpdate() {
+    console.log("willUpdate", this.events);
+    this.eventsDeepCopy = this.deepCopy(this.events);
+    this.updateFacets();
   }
 
   handleReset() {

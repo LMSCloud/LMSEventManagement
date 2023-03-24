@@ -279,11 +279,13 @@
         constructor() {
             super(...arguments);
             this.events = [];
+            this.facetsStrategy = "preserve";
             this.facets = {};
             this.event_types = [];
             this.target_groups = [];
             this.locations = [];
             this.isHidden = false;
+            this._eventsDeepCopy = [];
         }
         connectedCallback() {
             super.connectedCallback();
@@ -303,22 +305,62 @@
             };
             locations().then((locations) => (this.locations = locations));
         }
-        willUpdate() {
-            if (!this.events.length)
+        facetsStrategyManager() {
+            switch (this.facetsStrategy) {
+                case "preserve":
+                    return this.eventsDeepCopy;
+                case "update":
+                    return this.events;
+                default:
+                    throw new Error("Invalid facetsStrategy");
+            }
+        }
+        updateFacets() {
+            const events = this.facetsStrategyManager();
+            console.log("updateFacets", events);
+            if (!events.length)
                 return;
             this.facets = {
-                eventTypeIds: [...new Set(this.events.map((event) => event.event_type))],
+                eventTypeIds: [...new Set(events.map((event) => event.event_type))],
                 targetGroupIds: [
-                    ...new Set(this.events.flatMap((event) => event.target_groups.map((target_group) => target_group.selected ? target_group.target_group_id : NaN))),
+                    ...new Set(events.flatMap((event) => event.target_groups.map((target_group) => target_group.selected ? target_group.target_group_id : NaN))),
                 ].filter(Number.isInteger),
-                locationIds: [...new Set(this.events.map((event) => event.location))],
-                ...this.events
+                locationIds: [...new Set(events.map((event) => event.location))],
+                ...events
                     .map((event) => {
                     const { event_type, location, target_groups, ...rest } = event;
                     return rest;
                 })
                     .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
             };
+        }
+        deepCopy(obj) {
+            if (obj === null || typeof obj !== "object")
+                return obj;
+            if (obj instanceof Date)
+                return new Date(obj.getTime());
+            if (Array.isArray(obj))
+                return obj.map((item) => this.deepCopy(item));
+            const newObj = Object.create(Object.getPrototypeOf(obj));
+            for (const key in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                    newObj[key] = this.deepCopy(obj[key]);
+                }
+            }
+            return newObj;
+        }
+        get eventsDeepCopy() {
+            return this._eventsDeepCopy;
+        }
+        set eventsDeepCopy(value) {
+            if (this._eventsDeepCopy.length === 0) {
+                this._eventsDeepCopy = value;
+            }
+        }
+        willUpdate() {
+            console.log("willUpdate", this.events);
+            this.eventsDeepCopy = this.deepCopy(this.events);
+            this.updateFacets();
         }
         handleReset() {
             var _a;
@@ -569,6 +611,9 @@
     __decorate([
         e$2({ type: Array })
     ], LMSEventsFilter.prototype, "events", void 0);
+    __decorate([
+        e$2({ type: String })
+    ], LMSEventsFilter.prototype, "facetsStrategy", void 0);
     __decorate([
         t$1()
     ], LMSEventsFilter.prototype, "facets", void 0);
