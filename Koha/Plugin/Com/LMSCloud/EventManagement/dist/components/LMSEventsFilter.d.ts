@@ -31,7 +31,6 @@ export default class LMSEventsFilter extends LitElement {
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     private facetsStrategyManager;
-    private updateFacets;
     private deepCopy;
     private _eventsDeepCopy;
     private get eventsDeepCopy();

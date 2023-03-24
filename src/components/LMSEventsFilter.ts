@@ -88,31 +88,6 @@ export default class LMSEventsFilter extends LitElement {
     }
   }
 
-  private updateFacets() {
-    const events = this.facetsStrategyManager();
-    console.log("updateFacets", events);
-    if (!events.length) return;
-    this.facets = {
-      eventTypeIds: [...new Set(events.map((event) => event.event_type))],
-      targetGroupIds: [
-        ...new Set(
-          events.flatMap((event) =>
-            event.target_groups.map((target_group) =>
-              target_group.selected ? target_group.target_group_id : NaN
-            )
-          )
-        ),
-      ].filter(Number.isInteger),
-      locationIds: [...new Set(events.map((event) => event.location))],
-      ...events
-        .map((event) => {
-          const { event_type, location, target_groups, ...rest } = event;
-          return rest;
-        })
-        .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
-    };
-  }
-
   private deepCopy<T>(obj: T): T {
     if (obj === null || typeof obj !== "object") return obj as T;
     if (obj instanceof Date) return new Date(obj.getTime()) as T;
@@ -142,11 +117,30 @@ export default class LMSEventsFilter extends LitElement {
       this._eventsDeepCopy = value;
     }
   }
-  
+
   override willUpdate() {
-    console.log("willUpdate", this.events);
     this.eventsDeepCopy = this.deepCopy(this.events);
-    this.updateFacets();
+    const events = this.facetsStrategyManager();
+    if (!events.length) return;
+    this.facets = {
+      eventTypeIds: [...new Set(events.map((event) => event.event_type))],
+      targetGroupIds: [
+        ...new Set(
+          events.flatMap((event) =>
+            event.target_groups.map((target_group) =>
+              target_group.selected ? target_group.target_group_id : NaN
+            )
+          )
+        ),
+      ].filter(Number.isInteger),
+      locationIds: [...new Set(events.map((event) => event.location))],
+      ...events
+        .map((event) => {
+          const { event_type, location, target_groups, ...rest } = event;
+          return rest;
+        })
+        .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+    };
   }
 
   handleReset() {

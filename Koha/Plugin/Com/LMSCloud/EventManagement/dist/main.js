@@ -315,25 +315,6 @@
                     throw new Error("Invalid facetsStrategy");
             }
         }
-        updateFacets() {
-            const events = this.facetsStrategyManager();
-            console.log("updateFacets", events);
-            if (!events.length)
-                return;
-            this.facets = {
-                eventTypeIds: [...new Set(events.map((event) => event.event_type))],
-                targetGroupIds: [
-                    ...new Set(events.flatMap((event) => event.target_groups.map((target_group) => target_group.selected ? target_group.target_group_id : NaN))),
-                ].filter(Number.isInteger),
-                locationIds: [...new Set(events.map((event) => event.location))],
-                ...events
-                    .map((event) => {
-                    const { event_type, location, target_groups, ...rest } = event;
-                    return rest;
-                })
-                    .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
-            };
-        }
         deepCopy(obj) {
             if (obj === null || typeof obj !== "object")
                 return obj;
@@ -358,9 +339,23 @@
             }
         }
         willUpdate() {
-            console.log("willUpdate", this.events);
             this.eventsDeepCopy = this.deepCopy(this.events);
-            this.updateFacets();
+            const events = this.facetsStrategyManager();
+            if (!events.length)
+                return;
+            this.facets = {
+                eventTypeIds: [...new Set(events.map((event) => event.event_type))],
+                targetGroupIds: [
+                    ...new Set(events.flatMap((event) => event.target_groups.map((target_group) => target_group.selected ? target_group.target_group_id : NaN))),
+                ].filter(Number.isInteger),
+                locationIds: [...new Set(events.map((event) => event.location))],
+                ...events
+                    .map((event) => {
+                    const { event_type, location, target_groups, ...rest } = event;
+                    return rest;
+                })
+                    .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+            };
         }
         handleReset() {
             var _a;
