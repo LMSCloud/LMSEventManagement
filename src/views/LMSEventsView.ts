@@ -1,4 +1,4 @@
-import { LitElement, html, nothing } from "lit";
+import { LitElement, html, nothing, css } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import LMSCard from "../components/LMSCard";
 import LMSEventsFilter from "../components/LMSEventsFilter";
@@ -6,11 +6,13 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { LMSEvent } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
 import { classMap } from "lit/directives/class-map.js";
+import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
 
 declare global {
   interface HTMLElementTagNameMap {
     "lms-card": LMSCard;
     "lms-events-filter": LMSEventsFilter;
+    "lms-card-details-modal": LMSCardDetailsModal;
   }
 }
 
@@ -19,8 +21,17 @@ export default class LMSEventsView extends LitElement {
   @property({ type: String }) borrowernumber = undefined;
   @state() events: LMSEvent[] = [];
   @state() hasHiddenFacets = false;
+  @state() modalData: LMSEvent = {} as LMSEvent;
+  @state() hasOpenModal = false;
 
-  static override styles = [bootstrapStyles];
+  static override styles = [
+    bootstrapStyles,
+    css`
+      lms-card {
+        cursor: pointer;
+      }
+    `,
+  ];
 
   override connectedCallback() {
     super.connectedCallback();
@@ -75,6 +86,16 @@ export default class LMSEventsView extends LitElement {
     this.hasHiddenFacets = isHidden;
   }
 
+  handleShowDetails({ lmsEvent }: { lmsEvent: LMSEvent }) {
+    this.modalData = lmsEvent;
+    this.hasOpenModal = true;
+  }
+
+  handleHideDetails() {
+    this.modalData = {} as LMSEvent;
+    this.hasOpenModal = false;
+  }
+
   override render() {
     return html`
       <div class="container-fluid px-0">
@@ -117,12 +138,20 @@ export default class LMSEventsView extends LitElement {
                 this.events,
                 (event) => html`
                   <lms-card
+                    @click=${() => {
+                      this.handleShowDetails({ lmsEvent: event });
+                    }}
                     .title=${event.name}
                     .text=${event.description}
                     .image=${{ src: event.image, alt: event.name }}
                   ></lms-card>
                 `
               ) ?? nothing}
+              <lms-card-details-modal
+                @close=${this.handleHideDetails}
+                .event=${this.modalData}
+                .isOpen=${this.hasOpenModal}
+              ></lms-card-details-modal>
             </div>
           </div>
         </div>

@@ -257,13 +257,6 @@
 
     /**
      * @license
-     * Copyright 2021 Google LLC
-     * SPDX-License-Identifier: BSD-3-Clause
-     */
-    function*o$1(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
-
-    /**
-     * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
@@ -273,7 +266,155 @@
      * @license
      * Copyright 2018 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const o=e(class extends i{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.nt){this.nt=new Set,void 0!==i.strings&&(this.st=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.st)||void 0===r?void 0:r.has(t))&&this.nt.add(t);return this.render(s)}const e=i.element.classList;this.nt.forEach((t=>{t in s||(e.remove(t),this.nt.delete(t));}));for(const t in s){const i=!!s[t];i===this.nt.has(t)||(null===(o=this.st)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.nt.add(t)):(e.remove(t),this.nt.delete(t)));}return T}});
+     */const o$1=e(class extends i{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.nt){this.nt=new Set,void 0!==i.strings&&(this.st=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.st)||void 0===r?void 0:r.has(t))&&this.nt.add(t);return this.render(s)}const e=i.element.classList;this.nt.forEach((t=>{t in s||(e.remove(t),this.nt.delete(t));}));for(const t in s){const i=!!s[t];i===this.nt.has(t)||(null===(o=this.st)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.nt.add(t)):(e.remove(t),this.nt.delete(t)));}return T}});
+
+    /**
+     * @license
+     * Copyright 2021 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */
+    function*o(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
+
+    let LMSCardDetailsModal = class LMSCardDetailsModal extends s {
+        constructor() {
+            super(...arguments);
+            this.event = {};
+            this.isOpen = false;
+            this.event_types = [];
+            this.locations = [];
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            const event_types = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
+                return response.json();
+            };
+            event_types().then((event_types) => (this.event_types = event_types));
+            const locations = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/locations");
+                return response.json();
+            };
+            locations().then((locations) => (this.locations = locations));
+        }
+        handleSimulatedBackdropClick(event) {
+            if (event.target === event.currentTarget) {
+                this.toggleModal();
+            }
+        }
+        toggleModal() {
+            const { renderRoot } = this;
+            this.isOpen = !this.isOpen;
+            document.body.style.overflow = this.isOpen ? "hidden" : "auto";
+            const lmsModal = renderRoot.getElementById("lms-modal");
+            if (lmsModal) {
+                lmsModal.style.overflowY = this.isOpen ? "scroll" : "auto";
+            }
+            if (!this.isOpen) {
+                this.dispatchEvent(new CustomEvent("close", {
+                    bubbles: true,
+                    composed: true,
+                }));
+            }
+        }
+        willUpdate() {
+            var _a, _b, _c, _d;
+            const { event } = this;
+            /** Here we need to resolve the ids [event_type, location] to their state representations */
+            if (event.event_type) {
+                this.event.event_type =
+                    (_b = (_a = this.event_types.find((event_type) => event_type.id === parseInt(event.event_type, 10))) === null || _a === void 0 ? void 0 : _a.name) !== null && _b !== void 0 ? _b : "";
+            }
+            if (event.location) {
+                this.event.location =
+                    (_d = (_c = this.locations.find((location) => location.id === parseInt(event.location, 10))) === null || _c === void 0 ? void 0 : _c.name) !== null && _d !== void 0 ? _d : "";
+            }
+        }
+        render() {
+            var _a;
+            console.log(this.event);
+            return x `
+      <div class="backdrop" ?hidden=${!this.isOpen}></div>
+      <div
+        class="modal fade ${o$1({
+            "d-block": this.isOpen,
+            show: this.isOpen,
+        })}"
+        id="lms-modal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="lms-modal-title"
+        aria-hidden="true"
+        @click=${this.handleSimulatedBackdropClick}
+      >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="lms-modal-title">
+                ${(_a = this.event.name) !== null && _a !== void 0 ? _a : "Event"}
+              </h5>
+              <button
+                @click=${this.toggleModal}
+                type="button"
+                class="close"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              ${o(Array.from(Object.entries(this.event)), (entry) => {
+            return x `<div>
+                  ${this.getMarkupByObjectProperty(entry)}
+                </div>`;
+        })}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+        }
+        getMarkupByObjectProperty(entry) {
+            const [key, value] = entry;
+            if (["id", "image", "status"].includes(key))
+                return A;
+            return x `
+      <div class="row">
+        <div class="col-4">${key}</div>
+        <div class="col-8">${value}</div>
+      </div>
+    `;
+        }
+    };
+    LMSCardDetailsModal.styles = [
+        bootstrapStyles,
+        i$3 `
+      .backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(0 0 0 / 50%);
+        z-index: 1048;
+      }
+    `,
+    ];
+    __decorate([
+        e$2({ type: Object })
+    ], LMSCardDetailsModal.prototype, "event", void 0);
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSCardDetailsModal.prototype, "isOpen", void 0);
+    __decorate([
+        t$1()
+    ], LMSCardDetailsModal.prototype, "event_types", void 0);
+    __decorate([
+        t$1()
+    ], LMSCardDetailsModal.prototype, "locations", void 0);
+    LMSCardDetailsModal = __decorate([
+        e$3("lms-card-details-modal")
+    ], LMSCardDetailsModal);
+    var LMSCardDetailsModal$1 = LMSCardDetailsModal;
 
     let LMSEventsFilter = class LMSEventsFilter extends s {
         constructor() {
@@ -450,13 +591,13 @@
             return x `
       <div class="card" @change=${this.handleChange}>
         <div
-          class="card-header d-flex ${o({
+          class="card-header d-flex ${o$1({
             "justify-content-between": !this.isHidden,
             "justify-content-center": this.isHidden,
         })} sticky-top bg-white"
         >
           <h5
-            class="card-title ${o({
+            class="card-title ${o$1({
             "d-inline": !this.isHidden,
             "d-none": this.isHidden,
         })}"
@@ -474,7 +615,7 @@
             </button>
             <button
               type="button"
-              class="btn btn-sm btn-outline-secondary ${o({
+              class="btn btn-sm btn-outline-secondary ${o$1({
             "d-none": this.isHidden,
         })}"
               @click=${this.handleReset}
@@ -483,10 +624,10 @@
             </button>
           </div>
         </div>
-        <div class="card-body ${o({ "d-none": this.isHidden })}">
+        <div class="card-body ${o$1({ "d-none": this.isHidden })}">
           <div class="form-group">
             <label for="event_type">Event Type</label>
-            ${o$1(this.facets.eventTypeIds, (eventTypeId) => {
+            ${o(this.facets.eventTypeIds, (eventTypeId) => {
             var _a;
             return x `
                 <div class="form-group form-check">
@@ -505,7 +646,7 @@
           </div>
           <div class="form-group">
             <label for="target_group">Target Group</label>
-            ${o$1(this.facets.targetGroupIds, (targetGroupId) => {
+            ${o(this.facets.targetGroupIds, (targetGroupId) => {
             var _a;
             return x ` <div class="form-group form-check">
                 <input
@@ -572,7 +713,7 @@
           </div>
           <div class="form-group">
             <label for="location">Location</label>
-            ${o$1(this.facets.locationIds, (locationId) => {
+            ${o(this.facets.locationIds, (locationId) => {
             var _a;
             return x ` <div class="form-group form-check">
                   <input
@@ -1304,7 +1445,7 @@
             return x `
       <div class="container-fluid">
         <div class="card-deck">
-          ${o$1(this.uploadedImages, (uploadedImage, index) => {
+          ${o(this.uploadedImages, (uploadedImage, index) => {
             const { image, metadata } = uploadedImage;
             const { dtcreated, filename, hashvalue } = metadata;
             const filetype = filename.split(".").pop();
@@ -1496,7 +1637,7 @@
       <div class="btn-modal-wrapper">
         <button
           @click=${this.toggleModal}
-          class="btn-modal ${o({ tilted: this.isOpen })}"
+          class="btn-modal ${o$1({ tilted: this.isOpen })}"
           type="button"
         >
           ${litFontawesome_2(faPlus)}
@@ -1504,7 +1645,7 @@
       </div>
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
-        class="modal fade ${o({
+        class="modal fade ${o$1({
             "d-block": this.isOpen,
             show: this.isOpen,
         })}"
@@ -1534,7 +1675,7 @@
                 <div
                   role="alert"
                   ?hidden=${!this.alertMessage}
-                  class="alert ${o({
+                  class="alert ${o$1({
             "alert-danger": this.alertMessage.includes("Sorry!"),
         })} alert-dismissible fade show"
                 >
@@ -1549,7 +1690,7 @@
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                ${o$1(this.fields, (value) => this.getFieldMarkup(value))}
+                ${o(this.fields, (value) => this.getFieldMarkup(value))}
               </div>
               <div class="modal-footer">
                 <button
@@ -2137,7 +2278,7 @@
                         const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
                         const result = await response.json();
                         return x `<select class="form-control" name="event_type" disabled>
-            ${o$1(result, ({ id, name }) => x `<option
+            ${o(result, ({ id, name }) => x `<option
                   value=${id}
                   ?selected=${id === parseInt(value, 10)}
                 >
@@ -2161,7 +2302,7 @@
                 </tr>
               </thead>
               <tbody>
-                ${o$1(result, ({ id, name }) => {
+                ${o(result, ({ id, name }) => {
                         var _a, _b;
                         const target_group = value.find((target_group) => target_group.target_group_id === id);
                         const selected = (_a = target_group === null || target_group === void 0 ? void 0 : target_group.selected) !== null && _a !== void 0 ? _a : false;
@@ -2294,7 +2435,7 @@
                         const response = await fetch("/api/v1/contrib/eventmanagement/locations");
                         const result = await response.json();
                         return x `<select class="form-control" name="location" disabled>
-            ${o$1(result, ({ id, name }) => x `<option value=${id}>${name}</option>`)};
+            ${o(result, ({ id, name }) => x `<option value=${id}>${name}</option>`)};
           </select>`;
                     },
                 ],
@@ -2433,7 +2574,7 @@ ${value}</textarea
                 : x `
           <div class="container-fluid mx-0">
             <div class="card-deck">
-              ${o$1(this.data, (datum, index) => {
+              ${o(this.data, (datum, index) => {
                 var _a, _b, _c, _d, _e, _f;
                 return x `
                   <div class="card mt-5">
@@ -2689,13 +2830,13 @@ ${value}</textarea
       <table class="table table-bordered" id=${field.name}>
         <thead>
           <tr>
-            ${o$1(field.headers, ([name]) => x `<th scope="col">${name}</th>`)}
+            ${o(field.headers, ([name]) => x `<th scope="col">${name}</th>`)}
           </tr>
         </thead>
         <tbody>
-          ${o$1(field.dbData, (row) => x `<tr>
+          ${o(field.dbData, (row) => x `<tr>
               <td class="align-middle">${row.name}</td>
-              ${o$1(field.headers, (header) => this.getMatrixInputMarkup({ field, row, header }))}
+              ${o(field.headers, (header) => this.getMatrixInputMarkup({ field, row, header }))}
             </tr>`)}
         </tbody>
       </table>`;
@@ -2878,7 +3019,7 @@ ${value}</textarea
         }}
           ?required=${required}
         >
-          ${o$1(dbData, ({ id, name }) => x `<option
+          ${o(dbData, ({ id, name }) => x `<option
                 value=${id}
                 ?selected=${id === this.defaultOption.id}
               >
@@ -3441,9 +3582,9 @@ ${value}</textarea
                 </tr>
               </thead>
               <tbody>
-                ${o$1(this.data, (datum) => x `
+                ${o(this.data, (datum) => x `
                     <tr>
-                      ${o$1(this.headers, (header) => x `<td class="align-middle">${datum[header]}</td>`)}
+                      ${o(this.headers, (header) => x `<td class="align-middle">${datum[header]}</td>`)}
                       ${this.isEditable
                 ? x `
                             <td class="align-middle">
@@ -4306,6 +4447,8 @@ ${value}</textarea
             this.borrowernumber = undefined;
             this.events = [];
             this.hasHiddenFacets = false;
+            this.modalData = {};
+            this.hasOpenModal = false;
         }
         connectedCallback() {
             super.connectedCallback();
@@ -4346,6 +4489,14 @@ ${value}</textarea
             const isHidden = e.detail;
             this.hasHiddenFacets = isHidden;
         }
+        handleShowDetails({ lmsEvent }) {
+            this.modalData = lmsEvent;
+            this.hasOpenModal = true;
+        }
+        handleHideDetails() {
+            this.modalData = {};
+            this.hasOpenModal = false;
+        }
         render() {
             var _a;
             return x `
@@ -4357,7 +4508,7 @@ ${value}</textarea
             </div>
           </div>
           <div
-            class="${o({
+            class="${o$1({
             "col-xl-3": !this.hasHiddenFacets,
             "col-xl-1": this.hasHiddenFacets,
             "col-lg-4": !this.hasHiddenFacets,
@@ -4374,7 +4525,7 @@ ${value}</textarea
             ></lms-events-filter>
           </div>
           <div
-            class="${o({
+            class="${o$1({
             "col-xl-9": !this.hasHiddenFacets,
             "col-xl-11": this.hasHiddenFacets,
             "col-lg-8": !this.hasHiddenFacets,
@@ -4385,13 +4536,21 @@ ${value}</textarea
             ?hidden=${!this.events.length}
           >
             <div class="card-deck">
-              ${(_a = o$1(this.events, (event) => x `
+              ${(_a = o(this.events, (event) => x `
                   <lms-card
+                    @click=${() => {
+            this.handleShowDetails({ lmsEvent: event });
+        }}
                     .title=${event.name}
                     .text=${event.description}
                     .image=${{ src: event.image, alt: event.name }}
                   ></lms-card>
                 `)) !== null && _a !== void 0 ? _a : A}
+              <lms-card-details-modal
+                @close=${this.handleHideDetails}
+                .event=${this.modalData}
+                .isOpen=${this.hasOpenModal}
+              ></lms-card-details-modal>
             </div>
           </div>
         </div>
@@ -4399,7 +4558,14 @@ ${value}</textarea
     `;
         }
     };
-    LMSEventsView.styles = [bootstrapStyles];
+    LMSEventsView.styles = [
+        bootstrapStyles,
+        i$3 `
+      lms-card {
+        cursor: pointer;
+      }
+    `,
+    ];
     __decorate([
         e$2({ type: String })
     ], LMSEventsView.prototype, "borrowernumber", void 0);
@@ -4409,6 +4575,12 @@ ${value}</textarea
     __decorate([
         t$1()
     ], LMSEventsView.prototype, "hasHiddenFacets", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsView.prototype, "modalData", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsView.prototype, "hasOpenModal", void 0);
     LMSEventsView = __decorate([
         e$3("lms-events-view")
     ], LMSEventsView);
@@ -4495,6 +4667,7 @@ ${value}</textarea
     var main = {
         LMSAnchor: LMSAnchor$1,
         LMSCard: LMSCard$1,
+        LMSCardDetailsModal: LMSCardDetailsModal$1,
         LMSEventsFilter: LMSEventsFilter$1,
         LMSFloatingMenu: LMSFloatingMenu$1,
         LMSImageBrowser: LMSImageBrowser$1,

@@ -3,6 +3,7 @@ import "./main.css";
 /** components */
 import LMSAnchor from "./components/LMSAnchor";
 import LMSCard from "./components/LMSCard";
+import LMSCardDetailsModal from "./components/LMSCardDetailsModal";
 import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
 import LMSImageBrowser from "./components/LMSImageBrowser";
@@ -41,6 +42,7 @@ import StaffTargetGroupsView from "./views/StaffTargetGroupsView";
 export default {
   LMSAnchor,
   LMSCard,
+  LMSCardDetailsModal,
   LMSEventsFilter,
   LMSFloatingMenu,
   LMSImageBrowser,
