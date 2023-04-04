@@ -1,13 +1,11 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html, css, nothing } from "lit";
+import { LitElement, html, css /* nothing */ } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { map } from "lit/directives/map.js";
 import {
   EventType,
   LMSEvent,
   LMSLocation,
-  TargetGroupState,
 } from "../sharedDeclarations";
 
 @customElement("lms-card-details-modal")
@@ -16,6 +14,7 @@ export default class LMSCardDetailsModal extends LitElement {
   @property({ type: Boolean }) isOpen = false;
   @state() event_types: EventType[] = [];
   @state() locations: LMSLocation[] = [];
+  @state() locale: string = "en";
 
   static override styles = [
     bootstrapStyles,
@@ -54,6 +53,8 @@ export default class LMSCardDetailsModal extends LitElement {
     locations().then(
       (locations: LMSLocation[]) => (this.locations = locations)
     );
+
+    this.locale = document.documentElement.lang;
   }
 
   handleSimulatedBackdropClick(event: MouseEvent) {
@@ -99,7 +100,8 @@ export default class LMSCardDetailsModal extends LitElement {
   }
 
   override render() {
-    console.log(this.event);
+    const { name, description, location, image, start_time, end_time } =
+      this.event;
     return html`
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
@@ -118,7 +120,7 @@ export default class LMSCardDetailsModal extends LitElement {
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="lms-modal-title">
-                ${this.event.name ?? "Event"}
+                ${name ?? "Event"}
               </h5>
               <button
                 @click=${this.toggleModal}
@@ -130,11 +132,35 @@ export default class LMSCardDetailsModal extends LitElement {
               </button>
             </div>
             <div class="modal-body">
-              ${map(Array.from(Object.entries(this.event)), (entry) => {
-                return html`<div>
-                  ${this.getMarkupByObjectProperty(entry)}
-                </div>`;
-              })}
+              <div class="row">
+                <div class="col">
+                  <div>
+                    <strong>Date and Time</strong>
+                    <p>
+                      ${this.formatDatetimeByLocale(start_time)} -
+                      ${this.formatDatetimeByLocale(end_time)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <strong>Description</strong>
+                    <p>${description}</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <img src=${image} ?hidden=${!image} class="w-100 mb-4 rounded"/>
+
+                  <div>
+                    <strong>Fees</strong>
+                    <p>Unimplemented</p>
+                  </div>
+
+                  <div>
+                    <strong>Location</strong>
+                    <p>${location}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -142,16 +168,10 @@ export default class LMSCardDetailsModal extends LitElement {
     `;
   }
 
-  getMarkupByObjectProperty(
-    entry: [string, string | number | TargetGroupState[]]
-  ) {
-    const [key, value] = entry;
-    if (["id", "image", "status"].includes(key)) return nothing;
-    return html`
-      <div class="row">
-        <div class="col-4">${key}</div>
-        <div class="col-8">${value}</div>
-      </div>
-    `;
+  formatDatetimeByLocale(datetime: string) {
+    return new Intl.DateTimeFormat(this.locale, {
+      dateStyle: "full",
+      timeStyle: "short",
+    }).format(new Date(datetime));
   }
 }

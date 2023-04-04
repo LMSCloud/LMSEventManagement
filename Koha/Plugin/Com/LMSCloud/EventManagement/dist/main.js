@@ -268,13 +268,6 @@
      * SPDX-License-Identifier: BSD-3-Clause
      */const o$1=e(class extends i{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.nt){this.nt=new Set,void 0!==i.strings&&(this.st=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.st)||void 0===r?void 0:r.has(t))&&this.nt.add(t);return this.render(s)}const e=i.element.classList;this.nt.forEach((t=>{t in s||(e.remove(t),this.nt.delete(t));}));for(const t in s){const i=!!s[t];i===this.nt.has(t)||(null===(o=this.st)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.nt.add(t)):(e.remove(t),this.nt.delete(t)));}return T}});
 
-    /**
-     * @license
-     * Copyright 2021 Google LLC
-     * SPDX-License-Identifier: BSD-3-Clause
-     */
-    function*o(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
-
     let LMSCardDetailsModal = class LMSCardDetailsModal extends s {
         constructor() {
             super(...arguments);
@@ -282,6 +275,7 @@
             this.isOpen = false;
             this.event_types = [];
             this.locations = [];
+            this.locale = "en";
         }
         connectedCallback() {
             super.connectedCallback();
@@ -295,6 +289,7 @@
                 return response.json();
             };
             locations().then((locations) => (this.locations = locations));
+            this.locale = document.documentElement.lang;
         }
         handleSimulatedBackdropClick(event) {
             if (event.target === event.currentTarget) {
@@ -330,8 +325,7 @@
             }
         }
         render() {
-            var _a;
-            console.log(this.event);
+            const { name, description, location, image, start_time, end_time } = this.event;
             return x `
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
@@ -350,7 +344,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="lms-modal-title">
-                ${(_a = this.event.name) !== null && _a !== void 0 ? _a : "Event"}
+                ${name !== null && name !== void 0 ? name : "Event"}
               </h5>
               <button
                 @click=${this.toggleModal}
@@ -362,27 +356,46 @@
               </button>
             </div>
             <div class="modal-body">
-              ${o(Array.from(Object.entries(this.event)), (entry) => {
-            return x `<div>
-                  ${this.getMarkupByObjectProperty(entry)}
-                </div>`;
-        })}
+              <div class="row">
+                <div class="col">
+                  <div>
+                    <strong>Date and Time</strong>
+                    <p>
+                      ${this.formatDatetimeByLocale(start_time)} -
+                      ${this.formatDatetimeByLocale(end_time)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <strong>Description</strong>
+                    <p>${description}</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <img src=${image} ?hidden=${!image} class="w-100 mb-4 rounded"/>
+
+                  <div>
+                    <strong>Fees</strong>
+                    <p>Unimplemented</p>
+                  </div>
+
+                  <div>
+                    <strong>Location</strong>
+                    <p>${location}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     `;
         }
-        getMarkupByObjectProperty(entry) {
-            const [key, value] = entry;
-            if (["id", "image", "status"].includes(key))
-                return A;
-            return x `
-      <div class="row">
-        <div class="col-4">${key}</div>
-        <div class="col-8">${value}</div>
-      </div>
-    `;
+        formatDatetimeByLocale(datetime) {
+            return new Intl.DateTimeFormat(this.locale, {
+                dateStyle: "full",
+                timeStyle: "short",
+            }).format(new Date(datetime));
         }
     };
     LMSCardDetailsModal.styles = [
@@ -411,10 +424,20 @@
     __decorate([
         t$1()
     ], LMSCardDetailsModal.prototype, "locations", void 0);
+    __decorate([
+        t$1()
+    ], LMSCardDetailsModal.prototype, "locale", void 0);
     LMSCardDetailsModal = __decorate([
         e$3("lms-card-details-modal")
     ], LMSCardDetailsModal);
     var LMSCardDetailsModal$1 = LMSCardDetailsModal;
+
+    /**
+     * @license
+     * Copyright 2021 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */
+    function*o(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
 
     let LMSEventsFilter = class LMSEventsFilter extends s {
         constructor() {
