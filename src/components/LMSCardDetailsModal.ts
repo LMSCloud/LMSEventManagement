@@ -54,10 +54,10 @@ export default class LMSCardDetailsModal extends LitElement {
         display: inline-block;
         width: 1em;
         height: 1em;
-        color: darkgray;
+        color: #6C757D;
       }
 
-      .icon-wrapper {
+      .wrapper {
         display: inline-flex;
         align-items: center;
         gap: 0.25em;
@@ -186,7 +186,7 @@ export default class LMSCardDetailsModal extends LitElement {
         @click=${this.handleSimulatedBackdropClick}
       >
         <div
-          class="modal-dialog modal-lg modal-dialog-centered"
+          class="modal-dialog modal-xl modal-dialog-centered"
           role="document"
         >
           <div class="modal-content">
@@ -207,11 +207,11 @@ export default class LMSCardDetailsModal extends LitElement {
               <div class="row">
                 <div class="col">
                   <div>
-                    <p class="icon-wrapper">
+                    <p class="wrapper">
                       <span>${litFontawesome(faCalendar)}</span>
                       <strong>Date and Time</strong>
                     </p>
-                    <p class="icon-wrapper">
+                    <p class="wrapper">
                       ${this.formatDatetimeByLocale(start_time)}
                       <span>${litFontawesome(faArrowRight)}</span>
                       ${this.formatDatetimeByLocale(end_time)}
@@ -219,7 +219,7 @@ export default class LMSCardDetailsModal extends LitElement {
                   </div>
 
                   <div>
-                    <p class="icon-wrapper">
+                    <p class="wrapper">
                       <span>${litFontawesome(faInfoCircle)}</span>
                       <strong>Description</strong>
                     </p>
@@ -234,7 +234,7 @@ export default class LMSCardDetailsModal extends LitElement {
                   />
 
                   <div>
-                    <p class="icon-wrapper">
+                    <p class="wrapper">
                       <span>${litFontawesome(faCreditCard)}</span>
                       <strong>Fees</strong>
                     </p>
@@ -270,7 +270,7 @@ export default class LMSCardDetailsModal extends LitElement {
                   </div>
 
                   <div>
-                    <p class="icon-wrapper">
+                    <p class="wrapper">
                       <span>${litFontawesome(faMapMarker)}</span>
                       <strong>Location</strong>
                     </p>
@@ -320,7 +320,7 @@ export default class LMSCardDetailsModal extends LitElement {
   formatAddressByLocale(address: LMSLocation) {
     const { name, street, number, city, zip, country } = address;
     if (address) {
-      return html` ${name}<br />
+      return html` <strong>${name}</strong><br />
         ${street} ${number}<br />
         ${zip} ${city}<br />
         ${country}`;

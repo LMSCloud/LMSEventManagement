@@ -555,7 +555,7 @@
         @click=${this.handleSimulatedBackdropClick}
       >
         <div
-          class="modal-dialog modal-lg modal-dialog-centered"
+          class="modal-dialog modal-xl modal-dialog-centered"
           role="document"
         >
           <div class="modal-content">
@@ -576,11 +576,11 @@
               <div class="row">
                 <div class="col">
                   <div>
-                    <p class="icon-wrapper">
+                    <p class="wrapper">
                       <span>${litFontawesome_2(faCalendar)}</span>
                       <strong>Date and Time</strong>
                     </p>
-                    <p class="icon-wrapper">
+                    <p class="wrapper">
                       ${this.formatDatetimeByLocale(start_time)}
                       <span>${litFontawesome_2(faArrowRight)}</span>
                       ${this.formatDatetimeByLocale(end_time)}
@@ -588,7 +588,7 @@
                   </div>
 
                   <div>
-                    <p class="icon-wrapper">
+                    <p class="wrapper">
                       <span>${litFontawesome_2(faInfoCircle)}</span>
                       <strong>Description</strong>
                     </p>
@@ -603,7 +603,7 @@
                   />
 
                   <div>
-                    <p class="icon-wrapper">
+                    <p class="wrapper">
                       <span>${litFontawesome_2(faCreditCard)}</span>
                       <strong>Fees</strong>
                     </p>
@@ -634,7 +634,7 @@
                   </div>
 
                   <div>
-                    <p class="icon-wrapper">
+                    <p class="wrapper">
                       <span>${litFontawesome_2(faMapMarker)}</span>
                       <strong>Location</strong>
                     </p>
@@ -682,7 +682,7 @@
         formatAddressByLocale(address) {
             const { name, street, number, city, zip, country } = address;
             if (address) {
-                return x ` ${name}<br />
+                return x ` <strong>${name}</strong><br />
         ${street} ${number}<br />
         ${zip} ${city}<br />
         ${country}`;
@@ -707,10 +707,10 @@
         display: inline-block;
         width: 1em;
         height: 1em;
-        color: darkgray;
+        color: #6C757D;
       }
 
-      .icon-wrapper {
+      .wrapper {
         display: inline-flex;
         align-items: center;
         gap: 0.25em;
