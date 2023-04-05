@@ -15,6 +15,7 @@ import {
   faInfoCircle,
   faCreditCard,
   faMapMarker,
+  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { map } from "lit/directives/map.js";
 
@@ -54,6 +55,12 @@ export default class LMSCardDetailsModal extends LitElement {
         width: 1em;
         height: 1em;
         color: darkgray;
+      }
+
+      .icon-wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25em;
       }
     `,
   ];
@@ -200,19 +207,20 @@ export default class LMSCardDetailsModal extends LitElement {
               <div class="row">
                 <div class="col">
                   <div>
-                    <p>
-                      ${litFontawesome(faCalendar)}
+                    <p class="icon-wrapper">
+                      <span>${litFontawesome(faCalendar)}</span>
                       <strong>Date and Time</strong>
                     </p>
-                    <p>
-                      ${this.formatDatetimeByLocale(start_time)} -
+                    <p class="icon-wrapper">
+                      ${this.formatDatetimeByLocale(start_time)}
+                      <span>${litFontawesome(faArrowRight)}</span>
                       ${this.formatDatetimeByLocale(end_time)}
                     </p>
                   </div>
 
                   <div>
-                    <p>
-                      ${litFontawesome(faInfoCircle)}
+                    <p class="icon-wrapper">
+                      <span>${litFontawesome(faInfoCircle)}</span>
                       <strong>Description</strong>
                     </p>
                     <p>${description}</p>
@@ -226,8 +234,8 @@ export default class LMSCardDetailsModal extends LitElement {
                   />
 
                   <div>
-                    <p>
-                      ${litFontawesome(faCreditCard)}
+                    <p class="icon-wrapper">
+                      <span>${litFontawesome(faCreditCard)}</span>
                       <strong>Fees</strong>
                     </p>
                     <table class="table table-sm">
@@ -262,8 +270,8 @@ export default class LMSCardDetailsModal extends LitElement {
                   </div>
 
                   <div>
-                    <p>
-                      ${litFontawesome(faMapMarker)}
+                    <p class="icon-wrapper">
+                      <span>${litFontawesome(faMapMarker)}</span>
                       <strong>Location</strong>
                     </p>
                     <p>

@@ -388,6 +388,11 @@
       icon: [384, 512, ["map-marker"], "f041", "M384 192c0 87.4-117 243-168.3 307.2c-12.3 15.3-35.1 15.3-47.4 0C117 435 0 279.4 0 192C0 86 86 0 192 0S384 86 384 192z"]
     };
     var faMapMarker = faLocationPin;
+    var faArrowRight = {
+      prefix: 'fas',
+      iconName: 'arrow-right',
+      icon: [448, 512, [8594], "f061", "M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"]
+    };
     var faFloppyDisk = {
       prefix: 'fas',
       iconName: 'floppy-disk',
@@ -571,19 +576,20 @@
               <div class="row">
                 <div class="col">
                   <div>
-                    <p>
-                      ${litFontawesome_2(faCalendar)}
+                    <p class="icon-wrapper">
+                      <span>${litFontawesome_2(faCalendar)}</span>
                       <strong>Date and Time</strong>
                     </p>
-                    <p>
-                      ${this.formatDatetimeByLocale(start_time)} -
+                    <p class="icon-wrapper">
+                      ${this.formatDatetimeByLocale(start_time)}
+                      <span>${litFontawesome_2(faArrowRight)}</span>
                       ${this.formatDatetimeByLocale(end_time)}
                     </p>
                   </div>
 
                   <div>
-                    <p>
-                      ${litFontawesome_2(faInfoCircle)}
+                    <p class="icon-wrapper">
+                      <span>${litFontawesome_2(faInfoCircle)}</span>
                       <strong>Description</strong>
                     </p>
                     <p>${description}</p>
@@ -597,8 +603,8 @@
                   />
 
                   <div>
-                    <p>
-                      ${litFontawesome_2(faCreditCard)}
+                    <p class="icon-wrapper">
+                      <span>${litFontawesome_2(faCreditCard)}</span>
                       <strong>Fees</strong>
                     </p>
                     <table class="table table-sm">
@@ -628,8 +634,8 @@
                   </div>
 
                   <div>
-                    <p>
-                      ${litFontawesome_2(faMapMarker)}
+                    <p class="icon-wrapper">
+                      <span>${litFontawesome_2(faMapMarker)}</span>
                       <strong>Location</strong>
                     </p>
                     <p>
@@ -702,6 +708,12 @@
         width: 1em;
         height: 1em;
         color: darkgray;
+      }
+
+      .icon-wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25em;
       }
     `,
     ];
