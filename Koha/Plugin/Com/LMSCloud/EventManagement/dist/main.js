@@ -680,8 +680,8 @@
             return A;
         }
         formatAddressByLocale(address) {
-            const { name, street, number, city, zip, country } = address;
             if (address) {
+                const { name, street, number, city, zip, country } = address;
                 return x ` <strong>${name}</strong><br />
         ${street} ${number}<br />
         ${zip} ${city}<br />
@@ -707,7 +707,7 @@
         display: inline-block;
         width: 1em;
         height: 1em;
-        color: #6C757D;
+        color: #6c757d;
       }
 
       .wrapper {

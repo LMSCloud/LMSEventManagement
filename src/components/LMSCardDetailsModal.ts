@@ -54,7 +54,7 @@ export default class LMSCardDetailsModal extends LitElement {
         display: inline-block;
         width: 1em;
         height: 1em;
-        color: #6C757D;
+        color: #6c757d;
       }
 
       .wrapper {
@@ -318,8 +318,8 @@ export default class LMSCardDetailsModal extends LitElement {
   }
 
   formatAddressByLocale(address: LMSLocation) {
-    const { name, street, number, city, zip, country } = address;
     if (address) {
+      const { name, street, number, city, zip, country } = address;
       return html` <strong>${name}</strong><br />
         ${street} ${number}<br />
         ${zip} ${city}<br />
