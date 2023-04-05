@@ -12,11 +12,13 @@ export default class LMSCardDetailsModal extends LitElement {
     locations: LMSLocation[];
     target_groups: TargetGroupFee[];
     locale: string;
+    closeButton: HTMLButtonElement | undefined;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     handleSimulatedBackdropClick(event: MouseEvent): void;
     private toggleModal;
     willUpdate(): void;
+    updated(): void;
     render(): import("lit").TemplateResult<1>;
     formatDatetimeByLocale(datetime: string): string | typeof nothing;
     formatAddressByLocale(address: LMSLocation): typeof nothing | import("lit").TemplateResult<1>;

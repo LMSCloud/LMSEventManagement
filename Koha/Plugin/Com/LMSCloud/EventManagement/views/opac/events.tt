@@ -30,7 +30,7 @@
         <div class="lmse-content-main">
             <div class="lmse-content-block">
                 <h1>Loading...</h1>
-                <lms-events-view borrowernumber="[% borrowernumber %]"></lms-events-view>
+                <lms-events-view borrowernumber="[% borrowernumber %]" class="maincontent"></lms-events-view>
             </div>
         </div>
     </div>

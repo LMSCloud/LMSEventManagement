@@ -1,6 +1,6 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html, css /* nothing */, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import {
   EventType,
@@ -36,6 +36,7 @@ export default class LMSCardDetailsModal extends LitElement {
   @state() locations: LMSLocation[] = [];
   @state() target_groups: TargetGroupFee[] = [];
   @state() locale: string = "en";
+  @query(".close") closeButton: HTMLButtonElement | undefined;
 
   static override styles = [
     bootstrapStyles,
@@ -157,6 +158,12 @@ export default class LMSCardDetailsModal extends LitElement {
         fee:
           target_groups.find((etg) => etg.target_group_id === tg.id)?.fee ?? 0,
       }));
+    }
+  }
+
+  override updated() {
+    if (this.isOpen && this.closeButton) {
+      this.closeButton.focus();
     }
   }
 

@@ -32,10 +32,10 @@ export default {
       sourceMap: true,
     }),
     typescript(),
-    minifyHTML(),
-    terser(),
-    analyze({
-      summaryOnly: true,
-    }),
+    // minifyHTML(),
+    // terser(),
+    // analyze({
+    //   summaryOnly: true,
+    // }),
   ],
 };

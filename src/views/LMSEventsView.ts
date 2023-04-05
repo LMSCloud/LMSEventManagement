@@ -138,6 +138,12 @@ export default class LMSEventsView extends LitElement {
                 this.events,
                 (event) => html`
                   <lms-card
+                    tabindex="0"
+                    @keyup=${(e: KeyboardEvent) => {
+                      if (e.key === "Enter") {
+                        this.handleShowDetails({ lmsEvent: event });
+                      }
+                    }}
                     @click=${() => {
                       this.handleShowDetails({ lmsEvent: event });
                     }}
