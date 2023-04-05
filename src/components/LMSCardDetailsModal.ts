@@ -1,19 +1,39 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html, css /* nothing */ } from "lit";
+import { LitElement, html, css /* nothing */, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import {
   EventType,
   LMSEvent,
   LMSLocation,
+  TargetGroup,
+  TargetGroupFee,
 } from "../sharedDeclarations";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
+import {
+  faCalendar,
+  faInfoCircle,
+  faCreditCard,
+  faMapMarker,
+} from "@fortawesome/free-solid-svg-icons";
+import { map } from "lit/directives/map.js";
+
+type LMSEventFull = Omit<
+  LMSEvent,
+  "event_type" | "location" | "target_groups"
+> & {
+  event_type: EventType;
+  location: LMSLocation;
+  target_groups: TargetGroupFee[];
+};
 
 @customElement("lms-card-details-modal")
 export default class LMSCardDetailsModal extends LitElement {
-  @property({ type: Object }) event: LMSEvent = {} as LMSEvent;
+  @property({ type: Object }) event: LMSEvent | LMSEventFull = {} as LMSEvent;
   @property({ type: Boolean }) isOpen = false;
   @state() event_types: EventType[] = [];
   @state() locations: LMSLocation[] = [];
+  @state() target_groups: TargetGroupFee[] = [];
   @state() locale: string = "en";
 
   static override styles = [
@@ -27,6 +47,13 @@ export default class LMSCardDetailsModal extends LitElement {
         height: 100%;
         background-color: rgb(0 0 0 / 50%);
         z-index: 1048;
+      }
+
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: darkgray;
       }
     `,
   ];
@@ -52,6 +79,16 @@ export default class LMSCardDetailsModal extends LitElement {
     };
     locations().then(
       (locations: LMSLocation[]) => (this.locations = locations)
+    );
+
+    const target_groups = async () => {
+      const response = await fetch(
+        "/api/v1/contrib/eventmanagement/public/target_groups"
+      );
+      return response.json();
+    };
+    target_groups().then(
+      (target_groups: TargetGroupFee[]) => (this.target_groups = target_groups)
     );
 
     this.locale = document.documentElement.lang;
@@ -84,24 +121,49 @@ export default class LMSCardDetailsModal extends LitElement {
 
   override willUpdate() {
     const { event } = this;
-    /** Here we need to resolve the ids [event_type, location] to their state representations */
-    if (event.event_type) {
-      this.event.event_type =
-        this.event_types.find(
-          (event_type) => event_type.id === parseInt(event.event_type, 10)
-        )?.name ?? "";
+    const { event_type, location, target_groups } = event;
+    // Resolve event_type and location ids to their state representations
+    if (event_type && typeof event_type === "string") {
+      const et = this.event_types.find(
+        (type) => type.id === parseInt(event_type, 10)
+      );
+      this.event.event_type = et ?? ({} as EventType);
     }
-    if (event.location) {
-      this.event.location =
-        this.locations.find(
-          (location) => location.id === parseInt(event.location, 10)
-        )?.name ?? "";
+
+    if (location && typeof location === "string") {
+      const loc = this.locations.find(
+        (loc) => loc.id === parseInt(location, 10)
+      );
+      this.event.location = loc ?? ({} as LMSLocation);
+    }
+
+    if (
+      target_groups &&
+      target_groups.every((tg) => tg.hasOwnProperty("target_group_id"))
+    ) {
+      const selectedTargetGroups = this.target_groups.filter((target_group) =>
+        target_groups.some((tg) => tg.target_group_id === target_group.id)
+      );
+
+      this.event.target_groups = selectedTargetGroups.map((tg) => ({
+        ...tg,
+        fee:
+          target_groups.find((etg) => etg.target_group_id === tg.id)?.fee ?? 0,
+      }));
     }
   }
 
   override render() {
-    const { name, description, location, image, start_time, end_time } =
-      this.event;
+    const {
+      name,
+      description,
+      location,
+      image,
+      registration_link,
+      start_time,
+      end_time,
+      target_groups,
+    } = this.event;
     return html`
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
@@ -116,7 +178,10 @@ export default class LMSCardDetailsModal extends LitElement {
         aria-hidden="true"
         @click=${this.handleSimulatedBackdropClick}
       >
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div
+          class="modal-dialog modal-lg modal-dialog-centered"
+          role="document"
+        >
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="lms-modal-title">
@@ -135,7 +200,10 @@ export default class LMSCardDetailsModal extends LitElement {
               <div class="row">
                 <div class="col">
                   <div>
-                    <strong>Date and Time</strong>
+                    <p>
+                      ${litFontawesome(faCalendar)}
+                      <strong>Date and Time</strong>
+                    </p>
                     <p>
                       ${this.formatDatetimeByLocale(start_time)} -
                       ${this.formatDatetimeByLocale(end_time)}
@@ -143,24 +211,87 @@ export default class LMSCardDetailsModal extends LitElement {
                   </div>
 
                   <div>
-                    <strong>Description</strong>
+                    <p>
+                      ${litFontawesome(faInfoCircle)}
+                      <strong>Description</strong>
+                    </p>
                     <p>${description}</p>
                   </div>
                 </div>
                 <div class="col">
-                  <img src=${image} ?hidden=${!image} class="w-100 mb-4 rounded"/>
+                  <img
+                    src=${image}
+                    ?hidden=${!image}
+                    class="w-100 mb-4 rounded"
+                  />
 
                   <div>
-                    <strong>Fees</strong>
-                    <p>Unimplemented</p>
+                    <p>
+                      ${litFontawesome(faCreditCard)}
+                      <strong>Fees</strong>
+                    </p>
+                    <table class="table table-sm">
+                      <thead>
+                        <tr>
+                          <th scope="col">Target Group</th>
+                          <th scope="col">Age Range</th>
+                          <th scope="col">Fee</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${map(target_groups, (target_group) => {
+                          if (target_group.hasOwnProperty("target_group_id")) {
+                            return nothing;
+                          }
+                          const { name, fee, min_age, max_age } =
+                            target_group as unknown as Omit<
+                              TargetGroupFee,
+                              "id" | "target_group_id" | "selected"
+                            > &
+                              TargetGroup;
+                          return html`
+                            <tr>
+                              <td>${name}</td>
+                              <td>${min_age} - ${max_age}</td>
+                              <td>${fee}</td>
+                            </tr>
+                          `;
+                        })}
+                      </tbody>
+                    </table>
                   </div>
 
                   <div>
-                    <strong>Location</strong>
-                    <p>${location}</p>
+                    <p>
+                      ${litFontawesome(faMapMarker)}
+                      <strong>Location</strong>
+                    </p>
+                    <p>
+                      ${typeof location === "string"
+                        ? nothing
+                        : this.formatAddressByLocale(location)}
+                    </p>
                   </div>
                 </div>
               </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+                @click=${this.toggleModal}
+              >
+                Close
+              </button>
+              <a
+                role="button"
+                class="btn btn-primary"
+                ?hidden=${!registration_link}
+                href=${registration_link}
+              >
+                Register
+              </a>
             </div>
           </div>
         </div>
@@ -169,9 +300,23 @@ export default class LMSCardDetailsModal extends LitElement {
   }
 
   formatDatetimeByLocale(datetime: string) {
-    return new Intl.DateTimeFormat(this.locale, {
-      dateStyle: "full",
-      timeStyle: "short",
-    }).format(new Date(datetime));
+    if (datetime) {
+      return new Intl.DateTimeFormat(this.locale, {
+        dateStyle: "full",
+        timeStyle: "short",
+      }).format(new Date(datetime));
+    }
+    return nothing;
+  }
+
+  formatAddressByLocale(address: LMSLocation) {
+    const { name, street, number, city, zip, country } = address;
+    if (address) {
+      return html` ${name}<br />
+        ${street} ${number}<br />
+        ${zip} ${city}<br />
+        ${country}`;
+    }
+    return nothing;
   }
 }

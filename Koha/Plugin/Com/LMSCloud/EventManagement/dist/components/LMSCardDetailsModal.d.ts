@@ -1,10 +1,16 @@
-import { LitElement } from "lit";
-import { EventType, LMSEvent, LMSLocation } from "../sharedDeclarations";
+import { LitElement, nothing } from "lit";
+import { EventType, LMSEvent, LMSLocation, TargetGroupFee } from "../sharedDeclarations";
+type LMSEventFull = Omit<LMSEvent, "event_type" | "location" | "target_groups"> & {
+    event_type: EventType;
+    location: LMSLocation;
+    target_groups: TargetGroupFee[];
+};
 export default class LMSCardDetailsModal extends LitElement {
-    event: LMSEvent;
+    event: LMSEvent | LMSEventFull;
     isOpen: boolean;
     event_types: EventType[];
     locations: LMSLocation[];
+    target_groups: TargetGroupFee[];
     locale: string;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
@@ -12,6 +18,8 @@ export default class LMSCardDetailsModal extends LitElement {
     private toggleModal;
     willUpdate(): void;
     render(): import("lit").TemplateResult<1>;
-    formatDatetimeByLocale(datetime: string): string;
+    formatDatetimeByLocale(datetime: string): string | typeof nothing;
+    formatAddressByLocale(address: LMSLocation): typeof nothing | import("lit").TemplateResult<1>;
 }
+export {};
 //# sourceMappingURL=LMSCardDetailsModal.d.ts.map

@@ -268,6 +268,198 @@
      * SPDX-License-Identifier: BSD-3-Clause
      */const o$1=e(class extends i{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.nt){this.nt=new Set,void 0!==i.strings&&(this.st=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.st)||void 0===r?void 0:r.has(t))&&this.nt.add(t);return this.render(s)}const e=i.element.classList;this.nt.forEach((t=>{t in s||(e.remove(t),this.nt.delete(t));}));for(const t in s){const i=!!s[t];i===this.nt.has(t)||(null===(o=this.st)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.nt.add(t)):(e.remove(t),this.nt.delete(t)));}return T}});
 
+    function getAugmentedNamespace(n) {
+      if (n.__esModule) return n;
+      var f = n.default;
+    	if (typeof f == "function") {
+    		var a = function a () {
+    			if (this instanceof a) {
+    				var args = [null];
+    				args.push.apply(args, arguments);
+    				var Ctor = Function.bind.apply(f, args);
+    				return new Ctor();
+    			}
+    			return f.apply(this, arguments);
+    		};
+    		a.prototype = f.prototype;
+      } else a = {};
+      Object.defineProperty(a, '__esModule', {value: true});
+    	Object.keys(n).forEach(function (k) {
+    		var d = Object.getOwnPropertyDescriptor(n, k);
+    		Object.defineProperty(a, k, d.get ? d : {
+    			enumerable: true,
+    			get: function () {
+    				return n[k];
+    			}
+    		});
+    	});
+    	return a;
+    }
+
+    var litFontawesome$1 = {};
+
+    var require$$0 = /*@__PURE__*/getAugmentedNamespace(litHtml);
+
+    Object.defineProperty(litFontawesome$1, "__esModule", { value: true });
+    litFontawesome$1.urlFontawesome = litFontawesome_2 = litFontawesome$1.litFontawesome = void 0;
+    const lit_html_1 = require$$0;
+    function litFontawesome(definition, { className, color } = {}) {
+        return lit_html_1.svg `
+        <svg
+            aria-hidden="true"
+            focusable="false"
+            data-prefix="${definition.prefix}"
+            data-icon="${definition.iconName}"
+            role="img"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 ${definition.icon[0]} ${definition.icon[1]}"
+            class="${className || ''} ${definition.prefix}_${definition.iconName} fa-${definition.iconName}"
+            fill="${color || 'currentColor'}"
+        >
+            ${(Array.isArray(definition.icon[4]) ? definition.icon[4] : [definition.icon[4]]).map((icon) => lit_html_1.svg `<path d="${icon}"></path>`)}
+        </svg>
+    `;
+    }
+    var litFontawesome_2 = litFontawesome$1.litFontawesome = litFontawesome;
+    function uncachedUrlFontawesome(definition, options) {
+        const mount = window.document.createElement('div');
+        lit_html_1.render(litFontawesome(definition, options), mount);
+        return `data:image/svg+xml;base64,${btoa(mount.innerHTML.replace(/ {4}|<!---->|\n/g, ''))}`;
+    }
+    const cachedURL = new Map();
+    function urlFontawesome(definition, options = {}) {
+        let dataUrl;
+        const foundDefinition = cachedURL.get(definition);
+        let foundClassName;
+        if (foundDefinition !== undefined) {
+            foundClassName = foundDefinition.get(options.className);
+            if (foundClassName !== undefined) {
+                const foundColor = foundClassName.get(options.color);
+                if (foundColor !== undefined) {
+                    dataUrl = foundColor;
+                }
+            }
+        }
+        if (dataUrl === undefined) {
+            dataUrl = uncachedUrlFontawesome(definition, options);
+            if (foundDefinition === undefined) {
+                cachedURL.set(definition, new Map([[options.className, new Map([[options.color, dataUrl]])]]));
+            }
+            else if (foundClassName === undefined) {
+                foundDefinition.set(options.className, new Map([[options.color, dataUrl]]));
+            }
+            else {
+                foundClassName.set(options.color, dataUrl);
+            }
+        }
+        return dataUrl;
+    }
+    litFontawesome$1.urlFontawesome = urlFontawesome;
+
+    var faSortDown = {
+      prefix: 'fas',
+      iconName: 'sort-down',
+      icon: [320, 512, ["sort-desc"], "f0dd", "M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8H288c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z"]
+    };
+    var faList = {
+      prefix: 'fas',
+      iconName: 'list',
+      icon: [512, 512, ["list-squares"], "f03a", "M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"]
+    };
+    var faPenToSquare = {
+      prefix: 'fas',
+      iconName: 'pen-to-square',
+      icon: [512, 512, ["edit"], "f044", "M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.8 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"]
+    };
+    var faEdit = faPenToSquare;
+    var faBullseye = {
+      prefix: 'fas',
+      iconName: 'bullseye',
+      icon: [512, 512, [], "f140", "M448 256A192 192 0 1 0 64 256a192 192 0 1 0 384 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 80a80 80 0 1 0 0-160 80 80 0 1 0 0 160zm0-224a144 144 0 1 1 0 288 144 144 0 1 1 0-288zM224 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"]
+    };
+    var faImage = {
+      prefix: 'fas',
+      iconName: 'image',
+      icon: [512, 512, [], "f03e", "M0 96C0 60.7 28.7 32 64 32H448c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM323.8 202.5c-4.5-6.6-11.9-10.5-19.8-10.5s-15.4 3.9-19.8 10.5l-87 127.6L170.7 297c-4.6-5.7-11.5-9-18.7-9s-14.2 3.3-18.7 9l-64 80c-5.8 7.2-6.9 17.1-2.9 25.4s12.4 13.6 21.6 13.6h96 32H424c8.9 0 17.1-4.9 21.2-12.8s3.6-17.4-1.4-24.7l-120-176zM112 192a48 48 0 1 0 0-96 48 48 0 1 0 0 96z"]
+    };
+    var faLocationPin = {
+      prefix: 'fas',
+      iconName: 'location-pin',
+      icon: [384, 512, ["map-marker"], "f041", "M384 192c0 87.4-117 243-168.3 307.2c-12.3 15.3-35.1 15.3-47.4 0C117 435 0 279.4 0 192C0 86 86 0 192 0S384 86 384 192z"]
+    };
+    var faMapMarker = faLocationPin;
+    var faFloppyDisk = {
+      prefix: 'fas',
+      iconName: 'floppy-disk',
+      icon: [448, 512, [128190, 128426, "save"], "f0c7", "M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V173.3c0-17-6.7-33.3-18.7-45.3L352 50.7C340 38.7 323.7 32 306.7 32H64zm0 96c0-17.7 14.3-32 32-32H288c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V128zM224 288a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
+    };
+    var faSave = faFloppyDisk;
+    var faSortUp = {
+      prefix: 'fas',
+      iconName: 'sort-up',
+      icon: [320, 512, ["sort-asc"], "f0de", "M182.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z"]
+    };
+    var faTrash = {
+      prefix: 'fas',
+      iconName: 'trash',
+      icon: [448, 512, [], "f1f8", "M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"]
+    };
+    var faTag = {
+      prefix: 'fas',
+      iconName: 'tag',
+      icon: [448, 512, [127991], "f02b", "M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"]
+    };
+    var faCircleInfo = {
+      prefix: 'fas',
+      iconName: 'circle-info',
+      icon: [512, 512, ["info-circle"], "f05a", "M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"]
+    };
+    var faInfoCircle = faCircleInfo;
+    var faGear = {
+      prefix: 'fas',
+      iconName: 'gear',
+      icon: [512, 512, [9881, "cog"], "f013", "M481.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-30.9 28.1c-7.7 7.1-11.4 17.5-10.9 27.9c.1 2.9 .2 5.8 .2 8.8s-.1 5.9-.2 8.8c-.5 10.5 3.1 20.9 10.9 27.9l30.9 28.1c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-39.7-12.6c-10-3.2-20.8-1.1-29.7 4.6c-4.9 3.1-9.9 6.1-15.1 8.7c-9.3 4.8-16.5 13.2-18.8 23.4l-8.9 40.7c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-8.9-40.7c-2.2-10.2-9.5-18.6-18.8-23.4c-5.2-2.7-10.2-5.6-15.1-8.7c-8.8-5.7-19.7-7.8-29.7-4.6L69.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l30.9-28.1c7.7-7.1 11.4-17.5 10.9-27.9c-.1-2.9-.2-5.8-.2-8.8s.1-5.9 .2-8.8c.5-10.5-3.1-20.9-10.9-27.9L8.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l39.7 12.6c10 3.2 20.8 1.1 29.7-4.6c4.9-3.1 9.9-6.1 15.1-8.7c9.3-4.8 16.5-13.2 18.8-23.4l8.9-40.7c2-9.1 9-16.3 18.2-17.8C213.3 1.2 227.5 0 242 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l8.9 40.7c2.2 10.2 9.4 18.6 18.8 23.4c5.2 2.7 10.2 5.6 15.1 8.7c8.8 5.7 19.7 7.7 29.7 4.6l39.7-12.6c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM242 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"]
+    };
+    var faCog = faGear;
+    var faCreditCard = {
+      prefix: 'fas',
+      iconName: 'credit-card',
+      icon: [576, 512, [128179, 62083, "credit-card-alt"], "f09d", "M64 32C28.7 32 0 60.7 0 96v32H576V96c0-35.3-28.7-64-64-64H64zM576 224H0V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V224zM112 352h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm112 16c0-8.8 7.2-16 16-16H368c8.8 0 16 7.2 16 16s-7.2 16-16 16H240c-8.8 0-16-7.2-16-16z"]
+    };
+    var faLocationDot = {
+      prefix: 'fas',
+      iconName: 'location-dot',
+      icon: [384, 512, ["map-marker-alt"], "f3c5", "M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
+    };
+    var faCopy = {
+      prefix: 'fas',
+      iconName: 'copy',
+      icon: [512, 512, [], "f0c5", "M224 0c-35.3 0-64 28.7-64 64V288c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H224zM64 160c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H288c35.3 0 64-28.7 64-64V384H288v64H64V224h64V160H64z"]
+    };
+    var faPlus = {
+      prefix: 'fas',
+      iconName: 'plus',
+      icon: [448, 512, [10133, 61543, "add"], "2b", "M240 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H176V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H384c17.7 0 32-14.3 32-32s-14.3-32-32-32H240V80z"]
+    };
+    var faXmark = {
+      prefix: 'fas',
+      iconName: 'xmark',
+      icon: [320, 512, [128473, 10005, 10006, 10060, 215, "close", "multiply", "remove", "times"], "f00d", "M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"]
+    };
+    var faClose = faXmark;
+    var faCalendar = {
+      prefix: 'fas',
+      iconName: 'calendar',
+      icon: [448, 512, [128197, 128198], "f133", "M96 32V64H48C21.5 64 0 85.5 0 112v48H448V112c0-26.5-21.5-48-48-48H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32V64H160V32c0-17.7-14.3-32-32-32S96 14.3 96 32zM448 192H0V464c0 26.5 21.5 48 48 48H400c26.5 0 48-21.5 48-48V192z"]
+    };
+
+    /**
+     * @license
+     * Copyright 2021 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */
+    function*o(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
+
     let LMSCardDetailsModal = class LMSCardDetailsModal extends s {
         constructor() {
             super(...arguments);
@@ -275,6 +467,7 @@
             this.isOpen = false;
             this.event_types = [];
             this.locations = [];
+            this.target_groups = [];
             this.locale = "en";
         }
         connectedCallback() {
@@ -289,6 +482,11 @@
                 return response.json();
             };
             locations().then((locations) => (this.locations = locations));
+            const target_groups = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/target_groups");
+                return response.json();
+            };
+            target_groups().then((target_groups) => (this.target_groups = target_groups));
             this.locale = document.documentElement.lang;
         }
         handleSimulatedBackdropClick(event) {
@@ -312,20 +510,31 @@
             }
         }
         willUpdate() {
-            var _a, _b, _c, _d;
             const { event } = this;
-            /** Here we need to resolve the ids [event_type, location] to their state representations */
-            if (event.event_type) {
-                this.event.event_type =
-                    (_b = (_a = this.event_types.find((event_type) => event_type.id === parseInt(event.event_type, 10))) === null || _a === void 0 ? void 0 : _a.name) !== null && _b !== void 0 ? _b : "";
+            const { event_type, location, target_groups } = event;
+            // Resolve event_type and location ids to their state representations
+            if (event_type && typeof event_type === "string") {
+                const et = this.event_types.find((type) => type.id === parseInt(event_type, 10));
+                this.event.event_type = et !== null && et !== void 0 ? et : {};
             }
-            if (event.location) {
-                this.event.location =
-                    (_d = (_c = this.locations.find((location) => location.id === parseInt(event.location, 10))) === null || _c === void 0 ? void 0 : _c.name) !== null && _d !== void 0 ? _d : "";
+            if (location && typeof location === "string") {
+                const loc = this.locations.find((loc) => loc.id === parseInt(location, 10));
+                this.event.location = loc !== null && loc !== void 0 ? loc : {};
+            }
+            if (target_groups &&
+                target_groups.every((tg) => tg.hasOwnProperty("target_group_id"))) {
+                const selectedTargetGroups = this.target_groups.filter((target_group) => target_groups.some((tg) => tg.target_group_id === target_group.id));
+                this.event.target_groups = selectedTargetGroups.map((tg) => {
+                    var _a, _b;
+                    return ({
+                        ...tg,
+                        fee: (_b = (_a = target_groups.find((etg) => etg.target_group_id === tg.id)) === null || _a === void 0 ? void 0 : _a.fee) !== null && _b !== void 0 ? _b : 0,
+                    });
+                });
             }
         }
         render() {
-            const { name, description, location, image, start_time, end_time } = this.event;
+            const { name, description, location, image, registration_link, start_time, end_time, target_groups, } = this.event;
             return x `
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
@@ -340,7 +549,10 @@
         aria-hidden="true"
         @click=${this.handleSimulatedBackdropClick}
       >
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div
+          class="modal-dialog modal-lg modal-dialog-centered"
+          role="document"
+        >
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="lms-modal-title">
@@ -359,7 +571,10 @@
               <div class="row">
                 <div class="col">
                   <div>
-                    <strong>Date and Time</strong>
+                    <p>
+                      ${litFontawesome_2(faCalendar)}
+                      <strong>Date and Time</strong>
+                    </p>
                     <p>
                       ${this.formatDatetimeByLocale(start_time)} -
                       ${this.formatDatetimeByLocale(end_time)}
@@ -367,24 +582,82 @@
                   </div>
 
                   <div>
-                    <strong>Description</strong>
+                    <p>
+                      ${litFontawesome_2(faInfoCircle)}
+                      <strong>Description</strong>
+                    </p>
                     <p>${description}</p>
                   </div>
                 </div>
                 <div class="col">
-                  <img src=${image} ?hidden=${!image} class="w-100 mb-4 rounded"/>
+                  <img
+                    src=${image}
+                    ?hidden=${!image}
+                    class="w-100 mb-4 rounded"
+                  />
 
                   <div>
-                    <strong>Fees</strong>
-                    <p>Unimplemented</p>
+                    <p>
+                      ${litFontawesome_2(faCreditCard)}
+                      <strong>Fees</strong>
+                    </p>
+                    <table class="table table-sm">
+                      <thead>
+                        <tr>
+                          <th scope="col">Target Group</th>
+                          <th scope="col">Age Range</th>
+                          <th scope="col">Fee</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${o(target_groups, (target_group) => {
+            if (target_group.hasOwnProperty("target_group_id")) {
+                return A;
+            }
+            const { name, fee, min_age, max_age } = target_group;
+            return x `
+                            <tr>
+                              <td>${name}</td>
+                              <td>${min_age} - ${max_age}</td>
+                              <td>${fee}</td>
+                            </tr>
+                          `;
+        })}
+                      </tbody>
+                    </table>
                   </div>
 
                   <div>
-                    <strong>Location</strong>
-                    <p>${location}</p>
+                    <p>
+                      ${litFontawesome_2(faMapMarker)}
+                      <strong>Location</strong>
+                    </p>
+                    <p>
+                      ${typeof location === "string"
+            ? A
+            : this.formatAddressByLocale(location)}
+                    </p>
                   </div>
                 </div>
               </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+                @click=${this.toggleModal}
+              >
+                Close
+              </button>
+              <a
+                role="button"
+                class="btn btn-primary"
+                ?hidden=${!registration_link}
+                href=${registration_link}
+              >
+                Register
+              </a>
             </div>
           </div>
         </div>
@@ -392,10 +665,23 @@
     `;
         }
         formatDatetimeByLocale(datetime) {
-            return new Intl.DateTimeFormat(this.locale, {
-                dateStyle: "full",
-                timeStyle: "short",
-            }).format(new Date(datetime));
+            if (datetime) {
+                return new Intl.DateTimeFormat(this.locale, {
+                    dateStyle: "full",
+                    timeStyle: "short",
+                }).format(new Date(datetime));
+            }
+            return A;
+        }
+        formatAddressByLocale(address) {
+            const { name, street, number, city, zip, country } = address;
+            if (address) {
+                return x ` ${name}<br />
+        ${street} ${number}<br />
+        ${zip} ${city}<br />
+        ${country}`;
+            }
+            return A;
         }
     };
     LMSCardDetailsModal.styles = [
@@ -409,6 +695,13 @@
         height: 100%;
         background-color: rgb(0 0 0 / 50%);
         z-index: 1048;
+      }
+
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: darkgray;
       }
     `,
     ];
@@ -426,18 +719,14 @@
     ], LMSCardDetailsModal.prototype, "locations", void 0);
     __decorate([
         t$1()
+    ], LMSCardDetailsModal.prototype, "target_groups", void 0);
+    __decorate([
+        t$1()
     ], LMSCardDetailsModal.prototype, "locale", void 0);
     LMSCardDetailsModal = __decorate([
         e$3("lms-card-details-modal")
     ], LMSCardDetailsModal);
     var LMSCardDetailsModal$1 = LMSCardDetailsModal;
-
-    /**
-     * @license
-     * Copyright 2021 Google LLC
-     * SPDX-License-Identifier: BSD-3-Clause
-     */
-    function*o(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
 
     let LMSEventsFilter = class LMSEventsFilter extends s {
         constructor() {
@@ -795,94 +1084,6 @@
         e$3("lms-events-filter")
     ], LMSEventsFilter);
     var LMSEventsFilter$1 = LMSEventsFilter;
-
-    function getAugmentedNamespace(n) {
-      if (n.__esModule) return n;
-      var f = n.default;
-    	if (typeof f == "function") {
-    		var a = function a () {
-    			if (this instanceof a) {
-    				var args = [null];
-    				args.push.apply(args, arguments);
-    				var Ctor = Function.bind.apply(f, args);
-    				return new Ctor();
-    			}
-    			return f.apply(this, arguments);
-    		};
-    		a.prototype = f.prototype;
-      } else a = {};
-      Object.defineProperty(a, '__esModule', {value: true});
-    	Object.keys(n).forEach(function (k) {
-    		var d = Object.getOwnPropertyDescriptor(n, k);
-    		Object.defineProperty(a, k, d.get ? d : {
-    			enumerable: true,
-    			get: function () {
-    				return n[k];
-    			}
-    		});
-    	});
-    	return a;
-    }
-
-    var litFontawesome$1 = {};
-
-    var require$$0 = /*@__PURE__*/getAugmentedNamespace(litHtml);
-
-    Object.defineProperty(litFontawesome$1, "__esModule", { value: true });
-    litFontawesome$1.urlFontawesome = litFontawesome_2 = litFontawesome$1.litFontawesome = void 0;
-    const lit_html_1 = require$$0;
-    function litFontawesome(definition, { className, color } = {}) {
-        return lit_html_1.svg `
-        <svg
-            aria-hidden="true"
-            focusable="false"
-            data-prefix="${definition.prefix}"
-            data-icon="${definition.iconName}"
-            role="img"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 ${definition.icon[0]} ${definition.icon[1]}"
-            class="${className || ''} ${definition.prefix}_${definition.iconName} fa-${definition.iconName}"
-            fill="${color || 'currentColor'}"
-        >
-            ${(Array.isArray(definition.icon[4]) ? definition.icon[4] : [definition.icon[4]]).map((icon) => lit_html_1.svg `<path d="${icon}"></path>`)}
-        </svg>
-    `;
-    }
-    var litFontawesome_2 = litFontawesome$1.litFontawesome = litFontawesome;
-    function uncachedUrlFontawesome(definition, options) {
-        const mount = window.document.createElement('div');
-        lit_html_1.render(litFontawesome(definition, options), mount);
-        return `data:image/svg+xml;base64,${btoa(mount.innerHTML.replace(/ {4}|<!---->|\n/g, ''))}`;
-    }
-    const cachedURL = new Map();
-    function urlFontawesome(definition, options = {}) {
-        let dataUrl;
-        const foundDefinition = cachedURL.get(definition);
-        let foundClassName;
-        if (foundDefinition !== undefined) {
-            foundClassName = foundDefinition.get(options.className);
-            if (foundClassName !== undefined) {
-                const foundColor = foundClassName.get(options.color);
-                if (foundColor !== undefined) {
-                    dataUrl = foundColor;
-                }
-            }
-        }
-        if (dataUrl === undefined) {
-            dataUrl = uncachedUrlFontawesome(definition, options);
-            if (foundDefinition === undefined) {
-                cachedURL.set(definition, new Map([[options.className, new Map([[options.color, dataUrl]])]]));
-            }
-            else if (foundClassName === undefined) {
-                foundDefinition.set(options.className, new Map([[options.color, dataUrl]]));
-            }
-            else {
-                foundClassName.set(options.color, dataUrl);
-            }
-        }
-        return dataUrl;
-    }
-    litFontawesome$1.urlFontawesome = urlFontawesome;
 
     /*! gettext.js - Guillaume Potier - MIT Licensed */
     var i18n = function (options) {
@@ -1310,81 +1511,6 @@
         e$3("lms-floating-menu")
     ], LMSFloatingMenu);
     var LMSFloatingMenu$1 = LMSFloatingMenu;
-
-    var faSortDown = {
-      prefix: 'fas',
-      iconName: 'sort-down',
-      icon: [320, 512, ["sort-desc"], "f0dd", "M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8H288c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z"]
-    };
-    var faList = {
-      prefix: 'fas',
-      iconName: 'list',
-      icon: [512, 512, ["list-squares"], "f03a", "M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"]
-    };
-    var faPenToSquare = {
-      prefix: 'fas',
-      iconName: 'pen-to-square',
-      icon: [512, 512, ["edit"], "f044", "M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.8 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"]
-    };
-    var faEdit = faPenToSquare;
-    var faBullseye = {
-      prefix: 'fas',
-      iconName: 'bullseye',
-      icon: [512, 512, [], "f140", "M448 256A192 192 0 1 0 64 256a192 192 0 1 0 384 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 80a80 80 0 1 0 0-160 80 80 0 1 0 0 160zm0-224a144 144 0 1 1 0 288 144 144 0 1 1 0-288zM224 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"]
-    };
-    var faImage = {
-      prefix: 'fas',
-      iconName: 'image',
-      icon: [512, 512, [], "f03e", "M0 96C0 60.7 28.7 32 64 32H448c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM323.8 202.5c-4.5-6.6-11.9-10.5-19.8-10.5s-15.4 3.9-19.8 10.5l-87 127.6L170.7 297c-4.6-5.7-11.5-9-18.7-9s-14.2 3.3-18.7 9l-64 80c-5.8 7.2-6.9 17.1-2.9 25.4s12.4 13.6 21.6 13.6h96 32H424c8.9 0 17.1-4.9 21.2-12.8s3.6-17.4-1.4-24.7l-120-176zM112 192a48 48 0 1 0 0-96 48 48 0 1 0 0 96z"]
-    };
-    var faFloppyDisk = {
-      prefix: 'fas',
-      iconName: 'floppy-disk',
-      icon: [448, 512, [128190, 128426, "save"], "f0c7", "M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V173.3c0-17-6.7-33.3-18.7-45.3L352 50.7C340 38.7 323.7 32 306.7 32H64zm0 96c0-17.7 14.3-32 32-32H288c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V128zM224 288a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
-    };
-    var faSave = faFloppyDisk;
-    var faSortUp = {
-      prefix: 'fas',
-      iconName: 'sort-up',
-      icon: [320, 512, ["sort-asc"], "f0de", "M182.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z"]
-    };
-    var faTrash = {
-      prefix: 'fas',
-      iconName: 'trash',
-      icon: [448, 512, [], "f1f8", "M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"]
-    };
-    var faTag = {
-      prefix: 'fas',
-      iconName: 'tag',
-      icon: [448, 512, [127991], "f02b", "M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"]
-    };
-    var faGear = {
-      prefix: 'fas',
-      iconName: 'gear',
-      icon: [512, 512, [9881, "cog"], "f013", "M481.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-30.9 28.1c-7.7 7.1-11.4 17.5-10.9 27.9c.1 2.9 .2 5.8 .2 8.8s-.1 5.9-.2 8.8c-.5 10.5 3.1 20.9 10.9 27.9l30.9 28.1c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-39.7-12.6c-10-3.2-20.8-1.1-29.7 4.6c-4.9 3.1-9.9 6.1-15.1 8.7c-9.3 4.8-16.5 13.2-18.8 23.4l-8.9 40.7c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-8.9-40.7c-2.2-10.2-9.5-18.6-18.8-23.4c-5.2-2.7-10.2-5.6-15.1-8.7c-8.8-5.7-19.7-7.8-29.7-4.6L69.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l30.9-28.1c7.7-7.1 11.4-17.5 10.9-27.9c-.1-2.9-.2-5.8-.2-8.8s.1-5.9 .2-8.8c.5-10.5-3.1-20.9-10.9-27.9L8.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l39.7 12.6c10 3.2 20.8 1.1 29.7-4.6c4.9-3.1 9.9-6.1 15.1-8.7c9.3-4.8 16.5-13.2 18.8-23.4l8.9-40.7c2-9.1 9-16.3 18.2-17.8C213.3 1.2 227.5 0 242 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l8.9 40.7c2.2 10.2 9.4 18.6 18.8 23.4c5.2 2.7 10.2 5.6 15.1 8.7c8.8 5.7 19.7 7.7 29.7 4.6l39.7-12.6c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM242 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"]
-    };
-    var faCog = faGear;
-    var faLocationDot = {
-      prefix: 'fas',
-      iconName: 'location-dot',
-      icon: [384, 512, ["map-marker-alt"], "f3c5", "M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
-    };
-    var faCopy = {
-      prefix: 'fas',
-      iconName: 'copy',
-      icon: [512, 512, [], "f0c5", "M224 0c-35.3 0-64 28.7-64 64V288c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H224zM64 160c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H288c35.3 0 64-28.7 64-64V384H288v64H64V224h64V160H64z"]
-    };
-    var faPlus = {
-      prefix: 'fas',
-      iconName: 'plus',
-      icon: [448, 512, [10133, 61543, "add"], "2b", "M240 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H176V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H384c17.7 0 32-14.3 32-32s-14.3-32-32-32H240V80z"]
-    };
-    var faXmark = {
-      prefix: 'fas',
-      iconName: 'xmark',
-      icon: [320, 512, [128473, 10005, 10006, 10060, 215, "close", "multiply", "remove", "times"], "f00d", "M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"]
-    };
-    var faClose = faXmark;
 
     function createWrapper(breakpoints) {
         const [block, none] = breakpoints;
