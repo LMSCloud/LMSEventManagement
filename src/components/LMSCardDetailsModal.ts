@@ -238,7 +238,7 @@ export default class LMSCardDetailsModal extends LitElement {
                       <span>${litFontawesome(faCreditCard)}</span>
                       <strong>Fees</strong>
                     </p>
-                    <table class="table table-sm">
+                    <table class="table table-sm table-borderless">
                       <thead>
                         <tr>
                           <th scope="col">Target Group</th>
