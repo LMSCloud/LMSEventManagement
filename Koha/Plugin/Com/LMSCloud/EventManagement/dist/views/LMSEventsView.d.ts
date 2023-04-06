@@ -12,8 +12,8 @@ declare global {
 }
 export default class LMSEventsView extends LitElement {
     borrowernumber: undefined;
-    events: LMSEvent[];
     hasHiddenFacets: boolean;
+    events: LMSEvent[];
     modalData: LMSEvent;
     hasOpenModal: boolean;
     static styles: import("lit").CSSResult[];

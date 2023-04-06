@@ -35,11 +35,11 @@ export default class LMSEventsFilter extends LitElement {
   @property({ type: Array }) events: LMSEvent[] = [];
   @property({ type: String }) facetsStrategy: "preserve" | "update" =
     "preserve";
+  @property({ type: Boolean }) isHidden = false;
   @state() facets: Partial<Facets> = {};
   @state() event_types: EventType[] = [];
   @state() target_groups: TargetGroup[] = [];
   @state() locations: LMSLocation[] = [];
-  @state() isHidden = false;
   @queryAll("input") inputs: NodeListOf<HTMLInputElement> | undefined;
 
   static override styles = [bootstrapStyles];

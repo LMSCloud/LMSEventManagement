@@ -1,4 +1,4 @@
-import { LitElement, html, nothing } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 
@@ -21,7 +21,21 @@ export default class LMSCard extends LitElement {
   @property({ type: Array }) links = [] as Link[];
   @property({ type: Array }) listItems = [];
 
-  static override styles = [bootstrapStyles];
+  static override styles = [
+    bootstrapStyles,
+    css`
+      /* .card {
+
+      } */
+
+      .card:hover {
+        postion: relative;
+        top: -3px;
+        /* box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); */
+        border: 1px solid var(--primary);
+      }
+    `,
+  ];
 
   override render() {
     return html`

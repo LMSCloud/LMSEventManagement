@@ -19,22 +19,73 @@ declare global {
 @customElement("lms-events-view")
 export default class LMSEventsView extends LitElement {
   @property({ type: String }) borrowernumber = undefined;
+  @property({ attribute: "has-hidden-facets", reflect: true }) hasHiddenFacets =
+    false;
   @state() events: LMSEvent[] = [];
-  @state() hasHiddenFacets = false;
   @state() modalData: LMSEvent = {} as LMSEvent;
   @state() hasOpenModal = false;
 
   static override styles = [
     bootstrapStyles,
     css`
-      lms-card {
-        cursor: pointer;
+      .card-deck {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+      }
+
+      @media (min-width: 768px) {
+        .card-deck {
+          grid-gap: 1rem;
+        }
+
+        :host([has-hidden-facets="true"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
+        }
+
+        :host([has-hidden-facets="false"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(50%, 1fr));
+        }
+      }
+
+      @media (min-width: 992px) {
+        :host([has-hidden-facets="true"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+        }
+
+        :host([has-hidden-facets="false"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
+        }
+      }
+
+      @media (min-width: 1200px) {
+        :host([has-hidden-facets="true"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+        }
+
+        :host([has-hidden-facets="false"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+        }
+      }
+
+      @media (min-width: 1600px) {
+        :host([has-hidden-facets="true"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
+        }
+
+        :host([has-hidden-facets="false"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+        }
       }
     `,
   ];
 
   override connectedCallback() {
     super.connectedCallback();
+
+    if (window.innerWidth < 768) {
+      console.log("window.innerWidth < 768");
+      this.handleHide({ detail: true } as CustomEvent);
+    }
 
     const response = async () =>
       await fetch("/api/v1/contrib/eventmanagement/public/events");
@@ -82,8 +133,8 @@ export default class LMSEventsView extends LitElement {
   }
 
   handleHide(e: CustomEvent) {
-    const isHidden = e.detail;
-    this.hasHiddenFacets = isHidden;
+    const shouldHide = e.detail;
+    this.hasHiddenFacets = shouldHide;
   }
 
   handleShowDetails({ lmsEvent }: { lmsEvent: LMSEvent }) {
@@ -120,6 +171,7 @@ export default class LMSEventsView extends LitElement {
               @hide=${this.handleHide}
               @filter=${this.handleFilter}
               .events=${this.events}
+              .isHidden=${this.hasHiddenFacets}
             ></lms-events-filter>
           </div>
           <div

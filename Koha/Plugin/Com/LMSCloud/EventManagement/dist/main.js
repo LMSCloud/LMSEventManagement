@@ -240,7 +240,21 @@
     `;
         }
     };
-    LMSCard.styles = [bootstrapStyles];
+    LMSCard.styles = [
+        bootstrapStyles,
+        i$4 `
+      /* .card {
+
+      } */
+
+      .card:hover {
+        postion: relative;
+        top: -3px;
+        /* box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); */
+        border: 1px solid var(--primary);
+      }
+    `,
+    ];
     __decorate([
         e$2({ type: String })
     ], LMSCard.prototype, "title", void 0);
@@ -759,11 +773,11 @@
             super(...arguments);
             this.events = [];
             this.facetsStrategy = "preserve";
+            this.isHidden = false;
             this.facets = {};
             this.event_types = [];
             this.target_groups = [];
             this.locations = [];
-            this.isHidden = false;
             this._eventsDeepCopy = [];
         }
         connectedCallback() {
@@ -1089,6 +1103,9 @@
         e$2({ type: String })
     ], LMSEventsFilter.prototype, "facetsStrategy", void 0);
     __decorate([
+        e$2({ type: Boolean })
+    ], LMSEventsFilter.prototype, "isHidden", void 0);
+    __decorate([
         t$1()
     ], LMSEventsFilter.prototype, "facets", void 0);
     __decorate([
@@ -1100,9 +1117,6 @@
     __decorate([
         t$1()
     ], LMSEventsFilter.prototype, "locations", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsFilter.prototype, "isHidden", void 0);
     __decorate([
         e$1("input")
     ], LMSEventsFilter.prototype, "inputs", void 0);
@@ -4620,13 +4634,17 @@ ${value}</textarea
         constructor() {
             super(...arguments);
             this.borrowernumber = undefined;
-            this.events = [];
             this.hasHiddenFacets = false;
+            this.events = [];
             this.modalData = {};
             this.hasOpenModal = false;
         }
         connectedCallback() {
             super.connectedCallback();
+            if (window.innerWidth < 768) {
+                console.log("window.innerWidth < 768");
+                this.handleHide({ detail: true });
+            }
             const response = async () => await fetch("/api/v1/contrib/eventmanagement/public/events");
             response()
                 .then((response) => {
@@ -4661,13 +4679,12 @@ ${value}</textarea
             });
         }
         handleHide(e) {
-            const isHidden = e.detail;
-            this.hasHiddenFacets = isHidden;
+            const shouldHide = e.detail;
+            this.hasHiddenFacets = shouldHide;
         }
         handleShowDetails({ lmsEvent }) {
             this.modalData = lmsEvent;
             this.hasOpenModal = true;
-            console.log(this.modalData, this.hasOpenModal);
         }
         handleHideDetails() {
             this.modalData = {};
@@ -4698,6 +4715,7 @@ ${value}</textarea
               @hide=${this.handleHide}
               @filter=${this.handleFilter}
               .events=${this.events}
+              .isHidden=${this.hasHiddenFacets}
             ></lms-events-filter>
           </div>
           <div
@@ -4743,8 +4761,53 @@ ${value}</textarea
     LMSEventsView.styles = [
         bootstrapStyles,
         i$4 `
-      lms-card {
-        cursor: pointer;
+      .card-deck {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+      }
+
+      @media (min-width: 768px) {
+        .card-deck {
+          grid-gap: 1rem;
+        }
+
+        :host([has-hidden-facets="true"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
+        }
+
+        :host([has-hidden-facets="false"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(50%, 1fr));
+        }
+      }
+
+      @media (min-width: 992px) {
+        :host([has-hidden-facets="true"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+        }
+
+        :host([has-hidden-facets="false"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
+        }
+      }
+
+      @media (min-width: 1200px) {
+        :host([has-hidden-facets="true"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+        }
+
+        :host([has-hidden-facets="false"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+        }
+      }
+
+      @media (min-width: 1600px) {
+        :host([has-hidden-facets="true"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
+        }
+
+        :host([has-hidden-facets="false"]) .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+        }
       }
     `,
     ];
@@ -4752,11 +4815,11 @@ ${value}</textarea
         e$2({ type: String })
     ], LMSEventsView.prototype, "borrowernumber", void 0);
     __decorate([
-        t$1()
-    ], LMSEventsView.prototype, "events", void 0);
+        e$2({ attribute: "has-hidden-facets", reflect: true })
+    ], LMSEventsView.prototype, "hasHiddenFacets", void 0);
     __decorate([
         t$1()
-    ], LMSEventsView.prototype, "hasHiddenFacets", void 0);
+    ], LMSEventsView.prototype, "events", void 0);
     __decorate([
         t$1()
     ], LMSEventsView.prototype, "modalData", void 0);

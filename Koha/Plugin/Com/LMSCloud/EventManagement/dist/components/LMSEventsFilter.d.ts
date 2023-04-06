@@ -22,11 +22,11 @@ type Facets = {
 export default class LMSEventsFilter extends LitElement {
     events: LMSEvent[];
     facetsStrategy: "preserve" | "update";
+    isHidden: boolean;
     facets: Partial<Facets>;
     event_types: EventType[];
     target_groups: TargetGroup[];
     locations: LMSLocation[];
-    isHidden: boolean;
     inputs: NodeListOf<HTMLInputElement> | undefined;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
