@@ -24,14 +24,11 @@ export default class LMSCard extends LitElement {
   static override styles = [
     bootstrapStyles,
     css`
-      /* .card {
-
-      } */
-
       .card:hover {
+        cursor: pointer;
         postion: relative;
         top: -3px;
-        /* box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); */
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         border: 1px solid var(--primary);
       }
     `,
