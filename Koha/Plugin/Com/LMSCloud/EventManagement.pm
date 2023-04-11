@@ -39,6 +39,41 @@ Readonly my $TINYINT_UPPER_BOUNDARY => 255;
 
 no if ( $PERL_VERSION >= 5.018 ), 'warnings' => 'experimental';
 
+use Module::Metadata;
+use Koha::Schema;
+
+BEGIN {
+    my $path = Module::Metadata->find_module_by_name(__PACKAGE__);
+    $path =~ s{[.]pm$}{/lib}xms;
+    unshift @INC, $path;
+
+    require Koha::LMSCloud::EventManagement::Events;
+    require Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEvent;
+    Koha::Schema->register_class( KohaPluginComLmscloudEventmanagementEvent => 'Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEvent' );
+
+    require Koha::LMSCloud::EventManagement::EventTypes;
+    require Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEventType;
+    Koha::Schema->register_class( KohaPluginComLmscloudEventmanagementEventType => 'Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEventType' );
+
+    require Koha::LMSCloud::EventManagement::Locations;
+    require Koha::Schema::Result::KohaPluginComLmscloudEventmanagementLocation;
+    Koha::Schema->register_class( KohaPluginComLmscloudEventmanagementLocation => 'Koha::Schema::Result::KohaPluginComLmscloudEventmanagementLocation' );
+
+    require Koha::LMSCloud::EventManagement::TargetGroups;
+    require Koha::Schema::Result::KohaPluginComLmscloudEventmanagementTargetGroup;
+    Koha::Schema->register_class( KohaPluginComLmscloudEventmanagementTargetGroup => 'Koha::Schema::Result::KohaPluginComLmscloudEventmanagementTargetGroup' );
+
+    require Koha::Schema::Result::KohaPluginComLmscloudEventmanagementETgFee;
+    require Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEtTgFee;
+    Koha::Schema->register_class( KohaPluginComLmscloudEventmanagementETgFee => 'Koha::Schema::Result::KohaPluginComLmscloudEventmanagementETgFee' );
+
+    require Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees;
+    require Koha::LMSCloud::EventManagement::EventType::TargetGroup::Fees;
+    Koha::Schema->register_class( KohaPluginComLmscloudEventmanagementEtTgFee => 'Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEtTgFee' );
+
+    Koha::Database->schema( { new => 1 } );
+}
+
 ## Here we set our plugin version
 our $VERSION         = '1.3.0';
 our $MINIMUM_VERSION = '18.05';

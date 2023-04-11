@@ -7,7 +7,8 @@
     "package-kpz:test": "test -x ./node_modules/package-kpz/target/release/package-kpz",
     "package-kpz:build": "cd package-kpz && cargo build --release && cd ../ && ln -s ./package-kpz/target/release/package-kpz ./p-kpz",
     "lint": "eslint \"src/**/*.{js,ts}\"",
-    "build": "npx rollup -c && ./p-kpz -r \"lms-event-management\" -p \"Koha/Plugin/Com/LMSCloud/EventManagement.pm\""
+    "build": "npx rollup -c && ./p-kpz -r \"lms-event-management\" -p \"Koha/Plugin/Com/LMSCloud/EventManagement.pm\"",
+    "test": "mocha \"test/**/*.test.mjs\""
   },
   "repository": {
     "type": "git",
@@ -24,12 +25,17 @@
     "@rollup/plugin-terser": "^0.4.0",
     "@rollup/plugin-typescript": "^11.0.0",
     "autoprefixer": "^10.4.14",
+    "chai": "^4.3.7",
+    "chai-http": "^4.3.0",
+    "dotenv": "^16.0.3",
     "eslint": "^8.36.0",
     "eslint-plugin-lit": "^1.8.2",
     "gulp": "^4.0.2",
     "gulp-github-release": "^1.2.1",
     "gulp-run": "^1.7.1",
+    "mocha": "^10.2.0",
     "node-datetime": "^2.1.2",
+    "node-fetch": "^3.3.1",
     "rollup": "^2.79.1",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-minify-html-literals": "^1.2.6",

@@ -83,6 +83,28 @@
           "description": "Ending time of the event",
           "required": false,
           "type": "string"
+        },
+        {
+          "name": "_order_by",
+          "collectionFormat": "csv",
+          "description": "Sorting criteria",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "_page",
+          "description": "Page number, for paginated object listing",
+          "in": "query",
+          "required": false,
+          "type": "integer"
+        },
+        {
+          "name": "_per_page",
+          "description": "Page size, for paginated object listing",
+          "in": "query",
+          "required": false,
+          "type": "integer"
         }
       ],
       "produces": ["application/json"],

@@ -6,24 +6,15 @@ use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context;
 use Try::Tiny;
 use JSON;
-use SQL::Abstract;
-use Scalar::Util qw(looks_like_number reftype);
 use List::Util qw(any);
 
-use Koha::UploadedFiles;
+use Koha::Plugin::Com::LMSCloud::EventManagement;
+use Koha::LMSCloud::EventManagement::Events;
+use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees;
 
 our $VERSION = '1.0.0';
-
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::EventManagement->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
-}
-
-my $EVENTS_TABLE                  = $self ? $self->get_qualified_table_name('events')    : undef;
-my $EVENT_TARGET_GROUP_FEES_TABLE = $self ? $self->get_qualified_table_name('e_tg_fees') : undef;
 
 sub get {
     my $c = shift->openapi->valid_input or return;
@@ -49,83 +40,56 @@ sub get {
     }
 
     return try {
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
+        my $search_params = {};
 
-        my @event_ids;
+        $search_params->{name}              = { 'like' => $params->{name} }              if defined $params->{name} && $params->{name} ne q{};
+        $search_params->{event_type}        = $params->{event_type}                      if ( defined $params->{event_type} && @{ $params->{event_type} } );
+        $search_params->{min_age}           = { '>=' => $params->{min_age} }             if defined $params->{min_age};
+        $search_params->{max_age}           = { '<=' => $params->{max_age} }             if defined $params->{max_age};
+        $search_params->{open_registration} = $params->{open_registration}               if defined $params->{open_registration} && !$params->{open_registration};
+        $search_params->{location}          = $params->{location}                        if ( defined $params->{location} && @{ $params->{location} } );
+        $search_params->{start_time}        = { '>=' => $params->{start_time} }          if defined $params->{start_time};
+        $search_params->{end_time}          = { '<=' => "$params->{end_time} 23:59:59" } if defined $params->{end_time} && $params->{end_time} ne q{};
 
-        if ( defined $params->{target_group} && @{ $params->{target_group} } || defined $params->{fee} ) {
-            my $tg_fee_where = { selected => 1, };
-            $tg_fee_where->{target_group_id} = { q{=} => $params->{target_group} } if ( defined $params->{target_group} && @{ $params->{target_group} } );
-            $tg_fee_where->{fee}             = { '<=' => $params->{fee} }          if defined $params->{fee};
+        my @events = Koha::LMSCloud::EventManagement::Events->search($search_params);
 
-            my ( $stmt, @bind ) = $sql->select( $EVENT_TARGET_GROUP_FEES_TABLE, 'event_id', $tg_fee_where );
-            my $sth = $dbh->prepare($stmt);
-            $sth->execute(@bind);
+        my @filtered_events;
+        foreach my $event (@events) {
+            if ( defined $params->{target_group} && @{ $params->{target_group} } || defined $params->{fee} ) {
+                my $event_target_group_fees = Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $event->{id} } );
 
-            @event_ids = map { $_->{event_id} } @{ $sth->fetchall_arrayref( {} ) };
-        }
+                if ( defined $params->{target_group} && @{ $params->{target_group} } ) {
+                    $event_target_group_fees = $event_target_group_fees->search( { target_group_id => $params->{target_group} } );
+                }
 
-        # If the values of all the parameters are undef, we return all the events.
-        if ( !any {defined} values %{$params} && !@event_ids ) {
-            my ( $stmt, @bind ) = $sql->select( $EVENTS_TABLE, q{*}, { start_time => { '>=' => 'CURDATE()' } } );
-            my $sth = $dbh->prepare($stmt);
-            $sth->execute(@bind);
+                if ( defined $params->{fee} ) {
+                    $event_target_group_fees = $event_target_group_fees->search( { fee => { '<=' => $params->{fee} } } );
+                }
 
-            my $events = $sth->fetchall_arrayref( {} );
-
-            foreach my $event ( @{$events} ) {
-                ( $stmt, @bind ) = $sql->select( $EVENT_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_id => $event->{id} } );
-                $sth = $dbh->prepare($stmt);
-                $sth->execute(@bind);
-
-                my $target_groups = $sth->fetchall_arrayref( {} );
-                $event->{'target_groups'} = $target_groups;
+                if ( $event_target_group_fees->count ) {
+                    $event->{target_groups} = $event_target_group_fees->unblessed;
+                    push @filtered_events, $event->unblessed;
+                }
             }
-
-            return $c->render( status => 200, openapi => $events || [] );
+            else {
+                $event->{target_groups} = Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $event->{id}, selected => 1 } )->unblessed;
+                push @filtered_events, $event->unblessed;
+            }
         }
 
-        # Build the WHERE clause based on the specified parameters
-        my $where = {};
-        $where->{name}              = $params->{name}                            if defined $params->{name} && $params->{name} ne q{};
-        $where->{event_type}        = { q{=} => $params->{event_type} }          if ( defined $params->{event_type} && @{ $params->{event_type} } );
-        $where->{min_age}           = { '>=' => $params->{min_age} }             if defined $params->{min_age};
-        $where->{max_age}           = { '<=' => $params->{max_age} }             if defined $params->{max_age};
-        $where->{open_registration} = $params->{open_registration}               if defined $params->{open_registration} && !$params->{open_registration};
-        $where->{location}          = { q{=} => $params->{location} }            if ( defined $params->{location} && @{ $params->{location} } );
-        $where->{start_time}        = { '>=' => $params->{start_time} }          if defined $params->{start_time};
-        $where->{end_time}          = { '<=' => "$params->{end_time} 23:59:59" } if defined $params->{end_time} && $params->{end_time} ne q{};
+        use Data::Dumper;
+        warn Dumper \@filtered_events;
 
-        if (@event_ids) {
-            $where->{id} = { q{=} => \@event_ids };
-        }
-
-        my ( $stmt, @bind ) = $sql->select( $EVENTS_TABLE, q{*}, { -and => [ $where, { start_time => { '>=' => 'CURDATE()' } } ] } );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        my $events = $sth->fetchall_arrayref( {} );
-
-        foreach my $event ( @{$events} ) {
-            ( $stmt, @bind ) = $sql->select( $EVENT_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_id => $event->{id}, selected => 1 } );
-            $sth = $dbh->prepare($stmt);
-            $sth->execute(@bind);
-
-            my $target_groups = $sth->fetchall_arrayref( {} );
-            $event->{'target_groups'} = $target_groups;
-        }
-
-        if ( !( scalar @{$events} ) ) {
+        if ( !scalar @filtered_events ) {
             return $c->render(
                 status  => 404,
-                openapi => { error => 'Not Found' }
+                openapi => []
             );
         }
 
         return $c->render(
             status  => 200,
-            openapi => $events,
+            openapi => \@filtered_events,
         );
     }
     catch {
