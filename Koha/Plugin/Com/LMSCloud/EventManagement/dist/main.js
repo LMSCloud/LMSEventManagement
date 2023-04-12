@@ -936,6 +936,20 @@
                 bubbles: true,
             }));
         }
+        urlSearchParamsToQueryParam(searchParams) {
+            const queryParams = {};
+            searchParams.forEach((value, key) => {
+                const keys = key.split(".");
+                let currentParam = queryParams;
+                keys.forEach((k, i) => {
+                    if (!currentParam[k]) {
+                        currentParam[k] = i === keys.length - 1 ? value : {};
+                    }
+                    currentParam = currentParam[k];
+                });
+            });
+            return `q=${JSON.stringify(queryParams)}`;
+        }
         render() {
             return x `
       <div class="card" @change=${this.handleChange}>
@@ -4659,7 +4673,6 @@ ${value}</textarea
         }
         handleFilter(event) {
             const query = event.detail;
-            console.log("query in ev: ", query);
             const response = async () => await fetch(`/api/v1/contrib/eventmanagement/public/events?${new URLSearchParams(query)}`);
             response()
                 .then((response) => {

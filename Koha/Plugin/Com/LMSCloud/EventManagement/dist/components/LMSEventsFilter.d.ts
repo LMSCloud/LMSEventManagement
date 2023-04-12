@@ -40,6 +40,7 @@ export default class LMSEventsFilter extends LitElement {
     handleChange(): void;
     emitChange(e: Event): void;
     handleHideToggle(): void;
+    urlSearchParamsToQueryParam(searchParams: URLSearchParams): string;
     render(): import("lit").TemplateResult<1>;
 }
 export {};

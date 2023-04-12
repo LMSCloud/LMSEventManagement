@@ -258,6 +258,21 @@ export default class LMSEventsFilter extends LitElement {
     );
   }
 
+  urlSearchParamsToQueryParam(searchParams: URLSearchParams) {
+    const queryParams = {};
+    searchParams.forEach((value, key) => {
+      const keys = key.split(".");
+      let currentParam: Record<string, unknown> = queryParams;
+      keys.forEach((k, i) => {
+        if (!currentParam[k]) {
+          currentParam[k] = i === keys.length - 1 ? value : {};
+        }
+        currentParam = currentParam[k] as Record<string, unknown>;
+      });
+    });
+    return `q=${JSON.stringify(queryParams)}`;
+  }
+
   override render() {
     return html`
       <div class="card" @change=${this.handleChange}>

@@ -108,7 +108,6 @@ export default class LMSEventsView extends LitElement {
 
   handleFilter(event: CustomEvent) {
     const query = event.detail;
-    console.log("query in ev: ", query);
     const response = async () =>
       await fetch(
         `/api/v1/contrib/eventmanagement/public/events?${new URLSearchParams(

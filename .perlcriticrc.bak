@@ -1,0 +1,60 @@
+# perlcriticrc for Koha
+
+# Basics
+severity = 5
+
+# Grandfather clause
+only = 0
+
+# Use pointer syntax for hashrefs
+[ValuesAndExpressions::ProhibitDoubleSigils]
+
+# Indentation (4 spaces)
+[CodeLayout::ProhibitHardTabs]
+[CodeLayout::RequireConsistentNewlines]
+
+# Disagreements follow perlstyle man page
+[ValuesAndExpressions::ProhibitLeadingZeros]
+[ControlStructures::ProhibitUnlessBlocks]
+[ControlStructures::ProhibitUntilBlocks]
+
+# Hashrefs for arguments (PERL16)
+[Subroutines::ProhibitManyArgs]
+max_arguments = 1
+
+# Verboten subroutine parameters (PERL10)
+[Subroutines::ProhibitExplicitReturnUndef]
+[Variables::ProhibitReusedNames]
+
+# Naming subroutines and methods (PERL9)
+[Subroutines::RequireFinalReturn]
+
+# POD (PERL13)
+[Documentation::RequirePodSections]
+header = NAME
+header = SYNOPSIS
+header = DESCRIPTION
+header = FUNCTIONS
+header = AUTHOR
+
+# Exports (PERL14)
+[Modules::RequireExplicitInclusion]
+
+# Object-oriented code and the Koha namespace (PERL15)
+[Modules::RequireEndWithOne]
+[Modules::RequireFilenameMatchesPackage]
+
+# Object Oriented Programming in Koha
+[ClassHierarchies::ProhibitExplicitISA]
+
+# Unit tests (PERL17)
+[TestingAndDebugging::RequireUseStrict]
+[TestingAndDebugging::RequireUseWarnings]
+
+# Misc
+[ControlStructures::ProhibitPostfixControls]
+[ControlStructures::ProhibitCascadingIfElse]
+[Subroutines::RequireArgUnpacking]
+[Subroutines::RequireBuiltinMatchingOverride]
+[Variables::ProhibitAugmentedAssignmentInDeclaration]
+[Variables::ProhibitConditionalDeclarations]

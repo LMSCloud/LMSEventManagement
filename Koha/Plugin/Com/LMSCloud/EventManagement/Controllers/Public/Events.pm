@@ -13,6 +13,8 @@ use Koha::Plugin::Com::LMSCloud::EventManagement;
 use Koha::LMSCloud::EventManagement::Events;
 use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees;
 
+use Data::Dumper;
+
 our $VERSION = '1.0.0';
 
 sub get {
@@ -39,25 +41,22 @@ sub get {
     }
 
     return try {
-        my $search_params = {};
-        $search_params->{name}              = { 'like' => $params->{name} }              if defined $params->{name} && $params->{name} ne q{};
-        $search_params->{event_type}        = $params->{event_type}                      if ( defined $params->{event_type} && @{ $params->{event_type} } );
-        $search_params->{min_age}           = { '>=' => $params->{min_age} }             if defined $params->{min_age};
-        $search_params->{max_age}           = { '<=' => $params->{max_age} }             if defined $params->{max_age};
-        $search_params->{open_registration} = $params->{open_registration}               if defined $params->{open_registration} && !$params->{open_registration};
-        $search_params->{location}          = $params->{location}                        if ( defined $params->{location} && @{ $params->{location} } );
-        $search_params->{start_time}        = { '>=' => $params->{start_time} }          if defined $params->{start_time};
-        $search_params->{end_time}          = { '<=' => "$params->{end_time} 23:59:59" } if defined $params->{end_time} && $params->{end_time} ne q{};
+        my $events_set   = Koha::LMSCloud::EventManagement::Events->new;
+        my $defined_keys = [ map { defined $params->{$_} ? $_ : () } keys %{$params} ];
+        if ( @{$defined_keys} ) {
+            $events_set = $events_set->filter($params);
+        }
+        for my $param ( @{$defined_keys} ) {
+            delete $c->validation->output->{$param};
+        }
 
-        my $events = Koha::LMSCloud::EventManagement::Events->search($search_params);
+        my $events = $c->objects->search($events_set);
 
         # Preload event_target_group_fees data for all events
-        my $tg_params = { event_id => { '-in' => [ map { $_->id } $events->as_list ] } };
-
+        my $tg_params = { event_id => { '-in' => [ map { $_->{id} } $events->@* ] } };
         if ( defined $params->{target_group} && @{ $params->{target_group} } ) {
             $tg_params->{target_group_id} = { '-in' => $params->{target_group} };
         }
-
         if ( defined $params->{fee} ) {
             $tg_params->{fee} = { '<=' => $params->{fee} };
         }
@@ -71,17 +70,16 @@ sub get {
         }
 
         my $response = [];
-        for my $event ( $events->as_list ) {
+        for my $event ( $events->@* ) {
 
             # Get the preloaded target group fees for the current event
-            my $target_groups = $fees_by_event_id{ $event->id } // [];
-
+            my $target_groups = $fees_by_event_id{ $event->{id} } // [];
             if ( @{$target_groups} ) {
-                push @{$response}, { %{ $event->unblessed }, target_groups => $target_groups };
+                push @{$response}, { %{$event}, target_groups => $target_groups };
             }
         }
 
-        if ( !$response ) {
+        if ( !$events ) {
             return $c->render(
                 status  => 404,
                 openapi => []

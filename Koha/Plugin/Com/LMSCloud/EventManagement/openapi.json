@@ -85,6 +85,14 @@
           "type": "string"
         },
         {
+          "name": "_match",
+          "description": "Matching criteria",
+          "enum": ["contains", "exact", "starts_with", "ends_with"],
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
           "name": "_order_by",
           "collectionFormat": "csv",
           "description": "Sorting criteria",
@@ -105,6 +113,17 @@
           "in": "query",
           "required": false,
           "type": "integer"
+        },
+        {
+          "name": "q",
+          "description": "Query filter sent as a request parameter",
+          "in": "query",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "collectionFormat": "multi"
         }
       ],
       "produces": ["application/json"],
