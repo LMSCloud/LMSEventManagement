@@ -8,7 +8,6 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Try::Tiny;
 use JSON;
-use List::Util qw(any);
 
 use Koha::Plugin::Com::LMSCloud::EventManagement;
 use Koha::LMSCloud::EventManagement::Events;
@@ -41,7 +40,6 @@ sub get {
 
     return try {
         my $search_params = {};
-
         $search_params->{name}              = { 'like' => $params->{name} }              if defined $params->{name} && $params->{name} ne q{};
         $search_params->{event_type}        = $params->{event_type}                      if ( defined $params->{event_type} && @{ $params->{event_type} } );
         $search_params->{min_age}           = { '>=' => $params->{min_age} }             if defined $params->{min_age};
@@ -51,36 +49,39 @@ sub get {
         $search_params->{start_time}        = { '>=' => $params->{start_time} }          if defined $params->{start_time};
         $search_params->{end_time}          = { '<=' => "$params->{end_time} 23:59:59" } if defined $params->{end_time} && $params->{end_time} ne q{};
 
-        my @events = Koha::LMSCloud::EventManagement::Events->search($search_params);
+        my $events = Koha::LMSCloud::EventManagement::Events->search($search_params);
 
-        my @filtered_events;
-        foreach my $event (@events) {
-            if ( defined $params->{target_group} && @{ $params->{target_group} } || defined $params->{fee} ) {
-                my $event_target_group_fees = Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $event->{id} } );
+        # Preload event_target_group_fees data for all events
+        my $tg_params = { event_id => { '-in' => [ map { $_->id } $events->as_list ] } };
 
-                if ( defined $params->{target_group} && @{ $params->{target_group} } ) {
-                    $event_target_group_fees = $event_target_group_fees->search( { target_group_id => $params->{target_group} } );
-                }
+        if ( defined $params->{target_group} && @{ $params->{target_group} } ) {
+            $tg_params->{target_group_id} = { '-in' => $params->{target_group} };
+        }
 
-                if ( defined $params->{fee} ) {
-                    $event_target_group_fees = $event_target_group_fees->search( { fee => { '<=' => $params->{fee} } } );
-                }
+        if ( defined $params->{fee} ) {
+            $tg_params->{fee} = { '<=' => $params->{fee} };
+        }
 
-                if ( $event_target_group_fees->count ) {
-                    $event->{target_groups} = $event_target_group_fees->unblessed;
-                    push @filtered_events, $event->unblessed;
-                }
-            }
-            else {
-                $event->{target_groups} = Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $event->{id}, selected => 1 } )->unblessed;
-                push @filtered_events, $event->unblessed;
+        my $event_target_group_fees =
+            Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( $tg_params, { columns => [ 'event_id', 'target_group_id', 'fee', 'selected' ] } );
+
+        my %fees_by_event_id = map { $_->event_id => [] } $event_target_group_fees->as_list;
+        for my $fee ( $event_target_group_fees->as_list ) {
+            push @{ $fees_by_event_id{ $fee->event_id } }, $fee->unblessed;
+        }
+
+        my $response = [];
+        for my $event ( $events->as_list ) {
+
+            # Get the preloaded target group fees for the current event
+            my $target_groups = $fees_by_event_id{ $event->id } // [];
+
+            if ( @{$target_groups} ) {
+                push @{$response}, { %{ $event->unblessed }, target_groups => $target_groups };
             }
         }
 
-        use Data::Dumper;
-        warn Dumper \@filtered_events;
-
-        if ( !scalar @filtered_events ) {
+        if ( !$response ) {
             return $c->render(
                 status  => 404,
                 openapi => []
@@ -89,7 +90,7 @@ sub get {
 
         return $c->render(
             status  => 200,
-            openapi => \@filtered_events,
+            openapi => $response,
         );
     }
     catch {

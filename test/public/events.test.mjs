@@ -264,7 +264,7 @@ describe("Public Events API", () => {
 
   it("returns events filtered by location, max_age, and start_time", async () => {
     const location = "1";
-    const maxAge = 18;
+    const maxAge = 100;
     const startTime = "2023-04-20T14:00:00Z";
 
     const response = await fetch(`${url}/public/events?location=${location}&max_age=${maxAge}&start_time=${startTime}`);
