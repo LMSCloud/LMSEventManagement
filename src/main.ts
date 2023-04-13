@@ -8,7 +8,6 @@ import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
 import LMSImageBrowser from "./components/LMSImageBrowser";
 import LMSModal from "./components/LMSModal";
-// import LMSPaginationNav from "./components/LMSPaginationNav";
 import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventCardForm";
@@ -48,7 +47,6 @@ export default {
   LMSFloatingMenu,
   LMSImageBrowser,
   LMSModal,
-  // LMSPaginationNav,
   LMSStaffEventCardAttendees,
   LMSStaffEventCardPreview,
   LMSStaffEventCardForm,
