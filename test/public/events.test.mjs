@@ -4,14 +4,19 @@ import { expect } from "chai";
 
 dotenv.config();
 
-const baseURL = process.env.BASE_URL;
-const namespace = process.env.NAMESPACE;
-const url = `${baseURL}/${namespace}`;
+const PROTOCOL = process.env.PROTOCOL;
+const HOST = process.env.HOST;
+const PATHNAME = process.env.PATHNAME;
+const NAMESPACE = process.env.NAMESPACE;
+
+const PORT = 8080;
+
+const url = `${PROTOCOL}://${HOST}:${PORT}${PATHNAME}/${NAMESPACE}`;
 
 /** These tests require a running koha-testing-docker instance at localhost:8080
  *  and the db to be populated with the db seed for front_end_testing. */
 
-describe("Public Events API", () => {
+describe("Public Events Endpoint", () => {
   it("returns 200 response", async () => {
     const response = await fetch(`${url}/public/events`, {
       method: "GET",
@@ -74,7 +79,7 @@ describe("Public Events API", () => {
   });
 
   it("returns 404 response for invalid namespace", async () => {
-    const response = await fetch(`${baseURL}/invalid_namespace/public/events`, {
+    const response = await fetch(`${url}/invalid_namespace/public/events`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -250,7 +255,9 @@ describe("Public Events API", () => {
   it("returns events filtered by start_time and end_time", async () => {
     const startTime = "2023-04-20T14:00:00Z";
     const endTime = "2023-07-20T18:00:00Z";
-    const response = await fetch(`${url}/public/events?start_time=${startTime}&end_time=${endTime}`);
+    const response = await fetch(
+      `${url}/public/events?start_time=${startTime}&end_time=${endTime}`
+    );
     const events = await response.json();
 
     expect(response.status).to.equal(200);
@@ -267,7 +274,9 @@ describe("Public Events API", () => {
     const maxAge = 100;
     const startTime = "2023-04-20T14:00:00Z";
 
-    const response = await fetch(`${url}/public/events?location=${location}&max_age=${maxAge}&start_time=${startTime}`);
+    const response = await fetch(
+      `${url}/public/events?location=${location}&max_age=${maxAge}&start_time=${startTime}`
+    );
     const events = await response.json();
 
     expect(response.status).to.equal(200);
@@ -277,6 +286,92 @@ describe("Public Events API", () => {
       expect(event.location).to.equal(location);
       expect(event.max_age).to.be.at.most(maxAge);
       expect(new Date(event.start_time)).to.be.at.least(new Date(startTime));
+    });
+  });
+
+  it("returns events for a specific page with a specific number of events per page", async () => {
+    const page = 2;
+    const perPage = 5;
+    const response = await fetch(
+      `${url}/public/events?_page=${page}&_per_page=${perPage}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    expect(response.status).to.equal(200);
+    const events = await response.json();
+    expect(events).to.be.an("array");
+    expect(events.length).to.be.at.most(perPage);
+  });
+
+  it("returns events with a name that starts with a specific string", async () => {
+    const match = "starts_with";
+    const name = "Movie";
+    const response = await fetch(
+      `${url}/public/events?_match=${match}&name=${encodeURIComponent(name)}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    expect(response.status).to.equal(200);
+    const events = await response.json();
+    expect(events).to.be.an("array");
+    events.forEach((event) => {
+      expect(event.name.startsWith(name)).to.be.true;
+    });
+  });
+
+  it("returns events filtered by a query with multiple fields", async () => {
+    const location = "1";
+    const maxAge = 100;
+    const query = encodeURIComponent(
+      JSON.stringify({ location: location, max_age: { "<=": maxAge } })
+    );
+    const response = await fetch(`${url}/public/events?q=${query}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    expect(response.status).to.equal(200);
+    const events = await response.json();
+    expect(events).to.be.an("array");
+    events.forEach((event) => {
+      expect(event.location).to.equal(location);
+      expect(event.max_age).to.be.at.most(maxAge);
+    });
+  });
+
+  it("returns events ordered by a specific field", async () => {
+    const orderBy = "start_time";
+    const response = await fetch(`${url}/public/events?_order_by=${orderBy}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    expect(response.status).to.equal(200);
+    const events = await response.json();
+    expect(events).to.be.an("array");
+
+    let previousEventStartTime = null;
+    events.forEach((event) => {
+      if (previousEventStartTime) {
+        expect(new Date(event.start_time)).to.be.at.least(
+          previousEventStartTime
+        );
+      }
+      previousEventStartTime = new Date(event.start_time);
     });
   });
 });
