@@ -6,7 +6,7 @@ use base qw(Koha::Object);
 
 =head1 NAME
 
-Koha::FancyWord - Koha Fancy Word Object class
+Koha::LMSCloud::EventManagement::EventType - Koha LMSCloud EventManagement EventType Object class
 
 =head1 API
 

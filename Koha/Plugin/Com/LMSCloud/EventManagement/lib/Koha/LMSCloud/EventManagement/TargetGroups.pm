@@ -8,7 +8,7 @@ use base qw(Koha::Objects);
 
 =head1 NAME
 
-Koha::FancyWord - Koha Fancy Word Object set class
+Koha::LMSCloud::EventManagement::TargetGroups - Koha LMSCloud EventManagement TargetGroups Object set class
 
 =head1 API
 
