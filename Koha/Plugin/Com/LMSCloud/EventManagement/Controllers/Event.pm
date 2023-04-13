@@ -10,41 +10,33 @@ use C4::Context;
 use Try::Tiny;
 use JSON;
 use SQL::Abstract;
-use Scalar::Util qw(looks_like_number reftype);
 
-use Koha::UploadedFiles;
+use Koha::Plugin::Com::LMSCloud::EventManagement;
+use Koha::LMSCloud::EventManagement::Events;
+use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fee;
+use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees;
 
 our $VERSION = '1.0.0';
 
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::EventManagement->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
-}
-
-my $EVENTS_TABLE                  = $self ? $self->get_qualified_table_name('events')    : undef;
-my $EVENT_TARGET_GROUP_FEES_TABLE = $self ? $self->get_qualified_table_name('e_tg_fees') : undef;
+my $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
 
 sub get {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $id  = $c->validation->param('id');
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
+        my $id    = $c->validation->param('id');
+        my $event = Koha::LMSCloud::EventManagement::Events->find($id);
 
-        my ( $stmt, @bind ) = $sql->select( $EVENTS_TABLE, q{*}, { id => $id } );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        if ( !$event ) {
+            return $c->render( status => 404, openapi => { error => 'Event not found' } );
+        }
 
-        my $event = $sth->fetchrow_hashref;
-
-        ( $stmt, @bind ) = $sql->select( $EVENT_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_id => $event->{id} } );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        my $target_groups = $sth->fetchall_arrayref( {} );
-
-        return $c->render( status => 200, openapi => { %{$event}, target_groups => $target_groups } || {} );
+        my $event_target_group_fees =
+            Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $id }, { columns => [ 'target_group_id', 'selected', 'fee' ] } );
+        return $c->render(
+            status  => 200,
+            openapi => { %{ $event->unblessed }, target_groups => $event_target_group_fees->as_list } || {}
+        );
     }
     catch {
         return $c->unhandled_exception($_);
@@ -55,48 +47,41 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $id  = $c->validation->param('id');
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
+        my $id    = $c->validation->param('id');
+        my $body  = $c->validation->param('body');
+        my $event = Koha::LMSCloud::EventManagement::Events->find($id);
 
-        my $json      = $c->req->body;
-        my $new_event = decode_json($json);
+        if ( !$event ) {
+            return $c->render( status => 404, openapi => { error => 'Event not found' } );
+        }
 
-        my $target_groups = delete $new_event->{'target_groups'};
+        my $target_groups = delete $body->{'target_groups'};
 
-        my ( $stmt, @bind ) = $sql->update( $EVENTS_TABLE, $new_event, { id => $id } );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        $event->set_from_api($body);
+        $event->store;
 
         if ($target_groups) {
+            Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $id } )->delete;
 
-            # Delete existing target group fees records
-            ( $stmt, @bind ) = $sql->delete( $EVENT_TARGET_GROUP_FEES_TABLE, { event_id => $id } );
-            $sth = $dbh->prepare($stmt);
-            $sth->execute(@bind);
-
-            # Insert new target group fees records
-            for my $target_group ( $target_groups->@* ) {
-                my $record = { event_id => $id, target_group_id => $target_group->{'id'}, selected => $target_group->{'selected'}, fee => $target_group->{'fee'} };
-                ( $stmt, @bind ) = $sql->insert( $EVENT_TARGET_GROUP_FEES_TABLE, $record );
-                $sth = $dbh->prepare($stmt);
-                $sth->execute(@bind);
+            for my $target_group ( @{$target_groups} ) {
+                Koha::LMSCloud::EventManagement::Event::TargetGroup::Fee->new(
+                    {   event_id        => $id,
+                        target_group_id => $target_group->{'id'},
+                        selected        => $target_group->{'selected'},
+                        fee             => $target_group->{'fee'}
+                    }
+                )->store;
             }
         }
 
-        ( $stmt, @bind ) = $sql->select( $EVENTS_TABLE, q{*}, { id => $id } );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        $event->discard_changes;
+        my $event_target_group_fees =
+            Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $id }, { columns => [ 'target_group_id', 'selected', 'fee' ] } );
 
-        my $event = $sth->fetchrow_hashref;
-
-        ( $stmt, @bind ) = $sql->select( $EVENT_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_id => $event->{id} } );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        $target_groups = $sth->fetchall_arrayref( {} );
-
-        return $c->render( status => 200, openapi => { %{$event}, target_groups => $target_groups } || {} );
+        return $c->render(
+            status  => 200,
+            openapi => { %{ $event->unblessed }, target_groups => $event_target_group_fees->as_list } || {}
+        );
     }
     catch {
         return $c->unhandled_exception($_);
@@ -107,20 +92,20 @@ sub delete {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $id  = $c->validation->param('id');
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
+        my $id    = $c->validation->param('id');
+        my $event = Koha::LMSCloud::EventManagement::Events->find($id);
+
+        if ( !$event ) {
+            return $c->render( status => 404, openapi => { error => 'Event not found' } );
+        }
 
         # delete the entries from the junction table first
-        my ( $junction_stmt, @junction_bind ) = $sql->delete( $EVENT_TARGET_GROUP_FEES_TABLE, { event_id => $id } );
-        my $junction_sth = $dbh->prepare($junction_stmt);
-        $junction_sth->execute(@junction_bind);
+        Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $id } )->delete;
 
-        my ( $stmt, @bind ) = $sql->delete( $EVENTS_TABLE, { id => $id } );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        # delete the event
+        $event->delete;
 
-        return $c->render( status => 200, openapi => {} );
+        return $c->render( status => 204, openapi => q{} );
     }
     catch {
         return $c->unhandled_exception($_);

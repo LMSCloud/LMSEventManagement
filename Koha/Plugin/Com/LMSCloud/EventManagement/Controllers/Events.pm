@@ -6,44 +6,31 @@ use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
 
-use C4::Context;
 use Try::Tiny;
 use JSON;
-use SQL::Abstract;
-use Scalar::Util qw(looks_like_number reftype);
 
-use Koha::UploadedFiles;
+use Koha::Database;
+use Koha::Plugin::Com::LMSCloud::EventManagement;
+use Koha::LMSCloud::EventManagement::Event;
+use Koha::LMSCloud::EventManagement::Events;
+use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fee;
+use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees;
 
 our $VERSION = '1.0.0';
 
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::EventManagement->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
-}
-
-my $EVENTS_TABLE                  = $self ? $self->get_qualified_table_name('events')    : undef;
-my $EVENT_TARGET_GROUP_FEES_TABLE = $self ? $self->get_qualified_table_name('e_tg_fees') : undef;
+my $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
-
-        my ( $stmt, @bind ) = $sql->select( $EVENTS_TABLE, q{*} );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        my $events = $sth->fetchall_arrayref( {} );
+        my $events_set = Koha::LMSCloud::EventManagement::Events->new;
+        my $events     = $c->objects->search($events_set);
 
         foreach my $event ( @{$events} ) {
-            ( $stmt, @bind ) = $sql->select( $EVENT_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_id => $event->{id} } );
-            $sth = $dbh->prepare($stmt);
-            $sth->execute(@bind);
-
-            my $target_groups = $sth->fetchall_arrayref( {} );
-            $event->{'target_groups'} = $target_groups;
+            my $event_target_group_fees =
+                Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $event->{id} }, { columns => [ 'target_group_id', 'selected', 'fee' ] } );
+            $event->{'target_groups'} = $event_target_group_fees->as_list;
         }
 
         return $c->render( status => 200, openapi => $events || [] );
@@ -57,49 +44,28 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
+        my $body = $c->validation->param('body');
 
-        # We get our data for the new event type from the request body
-        my $json      = $c->req->body;
-        my $new_event = decode_json($json);
-
-        my $target_groups = delete $new_event->{'target_groups'};
-
-        my ( $stmt, @bind ) = $sql->insert( $EVENTS_TABLE, $new_event );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        my $id = $dbh->last_insert_id( undef, undef, $EVENTS_TABLE, undef );
+        my $target_groups = delete $body->{'target_groups'};
+        my $event         = Koha::LMSCloud::EventManagement::Event->new_from_api($body)->store;
 
         if ($target_groups) {
-            for my $target_group ( $target_groups->@* ) {
-                ( $stmt, @bind ) = $sql->insert(
-                    $EVENT_TARGET_GROUP_FEES_TABLE,
-                    {   event_id        => $id,
+            for my $target_group ( @{$target_groups} ) {
+                Koha::LMSCloud::EventManagement::Event::TargetGroup::Fee->new(
+                    {   event_id        => $event->id,
                         target_group_id => $target_group->{'id'},
                         selected        => $target_group->{'selected'},
-                        fee             => $target_group->{'fee'},
+                        fee             => $target_group->{'fee'}
                     }
-                );
-                $sth = $dbh->prepare($stmt);
-                $sth->execute(@bind);
+                )->store;
             }
         }
 
-        ( $stmt, @bind ) = $sql->select( $EVENTS_TABLE, q{*}, { id => $id } );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        $event->discard_changes;
+        my $event_target_group_fees =
+            Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $event->id }, { columns => [ 'target_group_id', 'selected', 'fee' ] } );
 
-        my $event = $sth->fetchrow_hashref;
-
-        ( $stmt, @bind ) = $sql->select( $EVENT_TARGET_GROUP_FEES_TABLE, [ 'target_group_id', 'selected', 'fee' ], { event_id => $event->{id} } );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        $target_groups = $sth->fetchall_arrayref( {} );
-
-        return $c->render( status => 200, openapi => { %{$event}, target_groups => $target_groups } || {} );
+        return $c->render( status => 200, openapi => { %{ $event->unblessed }, target_groups => $event_target_group_fees->as_list } || {} );
     }
     catch {
         return $c->unhandled_exception($_);

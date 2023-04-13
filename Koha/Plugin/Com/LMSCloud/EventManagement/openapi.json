@@ -626,6 +626,49 @@
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Events#list",
       "operationId": "getEvents",
       "tags": ["events"],
+      "parameters": [
+        {
+          "name": "_match",
+          "description": "Matching criteria",
+          "enum": ["contains", "exact", "starts_with", "ends_with"],
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "_order_by",
+          "collectionFormat": "csv",
+          "description": "Sorting criteria",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "_page",
+          "description": "Page number, for paginated object listing",
+          "in": "query",
+          "required": false,
+          "type": "integer"
+        },
+        {
+          "name": "_per_page",
+          "description": "Page size, for paginated object listing",
+          "in": "query",
+          "required": false,
+          "type": "integer"
+        },
+        {
+          "name": "q",
+          "description": "Query filter sent as a request parameter",
+          "in": "query",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "collectionFormat": "multi"
+        }
+      ],
       "description": "Get all events",
       "produces": ["application/json"],
       "responses": {
@@ -1338,63 +1381,10 @@
       ],
       "produces": ["application/json"],
       "responses": {
-        "200": {
+        "204": {
           "description": "Event",
           "schema": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "integer"
-              },
-              "name": {
-                "type": ["string", "null"]
-              },
-              "event_type": {
-                "type": ["string", "null"]
-              },
-              "target_group": {
-                "type": ["string", "null"]
-              },
-              "min_age": {
-                "type": ["integer", "null"]
-              },
-              "max_age": {
-                "type": ["integer", "null"]
-              },
-              "max_participants": {
-                "type": ["integer", "null"]
-              },
-              "start_time": {
-                "type": ["string", "null"]
-              },
-              "end_time": {
-                "type": ["string", "null"]
-              },
-              "registration_start": {
-                "type": ["string", "null"]
-              },
-              "registration_end": {
-                "type": ["string", "null"]
-              },
-              "fee": {
-                "type": ["number", "null"]
-              },
-              "location": {
-                "type": ["string", "null"]
-              },
-              "image": {
-                "type": ["string", "null"]
-              },
-              "description": {
-                "type": ["string", "null"]
-              },
-              "registration_link": {
-                "type": ["string", "null"]
-              },
-              "open_registration": {
-                "type": ["boolean", "null"]
-              }
-            }
+            "type": "string"
           }
         },
         "400": {
