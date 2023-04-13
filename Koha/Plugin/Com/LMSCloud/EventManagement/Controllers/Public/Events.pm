@@ -13,8 +13,6 @@ use Koha::Plugin::Com::LMSCloud::EventManagement;
 use Koha::LMSCloud::EventManagement::Events;
 use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees;
 
-use Data::Dumper;
-
 our $VERSION = '1.0.0';
 
 sub get {

@@ -33,9 +33,6 @@ sub filter {
     $search_params->{start_time}        = { '>=' => $params->{start_time} }          if defined $params->{start_time};
     $search_params->{end_time}          = { '<=' => "$params->{end_time} 23:59:59" } if defined $params->{end_time} && $params->{end_time} ne q{};
 
-    use Data::Dumper;
-    warn Dumper $search_params;
-
     return $self->search($search_params);
 }
 
