@@ -4649,14 +4649,60 @@ ${value}</textarea
             this.events = [];
             this.modalData = {};
             this.hasOpenModal = false;
+            this._order_by = "start_time";
+            this._page = 1;
+            this._per_page = 20;
+        }
+        getReservedQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            const reservedParams = [
+                "_match",
+                "_order_by",
+                "_page",
+                "_per_page",
+                "q",
+            ];
+            reservedParams.forEach((reservedParam) => {
+                const value = params.get(reservedParam);
+                if (value) {
+                    this[reservedParam] = parseInt(value) || value;
+                }
+            });
+        }
+        getReservedQueryString(useParams = [
+            "_match",
+            "_order_by",
+            "_page",
+            "_per_page",
+            "q",
+        ]) {
+            const params = new URLSearchParams();
+            useParams.forEach((usedParam) => {
+                const value = this[usedParam];
+                if (value) {
+                    params.set(usedParam, value.toString());
+                }
+            });
+            return params.toString();
+        }
+        updateUrlWithReservedParams(reservedParams) {
+            const url = new URL(window.location.href);
+            Object.entries(reservedParams).forEach(([key, value]) => {
+                if (value) {
+                    url.searchParams.set(key, value.toString());
+                }
+            });
+            history.pushState(null, "", url.toString());
         }
         connectedCallback() {
             super.connectedCallback();
+            this.getReservedQueryParams();
             if (window.innerWidth < 768) {
                 console.log("window.innerWidth < 768");
                 this.handleHide({ detail: true });
             }
-            const response = async () => await fetch("/api/v1/contrib/eventmanagement/public/events");
+            const reservedQueryString = this.getReservedQueryString();
+            const response = async () => await fetch(`/api/v1/contrib/eventmanagement/public/events${reservedQueryString ? `?${reservedQueryString}` : ""}`);
             response()
                 .then((response) => {
                 if (response.ok) {
@@ -4666,6 +4712,13 @@ ${value}</textarea
             })
                 .then((events) => {
                 this.events = events;
+                this.updateUrlWithReservedParams({
+                    _match: this._match,
+                    _order_by: this._order_by,
+                    _page: this._page,
+                    _per_page: this._per_page,
+                    q: this.q,
+                });
             })
                 .catch((error) => {
                 console.error(error);
@@ -4836,6 +4889,21 @@ ${value}</textarea
     __decorate([
         t$1()
     ], LMSEventsView.prototype, "hasOpenModal", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsView.prototype, "_match", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsView.prototype, "_order_by", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsView.prototype, "_page", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsView.prototype, "_per_page", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsView.prototype, "q", void 0);
     LMSEventsView = __decorate([
         e$3("lms-events-view")
     ], LMSEventsView);
@@ -4927,6 +4995,7 @@ ${value}</textarea
         LMSFloatingMenu: LMSFloatingMenu$1,
         LMSImageBrowser: LMSImageBrowser$1,
         LMSModal: LMSModal$1,
+        // LMSPaginationNav,
         LMSStaffEventCardAttendees: LMSStaffEventCardAttendees$1,
         LMSStaffEventCardPreview: LMSStaffEventCardPreview$1,
         LMSStaffEventCardForm: LMSStaffEventCardForm$1,
