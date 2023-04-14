@@ -1,7 +1,7 @@
 import { LitElement } from "lit";
 import LMSCard from "../LMSCard";
 import { Column } from "../../sharedDeclarations";
-import TemplateResultConverter from "../../lib/TemplateResultConverter";
+import { TemplateResultConverter } from "../../lib/converters";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-card": LMSCard;
