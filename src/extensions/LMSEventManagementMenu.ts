@@ -8,64 +8,61 @@ import {
   faImage,
 } from "@fortawesome/free-solid-svg-icons";
 import { customElement, property } from "lit/decorators.js";
-import { Gettext } from "gettext.js";
+import { TranslationHandler, __ } from "../lib/TranslationHandler";
 
 @customElement("lms-event-management-menu")
 export default class LMSEventMangementMenu extends LMSFloatingMenu {
   @property({ type: String }) baseurl = "";
   @property({ type: String }) pluginclass = "";
-  @property({ type: Function, attribute: false }) menuEntries = (
-    i18n: Gettext
-  ) => [
-    {
-      name: i18n.gettext("Settings") ?? "Settings",
-      icon: faCog,
-      url: `${this.baseurl}?class=${this.pluginclass}&method=configure`,
-      method: "configure",
-    },
-    {
-      name: i18n.gettext("Target Groups") ?? "Target Groups",
-      icon: faBullseye,
-      url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=target-groups`,
-      method: "configure",
-    },
-    {
-      name: i18n.gettext("Locations") ?? "Locations",
-      icon: faLocationDot,
-      url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=locations`,
-      method: "configure",
-    },
-    {
-      name: i18n.gettext("Event Types") ?? "Event Types",
-      icon: faTag,
-      url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=event-types`,
-      method: "configure",
-    },
-    {
-      name: i18n.gettext("Events") ?? "Events",
-      icon: faList,
-      url: `${this.baseurl}?class=${this.pluginclass}&method=tool`,
-      method: "tool",
-    },
-    {
-      name: i18n.gettext("Images") ?? "Images",
-      icon: faImage,
-      url: `${this.baseurl}?class=${this.pluginclass}&method=tool&op=images`,
-      method: "tool",
-    },
-  ];
 
-  override connectedCallback() {
+  constructor() {
+    super();
+    this.translationHandler = new TranslationHandler(() =>
+      this.requestUpdate()
+    );
+  }
+
+  override async connectedCallback() {
     super.connectedCallback();
+    await this.translationHandler.loadTranslations();
 
-    if (this._i18n instanceof Promise) {
-      this.items = [];
-      this._i18n.then((i18n) => {
-        this.items = this.menuEntries(i18n);
-      });
-      return;
-    }
-
-    this.items = this.menuEntries(this._i18n);
+    this.items = [
+      {
+        name: __("Settings"),
+        icon: faCog,
+        url: `${this.baseurl}?class=${this.pluginclass}&method=configure`,
+        method: "configure",
+      },
+      {
+        name: __("Target Groups"),
+        icon: faBullseye,
+        url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=target-groups`,
+        method: "configure",
+      },
+      {
+        name: __("Locations"),
+        icon: faLocationDot,
+        url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=locations`,
+        method: "configure",
+      },
+      {
+        name: __("Event Types"),
+        icon: faTag,
+        url: `${this.baseurl}?class=${this.pluginclass}&method=configure&op=event-types`,
+        method: "configure",
+      },
+      {
+        name: __("Events"),
+        icon: faList,
+        url: `${this.baseurl}?class=${this.pluginclass}&method=tool`,
+        method: "tool",
+      },
+      {
+        name: __("Images"),
+        icon: faImage,
+        url: `${this.baseurl}?class=${this.pluginclass}&method=tool&op=images`,
+        method: "tool",
+      },
+    ];
   }
 }

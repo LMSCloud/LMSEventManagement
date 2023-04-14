@@ -1,80 +1,75 @@
 import Gettext from "gettext.js";
 
-export default class TranslationHandler {
-  _i18n;
-  _locale;
+let i18nInstance: Gettext.Gettext;
 
-  constructor() {
-    this._i18n = Gettext();
-    /** As this has to be in sync with the locale
-     *  set in the backend we use the lang attribute
-     *  of the documentElement instead of the locale
-     *  set in the browser (window.navigator.language).
-     */
-    this._locale = document.documentElement.lang.slice(0, 2);
+export class TranslationHandler {
+  private i18n;
+  private locale: string;
+  private callback: Function;
+  private localeUrl: string;
+
+  constructor(
+    callback: Function,
+    localeUrl = "/api/v1/contrib/eventmanagement/static/locales/"
+  ) {
+    this.i18n = Gettext();
+    this.locale = document.documentElement.lang.slice(0, 2);
+    this.callback = callback;
+    this.localeUrl = localeUrl;
   }
 
   async loadTranslations() {
-    if (this._locale.startsWith("en")) {
-      this._i18n.setLocale("en");
-      return this._i18n;
+    if (this.locale.startsWith("en")) {
+      this.i18n.setLocale("en");
+      return this.i18n;
     }
 
-    /** Loading translations via API */
-    const response = await fetch(
-      `/api/v1/contrib/eventmanagement/static/locales/${this._locale}.json`
-    );
+    try {
+      const response = await fetch(`${this.localeUrl}${this.locale}.json`);
 
-    if (response.status >= 200 && response.status <= 299) {
-      const translations = await response.json();
-      this._i18n.loadJSON(translations, "messages");
-      this._i18n.setLocale(this._locale);
-      return this._i18n;
-    }
+      if (response.status >= 200 && response.status <= 299) {
+        const translations = await response.json();
+        this.i18n.loadJSON(translations, "messages");
+        this.i18n.setLocale(this.locale);
 
-    /** If there is no json for the locale we don't interpolate
-     *  and output that the translation is missing. */
-    if (response.status >= 400) {
+        if (this.callback) {
+          this.callback();
+        }
+
+        i18nInstance = this.i18n;
+        return this.i18n;
+      }
+
       console.info(
-        `No translations found for locale ${this._locale}. Using default locale.`
+        `No translations found for locale ${this.locale}. Using default locale.`
       );
-      this._i18n.setLocale("en");
+      this.i18n.setLocale("en");
+    } catch (error) {
+      console.error(
+        `Error loading translations for locale ${this.locale}:`,
+        error
+      );
+      this.i18n.setLocale("en");
     }
 
-    return this._i18n;
+    return this.i18n;
   }
 
-  set locale(locale) {
-    this._locale = locale;
+  set setLocale(locale: string) {
+    this.locale = locale;
   }
 
-  get locale() {
-    return this._locale;
+  get getLocale() {
+    return this.locale;
   }
 
-  get i18n() {
-    return this._i18n;
+  get getI18n() {
+    return this.i18n;
   }
+}
 
-  convertToFormat(string: string, format: string) {
-    /** This should be a polymorphic function that takes in a string
-     *  and depending on the specified format it tries to convert it
-     *  as best it can to the locale set in the TranslationHandler.'
-     *  To do that it makes use of the public templateTranslations
-     *  of this class. */
-
-    if (format === "datetime") {
-      const date = new Date(string);
-      return date.toLocaleString(this._locale, {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    }
-
-    // add a default return statement to handle cases when the if condition is not met
-    return string;
-  }
+export function __(text: string): string {
+  return typeof i18nInstance?.gettext === "function"
+    ? i18nInstance.gettext(text)
+    : text;
 }
