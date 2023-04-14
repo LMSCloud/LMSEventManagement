@@ -5,7 +5,7 @@ import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Column /* Input */ } from "../../sharedDeclarations";
 import { Gettext } from "gettext.js";
-import TemplateResultConverter from "../../lib/TemplateResultConverter";
+import { TemplateResultConverter } from "../../lib/converters";
 
 @customElement("lms-staff-event-card-form")
 export default class LMSStaffEventCardForm extends LitElement {

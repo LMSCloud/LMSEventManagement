@@ -1,6 +1,6 @@
 import { TemplateResult } from "lit";
 
-export default class TemplateResultConverter {
+export class TemplateResultConverter {
   private _templateResult: unknown;
 
   constructor(templateResult: unknown) {
@@ -25,4 +25,23 @@ export default class TemplateResultConverter {
       typeof e === "object" ? this.getRenderValues(e) : e
     );
   }
+}
+
+export function convertToFormat(
+  string: string,
+  format: string,
+  locale: string
+): string {
+  if (format === "datetime") {
+    const date = new Date(string);
+    return date.toLocaleString(locale, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  return string;
 }

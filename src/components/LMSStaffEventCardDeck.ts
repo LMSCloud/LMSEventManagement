@@ -12,7 +12,7 @@ import {
 import LMSStaffEventCardAttendees from "./LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSAnchor from "./LMSAnchor";
-import TemplateResultConverter from "../lib/TemplateResultConverter";
+import { TemplateResultConverter } from "../lib/converters";
 import { map } from "lit/directives/map.js";
 import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
 

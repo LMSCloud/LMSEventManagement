@@ -3,7 +3,7 @@ import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import LMSCard from "../LMSCard";
 import { Column } from "../../sharedDeclarations";
-import TemplateResultConverter from "../../lib/TemplateResultConverter";
+import { TemplateResultConverter } from "../../lib/converters";
 
 declare global {
   interface HTMLElementTagNameMap {
