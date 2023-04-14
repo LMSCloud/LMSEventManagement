@@ -93,7 +93,8 @@ sub delete {
 
     return try {
         my $id    = $c->validation->param('id');
-        my $event = Koha::LMSCloud::EventManagement::Events->find($id);
+        # This is a temporary fix for the issue with the delete method on rvs of find calls
+        my $event = Koha::LMSCloud::EventManagement::Events->search( { id => $id } );
 
         if ( !$event ) {
             return $c->render( status => 404, openapi => { error => 'Event not found' } );
