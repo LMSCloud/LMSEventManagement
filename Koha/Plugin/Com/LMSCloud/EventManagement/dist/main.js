@@ -2807,13 +2807,13 @@ ${value}</textarea
                       </ul>
                     </div>
                     <div class="card-body">
-                      <h5 class="card-title">
+                      <h3 class="card-title">
                         ${x `<span class="badge badge-primary"
                           >${[
                     new TemplateResultConverter(datum.name).getRenderValues(),
                 ]}</span
                         >`}
-                      </h5>
+                      </h3>
                       <lms-staff-event-card-form
                         .datum=${datum}
                         ?hidden=${!(((_b = (_a = this.cardStates) === null || _a === void 0 ? void 0 : _a.get(datum.uuid)) === null || _b === void 0 ? void 0 : _b[0]) ===

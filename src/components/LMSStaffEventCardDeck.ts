@@ -493,7 +493,7 @@ ${value}</textarea
                       </ul>
                     </div>
                     <div class="card-body">
-                      <h5 class="card-title">
+                      <h3 class="card-title">
                         ${html`<span class="badge badge-primary"
                           >${[
                             new TemplateResultConverter(
@@ -501,7 +501,7 @@ ${value}</textarea
                             ).getRenderValues(),
                           ]}</span
                         >`}
-                      </h5>
+                      </h3>
                       <lms-staff-event-card-form
                         .datum=${datum}
                         ?hidden=${!(
