@@ -1,4 +1,5 @@
 import { LitElement } from "lit";
+import { Gettext } from "gettext.js";
 export default class LMSPaginationNav extends LitElement {
     pageSizes: number[];
     hasPages: boolean;
@@ -6,6 +7,8 @@ export default class LMSPaginationNav extends LitElement {
     hasNext: boolean;
     _page: number;
     _per_page: number;
+    protected i18n: Gettext;
+    private translationHandler;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     getPaginatedHref(pageSize: number): string;

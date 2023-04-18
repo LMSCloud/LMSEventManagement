@@ -4,6 +4,7 @@ import { Column, URIComponents } from "../sharedDeclarations";
 import LMSStaffEventCardAttendees from "./LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSAnchor from "./LMSAnchor";
+import { Gettext } from "gettext.js";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-staff-event-card-form": LMSStaffEventCardForm;
@@ -16,6 +17,8 @@ export default class LMSStaffEventCardDeck extends LitElement {
     data: Column[];
     cardStates: Map<string, string[]>;
     href: URIComponents;
+    protected i18n: Gettext;
+    private translationHandler;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     private getInputFromColumn;

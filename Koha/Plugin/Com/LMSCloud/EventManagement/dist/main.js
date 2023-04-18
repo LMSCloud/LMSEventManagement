@@ -482,660 +482,6 @@
      */
     function*o(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
 
-    let LMSCardDetailsModal = class LMSCardDetailsModal extends s {
-        constructor() {
-            super(...arguments);
-            this.event = {};
-            this.isOpen = false;
-            this.event_types = [];
-            this.locations = [];
-            this.target_groups = [];
-            this.locale = "en";
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            const event_types = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
-                return response.json();
-            };
-            event_types().then((event_types) => (this.event_types = event_types));
-            const locations = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/public/locations");
-                return response.json();
-            };
-            locations().then((locations) => (this.locations = locations));
-            const target_groups = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/public/target_groups");
-                return response.json();
-            };
-            target_groups().then((target_groups) => (this.target_groups = target_groups));
-            this.locale = document.documentElement.lang;
-        }
-        handleSimulatedBackdropClick(event) {
-            if (event.target === event.currentTarget) {
-                this.toggleModal();
-            }
-        }
-        toggleModal() {
-            const { renderRoot } = this;
-            this.isOpen = !this.isOpen;
-            document.body.style.overflow = this.isOpen ? "hidden" : "auto";
-            const lmsModal = renderRoot.getElementById("lms-modal");
-            if (lmsModal) {
-                lmsModal.style.overflowY = this.isOpen ? "scroll" : "auto";
-            }
-            if (!this.isOpen) {
-                this.dispatchEvent(new CustomEvent("close", {
-                    bubbles: true,
-                    composed: true,
-                }));
-            }
-        }
-        willUpdate() {
-            const { event } = this;
-            const { event_type, location, target_groups } = event;
-            // Resolve event_type and location ids to their state representations
-            if (event_type && typeof event_type === "string") {
-                const et = this.event_types.find((type) => type.id === parseInt(event_type, 10));
-                this.event.event_type = et !== null && et !== void 0 ? et : {};
-            }
-            if (location && typeof location === "string") {
-                const loc = this.locations.find((loc) => loc.id === parseInt(location, 10));
-                this.event.location = loc !== null && loc !== void 0 ? loc : {};
-            }
-            if (target_groups &&
-                target_groups.every((tg) => tg.hasOwnProperty("target_group_id"))) {
-                const selectedTargetGroups = this.target_groups.filter((target_group) => target_groups.some((tg) => tg.target_group_id === target_group.id));
-                this.event.target_groups = selectedTargetGroups.map((tg) => {
-                    var _a, _b;
-                    return ({
-                        ...tg,
-                        fee: (_b = (_a = target_groups.find((etg) => etg.target_group_id === tg.id)) === null || _a === void 0 ? void 0 : _a.fee) !== null && _b !== void 0 ? _b : 0,
-                    });
-                });
-            }
-        }
-        updated() {
-            if (this.isOpen && this.closeButton) {
-                this.closeButton.focus();
-            }
-        }
-        render() {
-            const { name, description, location, image, registration_link, start_time, end_time, target_groups, } = this.event;
-            return x `
-      <div class="backdrop" ?hidden=${!this.isOpen}></div>
-      <div
-        class="modal fade ${o$1({
-            "d-block": this.isOpen,
-            show: this.isOpen,
-        })}"
-        id="lms-modal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="lms-modal-title"
-        aria-hidden="true"
-        @click=${this.handleSimulatedBackdropClick}
-      >
-        <div
-          class="modal-dialog modal-xl modal-dialog-centered"
-          role="document"
-        >
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="lms-modal-title">
-                ${name !== null && name !== void 0 ? name : "Event"}
-              </h5>
-              <button
-                @click=${this.toggleModal}
-                type="button"
-                class="close"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="col">
-                  <div>
-                    <p class="wrapper">
-                      <span>${litFontawesome_2(faCalendar)}</span>
-                      <strong>Date and Time</strong>
-                    </p>
-                    <p class="wrapper">
-                      ${this.formatDatetimeByLocale(start_time)}
-                      <span>${litFontawesome_2(faArrowRight)}</span>
-                      ${this.formatDatetimeByLocale(end_time)}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p class="wrapper">
-                      <span>${litFontawesome_2(faInfoCircle)}</span>
-                      <strong>Description</strong>
-                    </p>
-                    <p>${description}</p>
-                  </div>
-                </div>
-                <div class="col">
-                  <img
-                    src=${image}
-                    ?hidden=${!image}
-                    class="w-100 mb-4 rounded"
-                  />
-
-                  <div>
-                    <p class="wrapper">
-                      <span>${litFontawesome_2(faCreditCard)}</span>
-                      <strong>Fees</strong>
-                    </p>
-                    <table class="table table-sm table-borderless">
-                      <thead>
-                        <tr>
-                          <th scope="col">Target Group</th>
-                          <th scope="col">Age Range</th>
-                          <th scope="col">Fee</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        ${o(target_groups, (target_group) => {
-            if (target_group.hasOwnProperty("target_group_id")) {
-                return A;
-            }
-            const { name, fee, min_age, max_age } = target_group;
-            return x `
-                            <tr>
-                              <td>${name}</td>
-                              <td>${min_age} - ${max_age}</td>
-                              <td>${fee}</td>
-                            </tr>
-                          `;
-        })}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div>
-                    <p class="wrapper">
-                      <span>${litFontawesome_2(faMapMarker)}</span>
-                      <strong>Location</strong>
-                    </p>
-                    <p>
-                      ${typeof location === "string"
-            ? A
-            : this.formatAddressByLocale(location)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-                @click=${this.toggleModal}
-              >
-                Close
-              </button>
-              <a
-                role="button"
-                class="btn btn-primary"
-                ?hidden=${!registration_link}
-                href=${registration_link}
-              >
-                Register
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-        }
-        formatDatetimeByLocale(datetime) {
-            if (datetime) {
-                return new Intl.DateTimeFormat(this.locale, {
-                    dateStyle: "full",
-                    timeStyle: "short",
-                }).format(new Date(datetime));
-            }
-            return A;
-        }
-        formatAddressByLocale(address) {
-            if (address) {
-                const { name, street, number, city, zip, country } = address;
-                return x ` <strong>${name}</strong><br />
-        ${street} ${number}<br />
-        ${zip} ${city}<br />
-        ${country}`;
-            }
-            return A;
-        }
-    };
-    LMSCardDetailsModal.styles = [
-        bootstrapStyles,
-        i$4 `
-      .backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgb(0 0 0 / 50%);
-        z-index: 1048;
-      }
-
-      svg {
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        color: #6c757d;
-      }
-
-      .wrapper {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25em;
-      }
-    `,
-    ];
-    __decorate([
-        e$2({ type: Object })
-    ], LMSCardDetailsModal.prototype, "event", void 0);
-    __decorate([
-        e$2({ type: Boolean })
-    ], LMSCardDetailsModal.prototype, "isOpen", void 0);
-    __decorate([
-        t$1()
-    ], LMSCardDetailsModal.prototype, "event_types", void 0);
-    __decorate([
-        t$1()
-    ], LMSCardDetailsModal.prototype, "locations", void 0);
-    __decorate([
-        t$1()
-    ], LMSCardDetailsModal.prototype, "target_groups", void 0);
-    __decorate([
-        t$1()
-    ], LMSCardDetailsModal.prototype, "locale", void 0);
-    __decorate([
-        i$1(".close")
-    ], LMSCardDetailsModal.prototype, "closeButton", void 0);
-    LMSCardDetailsModal = __decorate([
-        e$3("lms-card-details-modal")
-    ], LMSCardDetailsModal);
-    var LMSCardDetailsModal$1 = LMSCardDetailsModal;
-
-    let LMSEventsFilter = class LMSEventsFilter extends s {
-        constructor() {
-            super(...arguments);
-            this.events = [];
-            this.facetsStrategy = "preserve";
-            this.isHidden = false;
-            this.facets = {};
-            this.event_types = [];
-            this.target_groups = [];
-            this.locations = [];
-            this._eventsDeepCopy = [];
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            const event_types = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
-                return response.json();
-            };
-            event_types().then((event_types) => (this.event_types = event_types));
-            const target_groups = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/public/target_groups");
-                return response.json();
-            };
-            target_groups().then((target_groups) => (this.target_groups = target_groups));
-            const locations = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/public/locations");
-                return response.json();
-            };
-            locations().then((locations) => (this.locations = locations));
-        }
-        facetsStrategyManager() {
-            switch (this.facetsStrategy) {
-                case "preserve":
-                    return this.eventsDeepCopy;
-                case "update":
-                    return this.events;
-                default:
-                    throw new Error("Invalid facetsStrategy");
-            }
-        }
-        deepCopy(obj) {
-            if (obj === null || typeof obj !== "object")
-                return obj;
-            if (obj instanceof Date)
-                return new Date(obj.getTime());
-            if (Array.isArray(obj))
-                return obj.map((item) => this.deepCopy(item));
-            const newObj = Object.create(Object.getPrototypeOf(obj));
-            for (const key in obj) {
-                if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                    newObj[key] = this.deepCopy(obj[key]);
-                }
-            }
-            return newObj;
-        }
-        get eventsDeepCopy() {
-            return this._eventsDeepCopy;
-        }
-        set eventsDeepCopy(value) {
-            if (this._eventsDeepCopy.length === 0) {
-                this._eventsDeepCopy = value;
-            }
-        }
-        willUpdate() {
-            this.eventsDeepCopy = this.deepCopy(this.events);
-            const events = this.facetsStrategyManager();
-            if (!events.length)
-                return;
-            this.facets = {
-                eventTypeIds: [...new Set(events.map((event) => event.event_type))],
-                targetGroupIds: [
-                    ...new Set(events.flatMap((event) => event.target_groups.map((target_group) => target_group.selected ? target_group.target_group_id : NaN))),
-                ].filter(Number.isInteger),
-                locationIds: [...new Set(events.map((event) => event.location))],
-                ...events
-                    .map((event) => {
-                    const { event_type, location, target_groups, ...rest } = event;
-                    return rest;
-                })
-                    .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
-            };
-        }
-        handleReset() {
-            var _a;
-            const inputs = (_a = this.shadowRoot) === null || _a === void 0 ? void 0 : _a.querySelectorAll("input");
-            inputs === null || inputs === void 0 ? void 0 : inputs.forEach((input) => {
-                switch (input.type) {
-                    case "checkbox":
-                        if (input.id === "open_registration") {
-                            input.checked = true;
-                            break;
-                        }
-                        input.checked = false;
-                        break;
-                    case "date":
-                        input.value = "";
-                        break;
-                    case "number":
-                        if (["min_age", "max_age"].includes(input.id)) {
-                            input.value = "";
-                            break;
-                        }
-                        input.value = input.min;
-                        break;
-                }
-            });
-            /** This basically works. Feels a bit ugly, though. */
-            this.dispatchEvent(new CustomEvent("filter", {
-                detail: "",
-                composed: true,
-                bubbles: true,
-            }));
-        }
-        handleChange() {
-            var _a;
-            const inputHandlers = new Map([
-                [
-                    "checkbox",
-                    (input) => {
-                        if (input.id === "open_registration") {
-                            return input.checked;
-                        }
-                        if (input.checked) {
-                            return input.id;
-                        }
-                        return false;
-                    },
-                ],
-                ["date", (input) => input.value],
-                ["number", (input) => input.value],
-                ["default", (input) => input.value],
-            ]);
-            const params = [...((_a = this.inputs) !== null && _a !== void 0 ? _a : [])]
-                .filter((input) => input.value || input.checked)
-                .map((input) => {
-                const handler = inputHandlers.get(input.type) || inputHandlers.get("default");
-                if (!handler)
-                    return [input.name, undefined];
-                const value = handler(input);
-                return [input.name, value];
-            })
-                .filter(([name, value]) => !(name &&
-                ["event_type", "target_group", "location"].includes(name.toString()) &&
-                value === false));
-            /** TODO: This could be shortened */
-            const query = new URLSearchParams();
-            params.forEach(([name, value]) => {
-                if (typeof name === "string" && value !== undefined) {
-                    query.append(name, value === null || value === void 0 ? void 0 : value.toString());
-                }
-            });
-            this.dispatchEvent(new CustomEvent("filter", {
-                detail: query.toString(),
-                composed: true,
-                bubbles: true,
-            }));
-        }
-        emitChange(e) {
-            const target = e.target;
-            if (target) {
-                target.dispatchEvent(new Event("change", { composed: true, bubbles: true }));
-            }
-        }
-        handleHideToggle() {
-            this.isHidden = !this.isHidden;
-            this.dispatchEvent(new CustomEvent("hide", {
-                detail: this.isHidden,
-                composed: true,
-                bubbles: true,
-            }));
-        }
-        urlSearchParamsToQueryParam(searchParams) {
-            const queryParams = {};
-            searchParams.forEach((value, key) => {
-                const keys = key.split(".");
-                let currentParam = queryParams;
-                keys.forEach((k, i) => {
-                    if (!currentParam[k]) {
-                        currentParam[k] = i === keys.length - 1 ? value : {};
-                    }
-                    currentParam = currentParam[k];
-                });
-            });
-            return `q=${JSON.stringify(queryParams)}`;
-        }
-        render() {
-            return x `
-      <div class="card" @change=${this.handleChange}>
-        <div
-          class="card-header d-flex ${o$1({
-            "justify-content-between": !this.isHidden,
-            "justify-content-center": this.isHidden,
-        })} sticky-top bg-white"
-        >
-          <h5
-            class="card-title ${o$1({
-            "d-inline": !this.isHidden,
-            "d-none": this.isHidden,
-        })}"
-          >
-            Filter
-          </h5>
-          <div>
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-secondary me-2"
-              @click=${this.handleHideToggle}
-              aria-label=${this.isHidden ? "Show filters" : "Hide filters"}
-            >
-              ${this.isHidden ? "Show" : "Hide"}
-            </button>
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-secondary ${o$1({
-            "d-none": this.isHidden,
-        })}"
-              @click=${this.handleReset}
-            >
-              Reset
-            </button>
-          </div>
-        </div>
-        <div class="card-body ${o$1({ "d-none": this.isHidden })}">
-          <div class="form-group">
-            <label for="event_type">Event Type</label>
-            ${o(this.facets.eventTypeIds, (eventTypeId) => {
-            var _a;
-            return x `
-                <div class="form-group form-check">
-                  <input
-                    type="checkbox"
-                    class="form-check-input"
-                    name="event_type"
-                    id=${eventTypeId}
-                  />
-                  <label class="form-check-label" for=${eventTypeId}
-                    >${(_a = this.event_types.find((event_type) => event_type.id === parseInt(eventTypeId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
-                  >
-                </div>
-              `;
-        })}
-          </div>
-          <div class="form-group">
-            <label for="target_group">Target Group</label>
-            ${o(this.facets.targetGroupIds, (targetGroupId) => {
-            var _a;
-            return x ` <div class="form-group form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  name="target_group"
-                  id=${targetGroupId}
-                />
-                <label class="form-check-label" for=${targetGroupId}
-                  >${(_a = this.target_groups.find((target_group) => target_group.id === targetGroupId)) === null || _a === void 0 ? void 0 : _a.name}</label
-                >
-              </div>`;
-        })}
-          </div>
-          <div class="form-group">
-            <label for="min_age">Min Age</label>
-            <input
-              type="number"
-              class="form-control form-control-sm"
-              id="min_age"
-              name="min_age"
-              min="0"
-              max="120"
-              value=""
-              @input=${this.emitChange}
-            />
-            <label for="max_age">Max Age</label>
-            <input
-              type="number"
-              class="form-control form-control-sm"
-              id="max_age"
-              name="max_age"
-              min="0"
-              max="120"
-              value=""
-              @input=${this.emitChange}
-            />
-          </div>
-          <div class="form-check">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              id="open_registration"
-              name="open_registration"
-              checked
-            />
-            <label for="open_registration">Open Registration</label>
-          </div>
-          <div class="form-group">
-            <label for="start_time">Start Date</label>
-            <input
-              type="date"
-              class="form-control form-control-sm"
-              id="start_time"
-              name="start_time"
-            />
-            <label for="end_time">End Date</label>
-            <input
-              type="date"
-              class="form-control form-control-sm"
-              id="end_time"
-              name="end_time"
-            />
-          </div>
-          <div class="form-group">
-            <label for="location">Location</label>
-            ${o(this.facets.locationIds, (locationId) => {
-            var _a;
-            return x ` <div class="form-group form-check">
-                  <input
-                    type="checkbox"
-                    class="form-check-input"
-                    name="location"
-                    id=${locationId}
-                  />
-                  <label class="form-check-label" for=${locationId}
-                    >${(_a = this.locations.find((location) => location.id === parseInt(locationId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
-                  >
-                </div>`;
-        })}
-          </div>
-          <div class="form-group">
-            <label for="fee">Fee</label>
-            <input
-              type="number"
-              class="form-control form-control-sm"
-              id="fee"
-              name="fee"
-              @input=${this.emitChange}
-            />
-          </div>
-        </div>
-      </div>
-    `;
-        }
-    };
-    LMSEventsFilter.styles = [bootstrapStyles];
-    __decorate([
-        e$2({ type: Array })
-    ], LMSEventsFilter.prototype, "events", void 0);
-    __decorate([
-        e$2({ type: String })
-    ], LMSEventsFilter.prototype, "facetsStrategy", void 0);
-    __decorate([
-        e$2({ type: Boolean })
-    ], LMSEventsFilter.prototype, "isHidden", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsFilter.prototype, "facets", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsFilter.prototype, "event_types", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsFilter.prototype, "target_groups", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsFilter.prototype, "locations", void 0);
-    __decorate([
-        e$1("input")
-    ], LMSEventsFilter.prototype, "inputs", void 0);
-    LMSEventsFilter = __decorate([
-        e$3("lms-events-filter")
-    ], LMSEventsFilter);
-    var LMSEventsFilter$1 = LMSEventsFilter;
-
     /*! gettext.js - Guillaume Potier - MIT Licensed */
     var i18n = function (options) {
      options = options || {};
@@ -1384,7 +730,7 @@
 
     let i18nInstance;
     class TranslationHandler {
-        constructor(callback, localeUrl = "/api/v1/contrib/eventmanagement/static/locales/") {
+        constructor(callback, localeUrl = "/api/v1/contrib/eventmanagement/static/locales") {
             this.i18n = i18n();
             this.locale = document.documentElement.lang.slice(0, 2);
             this.callback = callback;
@@ -1396,7 +742,7 @@
                 return this.i18n;
             }
             try {
-                const response = await fetch(`${this.localeUrl}${this.locale}.json`);
+                const response = await fetch(`${this.localeUrl}/${this.locale}/LC_MESSAGES/${this.locale}.json`);
                 if (response.status >= 200 && response.status <= 299) {
                     const translations = await response.json();
                     this.i18n.loadJSON(translations, "messages");
@@ -1432,6 +778,672 @@
             : text;
     }
 
+    let LMSCardDetailsModal = class LMSCardDetailsModal extends s {
+        constructor() {
+            super(...arguments);
+            this.event = {};
+            this.isOpen = false;
+            this.event_types = [];
+            this.locations = [];
+            this.target_groups = [];
+            this.locale = "en";
+            this.i18n = {};
+            this.translationHandler = {};
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+            });
+            const event_types = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
+                return response.json();
+            };
+            event_types().then((event_types) => (this.event_types = event_types));
+            const locations = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/locations");
+                return response.json();
+            };
+            locations().then((locations) => (this.locations = locations));
+            const target_groups = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/target_groups");
+                return response.json();
+            };
+            target_groups().then((target_groups) => (this.target_groups = target_groups));
+            this.locale = document.documentElement.lang;
+        }
+        handleSimulatedBackdropClick(event) {
+            if (event.target === event.currentTarget) {
+                this.toggleModal();
+            }
+        }
+        toggleModal() {
+            const { renderRoot } = this;
+            this.isOpen = !this.isOpen;
+            document.body.style.overflow = this.isOpen ? "hidden" : "auto";
+            const lmsModal = renderRoot.getElementById("lms-modal");
+            if (lmsModal) {
+                lmsModal.style.overflowY = this.isOpen ? "scroll" : "auto";
+            }
+            if (!this.isOpen) {
+                this.dispatchEvent(new CustomEvent("close", {
+                    bubbles: true,
+                    composed: true,
+                }));
+            }
+        }
+        willUpdate() {
+            const { event } = this;
+            const { event_type, location, target_groups } = event;
+            // Resolve event_type and location ids to their state representations
+            if (event_type && typeof event_type === "string") {
+                const et = this.event_types.find((type) => type.id === parseInt(event_type, 10));
+                this.event.event_type = et !== null && et !== void 0 ? et : {};
+            }
+            if (location && typeof location === "string") {
+                const loc = this.locations.find((loc) => loc.id === parseInt(location, 10));
+                this.event.location = loc !== null && loc !== void 0 ? loc : {};
+            }
+            if (target_groups &&
+                target_groups.every((tg) => tg.hasOwnProperty("target_group_id"))) {
+                const selectedTargetGroups = this.target_groups.filter((target_group) => target_groups.some((tg) => tg.target_group_id === target_group.id));
+                this.event.target_groups = selectedTargetGroups.map((tg) => {
+                    var _a, _b;
+                    return ({
+                        ...tg,
+                        fee: (_b = (_a = target_groups.find((etg) => etg.target_group_id === tg.id)) === null || _a === void 0 ? void 0 : _a.fee) !== null && _b !== void 0 ? _b : 0,
+                    });
+                });
+            }
+        }
+        updated() {
+            if (this.isOpen && this.closeButton) {
+                this.closeButton.focus();
+            }
+        }
+        render() {
+            const { name, description, location, image, registration_link, start_time, end_time, target_groups, } = this.event;
+            return x `
+      <div class="backdrop" ?hidden=${!this.isOpen}></div>
+      <div
+        class="modal fade ${o$1({
+            "d-block": this.isOpen,
+            show: this.isOpen,
+        })}"
+        id="lms-modal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="lms-modal-title"
+        aria-hidden="true"
+        @click=${this.handleSimulatedBackdropClick}
+      >
+        <div
+          class="modal-dialog modal-xl modal-dialog-centered"
+          role="document"
+        >
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="lms-modal-title">
+                ${name !== null && name !== void 0 ? name : "Event"}
+              </h5>
+              <button
+                @click=${this.toggleModal}
+                type="button"
+                class="close"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col">
+                  <div>
+                    <p class="wrapper">
+                      <span>${litFontawesome_2(faCalendar)}</span>
+                      <strong>${__("Date and Time")}</strong>
+                    </p>
+                    <p class="wrapper">
+                      ${this.formatDatetimeByLocale(start_time)}
+                      <span>${litFontawesome_2(faArrowRight)}</span>
+                      ${this.formatDatetimeByLocale(end_time)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="wrapper">
+                      <span>${litFontawesome_2(faInfoCircle)}</span>
+                      <strong>${__("Description")}</strong>
+                    </p>
+                    <p>${description}</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <img
+                    src=${image}
+                    ?hidden=${!image}
+                    class="w-100 mb-4 rounded"
+                  />
+
+                  <div>
+                    <p class="wrapper">
+                      <span>${litFontawesome_2(faCreditCard)}</span>
+                      <strong>${__("Fees")}</strong>
+                    </p>
+                    <table class="table table-sm table-borderless">
+                      <thead>
+                        <tr>
+                          <th scope="col">${__("Target Group")}</th>
+                          <th scope="col">${__("Age Range")}</th>
+                          <th scope="col">${__("Fee")}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${o(target_groups, (target_group) => {
+            if (target_group.hasOwnProperty("target_group_id")) {
+                return A;
+            }
+            const { name, fee, min_age, max_age } = target_group;
+            return x `
+                            <tr>
+                              <td>${name}</td>
+                              <td>${min_age} - ${max_age}</td>
+                              <td>${fee}</td>
+                            </tr>
+                          `;
+        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div>
+                    <p class="wrapper">
+                      <span>${litFontawesome_2(faMapMarker)}</span>
+                      <strong>${__("Location")}</strong>
+                    </p>
+                    <p>
+                      ${typeof location === "string"
+            ? A
+            : this.formatAddressByLocale(location)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+                @click=${this.toggleModal}
+              >
+                ${__("Close")}
+              </button>
+              <a
+                role="button"
+                class="btn btn-primary"
+                ?hidden=${!registration_link}
+                href=${registration_link}
+              >
+                ${__("Register")}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+        }
+        formatDatetimeByLocale(datetime) {
+            if (datetime) {
+                return new Intl.DateTimeFormat(this.locale, {
+                    dateStyle: "full",
+                    timeStyle: "short",
+                }).format(new Date(datetime));
+            }
+            return A;
+        }
+        formatAddressByLocale(address) {
+            if (address) {
+                const { name, street, number, city, zip, country } = address;
+                return x ` <strong>${name}</strong><br />
+        ${street} ${number}<br />
+        ${zip} ${city}<br />
+        ${country}`;
+            }
+            return A;
+        }
+    };
+    LMSCardDetailsModal.styles = [
+        bootstrapStyles,
+        i$4 `
+      .backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(0 0 0 / 50%);
+        z-index: 1048;
+      }
+
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: #6c757d;
+      }
+
+      .wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25em;
+      }
+    `,
+    ];
+    __decorate([
+        e$2({ type: Object })
+    ], LMSCardDetailsModal.prototype, "event", void 0);
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSCardDetailsModal.prototype, "isOpen", void 0);
+    __decorate([
+        t$1()
+    ], LMSCardDetailsModal.prototype, "event_types", void 0);
+    __decorate([
+        t$1()
+    ], LMSCardDetailsModal.prototype, "locations", void 0);
+    __decorate([
+        t$1()
+    ], LMSCardDetailsModal.prototype, "target_groups", void 0);
+    __decorate([
+        t$1()
+    ], LMSCardDetailsModal.prototype, "locale", void 0);
+    __decorate([
+        i$1(".close")
+    ], LMSCardDetailsModal.prototype, "closeButton", void 0);
+    LMSCardDetailsModal = __decorate([
+        e$3("lms-card-details-modal")
+    ], LMSCardDetailsModal);
+    var LMSCardDetailsModal$1 = LMSCardDetailsModal;
+
+    let LMSEventsFilter = class LMSEventsFilter extends s {
+        constructor() {
+            super(...arguments);
+            this.events = [];
+            this.facetsStrategy = "preserve";
+            this.isHidden = false;
+            this.facets = {};
+            this.event_types = [];
+            this.target_groups = [];
+            this.locations = [];
+            this.i18n = {};
+            this.translationHandler = {};
+            this._eventsDeepCopy = [];
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+            });
+            const event_types = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
+                return response.json();
+            };
+            event_types().then((event_types) => (this.event_types = event_types));
+            const target_groups = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/target_groups");
+                return response.json();
+            };
+            target_groups().then((target_groups) => (this.target_groups = target_groups));
+            const locations = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/locations");
+                return response.json();
+            };
+            locations().then((locations) => (this.locations = locations));
+        }
+        facetsStrategyManager() {
+            switch (this.facetsStrategy) {
+                case "preserve":
+                    return this.eventsDeepCopy;
+                case "update":
+                    return this.events;
+                default:
+                    throw new Error("Invalid facetsStrategy");
+            }
+        }
+        deepCopy(obj) {
+            if (obj === null || typeof obj !== "object")
+                return obj;
+            if (obj instanceof Date)
+                return new Date(obj.getTime());
+            if (Array.isArray(obj))
+                return obj.map((item) => this.deepCopy(item));
+            const newObj = Object.create(Object.getPrototypeOf(obj));
+            for (const key in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                    newObj[key] = this.deepCopy(obj[key]);
+                }
+            }
+            return newObj;
+        }
+        get eventsDeepCopy() {
+            return this._eventsDeepCopy;
+        }
+        set eventsDeepCopy(value) {
+            if (this._eventsDeepCopy.length === 0) {
+                this._eventsDeepCopy = value;
+            }
+        }
+        willUpdate() {
+            this.eventsDeepCopy = this.deepCopy(this.events);
+            const events = this.facetsStrategyManager();
+            if (!events.length)
+                return;
+            this.facets = {
+                eventTypeIds: [...new Set(events.map((event) => event.event_type))],
+                targetGroupIds: [
+                    ...new Set(events.flatMap((event) => event.target_groups.map((target_group) => target_group.selected ? target_group.target_group_id : NaN))),
+                ].filter(Number.isInteger),
+                locationIds: [...new Set(events.map((event) => event.location))],
+                ...events
+                    .map((event) => {
+                    const { event_type, location, target_groups, ...rest } = event;
+                    return rest;
+                })
+                    .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+            };
+        }
+        handleReset() {
+            var _a;
+            const inputs = (_a = this.shadowRoot) === null || _a === void 0 ? void 0 : _a.querySelectorAll("input");
+            inputs === null || inputs === void 0 ? void 0 : inputs.forEach((input) => {
+                switch (input.type) {
+                    case "checkbox":
+                        if (input.id === "open_registration") {
+                            input.checked = true;
+                            break;
+                        }
+                        input.checked = false;
+                        break;
+                    case "date":
+                        input.value = "";
+                        break;
+                    case "number":
+                        if (["min_age", "max_age"].includes(input.id)) {
+                            input.value = "";
+                            break;
+                        }
+                        input.value = input.min;
+                        break;
+                }
+            });
+            /** This basically works. Feels a bit ugly, though. */
+            this.dispatchEvent(new CustomEvent("filter", {
+                detail: "",
+                composed: true,
+                bubbles: true,
+            }));
+        }
+        handleChange() {
+            var _a;
+            const inputHandlers = new Map([
+                [
+                    "checkbox",
+                    (input) => {
+                        if (input.id === "open_registration") {
+                            return input.checked;
+                        }
+                        if (input.checked) {
+                            return input.id;
+                        }
+                        return false;
+                    },
+                ],
+                ["date", (input) => input.value],
+                ["number", (input) => input.value],
+                ["default", (input) => input.value],
+            ]);
+            const params = [...((_a = this.inputs) !== null && _a !== void 0 ? _a : [])]
+                .filter((input) => input.value || input.checked)
+                .map((input) => {
+                const handler = inputHandlers.get(input.type) || inputHandlers.get("default");
+                if (!handler)
+                    return [input.name, undefined];
+                const value = handler(input);
+                return [input.name, value];
+            })
+                .filter(([name, value]) => !(name &&
+                ["event_type", "target_group", "location"].includes(name.toString()) &&
+                value === false));
+            /** TODO: This could be shortened */
+            const query = new URLSearchParams();
+            params.forEach(([name, value]) => {
+                if (typeof name === "string" && value !== undefined) {
+                    query.append(name, value === null || value === void 0 ? void 0 : value.toString());
+                }
+            });
+            this.dispatchEvent(new CustomEvent("filter", {
+                detail: query.toString(),
+                composed: true,
+                bubbles: true,
+            }));
+        }
+        emitChange(e) {
+            const target = e.target;
+            if (target) {
+                target.dispatchEvent(new Event("change", { composed: true, bubbles: true }));
+            }
+        }
+        handleHideToggle() {
+            this.isHidden = !this.isHidden;
+            this.dispatchEvent(new CustomEvent("hide", {
+                detail: this.isHidden,
+                composed: true,
+                bubbles: true,
+            }));
+        }
+        urlSearchParamsToQueryParam(searchParams) {
+            const queryParams = {};
+            searchParams.forEach((value, key) => {
+                const keys = key.split(".");
+                let currentParam = queryParams;
+                keys.forEach((k, i) => {
+                    if (!currentParam[k]) {
+                        currentParam[k] = i === keys.length - 1 ? value : {};
+                    }
+                    currentParam = currentParam[k];
+                });
+            });
+            return `q=${JSON.stringify(queryParams)}`;
+        }
+        render() {
+            return x `
+      <div class="card" @change=${this.handleChange}>
+        <div
+          class="card-header d-flex ${o$1({
+            "justify-content-between": !this.isHidden,
+            "justify-content-center": this.isHidden,
+        })} sticky-top bg-white"
+        >
+          <h5
+            class="card-title ${o$1({
+            "d-inline": !this.isHidden,
+            "d-none": this.isHidden,
+        })}"
+          >
+            ${__("Filter")}
+          </h5>
+          <div>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary me-2"
+              @click=${this.handleHideToggle}
+              aria-label=${this.isHidden ? "Show filters" : "Hide filters"}
+            >
+              ${this.isHidden ? "Show" : "Hide"}
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary ${o$1({
+            "d-none": this.isHidden,
+        })}"
+              @click=${this.handleReset}
+            >
+              ${__("Reset")}
+            </button>
+          </div>
+        </div>
+        <div class="card-body ${o$1({ "d-none": this.isHidden })}">
+          <div class="form-group">
+            <label for="event_type">Event Type</label>
+            ${o(this.facets.eventTypeIds, (eventTypeId) => {
+            var _a;
+            return x `
+                <div class="form-group form-check">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    name="event_type"
+                    id=${eventTypeId}
+                  />
+                  <label class="form-check-label" for=${eventTypeId}
+                    >${(_a = this.event_types.find((event_type) => event_type.id === parseInt(eventTypeId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
+                  >
+                </div>
+              `;
+        })}
+          </div>
+          <div class="form-group">
+            <label for="target_group">${__("Target Group")}</label>
+            ${o(this.facets.targetGroupIds, (targetGroupId) => {
+            var _a;
+            return x ` <div class="form-group form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  name="target_group"
+                  id=${targetGroupId}
+                />
+                <label class="form-check-label" for=${targetGroupId}
+                  >${(_a = this.target_groups.find((target_group) => target_group.id === targetGroupId)) === null || _a === void 0 ? void 0 : _a.name}</label
+                >
+              </div>`;
+        })}
+          </div>
+          <div class="form-group">
+            <label for="min_age">Min Age</label>
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              id="min_age"
+              name="min_age"
+              min="0"
+              max="120"
+              value=""
+              @input=${this.emitChange}
+            />
+            <label for="max_age">Max Age</label>
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              id="max_age"
+              name="max_age"
+              min="0"
+              max="120"
+              value=""
+              @input=${this.emitChange}
+            />
+          </div>
+          <div class="form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="open_registration"
+              name="open_registration"
+              checked
+            />
+            <label for="open_registration">${__("Open Registration")}</label>
+          </div>
+          <div class="form-group">
+            <label for="start_time">Start Date</label>
+            <input
+              type="date"
+              class="form-control form-control-sm"
+              id="start_time"
+              name="start_time"
+            />
+            <label for="end_time">${__("End Date")}</label>
+            <input
+              type="date"
+              class="form-control form-control-sm"
+              id="end_time"
+              name="end_time"
+            />
+          </div>
+          <div class="form-group">
+            <label for="location">${__("Location")}</label>
+            ${o(this.facets.locationIds, (locationId) => {
+            var _a;
+            return x ` <div class="form-group form-check">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    name="location"
+                    id=${locationId}
+                  />
+                  <label class="form-check-label" for=${locationId}
+                    >${(_a = this.locations.find((location) => location.id === parseInt(locationId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
+                  >
+                </div>`;
+        })}
+          </div>
+          <div class="form-group">
+            <label for="fee">${__("Fee")}</label>
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              id="fee"
+              name="fee"
+              @input=${this.emitChange}
+            />
+          </div>
+        </div>
+      </div>
+    `;
+        }
+    };
+    LMSEventsFilter.styles = [bootstrapStyles];
+    __decorate([
+        e$2({ type: Array })
+    ], LMSEventsFilter.prototype, "events", void 0);
+    __decorate([
+        e$2({ type: String })
+    ], LMSEventsFilter.prototype, "facetsStrategy", void 0);
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSEventsFilter.prototype, "isHidden", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "facets", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "event_types", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "target_groups", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "locations", void 0);
+    __decorate([
+        e$1("input")
+    ], LMSEventsFilter.prototype, "inputs", void 0);
+    LMSEventsFilter = __decorate([
+        e$3("lms-events-filter")
+    ], LMSEventsFilter);
+    var LMSEventsFilter$1 = LMSEventsFilter;
+
     let LMSFloatingMenu = class LMSFloatingMenu extends s {
         constructor() {
             super(...arguments);
@@ -1447,6 +1459,7 @@
             this.translationHandler = new TranslationHandler(() => this.requestUpdate());
             this.translationHandler.loadTranslations().then((i18n) => {
                 this.i18n = i18n;
+                this.dispatchEvent(new CustomEvent("translations-loaded"));
             });
         }
         render() {
@@ -1557,6 +1570,8 @@
         constructor() {
             super(...arguments);
             this.uploadedImages = [];
+            this.i18n = {};
+            this.translationHandler = {};
             this.boundEventHandler = () => { };
         }
         loadImages() {
@@ -1580,6 +1595,10 @@
         }
         connectedCallback() {
             super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+            });
             /** This is the counterpart to the script in the intranet_js hook */
             this.boundEventHandler = this.handleMessageEvent.bind(this);
             window.addEventListener("message", this.boundEventHandler);
@@ -1638,7 +1657,7 @@
                 <div class="card-body">
                   <p
                     data-placement="top"
-                    title="Link constructed!"
+                    title="${__("Link constructed!")}"
                     @click=${() => {
                 this.handleClipboardCopy(hashvalue);
             }}
@@ -1663,7 +1682,7 @@
                         class="btn btn-primary text-center"
                       >
                         ${litFontawesome_2(faCopy)}
-                        <span>Copy to clipboard</span>
+                        <span>${__("Copy to clipboard")}</span>
                       </button>
                     </lms-tooltip>
                   </div>
@@ -1744,6 +1763,16 @@
             this.isOpen = false;
             this.alertMessage = "";
             this.modalTitle = "";
+            this.i18n = {};
+            this.translationHandler = {};
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+                this.dispatchEvent(new CustomEvent("translations-loaded"));
+            });
         }
         toggleModal() {
             const { renderRoot } = this;
@@ -1826,7 +1855,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="lms-modal-title">
-                ${(_a = this.modalTitle) !== null && _a !== void 0 ? _a : "Add"}
+                ${(_a = this.modalTitle) !== null && _a !== void 0 ? _a : `${__("Add")}`}
               </h5>
               <button
                 @click=${this.toggleModal}
@@ -1867,11 +1896,11 @@
                   @click=${this.toggleModal}
                 >
                   ${litFontawesome_2(faClose)}
-                  <span>Close</span>
+                  <span>${__("Close")}</span>
                 </button>
                 <button type="submit" class="btn btn-primary">
                   ${litFontawesome_2(faPlus)}
-                  <span>Create</span>
+                  <span>${__("Create")}</span>
                 </button>
               </div>
             </form>
@@ -1935,7 +1964,6 @@
                 : fieldTypes.get("default");
         }
     };
-    // @state() protected i18n: Gettext | Promise<Gettext> = {} as Gettext;
     LMSModal.styles = [
         bootstrapStyles,
         i$4 `
@@ -2135,6 +2163,15 @@
                 message: "",
             };
             this._i18n = {};
+            this.i18n = {};
+            this.translationHandler = {};
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+            });
         }
         handleEdit(e) {
             var _a;
@@ -2229,52 +2266,52 @@
       <form @submit=${this.handleSave}>
         <div class="form-row">
           <div class="form-group col">
-            <label for="name">Name</label>
+            <label for="name">${__("Name")}</label>
             ${datum.name}
           </div>
           <div class="form-group col">
-            <label for="event_type">Event Type</label>
+            <label for="event_type">${__("Event Type")}</label>
             ${datum.event_type}
           </div>
         </div>
 
-        <label for="target_groups">Target Groups</label>
+        <label for="target_groups">${__("Target Groups")}</label>
         ${datum.target_groups}
 
         <div class="form-row">
           <div class="form-group col">
-            <label for="min_age">Min Age</label>
+            <label for="min_age">${__("Min Age")}</label>
             ${datum.min_age}
           </div>
           <div class="form-group col">
-            <label for="max_age">Max Age</label>
+            <label for="max_age">${__("Max Age")}</label>
             ${datum.max_age}
           </div>
         </div>
 
         <div class="form-group">
-          <label for="max_participants">Max Participants</label>
+          <label for="max_participants">${__("Max Participants")}</label>
           ${datum.max_participants}
         </div>
 
         <div class="form-row">
           <div class="form-group col">
-            <label for="start_time">Start Time</label>
+            <label for="start_time">${__("Start Time")}</label>
             ${datum.start_time}
           </div>
           <div class="form-group col">
-            <label for="end_time">End Time</label>
+            <label for="end_time">${__("End Time")}</label>
             ${datum.end_time}
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group col">
-            <label for="registration_start">Registration Start</label>
+            <label for="registration_start">${__("Registration Start")}</label>
             ${datum.registration_start}
           </div>
           <div class="form-group col">
-            <label for="registration_end">Registration End</label>
+            <label for="registration_end">${__("Registration End")}</label>
             ${datum.registration_end}
           </div>
         </div>
@@ -2282,36 +2319,36 @@
         <div class="form-row">
           <div class="col">
             <div class="form-group">
-              <label for="location">Location</label>
+              <label for="location">${__("Location")}</label>
               ${datum.location}
             </div>
 
             <div class="form-group">
-              <label for="image">Image</label>
+              <label for="image">${__("Image")}</label>
               ${datum.image}
             </div>
 
             <div class="form-group">
-              <label for="status">Status</label>
+              <label for="status">${__("Status")}</label>
               ${datum.status}
             </div>
 
             <div class="form-group">
-              <label for="registration_link">Registration Link</label>
+              <label for="registration_link">${__("Registration Link")}</label>
               ${datum.registration_link}
             </div>
 
             <div class="form-check-inline">
               ${datum.open_registration}
               <label class="form-check-label" for="open_registration"
-                >Open Registration</label
+                >${__("Open Registration")}</label
               >
             </div>
           </div>
 
           <div class="col">
             <div class="form-group h-100">
-              <label for="description">Description</label>
+              <label for="description">${__("Description")}</label>
               ${datum.description}
             </div>
           </div>
@@ -2326,11 +2363,11 @@
                 class="btn btn-dark mr-2"
               >
                 ${litFontawesome_2(faEdit)}
-                <span>&nbsp;Edit</span>
+                <span>&nbsp;${__("Edit")}</span>
               </button>
               <button type="submit" class="btn btn-dark mr-2">
                 ${litFontawesome_2(faSave)}
-                <span>&nbsp;Save</span>
+                <span>&nbsp;${__("Save")}</span>
               </button>
               <button
                 @click=${this.handleDelete}
@@ -2338,7 +2375,7 @@
                 class="btn btn-danger mr-2"
               >
                 ${litFontawesome_2(faTrash)}
-                <span>&nbsp;Delete</span>
+                <span>&nbsp;${__("Delete")}</span>
               </button>
             </div>
           </div>
@@ -2393,9 +2430,15 @@
                     method: "configure",
                 },
             };
+            this.i18n = {};
+            this.translationHandler = {};
         }
         connectedCallback() {
             super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+            });
             const events = fetch("/api/v1/contrib/eventmanagement/events");
             events
                 .then((response) => {
@@ -2472,9 +2515,9 @@
             <table class="table table-sm table-bordered table-striped">
               <thead>
                 <tr>
-                  <th scope="col">target_group</th>
-                  <th scope="col">selected</th>
-                  <th scope="col">fee</th>
+                  <th scope="col">${__("target_group")}</th>
+                  <th scope="col">${__("selected")}</th>
+                  <th scope="col">${__("fee")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -2713,7 +2756,7 @@ ${value}</textarea
         render() {
             return !this.data.length
                 ? x `<h1 class="text-center">
-          You have to create a&nbsp;
+          ${__("You have to create a")}&nbsp;
           <lms-anchor
             .href=${{
                 ...this.href,
@@ -2722,7 +2765,7 @@ ${value}</textarea
                     op: "target-groups",
                 },
             }}
-            >target group</lms-anchor
+            >${__("target group")}</lms-anchor
           >, a&nbsp;
           <lms-anchor
             .href=${{
@@ -2732,7 +2775,7 @@ ${value}</textarea
                     op: "locations",
                 },
             }}
-            >location</lms-anchor
+            >${__("location")}</lms-anchor
           >
           &nbsp;and an&nbsp;
           <lms-anchor
@@ -2743,9 +2786,9 @@ ${value}</textarea
                     op: "event-types",
                 },
             }}
-            >event type</lms-anchor
+            >${__("event type")}</lms-anchor
           >
-          &nbsp;first.
+          &nbsp;${__("first")}.
         </h1>`
                 : x `
           <div class="container-fluid mx-0">
@@ -2762,7 +2805,7 @@ ${value}</textarea
                           data-uuid=${datum.uuid}
                           @click=${this.handleTabClick}
                         >
-                          <a class="nav-link active" href="#">Data</a>
+                          <a class="nav-link active" href="#">${__("Data")}</a>
                         </li>
                         <li
                           class="nav-item"
@@ -2770,7 +2813,7 @@ ${value}</textarea
                           data-uuid=${datum.uuid}
                           @click=${this.handleTabClick}
                         >
-                          <a class="nav-link" href="#">Waitlist</a>
+                          <a class="nav-link" href="#">${__("Waitlist")}</a>
                         </li>
                         <li
                           class="nav-item"
@@ -2778,7 +2821,7 @@ ${value}</textarea
                           data-uuid=${datum.uuid}
                           @click=${this.handleTabClick}
                         >
-                          <a class="nav-link">Preview</a>
+                          <a class="nav-link">${__("Preview")}</a>
                         </li>
                       </ul>
                     </div>
@@ -2814,16 +2857,7 @@ ${value}</textarea
         `;
         }
     };
-    LMSStaffEventCardDeck.styles = [
-        bootstrapStyles,
-        // css`
-        //   .card-deck {
-        //     display: grid;
-        //     grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
-        //     grid-gap: 0.5rem;
-        //   }
-        // `,
-    ];
+    LMSStaffEventCardDeck.styles = [bootstrapStyles];
     __decorate([
         e$2({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "data", void 0);
@@ -3217,14 +3251,17 @@ ${value}</textarea
 
     let LMSEventMangementMenu = class LMSEventMangementMenu extends LMSFloatingMenu$1 {
         constructor() {
-            super();
+            super(...arguments);
             this.baseurl = "";
             this.pluginclass = "";
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
         }
-        async connectedCallback() {
+        connectedCallback() {
             super.connectedCallback();
-            await this.translationHandler.loadTranslations();
+            this.addEventListener("translations-loaded", () => {
+                this.hydrate();
+            });
+        }
+        hydrate() {
             this.items = [
                 {
                     name: __("Settings"),
@@ -3285,8 +3322,13 @@ ${value}</textarea
             };
             this.selectedEventTypeId = undefined;
         }
-        connectedCallback() {
+        async connectedCallback() {
             super.connectedCallback();
+            this.addEventListener("translations-loaded", () => {
+                this.hydrate();
+            });
+        }
+        hydrate() {
             this.fields = [
                 {
                     name: "name",
@@ -3506,6 +3548,11 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
+            this.addEventListener("translations-loaded", () => {
+                this.hydrate();
+            });
+        }
+        hydrate() {
             this.fields = [
                 {
                     name: "name",
@@ -3614,15 +3661,19 @@ ${value}</textarea
                 heading: "",
                 message: "",
             };
-            // @property({ state: true }) private i18n: Gettext = {} as Gettext;
             this.notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
             this.emptyTableMessage = x `No data to display.`;
+            this.i18n = {};
+            this.translationHandler = {};
         }
-        // private async init() {
-        //   const translationHandler = new TranslationHandler();
-        //   await translationHandler.loadTranslations();
-        //   this.i18n = translationHandler.i18n;
-        // }
+        connectedCallback() {
+            super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+                this.dispatchEvent(new CustomEvent("translations-loaded"));
+            });
+        }
         handleEdit(e) {
             console.info(e, this.notImplementedInBaseMessage);
         }
@@ -3759,7 +3810,7 @@ ${value}</textarea
                                   class="btn btn-dark mx-2"
                                 >
                                   ${litFontawesome_2(faEdit)}
-                                  <span>&nbsp;Edit</span>
+                                  <span>&nbsp;${__("Edit")}</span>
                                 </button>
                                 <button
                                   @click=${this.handleSave}
@@ -3767,7 +3818,7 @@ ${value}</textarea
                                   class="btn btn-dark mx-2"
                                 >
                                   ${litFontawesome_2(faSave)}
-                                  <span>&nbsp;Save</span>
+                                  <span>&nbsp;${__("Save")}</span>
                                 </button>
                                 <button
                                   @click=${this.handleDelete}
@@ -3776,7 +3827,7 @@ ${value}</textarea
                                   class="btn btn-danger mx-2"
                                 >
                                   ${litFontawesome_2(faTrash)}
-                                  <span>&nbsp;Delete</span>
+                                  <span>&nbsp;${__("Delete")}</span>
                                 </button>
                               </div>
                             </td>
@@ -4180,6 +4231,11 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
+            this.addEventListener("translations-loaded", () => {
+                this.hydrate();
+            });
+        }
+        hydrate() {
             this.fields = [
                 {
                     name: "name",
@@ -4426,6 +4482,11 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
+            this.addEventListener("translations-loaded", () => {
+                this.hydrate();
+            });
+        }
+        hydrate() {
             this.fields = [
                 {
                     name: "name",
@@ -4616,6 +4677,8 @@ ${value}</textarea
             this._order_by = "start_time";
             this._page = 1;
             this._per_page = 20;
+            this.i18n = {};
+            this.translationHandler = {};
         }
         getReservedQueryParams() {
             const params = new URLSearchParams(window.location.search);
@@ -4660,6 +4723,10 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+            });
             this.getReservedQueryParams();
             if (window.innerWidth < 768) {
                 console.log("window.innerWidth < 768");
@@ -4724,7 +4791,7 @@ ${value}</textarea
         <div class="row">
           <div class="col-12" ?hidden=${this.events.length > 0}>
             <div class="alert alert-info" role="alert">
-              There are no events to display!
+              ${__("There are no events to display")}!
             </div>
           </div>
           <div
@@ -4912,8 +4979,20 @@ ${value}</textarea
     var StaffLocationsView$1 = StaffLocationsView;
 
     let StaffSettingsView = class StaffSettingsView extends s {
+        constructor() {
+            super(...arguments);
+            this.i18n = {};
+            this.translationHandler = {};
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+            });
+        }
         render() {
-            return x `<h1 class="text-center">Not implemented!</h1>`;
+            return x `<h1 class="text-center">${__("Not implemented")}!</h1>`;
         }
     };
     StaffSettingsView.styles = [bootstrapStyles];
