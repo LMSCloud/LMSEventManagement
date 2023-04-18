@@ -15,6 +15,8 @@ import LMSAnchor from "./LMSAnchor";
 import { TemplateResultConverter } from "../lib/converters";
 import { map } from "lit/directives/map.js";
 import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
+import { TranslationHandler, __ } from "../lib/TranslationHandler";
+import { Gettext } from "gettext.js";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -37,20 +39,20 @@ export default class LMSStaffEventCardDeck extends LitElement {
       method: "configure",
     },
   };
+  protected i18n: Gettext = {} as Gettext;
+  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
-  static override styles = [
-    bootstrapStyles,
-    // css`
-    //   .card-deck {
-    //     display: grid;
-    //     grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
-    //     grid-gap: 0.5rem;
-    //   }
-    // `,
-  ];
+  static override styles = [bootstrapStyles];
 
   override connectedCallback() {
     super.connectedCallback();
+
+    this.translationHandler = new TranslationHandler(() =>
+      this.requestUpdate()
+    );
+    this.translationHandler.loadTranslations().then((i18n) => {
+      this.i18n = i18n;
+    });
 
     const events = fetch("/api/v1/contrib/eventmanagement/events");
     events
@@ -160,9 +162,9 @@ export default class LMSStaffEventCardDeck extends LitElement {
             <table class="table table-sm table-bordered table-striped">
               <thead>
                 <tr>
-                  <th scope="col">target_group</th>
-                  <th scope="col">selected</th>
-                  <th scope="col">fee</th>
+                  <th scope="col">${__("target_group")}</th>
+                  <th scope="col">${__("selected")}</th>
+                  <th scope="col">${__("fee")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -423,7 +425,7 @@ ${value}</textarea
   override render() {
     return !this.data.length
       ? html`<h1 class="text-center">
-          You have to create a&nbsp;
+          ${__("You have to create a")}&nbsp;
           <lms-anchor
             .href=${{
               ...this.href,
@@ -432,8 +434,8 @@ ${value}</textarea
                 op: "target-groups",
               },
             }}
-            >target group</lms-anchor
-          >, a&nbsp;
+            >${__("target group")}</lms-anchor
+          >, ${__("a")}&nbsp;
           <lms-anchor
             .href=${{
               ...this.href,
@@ -442,9 +444,9 @@ ${value}</textarea
                 op: "locations",
               },
             }}
-            >location</lms-anchor
+            >${__("location")}</lms-anchor
           >
-          &nbsp;and an&nbsp;
+          &nbsp;${__("and an")}&nbsp;
           <lms-anchor
             .href=${{
               ...this.href,
@@ -453,9 +455,9 @@ ${value}</textarea
                 op: "event-types",
               },
             }}
-            >event type</lms-anchor
+            >${__("event type")}</lms-anchor
           >
-          &nbsp;first.
+          &nbsp;${__("first")}.
         </h1>`
       : html`
           <div class="container-fluid mx-0">
@@ -472,7 +474,7 @@ ${value}</textarea
                           data-uuid=${datum.uuid}
                           @click=${this.handleTabClick}
                         >
-                          <a class="nav-link active" href="#">Data</a>
+                          <a class="nav-link active" href="#">${__("Data")}</a>
                         </li>
                         <li
                           class="nav-item"
@@ -480,7 +482,7 @@ ${value}</textarea
                           data-uuid=${datum.uuid}
                           @click=${this.handleTabClick}
                         >
-                          <a class="nav-link" href="#">Waitlist</a>
+                          <a class="nav-link" href="#">${__("Waitlist")}</a>
                         </li>
                         <li
                           class="nav-item"
@@ -488,7 +490,7 @@ ${value}</textarea
                           data-uuid=${datum.uuid}
                           @click=${this.handleTabClick}
                         >
-                          <a class="nav-link">Preview</a>
+                          <a class="nav-link">${__("Preview")}</a>
                         </li>
                       </ul>
                     </div>

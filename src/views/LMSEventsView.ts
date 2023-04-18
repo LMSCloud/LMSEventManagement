@@ -8,6 +8,8 @@ import { map } from "lit/directives/map.js";
 import { classMap } from "lit/directives/class-map.js";
 import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
 import LMSPaginationNav from "../components/LMSPaginationNav";
+import { TranslationHandler, __ } from "../lib/TranslationHandler";
+import { Gettext } from "gettext.js";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -33,6 +35,8 @@ export default class LMSEventsView extends LitElement {
   @state() _page: number = 1;
   @state() _per_page: number = 20;
   @state() q?: string;
+  protected i18n: Gettext = {} as Gettext;
+  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [
     bootstrapStyles,
@@ -143,6 +147,13 @@ export default class LMSEventsView extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
 
+    this.translationHandler = new TranslationHandler(() =>
+      this.requestUpdate()
+    );
+    this.translationHandler.loadTranslations().then((i18n) => {
+      this.i18n = i18n;
+    });
+
     this.getReservedQueryParams();
 
     if (window.innerWidth < 768) {
@@ -227,7 +238,7 @@ export default class LMSEventsView extends LitElement {
         <div class="row">
           <div class="col-12" ?hidden=${this.events.length > 0}>
             <div class="alert alert-info" role="alert">
-              There are no events to display!
+              ${__("There are no events to display")}!
             </div>
           </div>
           <div

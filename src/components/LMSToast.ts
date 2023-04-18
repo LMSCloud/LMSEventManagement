@@ -1,12 +1,16 @@
 import { css, html, LitElement } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { customElement, property } from "lit/decorators.js";
+import { TranslationHandler, __ } from "../lib/TranslationHandler";
+import { Gettext } from "gettext.js";
 
 @customElement("lms-toast")
 export default class LMSToast extends LitElement {
   @property({ type: String }) heading = "";
   @property({ type: String }) message = "";
   @property({ state: true }) _elapsedTime = 0;
+  protected i18n: Gettext = {} as Gettext;
+  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [
     bootstrapStyles,
@@ -31,7 +35,7 @@ export default class LMSToast extends LitElement {
         <div class="toast">
           <div class="toast-header">
             <strong class="mr-auto">${this.heading}</strong>
-            <small>${this._elapsedTime} sec ago</small>
+            <small>${this._elapsedTime} ${__("sec ago")}</small>
             <button
               type="button"
               class="ml-2 mb-1 close"
@@ -49,6 +53,14 @@ export default class LMSToast extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+
+    this.translationHandler = new TranslationHandler(() =>
+      this.requestUpdate()
+    );
+    this.translationHandler.loadTranslations().then((i18n) => {
+      this.i18n = i18n;
+    });
+
     setInterval(() => {
       this._elapsedTime++;
     }, 1000);

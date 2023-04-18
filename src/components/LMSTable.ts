@@ -8,12 +8,12 @@ import {
   faSortDown,
   faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
-// import TranslationHandler from "../lib/TranslationHandler";
 import { customElement, property, state } from "lit/decorators.js";
 import LMSToast from "./LMSToast";
-// import { Gettext } from "gettext.js";
 import { Column } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
+import { TranslationHandler, __ } from "../lib/TranslationHandler";
+import { Gettext } from "gettext.js";
 
 type sortTask = {
   column: string;
@@ -33,10 +33,11 @@ export default class LMSTable extends LitElement {
     heading: "",
     message: "",
   };
-  // @property({ state: true }) private i18n: Gettext = {} as Gettext;
   @state() private notImplementedInBaseMessage =
     "Implement this method in your extended LMSTable component.";
   @state() protected emptyTableMessage = html`No data to display.`;
+  protected i18n: Gettext = {} as Gettext;
+  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [
     bootstrapStyles,
@@ -63,11 +64,16 @@ export default class LMSTable extends LitElement {
     `,
   ];
 
-  // private async init() {
-  //   const translationHandler = new TranslationHandler();
-  //   await translationHandler.loadTranslations();
-  //   this.i18n = translationHandler.i18n;
-  // }
+  override connectedCallback() {
+    super.connectedCallback();
+    this.translationHandler = new TranslationHandler(() =>
+      this.requestUpdate()
+    );
+    this.translationHandler.loadTranslations().then((i18n) => {
+      this.i18n = i18n;
+      this.dispatchEvent(new CustomEvent("translations-loaded"));
+    });
+  }
 
   public handleEdit(e: Event) {
     console.info(e, this.notImplementedInBaseMessage);
@@ -237,7 +243,7 @@ export default class LMSTable extends LitElement {
                                   class="btn btn-dark mx-2"
                                 >
                                   ${litFontawesome(faEdit)}
-                                  <span>&nbsp;Edit</span>
+                                  <span>&nbsp;${__("Edit")}</span>
                                 </button>
                                 <button
                                   @click=${this.handleSave}
@@ -245,7 +251,7 @@ export default class LMSTable extends LitElement {
                                   class="btn btn-dark mx-2"
                                 >
                                   ${litFontawesome(faSave)}
-                                  <span>&nbsp;Save</span>
+                                  <span>&nbsp;${__("Save")}</span>
                                 </button>
                                 <button
                                   @click=${this.handleDelete}
@@ -254,7 +260,7 @@ export default class LMSTable extends LitElement {
                                   class="btn btn-danger mx-2"
                                 >
                                   ${litFontawesome(faTrash)}
-                                  <span>&nbsp;Delete</span>
+                                  <span>&nbsp;${__("Delete")}</span>
                                 </button>
                               </div>
                             </td>

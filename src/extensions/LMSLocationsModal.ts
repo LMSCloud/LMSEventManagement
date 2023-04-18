@@ -12,6 +12,12 @@ export default class LMSLocationsModal extends LMSModal {
 
   override connectedCallback() {
     super.connectedCallback();
+    this.addEventListener("translations-loaded", () => {
+      this.hydrate();
+    });
+  }
+
+  private hydrate() {
     this.fields = [
       {
         name: "name",

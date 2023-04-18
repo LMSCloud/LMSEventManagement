@@ -52,6 +52,7 @@ export default class LMSFloatingMenu extends LitElement {
     );
     this.translationHandler.loadTranslations().then((i18n) => {
       this.i18n = i18n;
+      this.dispatchEvent(new CustomEvent("translations-loaded"));
     });
   }
 

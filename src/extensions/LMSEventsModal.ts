@@ -1,6 +1,7 @@
 import { customElement, property, state } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { CreateOpts, EventType } from "../sharedDeclarations";
+import { __ } from "../lib/TranslationHandler";
 
 @customElement("lms-events-modal")
 export default class LMSEventsModal extends LMSModal {
@@ -10,8 +11,14 @@ export default class LMSEventsModal extends LMSModal {
   };
   @state() private selectedEventTypeId: number | undefined = undefined;
 
-  override connectedCallback() {
+  override async connectedCallback() {
     super.connectedCallback();
+    this.addEventListener("translations-loaded", () => {
+      this.hydrate();
+    });
+  }
+
+  private hydrate() {
     this.fields = [
       {
         name: "name",

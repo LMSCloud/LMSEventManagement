@@ -4,8 +4,9 @@ import { customElement, property } from "lit/decorators.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Column /* Input */ } from "../../sharedDeclarations";
-import { Gettext } from "gettext.js";
 import { TemplateResultConverter } from "../../lib/converters";
+import { TranslationHandler, __ } from "../../lib/TranslationHandler";
+import { Gettext } from "gettext.js";
 
 @customElement("lms-staff-event-card-form")
 export default class LMSStaffEventCardForm extends LitElement {
@@ -15,6 +16,8 @@ export default class LMSStaffEventCardForm extends LitElement {
     message: "",
   };
   @property({ state: true }) _i18n: Gettext = {} as Gettext;
+  protected i18n: Gettext = {} as Gettext;
+  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [
     bootstrapStyles,
@@ -35,6 +38,16 @@ export default class LMSStaffEventCardForm extends LitElement {
       }
     `,
   ];
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.translationHandler = new TranslationHandler(() =>
+      this.requestUpdate()
+    );
+    this.translationHandler.loadTranslations().then((i18n) => {
+      this.i18n = i18n;
+    });
+  }
 
   private handleEdit(e: Event) {
     e.preventDefault();
@@ -168,52 +181,52 @@ export default class LMSStaffEventCardForm extends LitElement {
       <form @submit=${this.handleSave}>
         <div class="form-row">
           <div class="form-group col">
-            <label for="name">Name</label>
+            <label for="name">${__("Name")}</label>
             ${datum.name}
           </div>
           <div class="form-group col">
-            <label for="event_type">Event Type</label>
+            <label for="event_type">${__("Event Type")}</label>
             ${datum.event_type}
           </div>
         </div>
 
-        <label for="target_groups">Target Groups</label>
+        <label for="target_groups">${__("Target Groups")}</label>
         ${datum.target_groups}
 
         <div class="form-row">
           <div class="form-group col">
-            <label for="min_age">Min Age</label>
+            <label for="min_age">${__("Min Age")}</label>
             ${datum.min_age}
           </div>
           <div class="form-group col">
-            <label for="max_age">Max Age</label>
+            <label for="max_age">${__("Max Age")}</label>
             ${datum.max_age}
           </div>
         </div>
 
         <div class="form-group">
-          <label for="max_participants">Max Participants</label>
+          <label for="max_participants">${__("Max Participants")}</label>
           ${datum.max_participants}
         </div>
 
         <div class="form-row">
           <div class="form-group col">
-            <label for="start_time">Start Time</label>
+            <label for="start_time">${__("Start Time")}</label>
             ${datum.start_time}
           </div>
           <div class="form-group col">
-            <label for="end_time">End Time</label>
+            <label for="end_time">${__("End Time")}</label>
             ${datum.end_time}
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group col">
-            <label for="registration_start">Registration Start</label>
+            <label for="registration_start">${__("Registration Start")}</label>
             ${datum.registration_start}
           </div>
           <div class="form-group col">
-            <label for="registration_end">Registration End</label>
+            <label for="registration_end">${__("Registration End")}</label>
             ${datum.registration_end}
           </div>
         </div>
@@ -221,36 +234,36 @@ export default class LMSStaffEventCardForm extends LitElement {
         <div class="form-row">
           <div class="col">
             <div class="form-group">
-              <label for="location">Location</label>
+              <label for="location">${__("Location")}</label>
               ${datum.location}
             </div>
 
             <div class="form-group">
-              <label for="image">Image</label>
+              <label for="image">${__("Image")}</label>
               ${datum.image}
             </div>
 
             <div class="form-group">
-              <label for="status">Status</label>
+              <label for="status">${__("Status")}</label>
               ${datum.status}
             </div>
 
             <div class="form-group">
-              <label for="registration_link">Registration Link</label>
+              <label for="registration_link">${__("Registration Link")}</label>
               ${datum.registration_link}
             </div>
 
             <div class="form-check-inline">
               ${datum.open_registration}
               <label class="form-check-label" for="open_registration"
-                >Open Registration</label
+                >${__("Open Registration")}</label
               >
             </div>
           </div>
 
           <div class="col">
             <div class="form-group h-100">
-              <label for="description">Description</label>
+              <label for="description">${__("Description")}</label>
               ${datum.description}
             </div>
           </div>
@@ -265,11 +278,11 @@ export default class LMSStaffEventCardForm extends LitElement {
                 class="btn btn-dark mr-2"
               >
                 ${litFontawesome(faEdit)}
-                <span>&nbsp;Edit</span>
+                <span>&nbsp;${__("Edit")}</span>
               </button>
               <button type="submit" class="btn btn-dark mr-2">
                 ${litFontawesome(faSave)}
-                <span>&nbsp;Save</span>
+                <span>&nbsp;${__("Save")}</span>
               </button>
               <button
                 @click=${this.handleDelete}
@@ -277,7 +290,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                 class="btn btn-danger mr-2"
               >
                 ${litFontawesome(faTrash)}
-                <span>&nbsp;Delete</span>
+                <span>&nbsp;${__("Delete")}</span>
               </button>
             </div>
           </div>

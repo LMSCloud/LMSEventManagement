@@ -20,6 +20,8 @@ import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
 import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
 import { classMap } from "lit/directives/class-map.js";
+import { TranslationHandler, __ } from "../lib/TranslationHandler";
+import { Gettext } from "gettext.js";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -40,7 +42,8 @@ export default class LMSModal extends LitElement {
   @state() protected isOpen = false;
   @state() protected alertMessage = "";
   @state() protected modalTitle = "";
-  // @state() protected i18n: Gettext | Promise<Gettext> = {} as Gettext;
+  protected i18n: Gettext = {} as Gettext;
+  protected translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [
     bootstrapStyles,
@@ -102,6 +105,17 @@ export default class LMSModal extends LitElement {
       }
     `,
   ];
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.translationHandler = new TranslationHandler(() =>
+      this.requestUpdate()
+    );
+    this.translationHandler.loadTranslations().then((i18n) => {
+      this.i18n = i18n;
+      this.dispatchEvent(new CustomEvent("translations-loaded"));
+    });
+  }
 
   private toggleModal() {
     const { renderRoot } = this;
@@ -196,7 +210,7 @@ export default class LMSModal extends LitElement {
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="lms-modal-title">
-                ${this.modalTitle ?? "Add"}
+                ${this.modalTitle ?? `${__("Add")}`}
               </h5>
               <button
                 @click=${this.toggleModal}
@@ -237,11 +251,11 @@ export default class LMSModal extends LitElement {
                   @click=${this.toggleModal}
                 >
                   ${litFontawesome(faClose)}
-                  <span>Close</span>
+                  <span>${__("Close")}</span>
                 </button>
                 <button type="submit" class="btn btn-primary">
                   ${litFontawesome(faPlus)}
-                  <span>Create</span>
+                  <span>${__("Create")}</span>
                 </button>
               </div>
             </form>

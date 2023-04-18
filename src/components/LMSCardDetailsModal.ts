@@ -18,6 +18,8 @@ import {
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { map } from "lit/directives/map.js";
+import { TranslationHandler, __ } from "../lib/TranslationHandler";
+import { Gettext } from "gettext.js";
 
 type LMSEventFull = Omit<
   LMSEvent,
@@ -37,6 +39,8 @@ export default class LMSCardDetailsModal extends LitElement {
   @state() target_groups: TargetGroupFee[] = [];
   @state() locale: string = "en";
   @query(".close") closeButton: HTMLButtonElement | undefined;
+  protected i18n: Gettext = {} as Gettext;
+  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [
     bootstrapStyles,
@@ -68,6 +72,13 @@ export default class LMSCardDetailsModal extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+
+    this.translationHandler = new TranslationHandler(() =>
+      this.requestUpdate()
+    );
+    this.translationHandler.loadTranslations().then((i18n) => {
+      this.i18n = i18n;
+    });
 
     const event_types = async () => {
       const response = await fetch(
@@ -216,7 +227,7 @@ export default class LMSCardDetailsModal extends LitElement {
                   <div>
                     <p class="wrapper">
                       <span>${litFontawesome(faCalendar)}</span>
-                      <strong>Date and Time</strong>
+                      <strong>${__("Date and Time")}</strong>
                     </p>
                     <p class="wrapper">
                       ${this.formatDatetimeByLocale(start_time)}
@@ -228,7 +239,7 @@ export default class LMSCardDetailsModal extends LitElement {
                   <div>
                     <p class="wrapper">
                       <span>${litFontawesome(faInfoCircle)}</span>
-                      <strong>Description</strong>
+                      <strong>${__("Description")}</strong>
                     </p>
                     <p>${description}</p>
                   </div>
@@ -243,14 +254,14 @@ export default class LMSCardDetailsModal extends LitElement {
                   <div>
                     <p class="wrapper">
                       <span>${litFontawesome(faCreditCard)}</span>
-                      <strong>Fees</strong>
+                      <strong>${__("Fees")}</strong>
                     </p>
                     <table class="table table-sm table-borderless">
                       <thead>
                         <tr>
-                          <th scope="col">Target Group</th>
-                          <th scope="col">Age Range</th>
-                          <th scope="col">Fee</th>
+                          <th scope="col">${__("Target Group")}</th>
+                          <th scope="col">${__("Age Range")}</th>
+                          <th scope="col">${__("Fee")}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -279,7 +290,7 @@ export default class LMSCardDetailsModal extends LitElement {
                   <div>
                     <p class="wrapper">
                       <span>${litFontawesome(faMapMarker)}</span>
-                      <strong>Location</strong>
+                      <strong>${__("Location")}</strong>
                     </p>
                     <p>
                       ${typeof location === "string"
@@ -297,7 +308,7 @@ export default class LMSCardDetailsModal extends LitElement {
                 data-dismiss="modal"
                 @click=${this.toggleModal}
               >
-                Close
+                ${__("Close")}
               </button>
               <a
                 role="button"
@@ -305,7 +316,7 @@ export default class LMSCardDetailsModal extends LitElement {
                 ?hidden=${!registration_link}
                 href=${registration_link}
               >
-                Register
+                ${__("Register")}
               </a>
             </div>
           </div>

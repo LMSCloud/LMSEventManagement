@@ -9,6 +9,8 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { classMap } from "lit/directives/class-map.js";
+import { TranslationHandler, __ } from "../lib/TranslationHandler";
+import { Gettext } from "gettext.js";
 
 type Facets = {
   eventTypeIds: string[];
@@ -41,11 +43,20 @@ export default class LMSEventsFilter extends LitElement {
   @state() target_groups: TargetGroup[] = [];
   @state() locations: LMSLocation[] = [];
   @queryAll("input") inputs: NodeListOf<HTMLInputElement> | undefined;
+  protected i18n: Gettext = {} as Gettext;
+  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [bootstrapStyles];
 
   override connectedCallback() {
     super.connectedCallback();
+
+    this.translationHandler = new TranslationHandler(() =>
+      this.requestUpdate()
+    );
+    this.translationHandler.loadTranslations().then((i18n) => {
+      this.i18n = i18n;
+    });
 
     const event_types = async () => {
       const response = await fetch(
@@ -288,7 +299,7 @@ export default class LMSEventsFilter extends LitElement {
               "d-none": this.isHidden,
             })}"
           >
-            Filter
+            ${__("Filter")}
           </h5>
           <div>
             <button
@@ -306,7 +317,7 @@ export default class LMSEventsFilter extends LitElement {
               })}"
               @click=${this.handleReset}
             >
-              Reset
+              ${__("Reset")}
             </button>
           </div>
         </div>
@@ -334,7 +345,7 @@ export default class LMSEventsFilter extends LitElement {
             )}
           </div>
           <div class="form-group">
-            <label for="target_group">Target Group</label>
+            <label for="target_group">${__("Target Group")}</label>
             ${map(
               this.facets.targetGroupIds,
               (targetGroupId) => html` <div class="form-group form-check">
@@ -384,7 +395,7 @@ export default class LMSEventsFilter extends LitElement {
               name="open_registration"
               checked
             />
-            <label for="open_registration">Open Registration</label>
+            <label for="open_registration">${__("Open Registration")}</label>
           </div>
           <div class="form-group">
             <label for="start_time">Start Date</label>
@@ -394,7 +405,7 @@ export default class LMSEventsFilter extends LitElement {
               id="start_time"
               name="start_time"
             />
-            <label for="end_time">End Date</label>
+            <label for="end_time">${__("End Date")}</label>
             <input
               type="date"
               class="form-control form-control-sm"
@@ -403,7 +414,7 @@ export default class LMSEventsFilter extends LitElement {
             />
           </div>
           <div class="form-group">
-            <label for="location">Location</label>
+            <label for="location">${__("Location")}</label>
             ${map(
               this.facets.locationIds,
               (locationId) =>
@@ -423,7 +434,7 @@ export default class LMSEventsFilter extends LitElement {
             )}
           </div>
           <div class="form-group">
-            <label for="fee">Fee</label>
+            <label for="fee">${__("Fee")}</label>
             <input
               type="number"
               class="form-control form-control-sm"
