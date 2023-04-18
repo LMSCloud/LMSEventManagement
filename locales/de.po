@@ -1,1 +1,48 @@
-{}
+# German translations for PACKAGE package
+# German translation for PACKAGE.
+# Copyright (C) 2023 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Paul Derscheid <paul.derscheid@lmscloud.de>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-04-18 11:37+0200\n"
+"PO-Revision-Date: 2023-04-18 11:41+0200\n"
+"Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
+"Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.2.2\n"
+
+#: src/components/LMSFloatingMenu.ts:97
+msgid "current"
+msgstr "aktuell"
+
+#: src/extensions/LMSEventManagementMenu.ts:31
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: src/extensions/LMSEventManagementMenu.ts:37
+msgid "Target Groups"
+msgstr "Zielgruppen"
+
+#: src/extensions/LMSEventManagementMenu.ts:43
+msgid "Locations"
+msgstr "Locations"
+
+#: src/extensions/LMSEventManagementMenu.ts:49
+msgid "Event Types"
+msgstr "Veranstaltungstypen"
+
+#: src/extensions/LMSEventManagementMenu.ts:55
+msgid "Events"
+msgstr "Veranstaltungen"
+
+#: src/extensions/LMSEventManagementMenu.ts:61
+msgid "Images"
+msgstr "Bilder"

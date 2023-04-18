@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 11:35+0200\n"
+"POT-Creation-Date: 2023-04-18 11:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,10 +19,6 @@ msgstr ""
 
 #: src/components/LMSFloatingMenu.ts:97
 msgid "current"
-msgstr ""
-
-#: src/components/LMSStaffEventCard/LMSStaffEventCardAttendees.ts:39
-msgid "Not implemented"
 msgstr ""
 
 #: src/extensions/LMSEventManagementMenu.ts:31
