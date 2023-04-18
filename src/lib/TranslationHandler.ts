@@ -10,7 +10,7 @@ export class TranslationHandler {
 
   constructor(
     callback: Function,
-    localeUrl = "/api/v1/contrib/eventmanagement/static/locales/"
+    localeUrl = "/api/v1/contrib/eventmanagement/static/locales"
   ) {
     this.i18n = Gettext();
     this.locale = document.documentElement.lang.slice(0, 2);
@@ -25,7 +25,7 @@ export class TranslationHandler {
     }
 
     try {
-      const response = await fetch(`${this.localeUrl}${this.locale}.json`);
+      const response = await fetch(`${this.localeUrl}/${this.locale}/LC_MESSAGES/${this.locale}.json`);
 
       if (response.status >= 200 && response.status <= 299) {
         const translations = await response.json();
