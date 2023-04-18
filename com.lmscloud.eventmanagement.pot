@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-18 11:37+0200\n"
+"POT-Creation-Date: 2023-04-18 18:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,30 +17,229 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/components/LMSFloatingMenu.ts:97
-msgid "current"
-msgstr ""
-
-#: src/extensions/LMSEventManagementMenu.ts:31
+#: src/extensions/LMSEventManagementMenu.ts:28
 msgid "Settings"
 msgstr ""
 
-#: src/extensions/LMSEventManagementMenu.ts:37
+#: src/extensions/LMSEventManagementMenu.ts:34
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:193
 msgid "Target Groups"
 msgstr ""
 
-#: src/extensions/LMSEventManagementMenu.ts:43
+#: src/extensions/LMSEventManagementMenu.ts:40
 msgid "Locations"
 msgstr ""
 
-#: src/extensions/LMSEventManagementMenu.ts:49
+#: src/extensions/LMSEventManagementMenu.ts:46
 msgid "Event Types"
 msgstr ""
 
-#: src/extensions/LMSEventManagementMenu.ts:55
+#: src/extensions/LMSEventManagementMenu.ts:52
 msgid "Events"
 msgstr ""
 
-#: src/extensions/LMSEventManagementMenu.ts:61
+#: src/extensions/LMSEventManagementMenu.ts:58
 msgid "Images"
+msgstr ""
+
+#: src/components/LMSStaffEventCardDeck.ts:165
+msgid "target_group"
+msgstr ""
+
+#: src/components/LMSStaffEventCardDeck.ts:166
+msgid "selected"
+msgstr ""
+
+#: src/components/LMSStaffEventCardDeck.ts:167
+msgid "fee"
+msgstr ""
+
+#: src/components/LMSStaffEventCardDeck.ts:428
+msgid "You have to create a"
+msgstr ""
+
+#: src/components/LMSStaffEventCardDeck.ts:437
+msgid "target group"
+msgstr ""
+
+#: src/components/LMSStaffEventCardDeck.ts:447
+msgid "location"
+msgstr ""
+
+#: src/components/LMSStaffEventCardDeck.ts:458
+msgid "event type"
+msgstr ""
+
+#: src/components/LMSStaffEventCardDeck.ts:460
+msgid "first"
+msgstr ""
+
+#: src/components/LMSStaffEventCardDeck.ts:477
+msgid "Data"
+msgstr ""
+
+#: src/components/LMSStaffEventCardDeck.ts:485
+msgid "Waitlist"
+msgstr ""
+
+#: src/components/LMSStaffEventCardDeck.ts:493
+msgid "Preview"
+msgstr ""
+
+#: src/components/LMSToast.ts:38
+msgid "sec ago"
+msgstr ""
+
+#: src/components/LMSModal.ts:213
+msgid "Add"
+msgstr ""
+
+#: src/components/LMSModal.ts:254 src/components/LMSCardDetailsModal.ts:311
+msgid "Close"
+msgstr ""
+
+#: src/components/LMSModal.ts:258
+msgid "Create"
+msgstr ""
+
+#: src/components/LMSCardDetailsModal.ts:230
+msgid "Date and Time"
+msgstr ""
+
+#: src/components/LMSCardDetailsModal.ts:242
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:266
+msgid "Description"
+msgstr ""
+
+#: src/components/LMSCardDetailsModal.ts:257
+msgid "Fees"
+msgstr ""
+
+#: src/components/LMSCardDetailsModal.ts:262
+#: src/components/LMSEventsFilter.ts:348
+msgid "Target Group"
+msgstr ""
+
+#: src/components/LMSCardDetailsModal.ts:263
+msgid "Age Range"
+msgstr ""
+
+#: src/components/LMSCardDetailsModal.ts:264
+#: src/components/LMSEventsFilter.ts:437
+msgid "Fee"
+msgstr ""
+
+#: src/components/LMSCardDetailsModal.ts:293
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:237
+#: src/components/LMSEventsFilter.ts:417
+msgid "Location"
+msgstr ""
+
+#: src/components/LMSCardDetailsModal.ts:319
+msgid "Register"
+msgstr ""
+
+#: src/components/LMSTable.ts:246
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:281
+msgid "Edit"
+msgstr ""
+
+#: src/components/LMSTable.ts:254
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:285
+msgid "Save"
+msgstr ""
+
+#: src/components/LMSTable.ts:263
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:293
+msgid "Delete"
+msgstr ""
+
+#: src/components/LMSFloatingMenu.ts:98
+msgid "current"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardAttendees.ts:39
+#: src/views/StaffSettingsView.ts:26
+msgid "Not implemented"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:184
+msgid "Name"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:188
+msgid "Event Type"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:198
+msgid "Min Age"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:202
+msgid "Max Age"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:208
+msgid "Max Participants"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:214
+msgid "Start Time"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:218
+msgid "End Time"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:225
+msgid "Registration Start"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:229
+msgid "Registration End"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:242
+msgid "Image"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:247
+msgid "Status"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:252
+msgid "Registration Link"
+msgstr ""
+
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:259
+#: src/components/LMSEventsFilter.ts:398
+msgid "Open Registration"
+msgstr ""
+
+#: src/components/LMSEventsFilter.ts:302
+msgid "Filter"
+msgstr ""
+
+#: src/components/LMSEventsFilter.ts:320
+msgid "Reset"
+msgstr ""
+
+#: src/components/LMSEventsFilter.ts:408
+msgid "End Date"
+msgstr ""
+
+#: src/components/LMSImageBrowser.ts:213
+msgid "Copy to clipboard"
+msgstr ""
+
+#: src/components/LMSPaginationNav.ts:78
+msgid "Previous"
+msgstr ""
+
+#: src/components/LMSPaginationNav.ts:101
+msgid "Next"
+msgstr ""
+
+#: src/views/LMSEventsView.ts:241
+msgid "There are no events to display"
 msgstr ""
