@@ -5,11 +5,7 @@ use 5.032;
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
-
-use C4::Context;
 use Try::Tiny;
-use JSON;
-use SQL::Abstract;
 
 use Koha::Plugin::Com::LMSCloud::EventManagement;
 use Koha::LMSCloud::EventManagement::Events;
@@ -35,7 +31,7 @@ sub get {
             Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $id }, { columns => [ 'target_group_id', 'selected', 'fee' ] } );
         return $c->render(
             status  => 200,
-            openapi => { %{ $event->unblessed }, target_groups => $event_target_group_fees->as_list } || {}
+            openapi => { %{ $event->unblessed }, target_groups => $event_target_group_fees->as_list || [] } || {}
         );
     }
     catch {
@@ -92,7 +88,8 @@ sub delete {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $id    = $c->validation->param('id');
+        my $id = $c->validation->param('id');
+
         # This is a temporary fix for the issue with the delete method on rvs of find calls
         my $event = Koha::LMSCloud::EventManagement::Events->search( { id => $id } );
 

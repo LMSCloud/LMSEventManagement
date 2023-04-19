@@ -5,11 +5,8 @@ use 5.032;
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
-
 use Try::Tiny;
-use JSON;
 
-use Koha::Database;
 use Koha::Plugin::Com::LMSCloud::EventManagement;
 use Koha::LMSCloud::EventManagement::Event;
 use Koha::LMSCloud::EventManagement::Events;
@@ -25,15 +22,20 @@ sub list {
 
     return try {
         my $events_set = Koha::LMSCloud::EventManagement::Events->new;
-        my $events     = $c->objects->search($events_set);
+        my $events     = $c->objects->search_rs($events_set);
 
-        foreach my $event ( @{$events} ) {
+        my $response = [];
+        while ( my $event = $events->next ) {
+            my $event = $event->unblessed;
+
             my $event_target_group_fees =
                 Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $event->{id} }, { columns => [ 'target_group_id', 'selected', 'fee' ] } );
             $event->{'target_groups'} = $event_target_group_fees->as_list;
+
+            push @{$response}, $event;
         }
 
-        return $c->render( status => 200, openapi => $events || [] );
+        return $c->render( status => 200, openapi => $response || [] );
     }
     catch {
         return $c->unhandled_exception($_);

@@ -5,39 +5,31 @@ use 5.032;
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
-
-use C4::Context;
 use Try::Tiny;
-use JSON;
-use SQL::Abstract;
-use Scalar::Util qw(looks_like_number reftype);
 
-use Koha::UploadedFiles;
+use Koha::Plugin::Com::LMSCloud::EventManagement;
+use Koha::LMSCloud::EventManagement::TargetGroup;
+use Koha::LMSCloud::EventManagement::TargetGroups;
 
 our $VERSION = '1.0.0';
 
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::EventManagement->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
-}
-
-my $TARGET_GROUPS_TABLE = $self ? $self->get_qualified_table_name('target_groups') : undef;
+my $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
 
 sub get {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $id  = $c->validation->param('id');
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
+        my $id           = $c->validation->param('id');
+        my $target_group = Koha::LMSCloud::EventManagement::TargetGroups->find($id);
 
-        my ( $stmt, @bind ) = $sql->select( $TARGET_GROUPS_TABLE, q{*}, { id => $id } );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        if ( !$target_group ) {
+            return $c->render( status => 404, openapi => { error => 'Location not found' } );
+        }
 
-        my $target_group = $sth->fetchrow_hashref;
-
-        return $c->render( status => 200, openapi => $target_group || {} );
+        return $c->render(
+            status  => 200,
+            openapi => $target_group->unblessed
+        );
     }
     catch {
         return $c->unhandled_exception($_);
@@ -48,25 +40,21 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $id  = $c->validation->param('id');
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
+        my $id           = $c->validation->param('id');
+        my $body         = $c->validation->param('body');
+        my $target_group = Koha::LMSCloud::EventManagement::TargetGroups->find($id);
 
-        # We get our data for the new target group from the request body
-        my $json             = $c->req->body;
-        my $new_target_group = decode_json($json);
+        if ( !$target_group ) {
+            return $c->render( status => 404, openapi => { error => 'Event not found' } );
+        }
 
-        my ( $stmt, @bind ) = $sql->update( $TARGET_GROUPS_TABLE, $new_target_group, { id => $id } );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        $target_group->set_from_api($body);
+        $target_group->store;
 
-        ( $stmt, @bind ) = $sql->select( $TARGET_GROUPS_TABLE, q{*}, { id => $id } );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        my $target_group = $sth->fetchrow_hashref;
-
-        return $c->render( status => 200, openapi => $target_group || {} );
+        return $c->render(
+            status  => 200,
+            openapi => $target_group->unblessed
+        );
     }
     catch {
         return $c->unhandled_exception($_);
@@ -77,15 +65,18 @@ sub delete {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $id  = $c->validation->param('id');
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
+        my $id = $c->validation->param('id');
 
-        my ( $stmt, @bind ) = $sql->delete( $TARGET_GROUPS_TABLE, { id => $id } );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        # This is a temporary fix for the issue with the delete method on rvs of find calls
+        my $target_group = Koha::LMSCloud::EventManagement::TargetGroups->search( { id => $id } );
 
-        return $c->render( status => 200, openapi => {} );
+        if ( !$target_group ) {
+            return $c->render( status => 404, openapi => { error => 'Event not found' } );
+        }
+
+        $target_group->delete;
+
+        return $c->render( status => 204, openapi => q{} );
     }
     catch {
         return $c->unhandled_exception($_);

@@ -5,12 +5,7 @@ use 5.032;
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
-
-use C4::Context;
 use Try::Tiny;
-use JSON;
-use SQL::Abstract;
-use Scalar::Util qw(looks_like_number reftype);
 
 use Koha::UploadedFiles;
 use MIME::Base64;

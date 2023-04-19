@@ -5,37 +5,31 @@ use 5.032;
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
-
-use C4::Context;
 use Try::Tiny;
-use JSON;
-use SQL::Abstract;
-use Scalar::Util qw(looks_like_number reftype);
+
+use Koha::Plugin::Com::LMSCloud::EventManagement;
+use Koha::LMSCloud::EventManagement::Location;
+use Koha::LMSCloud::EventManagement::Locations;
 
 our $VERSION = '1.0.0';
 
-my $self = undef;
-if ( Koha::Plugin::Com::LMSCloud::EventManagement->can('new') ) {
-    $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
-}
-
-my $LOCATIONS_TABLE = $self ? $self->get_qualified_table_name('locations') : undef;
+my $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
 
 sub get {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $id  = $c->validation->param('id');
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
+        my $id       = $c->validation->param('id');
+        my $location = Koha::LMSCloud::EventManagement::Locations->find($id);
 
-        my ( $stmt, @bind ) = $sql->select( $LOCATIONS_TABLE, q{*}, { id => $id } );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        if ( !$location ) {
+            return $c->render( status => 404, openapi => { error => 'Location not found' } );
+        }
 
-        my $location = $sth->fetchrow_hashref;
-
-        return $c->render( status => 200, openapi => $location || {} );
+        return $c->render(
+            status  => 200,
+            openapi => $location->unblessed
+        );
     }
     catch {
         return $c->unhandled_exception($_);
@@ -46,25 +40,21 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $id  = $c->validation->param('id');
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
+        my $id       = $c->validation->param('id');
+        my $body     = $c->validation->param('body');
+        my $location = Koha::LMSCloud::EventManagement::Locations->find($id);
 
-        # We get our data for the new event type from the request body
-        my $json         = $c->req->body;
-        my $new_location = decode_json($json);
+        if ( !$location ) {
+            return $c->render( status => 404, openapi => { error => 'Event not found' } );
+        }
 
-        my ( $stmt, @bind ) = $sql->update( $LOCATIONS_TABLE, $new_location, { id => $id } );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        $location->set_from_api($body);
+        $location->store;
 
-        ( $stmt, @bind ) = $sql->select( $LOCATIONS_TABLE, q{*}, { id => $id } );
-        $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
-
-        my $event_type = $sth->fetchrow_hashref;
-
-        return $c->render( status => 200, openapi => $event_type || {} );
+        return $c->render(
+            status  => 200,
+            openapi => $location->unblessed
+        );
     }
     catch {
         return $c->unhandled_exception($_);
@@ -75,15 +65,18 @@ sub delete {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $id  = $c->validation->param('id');
-        my $sql = SQL::Abstract->new;
-        my $dbh = C4::Context->dbh;
+        my $id = $c->validation->param('id');
 
-        my ( $stmt, @bind ) = $sql->delete( $LOCATIONS_TABLE, { id => $id } );
-        my $sth = $dbh->prepare($stmt);
-        $sth->execute(@bind);
+        # This is a temporary fix for the issue with the delete method on rvs of find calls
+        my $location = Koha::LMSCloud::EventManagement::Locations->search( { id => $id } );
 
-        return $c->render( status => 200, openapi => {} );
+        if ( !$location ) {
+            return $c->render( status => 404, openapi => { error => 'Event not found' } );
+        }
+
+        $location->delete;
+
+        return $c->render( status => 204, openapi => q{} );
     }
     catch {
         return $c->unhandled_exception($_);
