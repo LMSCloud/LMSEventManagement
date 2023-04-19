@@ -2140,56 +2140,10 @@
       ],
       "produces": ["application/json"],
       "responses": {
-        "200": {
-          "description": "Event type",
+        "204": {
+          "description": "Event Type",
           "schema": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "integer"
-              },
-              "name": {
-                "type": "string"
-              },
-              "target_groups": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "integer"
-                    },
-                    "selected": {
-                      "type": "boolean"
-                    },
-                    "fee": {
-                      "type": "number"
-                    }
-                  }
-                }
-              },
-              "max_age": {
-                "type": "integer"
-              },
-              "min_age": {
-                "type": "integer"
-              },
-              "open_registration": {
-                "type": "boolean"
-              },
-              "max_participants": {
-                "type": "integer"
-              },
-              "description": {
-                "type": "string"
-              },
-              "image": {
-                "type": "string"
-              },
-              "location": {
-                "type": "integer"
-              }
-            }
+            "type": "string"
           }
         },
         "400": {
@@ -2942,33 +2896,10 @@
       ],
       "produces": ["application/json"],
       "responses": {
-        "200": {
+        "204": {
           "description": "Location",
           "schema": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "integer"
-              },
-              "name": {
-                "type": "string"
-              },
-              "street": {
-                "type": "string"
-              },
-              "number": {
-                "type": "string"
-              },
-              "city": {
-                "type": "string"
-              },
-              "zip": {
-                "type": "string"
-              },
-              "country": {
-                "type": "string"
-              }
-            }
+            "type": "string"
           }
         },
         "400": {
@@ -3532,21 +3463,10 @@
       ],
       "produces": ["application/json"],
       "responses": {
-        "200": {
+        "204": {
           "description": "Target group",
           "schema": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "integer"
-              },
-              "name": {
-                "type": ["string", "null"]
-              },
-              "description": {
-                "type": ["string", "null"]
-              }
-            }
+            "type": "string"
           }
         },
         "400": {
