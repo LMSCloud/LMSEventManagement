@@ -1,6 +1,5 @@
 import { LitElement, PropertyValues } from "lit";
 import LMSTooltip from "./LMSTooltip";
-import { Gettext } from "gettext.js";
 type UploadedImage = {
     image: string;
     metadata: {
@@ -25,8 +24,6 @@ export default class LMSImageBrowser extends LitElement {
     uploadedImages: UploadedImage[];
     buttonReferences: NodeListOf<HTMLButtonElement>;
     tooltipReferences: NodeListOf<LMSTooltip>;
-    protected i18n: Gettext;
-    private translationHandler;
     private boundEventHandler;
     static styles: import("lit").CSSResult[];
     loadImages(): void;

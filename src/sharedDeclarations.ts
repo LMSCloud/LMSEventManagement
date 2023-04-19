@@ -46,6 +46,10 @@ export type Column = {
   [key: string]: string | number | TemplateResult;
 };
 
+export type TaggedColumn = Column & {
+  uuid: string;
+};
+
 export type LMSLocation = {
   id: number;
   street: string;

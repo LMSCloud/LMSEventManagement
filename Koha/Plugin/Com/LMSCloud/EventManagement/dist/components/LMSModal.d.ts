@@ -4,8 +4,6 @@ import LMSSelect from "./Inputs/LMSSelect";
 import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
 import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
-import { TranslationHandler } from "../lib/TranslationHandler";
-import { Gettext } from "gettext.js";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-select": LMSSelect;
@@ -21,10 +19,7 @@ export default class LMSModal extends LitElement {
     protected isOpen: boolean;
     protected alertMessage: string;
     protected modalTitle: string;
-    protected i18n: Gettext;
-    protected translationHandler: TranslationHandler;
     static styles: import("lit").CSSResult[];
-    connectedCallback(): void;
     private toggleModal;
     private create;
     private dismissAlert;

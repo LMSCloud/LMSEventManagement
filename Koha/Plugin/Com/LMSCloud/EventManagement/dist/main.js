@@ -787,15 +787,9 @@
             this.locations = [];
             this.target_groups = [];
             this.locale = "en";
-            this.i18n = {};
-            this.translationHandler = {};
         }
         connectedCallback() {
             super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
-            });
             const event_types = async () => {
                 const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
                 return response.json();
@@ -1077,16 +1071,10 @@
             this.event_types = [];
             this.target_groups = [];
             this.locations = [];
-            this.i18n = {};
-            this.translationHandler = {};
             this._eventsDeepCopy = [];
         }
         connectedCallback() {
             super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
-            });
             const event_types = async () => {
                 const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
                 return response.json();
@@ -1570,8 +1558,6 @@
         constructor() {
             super(...arguments);
             this.uploadedImages = [];
-            this.i18n = {};
-            this.translationHandler = {};
             this.boundEventHandler = () => { };
         }
         loadImages() {
@@ -1595,10 +1581,6 @@
         }
         connectedCallback() {
             super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
-            });
             /** This is the counterpart to the script in the intranet_js hook */
             this.boundEventHandler = this.handleMessageEvent.bind(this);
             window.addEventListener("message", this.boundEventHandler);
@@ -1763,16 +1745,6 @@
             this.isOpen = false;
             this.alertMessage = "";
             this.modalTitle = "";
-            this.i18n = {};
-            this.translationHandler = {};
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
-                this.dispatchEvent(new CustomEvent("translations-loaded"));
-            });
         }
         toggleModal() {
             const { renderRoot } = this;
@@ -2048,18 +2020,6 @@
     var LMSModal$1 = LMSModal;
 
     let LMSStaffEventCardAttendees = class LMSStaffEventCardAttendees extends s {
-        constructor() {
-            super(...arguments);
-            this.i18n = {};
-            this.translationHandler = {};
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
-            });
-        }
         render() {
             return x ` <h1 class="text-center">${__("Not implemented")}!</h1> `;
         }
@@ -2162,16 +2122,6 @@
                 heading: "",
                 message: "",
             };
-            this._i18n = {};
-            this.i18n = {};
-            this.translationHandler = {};
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
-            });
         }
         handleEdit(e) {
             var _a;
@@ -2247,7 +2197,7 @@
         }
         async handleDelete(e) {
             e.preventDefault();
-            const id = new TemplateResultConverter(this.datum.id).getRenderValues()[0];
+            const [id] = new TemplateResultConverter(this.datum.id).getRenderValues();
             if (!id) {
                 return;
             }
@@ -2409,9 +2359,6 @@
     __decorate([
         e$2({ state: true })
     ], LMSStaffEventCardForm.prototype, "_toast", void 0);
-    __decorate([
-        e$2({ state: true })
-    ], LMSStaffEventCardForm.prototype, "_i18n", void 0);
     LMSStaffEventCardForm = __decorate([
         e$3("lms-staff-event-card-form")
     ], LMSStaffEventCardForm);
@@ -2420,320 +2367,278 @@
     let LMSStaffEventCardDeck = class LMSStaffEventCardDeck extends s {
         constructor() {
             super(...arguments);
+            this.events = [];
+            this.event_types = [];
+            this.target_groups = [];
+            this.locations = [];
             this.data = [];
             this.cardStates = new Map();
-            this.href = {
-                path: "/cgi-bin/koha/plugins/run.pl",
-                query: true,
-                params: {
-                    class: "Koha::Plugin::Com::LMSCloud::EventManagement",
-                    method: "configure",
-                },
-            };
-            this.i18n = {};
-            this.translationHandler = {};
         }
         connectedCallback() {
             super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
+            this.hydrate();
+        }
+        hydrate() {
+            /** Here we initialize the card states so we can track them
+             *  individually going forward. */
+            this.events.forEach(() => {
+                this.cardStates.set(crypto.getRandomValues(new Uint32Array(2)).join("-"), ["data"]);
             });
-            const events = fetch("/api/v1/contrib/eventmanagement/events");
-            events
-                .then((response) => {
-                if (response.status >= 200 && response.status <= 299) {
-                    return response.json();
-                }
-                throw new Error("Something went wrong");
-            })
-                /** Because we have to fetch data from endpoints to build the select
-                 *  elements, we have to make the getInputFromColumn function async
-                 *  and therefore turn the whole map call into nested async calls.
-                 *  Looks ugly, but basically the call to getInputFromColumn call
-                 *  just turns the enclosed function into a promise, which resolves
-                 *  to the value you'd expect. Just ignore the async/await syntax
-                 *  and remember that you have to resolve the Promise returned by
-                 *  the previous call before you can continue with the next one. */
-                .then(async (result) => {
-                /** Here we initialize the card states so we can track them
-                 *  individually going forward. */
-                result.forEach(() => {
-                    this.cardStates.set(crypto.getRandomValues(new Uint32Array(2)).join("-"), ["data"]);
+            const data = this.events.map((event) => {
+                const entries = Object.entries(event).map(([name, value]) => {
+                    return [name, this.getInputFromColumn({ name, value })];
                 });
-                const data = await Promise.all(result.map(async (promisedTemplateResult) => {
-                    const entries = await Promise.all(Object.entries(promisedTemplateResult).map(async ([name, value]) => [
-                        name,
-                        await this.getInputFromColumn({ name, value }),
-                    ]));
-                    return Object.fromEntries(entries);
-                }));
-                /** Here we tag every datum with the uuid we generated earlier. */
-                const cardStatesArray = Array.from(this.cardStates);
-                this.data = data.map((datum, index) => ({
+                return Object.fromEntries(entries);
+            });
+            /** Here we tag every datum with the uuid we generated earlier. */
+            this.data = data.map((datum, index) => {
+                const [uuid] = [...this.cardStates][index];
+                return {
                     ...datum,
-                    uuid: cardStatesArray[index][0],
-                }));
-            })
-                .catch((error) => {
-                console.error(error);
+                    uuid,
+                };
             });
         }
-        async getInputFromColumn({ name, value, }) {
+        getInputFromColumn({ name, value, }) {
             const inputs = new Map([
                 [
                     "name",
-                    () => x `<input
-            class="form-control"
-            type="text"
-            name="name"
-            value=${value}
-            disabled
-          />`,
+                    x `<input
+          class="form-control"
+          type="text"
+          name="name"
+          value=${value}
+          disabled
+        />`,
                 ],
                 [
                     "event_type",
-                    async () => {
-                        const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
-                        const result = await response.json();
-                        return x `<select class="form-control" name="event_type" disabled>
-            ${o(result, ({ id, name }) => x `<option
-                  value=${id}
-                  ?selected=${id === parseInt(value, 10)}
-                >
-                  ${name}
-                </option>`)};
-          </select>`;
-                    },
+                    x `<select class="form-control" name="event_type" disabled>
+          ${o(this.event_types, ({ id, name }) => x `<option
+                value=${id}
+                ?selected=${id === parseInt(value, 10)}
+              >
+                ${name}
+              </option>`)};
+        </select>`,
                 ],
                 [
                     "target_groups",
-                    async () => {
-                        const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
-                        const result = await response.json();
-                        return x `
-            <table class="table table-sm table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th scope="col">${__("target_group")}</th>
-                  <th scope="col">${__("selected")}</th>
-                  <th scope="col">${__("fee")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${o(result, ({ id, name }) => {
-                        var _a, _b;
-                        const target_group = value.find((target_group) => target_group.target_group_id === id);
-                        const selected = (_a = target_group === null || target_group === void 0 ? void 0 : target_group.selected) !== null && _a !== void 0 ? _a : false;
-                        const fee = (_b = target_group === null || target_group === void 0 ? void 0 : target_group.fee) !== null && _b !== void 0 ? _b : 0;
-                        return x `
-                    <tr>
-                      <td
-                        id=${id}
+                    x `
+          <table class="table table-sm table-bordered table-striped">
+            <thead>
+              <tr>
+                <th scope="col">${__("target_group")}</th>
+                <th scope="col">${__("selected")}</th>
+                <th scope="col">${__("fee")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${o(this.target_groups, ({ id, name }) => {
+                    var _a, _b;
+                    const target_group = value.find((target_group) => target_group.target_group_id === id);
+                    const selected = (_a = target_group === null || target_group === void 0 ? void 0 : target_group.selected) !== null && _a !== void 0 ? _a : false;
+                    const fee = (_b = target_group === null || target_group === void 0 ? void 0 : target_group.fee) !== null && _b !== void 0 ? _b : 0;
+                    return x `
+                  <tr>
+                    <td
+                      id=${id}
+                      data-group="target_groups"
+                      data-name="id"
+                      class="align-middle"
+                    >
+                      ${name}
+                    </td>
+                    <td class="align-middle">
+                      <input
+                        type="checkbox"
                         data-group="target_groups"
-                        data-name="id"
-                        class="align-middle"
-                      >
-                        ${name}
-                      </td>
-                      <td class="align-middle">
-                        <input
-                          type="checkbox"
-                          data-group="target_groups"
-                          data-name="selected"
-                          id=${id}
-                          class="form-control"
-                          ?checked=${selected}
-                          disabled
-                        />
-                      </td>
-                      <td class="align-middle">
-                        <input
-                          type="number"
-                          data-group="target_groups"
-                          data-name="fee"
-                          id=${id}
-                          step="0.01"
-                          class="form-control"
-                          value=${fee}
-                          disabled
-                        />
-                      </td>
-                    </tr>
-                  `;
-                    })}
-              </tbody>
-            </table>
-          `;
-                    },
+                        data-name="selected"
+                        id=${id}
+                        class="form-control"
+                        ?checked=${selected}
+                        disabled
+                      />
+                    </td>
+                    <td class="align-middle">
+                      <input
+                        type="number"
+                        data-group="target_groups"
+                        data-name="fee"
+                        id=${id}
+                        step="0.01"
+                        class="form-control"
+                        value=${fee}
+                        disabled
+                      />
+                    </td>
+                  </tr>
+                `;
+                })}
+            </tbody>
+          </table>
+        `,
                 ],
                 [
                     "min_age",
-                    () => x `<input
-            class="form-control"
-            type="number"
-            name="min_age"
-            value=${value}
-            disabled
-          />`,
+                    x `<input
+          class="form-control"
+          type="number"
+          name="min_age"
+          value=${value}
+          disabled
+        />`,
                 ],
                 [
                     "max_age",
-                    () => x `<input
-            class="form-control"
-            type="number"
-            name="max_age"
-            value=${value}
-            disabled
-          />`,
+                    x `<input
+          class="form-control"
+          type="number"
+          name="max_age"
+          value=${value}
+          disabled
+        />`,
                 ],
                 [
                     "max_participants",
-                    () => x `<input
-            class="form-control"
-            type="number"
-            name="max_participants"
-            value=${value}
-            disabled
-          />`,
+                    x `<input
+          class="form-control"
+          type="number"
+          name="max_participants"
+          value=${value}
+          disabled
+        />`,
                 ],
                 [
                     "start_time",
-                    () => x `<input
-            class="form-control"
-            type="datetime-local"
-            name="start_time"
-            value=${value}
-            disabled
-          />`,
+                    x `<input
+          class="form-control"
+          type="datetime-local"
+          name="start_time"
+          value=${value}
+          disabled
+        />`,
                 ],
                 [
                     "end_time",
-                    () => x `<input
-            class="form-control"
-            type="datetime-local"
-            name="end_time"
-            value=${value}
-            disabled
-          />`,
+                    x `<input
+          class="form-control"
+          type="datetime-local"
+          name="end_time"
+          value=${value}
+          disabled
+        />`,
                 ],
                 [
                     "registration_start",
-                    () => x `<input
-            class="form-control"
-            type="datetime-local"
-            name="registration_start"
-            value=${value}
-            disabled
-          />`,
+                    x `<input
+          class="form-control"
+          type="datetime-local"
+          name="registration_start"
+          value=${value}
+          disabled
+        />`,
                 ],
                 [
                     "registration_end",
-                    () => x `<input
-            class="form-control"
-            type="datetime-local"
-            name="registration_end"
-            value=${value}
-            disabled
-          />`,
+                    x `<input
+          class="form-control"
+          type="datetime-local"
+          name="registration_end"
+          value=${value}
+          disabled
+        />`,
                 ],
                 [
                     "fee",
-                    () => x `<input
-            class="form-control"
-            type="number"
-            step="0.01"
-            name="fee"
-            value=${value}
-            disabled
-          />`,
+                    x `<input
+          class="form-control"
+          type="number"
+          step="0.01"
+          name="fee"
+          value=${value}
+          disabled
+        />`,
                 ],
                 [
                     "location",
-                    async () => {
-                        const response = await fetch("/api/v1/contrib/eventmanagement/locations");
-                        const result = await response.json();
-                        return x `<select class="form-control" name="location" disabled>
-            ${o(result, ({ id, name }) => x `<option value=${id}>${name}</option>`)};
-          </select>`;
-                    },
+                    x `<select class="form-control" name="location" disabled>
+          ${o(this.locations, ({ id, name }) => x `<option value=${id}>${name}</option>`)}
+        </select>`,
                 ],
                 [
                     "image",
-                    () => x `<input
-            class="form-control"
-            type="text"
-            name="image"
-            value=${value}
-            disabled
-          />`,
+                    x `<input
+          class="form-control"
+          type="text"
+          name="image"
+          value=${value}
+          disabled
+        />`,
                 ],
                 [
                     "description",
-                    () => x `<textarea
-            class="form-control overflow-hidden h-100"
-            name="description"
-            disabled
-          >
+                    x `<textarea
+          class="form-control overflow-hidden h-100"
+          name="description"
+          disabled
+        >
 ${value}</textarea
-          >`,
+        >`,
                 ],
                 [
                     "status",
-                    () => x `<select class="form-control" name="status" disabled>
-            <option
-              value="pending"
-              ?selected=${value === "pending"}
-            >
-              Pending
-            </option>
-            <option
-              value="confirmed"
-              ?selected=${value === "confirmed"}
-            >
-              Confirmed
-            </option>
-            <option
-              value="canceled"
-              ?selected=${value === "canceled"}
-            >
-              Canceled
-            </option>
-            <option
-              value="sold_out"
-              ?selected=${value === "sold_out"}
-            >
-              Sold Out
-            </option>
-          </select>`,
+                    x `<select class="form-control" name="status" disabled>
+          <option value="pending" ?selected=${value === "pending"}>
+            ${__("Pending")}
+          </option>
+          <option
+            value="confirmed"
+            ?selected=${value === "confirmed"}
+          >
+            ${__("Confirmed")}
+          </option>
+          <option
+            value="canceled"
+            ?selected=${value === "canceled"}
+          >
+            ${__("Canceled")}
+          </option>
+          <option
+            value="sold_out"
+            ?selected=${value === "sold_out"}
+          >
+            ${__("Sold Out")}
+          </option>
+        </select>`,
                 ],
                 [
                     "registration_link",
-                    () => x `<input
-            class="form-control"
-            type="text"
-            name="registration_link"
-            value=${value}
-            disabled
-          />`,
+                    x `<input
+          class="form-control"
+          type="text"
+          name="registration_link"
+          value=${value}
+          disabled
+        />`,
                 ],
                 [
                     "open_registration",
-                    () => x `<input
-            @change=${(e) => {
+                    x `<input
+          @change=${(e) => {
                     const target = e.target;
                     target.value = (target.checked ? 1 : 0).toString();
                 }}
-            class="form-check-input"
-            type="checkbox"
-            name="open_registration"
-            ?checked=${value}
-            disabled
-          />`,
+          class="form-check-input"
+          type="checkbox"
+          name="open_registration"
+          ?checked=${value}
+          disabled
+        />`,
                 ],
-                ["default", () => x `${value}`],
+                ["default", x `${value}`],
             ]);
-            return inputs.get(name) ? inputs.get(name)() : inputs.get("default")();
+            return inputs.get(name) ? inputs.get(name) : inputs.get("default");
         }
         handleTabClick(event) {
             var _a, _b;
@@ -2754,119 +2659,81 @@ ${value}</textarea
             this.requestUpdate();
         }
         render() {
-            return !this.data.length
-                ? x `<h1 class="text-center">
-          ${__("You have to create a")}&nbsp;
-          <lms-anchor
-            .href=${{
-                ...this.href,
-                params: {
-                    ...this.href.params,
-                    op: "target-groups",
-                },
-            }}
-            >${__("target group")}</lms-anchor
-          >, a&nbsp;
-          <lms-anchor
-            .href=${{
-                ...this.href,
-                params: {
-                    ...this.href.params,
-                    op: "locations",
-                },
-            }}
-            >${__("location")}</lms-anchor
-          >
-          &nbsp;and an&nbsp;
-          <lms-anchor
-            .href=${{
-                ...this.href,
-                params: {
-                    ...this.href.params,
-                    op: "event-types",
-                },
-            }}
-            >${__("event type")}</lms-anchor
-          >
-          &nbsp;${__("first")}.
-        </h1>`
-                : x `
-          <div class="container-fluid mx-0">
-            <div class="card-deck">
-              ${o(this.data, (datum, index) => {
-                var _a, _b, _c, _d, _e, _f;
-                return x `
-                  <div class="card mt-5">
-                    <div class="card-header">
-                      <ul class="nav nav-tabs card-header-tabs">
-                        <li
-                          class="nav-item"
-                          data-content="data"
-                          data-uuid=${datum.uuid}
-                          @click=${this.handleTabClick}
-                        >
-                          <a class="nav-link active" href="#">${__("Data")}</a>
-                        </li>
-                        <li
-                          class="nav-item"
-                          data-content="attendees"
-                          data-uuid=${datum.uuid}
-                          @click=${this.handleTabClick}
-                        >
-                          <a class="nav-link" href="#">${__("Waitlist")}</a>
-                        </li>
-                        <li
-                          class="nav-item"
-                          data-content="preview"
-                          data-uuid=${datum.uuid}
-                          @click=${this.handleTabClick}
-                        >
-                          <a class="nav-link">${__("Preview")}</a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div class="card-body">
-                      <h3 class="card-title">
-                        ${x `<span class="badge badge-primary"
-                          >${[
-                    new TemplateResultConverter(datum.name).getRenderValues(),
-                ]}</span
-                        >`}
-                      </h3>
-                      <lms-staff-event-card-form
-                        .datum=${datum}
-                        ?hidden=${!(((_b = (_a = this.cardStates) === null || _a === void 0 ? void 0 : _a.get(datum.uuid)) === null || _b === void 0 ? void 0 : _b[0]) ===
-                    "data")}
-                      ></lms-staff-event-card-form>
-                      <lms-staff-event-card-attendees
-                        ?hidden=${!(((_d = (_c = this.cardStates) === null || _c === void 0 ? void 0 : _c.get(datum.uuid)) === null || _d === void 0 ? void 0 : _d[0]) ===
-                    "attendees")}
-                      ></lms-staff-event-card-attendees>
-                      <lms-staff-event-card-preview
-                        ?hidden=${!(((_f = (_e = this.cardStates) === null || _e === void 0 ? void 0 : _e.get(datum.uuid)) === null || _f === void 0 ? void 0 : _f[0]) ===
-                    "preview")}
-                        .datum=${datum}
-                      ></lms-staff-event-card-preview>
-                    </div>
-                  </div>
-                  ${insertResponsiveWrapper(index)}
-                `;
-            })}
-            </div>
-          </div>
-        `;
+            return x `
+      <div class="container-fluid mx-0">
+        <div class="card-deck">
+          ${o(this.data, (datum, index) => {
+            const { name, uuid } = datum;
+            const [title] = new TemplateResultConverter(name).getRenderValues();
+            const [state] = this.cardStates.get(uuid) || "data";
+            return x `
+              <div class="card mt-5">
+                <div class="card-header">
+                  <ul class="nav nav-tabs card-header-tabs">
+                    <li
+                      class="nav-item"
+                      data-content="data"
+                      data-uuid=${datum.uuid}
+                      @click=${this.handleTabClick}
+                    >
+                      <a class="nav-link active" href="#">${__("Data")}</a>
+                    </li>
+                    <li
+                      class="nav-item"
+                      data-content="attendees"
+                      data-uuid=${datum.uuid}
+                      @click=${this.handleTabClick}
+                    >
+                      <a class="nav-link" href="#">${__("Waitlist")}</a>
+                    </li>
+                    <li
+                      class="nav-item"
+                      data-content="preview"
+                      data-uuid=${datum.uuid}
+                      @click=${this.handleTabClick}
+                    >
+                      <a class="nav-link">${__("Preview")}</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body">
+                  <h3 class="card-title">
+                    ${x `<span class="badge badge-primary">${title}</span>`}
+                  </h3>
+                  <lms-staff-event-card-form
+                    .datum=${datum}
+                    ?hidden=${!(state === "data")}
+                  ></lms-staff-event-card-form>
+                  <lms-staff-event-card-attendees
+                    ?hidden=${!(state === "attendees")}
+                  ></lms-staff-event-card-attendees>
+                  <lms-staff-event-card-preview
+                    ?hidden=${!(state === "preview")}
+                    .datum=${datum}
+                  ></lms-staff-event-card-preview>
+                </div>
+              </div>
+              ${insertResponsiveWrapper(index)}
+            `;
+        })}
+        </div>
+      </div>
+    `;
         }
     };
     LMSStaffEventCardDeck.styles = [bootstrapStyles];
     __decorate([
         e$2({ type: Array })
-    ], LMSStaffEventCardDeck.prototype, "data", void 0);
+    ], LMSStaffEventCardDeck.prototype, "events", void 0);
     __decorate([
-        t$1()
-    ], LMSStaffEventCardDeck.prototype, "cardStates", void 0);
+        e$2({ type: Array })
+    ], LMSStaffEventCardDeck.prototype, "event_types", void 0);
     __decorate([
-        t$1()
-    ], LMSStaffEventCardDeck.prototype, "href", void 0);
+        e$2({ type: Array })
+    ], LMSStaffEventCardDeck.prototype, "target_groups", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSStaffEventCardDeck.prototype, "locations", void 0);
     LMSStaffEventCardDeck = __decorate([
         e$3("lms-staff-event-card-deck")
     ], LMSStaffEventCardDeck);
@@ -3324,22 +3191,20 @@ ${value}</textarea
         }
         async connectedCallback() {
             super.connectedCallback();
-            this.addEventListener("translations-loaded", () => {
-                this.hydrate();
-            });
+            this.hydrate();
         }
         hydrate() {
             this.fields = [
                 {
                     name: "name",
                     type: "text",
-                    desc: "Name",
+                    desc: __("Name"),
                     required: true,
                 },
                 {
                     name: "event_type",
                     type: "select",
-                    desc: "Event Type",
+                    desc: __("Event Type"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
                         const result = await response.json();
@@ -3357,7 +3222,7 @@ ${value}</textarea
                         ["selected", "checkbox"],
                         ["fee", "number"],
                     ],
-                    desc: "Target Groups",
+                    desc: __("Target Groups"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
                         const result = await response.json();
@@ -3371,49 +3236,49 @@ ${value}</textarea
                 {
                     name: "min_age",
                     type: "number",
-                    desc: "Min Age",
+                    desc: __("Min Age"),
                     required: true,
                 },
                 {
                     name: "max_age",
                     type: "number",
-                    desc: "Max Age",
+                    desc: __("Max Age"),
                     required: true,
                 },
                 {
                     name: "max_participants",
                     type: "number",
-                    desc: "Max Participants",
+                    desc: __("Max Participants"),
                     required: true,
                 },
                 {
                     name: "start_time",
                     type: "datetime-local",
-                    desc: "Start Time",
+                    desc: __("Start Time"),
                     required: true,
                 },
                 {
                     name: "end_time",
                     type: "datetime-local",
-                    desc: "End Time",
+                    desc: __("End Time"),
                     required: true,
                 },
                 {
                     name: "registration_start",
                     type: "datetime-local",
-                    desc: "Registration Start",
+                    desc: __("Registration Start"),
                     required: true,
                 },
                 {
                     name: "registration_end",
                     type: "datetime-local",
-                    desc: "Registration End",
+                    desc: __("Registration End"),
                     required: true,
                 },
                 {
                     name: "location",
                     type: "select",
-                    desc: "Location",
+                    desc: __("Location"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/locations");
                         const result = await response.json();
@@ -3427,25 +3292,25 @@ ${value}</textarea
                 {
                     name: "image",
                     type: "text",
-                    desc: "Image",
+                    desc: __("Image"),
                     required: false,
                 },
                 {
                     name: "description",
                     type: "text",
-                    desc: "Description",
+                    desc: __("Description"),
                     required: false,
                 },
                 {
                     name: "status",
                     type: "select",
-                    desc: "Status",
+                    desc: __("Status"),
                     logic: async () => {
                         return [
-                            { id: "pending", name: "Pending" },
-                            { id: "confirmed", name: "Confirmed" },
-                            { id: "canceled", name: "Canceled" },
-                            { id: "sold_out", name: "Sold Out" },
+                            { id: "pending", name: __("Pending") },
+                            { id: "confirmed", name: __("Confirmed") },
+                            { id: "canceled", name: __("Canceled") },
+                            { id: "sold_out", name: __("Sold Out") },
                         ];
                     },
                     required: true,
@@ -3453,13 +3318,13 @@ ${value}</textarea
                 {
                     name: "registration_link",
                     type: "text",
-                    desc: "Registration Link",
+                    desc: __("Registration Link"),
                     required: false,
                 },
                 {
                     name: "open_registration",
                     type: "checkbox",
-                    desc: "Open Registration",
+                    desc: __("Open Registration"),
                     required: false,
                 },
             ];
@@ -3548,16 +3413,14 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            this.addEventListener("translations-loaded", () => {
-                this.hydrate();
-            });
+            this.hydrate();
         }
         hydrate() {
             this.fields = [
                 {
                     name: "name",
                     type: "text",
-                    desc: "Name",
+                    desc: __("Name"),
                     required: true,
                     value: "",
                 },
@@ -3569,7 +3432,7 @@ ${value}</textarea
                         ["selected", "checkbox"],
                         ["fee", "number"],
                     ],
-                    desc: "Target Groups",
+                    desc: __("Target Groups"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
                         const result = await response.json();
@@ -3584,28 +3447,28 @@ ${value}</textarea
                 {
                     name: "min_age",
                     type: "number",
-                    desc: "Min Age",
+                    desc: __("Min Age"),
                     required: true,
                     value: "0",
                 },
                 {
                     name: "max_age",
                     type: "number",
-                    desc: "Max Age",
+                    desc: __("Max Age"),
                     required: true,
                     value: "0",
                 },
                 {
                     name: "max_participants",
                     type: "number",
-                    desc: "Max Participants",
+                    desc: __("Max Participants"),
                     required: true,
                     value: "0",
                 },
                 {
                     name: "location",
                     type: "select",
-                    desc: "Location",
+                    desc: __("Location"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/locations");
                         const result = await response.json();
@@ -3620,21 +3483,21 @@ ${value}</textarea
                 {
                     name: "image",
                     type: "text",
-                    desc: "Image",
+                    desc: __("Image"),
                     required: false,
                     value: "0",
                 },
                 {
                     name: "description",
                     type: "text",
-                    desc: "Description",
+                    desc: __("Description"),
                     required: false,
                     value: "",
                 },
                 {
                     name: "open_registration",
                     type: "checkbox",
-                    desc: "Open Registration",
+                    desc: __("Open Registration"),
                     required: false,
                     value: "0",
                 },
@@ -3663,16 +3526,6 @@ ${value}</textarea
             };
             this.notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
             this.emptyTableMessage = x `No data to display.`;
-            this.i18n = {};
-            this.translationHandler = {};
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
-                this.dispatchEvent(new CustomEvent("translations-loaded"));
-            });
         }
         handleEdit(e) {
             console.info(e, this.notImplementedInBaseMessage);
@@ -3740,7 +3593,6 @@ ${value}</textarea
             var _a;
             const { data } = this;
             const hasData = (_a = (data === null || data === void 0 ? void 0 : data.length) > 0) !== null && _a !== void 0 ? _a : false;
-            console.log(JSON.stringify(this.data, null, 2));
             if (hasData) {
                 this.data = data.sort((a, b) => {
                     const aValue = a[column];
@@ -3754,7 +3606,6 @@ ${value}</textarea
                     return 0;
                 });
             }
-            console.log(JSON.stringify(this.data, null, 2));
         }
         willUpdate(_changedProperties) {
             super.willUpdate(_changedProperties);
@@ -4220,7 +4071,6 @@ ${value}</textarea
     ], LMSEventTypesTable$1);
     var LMSEventTypesTable$2 = LMSEventTypesTable$1;
 
-    // import { Gettext } from "gettext.js";
     let LMSLocationsModal = class LMSLocationsModal extends LMSModal$1 {
         constructor() {
             super(...arguments);
@@ -4231,51 +4081,49 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            this.addEventListener("translations-loaded", () => {
-                this.hydrate();
-            });
+            this.hydrate();
         }
         hydrate() {
             this.fields = [
                 {
                     name: "name",
                     type: "text",
-                    desc: "Name",
+                    desc: __("Name"),
                     required: true,
                     value: "",
                 },
                 {
                     name: "street",
                     type: "text",
-                    desc: "Street",
+                    desc: __("Street"),
                     required: true,
                     value: "",
                 },
                 {
                     name: "number",
                     type: "text",
-                    desc: "Number",
+                    desc: __("Number"),
                     required: false,
                     value: "",
                 },
                 {
                     name: "city",
                     type: "text",
-                    desc: "City",
+                    desc: __("City"),
                     required: false,
                     value: "",
                 },
                 {
                     name: "zip",
                     type: "text",
-                    desc: "Zip",
+                    desc: __("Zip"),
                     required: false,
                     value: "0",
                 },
                 {
                     name: "country",
                     type: "text",
-                    desc: "Country",
+                    desc: __("Country"),
                     required: false,
                     value: "",
                 },
@@ -4482,30 +4330,28 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            this.addEventListener("translations-loaded", () => {
-                this.hydrate();
-            });
+            this.hydrate();
         }
         hydrate() {
             this.fields = [
                 {
                     name: "name",
                     type: "text",
-                    desc: "Name",
+                    desc: __("Name"),
                     required: true,
                     value: "",
                 },
                 {
                     name: "min_age",
                     type: "number",
-                    desc: "Min Age",
+                    desc: __("Min Age"),
                     required: true,
                     value: "0",
                 },
                 {
                     name: "max_age",
                     type: "number",
-                    desc: "Max Age",
+                    desc: __("Max Age"),
                     required: false,
                     value: "0",
                 },
@@ -4729,7 +4575,6 @@ ${value}</textarea
             });
             this.getReservedQueryParams();
             if (window.innerWidth < 768) {
-                console.log("window.innerWidth < 768");
                 this.handleHide({ detail: true });
             }
             const reservedQueryString = this.getReservedQueryString();
@@ -4941,18 +4786,124 @@ ${value}</textarea
     var LMSEventsView$1 = LMSEventsView;
 
     let StaffEventsView = class StaffEventsView extends s {
+        constructor() {
+            super(...arguments);
+            this.events = [];
+            this.event_types = [];
+            this.target_groups = [];
+            this.locations = [];
+            this.href = {
+                path: "/cgi-bin/koha/plugins/run.pl",
+                query: true,
+                params: {
+                    class: "Koha::Plugin::Com::LMSCloud::EventManagement",
+                    method: "configure",
+                },
+            };
+            this.i18n = {};
+            this.translationHandler = {};
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+            });
+            Promise.all([
+                fetch("/api/v1/contrib/eventmanagement/events"),
+                fetch("/api/v1/contrib/eventmanagement/event_types"),
+                fetch("/api/v1/contrib/eventmanagement/target_groups"),
+                fetch("/api/v1/contrib/eventmanagement/locations"),
+            ])
+                .then((results) => Promise.all(results.map((result) => result.json())))
+                .then(([events, event_types, target_groups, locations]) => {
+                this.event_types = event_types;
+                this.target_groups = target_groups;
+                this.locations = locations;
+                this.events = events; // Assigning events last to trigger a rerender
+            });
+        }
+        hasData() {
+            return [
+                this.events,
+                this.event_types,
+                this.target_groups,
+                this.locations,
+            ].every((data) => data.length > 0);
+        }
         render() {
-            return x ` <lms-staff-event-card-deck>
-      </lms-staff-event-card-deck>
-      <lms-events-modal></lms-events-modal>`;
+            if (!this.hasData()) {
+                return x `
+        <h1 class="text-center">
+          ${__("You have to create a")}&nbsp;
+          <lms-anchor
+            .href=${{
+                ...this.href,
+                params: {
+                    ...this.href.params,
+                    op: "target-groups",
+                },
+            }}
+            >${__("target group")}</lms-anchor
+          >, ${__("a")}&nbsp;
+          <lms-anchor
+            .href=${{
+                ...this.href,
+                params: {
+                    ...this.href.params,
+                    op: "locations",
+                },
+            }}
+            >${__("location")}</lms-anchor
+          >
+          &nbsp;${__("and an")}&nbsp;
+          <lms-anchor
+            .href=${{
+                ...this.href,
+                params: {
+                    ...this.href.params,
+                    op: "event-types",
+                },
+            }}
+            >${__("event type")}</lms-anchor
+          >
+          &nbsp;${__("first")}.
+        </h1>
+      </div>`;
+            }
+            return x `
+      <lms-staff-event-card-deck
+        .events=${this.events}
+        .event_types=${this.event_types}
+        .target_groups=${this.target_groups}
+        .locations=${this.locations}
+      ></lms-staff-event-card-deck>
+      <lms-events-modal></lms-events-modal>
+    `;
         }
     };
+    StaffEventsView.styles = [bootstrapStyles];
+    __decorate([
+        t$1()
+    ], StaffEventsView.prototype, "events", void 0);
     StaffEventsView = __decorate([
         e$3("lms-staff-events-view")
     ], StaffEventsView);
     var StaffEventsView$1 = StaffEventsView;
 
     let StaffEventTypesView$1 = class StaffEventTypesView extends s {
+        constructor() {
+            super(...arguments);
+            this.i18n = {};
+            this.translationHandler = {};
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+            });
+        }
         render() {
             return x `
       <lms-event-types-table></lms-event-types-table>
@@ -4966,6 +4917,18 @@ ${value}</textarea
     var StaffEventTypesView$2 = StaffEventTypesView$1;
 
     let StaffLocationsView = class StaffLocationsView extends s {
+        constructor() {
+            super(...arguments);
+            this.i18n = {};
+            this.translationHandler = {};
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+            });
+        }
         render() {
             return x `
       <lms-locations-table></lms-locations-table>
@@ -5005,20 +4968,24 @@ ${value}</textarea
         constructor() {
             super(...arguments);
             this.data = [];
+            this.i18n = {};
+            this.translationHandler = {};
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
+            this.translationHandler.loadTranslations().then((i18n) => {
+                this.i18n = i18n;
+            });
         }
         async handleCreated() {
             const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
             this.data = await response.json();
         }
         render() {
-            var _a;
             return x `
-      <lms-target-groups-table
-        .data=${(_a = this.data) !== null && _a !== void 0 ? _a : []}
-      ></lms-target-groups-table>
-      <lms-target-groups-modal
-        @created=${this.handleCreated}
-      ></lms-target-groups-modal>
+      <lms-target-groups-table></lms-target-groups-table>
+      <lms-target-groups-modal></lms-target-groups-modal>
     `;
         }
     };

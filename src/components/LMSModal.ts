@@ -20,8 +20,7 @@ import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
 import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
 import { classMap } from "lit/directives/class-map.js";
-import { TranslationHandler, __ } from "../lib/TranslationHandler";
-import { Gettext } from "gettext.js";
+import { __ } from "../lib/TranslationHandler";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -42,8 +41,6 @@ export default class LMSModal extends LitElement {
   @state() protected isOpen = false;
   @state() protected alertMessage = "";
   @state() protected modalTitle = "";
-  protected i18n: Gettext = {} as Gettext;
-  protected translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [
     bootstrapStyles,
@@ -105,17 +102,6 @@ export default class LMSModal extends LitElement {
       }
     `,
   ];
-
-  override connectedCallback() {
-    super.connectedCallback();
-    this.translationHandler = new TranslationHandler(() =>
-      this.requestUpdate()
-    );
-    this.translationHandler.loadTranslations().then((i18n) => {
-      this.i18n = i18n;
-      this.dispatchEvent(new CustomEvent("translations-loaded"));
-    });
-  }
 
   private toggleModal() {
     const { renderRoot } = this;

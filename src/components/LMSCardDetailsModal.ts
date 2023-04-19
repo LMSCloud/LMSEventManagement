@@ -18,8 +18,7 @@ import {
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { map } from "lit/directives/map.js";
-import { TranslationHandler, __ } from "../lib/TranslationHandler";
-import { Gettext } from "gettext.js";
+import { __ } from "../lib/TranslationHandler";
 
 type LMSEventFull = Omit<
   LMSEvent,
@@ -39,8 +38,6 @@ export default class LMSCardDetailsModal extends LitElement {
   @state() target_groups: TargetGroupFee[] = [];
   @state() locale: string = "en";
   @query(".close") closeButton: HTMLButtonElement | undefined;
-  protected i18n: Gettext = {} as Gettext;
-  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [
     bootstrapStyles,
@@ -72,13 +69,6 @@ export default class LMSCardDetailsModal extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-
-    this.translationHandler = new TranslationHandler(() =>
-      this.requestUpdate()
-    );
-    this.translationHandler.loadTranslations().then((i18n) => {
-      this.i18n = i18n;
-    });
 
     const event_types = async () => {
       const response = await fetch(

@@ -10,8 +10,7 @@ import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import LMSTooltip from "./LMSTooltip";
 import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
-import { TranslationHandler, __ } from "../lib/TranslationHandler";
-import { Gettext } from "gettext.js";
+import { __ } from "../lib/TranslationHandler";
 
 type UploadedImage = {
   image: string;
@@ -45,8 +44,6 @@ export default class LMSImageBrowser extends LitElement {
   uploadedImages: UploadedImage[] = [];
   @queryAll('[id^="button-"]') buttonReferences!: NodeListOf<HTMLButtonElement>;
   @queryAll('[id^="tooltip-"]') tooltipReferences!: NodeListOf<LMSTooltip>;
-  protected i18n: Gettext = {} as Gettext;
-  private translationHandler: TranslationHandler = {} as TranslationHandler;
   private boundEventHandler: (event: MessageEvent) => void = () => {};
 
   static override styles = [
@@ -111,13 +108,6 @@ export default class LMSImageBrowser extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-
-    this.translationHandler = new TranslationHandler(() =>
-      this.requestUpdate()
-    );
-    this.translationHandler.loadTranslations().then((i18n) => {
-      this.i18n = i18n;
-    });
 
     /** This is the counterpart to the script in the intranet_js hook */
     this.boundEventHandler = this.handleMessageEvent.bind(this);

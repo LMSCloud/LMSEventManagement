@@ -3,6 +3,8 @@ import { customElement, property } from "lit/decorators.js";
 import LMSTargetGroupsModal from "../extensions/LMSTargetGroupsModal";
 import LMSTargetGroupsTable from "../extensions/LMSTargetGroupsTable";
 import { TargetGroup } from "../sharedDeclarations";
+import { TranslationHandler, __ } from "../lib/TranslationHandler";
+import { Gettext } from "gettext.js";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -14,6 +16,18 @@ declare global {
 @customElement("lms-staff-target-groups-view")
 export default class StaffEventTypesView extends LitElement {
   @property({ type: Array }) data: TargetGroup[] = [];
+  protected i18n: Gettext = {} as Gettext;
+  private translationHandler: TranslationHandler = {} as TranslationHandler;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.translationHandler = new TranslationHandler(() =>
+      this.requestUpdate()
+    );
+    this.translationHandler.loadTranslations().then((i18n) => {
+      this.i18n = i18n;
+    });
+  }
 
   async handleCreated() {
     const response = await fetch(
@@ -24,12 +38,8 @@ export default class StaffEventTypesView extends LitElement {
 
   override render() {
     return html`
-      <lms-target-groups-table
-        .data=${this.data ?? []}
-      ></lms-target-groups-table>
-      <lms-target-groups-modal
-        @created=${this.handleCreated}
-      ></lms-target-groups-modal>
+      <lms-target-groups-table></lms-target-groups-table>
+      <lms-target-groups-modal></lms-target-groups-modal>
     `;
   }
 }

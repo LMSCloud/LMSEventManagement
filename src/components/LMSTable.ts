@@ -12,8 +12,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import LMSToast from "./LMSToast";
 import { Column } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
-import { TranslationHandler, __ } from "../lib/TranslationHandler";
-import { Gettext } from "gettext.js";
+import { __ } from "../lib/TranslationHandler";
 
 type sortTask = {
   column: string;
@@ -36,8 +35,6 @@ export default class LMSTable extends LitElement {
   @state() private notImplementedInBaseMessage =
     "Implement this method in your extended LMSTable component.";
   @state() protected emptyTableMessage = html`No data to display.`;
-  protected i18n: Gettext = {} as Gettext;
-  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [
     bootstrapStyles,
@@ -63,17 +60,6 @@ export default class LMSTable extends LitElement {
       }
     `,
   ];
-
-  override connectedCallback() {
-    super.connectedCallback();
-    this.translationHandler = new TranslationHandler(() =>
-      this.requestUpdate()
-    );
-    this.translationHandler.loadTranslations().then((i18n) => {
-      this.i18n = i18n;
-      this.dispatchEvent(new CustomEvent("translations-loaded"));
-    });
-  }
 
   public handleEdit(e: Event) {
     console.info(e, this.notImplementedInBaseMessage);
@@ -156,8 +142,6 @@ export default class LMSTable extends LitElement {
     const { data } = this;
     const hasData = data?.length > 0 ?? false;
 
-    console.log(JSON.stringify(this.data, null, 2));
-
     if (hasData) {
       this.data = data.sort((a, b) => {
         const aValue = a[column];
@@ -171,8 +155,6 @@ export default class LMSTable extends LitElement {
         return 0;
       });
     }
-
-    console.log(JSON.stringify(this.data, null, 2));
   }
 
   protected override willUpdate(

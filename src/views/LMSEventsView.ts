@@ -157,7 +157,6 @@ export default class LMSEventsView extends LitElement {
     this.getReservedQueryParams();
 
     if (window.innerWidth < 768) {
-      console.log("window.innerWidth < 768");
       this.handleHide({ detail: true } as CustomEvent);
     }
 

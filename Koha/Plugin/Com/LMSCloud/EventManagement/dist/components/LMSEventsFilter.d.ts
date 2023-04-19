@@ -1,6 +1,5 @@
 import { LitElement } from "lit";
 import { EventType, LMSEvent, LMSLocation, TargetGroup } from "../sharedDeclarations";
-import { Gettext } from "gettext.js";
 type Facets = {
     eventTypeIds: string[];
     targetGroupIds: number[];
@@ -29,8 +28,6 @@ export default class LMSEventsFilter extends LitElement {
     target_groups: TargetGroup[];
     locations: LMSLocation[];
     inputs: NodeListOf<HTMLInputElement> | undefined;
-    protected i18n: Gettext;
-    private translationHandler;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     private facetsStrategyManager;

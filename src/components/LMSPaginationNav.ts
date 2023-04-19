@@ -3,8 +3,7 @@ import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
-import { TranslationHandler, __ } from "../lib/TranslationHandler";
-import { Gettext } from "gettext.js";
+import { __ } from "../lib/TranslationHandler";
 
 @customElement("lms-pagination-nav")
 export default class LMSPaginationNav extends LitElement {
@@ -16,20 +15,11 @@ export default class LMSPaginationNav extends LitElement {
   @property({ type: Boolean }) hasNext = false;
   @state() _page = 1;
   @state() _per_page = 20;
-  protected i18n: Gettext = {} as Gettext;
-  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [bootstrapStyles];
 
   override connectedCallback() {
     super.connectedCallback();
-
-    this.translationHandler = new TranslationHandler(() =>
-      this.requestUpdate()
-    );
-    this.translationHandler.loadTranslations().then((i18n) => {
-      this.i18n = i18n;
-    });
 
     const params = new URLSearchParams(window.location.search);
     const _page = params.get("page");
@@ -66,7 +56,6 @@ export default class LMSPaginationNav extends LitElement {
   }
 
   override render() {
-    console.log(this.hasPages);
     return html` <nav aria-label="Page navigation">
       <ul class="pagination justify-content-end">
         <li

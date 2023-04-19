@@ -5,8 +5,7 @@ import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Column /* Input */ } from "../../sharedDeclarations";
 import { TemplateResultConverter } from "../../lib/converters";
-import { TranslationHandler, __ } from "../../lib/TranslationHandler";
-import { Gettext } from "gettext.js";
+import { __ } from "../../lib/TranslationHandler";
 
 @customElement("lms-staff-event-card-form")
 export default class LMSStaffEventCardForm extends LitElement {
@@ -15,9 +14,6 @@ export default class LMSStaffEventCardForm extends LitElement {
     heading: "",
     message: "",
   };
-  @property({ state: true }) _i18n: Gettext = {} as Gettext;
-  protected i18n: Gettext = {} as Gettext;
-  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [
     bootstrapStyles,
@@ -38,16 +34,6 @@ export default class LMSStaffEventCardForm extends LitElement {
       }
     `,
   ];
-
-  override connectedCallback() {
-    super.connectedCallback();
-    this.translationHandler = new TranslationHandler(() =>
-      this.requestUpdate()
-    );
-    this.translationHandler.loadTranslations().then((i18n) => {
-      this.i18n = i18n;
-    });
-  }
 
   private handleEdit(e: Event) {
     e.preventDefault();
@@ -154,7 +140,7 @@ export default class LMSStaffEventCardForm extends LitElement {
 
   private async handleDelete(e: Event) {
     e.preventDefault();
-    const id = new TemplateResultConverter(this.datum.id).getRenderValues()[0];
+    const [id] = new TemplateResultConverter(this.datum.id).getRenderValues();
 
     if (!id) {
       return;

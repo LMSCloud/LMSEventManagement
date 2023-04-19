@@ -1,6 +1,8 @@
 import { LitElement } from "lit";
 import LMSStaffEventCardsDeck from "../components/LMSStaffEventCardDeck";
 import LMSEventsModal from "../extensions/LMSEventsModal";
+import { Column } from "../sharedDeclarations";
+import { Gettext } from "gettext.js";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-staff-event-card-deck": LMSStaffEventCardsDeck;
@@ -8,6 +10,16 @@ declare global {
     }
 }
 export default class StaffEventsView extends LitElement {
+    events: Column[];
+    private event_types;
+    private target_groups;
+    private locations;
+    private href;
+    protected i18n: Gettext;
+    private translationHandler;
+    static styles: import("lit").CSSResult[];
+    connectedCallback(): void;
+    hasData(): boolean;
     render(): import("lit").TemplateResult<1>;
 }
 //# sourceMappingURL=StaffEventsView.d.ts.map

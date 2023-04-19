@@ -1,7 +1,7 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { CreateOpts } from "../sharedDeclarations";
-// import { Gettext } from "gettext.js";
+import { __ } from "../lib/TranslationHandler";
 
 @customElement("lms-locations-modal")
 export default class LMSLocationsModal extends LMSModal {
@@ -12,9 +12,7 @@ export default class LMSLocationsModal extends LMSModal {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.addEventListener("translations-loaded", () => {
-      this.hydrate();
-    });
+    this.hydrate();
   }
 
   private hydrate() {
@@ -22,42 +20,42 @@ export default class LMSLocationsModal extends LMSModal {
       {
         name: "name",
         type: "text",
-        desc: "Name",
+        desc: __("Name"),
         required: true,
         value: "",
       },
       {
         name: "street",
         type: "text",
-        desc: "Street",
+        desc: __("Street"),
         required: true,
         value: "",
       },
       {
         name: "number",
         type: "text",
-        desc: "Number",
+        desc: __("Number"),
         required: false,
         value: "",
       },
       {
         name: "city",
         type: "text",
-        desc: "City",
+        desc: __("City"),
         required: false,
         value: "",
       },
       {
         name: "zip",
         type: "text",
-        desc: "Zip",
+        desc: __("Zip"),
         required: false,
         value: "0",
       },
       {
         name: "country",
         type: "text",
-        desc: "Country",
+        desc: __("Country"),
         required: false,
         value: "",
       },

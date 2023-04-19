@@ -1,6 +1,7 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { CreateOpts } from "../sharedDeclarations";
+import { __ } from "../lib/TranslationHandler";
 
 @customElement("lms-target-groups-modal")
 export default class LMSTargetGroupsModal extends LMSModal {
@@ -11,9 +12,7 @@ export default class LMSTargetGroupsModal extends LMSModal {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.addEventListener("translations-loaded", () => {
-      this.hydrate();
-    });
+    this.hydrate();
   }
 
   private hydrate() {
@@ -21,21 +20,21 @@ export default class LMSTargetGroupsModal extends LMSModal {
       {
         name: "name",
         type: "text",
-        desc: "Name",
+        desc: __("Name"),
         required: true,
         value: "",
       },
       {
         name: "min_age",
         type: "number",
-        desc: "Min Age",
+        desc: __("Min Age"),
         required: true,
         value: "0",
       },
       {
         name: "max_age",
         type: "number",
-        desc: "Max Age",
+        desc: __("Max Age"),
         required: false,
         value: "0",
       },

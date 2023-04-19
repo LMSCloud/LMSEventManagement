@@ -1,10 +1,9 @@
 import { LitElement, TemplateResult } from "lit";
 import LMSStaffEventCardForm from "./LMSStaffEventCard/LMSStaffEventCardForm";
-import { Column, URIComponents } from "../sharedDeclarations";
+import { TargetGroup, EventType, LMSLocation, LMSEvent } from "../sharedDeclarations";
 import LMSStaffEventCardAttendees from "./LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSAnchor from "./LMSAnchor";
-import { Gettext } from "gettext.js";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-staff-event-card-form": LMSStaffEventCardForm;
@@ -14,13 +13,15 @@ declare global {
     }
 }
 export default class LMSStaffEventCardDeck extends LitElement {
-    data: Column[];
-    cardStates: Map<string, string[]>;
-    href: URIComponents;
-    protected i18n: Gettext;
-    private translationHandler;
+    events: LMSEvent[];
+    event_types: EventType[];
+    target_groups: TargetGroup[];
+    locations: LMSLocation[];
+    private data;
+    private cardStates;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
+    private hydrate;
     private getInputFromColumn;
     private handleTabClick;
     render(): TemplateResult<1>;

@@ -1,6 +1,5 @@
 import { LitElement, PropertyValueMap } from "lit";
 import { Column } from "../sharedDeclarations";
-import { Gettext } from "gettext.js";
 export default class LMSTable extends LitElement {
     data: Column[];
     order: string[];
@@ -10,10 +9,7 @@ export default class LMSTable extends LitElement {
     private toast;
     private notImplementedInBaseMessage;
     protected emptyTableMessage: import("lit").TemplateResult<1>;
-    protected i18n: Gettext;
-    private translationHandler;
     static styles: import("lit").CSSResult[];
-    connectedCallback(): void;
     handleEdit(e: Event): void;
     handleSave(e: Event): void;
     handleDelete(e: Event): void;

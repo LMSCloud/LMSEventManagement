@@ -13,9 +13,7 @@ export default class LMSEventsModal extends LMSModal {
 
   override async connectedCallback() {
     super.connectedCallback();
-    this.addEventListener("translations-loaded", () => {
-      this.hydrate();
-    });
+    this.hydrate();
   }
 
   private hydrate() {
@@ -23,13 +21,13 @@ export default class LMSEventsModal extends LMSModal {
       {
         name: "name",
         type: "text",
-        desc: "Name",
+        desc: __("Name"),
         required: true,
       },
       {
         name: "event_type",
         type: "select",
-        desc: "Event Type",
+        desc: __("Event Type"),
         logic: async () => {
           const response = await fetch(
             "/api/v1/contrib/eventmanagement/event_types"
@@ -49,7 +47,7 @@ export default class LMSEventsModal extends LMSModal {
           ["selected", "checkbox"],
           ["fee", "number"],
         ],
-        desc: "Target Groups",
+        desc: __("Target Groups"),
         logic: async () => {
           const response = await fetch(
             "/api/v1/contrib/eventmanagement/target_groups"
@@ -65,49 +63,49 @@ export default class LMSEventsModal extends LMSModal {
       {
         name: "min_age",
         type: "number",
-        desc: "Min Age",
+        desc: __("Min Age"),
         required: true,
       },
       {
         name: "max_age",
         type: "number",
-        desc: "Max Age",
+        desc: __("Max Age"),
         required: true,
       },
       {
         name: "max_participants",
         type: "number",
-        desc: "Max Participants",
+        desc: __("Max Participants"),
         required: true,
       },
       {
         name: "start_time",
         type: "datetime-local",
-        desc: "Start Time",
+        desc: __("Start Time"),
         required: true,
       },
       {
         name: "end_time",
         type: "datetime-local",
-        desc: "End Time",
+        desc: __("End Time"),
         required: true,
       },
       {
         name: "registration_start",
         type: "datetime-local",
-        desc: "Registration Start",
+        desc: __("Registration Start"),
         required: true,
       },
       {
         name: "registration_end",
         type: "datetime-local",
-        desc: "Registration End",
+        desc: __("Registration End"),
         required: true,
       },
       {
         name: "location",
         type: "select",
-        desc: "Location",
+        desc: __("Location"),
         logic: async () => {
           const response = await fetch(
             "/api/v1/contrib/eventmanagement/locations"
@@ -123,25 +121,25 @@ export default class LMSEventsModal extends LMSModal {
       {
         name: "image",
         type: "text",
-        desc: "Image",
+        desc: __("Image"),
         required: false,
       },
       {
         name: "description",
         type: "text",
-        desc: "Description",
+        desc: __("Description"),
         required: false,
       },
       {
         name: "status",
         type: "select",
-        desc: "Status",
+        desc: __("Status"),
         logic: async () => {
           return [
-            { id: "pending", name: "Pending" },
-            { id: "confirmed", name: "Confirmed" },
-            { id: "canceled", name: "Canceled" },
-            { id: "sold_out", name: "Sold Out" },
+            { id: "pending", name: __("Pending") },
+            { id: "confirmed", name: __("Confirmed") },
+            { id: "canceled", name: __("Canceled") },
+            { id: "sold_out", name: __("Sold Out") },
           ];
         },
         required: true,
@@ -149,13 +147,13 @@ export default class LMSEventsModal extends LMSModal {
       {
         name: "registration_link",
         type: "text",
-        desc: "Registration Link",
+        desc: __("Registration Link"),
         required: false,
       },
       {
         name: "open_registration",
         type: "checkbox",
-        desc: "Open Registration",
+        desc: __("Open Registration"),
         required: false,
       },
     ];

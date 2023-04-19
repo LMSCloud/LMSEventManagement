@@ -1,6 +1,7 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { CreateOpts, LMSLocation } from "../sharedDeclarations";
+import { __ } from "../lib/TranslationHandler";
 
 @customElement("lms-event-types-modal")
 export default class LMSEventTypesModal extends LMSModal {
@@ -11,9 +12,7 @@ export default class LMSEventTypesModal extends LMSModal {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.addEventListener("translations-loaded", () => {
-      this.hydrate();
-    });
+    this.hydrate();
   }
 
   private hydrate() {
@@ -21,7 +20,7 @@ export default class LMSEventTypesModal extends LMSModal {
       {
         name: "name",
         type: "text",
-        desc: "Name",
+        desc: __("Name"),
         required: true,
         value: "",
       },
@@ -33,7 +32,7 @@ export default class LMSEventTypesModal extends LMSModal {
           ["selected", "checkbox"],
           ["fee", "number"],
         ],
-        desc: "Target Groups",
+        desc: __("Target Groups"),
         logic: async () => {
           const response = await fetch(
             "/api/v1/contrib/eventmanagement/target_groups"
@@ -50,28 +49,28 @@ export default class LMSEventTypesModal extends LMSModal {
       {
         name: "min_age",
         type: "number",
-        desc: "Min Age",
+        desc: __("Min Age"),
         required: true,
         value: "0",
       },
       {
         name: "max_age",
         type: "number",
-        desc: "Max Age",
+        desc: __("Max Age"),
         required: true,
         value: "0",
       },
       {
         name: "max_participants",
         type: "number",
-        desc: "Max Participants",
+        desc: __("Max Participants"),
         required: true,
         value: "0",
       },
       {
         name: "location",
         type: "select",
-        desc: "Location",
+        desc: __("Location"),
         logic: async () => {
           const response = await fetch(
             "/api/v1/contrib/eventmanagement/locations"
@@ -88,21 +87,21 @@ export default class LMSEventTypesModal extends LMSModal {
       {
         name: "image",
         type: "text",
-        desc: "Image",
+        desc: __("Image"),
         required: false,
         value: "0",
       },
       {
         name: "description",
         type: "text",
-        desc: "Description",
+        desc: __("Description"),
         required: false,
         value: "",
       },
       {
         name: "open_registration",
         type: "checkbox",
-        desc: "Open Registration",
+        desc: __("Open Registration"),
         required: false,
         value: "0",
       },
