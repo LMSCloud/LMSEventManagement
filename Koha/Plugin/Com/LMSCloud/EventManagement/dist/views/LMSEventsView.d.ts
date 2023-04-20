@@ -4,7 +4,6 @@ import LMSEventsFilter from "../components/LMSEventsFilter";
 import { LMSEvent } from "../sharedDeclarations";
 import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
 import LMSPaginationNav from "../components/LMSPaginationNav";
-import { Gettext } from "gettext.js";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-card": LMSCard;
@@ -25,8 +24,6 @@ export default class LMSEventsView extends LitElement {
     _page: number;
     _per_page: number;
     q?: string;
-    protected i18n: Gettext;
-    private translationHandler;
     static styles: import("lit").CSSResult[];
     getReservedQueryParams(this: {
         [key in ReservedParam]?: number | string;

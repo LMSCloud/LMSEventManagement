@@ -1,4 +1,6 @@
 import { TemplateResult } from "lit";
+import { DirectiveResult } from "lit/directive";
+import { TranslateDirective } from "./lib/translate";
 export type InputType = "hidden" | "text" | "search" | "tel" | "url" | "email" | "password" | "datetime" | "date" | "month" | "week" | "time" | "datetime-local" | "number" | "range" | "color" | "checkbox" | "radio" | "file" | "submit" | "image" | "reset" | "button";
 export type HandlerCallbackFunction = ({ e, value, fields, }: {
     e?: Event;
@@ -50,14 +52,14 @@ export type Input = {
 };
 export type SelectOption = {
     id: string | number;
-    name: string;
+    name: string | DirectiveResult<typeof TranslateDirective>;
 };
 export type BaseField = {
     name: string;
-    desc?: string;
+    desc?: string | DirectiveResult<typeof TranslateDirective>;
     logic?: () => Promise<{
         id: string | number;
-        name: string;
+        name: string | DirectiveResult<typeof TranslateDirective>;
     }[]>;
     required?: boolean;
     value?: string | {
@@ -65,7 +67,7 @@ export type BaseField = {
     }[];
     dbData?: {
         id: string | number;
-        name: string;
+        name: string | DirectiveResult<typeof TranslateDirective>;
     }[];
     attributes?: [string, string | number][];
 };

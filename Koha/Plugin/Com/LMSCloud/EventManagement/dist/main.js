@@ -772,11 +772,94 @@
             return this.i18n;
         }
     }
-    function __(text) {
-        return typeof (i18nInstance === null || i18nInstance === void 0 ? void 0 : i18nInstance.gettext) === "function"
-            ? i18nInstance.gettext(text)
-            : text;
+
+    class TranslationProxy {
+        constructor(text, translationController) {
+            this._text = text;
+            this._callback = () => { };
+            translationController.addProxy(this);
+        }
+        setCallback(callback) {
+            this._callback = callback;
+        }
+        updateTranslatedText(translatedText) {
+            this._translatedText = translatedText;
+            this._callback(translatedText);
+        }
     }
+
+    class TranslationController {
+        constructor() {
+            this.translationHandler = {};
+            this.translationsLoaded = false;
+            this.proxies = new Set();
+        }
+        static getInstance() {
+            if (!this._instance) {
+                this._instance = new TranslationController();
+            }
+            return this._instance;
+        }
+        async loadTranslations(callback, localeUrl) {
+            if (this.translationsLoaded) {
+                return;
+            }
+            this.translationHandler = new TranslationHandler(() => {
+                this.updateProxies();
+                callback();
+            }, localeUrl);
+            await this.translationHandler.loadTranslations();
+        }
+        __(text) {
+            return new TranslationProxy(text, this);
+        }
+        addProxy(proxy) {
+            this.proxies.add(proxy);
+        }
+        updateProxies() {
+            this.proxies.forEach((proxy) => {
+                const translatedText = this.translationHandler.getI18n.gettext(proxy._text);
+                proxy.updateTranslatedText(translatedText);
+            });
+        }
+    }
+    new TranslationController();
+
+    class TranslateDirective extends i {
+        constructor(partInfo) {
+            super(partInfo);
+            this._text = "";
+            this._proxy = {};
+            this._element = null;
+            this._textNode = null;
+        }
+        update(_part, [text]) {
+            if (this._text !== text) {
+                const controller = TranslationController.getInstance();
+                this._text = text;
+                this._proxy = controller.__(text);
+                this._proxy.setCallback((translatedText) => {
+                    if (this._textNode) {
+                        this._textNode.textContent = translatedText;
+                    }
+                });
+            }
+            if (!this._element) {
+                this._element = document.createElement("span");
+                this._textNode = document.createTextNode("");
+                this._element.appendChild(this._textNode);
+            }
+            return this.render(text);
+        }
+        render(_text) {
+            const translatedText = this._proxy._translatedText || this._text;
+            if (this._textNode) {
+                this._textNode.textContent = translatedText;
+            }
+            return this._element;
+        }
+    }
+    const __ = e(TranslateDirective);
 
     let LMSCardDetailsModal = class LMSCardDetailsModal extends s {
         constructor() {
@@ -790,6 +873,9 @@
         }
         connectedCallback() {
             super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
             const event_types = async () => {
                 const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
                 return response.json();
@@ -1075,6 +1161,9 @@
         }
         connectedCallback() {
             super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
             const event_types = async () => {
                 const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
                 return response.json();
@@ -1268,9 +1357,11 @@
               type="button"
               class="btn btn-sm btn-outline-secondary me-2"
               @click=${this.handleHideToggle}
-              aria-label=${this.isHidden ? "Show filters" : "Hide filters"}
+              aria-label=${this.isHidden
+            ? __("Show filters")
+            : __("Hide filters")}
             >
-              ${this.isHidden ? "Show" : "Hide"}
+              ${this.isHidden ? __("Show filters") : __("Hide filters")}
             </button>
             <button
               type="button"
@@ -1285,7 +1376,7 @@
         </div>
         <div class="card-body ${o$1({ "d-none": this.isHidden })}">
           <div class="form-group">
-            <label for="event_type">Event Type</label>
+            <label for="event_type">${__("Event Type")}</label>
             ${o(this.facets.eventTypeIds, (eventTypeId) => {
             var _a;
             return x `
@@ -1321,7 +1412,7 @@
         })}
           </div>
           <div class="form-group">
-            <label for="min_age">Min Age</label>
+            <label for="min_age">${__("Min Age")}</label>
             <input
               type="number"
               class="form-control form-control-sm"
@@ -1332,7 +1423,7 @@
               value=""
               @input=${this.emitChange}
             />
-            <label for="max_age">Max Age</label>
+            <label for="max_age">${__("Max Age")}</label>
             <input
               type="number"
               class="form-control form-control-sm"
@@ -1355,7 +1446,7 @@
             <label for="open_registration">${__("Open Registration")}</label>
           </div>
           <div class="form-group">
-            <label for="start_time">Start Date</label>
+            <label for="start_time">${__("Start Date")}</label>
             <input
               type="date"
               class="form-control form-control-sm"
@@ -1439,16 +1530,6 @@
             this.items = [];
             this._currentUrl = window.location.href;
             this._currentSearchParams = new URLSearchParams(window.location.search);
-            this.i18n = {};
-            this.translationHandler = {};
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
-                this.dispatchEvent(new CustomEvent("translations-loaded"));
-            });
         }
         render() {
             return x ` <nav
@@ -1581,6 +1662,9 @@
         }
         connectedCallback() {
             super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
             /** This is the counterpart to the script in the intranet_js hook */
             this.boundEventHandler = this.handleMessageEvent.bind(this);
             window.addEventListener("message", this.boundEventHandler);
@@ -2020,6 +2104,12 @@
     var LMSModal$1 = LMSModal;
 
     let LMSStaffEventCardAttendees = class LMSStaffEventCardAttendees extends s {
+        connectedCallback() {
+            super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
+        }
         render() {
             return x ` <h1 class="text-center">${__("Not implemented")}!</h1> `;
         }
@@ -2122,6 +2212,12 @@
                 heading: "",
                 message: "",
             };
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
         }
         handleEdit(e) {
             var _a;
@@ -2376,6 +2472,9 @@
         }
         connectedCallback() {
             super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
             this.hydrate();
         }
         hydrate() {
@@ -3124,9 +3223,7 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            this.addEventListener("translations-loaded", () => {
-                this.hydrate();
-            });
+            this.hydrate();
         }
         hydrate() {
             this.items = [
@@ -3525,7 +3622,13 @@ ${value}</textarea
                 message: "",
             };
             this.notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
-            this.emptyTableMessage = x `No data to display.`;
+            this.emptyTableMessage = x `${__("No data to display")}.`;
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
         }
         handleEdit(e) {
             console.info(e, this.notImplementedInBaseMessage);
@@ -3860,6 +3963,9 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
             this.order = [
                 "id",
                 "name",
@@ -3874,7 +3980,7 @@ ${value}</textarea
             ];
             this.isEditable = true;
             this.isDeletable = true;
-            this.emptyTableMessage = x `You have to create a&nbsp;
+            this.emptyTableMessage = x `${__("You have to create a")}&nbsp;
       <lms-anchor
         .href=${{
             ...this.href,
@@ -3883,7 +3989,7 @@ ${value}</textarea
                 op: "target-groups",
             },
         }}
-        >target group</lms-anchor
+        >${__("target group")}</lms-anchor
       >&nbsp;and a&nbsp;
       <lms-anchor
         .href=${{
@@ -3893,9 +3999,9 @@ ${value}</textarea
                 op: "locations",
             },
         }}
-        >location</lms-anchor
+        >${__("location")}</lms-anchor
       >
-      &nbsp;first.`;
+      &nbsp;${__("first")}.`;
             const eventTypes = fetch("/api/v1/contrib/eventmanagement/event_types");
             eventTypes
                 .then((response) => {
@@ -4081,6 +4187,9 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
             this.hydrate();
         }
         hydrate() {
@@ -4218,6 +4327,9 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
             this.order = [
                 "id",
                 "name",
@@ -4446,6 +4558,9 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
             this.order = ["id", "name", "min_age", "max_age"];
             this.isEditable = true;
             this.isDeletable = true;
@@ -4523,8 +4638,6 @@ ${value}</textarea
             this._order_by = "start_time";
             this._page = 1;
             this._per_page = 20;
-            this.i18n = {};
-            this.translationHandler = {};
         }
         getReservedQueryParams() {
             const params = new URLSearchParams(window.location.search);
@@ -4569,9 +4682,8 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
             });
             this.getReservedQueryParams();
             if (window.innerWidth < 768) {
@@ -4800,14 +4912,11 @@ ${value}</textarea
                     method: "configure",
                 },
             };
-            this.i18n = {};
-            this.translationHandler = {};
         }
         connectedCallback() {
             super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
             });
             Promise.all([
                 fetch("/api/v1/contrib/eventmanagement/events"),
@@ -4892,16 +5001,10 @@ ${value}</textarea
     var StaffEventsView$1 = StaffEventsView;
 
     let StaffEventTypesView$1 = class StaffEventTypesView extends s {
-        constructor() {
-            super(...arguments);
-            this.i18n = {};
-            this.translationHandler = {};
-        }
         connectedCallback() {
             super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
             });
         }
         render() {
@@ -4917,16 +5020,10 @@ ${value}</textarea
     var StaffEventTypesView$2 = StaffEventTypesView$1;
 
     let StaffLocationsView = class StaffLocationsView extends s {
-        constructor() {
-            super(...arguments);
-            this.i18n = {};
-            this.translationHandler = {};
-        }
         connectedCallback() {
             super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
             });
         }
         render() {
@@ -4942,16 +5039,10 @@ ${value}</textarea
     var StaffLocationsView$1 = StaffLocationsView;
 
     let StaffSettingsView = class StaffSettingsView extends s {
-        constructor() {
-            super(...arguments);
-            this.i18n = {};
-            this.translationHandler = {};
-        }
         connectedCallback() {
             super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
             });
         }
         render() {
@@ -4968,19 +5059,16 @@ ${value}</textarea
         constructor() {
             super(...arguments);
             this.data = [];
-            this.i18n = {};
-            this.translationHandler = {};
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            this.translationHandler = new TranslationHandler(() => this.requestUpdate());
-            this.translationHandler.loadTranslations().then((i18n) => {
-                this.i18n = i18n;
-            });
         }
         async handleCreated() {
             const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
             this.data = await response.json();
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
         }
         render() {
             return x `

@@ -7,6 +7,7 @@ export default class LMSStaffEventCardForm extends LitElement {
         message: string;
     };
     static styles: import("lit").CSSResult[];
+    connectedCallback(): void;
     private handleEdit;
     private handleSave;
     private handleDelete;
