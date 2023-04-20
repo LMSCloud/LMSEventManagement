@@ -1,4 +1,11 @@
-import { html, css, LitElement, PropertyValueMap, TemplateResult } from "lit";
+import {
+  html,
+  css,
+  LitElement,
+  PropertyValueMap,
+  TemplateResult,
+  nothing,
+} from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import {
@@ -209,7 +216,7 @@ export default class LMSTable extends LitElement {
                     (key) =>
                       html`<th scope="col">
                         <div class="d-flex">
-                          ${key}
+                          ${__(key)}
                           <button
                             class="btn btn-sm btn-sort"
                             @click=${() =>
@@ -234,8 +241,8 @@ export default class LMSTable extends LitElement {
                       </th>`
                   )}
                   ${this.isEditable
-                    ? html`<th scope="col">actions</th>`
-                    : html``}
+                    ? html`<th scope="col">${__("actions")}</th>`
+                    : nothing}
                 </tr>
               </thead>
               <tbody>
@@ -280,7 +287,7 @@ export default class LMSTable extends LitElement {
                               </div>
                             </td>
                           `
-                        : html``}
+                        : nothing}
                     </tr>
                   `
                 )}
