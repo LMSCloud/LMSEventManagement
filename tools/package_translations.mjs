@@ -11,7 +11,7 @@ async function move(file, options) {
   const destination = `${options.pm.file.path}/${options.pm.file.name.replace(
     ".pm",
     ""
-  )}/locales/${locale}/LC_MESSAGES/${options.locale_namespace}.mo`;
+  )}/locales/${locale}/LC_MESSAGES`;
 
   try {
     await fs.mkdir(destination, { recursive: true });
