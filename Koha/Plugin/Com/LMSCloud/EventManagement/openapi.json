@@ -1020,6 +1020,13 @@
           "description": "ID of event to fetch",
           "required": true,
           "type": "integer"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -1169,6 +1176,13 @@
           "description": "ID of event to update",
           "required": true,
           "type": "integer"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         },
         {
           "name": "body",
@@ -1377,6 +1391,13 @@
           "description": "ID of event to delete",
           "required": true,
           "type": "integer"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -1800,6 +1821,13 @@
           "description": "Event type id",
           "required": true,
           "type": "integer"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -1942,6 +1970,13 @@
           "description": "Event type id",
           "required": true,
           "type": "integer"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         },
         {
           "name": "body",
@@ -2136,6 +2171,13 @@
           "description": "Event type id",
           "required": true,
           "type": "integer"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -2622,6 +2664,13 @@
           "description": "Location id",
           "required": true,
           "type": "integer"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -2741,6 +2790,13 @@
           "description": "Location id",
           "required": true,
           "type": "integer"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         },
         {
           "name": "body",
@@ -2892,6 +2948,13 @@
           "description": "Location id",
           "required": true,
           "type": "integer"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -3219,6 +3282,13 @@
           "description": "Target group id",
           "required": true,
           "type": "integer"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -3329,6 +3399,13 @@
           "description": "Target group id",
           "required": true,
           "type": "integer"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         },
         {
           "name": "body",
@@ -3459,6 +3536,13 @@
           "description": "Target group id",
           "required": true,
           "type": "integer"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
