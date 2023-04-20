@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-20 16:30+0200\n"
+"POT-Creation-Date: 2023-04-20 22:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,9 +23,9 @@ msgstr ""
 msgid "Event not found"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:37
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:61
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:89
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:40
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:64
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:92
 msgid "Target Group not found"
 msgstr ""
 
@@ -85,8 +85,8 @@ msgstr ""
 msgid "max_participants"
 msgstr ""
 
-#: src/dynamically_added_strings.ts:21 src/extensions/LMSEventTypesTable.ts:208
-#: src/views/StaffEventsView.ts:88
+#: src/dynamically_added_strings.ts:21 src/extensions/LMSEventTypesTable.ts:202
+#: src/views/StaffEventsView.ts:83
 msgid "location"
 msgstr ""
 
@@ -102,258 +102,261 @@ msgstr ""
 msgid "open_registration"
 msgstr ""
 
-#: src/extensions/LMSEventManagementMenu.ts:32
+#: src/extensions/LMSEventManagementMenu.ts:26
 msgid "Settings"
 msgstr ""
 
-#: src/extensions/LMSEventManagementMenu.ts:38
-#: src/extensions/LMSEventsModal.ts:56 src/extensions/LMSEventTypesModal.ts:41
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:188
+#: src/extensions/LMSEventManagementMenu.ts:32
+#: src/extensions/LMSEventsModal.ts:50 src/extensions/LMSEventTypesModal.ts:35
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:180
 msgid "Target Groups"
 msgstr ""
 
-#: src/extensions/LMSEventManagementMenu.ts:44
+#: src/extensions/LMSEventManagementMenu.ts:38
 msgid "Locations"
 msgstr ""
 
-#: src/extensions/LMSEventManagementMenu.ts:50
+#: src/extensions/LMSEventManagementMenu.ts:44
 msgid "Event Types"
 msgstr ""
 
-#: src/extensions/LMSEventManagementMenu.ts:56
+#: src/extensions/LMSEventManagementMenu.ts:50
 msgid "Events"
 msgstr ""
 
-#: src/extensions/LMSEventManagementMenu.ts:62
+#: src/extensions/LMSEventManagementMenu.ts:56
 msgid "Images"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:30 src/extensions/LMSLocationsModal.ts:29
-#: src/extensions/LMSEventTypesModal.ts:29
-#: src/extensions/LMSTargetGroupsModal.ts:29
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:179
+#: src/extensions/LMSEventsModal.ts:24 src/extensions/LMSLocationsModal.ts:23
+#: src/extensions/LMSEventTypesModal.ts:23
+#: src/extensions/LMSTargetGroupsModal.ts:23
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:171
 msgid "Name"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:36
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:183
-#: src/components/LMSEventsFilter.ts:323
+#: src/extensions/LMSEventsModal.ts:30
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:175
+#: src/components/LMSEventsFilter.ts:318
 msgid "Event Type"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:72 src/extensions/LMSEventTypesModal.ts:58
-#: src/extensions/LMSTargetGroupsModal.ts:36
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:193
-#: src/components/LMSEventsFilter.ts:364
+#: src/extensions/LMSEventsModal.ts:66 src/extensions/LMSEventTypesModal.ts:52
+#: src/extensions/LMSTargetGroupsModal.ts:30
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:185
+#: src/components/LMSEventsFilter.ts:359
 msgid "Min Age"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:78 src/extensions/LMSEventTypesModal.ts:65
-#: src/extensions/LMSTargetGroupsModal.ts:43
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:197
-#: src/components/LMSEventsFilter.ts:375
+#: src/extensions/LMSEventsModal.ts:72 src/extensions/LMSEventTypesModal.ts:59
+#: src/extensions/LMSTargetGroupsModal.ts:37
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:189
+#: src/components/LMSEventsFilter.ts:370
 msgid "Max Age"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:84 src/extensions/LMSEventTypesModal.ts:72
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:203
+#: src/extensions/LMSEventsModal.ts:78 src/extensions/LMSEventTypesModal.ts:66
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:195
 msgid "Max Participants"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:90
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:209
+#: src/extensions/LMSEventsModal.ts:84
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:201
 msgid "Start Time"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:96
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:213
+#: src/extensions/LMSEventsModal.ts:90
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:205
 msgid "End Time"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:102
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:220
+#: src/extensions/LMSEventsModal.ts:96
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:212
 msgid "Registration Start"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:108
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:224
+#: src/extensions/LMSEventsModal.ts:102
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:216
 msgid "Registration End"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:114 src/extensions/LMSEventTypesModal.ts:79
-#: src/components/LMSCardDetailsModal.ts:288
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:232
-#: src/components/LMSEventsFilter.ts:414
+#: src/extensions/LMSEventsModal.ts:108 src/extensions/LMSEventTypesModal.ts:73
+#: src/components/LMSCardDetailsModal.ts:285
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:224
+#: src/components/LMSEventsFilter.ts:409
 msgid "Location"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:130 src/extensions/LMSEventTypesModal.ts:96
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:237
+#: src/extensions/LMSEventsModal.ts:124 src/extensions/LMSEventTypesModal.ts:90
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:229
 msgid "Image"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:136
-#: src/extensions/LMSEventTypesModal.ts:103
-#: src/components/LMSCardDetailsModal.ts:237
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:261
+#: src/extensions/LMSEventsModal.ts:130 src/extensions/LMSEventTypesModal.ts:97
+#: src/components/LMSCardDetailsModal.ts:234
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:253
 msgid "Description"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:142
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:242
+#: src/extensions/LMSEventsModal.ts:136
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:234
 msgid "Status"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:145
-#: src/components/LMSStaffEventCardDeck.ts:286
+#: src/extensions/LMSEventsModal.ts:139
+#: src/components/LMSStaffEventCardDeck.ts:281
 msgid "Pending"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:146
-#: src/components/LMSStaffEventCardDeck.ts:292
+#: src/extensions/LMSEventsModal.ts:140
+#: src/components/LMSStaffEventCardDeck.ts:287
 msgid "Confirmed"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:147
-#: src/components/LMSStaffEventCardDeck.ts:298
+#: src/extensions/LMSEventsModal.ts:141
+#: src/components/LMSStaffEventCardDeck.ts:293
 msgid "Canceled"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:148
-#: src/components/LMSStaffEventCardDeck.ts:304
+#: src/extensions/LMSEventsModal.ts:142
+#: src/components/LMSStaffEventCardDeck.ts:299
 msgid "Sold Out"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:156
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:247
+#: src/extensions/LMSEventsModal.ts:150
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:239
 msgid "Registration Link"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:162
-#: src/extensions/LMSEventTypesModal.ts:110
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:254
-#: src/components/LMSEventsFilter.ts:395
+#: src/extensions/LMSEventsModal.ts:156
+#: src/extensions/LMSEventTypesModal.ts:104
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:246
+#: src/components/LMSEventsFilter.ts:390
 msgid "Open Registration"
 msgstr ""
 
-#: src/extensions/LMSLocationsModal.ts:36
+#: src/extensions/LMSLocationsModal.ts:30
 msgid "Street"
 msgstr ""
 
-#: src/extensions/LMSLocationsModal.ts:43
+#: src/extensions/LMSLocationsModal.ts:37
 msgid "Number"
 msgstr ""
 
-#: src/extensions/LMSLocationsModal.ts:50
+#: src/extensions/LMSLocationsModal.ts:44
 msgid "City"
 msgstr ""
 
-#: src/extensions/LMSLocationsModal.ts:57
+#: src/extensions/LMSLocationsModal.ts:51
 msgid "Zip"
 msgstr ""
 
-#: src/extensions/LMSLocationsModal.ts:64
+#: src/extensions/LMSLocationsModal.ts:58
 msgid "Country"
 msgstr ""
 
-#: src/extensions/LMSEventTypesTable.ts:189 src/views/StaffEventsView.ts:69
+#: src/extensions/LMSEventTypesTable.ts:183 src/views/StaffEventsView.ts:64
 msgid "You have to create a"
 msgstr ""
 
-#: src/extensions/LMSEventTypesTable.ts:198 src/views/StaffEventsView.ts:78
+#: src/extensions/LMSEventTypesTable.ts:192 src/views/StaffEventsView.ts:73
 msgid "target group"
 msgstr ""
 
-#: src/extensions/LMSEventTypesTable.ts:210 src/views/StaffEventsView.ts:101
+#: src/extensions/LMSEventTypesTable.ts:193
+msgid "and a"
+msgstr ""
+
+#: src/extensions/LMSEventTypesTable.ts:204 src/views/StaffEventsView.ts:96
 msgid "first"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:119
+#: src/components/LMSStaffEventCardDeck.ts:114
 msgid "target_group"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:120
+#: src/components/LMSStaffEventCardDeck.ts:115
 msgid "selected"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:121
+#: src/components/LMSStaffEventCardDeck.ts:116
 msgid "fee"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:374
+#: src/components/LMSStaffEventCardDeck.ts:369
 msgid "Data"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:382
+#: src/components/LMSStaffEventCardDeck.ts:377
 msgid "Waitlist"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:390
+#: src/components/LMSStaffEventCardDeck.ts:385
 msgid "Preview"
 msgstr ""
 
-#: src/components/LMSToast.ts:36
+#: src/components/LMSToast.ts:37
 msgid "sec ago"
 msgstr ""
 
-#: src/components/LMSModal.ts:208
+#: src/components/LMSModal.ts:201
 msgid "Add"
 msgstr ""
 
-#: src/components/LMSModal.ts:249 src/components/LMSCardDetailsModal.ts:306
+#: src/components/LMSModal.ts:242 src/components/LMSCardDetailsModal.ts:303
 msgid "Close"
 msgstr ""
 
-#: src/components/LMSModal.ts:253
+#: src/components/LMSModal.ts:246
 msgid "Create"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:225
+#: src/components/LMSCardDetailsModal.ts:222
 msgid "Date and Time"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:252
+#: src/components/LMSCardDetailsModal.ts:249
 msgid "Fees"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:257
-#: src/components/LMSEventsFilter.ts:345
+#: src/components/LMSCardDetailsModal.ts:254
+#: src/components/LMSEventsFilter.ts:340
 msgid "Target Group"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:258
+#: src/components/LMSCardDetailsModal.ts:255
 msgid "Age Range"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:259
-#: src/components/LMSEventsFilter.ts:434
+#: src/components/LMSCardDetailsModal.ts:256
+#: src/components/LMSEventsFilter.ts:429
 msgid "Fee"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:314
+#: src/components/LMSCardDetailsModal.ts:311
 msgid "Register"
 msgstr ""
 
-#: src/components/LMSTable.ts:45
+#: src/components/LMSTable.ts:46
 msgid "No data to display"
 msgstr ""
 
-#: src/components/LMSTable.ts:244
+#: src/components/LMSTable.ts:239
 msgid "actions"
 msgstr ""
 
-#: src/components/LMSTable.ts:268
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:276
+#: src/components/LMSTable.ts:263
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:268
 msgid "Edit"
 msgstr ""
 
-#: src/components/LMSTable.ts:276
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:280
+#: src/components/LMSTable.ts:271
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:272
 msgid "Save"
 msgstr ""
 
-#: src/components/LMSTable.ts:285
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:288
+#: src/components/LMSTable.ts:280
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:280
 msgid "Delete"
 msgstr ""
 
@@ -361,59 +364,59 @@ msgstr ""
 msgid "current"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardAttendees.ts:34
-#: src/views/StaffSettingsView.ts:19
+#: src/components/LMSStaffEventCard/LMSStaffEventCardAttendees.ts:26
+#: src/views/StaffSettingsView.ts:12
 msgid "Not implemented"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:297
+#: src/components/LMSEventsFilter.ts:292
 msgid "Filter"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:305 src/components/LMSEventsFilter.ts:308
+#: src/components/LMSEventsFilter.ts:300 src/components/LMSEventsFilter.ts:303
 msgid "Show filters"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:306 src/components/LMSEventsFilter.ts:308
+#: src/components/LMSEventsFilter.ts:301 src/components/LMSEventsFilter.ts:303
 msgid "Hide filters"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:317
+#: src/components/LMSEventsFilter.ts:312
 msgid "Reset"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:398
+#: src/components/LMSEventsFilter.ts:393
 msgid "Start Date"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:405
+#: src/components/LMSEventsFilter.ts:400
 msgid "End Date"
 msgstr ""
 
-#: src/components/LMSImageBrowser.ts:208
+#: src/components/LMSImageBrowser.ts:205
 msgid "Copy to clipboard"
 msgstr ""
 
-#: src/components/LMSPaginationNav.ts:72
+#: src/components/LMSPaginationNav.ts:68
 msgid "Previous"
 msgstr ""
 
-#: src/components/LMSPaginationNav.ts:95
+#: src/components/LMSPaginationNav.ts:91
 msgid "Next"
 msgstr ""
 
-#: src/views/LMSEventsView.ts:235
+#: src/views/LMSEventsView.ts:232
 msgid "There are no events to display"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:79
+#: src/views/StaffEventsView.ts:74
 msgid "a"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:90
+#: src/views/StaffEventsView.ts:85
 msgid "and an"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:99
+#: src/views/StaffEventsView.ts:94
 msgid "event type"
 msgstr ""
