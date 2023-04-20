@@ -3749,7 +3749,7 @@ ${value}</textarea
                 <tr>
                   ${this.headers.map((key) => x `<th scope="col">
                         <div class="d-flex">
-                          ${key}
+                          ${__(key)}
                           <button
                             class="btn btn-sm btn-sort"
                             @click=${() => this.sortColumnByValue({
@@ -3771,8 +3771,8 @@ ${value}</textarea
                         </div>
                       </th>`)}
                   ${this.isEditable
-                ? x `<th scope="col">actions</th>`
-                : x ``}
+                ? x `<th scope="col">${__("actions")}</th>`
+                : A}
                 </tr>
               </thead>
               <tbody>
@@ -3811,7 +3811,7 @@ ${value}</textarea
                               </div>
                             </td>
                           `
-                : x ``}
+                : A}
                     </tr>
                   `)}
               </tbody>
