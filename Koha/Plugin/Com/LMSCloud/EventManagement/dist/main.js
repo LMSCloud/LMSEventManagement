@@ -823,10 +823,7 @@
             });
         }
     }
-    const translationController = new TranslationController();
-    function __$1(text) {
-        return translationController.__(text);
-    }
+    new TranslationController();
 
     class TranslateDirective extends i {
         constructor(partInfo) {
@@ -3310,13 +3307,13 @@ ${value}</textarea
                 {
                     name: "name",
                     type: "text",
-                    desc: __$1("Name"),
+                    desc: __("Name"),
                     required: true,
                 },
                 {
                     name: "event_type",
                     type: "select",
-                    desc: __$1("Event Type"),
+                    desc: __("Event Type"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
                         const result = await response.json();
@@ -3334,7 +3331,7 @@ ${value}</textarea
                         ["selected", "checkbox"],
                         ["fee", "number"],
                     ],
-                    desc: __$1("Target Groups"),
+                    desc: __("Target Groups"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
                         const result = await response.json();
@@ -3348,49 +3345,49 @@ ${value}</textarea
                 {
                     name: "min_age",
                     type: "number",
-                    desc: __$1("Min Age"),
+                    desc: __("Min Age"),
                     required: true,
                 },
                 {
                     name: "max_age",
                     type: "number",
-                    desc: __$1("Max Age"),
+                    desc: __("Max Age"),
                     required: true,
                 },
                 {
                     name: "max_participants",
                     type: "number",
-                    desc: __$1("Max Participants"),
+                    desc: __("Max Participants"),
                     required: true,
                 },
                 {
                     name: "start_time",
                     type: "datetime-local",
-                    desc: __$1("Start Time"),
+                    desc: __("Start Time"),
                     required: true,
                 },
                 {
                     name: "end_time",
                     type: "datetime-local",
-                    desc: __$1("End Time"),
+                    desc: __("End Time"),
                     required: true,
                 },
                 {
                     name: "registration_start",
                     type: "datetime-local",
-                    desc: __$1("Registration Start"),
+                    desc: __("Registration Start"),
                     required: true,
                 },
                 {
                     name: "registration_end",
                     type: "datetime-local",
-                    desc: __$1("Registration End"),
+                    desc: __("Registration End"),
                     required: true,
                 },
                 {
                     name: "location",
                     type: "select",
-                    desc: __$1("Location"),
+                    desc: __("Location"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/locations");
                         const result = await response.json();
@@ -3404,25 +3401,25 @@ ${value}</textarea
                 {
                     name: "image",
                     type: "text",
-                    desc: __$1("Image"),
+                    desc: __("Image"),
                     required: false,
                 },
                 {
                     name: "description",
                     type: "text",
-                    desc: __$1("Description"),
+                    desc: __("Description"),
                     required: false,
                 },
                 {
                     name: "status",
                     type: "select",
-                    desc: __$1("Status"),
+                    desc: __("Status"),
                     logic: async () => {
                         return [
-                            { id: "pending", name: __$1("Pending") },
-                            { id: "confirmed", name: __$1("Confirmed") },
-                            { id: "canceled", name: __$1("Canceled") },
-                            { id: "sold_out", name: __$1("Sold Out") },
+                            { id: "pending", name: __("Pending") },
+                            { id: "confirmed", name: __("Confirmed") },
+                            { id: "canceled", name: __("Canceled") },
+                            { id: "sold_out", name: __("Sold Out") },
                         ];
                     },
                     required: true,
@@ -3430,13 +3427,13 @@ ${value}</textarea
                 {
                     name: "registration_link",
                     type: "text",
-                    desc: __$1("Registration Link"),
+                    desc: __("Registration Link"),
                     required: false,
                 },
                 {
                     name: "open_registration",
                     type: "checkbox",
-                    desc: __$1("Open Registration"),
+                    desc: __("Open Registration"),
                     required: false,
                 },
             ];
