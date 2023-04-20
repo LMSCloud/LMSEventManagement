@@ -20,6 +20,7 @@ export default class LMSModal extends LitElement {
     protected alertMessage: string;
     protected modalTitle: string;
     static styles: import("lit").CSSResult[];
+    connectedCallback(): void;
     private toggleModal;
     private create;
     private dismissAlert;

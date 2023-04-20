@@ -1,4 +1,4 @@
-import { LitElement, PropertyValueMap } from "lit";
+import { LitElement, PropertyValueMap, TemplateResult } from "lit";
 import { Column } from "../sharedDeclarations";
 export default class LMSTable extends LitElement {
     data: Column[];
@@ -8,7 +8,7 @@ export default class LMSTable extends LitElement {
     protected isDeletable: boolean;
     private toast;
     private notImplementedInBaseMessage;
-    protected emptyTableMessage: import("lit").TemplateResult<1>;
+    protected emptyTableMessage: TemplateResult<1>;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     handleEdit(e: Event): void;
@@ -22,6 +22,6 @@ export default class LMSTable extends LitElement {
     private sortColumns;
     private sortColumnByValue;
     protected willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
-    render(): import("lit").TemplateResult<1>;
+    render(): TemplateResult<1>;
 }
 //# sourceMappingURL=LMSTable.d.ts.map

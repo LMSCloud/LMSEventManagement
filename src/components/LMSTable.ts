@@ -1,4 +1,4 @@
-import { html, css, LitElement, PropertyValueMap } from "lit";
+import { html, css, LitElement, PropertyValueMap, TemplateResult } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import {
@@ -50,6 +50,11 @@ export default class LMSTable extends LitElement {
         width: 1em;
         height: 1em;
         color: #ffffff;
+      }
+
+      .fa-sort-up,
+      .fa-sort-down {
+        color: #000000;
       }
 
       button {
@@ -148,13 +153,28 @@ export default class LMSTable extends LitElement {
   }
 
   private sortColumnByValue({ column, direction }: sortTask) {
+    console.log("sortColumnByValue", column, direction);
     const { data } = this;
     const hasData = data?.length > 0 ?? false;
 
     if (hasData) {
       this.data = data.sort((a, b) => {
-        const aValue = a[column];
-        const bValue = b[column];
+        let aValue = a[column];
+        let bValue = b[column];
+
+        if (aValue instanceof Object) {
+          [aValue] = (aValue as TemplateResult).values as unknown as (
+            | string
+            | number
+          )[];
+        }
+        if (bValue instanceof Object) {
+          [bValue] = (bValue as TemplateResult).values as unknown as (
+            | string
+            | number
+          )[];
+        }
+
         if (aValue < bValue) {
           return direction === "asc" ? -1 : 1;
         }
@@ -164,6 +184,8 @@ export default class LMSTable extends LitElement {
         return 0;
       });
     }
+
+    this.requestUpdate();
   }
 
   protected override willUpdate(
@@ -186,27 +208,29 @@ export default class LMSTable extends LitElement {
                   ${this.headers.map(
                     (key) =>
                       html`<th scope="col">
-                        ${key}
-                        <button
-                          class="btn btn-sm"
-                          @click=${() =>
-                            this.sortColumnByValue({
-                              column: key,
-                              direction: "asc",
-                            })}
-                        >
-                          ${litFontawesome(faSortDown)}
-                        </button>
-                        <button
-                          class="btn btn-sm"
-                          @click=${() =>
-                            this.sortColumnByValue({
-                              column: key,
-                              direction: "desc",
-                            })}
-                        >
-                          ${litFontawesome(faSortUp)}
-                        </button>
+                        <div class="d-flex">
+                          ${key}
+                          <button
+                            class="btn btn-sm btn-sort"
+                            @click=${() =>
+                              this.sortColumnByValue({
+                                column: key,
+                                direction: "asc",
+                              })}
+                          >
+                            ${litFontawesome(faSortUp)}
+                          </button>
+                          <button
+                            class="btn btn-sm btn-sort"
+                            @click=${() =>
+                              this.sortColumnByValue({
+                                column: key,
+                                direction: "desc",
+                              })}
+                          >
+                            ${litFontawesome(faSortDown)}
+                          </button>
+                        </div>
                       </th>`
                   )}
                   ${this.isEditable

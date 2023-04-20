@@ -823,7 +823,10 @@
             });
         }
     }
-    new TranslationController();
+    const translationController = new TranslationController();
+    function __$1(text) {
+        return translationController.__(text);
+    }
 
     class TranslateDirective extends i {
         constructor(partInfo) {
@@ -1829,6 +1832,12 @@
             this.isOpen = false;
             this.alertMessage = "";
             this.modalTitle = "";
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
         }
         toggleModal() {
             const { renderRoot } = this;
@@ -3223,6 +3232,9 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
             this.hydrate();
         }
         hydrate() {
@@ -3288,6 +3300,9 @@ ${value}</textarea
         }
         async connectedCallback() {
             super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
             this.hydrate();
         }
         hydrate() {
@@ -3295,13 +3310,13 @@ ${value}</textarea
                 {
                     name: "name",
                     type: "text",
-                    desc: __("Name"),
+                    desc: __$1("Name"),
                     required: true,
                 },
                 {
                     name: "event_type",
                     type: "select",
-                    desc: __("Event Type"),
+                    desc: __$1("Event Type"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
                         const result = await response.json();
@@ -3319,7 +3334,7 @@ ${value}</textarea
                         ["selected", "checkbox"],
                         ["fee", "number"],
                     ],
-                    desc: __("Target Groups"),
+                    desc: __$1("Target Groups"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
                         const result = await response.json();
@@ -3333,49 +3348,49 @@ ${value}</textarea
                 {
                     name: "min_age",
                     type: "number",
-                    desc: __("Min Age"),
+                    desc: __$1("Min Age"),
                     required: true,
                 },
                 {
                     name: "max_age",
                     type: "number",
-                    desc: __("Max Age"),
+                    desc: __$1("Max Age"),
                     required: true,
                 },
                 {
                     name: "max_participants",
                     type: "number",
-                    desc: __("Max Participants"),
+                    desc: __$1("Max Participants"),
                     required: true,
                 },
                 {
                     name: "start_time",
                     type: "datetime-local",
-                    desc: __("Start Time"),
+                    desc: __$1("Start Time"),
                     required: true,
                 },
                 {
                     name: "end_time",
                     type: "datetime-local",
-                    desc: __("End Time"),
+                    desc: __$1("End Time"),
                     required: true,
                 },
                 {
                     name: "registration_start",
                     type: "datetime-local",
-                    desc: __("Registration Start"),
+                    desc: __$1("Registration Start"),
                     required: true,
                 },
                 {
                     name: "registration_end",
                     type: "datetime-local",
-                    desc: __("Registration End"),
+                    desc: __$1("Registration End"),
                     required: true,
                 },
                 {
                     name: "location",
                     type: "select",
-                    desc: __("Location"),
+                    desc: __$1("Location"),
                     logic: async () => {
                         const response = await fetch("/api/v1/contrib/eventmanagement/locations");
                         const result = await response.json();
@@ -3389,25 +3404,25 @@ ${value}</textarea
                 {
                     name: "image",
                     type: "text",
-                    desc: __("Image"),
+                    desc: __$1("Image"),
                     required: false,
                 },
                 {
                     name: "description",
                     type: "text",
-                    desc: __("Description"),
+                    desc: __$1("Description"),
                     required: false,
                 },
                 {
                     name: "status",
                     type: "select",
-                    desc: __("Status"),
+                    desc: __$1("Status"),
                     logic: async () => {
                         return [
-                            { id: "pending", name: __("Pending") },
-                            { id: "confirmed", name: __("Confirmed") },
-                            { id: "canceled", name: __("Canceled") },
-                            { id: "sold_out", name: __("Sold Out") },
+                            { id: "pending", name: __$1("Pending") },
+                            { id: "confirmed", name: __$1("Confirmed") },
+                            { id: "canceled", name: __$1("Canceled") },
+                            { id: "sold_out", name: __$1("Sold Out") },
                         ];
                     },
                     required: true,
@@ -3415,13 +3430,13 @@ ${value}</textarea
                 {
                     name: "registration_link",
                     type: "text",
-                    desc: __("Registration Link"),
+                    desc: __$1("Registration Link"),
                     required: false,
                 },
                 {
                     name: "open_registration",
                     type: "checkbox",
-                    desc: __("Open Registration"),
+                    desc: __$1("Open Registration"),
                     required: false,
                 },
             ];
@@ -3510,6 +3525,9 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
             this.hydrate();
         }
         hydrate() {
@@ -3694,12 +3712,19 @@ ${value}</textarea
         }
         sortColumnByValue({ column, direction }) {
             var _a;
+            console.log("sortColumnByValue", column, direction);
             const { data } = this;
             const hasData = (_a = (data === null || data === void 0 ? void 0 : data.length) > 0) !== null && _a !== void 0 ? _a : false;
             if (hasData) {
                 this.data = data.sort((a, b) => {
-                    const aValue = a[column];
-                    const bValue = b[column];
+                    let aValue = a[column];
+                    let bValue = b[column];
+                    if (aValue instanceof Object) {
+                        [aValue] = aValue.values;
+                    }
+                    if (bValue instanceof Object) {
+                        [bValue] = bValue.values;
+                    }
                     if (aValue < bValue) {
                         return direction === "asc" ? -1 : 1;
                     }
@@ -3709,6 +3734,7 @@ ${value}</textarea
                     return 0;
                 });
             }
+            this.requestUpdate();
         }
         willUpdate(_changedProperties) {
             super.willUpdate(_changedProperties);
@@ -3725,25 +3751,27 @@ ${value}</textarea
               <thead>
                 <tr>
                   ${this.headers.map((key) => x `<th scope="col">
-                        ${key}
-                        <button
-                          class="btn btn-sm"
-                          @click=${() => this.sortColumnByValue({
+                        <div class="d-flex">
+                          ${key}
+                          <button
+                            class="btn btn-sm btn-sort"
+                            @click=${() => this.sortColumnByValue({
                 column: key,
                 direction: "asc",
             })}
-                        >
-                          ${litFontawesome_2(faSortDown)}
-                        </button>
-                        <button
-                          class="btn btn-sm"
-                          @click=${() => this.sortColumnByValue({
+                          >
+                            ${litFontawesome_2(faSortUp)}
+                          </button>
+                          <button
+                            class="btn btn-sm btn-sort"
+                            @click=${() => this.sortColumnByValue({
                 column: key,
                 direction: "desc",
             })}
-                        >
-                          ${litFontawesome_2(faSortUp)}
-                        </button>
+                          >
+                            ${litFontawesome_2(faSortDown)}
+                          </button>
+                        </div>
                       </th>`)}
                   ${this.isEditable
                 ? x `<th scope="col">actions</th>`
@@ -3808,6 +3836,11 @@ ${value}</textarea
         width: 1em;
         height: 1em;
         color: #ffffff;
+      }
+
+      .fa-sort-up,
+      .fa-sort-down {
+        color: #000000;
       }
 
       button {
@@ -4442,6 +4475,9 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
+            TranslationController.getInstance().loadTranslations(() => {
+                console.log("Translations loaded");
+            });
             this.hydrate();
         }
         hydrate() {
