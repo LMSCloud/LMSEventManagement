@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-19 20:01+0200\n"
-"PO-Revision-Date: 2023-04-19 20:02+0200\n"
+"POT-Creation-Date: 2023-04-20 11:38+0200\n"
+"PO-Revision-Date: 2023-04-20 11:39+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -54,18 +54,21 @@ msgstr "Name"
 
 #: src/extensions/LMSEventsModal.ts:30
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:174
+#: src/components/LMSEventsFilter.ts:316
 msgid "Event Type"
 msgstr "Veranstaltungstyp"
 
 #: src/extensions/LMSEventsModal.ts:66 src/extensions/LMSEventTypesModal.ts:52
 #: src/extensions/LMSTargetGroupsModal.ts:30
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:184
+#: src/components/LMSEventsFilter.ts:357
 msgid "Min Age"
 msgstr "Mindestalter"
 
 #: src/extensions/LMSEventsModal.ts:72 src/extensions/LMSEventTypesModal.ts:59
 #: src/extensions/LMSTargetGroupsModal.ts:37
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:188
+#: src/components/LMSEventsFilter.ts:368
 msgid "Max Age"
 msgstr "Maximalalter"
 
@@ -169,6 +172,22 @@ msgstr "PLZ"
 msgid "Country"
 msgstr "Land"
 
+#: src/extensions/LMSEventTypesTable.ts:184 src/views/StaffEventsView.ts:74
+msgid "You have to create a"
+msgstr "Sie müssen zuerst eine"
+
+#: src/extensions/LMSEventTypesTable.ts:193 src/views/StaffEventsView.ts:83
+msgid "target group"
+msgstr "Zielgruppe"
+
+#: src/extensions/LMSEventTypesTable.ts:203 src/views/StaffEventsView.ts:93
+msgid "location"
+msgstr "Location"
+
+#: src/extensions/LMSEventTypesTable.ts:205 src/views/StaffEventsView.ts:106
+msgid "first"
+msgstr "erstellen"
+
 #: src/components/LMSStaffEventCardDeck.ts:113
 msgid "target_group"
 msgstr "Zielgruppe"
@@ -235,6 +254,10 @@ msgstr "Beitrag"
 msgid "Register"
 msgstr "Registrieren"
 
+#: src/components/LMSTable.ts:37
+msgid "No data to display"
+msgstr "Keine Daten vorhanden"
+
 #: src/components/LMSTable.ts:228
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:267
 msgid "Edit"
@@ -263,9 +286,21 @@ msgstr "Nicht implementiert"
 msgid "Filter"
 msgstr "Filtern"
 
+#: src/components/LMSEventsFilter.ts:299 src/components/LMSEventsFilter.ts:301
+msgid "Show filters"
+msgstr "Filter anzeigen"
+
+#: src/components/LMSEventsFilter.ts:299 src/components/LMSEventsFilter.ts:301
+msgid "Hide filters"
+msgstr "Filter ausblenden"
+
 #: src/components/LMSEventsFilter.ts:310
 msgid "Reset"
 msgstr "Zurücksetzen"
+
+#: src/components/LMSEventsFilter.ts:391
+msgid "Start Date"
+msgstr "Startzeit"
 
 #: src/components/LMSEventsFilter.ts:398
 msgid "End Date"
@@ -287,21 +322,9 @@ msgstr "Vor"
 msgid "There are no events to display"
 msgstr "Es sind derzeit keine Events vorhanden"
 
-#: src/views/StaffEventsView.ts:74
-msgid "You have to create a"
-msgstr "Sie müssen zuerst eine"
-
-#: src/views/StaffEventsView.ts:83
-msgid "target group"
-msgstr "Zielgruppe"
-
 #: src/views/StaffEventsView.ts:84
 msgid "a"
 msgstr "eine"
-
-#: src/views/StaffEventsView.ts:93
-msgid "location"
-msgstr "Location"
 
 #: src/views/StaffEventsView.ts:95
 msgid "and an"
@@ -310,7 +333,3 @@ msgstr "und einen"
 #: src/views/StaffEventsView.ts:104
 msgid "event type"
 msgstr "Veranstaltungstyp"
-
-#: src/views/StaffEventsView.ts:106
-msgid "first"
-msgstr "erstellen"

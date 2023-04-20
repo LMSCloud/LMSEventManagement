@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-19 20:01+0200\n"
+"POT-Creation-Date: 2023-04-20 11:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,18 +52,21 @@ msgstr ""
 
 #: src/extensions/LMSEventsModal.ts:30
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:174
+#: src/components/LMSEventsFilter.ts:316
 msgid "Event Type"
 msgstr ""
 
 #: src/extensions/LMSEventsModal.ts:66 src/extensions/LMSEventTypesModal.ts:52
 #: src/extensions/LMSTargetGroupsModal.ts:30
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:184
+#: src/components/LMSEventsFilter.ts:357
 msgid "Min Age"
 msgstr ""
 
 #: src/extensions/LMSEventsModal.ts:72 src/extensions/LMSEventTypesModal.ts:59
 #: src/extensions/LMSTargetGroupsModal.ts:37
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:188
+#: src/components/LMSEventsFilter.ts:368
 msgid "Max Age"
 msgstr ""
 
@@ -167,6 +170,22 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
+#: src/extensions/LMSEventTypesTable.ts:184 src/views/StaffEventsView.ts:74
+msgid "You have to create a"
+msgstr ""
+
+#: src/extensions/LMSEventTypesTable.ts:193 src/views/StaffEventsView.ts:83
+msgid "target group"
+msgstr ""
+
+#: src/extensions/LMSEventTypesTable.ts:203 src/views/StaffEventsView.ts:93
+msgid "location"
+msgstr ""
+
+#: src/extensions/LMSEventTypesTable.ts:205 src/views/StaffEventsView.ts:106
+msgid "first"
+msgstr ""
+
 #: src/components/LMSStaffEventCardDeck.ts:113
 msgid "target_group"
 msgstr ""
@@ -233,6 +252,10 @@ msgstr ""
 msgid "Register"
 msgstr ""
 
+#: src/components/LMSTable.ts:37
+msgid "No data to display"
+msgstr ""
+
 #: src/components/LMSTable.ts:228
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:267
 msgid "Edit"
@@ -261,8 +284,20 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
+#: src/components/LMSEventsFilter.ts:299 src/components/LMSEventsFilter.ts:301
+msgid "Show filters"
+msgstr ""
+
+#: src/components/LMSEventsFilter.ts:299 src/components/LMSEventsFilter.ts:301
+msgid "Hide filters"
+msgstr ""
+
 #: src/components/LMSEventsFilter.ts:310
 msgid "Reset"
+msgstr ""
+
+#: src/components/LMSEventsFilter.ts:391
+msgid "Start Date"
 msgstr ""
 
 #: src/components/LMSEventsFilter.ts:398
@@ -285,20 +320,8 @@ msgstr ""
 msgid "There are no events to display"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:74
-msgid "You have to create a"
-msgstr ""
-
-#: src/views/StaffEventsView.ts:83
-msgid "target group"
-msgstr ""
-
 #: src/views/StaffEventsView.ts:84
 msgid "a"
-msgstr ""
-
-#: src/views/StaffEventsView.ts:93
-msgid "location"
 msgstr ""
 
 #: src/views/StaffEventsView.ts:95
@@ -307,8 +330,4 @@ msgstr ""
 
 #: src/views/StaffEventsView.ts:104
 msgid "event type"
-msgstr ""
-
-#: src/views/StaffEventsView.ts:106
-msgid "first"
 msgstr ""
