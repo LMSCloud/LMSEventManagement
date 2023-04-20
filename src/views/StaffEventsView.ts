@@ -3,9 +3,9 @@ import { customElement, state } from "lit/decorators.js";
 import LMSStaffEventCardsDeck from "../components/LMSStaffEventCardDeck";
 import LMSEventsModal from "../extensions/LMSEventsModal";
 import { Column, URIComponents } from "../sharedDeclarations";
-import { TranslationHandler, __ } from "../lib/TranslationHandler";
-import { Gettext } from "gettext.js";
+import { __ } from "../lib/translate";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
+import { TranslationController } from "../lib/TranslationController";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -28,19 +28,14 @@ export default class StaffEventsView extends LitElement {
       method: "configure",
     },
   };
-  protected i18n: Gettext = {} as Gettext;
-  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [bootstrapStyles];
 
   override connectedCallback() {
     super.connectedCallback();
 
-    this.translationHandler = new TranslationHandler(() =>
-      this.requestUpdate()
-    );
-    this.translationHandler.loadTranslations().then((i18n) => {
-      this.i18n = i18n;
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
     });
 
     Promise.all([

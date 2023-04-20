@@ -17,7 +17,8 @@ import LMSAnchor from "./LMSAnchor";
 import { TemplateResultConverter } from "../lib/converters";
 import { map } from "lit/directives/map.js";
 import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
-import { __ } from "../lib/TranslationHandler";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -41,6 +42,11 @@ export default class LMSStaffEventCardDeck extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
+
     this.hydrate();
   }
 

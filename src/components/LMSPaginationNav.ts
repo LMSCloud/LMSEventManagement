@@ -3,7 +3,8 @@ import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
-import { __ } from "../lib/TranslationHandler";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 @customElement("lms-pagination-nav")
 export default class LMSPaginationNav extends LitElement {
@@ -20,6 +21,10 @@ export default class LMSPaginationNav extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
 
     const params = new URLSearchParams(window.location.search);
     const _page = params.get("page");

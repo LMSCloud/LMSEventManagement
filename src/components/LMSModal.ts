@@ -11,7 +11,7 @@ import { map } from "lit/directives/map.js";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
-// import TranslationHandler from "../lib/TranslationHandler";
+// import translate from "../lib/TranslationHandler";
 import { customElement, property, state } from "lit/decorators.js";
 // import { Gettext } from "gettext.js";
 import { CreateOpts, MatrixGroup, ModalField } from "../sharedDeclarations";
@@ -20,7 +20,8 @@ import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
 import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
 import { classMap } from "lit/directives/class-map.js";
-import { __ } from "../lib/TranslationHandler";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -103,6 +104,14 @@ export default class LMSModal extends LitElement {
     `,
   ];
 
+  override connectedCallback() {
+    super.connectedCallback();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
+  }
+  
   private toggleModal() {
     const { renderRoot } = this;
     this.isOpen = !this.isOpen;

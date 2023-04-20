@@ -2,6 +2,8 @@ import { customElement } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
 import { html, TemplateResult } from "lit";
 import { Input, InputType, LMSLocation } from "../sharedDeclarations";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 type LMSLocationValue = string | number;
 
@@ -112,6 +114,10 @@ export default class LMSLocationsTable extends LMSTable {
 
   override connectedCallback() {
     super.connectedCallback();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
 
     this.order = [
       "id",

@@ -1,4 +1,6 @@
 import { TemplateResult } from "lit";
+import { DirectiveResult } from "lit/directive";
+import { TranslateDirective } from "./lib/translate";
 
 export type InputType =
   | "hidden"
@@ -86,16 +88,16 @@ export type Input = {
 
 export type SelectOption = {
   id: string | number;
-  name: string;
+  name: string | DirectiveResult<typeof TranslateDirective>;
 };
 
 export type BaseField = {
   name: string;
-  desc?: string;
-  logic?: () => Promise<{ id: string | number; name: string }[]>;
+  desc?: string | DirectiveResult<typeof TranslateDirective>;
+  logic?: () => Promise<{ id: string | number; name: string | DirectiveResult<typeof TranslateDirective> }[]>;
   required?: boolean;
   value?: string | { [key: string]: string }[];
-  dbData?: { id: string | number; name: string }[];
+  dbData?: { id: string | number; name: string | DirectiveResult<typeof TranslateDirective> }[];
   attributes?: [string, string | number][];
 };
 

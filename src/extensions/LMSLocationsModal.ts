@@ -1,7 +1,8 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { CreateOpts } from "../sharedDeclarations";
-import { __ } from "../lib/TranslationHandler";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 @customElement("lms-locations-modal")
 export default class LMSLocationsModal extends LMSModal {
@@ -12,6 +13,11 @@ export default class LMSLocationsModal extends LMSModal {
 
   override connectedCallback() {
     super.connectedCallback();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
+
     this.hydrate();
   }
 

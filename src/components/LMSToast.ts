@@ -1,7 +1,8 @@
 import { css, html, LitElement } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { customElement, property } from "lit/decorators.js";
-import { __ } from "../lib/TranslationHandler";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 @customElement("lms-toast")
 export default class LMSToast extends LitElement {
@@ -50,6 +51,10 @@ export default class LMSToast extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
 
     setInterval(() => {
       this._elapsedTime++;

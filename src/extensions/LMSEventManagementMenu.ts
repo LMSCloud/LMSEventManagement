@@ -8,7 +8,8 @@ import {
   faImage,
 } from "@fortawesome/free-solid-svg-icons";
 import { customElement, property } from "lit/decorators.js";
-import { __ } from "../lib/TranslationHandler";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 @customElement("lms-event-management-menu")
 export default class LMSEventMangementMenu extends LMSFloatingMenu {
@@ -17,9 +18,12 @@ export default class LMSEventMangementMenu extends LMSFloatingMenu {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.addEventListener("translations-loaded", () => {
-      this.hydrate();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
     });
+    
+    this.hydrate();
   }
 
   private hydrate() {

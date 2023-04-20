@@ -4,10 +4,15 @@ import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { MatrixGroup, ModalField } from "../../sharedDeclarations";
 import { map } from "lit/directives/map.js";
+import { DirectiveResult } from "lit/directive";
+import { TranslateDirective } from "../../lib/translate";
 
 type MatrixMarkupGenArgs = {
   field: ModalField;
-  row: { id: string | number; name: string };
+  row: {
+    id: string | number;
+    name: string | DirectiveResult<typeof TranslateDirective>;
+  };
   header: string[];
 };
 

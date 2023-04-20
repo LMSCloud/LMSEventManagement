@@ -18,7 +18,8 @@ import {
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { map } from "lit/directives/map.js";
-import { __ } from "../lib/TranslationHandler";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 type LMSEventFull = Omit<
   LMSEvent,
@@ -69,6 +70,10 @@ export default class LMSCardDetailsModal extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
 
     const event_types = async () => {
       const response = await fetch(

@@ -8,8 +8,8 @@ import { map } from "lit/directives/map.js";
 import { classMap } from "lit/directives/class-map.js";
 import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
 import LMSPaginationNav from "../components/LMSPaginationNav";
-import { TranslationHandler, __ } from "../lib/TranslationHandler";
-import { Gettext } from "gettext.js";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -35,8 +35,6 @@ export default class LMSEventsView extends LitElement {
   @state() _page: number = 1;
   @state() _per_page: number = 20;
   @state() q?: string;
-  protected i18n: Gettext = {} as Gettext;
-  private translationHandler: TranslationHandler = {} as TranslationHandler;
 
   static override styles = [
     bootstrapStyles,
@@ -147,11 +145,8 @@ export default class LMSEventsView extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
 
-    this.translationHandler = new TranslationHandler(() =>
-      this.requestUpdate()
-    );
-    this.translationHandler.loadTranslations().then((i18n) => {
-      this.i18n = i18n;
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
     });
 
     this.getReservedQueryParams();

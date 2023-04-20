@@ -1,7 +1,8 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { CreateOpts, LMSLocation } from "../sharedDeclarations";
-import { __ } from "../lib/TranslationHandler";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 @customElement("lms-event-types-modal")
 export default class LMSEventTypesModal extends LMSModal {
@@ -12,6 +13,11 @@ export default class LMSEventTypesModal extends LMSModal {
 
   override connectedCallback() {
     super.connectedCallback();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
+
     this.hydrate();
   }
 

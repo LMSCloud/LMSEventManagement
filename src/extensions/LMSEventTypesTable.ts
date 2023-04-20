@@ -9,6 +9,9 @@ import {
   URIComponents,
 } from "../sharedDeclarations";
 import LMSAnchor from "../components/LMSAnchor";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
+
 
 type EventTypeValue = string | number | boolean | TargetGroupFee[];
 
@@ -165,6 +168,10 @@ export default class LMSEventTypesTable extends LMSTable {
   override connectedCallback() {
     super.connectedCallback();
 
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
+
     this.order = [
       "id",
       "name",
@@ -179,7 +186,7 @@ export default class LMSEventTypesTable extends LMSTable {
     ];
     this.isEditable = true;
     this.isDeletable = true;
-    this.emptyTableMessage = html`You have to create a&nbsp;
+    this.emptyTableMessage = html`${__("You have to create a")}&nbsp;
       <lms-anchor
         .href=${{
           ...this.href,
@@ -188,7 +195,7 @@ export default class LMSEventTypesTable extends LMSTable {
             op: "target-groups",
           },
         }}
-        >target group</lms-anchor
+        >${__("target group")}</lms-anchor
       >&nbsp;and a&nbsp;
       <lms-anchor
         .href=${{
@@ -198,9 +205,9 @@ export default class LMSEventTypesTable extends LMSTable {
             op: "locations",
           },
         }}
-        >location</lms-anchor
+        >${__("location")}</lms-anchor
       >
-      &nbsp;first.`;
+      &nbsp;${__("first")}.`;
 
     const eventTypes = fetch("/api/v1/contrib/eventmanagement/event_types");
     eventTypes

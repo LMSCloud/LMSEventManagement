@@ -5,7 +5,8 @@ import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Column /* Input */ } from "../../sharedDeclarations";
 import { TemplateResultConverter } from "../../lib/converters";
-import { __ } from "../../lib/TranslationHandler";
+import { __ } from "../../lib/translate";
+import { TranslationController } from "../../lib/TranslationController";
 
 @customElement("lms-staff-event-card-form")
 export default class LMSStaffEventCardForm extends LitElement {
@@ -34,6 +35,14 @@ export default class LMSStaffEventCardForm extends LitElement {
       }
     `,
   ];
+
+  override connectedCallback() {
+    super.connectedCallback();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
+  }
 
   private handleEdit(e: Event) {
     e.preventDefault();

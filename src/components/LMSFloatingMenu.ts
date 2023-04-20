@@ -3,11 +3,11 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { customElement, property } from "lit/decorators.js";
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import { TranslationHandler, __ } from "../lib/TranslationHandler";
-import { Gettext } from "gettext.js";
+import { TranslateDirective, __ } from "../lib/translate";
+import { DirectiveResult } from "lit/directive.js";
 
 type MenuEntry = {
-  name: string;
+  name: string | DirectiveResult<typeof TranslateDirective>;
   icon: IconDefinition;
   url: string;
   method: string;
@@ -26,9 +26,6 @@ export default class LMSFloatingMenu extends LitElement {
   @property({ type: String, attribute: false }) _currentSearchParams =
     new URLSearchParams(window.location.search);
 
-  protected i18n: Gettext = {} as Gettext;
-  protected translationHandler: TranslationHandler = {} as TranslationHandler;
-
   static override styles = [
     bootstrapStyles,
     css`
@@ -44,17 +41,6 @@ export default class LMSFloatingMenu extends LitElement {
       }
     `,
   ];
-
-  override connectedCallback() {
-    super.connectedCallback();
-    this.translationHandler = new TranslationHandler(() =>
-      this.requestUpdate()
-    );
-    this.translationHandler.loadTranslations().then((i18n) => {
-      this.i18n = i18n;
-      this.dispatchEvent(new CustomEvent("translations-loaded"));
-    });
-  }
 
   override render() {
     return html` <nav

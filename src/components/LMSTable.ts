@@ -12,7 +12,8 @@ import { customElement, property, state } from "lit/decorators.js";
 import LMSToast from "./LMSToast";
 import { Column } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
-import { __ } from "../lib/TranslationHandler";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 type sortTask = {
   column: string;
@@ -34,7 +35,7 @@ export default class LMSTable extends LitElement {
   };
   @state() private notImplementedInBaseMessage =
     "Implement this method in your extended LMSTable component.";
-  @state() protected emptyTableMessage = html`No data to display.`;
+  @state() protected emptyTableMessage = html`${__("No data to display")}.`;
 
   static override styles = [
     bootstrapStyles,
@@ -60,6 +61,14 @@ export default class LMSTable extends LitElement {
       }
     `,
   ];
+
+  override connectedCallback() {
+    super.connectedCallback();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
+  }
 
   public handleEdit(e: Event) {
     console.info(e, this.notImplementedInBaseMessage);

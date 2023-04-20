@@ -10,7 +10,8 @@ import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import LMSTooltip from "./LMSTooltip";
 import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
-import { __ } from "../lib/TranslationHandler";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 type UploadedImage = {
   image: string;
@@ -108,6 +109,10 @@ export default class LMSImageBrowser extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
 
     /** This is the counterpart to the script in the intranet_js hook */
     this.boundEventHandler = this.handleMessageEvent.bind(this);

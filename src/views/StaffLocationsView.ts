@@ -2,8 +2,8 @@ import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import LMSLocationsModal from "../extensions/LMSLocationsModal";
 import LMSLocationsTable from "../extensions/LMSLocationsTable";
-import { TranslationHandler, __ } from "../lib/TranslationHandler";
-import { Gettext } from "gettext.js";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -14,16 +14,10 @@ declare global {
 
 @customElement("lms-staff-locations-view")
 export default class StaffLocationsView extends LitElement {
-  protected i18n: Gettext = {} as Gettext;
-  private translationHandler: TranslationHandler = {} as TranslationHandler;
-
-  override connectedCallback() {
+  override connectedCallback(): void {
     super.connectedCallback();
-    this.translationHandler = new TranslationHandler(() =>
-      this.requestUpdate()
-    );
-    this.translationHandler.loadTranslations().then((i18n) => {
-      this.i18n = i18n;
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
     });
   }
 

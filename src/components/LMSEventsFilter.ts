@@ -9,7 +9,8 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { classMap } from "lit/directives/class-map.js";
-import { __ } from "../lib/TranslationHandler";
+import { __ } from "../lib/translate";
+import { TranslationController } from "../lib/TranslationController";
 
 type Facets = {
   eventTypeIds: string[];
@@ -47,6 +48,10 @@ export default class LMSEventsFilter extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
+
+    TranslationController.getInstance().loadTranslations(() => {
+      console.log("Translations loaded");
+    });
 
     const event_types = async () => {
       const response = await fetch(
@@ -296,9 +301,11 @@ export default class LMSEventsFilter extends LitElement {
               type="button"
               class="btn btn-sm btn-outline-secondary me-2"
               @click=${this.handleHideToggle}
-              aria-label=${this.isHidden ? "Show filters" : "Hide filters"}
+              aria-label=${this.isHidden
+                ? __("Show filters")
+                : __("Hide filters")}
             >
-              ${this.isHidden ? "Show" : "Hide"}
+              ${this.isHidden ? __("Show filters") : __("Hide filters")}
             </button>
             <button
               type="button"
@@ -313,7 +320,7 @@ export default class LMSEventsFilter extends LitElement {
         </div>
         <div class="card-body ${classMap({ "d-none": this.isHidden })}">
           <div class="form-group">
-            <label for="event_type">Event Type</label>
+            <label for="event_type">${__("Event Type")}</label>
             ${map(
               this.facets.eventTypeIds,
               (eventTypeId) => html`
@@ -354,7 +361,7 @@ export default class LMSEventsFilter extends LitElement {
             )}
           </div>
           <div class="form-group">
-            <label for="min_age">Min Age</label>
+            <label for="min_age">${__("Min Age")}</label>
             <input
               type="number"
               class="form-control form-control-sm"
@@ -365,7 +372,7 @@ export default class LMSEventsFilter extends LitElement {
               value=""
               @input=${this.emitChange}
             />
-            <label for="max_age">Max Age</label>
+            <label for="max_age">${__("Max Age")}</label>
             <input
               type="number"
               class="form-control form-control-sm"
@@ -388,7 +395,7 @@ export default class LMSEventsFilter extends LitElement {
             <label for="open_registration">${__("Open Registration")}</label>
           </div>
           <div class="form-group">
-            <label for="start_time">Start Date</label>
+            <label for="start_time">${__("Start Date")}</label>
             <input
               type="date"
               class="form-control form-control-sm"
