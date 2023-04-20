@@ -10,7 +10,7 @@ import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { classMap } from "lit/directives/class-map.js";
 import { __ } from "../lib/translate";
-import { TranslationController } from "../lib/TranslationController";
+import { skeletonStyles } from "./styles/skeleton";
 
 type Facets = {
   eventTypeIds: string[];
@@ -44,14 +44,10 @@ export default class LMSEventsFilter extends LitElement {
   @state() locations: LMSLocation[] = [];
   @queryAll("input") inputs: NodeListOf<HTMLInputElement> | undefined;
 
-  static override styles = [bootstrapStyles];
+  static override styles = [bootstrapStyles, skeletonStyles];
 
   override connectedCallback() {
     super.connectedCallback();
-
-    TranslationController.getInstance().loadTranslations(() => {
-      console.log("Translations loaded");
-    });
 
     const event_types = async () => {
       const response = await fetch(
