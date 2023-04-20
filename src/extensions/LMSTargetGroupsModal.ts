@@ -2,7 +2,6 @@ import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { CreateOpts } from "../sharedDeclarations";
 import { __ } from "../lib/translate";
-import { TranslationController } from "../lib/TranslationController";
 
 @customElement("lms-target-groups-modal")
 export default class LMSTargetGroupsModal extends LMSModal {
@@ -13,11 +12,6 @@ export default class LMSTargetGroupsModal extends LMSModal {
 
   override connectedCallback() {
     super.connectedCallback();
-
-    TranslationController.getInstance().loadTranslations(() => {
-      console.log("Translations loaded");
-    });
-
     this.hydrate();
   }
 

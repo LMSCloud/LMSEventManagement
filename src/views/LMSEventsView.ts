@@ -9,7 +9,7 @@ import { classMap } from "lit/directives/class-map.js";
 import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
 import LMSPaginationNav from "../components/LMSPaginationNav";
 import { __ } from "../lib/translate";
-import { TranslationController } from "../lib/TranslationController";
+import { skeletonStyles } from "../components/styles/skeleton";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -38,6 +38,7 @@ export default class LMSEventsView extends LitElement {
 
   static override styles = [
     bootstrapStyles,
+    skeletonStyles,
     css`
       .card-deck {
         display: grid;
@@ -144,10 +145,6 @@ export default class LMSEventsView extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-
-    TranslationController.getInstance().loadTranslations(() => {
-      console.log("Translations loaded");
-    });
 
     this.getReservedQueryParams();
 

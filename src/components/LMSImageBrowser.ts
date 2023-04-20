@@ -11,7 +11,7 @@ import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import LMSTooltip from "./LMSTooltip";
 import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
 import { __ } from "../lib/translate";
-import { TranslationController } from "../lib/TranslationController";
+import { skeletonStyles } from "./styles/skeleton";
 
 type UploadedImage = {
   image: string;
@@ -49,6 +49,7 @@ export default class LMSImageBrowser extends LitElement {
 
   static override styles = [
     bootstrapStyles,
+    skeletonStyles,
     css`
       img {
         aspect-ratio: 4 / 3;
@@ -109,10 +110,6 @@ export default class LMSImageBrowser extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-
-    TranslationController.getInstance().loadTranslations(() => {
-      console.log("Translations loaded");
-    });
 
     /** This is the counterpart to the script in the intranet_js hook */
     this.boundEventHandler = this.handleMessageEvent.bind(this);

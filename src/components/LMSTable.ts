@@ -19,8 +19,9 @@ import { customElement, property, state } from "lit/decorators.js";
 import LMSToast from "./LMSToast";
 import { Column } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
+// import { repeat } from "litk/directives/repeat.js";
 import { __ } from "../lib/translate";
-import { TranslationController } from "../lib/TranslationController";
+import { skeletonStyles } from "./styles/skeleton";
 
 type sortTask = {
   column: string;
@@ -46,6 +47,7 @@ export default class LMSTable extends LitElement {
 
   static override styles = [
     bootstrapStyles,
+    skeletonStyles,
     css`
       table {
         background: white;
@@ -73,14 +75,6 @@ export default class LMSTable extends LitElement {
       }
     `,
   ];
-
-  override connectedCallback() {
-    super.connectedCallback();
-
-    TranslationController.getInstance().loadTranslations(() => {
-      console.log("Translations loaded");
-    });
-  }
 
   public handleEdit(e: Event) {
     console.info(e, this.notImplementedInBaseMessage);
@@ -212,7 +206,8 @@ export default class LMSTable extends LitElement {
             >
               <thead>
                 <tr>
-                  ${this.headers.map(
+                  ${map(
+                    this.headers,
                     (key) =>
                       html`<th scope="col">
                         <div class="d-flex">
@@ -265,7 +260,7 @@ export default class LMSTable extends LitElement {
                                   class="btn btn-dark mx-2"
                                 >
                                   ${litFontawesome(faEdit)}
-                                  <span>&nbsp;${__("Edit")}</span>
+                                  <span>${__("Edit")}</span>
                                 </button>
                                 <button
                                   @click=${this.handleSave}
@@ -273,7 +268,7 @@ export default class LMSTable extends LitElement {
                                   class="btn btn-dark mx-2"
                                 >
                                   ${litFontawesome(faSave)}
-                                  <span>&nbsp;${__("Save")}</span>
+                                  <span>${__("Save")}</span>
                                 </button>
                                 <button
                                   @click=${this.handleDelete}
@@ -282,7 +277,7 @@ export default class LMSTable extends LitElement {
                                   class="btn btn-danger mx-2"
                                 >
                                   ${litFontawesome(faTrash)}
-                                  <span>&nbsp;${__("Delete")}</span>
+                                  <span>${__("Delete")}</span>
                                 </button>
                               </div>
                             </td>

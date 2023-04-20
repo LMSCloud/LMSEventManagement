@@ -3,7 +3,6 @@ import LMSTable from "../components/LMSTable";
 import { html, TemplateResult } from "lit";
 import { InputType } from "../sharedDeclarations";
 import { Input, TargetGroup } from "../sharedDeclarations";
-import { TranslationController } from "../lib/TranslationController";
 
 type TargetGroupValue = string | number | boolean;
 
@@ -114,10 +113,6 @@ export default class LMSEventTypesTable extends LMSTable {
 
   override connectedCallback() {
     super.connectedCallback();
-
-    TranslationController.getInstance().loadTranslations(() => {
-      console.log("Translations loaded");
-    });
 
     this.order = ["id", "name", "min_age", "max_age"];
     this.isEditable = true;

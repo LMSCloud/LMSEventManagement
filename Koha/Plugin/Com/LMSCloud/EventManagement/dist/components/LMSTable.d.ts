@@ -10,7 +10,6 @@ export default class LMSTable extends LitElement {
     private notImplementedInBaseMessage;
     protected emptyTableMessage: TemplateResult<1>;
     static styles: import("lit").CSSResult[];
-    connectedCallback(): void;
     handleEdit(e: Event): void;
     handleSave(e: Event): void;
     handleDelete(e: Event): void;

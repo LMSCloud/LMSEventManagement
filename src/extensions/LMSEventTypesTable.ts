@@ -10,8 +10,6 @@ import {
 } from "../sharedDeclarations";
 import LMSAnchor from "../components/LMSAnchor";
 import { __ } from "../lib/translate";
-import { TranslationController } from "../lib/TranslationController";
-
 
 type EventTypeValue = string | number | boolean | TargetGroupFee[];
 
@@ -168,10 +166,6 @@ export default class LMSEventTypesTable extends LMSTable {
   override connectedCallback() {
     super.connectedCallback();
 
-    TranslationController.getInstance().loadTranslations(() => {
-      console.log("Translations loaded");
-    });
-
     this.order = [
       "id",
       "name",
@@ -196,7 +190,7 @@ export default class LMSEventTypesTable extends LMSTable {
           },
         }}
         >${__("target group")}</lms-anchor
-      >&nbsp;and a&nbsp;
+      >&nbsp;${__("and a")}&nbsp;
       <lms-anchor
         .href=${{
           ...this.href,

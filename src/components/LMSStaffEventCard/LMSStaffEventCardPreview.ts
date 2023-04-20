@@ -4,6 +4,7 @@ import { customElement, property } from "lit/decorators.js";
 import LMSCard from "../LMSCard";
 import { Column } from "../../sharedDeclarations";
 import { TemplateResultConverter } from "../../lib/converters";
+import { skeletonStyles } from "../styles/skeleton";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -20,7 +21,7 @@ export default class LMSStaffEventCardPreview extends LitElement {
     new TemplateResultConverter(undefined);
 
   static override styles = [
-    bootstrapStyles,
+    bootstrapStyles, skeletonStyles,
     css`
       svg {
         display: inline-block;

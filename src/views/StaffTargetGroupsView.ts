@@ -3,8 +3,6 @@ import { customElement, property } from "lit/decorators.js";
 import LMSTargetGroupsModal from "../extensions/LMSTargetGroupsModal";
 import LMSTargetGroupsTable from "../extensions/LMSTargetGroupsTable";
 import { TargetGroup } from "../sharedDeclarations";
-import { __ } from "../lib/translate";
-import { TranslationController } from "../lib/TranslationController";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -22,13 +20,6 @@ export default class StaffEventTypesView extends LitElement {
       "/api/v1/contrib/eventmanagement/target_groups"
     );
     this.data = await response.json();
-  }
-
-  override connectedCallback(): void {
-    super.connectedCallback();
-    TranslationController.getInstance().loadTranslations(() => {
-      console.log("Translations loaded");
-    });
   }
 
   override render() {

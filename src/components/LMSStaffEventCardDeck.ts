@@ -18,7 +18,7 @@ import { TemplateResultConverter } from "../lib/converters";
 import { map } from "lit/directives/map.js";
 import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
 import { __ } from "../lib/translate";
-import { TranslationController } from "../lib/TranslationController";
+import { skeletonStyles } from "./styles/skeleton";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -38,15 +38,10 @@ export default class LMSStaffEventCardDeck extends LitElement {
   private data: TaggedColumn[] = [];
   private cardStates: Map<string, string[]> = new Map();
 
-  static override styles = [bootstrapStyles];
+  static override styles = [bootstrapStyles, skeletonStyles];
 
   override connectedCallback() {
     super.connectedCallback();
-
-    TranslationController.getInstance().loadTranslations(() => {
-      console.log("Translations loaded");
-    });
-
     this.hydrate();
   }
 

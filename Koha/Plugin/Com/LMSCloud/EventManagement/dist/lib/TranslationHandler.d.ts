@@ -10,5 +10,4 @@ export declare class TranslationHandler {
     get getLocale(): string;
     get getI18n(): Gettext.Gettext;
 }
-export declare function __(text: string): string;
 //# sourceMappingURL=TranslationHandler.d.ts.map

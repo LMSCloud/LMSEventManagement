@@ -21,7 +21,7 @@ import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
 import { classMap } from "lit/directives/class-map.js";
 import { __ } from "../lib/translate";
-import { TranslationController } from "../lib/TranslationController";
+import { skeletonStyles } from "./styles/skeleton";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -45,6 +45,7 @@ export default class LMSModal extends LitElement {
 
   static override styles = [
     bootstrapStyles,
+    skeletonStyles,
     css`
       .btn-modal-wrapper {
         position: fixed;
@@ -104,14 +105,6 @@ export default class LMSModal extends LitElement {
     `,
   ];
 
-  override connectedCallback() {
-    super.connectedCallback();
-
-    TranslationController.getInstance().loadTranslations(() => {
-      console.log("Translations loaded");
-    });
-  }
-  
   private toggleModal() {
     const { renderRoot } = this;
     this.isOpen = !this.isOpen;

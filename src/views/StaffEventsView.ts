@@ -5,8 +5,7 @@ import LMSEventsModal from "../extensions/LMSEventsModal";
 import { Column, URIComponents } from "../sharedDeclarations";
 import { __ } from "../lib/translate";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { TranslationController } from "../lib/TranslationController";
-
+import { skeletonStyles } from "../components/styles/skeleton";
 declare global {
   interface HTMLElementTagNameMap {
     "lms-staff-event-card-deck": LMSStaffEventCardsDeck;
@@ -29,14 +28,10 @@ export default class StaffEventsView extends LitElement {
     },
   };
 
-  static override styles = [bootstrapStyles];
+  static override styles = [bootstrapStyles, skeletonStyles];
 
   override connectedCallback() {
     super.connectedCallback();
-
-    TranslationController.getInstance().loadTranslations(() => {
-      console.log("Translations loaded");
-    });
 
     Promise.all([
       fetch("/api/v1/contrib/eventmanagement/events"),

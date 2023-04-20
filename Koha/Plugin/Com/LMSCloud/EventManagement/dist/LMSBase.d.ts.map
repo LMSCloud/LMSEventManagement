@@ -1,0 +1,1 @@
+{"version":3,"file":"LMSBase.d.ts","sourceRoot":"","sources":["../../../../../../src/LMSBase.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,UAAU,EAAE,MAAM,KAAK,CAAC;AAGjC,MAAM,CAAC,OAAO,CAAC,QAAQ,OAAO,OAAQ,SAAQ,UAAU;IACtD,OAAO,CAAC,mBAAmB,CAAS;IACpC,OAAO,CAAC,cAAc,CAAQ;;IAQ9B,gBAAgB;IAOP,aAAa;CAMvB"}

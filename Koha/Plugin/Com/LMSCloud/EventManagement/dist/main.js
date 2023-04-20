@@ -729,137 +729,129 @@
     };
 
     let i18nInstance;
-    class TranslationHandler {
-        constructor(callback, localeUrl = "/api/v1/contrib/eventmanagement/static/locales") {
-            this.i18n = i18n();
-            this.locale = document.documentElement.lang.slice(0, 2);
-            this.callback = callback;
-            this.localeUrl = localeUrl;
+    let translationsLoaded = false;
+    let callbacks = [];
+    let loadTranslationsCalled = false;
+    async function loadTranslations(localeUrl = "/api/v1/contrib/eventmanagement/static/locales") {
+        const locale = document.documentElement.lang.slice(0, 2);
+        if (locale.startsWith("en") || translationsLoaded) {
+            return;
         }
-        async loadTranslations() {
-            if (this.locale.startsWith("en")) {
-                this.i18n.setLocale("en");
-                return this.i18n;
+        try {
+            const response = await fetch(`${localeUrl}/${locale}/LC_MESSAGES/${locale}.json`);
+            if (response.status >= 200 && response.status <= 299) {
+                const translations = await response.json();
+                const i18n$1 = i18n();
+                i18n$1.loadJSON(translations, "messages");
+                i18n$1.setLocale(locale);
+                i18nInstance = i18n$1;
+                translationsLoaded = true;
+                callbacks.forEach(({ callback }) => {
+                    callback();
+                });
             }
-            try {
-                const response = await fetch(`${this.localeUrl}/${this.locale}/LC_MESSAGES/${this.locale}.json`);
-                if (response.status >= 200 && response.status <= 299) {
-                    const translations = await response.json();
-                    this.i18n.loadJSON(translations, "messages");
-                    this.i18n.setLocale(this.locale);
-                    if (this.callback) {
-                        this.callback();
-                    }
-                    i18nInstance = this.i18n;
-                    return this.i18n;
-                }
-                console.info(`No translations found for locale ${this.locale}. Using default locale.`);
-                this.i18n.setLocale("en");
+            else {
+                console.info(`No translations found for locale ${locale}. Using default locale.`);
             }
-            catch (error) {
-                console.error(`Error loading translations for locale ${this.locale}:`, error);
-                this.i18n.setLocale("en");
-            }
-            return this.i18n;
         }
-        set setLocale(locale) {
-            this.locale = locale;
-        }
-        get getLocale() {
-            return this.locale;
-        }
-        get getI18n() {
-            return this.i18n;
+        catch (error) {
+            console.error(`Error loading translations for locale ${locale}:`, error);
         }
     }
-
-    class TranslationProxy {
-        constructor(text, translationController) {
-            this._text = text;
-            this._callback = () => { };
-            translationController.addProxy(this);
-        }
-        setCallback(callback) {
-            this._callback = callback;
-        }
-        updateTranslatedText(translatedText) {
-            this._translatedText = translatedText;
-            this._callback(translatedText);
-        }
-    }
-
-    class TranslationController {
-        constructor() {
-            this.translationHandler = {};
-            this.translationsLoaded = false;
-            this.proxies = new Set();
-        }
-        static getInstance() {
-            if (!this._instance) {
-                this._instance = new TranslationController();
-            }
-            return this._instance;
-        }
-        async loadTranslations(callback, localeUrl) {
-            if (this.translationsLoaded) {
-                return;
-            }
-            this.translationHandler = new TranslationHandler(() => {
-                this.updateProxies();
-                callback();
-            }, localeUrl);
-            await this.translationHandler.loadTranslations();
-        }
-        __(text) {
-            return new TranslationProxy(text, this);
-        }
-        addProxy(proxy) {
-            this.proxies.add(proxy);
-        }
-        updateProxies() {
-            this.proxies.forEach((proxy) => {
-                const translatedText = this.translationHandler.getI18n.gettext(proxy._text);
-                proxy.updateTranslatedText(translatedText);
-            });
-        }
-    }
-    new TranslationController();
-
     class TranslateDirective extends i {
         constructor(partInfo) {
             super(partInfo);
-            this._text = "";
-            this._proxy = {};
             this._element = null;
             this._textNode = null;
+            this._element = document.createElement("span");
+            this._textNode = document.createTextNode("");
+            this._element.appendChild(this._textNode);
+            this._locale = document.documentElement.lang.slice(0, 2);
+            if (!loadTranslationsCalled && !this._locale.startsWith("en")) {
+                loadTranslationsCalled = true;
+                loadTranslations();
+            }
+        }
+        async updateTranslation(text) {
+            if (translationsLoaded && this._textNode) {
+                this._textNode.textContent = i18nInstance.gettext(text);
+            }
+        }
+        async ____(text) {
+            if (!translationsLoaded) {
+                callbacks.push({
+                    text,
+                    callback: () => {
+                        this.updateTranslation(text);
+                        if (this._element) {
+                            this._element.classList.remove("skeleton");
+                        }
+                    },
+                });
+                if (this._locale.startsWith("en")) {
+                    return text;
+                }
+                else {
+                    return "";
+                }
+            }
+            else {
+                const translatedText = i18nInstance.gettext(text);
+                return translatedText;
+            }
         }
         update(_part, [text]) {
-            if (this._text !== text) {
-                const controller = TranslationController.getInstance();
-                this._text = text;
-                this._proxy = controller.__(text);
-                this._proxy.setCallback((translatedText) => {
-                    if (this._textNode) {
-                        this._textNode.textContent = translatedText;
-                    }
-                });
-            }
-            if (!this._element) {
-                this._element = document.createElement("span");
-                this._textNode = document.createTextNode("");
-                this._element.appendChild(this._textNode);
-            }
+            this.____(text).then((translatedText) => {
+                this.updateTranslation(text);
+                this.render(translatedText);
+            });
             return this.render(text);
         }
         render(_text) {
-            const translatedText = this._proxy._translatedText || this._text;
-            if (this._textNode) {
-                this._textNode.textContent = translatedText;
+            if (this._element && this._textNode) {
+                if (translationsLoaded || this._locale.startsWith("en")) {
+                    this._textNode.textContent = _text;
+                }
+                else {
+                    this._element.classList.add("skeleton");
+                }
+                return this._element;
             }
-            return this._element;
+            return _text;
         }
     }
     const __ = e(TranslateDirective);
+
+    const skeletonStyles = i$4 `
+  .skeleton {
+    width: 3rem;
+    height: 1em;
+    opacity: 0.7;
+    animation: skeleton-loading 1s linear infinite alternate;
+  }
+
+  .skeleton-text {
+    width: 100%;
+    height: 0.5rem;
+    margin-bottom: 0.25rem;
+    border-radius: 0.125rem;
+  }
+
+  .skeleton-text:last-child {
+    margin-bottom: 0;
+    width: 80%;
+  }
+
+  @keyframes skeleton-loading {
+    0% {
+      background-color: hsl(200, 20%, 70%);
+    }
+
+    100% {
+      background-color: hsl(200, 20%, 95%);
+    }
+  }
+`;
 
     let LMSCardDetailsModal = class LMSCardDetailsModal extends s {
         constructor() {
@@ -873,9 +865,6 @@
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             const event_types = async () => {
                 const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
                 return response.json();
@@ -1096,6 +1085,7 @@
     };
     LMSCardDetailsModal.styles = [
         bootstrapStyles,
+        skeletonStyles,
         i$4 `
       .backdrop {
         position: fixed;
@@ -1161,9 +1151,6 @@
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             const event_types = async () => {
                 const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
                 return response.json();
@@ -1662,9 +1649,6 @@
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             /** This is the counterpart to the script in the intranet_js hook */
             this.boundEventHandler = this.handleMessageEvent.bind(this);
             window.addEventListener("message", this.boundEventHandler);
@@ -1769,6 +1753,7 @@
     };
     LMSImageBrowser.styles = [
         bootstrapStyles,
+        skeletonStyles,
         i$4 `
       img {
         aspect-ratio: 4 / 3;
@@ -1829,12 +1814,6 @@
             this.isOpen = false;
             this.alertMessage = "";
             this.modalTitle = "";
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
         }
         toggleModal() {
             const { renderRoot } = this;
@@ -2028,6 +2007,7 @@
     };
     LMSModal.styles = [
         bootstrapStyles,
+        skeletonStyles,
         i$4 `
       .btn-modal-wrapper {
         position: fixed;
@@ -2110,18 +2090,13 @@
     var LMSModal$1 = LMSModal;
 
     let LMSStaffEventCardAttendees = class LMSStaffEventCardAttendees extends s {
-        connectedCallback() {
-            super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
-        }
         render() {
             return x ` <h1 class="text-center">${__("Not implemented")}!</h1> `;
         }
     };
     LMSStaffEventCardAttendees.styles = [
         bootstrapStyles,
+        skeletonStyles,
         i$4 `
       svg {
         display: inline-block;
@@ -2179,7 +2154,7 @@
         }
     };
     LMSStaffEventCardPreview.styles = [
-        bootstrapStyles,
+        bootstrapStyles, skeletonStyles,
         i$4 `
       svg {
         display: inline-block;
@@ -2218,12 +2193,6 @@
                 heading: "",
                 message: "",
             };
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
         }
         handleEdit(e) {
             var _a;
@@ -2438,6 +2407,7 @@
     };
     LMSStaffEventCardForm.styles = [
         bootstrapStyles,
+        skeletonStyles,
         i$4 `
       svg {
         display: inline-block;
@@ -2478,9 +2448,6 @@
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             this.hydrate();
         }
         hydrate() {
@@ -2826,7 +2793,7 @@ ${value}</textarea
     `;
         }
     };
-    LMSStaffEventCardDeck.styles = [bootstrapStyles];
+    LMSStaffEventCardDeck.styles = [bootstrapStyles, skeletonStyles];
     __decorate([
         e$2({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "events", void 0);
@@ -3229,9 +3196,6 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             this.hydrate();
         }
         hydrate() {
@@ -3297,9 +3261,6 @@ ${value}</textarea
         }
         async connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             this.hydrate();
         }
         hydrate() {
@@ -3522,9 +3483,6 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             this.hydrate();
         }
         hydrate() {
@@ -3639,12 +3597,6 @@ ${value}</textarea
             this.notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
             this.emptyTableMessage = x `${__("No data to display")}.`;
         }
-        connectedCallback() {
-            super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
-        }
         handleEdit(e) {
             console.info(e, this.notImplementedInBaseMessage);
         }
@@ -3747,7 +3699,7 @@ ${value}</textarea
             >
               <thead>
                 <tr>
-                  ${this.headers.map((key) => x `<th scope="col">
+                  ${o(this.headers, (key) => x `<th scope="col">
                         <div class="d-flex">
                           ${__(key)}
                           <button
@@ -3789,7 +3741,7 @@ ${value}</textarea
                                   class="btn btn-dark mx-2"
                                 >
                                   ${litFontawesome_2(faEdit)}
-                                  <span>&nbsp;${__("Edit")}</span>
+                                  <span>${__("Edit")}</span>
                                 </button>
                                 <button
                                   @click=${this.handleSave}
@@ -3797,7 +3749,7 @@ ${value}</textarea
                                   class="btn btn-dark mx-2"
                                 >
                                   ${litFontawesome_2(faSave)}
-                                  <span>&nbsp;${__("Save")}</span>
+                                  <span>${__("Save")}</span>
                                 </button>
                                 <button
                                   @click=${this.handleDelete}
@@ -3806,7 +3758,7 @@ ${value}</textarea
                                   class="btn btn-danger mx-2"
                                 >
                                   ${litFontawesome_2(faTrash)}
-                                  <span>&nbsp;${__("Delete")}</span>
+                                  <span>${__("Delete")}</span>
                                 </button>
                               </div>
                             </td>
@@ -3822,6 +3774,7 @@ ${value}</textarea
     };
     LMSTable.styles = [
         bootstrapStyles,
+        skeletonStyles,
         i$4 `
       table {
         background: white;
@@ -3993,9 +3946,6 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             this.order = [
                 "id",
                 "name",
@@ -4020,7 +3970,7 @@ ${value}</textarea
             },
         }}
         >${__("target group")}</lms-anchor
-      >&nbsp;and a&nbsp;
+      >&nbsp;${__("and a")}&nbsp;
       <lms-anchor
         .href=${{
             ...this.href,
@@ -4217,9 +4167,6 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             this.hydrate();
         }
         hydrate() {
@@ -4357,9 +4304,6 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             this.order = [
                 "id",
                 "name",
@@ -4472,9 +4416,6 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             this.hydrate();
         }
         hydrate() {
@@ -4591,9 +4532,6 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             this.order = ["id", "name", "min_age", "max_age"];
             this.isEditable = true;
             this.isDeletable = true;
@@ -4715,9 +4653,6 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             this.getReservedQueryParams();
             if (window.innerWidth < 768) {
                 this.handleHide({ detail: true });
@@ -4844,6 +4779,7 @@ ${value}</textarea
     };
     LMSEventsView.styles = [
         bootstrapStyles,
+        skeletonStyles,
         i$4 `
       .card-deck {
         display: grid;
@@ -4948,9 +4884,6 @@ ${value}</textarea
         }
         connectedCallback() {
             super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
             Promise.all([
                 fetch("/api/v1/contrib/eventmanagement/events"),
                 fetch("/api/v1/contrib/eventmanagement/event_types"),
@@ -5024,7 +4957,7 @@ ${value}</textarea
     `;
         }
     };
-    StaffEventsView.styles = [bootstrapStyles];
+    StaffEventsView.styles = [bootstrapStyles, skeletonStyles];
     __decorate([
         t$1()
     ], StaffEventsView.prototype, "events", void 0);
@@ -5034,12 +4967,6 @@ ${value}</textarea
     var StaffEventsView$1 = StaffEventsView;
 
     let StaffEventTypesView$1 = class StaffEventTypesView extends s {
-        connectedCallback() {
-            super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
-        }
         render() {
             return x `
       <lms-event-types-table></lms-event-types-table>
@@ -5053,12 +4980,6 @@ ${value}</textarea
     var StaffEventTypesView$2 = StaffEventTypesView$1;
 
     let StaffLocationsView = class StaffLocationsView extends s {
-        connectedCallback() {
-            super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
-        }
         render() {
             return x `
       <lms-locations-table></lms-locations-table>
@@ -5072,17 +4993,11 @@ ${value}</textarea
     var StaffLocationsView$1 = StaffLocationsView;
 
     let StaffSettingsView = class StaffSettingsView extends s {
-        connectedCallback() {
-            super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
-        }
         render() {
             return x `<h1 class="text-center">${__("Not implemented")}!</h1>`;
         }
     };
-    StaffSettingsView.styles = [bootstrapStyles];
+    StaffSettingsView.styles = [bootstrapStyles, skeletonStyles];
     StaffSettingsView = __decorate([
         e$3("lms-staff-settings-view")
     ], StaffSettingsView);
@@ -5096,12 +5011,6 @@ ${value}</textarea
         async handleCreated() {
             const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
             this.data = await response.json();
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            TranslationController.getInstance().loadTranslations(() => {
-                console.log("Translations loaded");
-            });
         }
         render() {
             return x `

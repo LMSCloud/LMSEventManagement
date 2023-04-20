@@ -8,7 +8,6 @@ declare global {
     }
 }
 export default class StaffLocationsView extends LitElement {
-    connectedCallback(): void;
     render(): import("lit").TemplateResult<1>;
 }
 //# sourceMappingURL=StaffLocationsView.d.ts.map

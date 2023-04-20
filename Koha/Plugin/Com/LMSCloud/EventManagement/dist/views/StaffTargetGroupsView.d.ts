@@ -11,7 +11,6 @@ declare global {
 export default class StaffEventTypesView extends LitElement {
     data: TargetGroup[];
     handleCreated(): Promise<void>;
-    connectedCallback(): void;
     render(): import("lit").TemplateResult<1>;
 }
 //# sourceMappingURL=StaffTargetGroupsView.d.ts.map
