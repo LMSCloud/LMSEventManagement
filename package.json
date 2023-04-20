@@ -12,7 +12,7 @@
     "ktd:copy": "docker cp Koha koha-koha-1:/var/lib/koha/kohadev/plugins/",
     "ktd:restart": "docker exec -ti koha-koha-1 bash -c \"koha-plack --restart kohadev\"",
     "ktd:install": "npm run ktd:copy && docker exec -ti koha-koha-1 /kohadevbox/koha/misc/devel/install_plugins.pl && (test \"$RESTART\" = \"true\" && npm run ktd:restart || true)",
-    "translate:extract": "find src -type f -name '*.ts' | xargs xgettext --output=com.lmscloud.eventmanagement.pot --from-code=utf-8 --force-po --keyword=__",
+    "translate:extract": "find . \\( -path \"./src/*\" -o -path \"./Koha/Plugin/*\" \\) -type f \\( -name '*.ts' -o -name '*.pm' \\) | xargs xgettext --output=com.lmscloud.eventmanagement.pot --from-code=utf-8 --force-po --keyword=__",
     "translate:instantiate": "[[ -z \"$LOCALE\" ]] && echo \"LOCALE not set\" || (if [ ! -f locales/$LOCALE.po ]; then msginit --input=com.lmscloud.eventmanagement.pot --locale=$LOCALE --output-file=locales/$LOCALE.po; else msgmerge --update locales/$LOCALE.po com.lmscloud.eventmanagement.pot; fi)",
     "translate:package": "./tools/package_translations.mjs && ./tools/add_static_routes.mjs"
   },
