@@ -1,5 +1,5 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html, TemplateResult } from "lit";
+import { LitElement, html, TemplateResult, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import LMSStaffEventCardForm from "./LMSStaffEventCard/LMSStaffEventCardForm";
 import {
@@ -38,7 +38,49 @@ export default class LMSStaffEventCardDeck extends LitElement {
   private data: TaggedColumn[] = [];
   private cardStates: Map<string, string[]> = new Map();
 
-  static override styles = [bootstrapStyles, skeletonStyles];
+  static override styles = [
+    bootstrapStyles,
+    skeletonStyles,
+    css`
+      .card-deck-responsive {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .card-deck-responsive .card {
+        flex: 0 0 auto;
+        margin: 1rem;
+        width: calc(
+          20% - 2rem
+        ); /* Adjust the width to 20% for larger screens */
+      }
+
+      @media (max-width: 1920px) {
+        .card-deck-responsive .card {
+          width: calc(
+            25% - 2rem
+          ); /* Adjust the width to 25% for 1080p screens */
+        }
+      }
+
+      @media (max-width: 1200px) {
+        .card-deck-responsive .card {
+          width: calc(
+            50% - 2rem
+          ); /* Adjust the width to 50% for screens smaller than 1200px */
+        }
+      }
+
+      @media (max-width: 768px) {
+        .card-deck-responsive .card {
+          width: calc(
+            100% - 2rem
+          ); /* Adjust the width to 100% for screens smaller than 768px */
+        }
+      }
+    `,
+  ];
 
   override connectedCallback() {
     super.connectedCallback();
@@ -351,7 +393,7 @@ ${value}</textarea
   override render() {
     return html`
       <div class="container-fluid mx-0">
-        <div class="card-deck">
+        <div class="card-deck card-deck-responsive">
           ${map(this.data, (datum, index) => {
             const { name, uuid } = datum;
             const [title] = new TemplateResultConverter(name).getRenderValues();
@@ -403,7 +445,7 @@ ${value}</textarea
                   ></lms-staff-event-card-preview>
                 </div>
               </div>
-              ${insertResponsiveWrapper(index)}
+              <!-- ${insertResponsiveWrapper(index)} -->
             `;
           })}
         </div>
