@@ -35,7 +35,6 @@ import LMSTargetGroupsTable from "./extensions/LMSTargetGroupsTable";
 import LMSEventsView from "./views/LMSEventsView";
 import StaffEventsView from "./views/StaffEventsView";
 import StaffEventTypesView from "./views/StaffEventTypesView";
-
 import StaffLocationsView from "./views/StaffLocationsView";
 import StaffSettingsView from "./views/StaffSettingsView";
 import StaffTargetGroupsView from "./views/StaffTargetGroupsView";
