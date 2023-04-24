@@ -1,3 +1,4 @@
+[% USE gtx = Gettext('com.lmscloud.eventmanagement', LANG, 'utf-8', LOCALES) %]
 [% INCLUDE "$PLUGIN_DIR/includes/head.inc" %]
 [% INCLUDE "$PLUGIN_DIR/includes/body-header.inc" %]
 
@@ -8,7 +9,7 @@
     <div class="lmse-footer" id="entry-point">
         <div class="text-center">
             <lms-anchor data-href='{ "path": "/cgi-bin/koha/tools/upload.pl" }' target="_blank">
-                <i class="fa fa-upload"></i>&nbsp;Upload images
+                <i class="fa fa-upload"></i>&nbsp;[% "Upload images" | gettext %]
             </lms-anchor>
         </div>
     </div>
