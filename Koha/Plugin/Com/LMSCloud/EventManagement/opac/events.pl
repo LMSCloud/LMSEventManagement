@@ -26,8 +26,6 @@ use C4::Context;
 use C4::Output qw( output_html_with_http_headers );
 use C4::Languages qw( getlanguage );
 
-use File::Basename;
-use File::Spec;
 use CGI qw ( -utf8 );
 
 our $VERSION = '1.0.0';
@@ -36,11 +34,7 @@ use Koha::Plugin::Com::LMSCloud::EventManagement;
 
 no if ( $PERL_VERSION >= 5.018 ), 'warnings' => 'experimental';
 
-my $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
-
-splice @dirs, -1;
-my $plugin_dir = File::Spec->catdir(@dirs);
-
+my $self  = Koha::Plugin::Com::LMSCloud::EventManagement->new;
 my $query = CGI->new;
 my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
     {   template_name   => $self->bundle_path . '/views/opac/events.tt',
