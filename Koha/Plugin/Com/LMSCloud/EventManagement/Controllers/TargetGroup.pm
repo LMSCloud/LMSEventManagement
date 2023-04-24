@@ -24,15 +24,12 @@ textdomain 'com.lmscloud.eventmanagement';
 bind_textdomain_filter 'com.lmscloud.eventmanagement', \&Encode::decode_utf8;
 bindtextdomain 'com.lmscloud.eventmanagement' => $self->bundle_path . '/locales/';
 
-warn $self->bundle_path . '/locales/';
-
 sub get {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
-        $ENV{OUTPUT_CHARSET} = 'UTF-8';
-        warn "LANGUAGE: $ENV{LANGUAGE}";
+        local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
+        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
         my $id           = $c->validation->param('id');
         my $target_group = Koha::LMSCloud::EventManagement::TargetGroups->find($id);
 
