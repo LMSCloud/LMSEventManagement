@@ -1567,6 +1567,7 @@
     };
     LMSFloatingMenu.styles = [
         bootstrapStyles,
+        skeletonStyles,
         i$4 `
       svg {
         width: 1rem;

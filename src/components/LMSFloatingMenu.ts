@@ -5,6 +5,7 @@ import { customElement, property } from "lit/decorators.js";
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { TranslateDirective, __ } from "../lib/translate";
 import { DirectiveResult } from "lit/directive.js";
+import { skeletonStyles } from "../styles/skeleton";
 
 type MenuEntry = {
   name: string | DirectiveResult<typeof TranslateDirective>;
@@ -28,6 +29,7 @@ export default class LMSFloatingMenu extends LitElement {
 
   static override styles = [
     bootstrapStyles,
+    skeletonStyles,
     css`
       svg {
         width: 1rem;
