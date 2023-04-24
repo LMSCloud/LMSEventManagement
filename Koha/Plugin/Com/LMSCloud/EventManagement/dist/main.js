@@ -827,6 +827,7 @@
     width: 3rem;
     height: 1em;
     opacity: 0.7;
+    background-color: hsl(200, 20%, 70%);
     animation: skeleton-loading 1s linear infinite alternate;
   }
 
@@ -1480,7 +1481,7 @@
     `;
         }
     };
-    LMSEventsFilter.styles = [bootstrapStyles];
+    LMSEventsFilter.styles = [bootstrapStyles, skeletonStyles];
     __decorate([
         e$2({ type: Array })
     ], LMSEventsFilter.prototype, "events", void 0);
