@@ -4,7 +4,7 @@ import { customElement, property } from "lit/decorators.js";
 import LMSCard from "../LMSCard";
 import { Column } from "../../sharedDeclarations";
 import { TemplateResultConverter } from "../../lib/converters";
-import { skeletonStyles } from "../styles/skeleton";
+import { skeletonStyles } from "../../styles/skeleton";
 
 declare global {
   interface HTMLElementTagNameMap {

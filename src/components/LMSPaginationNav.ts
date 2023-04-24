@@ -4,7 +4,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { __ } from "../lib/translate";
-import { skeletonStyles } from "./styles/skeleton";
+import { skeletonStyles } from "../styles/skeleton";
 
 @customElement("lms-pagination-nav")
 export default class LMSPaginationNav extends LitElement {

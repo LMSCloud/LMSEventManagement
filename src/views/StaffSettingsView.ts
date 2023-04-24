@@ -2,7 +2,7 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { __ } from "../lib/translate";
-import { skeletonStyles } from "../components/styles/skeleton";
+import { skeletonStyles } from "../styles/skeleton";
 
 @customElement("lms-staff-settings-view")
 export default class StaffSettingsView extends LitElement {

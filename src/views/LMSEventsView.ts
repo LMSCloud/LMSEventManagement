@@ -9,7 +9,7 @@ import { classMap } from "lit/directives/class-map.js";
 import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
 import LMSPaginationNav from "../components/LMSPaginationNav";
 import { __ } from "../lib/translate";
-import { skeletonStyles } from "../components/styles/skeleton";
+import { skeletonStyles } from "../styles/skeleton";
 
 declare global {
   interface HTMLElementTagNameMap {

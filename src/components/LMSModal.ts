@@ -21,7 +21,7 @@ import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
 import { classMap } from "lit/directives/class-map.js";
 import { __ } from "../lib/translate";
-import { skeletonStyles } from "./styles/skeleton";
+import { skeletonStyles } from "../styles/skeleton";
 
 declare global {
   interface HTMLElementTagNameMap {

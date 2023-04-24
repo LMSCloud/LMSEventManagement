@@ -19,7 +19,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { map } from "lit/directives/map.js";
 import { __ } from "../lib/translate";
-import { skeletonStyles } from "./styles/skeleton";
+import { skeletonStyles } from "../styles/skeleton";
 
 type LMSEventFull = Omit<
   LMSEvent,

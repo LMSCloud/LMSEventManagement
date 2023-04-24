@@ -2,7 +2,7 @@ import { css, html, LitElement } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { customElement, property } from "lit/decorators.js";
 import { __ } from "../lib/translate";
-import { skeletonStyles } from "./styles/skeleton";
+import { skeletonStyles } from "../styles/skeleton";
 
 @customElement("lms-toast")
 export default class LMSToast extends LitElement {

@@ -5,7 +5,7 @@ import LMSEventsModal from "../extensions/LMSEventsModal";
 import { Column, URIComponents } from "../sharedDeclarations";
 import { __ } from "../lib/translate";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { skeletonStyles } from "../components/styles/skeleton";
+import { skeletonStyles } from "../styles/skeleton";
 declare global {
   interface HTMLElementTagNameMap {
     "lms-staff-event-card-deck": LMSStaffEventCardsDeck;

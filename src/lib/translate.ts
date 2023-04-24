@@ -68,7 +68,7 @@ export class TranslateDirective extends Directive {
         callback: () => {
           this.updateTranslation(text);
           if (this._element) {
-            this._element.classList.remove("skeleton");
+            this._element.classList.remove("skeleton", "skeleton-text");
           }
         },
       });
@@ -97,7 +97,9 @@ export class TranslateDirective extends Directive {
       if (translationsLoaded || this._locale.startsWith("en")) {
         this._textNode.textContent = _text;
       } else {
-        this._element.classList.add("skeleton");
+        const rng = Math.floor(Math.random() * 10) + 4;
+        this._textNode.textContent = "\u00A0".repeat(rng);
+        this._element.classList.add("skeleton", "skeleton-text");
       }
       return this._element;
     }

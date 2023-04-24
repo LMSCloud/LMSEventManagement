@@ -21,7 +21,7 @@ import { Column } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
 // import { repeat } from "litk/directives/repeat.js";
 import { __ } from "../lib/translate";
-import { skeletonStyles } from "./styles/skeleton";
+import { skeletonStyles } from "../styles/skeleton";
 
 type sortTask = {
   column: string;

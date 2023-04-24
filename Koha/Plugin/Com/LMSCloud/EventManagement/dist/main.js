@@ -784,7 +784,7 @@
                     callback: () => {
                         this.updateTranslation(text);
                         if (this._element) {
-                            this._element.classList.remove("skeleton");
+                            this._element.classList.remove("skeleton", "skeleton-text");
                         }
                     },
                 });
@@ -813,7 +813,9 @@
                     this._textNode.textContent = _text;
                 }
                 else {
-                    this._element.classList.add("skeleton");
+                    const rng = Math.floor(Math.random() * 10) + 4;
+                    this._textNode.textContent = "\u00A0".repeat(rng);
+                    this._element.classList.add("skeleton", "skeleton-text");
                 }
                 return this._element;
             }
@@ -824,16 +826,14 @@
 
     const skeletonStyles = i$4 `
   .skeleton {
-    width: 3rem;
-    height: 1em;
     opacity: 0.7;
-    background-color: hsl(200, 20%, 70%);
     animation: skeleton-loading 1s linear infinite alternate;
   }
 
   .skeleton-text {
+    color: transparent;
     width: 100%;
-    height: 0.5rem;
+    height: 1em;
     margin-bottom: 0.25rem;
     border-radius: 0.125rem;
   }

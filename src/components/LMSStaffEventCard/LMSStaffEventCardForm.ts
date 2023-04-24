@@ -6,7 +6,7 @@ import { faEdit, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Column /* Input */ } from "../../sharedDeclarations";
 import { TemplateResultConverter } from "../../lib/converters";
 import { __ } from "../../lib/translate";
-import { skeletonStyles } from "../styles/skeleton";
+import { skeletonStyles } from "../../styles/skeleton";
 @customElement("lms-staff-event-card-form")
 export default class LMSStaffEventCardForm extends LitElement {
   @property({ type: Array }) datum: Column = {} as Column;

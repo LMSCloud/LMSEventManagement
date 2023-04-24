@@ -11,7 +11,7 @@ import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import LMSTooltip from "./LMSTooltip";
 import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
 import { __ } from "../lib/translate";
-import { skeletonStyles } from "./styles/skeleton";
+import { skeletonStyles } from "../styles/skeleton";
 
 type UploadedImage = {
   image: string;

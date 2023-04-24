@@ -18,7 +18,7 @@ import { TemplateResultConverter } from "../lib/converters";
 import { map } from "lit/directives/map.js";
 import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
 import { __ } from "../lib/translate";
-import { skeletonStyles } from "./styles/skeleton";
+import { skeletonStyles } from "../styles/skeleton";
 
 declare global {
   interface HTMLElementTagNameMap {
