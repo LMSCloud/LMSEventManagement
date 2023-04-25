@@ -167,7 +167,6 @@ export default class LMSTable extends LitElement {
   }
 
   private sortColumnByValue({ column, direction }: sortTask) {
-    console.log("sortColumnByValue", column, direction);
     const { data } = this;
     const hasData = data?.length > 0 ?? false;
 
@@ -223,29 +222,27 @@ export default class LMSTable extends LitElement {
                     this.headers,
                     (key) =>
                       html`<th scope="col">
-                        <div class="d-flex">
-                          ${__(key)}
-                          <button
-                            class="btn btn-sm btn-sort"
-                            @click=${() =>
-                              this.sortColumnByValue({
-                                column: key,
-                                direction: "asc",
-                              })}
-                          >
-                            ${litFontawesome(faSortUp)}
-                          </button>
-                          <button
-                            class="btn btn-sm btn-sort"
-                            @click=${() =>
-                              this.sortColumnByValue({
-                                column: key,
-                                direction: "desc",
-                              })}
-                          >
-                            ${litFontawesome(faSortDown)}
-                          </button>
-                        </div>
+                        ${__(key)}
+                        <!-- <button
+                          class="btn btn-sm btn-sort"
+                          @click=${() =>
+                          this.sortColumnByValue({
+                            column: key,
+                            direction: "asc",
+                          })}
+                        >
+                          ${litFontawesome(faSortUp)}
+                        </button>
+                        <button
+                          class="btn btn-sm btn-sort"
+                          @click=${() =>
+                          this.sortColumnByValue({
+                            column: key,
+                            direction: "desc",
+                          })}
+                        >
+                          ${litFontawesome(faSortDown)}
+                        </button> -->
                       </th>`
                   )}
                   ${this.isEditable
