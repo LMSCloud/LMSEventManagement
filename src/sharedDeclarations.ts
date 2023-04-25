@@ -94,10 +94,18 @@ export type SelectOption = {
 export type BaseField = {
   name: string;
   desc?: string | DirectiveResult<typeof TranslateDirective>;
-  logic?: () => Promise<{ id: string | number; name: string | DirectiveResult<typeof TranslateDirective> }[]>;
+  logic?: () => Promise<
+    {
+      id: string | number;
+      name: string | DirectiveResult<typeof TranslateDirective>;
+    }[]
+  >;
   required?: boolean;
   value?: string | { [key: string]: string }[];
-  dbData?: { id: string | number; name: string | DirectiveResult<typeof TranslateDirective> }[];
+  dbData?: {
+    id: string | number;
+    name: string | DirectiveResult<typeof TranslateDirective>;
+  }[];
   attributes?: [string, string | number][];
 };
 
@@ -163,3 +171,5 @@ export type URIComponents = {
 export type MatrixGroup = {
   [key: string]: string;
 };
+
+export type TaggedData = ["target_groups" | "location" | "event_type", any[]];

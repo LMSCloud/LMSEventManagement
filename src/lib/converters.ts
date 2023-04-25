@@ -1,4 +1,27 @@
-import { TemplateResult } from "lit";
+import { TemplateResult, html } from "lit";
+import {
+  TaggedData,
+  EventType,
+  InputType,
+  LMSLocation,
+  TargetGroup,
+  TargetGroupFee,
+} from "../sharedDeclarations";
+import { map } from "lit/directives/map.js";
+import { __ } from "../lib/translate";
+
+type InputTypeValue = string | number | boolean | TargetGroupFee[];
+
+type TemplateQuery = {
+  name: string;
+  value: InputType | InputTypeValue;
+  data?: TaggedData[];
+};
+
+type TemplateFunction = (
+  value: InputTypeValue,
+  data?: EventType[] | LMSLocation[] | TargetGroup[]
+) => TemplateResult;
 
 export class TemplateResultConverter {
   private _templateResult: unknown;
@@ -44,4 +67,263 @@ export function convertToFormat(
   }
 
   return string;
+}
+
+export class InputConverter {
+  private conversionMap: Record<string, TemplateFunction> = {};
+
+  constructor() {
+    this.conversionMap = {
+      name: (value) => html`<input
+        class="form-control"
+        type="text"
+        name="name"
+        value=${value}
+        disabled
+      />`,
+      event_type: (value, data) => html`<select
+        class="form-control"
+        name="event_type"
+        disabled
+      >
+        ${map(
+          data as EventType[],
+          ({ id, name }: EventType) =>
+            html`<option
+              value=${id}
+              ?selected=${id === parseInt(value as string, 10)}
+            >
+              ${name}
+            </option>`
+        )};
+      </select>`,
+      target_groups: (value, data) => html`
+        <table class="table table-sm mb-0">
+          <tbody>
+            ${map(data as TargetGroup[], ({ id, name }: TargetGroup) => {
+              const targetGroupFee = (
+                value as unknown as TargetGroupFee[]
+              ).find(
+                (targetGroupFee: TargetGroupFee) =>
+                  targetGroupFee.target_group_id === id
+              );
+              const selected = targetGroupFee?.selected ?? false;
+              const fee = targetGroupFee?.fee ?? 0;
+              return html`
+                <tr>
+                  <td id=${id} class="align-middle">${name}</td>
+                  <td class="align-middle">
+                    <input
+                      type="checkbox"
+                      data-group="target_groups"
+                      name="selected"
+                      id=${id}
+                      class="form-control"
+                      ?checked=${selected}
+                      disabled
+                    />
+                  </td>
+                  <td class="align-middle">
+                    <input
+                      type="number"
+                      data-group="target_groups"
+                      name="fee"
+                      id=${id}
+                      step="0.01"
+                      class="form-control"
+                      value=${fee}
+                      disabled
+                    />
+                  </td>
+                </tr>
+              `;
+            })}
+          </tbody>
+        </table>
+      `,
+      min_age: (value) => html`<input
+        class="form-control"
+        type="number"
+        name="min_age"
+        value=${value}
+        disabled
+      />`,
+      max_age: (value) => html`<input
+        class="form-control"
+        type="number"
+        name="max_age"
+        value=${value}
+        disabled
+      />`,
+      max_participants: (value) => html`<input
+        class="form-control"
+        type="number"
+        name="max_participants"
+        value=${value}
+        disabled
+      />`,
+      location: (value, data) => html`<select
+        class="form-control"
+        name="location"
+        disabled
+      >
+        ${map(
+          data as LMSLocation[],
+          ({ id, name }: LMSLocation) =>
+            html`<option value=${id} ?selected=${id === value}>${name}</option>`
+        )};
+      </select>`,
+      image: (value) => html`<input
+        class="form-control"
+        type="number"
+        name="image"
+        value=${value}
+        disabled
+      />`,
+      description: (value) => html`<input
+        class="form-control"
+        type="text"
+        name="description"
+        value=${value}
+        disabled
+      />`,
+      open_registration: (value) => html`<input
+        class="form-control"
+        type="checkbox"
+        name="open_registration"
+        ?checked=${value as unknown as boolean}
+        disabled
+      />`,
+      street: (value) => html`<input
+        class="form-control"
+        type="text"
+        name="street"
+        value=${value}
+        disabled
+      />`,
+      number: (value) => html`<input
+        class="form-control"
+        type="text"
+        name="number"
+        value=${value}
+        disabled
+      />`,
+      city: (value) => html`<input
+        class="form-control"
+        type="text"
+        name="city"
+        value=${value}
+        disabled
+      />`,
+      zip: (value) => html`<input
+        class="form-control"
+        type="text"
+        name="zip"
+        value=${value}
+        disabled
+      />`,
+      country: (value) => html`<input
+        class="form-control"
+        type="text"
+        name="country"
+        value=${value}
+        disabled
+      />`,
+      start_time: (value) => html`<input
+        class="form-control"
+        type="datetime-local"
+        name="start_time"
+        value=${value}
+        disabled
+      />`,
+      end_time: (value) => html`<input
+        class="form-control"
+        type="datetime-local"
+        name="end_time"
+        value=${value}
+        disabled
+      />`,
+      registration_start: (value) => html`<input
+        class="form-control"
+        type="datetime-local"
+        name="registration_start"
+        value=${value}
+        disabled
+      />`,
+      registration_end: (value) => html`<input
+        class="form-control"
+        type="datetime-local"
+        name="registration_end"
+        value=${value}
+        disabled
+      />`,
+      status: (value) => html`<select
+        class="form-control"
+        name="status"
+        disabled
+      >
+        <option value="pending" ?selected=${(value as string) === "pending"}>
+          ${__("Pending")}
+        </option>
+        <option
+          value="confirmed"
+          ?selected=${(value as string) === "confirmed"}
+        >
+          ${__("Confirmed")}
+        </option>
+        <option value="canceled" ?selected=${(value as string) === "canceled"}>
+          ${__("Canceled")}
+        </option>
+        <option value="sold_out" ?selected=${(value as string) === "sold_out"}>
+          ${__("Sold Out")}
+        </option>
+      </select>`,
+      registration_link: (value) => html`<input
+        class="form-control"
+        type="text"
+        name="registration_link"
+        value=${value}
+        disabled
+      />`,
+    };
+  }
+
+  private needsData(name: string): boolean {
+    return ["target_groups", "event_type", "location"].includes(name);
+  }
+
+  public getInputTemplate({
+    name,
+    value,
+    data,
+  }: TemplateQuery): TemplateResult {
+    const template = this.conversionMap[name];
+    if (!template) return this.renderValue(value);
+
+    if (this.needsData(name)) {
+      const requiredData = this.findDataByName(name, data);
+      if (!requiredData) return this.renderError();
+      return template(value, requiredData);
+    }
+
+    return template(value);
+  }
+
+  private findDataByName(
+    name: string,
+    data?: TaggedData[]
+  ): TargetGroup[] | LMSLocation[] | EventType[] | undefined {
+    if (!data) return undefined;
+
+    const [, foundData] = data.find(([tag]) => tag === name) ?? [, undefined];
+    return foundData;
+  }
+
+  private renderValue(value: InputTypeValue): TemplateResult {
+    return html`${value}`;
+  }
+
+  private renderError(): TemplateResult {
+    return html`<strong>${__("Error")}!</strong>`;
+  }
 }

@@ -17,11 +17,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { customElement, property, state } from "lit/decorators.js";
 import LMSToast from "./LMSToast";
-import { Column } from "../sharedDeclarations";
+import { Column, TaggedData } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
-// import { repeat } from "litk/directives/repeat.js";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
+import { InputConverter } from "../lib/converters";
 
 type sortTask = {
   column: string;
@@ -44,6 +44,7 @@ export default class LMSTable extends LitElement {
   @state() private notImplementedInBaseMessage =
     "Implement this method in your extended LMSTable component.";
   @state() protected emptyTableMessage = html`${__("No data to display")}.`;
+  private inputConverter = new InputConverter();
 
   static override styles = [
     bootstrapStyles,
@@ -88,7 +89,19 @@ export default class LMSTable extends LitElement {
     console.info(e, this.notImplementedInBaseMessage);
   }
 
-  renderToast(status: string, result: { error: string; errors: ErrorEvent }) {
+  protected *getColumnData(
+    query: Record<string, string | number | boolean | any[]>,
+    data?: TaggedData[]
+  ) {
+    for (const [name, value] of Object.entries(query)) {
+      yield [name, this.inputConverter.getInputTemplate({ name, value, data })];
+    }
+  }
+
+  protected renderToast(
+    status: string,
+    result: { error: string; errors: ErrorEvent }
+  ) {
     if (result.error) {
       this.toast = {
         heading: status,
