@@ -59,8 +59,8 @@ msgstr ""
 msgid "max_participants"
 msgstr ""
 
-#: src/dynamically_added_strings.ts:21 src/extensions/LMSEventTypesTable.ts:201
-#: src/views/StaffEventsView.ts:83
+#: src/dynamically_added_strings.ts:21 src/views/StaffEventTypesView.ts:76
+#: src/views/StaffEventsView.ts:82
 msgid "location"
 msgstr ""
 
@@ -81,7 +81,7 @@ msgid "Date and Time"
 msgstr ""
 
 #: src/components/LMSCardDetailsModal.ts:234
-#: src/extensions/LMSEventTypesModal.ts:97 src/extensions/LMSEventsModal.ts:130
+#: src/extensions/LMSEventTypesModal.ts:98 src/extensions/LMSEventsModal.ts:131
 msgid "Description"
 msgstr ""
 
@@ -105,11 +105,11 @@ msgstr ""
 
 #: src/components/LMSCardDetailsModal.ts:285
 #: src/components/LMSEventsFilter.ts:410
-#: src/extensions/LMSEventTypesModal.ts:73 src/extensions/LMSEventsModal.ts:108
+#: src/extensions/LMSEventTypesModal.ts:74 src/extensions/LMSEventsModal.ts:109
 msgid "Location"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:303 src/components/LMSModal.ts:242
+#: src/components/LMSCardDetailsModal.ts:303 src/components/LMSModal.ts:253
 msgid "Close"
 msgstr ""
 
@@ -133,25 +133,25 @@ msgstr ""
 msgid "Reset"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:319 src/extensions/LMSEventsModal.ts:30
+#: src/components/LMSEventsFilter.ts:319 src/extensions/LMSEventsModal.ts:31
 msgid "Event Type"
 msgstr ""
 
 #: src/components/LMSEventsFilter.ts:360
-#: src/extensions/LMSEventTypesModal.ts:52 src/extensions/LMSEventsModal.ts:66
-#: src/extensions/LMSTargetGroupsModal.ts:30
+#: src/extensions/LMSEventTypesModal.ts:53 src/extensions/LMSEventsModal.ts:67
+#: src/extensions/LMSTargetGroupsModal.ts:31
 msgid "Min Age"
 msgstr ""
 
 #: src/components/LMSEventsFilter.ts:371
-#: src/extensions/LMSEventTypesModal.ts:59 src/extensions/LMSEventsModal.ts:72
-#: src/extensions/LMSTargetGroupsModal.ts:37
+#: src/extensions/LMSEventTypesModal.ts:60 src/extensions/LMSEventsModal.ts:73
+#: src/extensions/LMSTargetGroupsModal.ts:38
 msgid "Max Age"
 msgstr ""
 
 #: src/components/LMSEventsFilter.ts:391
-#: src/extensions/LMSEventTypesModal.ts:104
-#: src/extensions/LMSEventsModal.ts:156
+#: src/extensions/LMSEventTypesModal.ts:105
+#: src/extensions/LMSEventsModal.ts:157
 msgid "Open Registration"
 msgstr ""
 
@@ -171,11 +171,11 @@ msgstr ""
 msgid "Copy to clipboard"
 msgstr ""
 
-#: src/components/LMSModal.ts:201
+#: src/components/LMSModal.ts:212
 msgid "Add"
 msgstr ""
 
-#: src/components/LMSModal.ts:246
+#: src/components/LMSModal.ts:257
 msgid "Create"
 msgstr ""
 
@@ -187,51 +187,20 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:156
-msgid "target_group"
-msgstr ""
-
-#: src/components/LMSStaffEventCardDeck.ts:157
-msgid "selected"
-msgstr ""
-
-#: src/components/LMSStaffEventCardDeck.ts:158
-msgid "fee"
-msgstr ""
-
-#: src/components/LMSStaffEventCardDeck.ts:323
-#: src/extensions/LMSEventsModal.ts:139 src/lib/converters.ts:266
-msgid "Pending"
-msgstr ""
-
-#: src/components/LMSStaffEventCardDeck.ts:329
-#: src/extensions/LMSEventsModal.ts:140 src/lib/converters.ts:272
-msgid "Confirmed"
-msgstr ""
-
-#: src/components/LMSStaffEventCardDeck.ts:335
-#: src/extensions/LMSEventsModal.ts:141 src/lib/converters.ts:275
-msgid "Canceled"
-msgstr ""
-
-#: src/components/LMSStaffEventCardDeck.ts:341
-#: src/extensions/LMSEventsModal.ts:142 src/lib/converters.ts:278
-msgid "Sold Out"
-msgstr ""
-
-#: src/components/LMSStaffEventCardDeck.ts:411
+#: src/components/LMSStaffEventCardDeck.ts:165
 msgid "Data"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:419
+#: src/components/LMSStaffEventCardDeck.ts:173
 msgid "Waitlist"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:427
+#: src/components/LMSStaffEventCardDeck.ts:181
 msgid "Preview"
 msgstr ""
 
-#: src/components/LMSTable.ts:46
+#: src/components/LMSTable.ts:46 src/views/StaffLocationsView.ts:35
+#: src/views/StaffTargetGroupsView.ts:42
 msgid "No data to display"
 msgstr ""
 
@@ -260,7 +229,7 @@ msgid "Settings"
 msgstr ""
 
 #: src/extensions/LMSEventManagementMenu.ts:32
-#: src/extensions/LMSEventTypesModal.ts:35 src/extensions/LMSEventsModal.ts:50
+#: src/extensions/LMSEventTypesModal.ts:36 src/extensions/LMSEventsModal.ts:51
 msgid "Target Groups"
 msgstr ""
 
@@ -283,81 +252,109 @@ msgstr ""
 msgid "Images"
 msgstr ""
 
-#: src/extensions/LMSEventTypesModal.ts:23 src/extensions/LMSEventsModal.ts:24
-#: src/extensions/LMSLocationsModal.ts:23
-#: src/extensions/LMSTargetGroupsModal.ts:23
+#: src/extensions/LMSEventTypesModal.ts:19
+msgid "Create Event Type"
+msgstr ""
+
+#: src/extensions/LMSEventTypesModal.ts:24 src/extensions/LMSEventsModal.ts:25
+#: src/extensions/LMSLocationsModal.ts:24
+#: src/extensions/LMSTargetGroupsModal.ts:24
 msgid "Name"
 msgstr ""
 
-#: src/extensions/LMSEventTypesModal.ts:66 src/extensions/LMSEventsModal.ts:78
+#: src/extensions/LMSEventTypesModal.ts:67 src/extensions/LMSEventsModal.ts:79
 msgid "Max Participants"
 msgstr ""
 
-#: src/extensions/LMSEventTypesModal.ts:90 src/extensions/LMSEventsModal.ts:124
+#: src/extensions/LMSEventTypesModal.ts:91 src/extensions/LMSEventsModal.ts:125
 msgid "Image"
 msgstr ""
 
-#: src/extensions/LMSEventTypesTable.ts:182 src/views/StaffEventsView.ts:64
-msgid "You have to create a"
+#: src/extensions/LMSEventsModal.ts:20
+msgid "Create Event"
 msgstr ""
 
-#: src/extensions/LMSEventTypesTable.ts:191 src/views/StaffEventsView.ts:73
-msgid "target group"
-msgstr ""
-
-#: src/extensions/LMSEventTypesTable.ts:192
-msgid "and a"
-msgstr ""
-
-#: src/extensions/LMSEventTypesTable.ts:203 src/views/StaffEventsView.ts:96
-msgid "first"
-msgstr ""
-
-#: src/extensions/LMSEventsModal.ts:84
+#: src/extensions/LMSEventsModal.ts:85
 msgid "Start Time"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:90
+#: src/extensions/LMSEventsModal.ts:91
 msgid "End Time"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:96
+#: src/extensions/LMSEventsModal.ts:97
 msgid "Registration Start"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:102
+#: src/extensions/LMSEventsModal.ts:103
 msgid "Registration End"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:136
+#: src/extensions/LMSEventsModal.ts:137
 msgid "Status"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:150
+#: src/extensions/LMSEventsModal.ts:140 src/lib/converters.ts:273
+msgid "Pending"
+msgstr ""
+
+#: src/extensions/LMSEventsModal.ts:141 src/lib/converters.ts:279
+msgid "Confirmed"
+msgstr ""
+
+#: src/extensions/LMSEventsModal.ts:142 src/lib/converters.ts:282
+msgid "Canceled"
+msgstr ""
+
+#: src/extensions/LMSEventsModal.ts:143 src/lib/converters.ts:285
+msgid "Sold Out"
+msgstr ""
+
+#: src/extensions/LMSEventsModal.ts:151
 msgid "Registration Link"
 msgstr ""
 
-#: src/extensions/LMSLocationsModal.ts:30
+#: src/extensions/LMSLocationsModal.ts:19
+msgid "Create Location"
+msgstr ""
+
+#: src/extensions/LMSLocationsModal.ts:31
 msgid "Street"
 msgstr ""
 
-#: src/extensions/LMSLocationsModal.ts:37
+#: src/extensions/LMSLocationsModal.ts:38
 msgid "Number"
 msgstr ""
 
-#: src/extensions/LMSLocationsModal.ts:44
+#: src/extensions/LMSLocationsModal.ts:45
 msgid "City"
 msgstr ""
 
-#: src/extensions/LMSLocationsModal.ts:51
+#: src/extensions/LMSLocationsModal.ts:52
 msgid "Zip"
 msgstr ""
 
-#: src/extensions/LMSLocationsModal.ts:58
+#: src/extensions/LMSLocationsModal.ts:59
 msgid "Country"
 msgstr ""
 
-#: src/lib/converters.ts:327
+#: src/extensions/LMSTargetGroupsModal.ts:19
+msgid "Create Target Group"
+msgstr ""
+
+#: src/lib/converters.ts:104
+msgid "target_group"
+msgstr ""
+
+#: src/lib/converters.ts:105
+msgid "selected"
+msgstr ""
+
+#: src/lib/converters.ts:106
+msgid "fee"
+msgstr ""
+
+#: src/lib/converters.ts:334
 msgid "Error"
 msgstr ""
 
@@ -365,15 +362,31 @@ msgstr ""
 msgid "There are no events to display"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:74
+#: src/views/StaffEventTypesView.ts:57 src/views/StaffEventsView.ts:63
+msgid "You have to create a"
+msgstr ""
+
+#: src/views/StaffEventTypesView.ts:66 src/views/StaffEventsView.ts:72
+msgid "target group"
+msgstr ""
+
+#: src/views/StaffEventTypesView.ts:67
+msgid "and a"
+msgstr ""
+
+#: src/views/StaffEventTypesView.ts:78 src/views/StaffEventsView.ts:95
+msgid "first"
+msgstr ""
+
+#: src/views/StaffEventsView.ts:73
 msgid "a"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:85
+#: src/views/StaffEventsView.ts:84
 msgid "and an"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:94
+#: src/views/StaffEventsView.ts:93
 msgid "event type"
 msgstr ""
 
