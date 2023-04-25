@@ -30,6 +30,11 @@ export default class StaffEventTypesView extends LitElement {
 
   static override styles = [bootstrapStyles, skeletonStyles];
 
+  async fetchUpdate() {
+    const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
+    this.event_types = await response.json();
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     Promise.all([
@@ -84,8 +89,12 @@ export default class StaffEventTypesView extends LitElement {
         .target_groups=${this.target_groups}
         .locations=${this.locations}
         .event_types=${this.event_types}
+        @updated=${this.fetchUpdate}
+        @deleted=${this.fetchUpdate}
       ></lms-event-types-table>
-      <lms-event-types-modal></lms-event-types-modal>
+      <lms-event-types-modal
+        @created=${this.fetchUpdate}
+      ></lms-event-types-modal>
     `;
   }
 }

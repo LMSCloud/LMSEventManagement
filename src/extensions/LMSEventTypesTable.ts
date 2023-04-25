@@ -111,6 +111,7 @@ export default class LMSEventTypesTable extends LMSTable {
       inputs.forEach((input) => {
         input.disabled = true;
       });
+      this.dispatchEvent(new CustomEvent("updated", { detail: id }));
       return;
     }
 
@@ -143,6 +144,7 @@ export default class LMSEventTypesTable extends LMSTable {
     );
 
     if (response.status >= 200 && response.status <= 299) {
+      this.dispatchEvent(new CustomEvent("deleted", { detail: id }));
       return;
     }
 
@@ -184,5 +186,12 @@ export default class LMSEventTypesTable extends LMSTable {
         ])
       );
     });
+  }
+
+  override updated(changedProperties: Map<string, any>) {
+    super.updated(changedProperties);
+    if (changedProperties.has("event_types")) {
+      this.hydrate();
+    }
   }
 }

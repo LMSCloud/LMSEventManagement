@@ -11,6 +11,7 @@ declare global {
 export default class StaffLocationsView extends LitElement {
     locations: Column[];
     static styles: import("lit").CSSResult[];
+    fetchUpdate(): Promise<void>;
     connectedCallback(): void;
     render(): import("lit").TemplateResult<1>;
 }

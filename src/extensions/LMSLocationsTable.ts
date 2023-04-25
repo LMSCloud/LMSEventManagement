@@ -69,6 +69,7 @@ export default class LMSLocationsTable extends LMSTable {
       inputs.forEach((input) => {
         input.disabled = true;
       });
+      this.dispatchEvent(new CustomEvent("updated", { detail: id }));
       return;
     }
 
@@ -101,6 +102,7 @@ export default class LMSLocationsTable extends LMSTable {
     );
 
     if (response.status >= 200 && response.status <= 299) {
+      this.dispatchEvent(new CustomEvent("deleted", { detail: id }));
       return;
     }
 
@@ -135,5 +137,12 @@ export default class LMSLocationsTable extends LMSTable {
     this.data = this.locations.map((location: LMSLocation) => {
       return Object.fromEntries(this.getColumnData(location));
     });
+  }
+
+  override updated(changedProperties: Map<string, any>) {
+    super.updated(changedProperties);
+    if (changedProperties.has("locations")) {
+      this.hydrate();
+    }
   }
 }

@@ -20,6 +20,11 @@ export default class StaffLocationsView extends LitElement {
 
   static override styles = [bootstrapStyles, skeletonStyles];
 
+  async fetchUpdate() {
+    const response = await fetch("/api/v1/contrib/eventmanagement/locations");
+    this.locations = await response.json();
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     const locations = fetch("/api/v1/contrib/eventmanagement/locations");
@@ -36,8 +41,12 @@ export default class StaffLocationsView extends LitElement {
     }
 
     return html`
-      <lms-locations-table .locations=${this.locations}></lms-locations-table>
-      <lms-locations-modal></lms-locations-modal>
+      <lms-locations-table
+        .locations=${this.locations}
+        @updated=${this.fetchUpdate}
+        @deleted=${this.fetchUpdate}
+      ></lms-locations-table>
+      <lms-locations-modal @created=${this.fetchUpdate}></lms-locations-modal>
     `;
   }
 }

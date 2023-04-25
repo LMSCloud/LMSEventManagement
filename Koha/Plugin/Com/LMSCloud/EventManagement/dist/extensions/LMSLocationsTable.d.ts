@@ -8,5 +8,6 @@ export default class LMSLocationsTable extends LMSTable {
     constructor();
     connectedCallback(): void;
     private hydrate;
+    updated(changedProperties: Map<string, any>): void;
 }
 //# sourceMappingURL=LMSLocationsTable.d.ts.map

@@ -8,5 +8,6 @@ export default class LMSEventTypesTable extends LMSTable {
     constructor();
     connectedCallback(): void;
     private hydrate;
+    updated(changedProperties: Map<string, any>): void;
 }
 //# sourceMappingURL=LMSTargetGroupsTable.d.ts.map

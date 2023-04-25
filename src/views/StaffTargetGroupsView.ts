@@ -20,7 +20,7 @@ export default class StaffEventTypesView extends LitElement {
 
   static override styles = [bootstrapStyles, skeletonStyles];
 
-  async handleCreated() {
+  async fetchUpdate() {
     const response = await fetch(
       "/api/v1/contrib/eventmanagement/target_groups"
     );
@@ -45,8 +45,12 @@ export default class StaffEventTypesView extends LitElement {
     return html`
       <lms-target-groups-table
         .target_groups=${this.target_groups}
+        @updated=${this.fetchUpdate}
+        @deleted=${this.fetchUpdate}
       ></lms-target-groups-table>
-      <lms-target-groups-modal></lms-target-groups-modal>
+      <lms-target-groups-modal
+        @created=${this.fetchUpdate}
+      ></lms-target-groups-modal>
     `;
   }
 }

@@ -3991,6 +3991,7 @@ ${value}</textarea
                 inputs.forEach((input) => {
                     input.disabled = true;
                 });
+                this.dispatchEvent(new CustomEvent("updated", { detail: id }));
                 return;
             }
             if (response.status >= 400) {
@@ -4014,6 +4015,7 @@ ${value}</textarea
             }
             const response = await fetch(`/api/v1/contrib/eventmanagement/event_types/${id}`, { method: "DELETE" });
             if (response.status >= 200 && response.status <= 299) {
+                this.dispatchEvent(new CustomEvent("deleted", { detail: id }));
                 return;
             }
             if (response.status >= 400) {
@@ -4052,6 +4054,12 @@ ${value}</textarea
                     ["location", this.locations],
                 ]));
             });
+        }
+        updated(changedProperties) {
+            super.updated(changedProperties);
+            if (changedProperties.has("event_types")) {
+                this.hydrate();
+            }
         }
     };
     __decorate([
@@ -4184,6 +4192,7 @@ ${value}</textarea
                 inputs.forEach((input) => {
                     input.disabled = true;
                 });
+                this.dispatchEvent(new CustomEvent("updated", { detail: id }));
                 return;
             }
             if (response.status >= 400) {
@@ -4207,6 +4216,7 @@ ${value}</textarea
             }
             const response = await fetch(`/api/v1/contrib/eventmanagement/locations/${id}`, { method: "DELETE" });
             if (response.status >= 200 && response.status <= 299) {
+                this.dispatchEvent(new CustomEvent("deleted", { detail: id }));
                 return;
             }
             if (response.status >= 400) {
@@ -4238,6 +4248,12 @@ ${value}</textarea
             this.data = this.locations.map((location) => {
                 return Object.fromEntries(this.getColumnData(location));
             });
+        }
+        updated(changedProperties) {
+            super.updated(changedProperties);
+            if (changedProperties.has("locations")) {
+                this.hydrate();
+            }
         }
     };
     __decorate([
@@ -4343,6 +4359,7 @@ ${value}</textarea
                 inputs.forEach((input) => {
                     input.disabled = true;
                 });
+                this.dispatchEvent(new CustomEvent("updated", { detail: id }));
                 return;
             }
             if (response.status >= 400) {
@@ -4366,6 +4383,7 @@ ${value}</textarea
             }
             const response = await fetch(`/api/v1/contrib/eventmanagement/target_groups/${id}`, { method: "DELETE" });
             if (response.status >= 200 && response.status <= 299) {
+                this.dispatchEvent(new CustomEvent("deleted", { detail: id }));
                 return;
             }
             if (response.status >= 400) {
@@ -4388,6 +4406,12 @@ ${value}</textarea
             this.data = this.target_groups.map((target_group) => {
                 return Object.fromEntries(this.getColumnData(target_group));
             });
+        }
+        updated(changedProperties) {
+            super.updated(changedProperties);
+            if (changedProperties.has("target_groups")) {
+                this.hydrate();
+            }
         }
     };
     __decorate([
@@ -4779,6 +4803,10 @@ ${value}</textarea
                 },
             };
         }
+        async fetchUpdate() {
+            const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
+            this.event_types = await response.json();
+        }
         connectedCallback() {
             super.connectedCallback();
             Promise.all([
@@ -4828,8 +4856,12 @@ ${value}</textarea
         .target_groups=${this.target_groups}
         .locations=${this.locations}
         .event_types=${this.event_types}
+        @updated=${this.fetchUpdate}
+        @deleted=${this.fetchUpdate}
       ></lms-event-types-table>
-      <lms-event-types-modal></lms-event-types-modal>
+      <lms-event-types-modal
+        @created=${this.fetchUpdate}
+      ></lms-event-types-modal>
     `;
         }
     };
@@ -4850,6 +4882,10 @@ ${value}</textarea
             super(...arguments);
             this.locations = [];
         }
+        async fetchUpdate() {
+            const response = await fetch("/api/v1/contrib/eventmanagement/locations");
+            this.locations = await response.json();
+        }
         connectedCallback() {
             super.connectedCallback();
             const locations = fetch("/api/v1/contrib/eventmanagement/locations");
@@ -4864,8 +4900,12 @@ ${value}</textarea
                 return x ` <h1 class="text-center">${__("No data to display")}.</h1>`;
             }
             return x `
-      <lms-locations-table .locations=${this.locations}></lms-locations-table>
-      <lms-locations-modal></lms-locations-modal>
+      <lms-locations-table
+        .locations=${this.locations}
+        @updated=${this.fetchUpdate}
+        @deleted=${this.fetchUpdate}
+      ></lms-locations-table>
+      <lms-locations-modal @created=${this.fetchUpdate}></lms-locations-modal>
     `;
         }
     };
@@ -4894,7 +4934,7 @@ ${value}</textarea
             super(...arguments);
             this.target_groups = [];
         }
-        async handleCreated() {
+        async fetchUpdate() {
             const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
             this.target_groups = await response.json();
         }
@@ -4914,8 +4954,12 @@ ${value}</textarea
             return x `
       <lms-target-groups-table
         .target_groups=${this.target_groups}
+        @updated=${this.fetchUpdate}
+        @deleted=${this.fetchUpdate}
       ></lms-target-groups-table>
-      <lms-target-groups-modal></lms-target-groups-modal>
+      <lms-target-groups-modal
+        @created=${this.fetchUpdate}
+      ></lms-target-groups-modal>
     `;
         }
     };
