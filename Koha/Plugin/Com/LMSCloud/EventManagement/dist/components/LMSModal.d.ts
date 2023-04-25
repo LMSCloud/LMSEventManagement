@@ -29,5 +29,6 @@ export default class LMSModal extends LitElement {
     render(): TemplateResult<1>;
     protected mediateChange(e: CustomEvent): void;
     private getFieldMarkup;
+    initIntersectionObserver(): void;
 }
 //# sourceMappingURL=LMSModal.d.ts.map

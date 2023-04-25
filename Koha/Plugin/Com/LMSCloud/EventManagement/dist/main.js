@@ -1858,6 +1858,7 @@
             this.alertMessage = "";
         }
         firstUpdated() {
+            this.initIntersectionObserver();
             const dbDataPopulated = this.fields.map(async (field) => {
                 if (field.logic) {
                     return {
@@ -2019,6 +2020,27 @@
                 ? fieldTypes.get(type)
                 : fieldTypes.get("default");
         }
+        initIntersectionObserver() {
+            var _a, _b;
+            const footer = (_a = document.getElementById("i18nMenu")) === null || _a === void 0 ? void 0 : _a.parentElement;
+            const btnModalWrapper = (_b = this.shadowRoot) === null || _b === void 0 ? void 0 : _b.querySelector(".btn-modal-wrapper");
+            if (!footer || !btnModalWrapper)
+                return;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting && entry.intersectionRatio > 0) {
+                        let bottom = parseFloat(getComputedStyle(btnModalWrapper).bottom);
+                        bottom = bottom + footer.offsetHeight;
+                        btnModalWrapper.style.bottom = `${bottom}px`;
+                    }
+                });
+            }, {
+                root: null,
+                rootMargin: "0px",
+                threshold: 1.0,
+            });
+            observer.observe(footer);
+        }
     };
     LMSModal.styles = [
         bootstrapStyles,
@@ -2029,7 +2051,7 @@
         bottom: 1em;
         right: 1em;
         border-radius: 50%;
-        background-color: var(--background-color);
+        background-color: var(--primary-color);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -2064,20 +2086,17 @@
         transition-timing-function: ease-in-out;
         transform: translateX(2px) translateY(1px) rotate(45deg);
       }
-      /* .btn-modal-wrapper:has(.tilted) {
-        z-index: 1051;
-      } */
       svg {
         display: inline-block;
         width: 1em;
         height: 1em;
-        color: #ffffff;
+        color: var(--background-color);
       }
       button {
         white-space: nowrap;
       }
       button.btn-modal > svg {
-        color: var(--text-color);
+        color: var(--background-color);
       }
     `,
     ];
@@ -3733,7 +3752,6 @@ ${value}</textarea
         }
         sortColumnByValue({ column, direction }) {
             var _a;
-            console.log("sortColumnByValue", column, direction);
             const { data } = this;
             const hasData = (_a = (data === null || data === void 0 ? void 0 : data.length) > 0) !== null && _a !== void 0 ? _a : false;
             if (hasData) {
@@ -3772,27 +3790,25 @@ ${value}</textarea
               <thead>
                 <tr>
                   ${o$1(this.headers, (key) => x `<th scope="col">
-                        <div class="d-flex">
-                          ${__(key)}
-                          <button
-                            class="btn btn-sm btn-sort"
-                            @click=${() => this.sortColumnByValue({
+                        ${__(key)}
+                        <!-- <button
+                          class="btn btn-sm btn-sort"
+                          @click=${() => this.sortColumnByValue({
                 column: key,
                 direction: "asc",
             })}
-                          >
-                            ${litFontawesome_2(faSortUp)}
-                          </button>
-                          <button
-                            class="btn btn-sm btn-sort"
-                            @click=${() => this.sortColumnByValue({
+                        >
+                          ${litFontawesome_2(faSortUp)}
+                        </button>
+                        <button
+                          class="btn btn-sm btn-sort"
+                          @click=${() => this.sortColumnByValue({
                 column: key,
                 direction: "desc",
             })}
-                          >
-                            ${litFontawesome_2(faSortDown)}
-                          </button>
-                        </div>
+                        >
+                          ${litFontawesome_2(faSortDown)}
+                        </button> -->
                       </th>`)}
                   ${this.isEditable
                 ? x `<th scope="col">${__("actions")}</th>`
