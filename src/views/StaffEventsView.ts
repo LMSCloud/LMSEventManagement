@@ -59,43 +59,41 @@ export default class StaffEventsView extends LitElement {
 
   override render() {
     if (!this.hasData()) {
-      return html`
-        <h1 class="text-center">
-          ${__("You have to create a")}&nbsp;
-          <lms-anchor
-            .href=${{
-              ...this.href,
-              params: {
-                ...this.href.params,
-                op: "target-groups",
-              },
-            }}
-            >${__("target group")}</lms-anchor
-          >, ${__("a")}&nbsp;
-          <lms-anchor
-            .href=${{
-              ...this.href,
-              params: {
-                ...this.href.params,
-                op: "locations",
-              },
-            }}
-            >${__("location")}</lms-anchor
-          >
-          &nbsp;${__("and an")}&nbsp;
-          <lms-anchor
-            .href=${{
-              ...this.href,
-              params: {
-                ...this.href.params,
-                op: "event-types",
-              },
-            }}
-            >${__("event type")}</lms-anchor
-          >
-          &nbsp;${__("first")}.
-        </h1>
-      </div>`;
+      return html` <h1 class="text-center">
+        ${__("You have to create a")}&nbsp;
+        <lms-anchor
+          .href=${{
+            ...this.href,
+            params: {
+              ...this.href.params,
+              op: "target-groups",
+            },
+          }}
+          >${__("target group")}</lms-anchor
+        >, ${__("a")}&nbsp;
+        <lms-anchor
+          .href=${{
+            ...this.href,
+            params: {
+              ...this.href.params,
+              op: "locations",
+            },
+          }}
+          >${__("location")}</lms-anchor
+        >
+        &nbsp;${__("and an")}&nbsp;
+        <lms-anchor
+          .href=${{
+            ...this.href,
+            params: {
+              ...this.href.params,
+              op: "event-types",
+            },
+          }}
+          >${__("event type")}</lms-anchor
+        >
+        &nbsp;${__("first")}.
+      </h1>`;
     }
 
     return html`

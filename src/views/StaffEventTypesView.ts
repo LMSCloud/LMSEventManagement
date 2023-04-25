@@ -1,8 +1,11 @@
 import { LitElement, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import LMSEventTypesModal from "../extensions/LMSEventTypesModal";
 import LMSEventTypesTable from "../extensions/LMSEventTypesTable";
-import { Column } from "../sharedDeclarations";
+import { Column, URIComponents } from "../sharedDeclarations";
+import { __ } from "../lib/translate";
+import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
+import { skeletonStyles } from "../styles/skeleton";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -16,6 +19,16 @@ export default class StaffEventTypesView extends LitElement {
   @state() event_types: Column[] = [];
   private target_groups: Column[] = [];
   private locations: Column[] = [];
+  @property({ type: Object, attribute: false }) href: URIComponents = {
+    path: "/cgi-bin/koha/plugins/run.pl",
+    query: true,
+    params: {
+      class: "Koha::Plugin::Com::LMSCloud::EventManagement",
+      method: "configure",
+    },
+  };
+
+  static override styles = [bootstrapStyles, skeletonStyles];
 
   override connectedCallback() {
     super.connectedCallback();
@@ -40,7 +53,30 @@ export default class StaffEventTypesView extends LitElement {
 
   override render() {
     if (!this.hasData()) {
-      return html`<div class="skeleton"></div>`;
+      return html` <h1 class="text-center">
+        ${__("You have to create a")}&nbsp;
+        <lms-anchor
+          .href=${{
+            ...this.href,
+            params: {
+              ...this.href.params,
+              op: "target-groups",
+            },
+          }}
+          >${__("target group")}</lms-anchor
+        >&nbsp;${__("and a")}&nbsp;
+        <lms-anchor
+          .href=${{
+            ...this.href,
+            params: {
+              ...this.href.params,
+              op: "locations",
+            },
+          }}
+          >${__("location")}</lms-anchor
+        >
+        &nbsp;${__("first")}.
+      </h1>`;
     }
 
     return html`

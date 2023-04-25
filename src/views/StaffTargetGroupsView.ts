@@ -3,6 +3,9 @@ import { customElement, state } from "lit/decorators.js";
 import LMSTargetGroupsModal from "../extensions/LMSTargetGroupsModal";
 import LMSTargetGroupsTable from "../extensions/LMSTargetGroupsTable";
 import { Column } from "../sharedDeclarations";
+import { __ } from "../lib/translate";
+import { skeletonStyles } from "../styles/skeleton";
+import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -14,6 +17,8 @@ declare global {
 @customElement("lms-staff-target-groups-view")
 export default class StaffEventTypesView extends LitElement {
   @state() target_groups: Column[] = [];
+
+  static override styles = [bootstrapStyles, skeletonStyles];
 
   async handleCreated() {
     const response = await fetch(
@@ -34,7 +39,7 @@ export default class StaffEventTypesView extends LitElement {
 
   override render() {
     if (!this.target_groups.length) {
-      return html`<div class="skeleton"></div>`;
+      return html` <h1 class="text-center">${__("No data to display")}.</h1>`;
     }
 
     return html`
