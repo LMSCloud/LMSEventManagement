@@ -20,8 +20,10 @@ import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
 import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
 import { classMap } from "lit/directives/class-map.js";
-import { __ } from "../lib/translate";
+import { styleMap } from "lit/directives/style-map.js";
+import { TranslateDirective, __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
+import { DirectiveResult } from "lit/directive";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -41,7 +43,9 @@ export default class LMSModal extends LitElement {
   @property({ type: Boolean }) editable = false;
   @state() protected isOpen = false;
   @state() protected alertMessage = "";
-  @state() protected modalTitle = "";
+  @state() protected modalTitle:
+    | string
+    | DirectiveResult<typeof TranslateDirective> = "";
 
   static override styles = [
     bootstrapStyles,
@@ -87,9 +91,9 @@ export default class LMSModal extends LitElement {
         transition-timing-function: ease-in-out;
         transform: translateX(2px) translateY(1px) rotate(45deg);
       }
-      .btn-modal-wrapper:has(.tilted) {
+      /* .btn-modal-wrapper:has(.tilted) {
         z-index: 1051;
-      }
+      } */
       svg {
         display: inline-block;
         width: 1em;
@@ -106,13 +110,8 @@ export default class LMSModal extends LitElement {
   ];
 
   private toggleModal() {
-    const { renderRoot } = this;
     this.isOpen = !this.isOpen;
     document.body.style.overflow = this.isOpen ? "hidden" : "auto";
-    const lmsModal = (renderRoot as ShadowRoot).getElementById("lms-modal");
-    if (lmsModal) {
-      lmsModal.style.overflowY = this.isOpen ? "scroll" : "auto";
-    }
   }
 
   private async create(e: Event) {
@@ -173,7 +172,12 @@ export default class LMSModal extends LitElement {
 
   override render() {
     return html`
-      <div class="btn-modal-wrapper">
+      <div
+        class="btn-modal-wrapper"
+        style=${styleMap({
+          zIndex: this.isOpen ? "1051" : "1049",
+        })}
+      >
         <button
           @click=${this.toggleModal}
           class="btn-modal ${classMap({ tilted: this.isOpen })}"
@@ -182,7 +186,11 @@ export default class LMSModal extends LitElement {
           ${litFontawesome(faPlus)}
         </button>
       </div>
-      <div class="backdrop" ?hidden=${!this.isOpen}></div>
+      <div
+        class="backdrop"
+        ?hidden=${!this.isOpen}
+        @click=${this.toggleModal}
+      ></div>
       <div
         class="modal fade ${classMap({
           "d-block": this.isOpen,
@@ -193,6 +201,9 @@ export default class LMSModal extends LitElement {
         role="dialog"
         aria-labelledby="lms-modal-title"
         aria-hidden="true"
+        style=${styleMap({
+          overflowY: this.isOpen ? "scroll" : "auto",
+        })}
       >
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
