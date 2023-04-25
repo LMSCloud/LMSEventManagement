@@ -1,13 +1,12 @@
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
-import { html, TemplateResult } from "lit";
-import { Input, InputType, LMSLocation } from "../sharedDeclarations";
+import { Input, LMSLocation } from "../sharedDeclarations";
 import { __ } from "../lib/translate";
-
-type LMSLocationValue = string | number;
 
 @customElement("lms-locations-table")
 export default class LMSLocationsTable extends LMSTable {
+  @property({ type: Array }) locations: LMSLocation[] = [];
+
   override handleEdit(e: Event) {
     if (e.target) {
       let inputs: NodeListOf<HTMLInputElement> =
@@ -111,9 +110,8 @@ export default class LMSLocationsTable extends LMSTable {
     }
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-
+  constructor() {
+    super();
     this.order = [
       "id",
       "name",
@@ -126,110 +124,16 @@ export default class LMSLocationsTable extends LMSTable {
     ];
     this.isEditable = true;
     this.isDeletable = true;
-
-    const locations = fetch("/api/v1/contrib/eventmanagement/locations");
-    locations
-      .then((response) => {
-        if (response.status >= 200 && response.status <= 299) {
-          return response.json();
-        }
-
-        throw new Error("Something went wrong");
-      })
-      .then((result) => {
-        this.data = result.map((location: LMSLocation) =>
-          Object.fromEntries(
-            Object.entries(location).map(
-              ([name, value]: [string, LMSLocationValue]) => [
-                name,
-                this.getInputFromColumn({ name, value }),
-              ]
-            )
-          )
-        );
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   }
 
-  private getInputFromColumn({
-    name,
-    value,
-  }: {
-    name: string;
-    value: InputType | LMSLocationValue;
-  }) {
-    const inputs = new Map<string, () => TemplateResult>([
-      [
-        "name",
-        () =>
-          html`<input
-            class="form-control"
-            type="text"
-            name="name"
-            value=${value}
-            disabled
-          />`,
-      ],
-      [
-        "street",
-        () =>
-          html`<input
-            class="form-control"
-            type="text"
-            name="street"
-            value=${value}
-            disabled
-          />`,
-      ],
-      [
-        "number",
-        () =>
-          html`<input
-            class="form-control"
-            type="text"
-            name="number"
-            value=${value}
-            disabled
-          />`,
-      ],
-      [
-        "city",
-        () =>
-          html`<input
-            class="form-control"
-            type="text"
-            name="city"
-            value=${value}
-            disabled
-          />`,
-      ],
-      [
-        "zip",
-        () =>
-          html`<input
-            class="form-control"
-            type="text"
-            name="zip"
-            value=${value}
-            disabled
-          />`,
-      ],
-      [
-        "country",
-        () =>
-          html`<input
-            class="form-control"
-            type="text"
-            name="country"
-            value=${value}
-            disabled
-          />`,
-      ],
-      ["default", () => html`${value}`],
-    ]);
+  override connectedCallback() {
+    super.connectedCallback();
+    this.hydrate();
+  }
 
-    return inputs.get(name) ? inputs.get(name)!() : inputs.get("default")!();
+  private hydrate() {
+    this.data = this.locations.map((location: LMSLocation) => {
+      return Object.fromEntries(this.getColumnData(location));
+    });
   }
 }

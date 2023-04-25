@@ -1,17 +1,14 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
-import { html, TemplateResult } from "lit";
+import { html } from "lit";
 import {
-  InputType,
   EventType,
   TargetGroup,
-  TargetGroupFee,
   URIComponents,
+  LMSLocation,
 } from "../sharedDeclarations";
 import LMSAnchor from "../components/LMSAnchor";
 import { __ } from "../lib/translate";
-
-type EventTypeValue = string | number | boolean | TargetGroupFee[];
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -21,6 +18,9 @@ declare global {
 
 @customElement("lms-event-types-table")
 export default class LMSEventTypesTable extends LMSTable {
+  @property({ type: Array }) target_groups: TargetGroup[] = [];
+  @property({ type: Array }) locations: LMSLocation[] = [];
+  @property({ type: Array }) event_types: EventType[] = [];
   @property({ type: Object, attribute: false }) href: URIComponents = {
     path: "/cgi-bin/koha/plugins/run.pl",
     query: true,
@@ -163,9 +163,8 @@ export default class LMSEventTypesTable extends LMSTable {
     }
   }
 
-  override connectedCallback() {
-    super.connectedCallback();
-
+  constructor() {
+    super();
     this.order = [
       "id",
       "name",
@@ -202,205 +201,21 @@ export default class LMSEventTypesTable extends LMSTable {
         >${__("location")}</lms-anchor
       >
       &nbsp;${__("first")}.`;
-
-    const eventTypes = fetch("/api/v1/contrib/eventmanagement/event_types");
-    eventTypes
-      .then((response) => {
-        if (response.status >= 200 && response.status <= 299) {
-          return response.json();
-        }
-
-        throw new Error("Something went wrong");
-      })
-      /** Because we have to fetch data from endpoints to build the select
-       *  elements, we have to make the getInputFromColumn function async
-       *  and therefore turn the whole map call into nested async calls.
-       *  Looks ugly, but basically the call to getInputFromColumn call
-       *  just turns the enclosed function into a promise, which resolves
-       *  to the value you'd expect. Just ignore the async/await syntax
-       *  and remember that you have to resolve the Promise returned by
-       *  the previous call before you can continue with the next one. */
-      .then(async (result) => {
-        const data = await Promise.all(
-          result.map(async (event_type: EventType) => {
-            const entries = await Promise.all(
-              Object.entries(event_type).map(
-                async ([name, value]: [string, InputType | EventTypeValue]) => [
-                  name,
-                  await this.getInputFromColumn({ name, value }),
-                ]
-              )
-            );
-            return Object.fromEntries(entries);
-          })
-        );
-        this.data = data;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   }
 
-  private isInputType(value: InputType | EventTypeValue): value is InputType {
-    return typeof value === "string" || typeof value === "number";
+  override connectedCallback() {
+    super.connectedCallback();
+    this.hydrate();
   }
 
-  private async getInputFromColumn({
-    name,
-    value,
-  }: {
-    name: string;
-    value: InputType | EventTypeValue;
-  }) {
-    const inputs = new Map<
-      string,
-      () => TemplateResult | Promise<TemplateResult>
-    >([
-      [
-        "name",
-        () =>
-          html`<input
-            class="form-control"
-            type="text"
-            name="name"
-            value=${this.isInputType(value) ? value : ""}
-            disabled
-          />`,
-      ],
-      [
-        "target_groups",
-        async () => {
-          const response = await fetch(
-            "/api/v1/contrib/eventmanagement/target_groups"
-          );
-          const result = await response.json();
-          return html`
-            <table class="table table-sm mb-0">
-              <tbody>
-                ${result.map(({ id, name }: TargetGroup) => {
-                  const target_group = (
-                    value as unknown as TargetGroupFee[]
-                  ).find((target_group) => target_group.target_group_id === id);
-                  const selected = target_group?.selected ?? false;
-                  const fee = target_group?.fee ?? 0;
-                  return html`
-                    <tr>
-                      <td id=${id} class="align-middle">${name}</td>
-                      <td class="align-middle">
-                        <input
-                          type="checkbox"
-                          data-group="target_groups"
-                          name="selected"
-                          id=${id}
-                          class="form-control"
-                          ?checked=${selected}
-                          disabled
-                        />
-                      </td>
-                      <td class="align-middle">
-                        <input
-                          type="number"
-                          data-group="target_groups"
-                          name="fee"
-                          id=${id}
-                          step="0.01"
-                          class="form-control"
-                          value=${fee}
-                          disabled
-                        />
-                      </td>
-                    </tr>
-                  `;
-                })}
-              </tbody>
-            </table>
-          `;
-        },
-      ],
-      [
-        "min_age",
-        () =>
-          html`<input
-            class="form-control"
-            type="number"
-            name="min_age"
-            value=${this.isInputType(value) ? value : ""}
-            disabled
-          />`,
-      ],
-      [
-        "max_age",
-        () =>
-          html`<input
-            class="form-control"
-            type="number"
-            name="max_age"
-            value=${this.isInputType(value) ? value : ""}
-            disabled
-          />`,
-      ],
-      [
-        "max_participants",
-        () =>
-          html`<input
-            class="form-control"
-            type="number"
-            name="max_participants"
-            value=${this.isInputType(value) ? value : ""}
-            disabled
-          />`,
-      ],
-      [
-        "location",
-        async () => {
-          const response = await fetch(
-            "/api/v1/contrib/eventmanagement/locations"
-          );
-          const result = await response.json();
-          return html`<select class="form-control" name="location" disabled>
-            ${result.map(
-              ({ id, name }: { id: number; name: string }) =>
-                html`<option value=${id}>${name}</option>`
-            )};
-          </select>`;
-        },
-      ],
-      [
-        "image",
-        () =>
-          html`<input
-            class="form-control"
-            type="number"
-            name="image"
-            value=${this.isInputType(value) ? value : ""}
-            disabled
-          />`,
-      ],
-      [
-        "description",
-        () =>
-          html`<input
-            class="form-control"
-            type="text"
-            name="description"
-            value=${this.isInputType(value) ? value : ""}
-            disabled
-          />`,
-      ],
-      [
-        "open_registration",
-        () =>
-          html`<input
-            class="form-control"
-            type="checkbox"
-            name="open_registration"
-            ?checked=${value as unknown as boolean}
-            disabled
-          />`,
-      ],
-      ["default", () => html`${value}`],
-    ]);
-
-    return inputs.get(name) ? inputs.get(name)!() : inputs.get("default")!();
+  private hydrate() {
+    this.data = this.event_types.map((event_type: EventType) => {
+      return Object.fromEntries(
+        this.getColumnData(event_type, [
+          ["target_groups", this.target_groups],
+          ["location", this.locations],
+        ])
+      );
+    });
   }
 }
