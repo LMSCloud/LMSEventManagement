@@ -16,6 +16,7 @@ export default class LMSLocationsModal extends LMSModal {
   }
 
   private hydrate() {
+    this.modalTitle = __("Create Location");
     this.fields = [
       {
         name: "name",

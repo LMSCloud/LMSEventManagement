@@ -17,6 +17,7 @@ export default class LMSEventsModal extends LMSModal {
   }
 
   private hydrate() {
+    this.modalTitle = __("Create Event");
     this.fields = [
       {
         name: "name",

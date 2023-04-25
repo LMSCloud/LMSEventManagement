@@ -16,6 +16,7 @@ export default class LMSTargetGroupsModal extends LMSModal {
   }
 
   private hydrate() {
+    this.modalTitle = __("Create Target Group");
     this.fields = [
       {
         name: "name",
