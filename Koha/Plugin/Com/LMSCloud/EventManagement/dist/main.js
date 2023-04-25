@@ -2134,6 +2134,240 @@
             return [...values, ""].map((e) => typeof e === "object" ? this.getRenderValues(e) : e);
         }
     }
+    class InputConverter {
+        constructor() {
+            this.conversionMap = {};
+            this.conversionMap = {
+                name: (value) => x `<input
+        class="form-control"
+        type="text"
+        name="name"
+        value=${value}
+        disabled
+      />`,
+                event_type: (value, data) => x `<select
+        class="form-control"
+        name="event_type"
+        disabled
+      >
+        ${o(data, ({ id, name }) => x `<option
+              value=${id}
+              ?selected=${id === parseInt(value, 10)}
+            >
+              ${name}
+            </option>`)};
+      </select>`,
+                target_groups: (value, data) => x `
+        <table class="table table-sm mb-0">
+          <tbody>
+            ${o(data, ({ id, name }) => {
+                var _a, _b;
+                const targetGroupFee = value.find((targetGroupFee) => targetGroupFee.target_group_id === id);
+                const selected = (_a = targetGroupFee === null || targetGroupFee === void 0 ? void 0 : targetGroupFee.selected) !== null && _a !== void 0 ? _a : false;
+                const fee = (_b = targetGroupFee === null || targetGroupFee === void 0 ? void 0 : targetGroupFee.fee) !== null && _b !== void 0 ? _b : 0;
+                return x `
+                <tr>
+                  <td id=${id} class="align-middle">${name}</td>
+                  <td class="align-middle">
+                    <input
+                      type="checkbox"
+                      data-group="target_groups"
+                      name="selected"
+                      id=${id}
+                      class="form-control"
+                      ?checked=${selected}
+                      disabled
+                    />
+                  </td>
+                  <td class="align-middle">
+                    <input
+                      type="number"
+                      data-group="target_groups"
+                      name="fee"
+                      id=${id}
+                      step="0.01"
+                      class="form-control"
+                      value=${fee}
+                      disabled
+                    />
+                  </td>
+                </tr>
+              `;
+            })}
+          </tbody>
+        </table>
+      `,
+                min_age: (value) => x `<input
+        class="form-control"
+        type="number"
+        name="min_age"
+        value=${value}
+        disabled
+      />`,
+                max_age: (value) => x `<input
+        class="form-control"
+        type="number"
+        name="max_age"
+        value=${value}
+        disabled
+      />`,
+                max_participants: (value) => x `<input
+        class="form-control"
+        type="number"
+        name="max_participants"
+        value=${value}
+        disabled
+      />`,
+                location: (value, data) => x `<select
+        class="form-control"
+        name="location"
+        disabled
+      >
+        ${o(data, ({ id, name }) => x `<option value=${id} ?selected=${id === value}>${name}</option>`)};
+      </select>`,
+                image: (value) => x `<input
+        class="form-control"
+        type="number"
+        name="image"
+        value=${value}
+        disabled
+      />`,
+                description: (value) => x `<input
+        class="form-control"
+        type="text"
+        name="description"
+        value=${value}
+        disabled
+      />`,
+                open_registration: (value) => x `<input
+        class="form-control"
+        type="checkbox"
+        name="open_registration"
+        ?checked=${value}
+        disabled
+      />`,
+                street: (value) => x `<input
+        class="form-control"
+        type="text"
+        name="street"
+        value=${value}
+        disabled
+      />`,
+                number: (value) => x `<input
+        class="form-control"
+        type="text"
+        name="number"
+        value=${value}
+        disabled
+      />`,
+                city: (value) => x `<input
+        class="form-control"
+        type="text"
+        name="city"
+        value=${value}
+        disabled
+      />`,
+                zip: (value) => x `<input
+        class="form-control"
+        type="text"
+        name="zip"
+        value=${value}
+        disabled
+      />`,
+                country: (value) => x `<input
+        class="form-control"
+        type="text"
+        name="country"
+        value=${value}
+        disabled
+      />`,
+                start_time: (value) => x `<input
+        class="form-control"
+        type="datetime-local"
+        name="start_time"
+        value=${value}
+        disabled
+      />`,
+                end_time: (value) => x `<input
+        class="form-control"
+        type="datetime-local"
+        name="end_time"
+        value=${value}
+        disabled
+      />`,
+                registration_start: (value) => x `<input
+        class="form-control"
+        type="datetime-local"
+        name="registration_start"
+        value=${value}
+        disabled
+      />`,
+                registration_end: (value) => x `<input
+        class="form-control"
+        type="datetime-local"
+        name="registration_end"
+        value=${value}
+        disabled
+      />`,
+                status: (value) => x `<select
+        class="form-control"
+        name="status"
+        disabled
+      >
+        <option value="pending" ?selected=${value === "pending"}>
+          ${__("Pending")}
+        </option>
+        <option
+          value="confirmed"
+          ?selected=${value === "confirmed"}
+        >
+          ${__("Confirmed")}
+        </option>
+        <option value="canceled" ?selected=${value === "canceled"}>
+          ${__("Canceled")}
+        </option>
+        <option value="sold_out" ?selected=${value === "sold_out"}>
+          ${__("Sold Out")}
+        </option>
+      </select>`,
+                registration_link: (value) => x `<input
+        class="form-control"
+        type="text"
+        name="registration_link"
+        value=${value}
+        disabled
+      />`,
+            };
+        }
+        needsData(name) {
+            return ["target_groups", "event_type", "location"].includes(name);
+        }
+        getInputTemplate({ name, value, data, }) {
+            const template = this.conversionMap[name];
+            if (!template)
+                return this.renderValue(value);
+            if (this.needsData(name)) {
+                const requiredData = this.findDataByName(name, data);
+                if (!requiredData)
+                    return this.renderError();
+                return template(value, requiredData);
+            }
+            return template(value);
+        }
+        findDataByName(name, data) {
+            var _a;
+            if (!data)
+                return undefined;
+            const [, foundData] = (_a = data.find(([tag]) => tag === name)) !== null && _a !== void 0 ? _a : [, undefined];
+            return foundData;
+        }
+        renderValue(value) {
+            return x `${value}`;
+        }
+        renderError() {
+            return x `<strong>${__("Error")}!</strong>`;
+        }
+    }
 
     let LMSStaffEventCardPreview = class LMSStaffEventCardPreview extends s {
         constructor() {
@@ -3640,6 +3874,7 @@ ${value}</textarea
             };
             this.notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
             this.emptyTableMessage = x `${__("No data to display")}.`;
+            this.inputConverter = new InputConverter();
         }
         handleEdit(e) {
             console.info(e, this.notImplementedInBaseMessage);
@@ -3649,6 +3884,11 @@ ${value}</textarea
         }
         handleDelete(e) {
             console.info(e, this.notImplementedInBaseMessage);
+        }
+        *getColumnData(query, data) {
+            for (const [name, value] of Object.entries(query)) {
+                yield [name, this.inputConverter.getInputTemplate({ name, value, data })];
+            }
         }
         renderToast(status, result) {
             if (result.error) {
@@ -3876,17 +4116,6 @@ ${value}</textarea
     var LMSTable$1 = LMSTable;
 
     let LMSEventTypesTable$1 = class LMSEventTypesTable extends LMSTable$1 {
-        constructor() {
-            super(...arguments);
-            this.href = {
-                path: "/cgi-bin/koha/plugins/run.pl",
-                query: true,
-                params: {
-                    class: "Koha::Plugin::Com::LMSCloud::EventManagement",
-                    method: "configure",
-                },
-            };
-        }
         handleEdit(e) {
             if (e.target) {
                 let inputs = this.renderRoot.querySelectorAll("input, select");
@@ -3988,8 +4217,19 @@ ${value}</textarea
                 this.renderToast(response.statusText, error);
             }
         }
-        connectedCallback() {
-            super.connectedCallback();
+        constructor() {
+            super();
+            this.target_groups = [];
+            this.locations = [];
+            this.event_types = [];
+            this.href = {
+                path: "/cgi-bin/koha/plugins/run.pl",
+                query: true,
+                params: {
+                    class: "Koha::Plugin::Com::LMSCloud::EventManagement",
+                    method: "configure",
+                },
+            };
             this.order = [
                 "id",
                 "name",
@@ -4026,173 +4266,29 @@ ${value}</textarea
         >${__("location")}</lms-anchor
       >
       &nbsp;${__("first")}.`;
-            const eventTypes = fetch("/api/v1/contrib/eventmanagement/event_types");
-            eventTypes
-                .then((response) => {
-                if (response.status >= 200 && response.status <= 299) {
-                    return response.json();
-                }
-                throw new Error("Something went wrong");
-            })
-                /** Because we have to fetch data from endpoints to build the select
-                 *  elements, we have to make the getInputFromColumn function async
-                 *  and therefore turn the whole map call into nested async calls.
-                 *  Looks ugly, but basically the call to getInputFromColumn call
-                 *  just turns the enclosed function into a promise, which resolves
-                 *  to the value you'd expect. Just ignore the async/await syntax
-                 *  and remember that you have to resolve the Promise returned by
-                 *  the previous call before you can continue with the next one. */
-                .then(async (result) => {
-                const data = await Promise.all(result.map(async (event_type) => {
-                    const entries = await Promise.all(Object.entries(event_type).map(async ([name, value]) => [
-                        name,
-                        await this.getInputFromColumn({ name, value }),
-                    ]));
-                    return Object.fromEntries(entries);
-                }));
-                this.data = data;
-            })
-                .catch((error) => {
-                console.error(error);
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.hydrate();
+        }
+        hydrate() {
+            this.data = this.event_types.map((event_type) => {
+                return Object.fromEntries(this.getColumnData(event_type, [
+                    ["target_groups", this.target_groups],
+                    ["location", this.locations],
+                ]));
             });
         }
-        isInputType(value) {
-            return typeof value === "string" || typeof value === "number";
-        }
-        async getInputFromColumn({ name, value, }) {
-            const inputs = new Map([
-                [
-                    "name",
-                    () => x `<input
-            class="form-control"
-            type="text"
-            name="name"
-            value=${this.isInputType(value) ? value : ""}
-            disabled
-          />`,
-                ],
-                [
-                    "target_groups",
-                    async () => {
-                        const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
-                        const result = await response.json();
-                        return x `
-            <table class="table table-sm mb-0">
-              <tbody>
-                ${result.map(({ id, name }) => {
-                        var _a, _b;
-                        const target_group = value.find((target_group) => target_group.target_group_id === id);
-                        const selected = (_a = target_group === null || target_group === void 0 ? void 0 : target_group.selected) !== null && _a !== void 0 ? _a : false;
-                        const fee = (_b = target_group === null || target_group === void 0 ? void 0 : target_group.fee) !== null && _b !== void 0 ? _b : 0;
-                        return x `
-                    <tr>
-                      <td id=${id} class="align-middle">${name}</td>
-                      <td class="align-middle">
-                        <input
-                          type="checkbox"
-                          data-group="target_groups"
-                          name="selected"
-                          id=${id}
-                          class="form-control"
-                          ?checked=${selected}
-                          disabled
-                        />
-                      </td>
-                      <td class="align-middle">
-                        <input
-                          type="number"
-                          data-group="target_groups"
-                          name="fee"
-                          id=${id}
-                          step="0.01"
-                          class="form-control"
-                          value=${fee}
-                          disabled
-                        />
-                      </td>
-                    </tr>
-                  `;
-                    })}
-              </tbody>
-            </table>
-          `;
-                    },
-                ],
-                [
-                    "min_age",
-                    () => x `<input
-            class="form-control"
-            type="number"
-            name="min_age"
-            value=${this.isInputType(value) ? value : ""}
-            disabled
-          />`,
-                ],
-                [
-                    "max_age",
-                    () => x `<input
-            class="form-control"
-            type="number"
-            name="max_age"
-            value=${this.isInputType(value) ? value : ""}
-            disabled
-          />`,
-                ],
-                [
-                    "max_participants",
-                    () => x `<input
-            class="form-control"
-            type="number"
-            name="max_participants"
-            value=${this.isInputType(value) ? value : ""}
-            disabled
-          />`,
-                ],
-                [
-                    "location",
-                    async () => {
-                        const response = await fetch("/api/v1/contrib/eventmanagement/locations");
-                        const result = await response.json();
-                        return x `<select class="form-control" name="location" disabled>
-            ${result.map(({ id, name }) => x `<option value=${id}>${name}</option>`)};
-          </select>`;
-                    },
-                ],
-                [
-                    "image",
-                    () => x `<input
-            class="form-control"
-            type="number"
-            name="image"
-            value=${this.isInputType(value) ? value : ""}
-            disabled
-          />`,
-                ],
-                [
-                    "description",
-                    () => x `<input
-            class="form-control"
-            type="text"
-            name="description"
-            value=${this.isInputType(value) ? value : ""}
-            disabled
-          />`,
-                ],
-                [
-                    "open_registration",
-                    () => x `<input
-            class="form-control"
-            type="checkbox"
-            name="open_registration"
-            ?checked=${value}
-            disabled
-          />`,
-                ],
-                ["default", () => x `${value}`],
-            ]);
-            return inputs.get(name) ? inputs.get(name)() : inputs.get("default")();
-        }
     };
+    __decorate([
+        e$2({ type: Array })
+    ], LMSEventTypesTable$1.prototype, "target_groups", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSEventTypesTable$1.prototype, "locations", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSEventTypesTable$1.prototype, "event_types", void 0);
     __decorate([
         e$2({ type: Object, attribute: false })
     ], LMSEventTypesTable$1.prototype, "href", void 0);
@@ -4346,8 +4442,9 @@ ${value}</textarea
                 this.renderToast(response.statusText, error);
             }
         }
-        connectedCallback() {
-            super.connectedCallback();
+        constructor() {
+            super();
+            this.locations = [];
             this.order = [
                 "id",
                 "name",
@@ -4360,91 +4457,20 @@ ${value}</textarea
             ];
             this.isEditable = true;
             this.isDeletable = true;
-            const locations = fetch("/api/v1/contrib/eventmanagement/locations");
-            locations
-                .then((response) => {
-                if (response.status >= 200 && response.status <= 299) {
-                    return response.json();
-                }
-                throw new Error("Something went wrong");
-            })
-                .then((result) => {
-                this.data = result.map((location) => Object.fromEntries(Object.entries(location).map(([name, value]) => [
-                    name,
-                    this.getInputFromColumn({ name, value }),
-                ])));
-            })
-                .catch((error) => {
-                console.error(error);
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.hydrate();
+        }
+        hydrate() {
+            this.data = this.locations.map((location) => {
+                return Object.fromEntries(this.getColumnData(location));
             });
         }
-        getInputFromColumn({ name, value, }) {
-            const inputs = new Map([
-                [
-                    "name",
-                    () => x `<input
-            class="form-control"
-            type="text"
-            name="name"
-            value=${value}
-            disabled
-          />`,
-                ],
-                [
-                    "street",
-                    () => x `<input
-            class="form-control"
-            type="text"
-            name="street"
-            value=${value}
-            disabled
-          />`,
-                ],
-                [
-                    "number",
-                    () => x `<input
-            class="form-control"
-            type="text"
-            name="number"
-            value=${value}
-            disabled
-          />`,
-                ],
-                [
-                    "city",
-                    () => x `<input
-            class="form-control"
-            type="text"
-            name="city"
-            value=${value}
-            disabled
-          />`,
-                ],
-                [
-                    "zip",
-                    () => x `<input
-            class="form-control"
-            type="text"
-            name="zip"
-            value=${value}
-            disabled
-          />`,
-                ],
-                [
-                    "country",
-                    () => x `<input
-            class="form-control"
-            type="text"
-            name="country"
-            value=${value}
-            disabled
-          />`,
-                ],
-                ["default", () => x `${value}`],
-            ]);
-            return inputs.get(name) ? inputs.get(name)() : inputs.get("default")();
-        }
     };
+    __decorate([
+        e$2({ type: Array })
+    ], LMSLocationsTable.prototype, "locations", void 0);
     LMSLocationsTable = __decorate([
         e$3("lms-locations-table")
     ], LMSLocationsTable);
@@ -4574,69 +4600,26 @@ ${value}</textarea
                 this.renderToast(response.statusText, error);
             }
         }
-        connectedCallback() {
-            super.connectedCallback();
+        constructor() {
+            super();
+            this.target_groups = [];
             this.order = ["id", "name", "min_age", "max_age"];
             this.isEditable = true;
             this.isDeletable = true;
-            const events = fetch("/api/v1/contrib/eventmanagement/target_groups");
-            events
-                .then((response) => {
-                if (response.status >= 200 && response.status <= 299) {
-                    return response.json();
-                }
-                throw new Error("Something went wrong");
-            })
-                .then((result) => {
-                this.data = result === null || result === void 0 ? void 0 : result.map((target_group) => Object.fromEntries(Object.entries(target_group).map(([name, value]) => {
-                    var _a;
-                    return [
-                        name,
-                        (_a = this.getInputFromColumn({ name, value })) !== null && _a !== void 0 ? _a : "",
-                    ];
-                })));
-            })
-                .catch((error) => {
-                console.error(error);
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.hydrate();
+        }
+        hydrate() {
+            this.data = this.target_groups.map((target_group) => {
+                return Object.fromEntries(this.getColumnData(target_group));
             });
         }
-        getInputFromColumn({ name, value, }) {
-            const inputs = new Map([
-                [
-                    "name",
-                    x `<input
-          class="form-control"
-          type="text"
-          name="name"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "min_age",
-                    x `<input
-          class="form-control"
-          type="number"
-          name="min_age"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "max_age",
-                    x `<input
-          class="form-control"
-          type="number"
-          name="max_age"
-          value=${value}
-          disabled
-        />`,
-                ],
-                ["default", x `${value}`],
-            ]);
-            return inputs.get(name) ? inputs.get(name) : inputs.get("default");
-        }
     };
+    __decorate([
+        e$2({ type: Array })
+    ], LMSEventTypesTable.prototype, "target_groups", void 0);
     LMSEventTypesTable = __decorate([
         e$3("lms-target-groups-table")
     ], LMSEventTypesTable);
@@ -5011,26 +4994,78 @@ ${value}</textarea
     var StaffEventsView$1 = StaffEventsView;
 
     let StaffEventTypesView$1 = class StaffEventTypesView extends s {
+        constructor() {
+            super(...arguments);
+            this.event_types = [];
+            this.target_groups = [];
+            this.locations = [];
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            Promise.all([
+                fetch("/api/v1/contrib/eventmanagement/target_groups"),
+                fetch("/api/v1/contrib/eventmanagement/locations"),
+                fetch("/api/v1/contrib/eventmanagement/event_types"),
+            ])
+                .then((results) => Promise.all(results.map((result) => result.json())))
+                .then(([target_groups, locations, event_types]) => {
+                this.target_groups = target_groups;
+                this.locations = locations;
+                this.event_types = event_types;
+            });
+        }
+        hasData() {
+            return [this.target_groups, this.locations, this.event_types].every((data) => data.length > 0);
+        }
         render() {
+            if (!this.hasData()) {
+                return x `<div class="skeleton"></div>`;
+            }
             return x `
-      <lms-event-types-table></lms-event-types-table>
+      <lms-event-types-table
+        .target_groups=${this.target_groups}
+        .locations=${this.locations}
+        .event_types=${this.event_types}
+      ></lms-event-types-table>
       <lms-event-types-modal></lms-event-types-modal>
     `;
         }
     };
+    __decorate([
+        t$1()
+    ], StaffEventTypesView$1.prototype, "event_types", void 0);
     StaffEventTypesView$1 = __decorate([
         e$3("lms-staff-event-types-view")
     ], StaffEventTypesView$1);
     var StaffEventTypesView$2 = StaffEventTypesView$1;
 
     let StaffLocationsView = class StaffLocationsView extends s {
+        constructor() {
+            super(...arguments);
+            this.locations = [];
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            const locations = fetch("/api/v1/contrib/eventmanagement/locations");
+            locations
+                .then((response) => response.json())
+                .then((result) => {
+                this.locations = result;
+            });
+        }
         render() {
+            if (!this.locations.length) {
+                return x `<div class="skeleton"></div>`;
+            }
             return x `
-      <lms-locations-table></lms-locations-table>
+      <lms-locations-table .locations=${this.locations}></lms-locations-table>
       <lms-locations-modal></lms-locations-modal>
     `;
         }
     };
+    __decorate([
+        t$1()
+    ], StaffLocationsView.prototype, "locations", void 0);
     StaffLocationsView = __decorate([
         e$3("lms-staff-locations-view")
     ], StaffLocationsView);
@@ -5050,22 +5085,36 @@ ${value}</textarea
     let StaffEventTypesView = class StaffEventTypesView extends s {
         constructor() {
             super(...arguments);
-            this.data = [];
+            this.target_groups = [];
         }
         async handleCreated() {
             const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
-            this.data = await response.json();
+            this.target_groups = await response.json();
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            const locations = fetch("/api/v1/contrib/eventmanagement/target_groups");
+            locations
+                .then((response) => response.json())
+                .then((result) => {
+                this.target_groups = result;
+            });
         }
         render() {
+            if (!this.target_groups.length) {
+                return x `<div class="skeleton"></div>`;
+            }
             return x `
-      <lms-target-groups-table></lms-target-groups-table>
+      <lms-target-groups-table
+        .target_groups=${this.target_groups}
+      ></lms-target-groups-table>
       <lms-target-groups-modal></lms-target-groups-modal>
     `;
         }
     };
     __decorate([
-        e$2({ type: Array })
-    ], StaffEventTypesView.prototype, "data", void 0);
+        t$1()
+    ], StaffEventTypesView.prototype, "target_groups", void 0);
     StaffEventTypesView = __decorate([
         e$3("lms-staff-target-groups-view")
     ], StaffEventTypesView);

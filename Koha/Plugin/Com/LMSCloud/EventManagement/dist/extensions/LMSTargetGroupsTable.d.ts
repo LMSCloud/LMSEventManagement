@@ -1,9 +1,12 @@
 import LMSTable from "../components/LMSTable";
+import { TargetGroup } from "../sharedDeclarations";
 export default class LMSEventTypesTable extends LMSTable {
+    target_groups: TargetGroup[];
     handleEdit(e: Event): void;
     handleSave(e: Event): Promise<void>;
     handleDelete(e: Event): Promise<void>;
+    constructor();
     connectedCallback(): void;
-    private getInputFromColumn;
+    private hydrate;
 }
 //# sourceMappingURL=LMSTargetGroupsTable.d.ts.map

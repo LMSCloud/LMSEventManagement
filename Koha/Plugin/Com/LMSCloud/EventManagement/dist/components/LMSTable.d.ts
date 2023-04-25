@@ -1,5 +1,5 @@
 import { LitElement, PropertyValueMap, TemplateResult } from "lit";
-import { Column } from "../sharedDeclarations";
+import { Column, TaggedData } from "../sharedDeclarations";
 export default class LMSTable extends LitElement {
     data: Column[];
     order: string[];
@@ -9,11 +9,13 @@ export default class LMSTable extends LitElement {
     private toast;
     private notImplementedInBaseMessage;
     protected emptyTableMessage: TemplateResult<1>;
+    private inputConverter;
     static styles: import("lit").CSSResult[];
     handleEdit(e: Event): void;
     handleSave(e: Event): void;
     handleDelete(e: Event): void;
-    renderToast(status: string, result: {
+    protected getColumnData(query: Record<string, string | number | boolean | any[]>, data?: TaggedData[]): Generator<(string | TemplateResult<2 | 1>)[], void, unknown>;
+    protected renderToast(status: string, result: {
         error: string;
         errors: ErrorEvent;
     }): void;

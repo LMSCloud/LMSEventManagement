@@ -124,4 +124,5 @@ export type URIComponents = {
 export type MatrixGroup = {
     [key: string]: string;
 };
+export type TaggedData = ["target_groups" | "location" | "event_type", any[]];
 //# sourceMappingURL=sharedDeclarations.d.ts.map
