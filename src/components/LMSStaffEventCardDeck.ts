@@ -1,20 +1,19 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html, TemplateResult, css } from "lit";
+import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import LMSStaffEventCardForm from "./LMSStaffEventCard/LMSStaffEventCardForm";
 import {
   TaggedColumn,
   TargetGroup,
-  TargetGroupFee,
   EventType,
   LMSLocation,
   LMSEvent,
-  TargetGroupState,
+  TaggedData,
 } from "../sharedDeclarations";
 import LMSStaffEventCardAttendees from "./LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSAnchor from "./LMSAnchor";
-import { TemplateResultConverter } from "../lib/converters";
+import { InputConverter, TemplateResultConverter } from "../lib/converters";
 import { map } from "lit/directives/map.js";
 import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
 import { __ } from "../lib/translate";
@@ -37,6 +36,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
   @property({ type: Array }) locations: LMSLocation[] = [];
   private data: TaggedColumn[] = [];
   private cardStates: Map<string, string[]> = new Map();
+  private inputConverter = new InputConverter();
 
   static override styles = [
     bootstrapStyles,
@@ -87,6 +87,15 @@ export default class LMSStaffEventCardDeck extends LitElement {
     this.hydrate();
   }
 
+  protected *getColumnData(
+    query: Record<string, string | number | boolean | any[]>,
+    data?: TaggedData[]
+  ) {
+    for (const [name, value] of Object.entries(query)) {
+      yield [name, this.inputConverter.getInputTemplate({ name, value, data })];
+    }
+  }
+
   private hydrate() {
     /** Here we initialize the card states so we can track them
      *  individually going forward. */
@@ -98,10 +107,13 @@ export default class LMSStaffEventCardDeck extends LitElement {
     });
 
     const data = this.events.map((event: LMSEvent) => {
-      const entries = Object.entries(event).map(([name, value]) => {
-        return [name, this.getInputFromColumn({ name, value })];
-      });
-      return Object.fromEntries(entries);
+      return Object.fromEntries(
+        this.getColumnData(event, [
+          ["target_groups", this.target_groups],
+          ["location", this.locations],
+          ["event_type", this.event_types],
+        ])
+      );
     });
 
     /** Here we tag every datum with the uuid we generated earlier. */
@@ -112,264 +124,6 @@ export default class LMSStaffEventCardDeck extends LitElement {
         uuid,
       };
     });
-  }
-
-  private getInputFromColumn({
-    name,
-    value,
-  }: {
-    name: string;
-    value: string | number | TargetGroupState[];
-  }) {
-    const inputs = new Map<string, TemplateResult>([
-      [
-        "name",
-        html`<input
-          class="form-control"
-          type="text"
-          name="name"
-          value=${value}
-          disabled
-        />`,
-      ],
-      [
-        "event_type",
-        html`<select class="form-control" name="event_type" disabled>
-          ${map(
-            this.event_types,
-            ({ id, name }: { id: number; name: string }) =>
-              html`<option
-                value=${id}
-                ?selected=${id === parseInt(value as string, 10)}
-              >
-                ${name}
-              </option>`
-          )};
-        </select>`,
-      ],
-      [
-        "target_groups",
-        html`
-          <table class="table table-sm table-bordered table-striped">
-            <thead>
-              <tr>
-                <th scope="col">${__("target_group")}</th>
-                <th scope="col">${__("selected")}</th>
-                <th scope="col">${__("fee")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${map(this.target_groups, ({ id, name }: TargetGroup) => {
-                const target_group = (
-                  value as unknown as TargetGroupFee[]
-                ).find((target_group) => target_group.target_group_id === id);
-                const selected = target_group?.selected ?? false;
-                const fee = target_group?.fee ?? 0;
-                return html`
-                  <tr>
-                    <td
-                      id=${id}
-                      data-group="target_groups"
-                      data-name="id"
-                      class="align-middle"
-                    >
-                      ${name}
-                    </td>
-                    <td class="align-middle">
-                      <input
-                        type="checkbox"
-                        data-group="target_groups"
-                        data-name="selected"
-                        id=${id}
-                        class="form-control"
-                        ?checked=${selected}
-                        disabled
-                      />
-                    </td>
-                    <td class="align-middle">
-                      <input
-                        type="number"
-                        data-group="target_groups"
-                        data-name="fee"
-                        id=${id}
-                        step="0.01"
-                        class="form-control"
-                        value=${fee}
-                        disabled
-                      />
-                    </td>
-                  </tr>
-                `;
-              })}
-            </tbody>
-          </table>
-        `,
-      ],
-      [
-        "min_age",
-        html`<input
-          class="form-control"
-          type="number"
-          name="min_age"
-          value=${value}
-          disabled
-        />`,
-      ],
-      [
-        "max_age",
-        html`<input
-          class="form-control"
-          type="number"
-          name="max_age"
-          value=${value}
-          disabled
-        />`,
-      ],
-      [
-        "max_participants",
-        html`<input
-          class="form-control"
-          type="number"
-          name="max_participants"
-          value=${value}
-          disabled
-        />`,
-      ],
-      [
-        "start_time",
-        html`<input
-          class="form-control"
-          type="datetime-local"
-          name="start_time"
-          value=${value}
-          disabled
-        />`,
-      ],
-      [
-        "end_time",
-        html`<input
-          class="form-control"
-          type="datetime-local"
-          name="end_time"
-          value=${value}
-          disabled
-        />`,
-      ],
-      [
-        "registration_start",
-        html`<input
-          class="form-control"
-          type="datetime-local"
-          name="registration_start"
-          value=${value}
-          disabled
-        />`,
-      ],
-      [
-        "registration_end",
-        html`<input
-          class="form-control"
-          type="datetime-local"
-          name="registration_end"
-          value=${value}
-          disabled
-        />`,
-      ],
-      [
-        "fee",
-        html`<input
-          class="form-control"
-          type="number"
-          step="0.01"
-          name="fee"
-          value=${value}
-          disabled
-        />`,
-      ],
-      [
-        "location",
-        html`<select class="form-control" name="location" disabled>
-          ${map(
-            this.locations,
-            ({ id, name }: { id: number; name: string }) =>
-              html`<option value=${id}>${name}</option>`
-          )}
-        </select>`,
-      ],
-      [
-        "image",
-        html`<input
-          class="form-control"
-          type="text"
-          name="image"
-          value=${value}
-          disabled
-        />`,
-      ],
-      [
-        "description",
-        html`<textarea
-          class="form-control overflow-hidden h-100"
-          name="description"
-          disabled
-        >
-${value}</textarea
-        >`,
-      ],
-      [
-        "status",
-        html`<select class="form-control" name="status" disabled>
-          <option value="pending" ?selected=${(value as string) === "pending"}>
-            ${__("Pending")}
-          </option>
-          <option
-            value="confirmed"
-            ?selected=${(value as string) === "confirmed"}
-          >
-            ${__("Confirmed")}
-          </option>
-          <option
-            value="canceled"
-            ?selected=${(value as string) === "canceled"}
-          >
-            ${__("Canceled")}
-          </option>
-          <option
-            value="sold_out"
-            ?selected=${(value as string) === "sold_out"}
-          >
-            ${__("Sold Out")}
-          </option>
-        </select>`,
-      ],
-      [
-        "registration_link",
-        html`<input
-          class="form-control"
-          type="text"
-          name="registration_link"
-          value=${value}
-          disabled
-        />`,
-      ],
-      [
-        "open_registration",
-        html`<input
-          @change=${(e: Event) => {
-            const target = e.target as HTMLInputElement;
-            target.value = (target.checked ? 1 : 0).toString();
-          }}
-          class="form-check-input"
-          type="checkbox"
-          name="open_registration"
-          ?checked=${value as unknown as boolean}
-          disabled
-        />`,
-      ],
-      ["default", html`${value}`],
-    ]);
-
-    return inputs.get(name) ? inputs.get(name) : inputs.get("default");
   }
 
   private handleTabClick(event: Event) {

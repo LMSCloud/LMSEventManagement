@@ -98,7 +98,14 @@ export class InputConverter {
         )};
       </select>`,
       target_groups: (value, data) => html`
-        <table class="table table-sm mb-0">
+        <table class="table table-sm table-bordered table-striped mb-0">
+          <thead>
+            <tr>
+              <th scope="col">${__("target_group")}</th>
+              <th scope="col">${__("selected")}</th>
+              <th scope="col">${__("fee")}</th>
+            </tr>
+          </thead>
           <tbody>
             ${map(data as TargetGroup[], ({ id, name }: TargetGroup) => {
               const targetGroupFee = (
@@ -175,18 +182,18 @@ export class InputConverter {
       </select>`,
       image: (value) => html`<input
         class="form-control"
-        type="number"
+        type="text"
         name="image"
         value=${value}
         disabled
       />`,
-      description: (value) => html`<input
-        class="form-control"
-        type="text"
+      description: (value) => html`<textarea
+        class="form-control overflow-hidden h-100"
         name="description"
-        value=${value}
         disabled
-      />`,
+      >
+${value}</textarea
+      >`,
       open_registration: (value) => html`<input
         class="form-control"
         type="checkbox"

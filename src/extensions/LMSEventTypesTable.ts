@@ -1,12 +1,6 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
-import { html } from "lit";
-import {
-  EventType,
-  TargetGroup,
-  URIComponents,
-  LMSLocation,
-} from "../sharedDeclarations";
+import { EventType, TargetGroup, LMSLocation } from "../sharedDeclarations";
 import LMSAnchor from "../components/LMSAnchor";
 import { __ } from "../lib/translate";
 
@@ -21,14 +15,6 @@ export default class LMSEventTypesTable extends LMSTable {
   @property({ type: Array }) target_groups: TargetGroup[] = [];
   @property({ type: Array }) locations: LMSLocation[] = [];
   @property({ type: Array }) event_types: EventType[] = [];
-  @property({ type: Object, attribute: false }) href: URIComponents = {
-    path: "/cgi-bin/koha/plugins/run.pl",
-    query: true,
-    params: {
-      class: "Koha::Plugin::Com::LMSCloud::EventManagement",
-      method: "configure",
-    },
-  };
 
   override handleEdit(e: Event) {
     if (e.target) {
@@ -45,7 +31,7 @@ export default class LMSEventTypesTable extends LMSTable {
       }
 
       if (parent) {
-        inputs = parent?.querySelectorAll("input, select");
+        inputs = parent?.querySelectorAll("input, select, textarea");
         inputs?.forEach((input) => {
           input.disabled = false;
         });
@@ -53,7 +39,10 @@ export default class LMSEventTypesTable extends LMSTable {
     }
   }
 
-  handleInput(input: HTMLInputElement | HTMLSelectElement, value: unknown) {
+  handleInput(
+    input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
+    value: unknown
+  ) {
     if (input instanceof HTMLInputElement && input.type === "checkbox") {
       return input.checked ? "1" : "0";
     }
@@ -73,8 +62,8 @@ export default class LMSEventTypesTable extends LMSTable {
       inputs = undefined;
     if (parent) {
       id = parent.firstElementChild?.textContent?.trim();
-      inputs = parent.querySelectorAll("input, select") as NodeListOf<
-        HTMLInputElement | HTMLSelectElement
+      inputs = parent.querySelectorAll("input, select, textarea") as NodeListOf<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
       >;
     }
 
@@ -179,28 +168,6 @@ export default class LMSEventTypesTable extends LMSTable {
     ];
     this.isEditable = true;
     this.isDeletable = true;
-    this.emptyTableMessage = html`${__("You have to create a")}&nbsp;
-      <lms-anchor
-        .href=${{
-          ...this.href,
-          params: {
-            ...this.href.params,
-            op: "target-groups",
-          },
-        }}
-        >${__("target group")}</lms-anchor
-      >&nbsp;${__("and a")}&nbsp;
-      <lms-anchor
-        .href=${{
-          ...this.href,
-          params: {
-            ...this.href.params,
-            op: "locations",
-          },
-        }}
-        >${__("location")}</lms-anchor
-      >
-      &nbsp;${__("first")}.`;
   }
 
   override connectedCallback() {
