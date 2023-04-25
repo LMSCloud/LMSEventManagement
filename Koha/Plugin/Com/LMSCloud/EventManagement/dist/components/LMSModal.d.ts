@@ -4,6 +4,8 @@ import LMSSelect from "./Inputs/LMSSelect";
 import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
 import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
+import { TranslateDirective } from "../lib/translate";
+import { DirectiveResult } from "lit/directive";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-select": LMSSelect;
@@ -18,7 +20,7 @@ export default class LMSModal extends LitElement {
     editable: boolean;
     protected isOpen: boolean;
     protected alertMessage: string;
-    protected modalTitle: string;
+    protected modalTitle: string | DirectiveResult<typeof TranslateDirective>;
     static styles: import("lit").CSSResult[];
     private toggleModal;
     private create;

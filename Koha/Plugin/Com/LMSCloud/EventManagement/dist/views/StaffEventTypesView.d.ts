@@ -1,7 +1,7 @@
 import { LitElement } from "lit";
 import LMSEventTypesModal from "../extensions/LMSEventTypesModal";
 import LMSEventTypesTable from "../extensions/LMSEventTypesTable";
-import { Column } from "../sharedDeclarations";
+import { Column, URIComponents } from "../sharedDeclarations";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-event-types-table": LMSEventTypesTable;
@@ -12,6 +12,8 @@ export default class StaffEventTypesView extends LitElement {
     event_types: Column[];
     private target_groups;
     private locations;
+    href: URIComponents;
+    static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     hasData(): boolean;
     render(): import("lit").TemplateResult<1>;

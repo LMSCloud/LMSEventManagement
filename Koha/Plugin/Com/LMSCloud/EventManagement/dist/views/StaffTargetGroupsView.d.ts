@@ -10,6 +10,7 @@ declare global {
 }
 export default class StaffEventTypesView extends LitElement {
     target_groups: Column[];
+    static styles: import("lit").CSSResult[];
     handleCreated(): Promise<void>;
     connectedCallback(): void;
     render(): import("lit").TemplateResult<1>;

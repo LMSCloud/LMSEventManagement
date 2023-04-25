@@ -1,6 +1,6 @@
-import { LitElement, TemplateResult } from "lit";
+import { LitElement } from "lit";
 import LMSStaffEventCardForm from "./LMSStaffEventCard/LMSStaffEventCardForm";
-import { TargetGroup, EventType, LMSLocation, LMSEvent } from "../sharedDeclarations";
+import { TargetGroup, EventType, LMSLocation, LMSEvent, TaggedData } from "../sharedDeclarations";
 import LMSStaffEventCardAttendees from "./LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSAnchor from "./LMSAnchor";
@@ -19,11 +19,12 @@ export default class LMSStaffEventCardDeck extends LitElement {
     locations: LMSLocation[];
     private data;
     private cardStates;
+    private inputConverter;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
+    protected getColumnData(query: Record<string, string | number | boolean | any[]>, data?: TaggedData[]): Generator<(string | import("lit").TemplateResult<2 | 1>)[], void, unknown>;
     private hydrate;
-    private getInputFromColumn;
     private handleTabClick;
-    render(): TemplateResult<1>;
+    render(): import("lit").TemplateResult<1>;
 }
 //# sourceMappingURL=LMSStaffEventCardDeck.d.ts.map

@@ -31,20 +31,20 @@
      * Copyright 2019 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const t$3=window,e$6=t$3.ShadowRoot&&(void 0===t$3.ShadyCSS||t$3.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$4=new WeakMap;class o$6{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$6&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$4.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$4.set(s,t));}return t}toString(){return this.cssText}}const r$2=t=>new o$6("string"==typeof t?t:t+"",void 0,s$3),i$4=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$6(n,t,s$3)},S$1=(s,n)=>{e$6?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$3.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$6?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
+    const t$3=window,e$6=t$3.ShadowRoot&&(void 0===t$3.ShadyCSS||t$3.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$5=new WeakMap;class o$7{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$6&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$5.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$5.set(s,t));}return t}toString(){return this.cssText}}const r$2=t=>new o$7("string"==typeof t?t:t+"",void 0,s$3),i$5=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$7(n,t,s$3)},S$1=(s,n)=>{e$6?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$3.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$6?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var s$2;const e$5=window,r$1=e$5.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$5=e$5.reactiveElementPolyfillSupport,n$3={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$3={attribute:!0,type:String,converter:n$3,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$3){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$3}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$3){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$3).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$3;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$5||o$5({ReactiveElement:d$1}),(null!==(s$2=e$5.reactiveElementVersions)&&void 0!==s$2?s$2:e$5.reactiveElementVersions=[]).push("1.6.1");
+     */var s$2;const e$5=window,r$1=e$5.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$6=e$5.reactiveElementPolyfillSupport,n$4={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$3={attribute:!0,type:String,converter:n$4,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$3){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$3}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$3){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$4).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$4;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$6||o$6({ReactiveElement:d$1}),(null!==(s$2=e$5.reactiveElementVersions)&&void 0!==s$2?s$2:e$5.reactiveElementVersions=[]).push("1.6.1");
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    var t$2;const i$3=window,s$1=i$3.trustedTypes,e$4=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$4="$lit$",n$2=`lit$${(Math.random()+"").slice(9)}$`,l$2="?"+n$2,h=`<${l$2}>`,r=document,d=()=>r.createComment(""),u=t=>null===t||"object"!=typeof t&&"function"!=typeof t,c=Array.isArray,v=t=>c(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),a="[ \t\n\f\r]",f=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${a}(?:([^\\s"'>=/]+)(${a}*=${a}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,w=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),x=w(1),b=w(2),T=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),E=new WeakMap,C=r.createTreeWalker(r,129,null,!1),P=(t,i)=>{const s=t.length-1,l=[];let r,d=2===i?"<svg>":"",u=f;for(let i=0;i<s;i++){const s=t[i];let e,c,v=-1,a=0;for(;a<s.length&&(u.lastIndex=a,c=u.exec(s),null!==c);)a=u.lastIndex,u===f?"!--"===c[1]?u=_:void 0!==c[1]?u=m:void 0!==c[2]?(y.test(c[2])&&(r=RegExp("</"+c[2],"g")),u=p):void 0!==c[3]&&(u=p):u===p?">"===c[0]?(u=null!=r?r:f,v=-1):void 0===c[1]?v=-2:(v=u.lastIndex-c[2].length,e=c[1],u=void 0===c[3]?p:'"'===c[3]?$:g):u===$||u===g?u=p:u===_||u===m?u=f:(u=p,r=void 0);const w=u===p&&t[i+1].startsWith("/>")?" ":"";d+=u===f?s+h:v>=0?(l.push(e),s.slice(0,v)+o$4+s.slice(v)+n$2+w):s+n$2+(-2===v?(l.push(void 0),i):w);}const c=d+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$4?e$4.createHTML(c):c,l]};class V{constructor({strings:t,_$litType$:i},e){let h;this.parts=[];let r=0,u=0;const c=t.length-1,v=this.parts,[a,f]=P(t,i);if(this.el=V.createElement(a,e),C.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(h=C.nextNode())&&v.length<c;){if(1===h.nodeType){if(h.hasAttributes()){const t=[];for(const i of h.getAttributeNames())if(i.endsWith(o$4)||i.startsWith(n$2)){const s=f[u++];if(t.push(i),void 0!==s){const t=h.getAttribute(s.toLowerCase()+o$4).split(n$2),i=/([.?@])?(.*)/.exec(s);v.push({type:1,index:r,name:i[2],strings:t,ctor:"."===i[1]?k:"?"===i[1]?I:"@"===i[1]?L:R});}else v.push({type:6,index:r});}for(const i of t)h.removeAttribute(i);}if(y.test(h.tagName)){const t=h.textContent.split(n$2),i=t.length-1;if(i>0){h.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)h.append(t[s],d()),C.nextNode(),v.push({type:2,index:++r});h.append(t[i],d());}}}else if(8===h.nodeType)if(h.data===l$2)v.push({type:2,index:r});else {let t=-1;for(;-1!==(t=h.data.indexOf(n$2,t+1));)v.push({type:7,index:r}),t+=n$2.length-1;}r++;}}static createElement(t,i){const s=r.createElement("template");return s.innerHTML=t,s}}function N(t,i,s=t,e){var o,n,l,h;if(i===T)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const d=u(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==d&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===d?r=void 0:(r=new d(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=N(t,r._$AS(t,i.values),r,e)),i}class S{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:r).importNode(s,!0);C.currentNode=o;let n=C.nextNode(),l=0,h=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new M(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new z(n,this,t)),this._$AV.push(i),d=e[++h];}l!==(null==d?void 0:d.index)&&(n=C.nextNode(),l++);}return o}v(t){let i=0;for(const s of this._$AV)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class M{constructor(t,i,s,e){var o;this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cp=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cp}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===(null==t?void 0:t.nodeType)&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=N(this,t,i),u(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==T&&this._(t):void 0!==t._$litType$?this.g(t):void 0!==t.nodeType?this.$(t):v(t)?this.T(t):this._(t);}k(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}$(t){this._$AH!==t&&(this._$AR(),this._$AH=this.k(t));}_(t){this._$AH!==A&&u(this._$AH)?this._$AA.nextSibling.data=t:this.$(r.createTextNode(t)),this._$AH=t;}g(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=V.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.v(s);else {const t=new S(o,this),i=t.u(this.options);t.v(s),this.$(i),this._$AH=t;}}_$AC(t){let i=E.get(t.strings);return void 0===i&&E.set(t.strings,i=new V(t)),i}T(t){c(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new M(this.k(d()),this.k(d()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cp=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class R{constructor(t,i,s,e,o){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=N(this,t,i,0),n=!u(t)||t!==this._$AH&&t!==T,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=N(this,e[s+l],i,l),h===T&&(h=this._$AH[l]),n||(n=!u(h)||h!==this._$AH[l]),h===A?t=A:t!==A&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class k extends R{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}const H=s$1?s$1.emptyScript:"";class I extends R{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==A?this.element.setAttribute(this.name,H):this.element.removeAttribute(this.name);}}class L extends R{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=N(this,t,i,0))&&void 0!==s?s:A)===T)return;const e=this._$AH,o=t===A&&e!==A||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==A&&(e===A||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){N(this,t);}}const Z={O:o$4,P:n$2,A:l$2,C:1,M:P,L:S,D:v,R:N,I:M,V:R,H:I,N:L,U:k,F:z},j=i$3.litHtmlPolyfillSupport;null==j||j(V,M),(null!==(t$2=i$3.litHtmlVersions)&&void 0!==t$2?t$2:i$3.litHtmlVersions=[]).push("2.7.2");const B=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new M(i.insertBefore(d(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
+    var t$2;const i$4=window,s$1=i$4.trustedTypes,e$4=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$5="$lit$",n$3=`lit$${(Math.random()+"").slice(9)}$`,l$2="?"+n$3,h=`<${l$2}>`,r=document,d=()=>r.createComment(""),u=t=>null===t||"object"!=typeof t&&"function"!=typeof t,c=Array.isArray,v=t=>c(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),a="[ \t\n\f\r]",f=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${a}(?:([^\\s"'>=/]+)(${a}*=${a}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,w=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),x=w(1),b=w(2),T=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),E=new WeakMap,C=r.createTreeWalker(r,129,null,!1),P=(t,i)=>{const s=t.length-1,l=[];let r,d=2===i?"<svg>":"",u=f;for(let i=0;i<s;i++){const s=t[i];let e,c,v=-1,a=0;for(;a<s.length&&(u.lastIndex=a,c=u.exec(s),null!==c);)a=u.lastIndex,u===f?"!--"===c[1]?u=_:void 0!==c[1]?u=m:void 0!==c[2]?(y.test(c[2])&&(r=RegExp("</"+c[2],"g")),u=p):void 0!==c[3]&&(u=p):u===p?">"===c[0]?(u=null!=r?r:f,v=-1):void 0===c[1]?v=-2:(v=u.lastIndex-c[2].length,e=c[1],u=void 0===c[3]?p:'"'===c[3]?$:g):u===$||u===g?u=p:u===_||u===m?u=f:(u=p,r=void 0);const w=u===p&&t[i+1].startsWith("/>")?" ":"";d+=u===f?s+h:v>=0?(l.push(e),s.slice(0,v)+o$5+s.slice(v)+n$3+w):s+n$3+(-2===v?(l.push(void 0),i):w);}const c=d+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$4?e$4.createHTML(c):c,l]};class V{constructor({strings:t,_$litType$:i},e){let h;this.parts=[];let r=0,u=0;const c=t.length-1,v=this.parts,[a,f]=P(t,i);if(this.el=V.createElement(a,e),C.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(h=C.nextNode())&&v.length<c;){if(1===h.nodeType){if(h.hasAttributes()){const t=[];for(const i of h.getAttributeNames())if(i.endsWith(o$5)||i.startsWith(n$3)){const s=f[u++];if(t.push(i),void 0!==s){const t=h.getAttribute(s.toLowerCase()+o$5).split(n$3),i=/([.?@])?(.*)/.exec(s);v.push({type:1,index:r,name:i[2],strings:t,ctor:"."===i[1]?k:"?"===i[1]?I:"@"===i[1]?L:R});}else v.push({type:6,index:r});}for(const i of t)h.removeAttribute(i);}if(y.test(h.tagName)){const t=h.textContent.split(n$3),i=t.length-1;if(i>0){h.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)h.append(t[s],d()),C.nextNode(),v.push({type:2,index:++r});h.append(t[i],d());}}}else if(8===h.nodeType)if(h.data===l$2)v.push({type:2,index:r});else {let t=-1;for(;-1!==(t=h.data.indexOf(n$3,t+1));)v.push({type:7,index:r}),t+=n$3.length-1;}r++;}}static createElement(t,i){const s=r.createElement("template");return s.innerHTML=t,s}}function N(t,i,s=t,e){var o,n,l,h;if(i===T)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const d=u(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==d&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===d?r=void 0:(r=new d(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=N(t,r._$AS(t,i.values),r,e)),i}class S{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:r).importNode(s,!0);C.currentNode=o;let n=C.nextNode(),l=0,h=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new M(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new z(n,this,t)),this._$AV.push(i),d=e[++h];}l!==(null==d?void 0:d.index)&&(n=C.nextNode(),l++);}return o}v(t){let i=0;for(const s of this._$AV)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class M{constructor(t,i,s,e){var o;this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cp=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cp}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===(null==t?void 0:t.nodeType)&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=N(this,t,i),u(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==T&&this._(t):void 0!==t._$litType$?this.g(t):void 0!==t.nodeType?this.$(t):v(t)?this.T(t):this._(t);}k(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}$(t){this._$AH!==t&&(this._$AR(),this._$AH=this.k(t));}_(t){this._$AH!==A&&u(this._$AH)?this._$AA.nextSibling.data=t:this.$(r.createTextNode(t)),this._$AH=t;}g(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=V.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.v(s);else {const t=new S(o,this),i=t.u(this.options);t.v(s),this.$(i),this._$AH=t;}}_$AC(t){let i=E.get(t.strings);return void 0===i&&E.set(t.strings,i=new V(t)),i}T(t){c(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new M(this.k(d()),this.k(d()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cp=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class R{constructor(t,i,s,e,o){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=N(this,t,i,0),n=!u(t)||t!==this._$AH&&t!==T,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=N(this,e[s+l],i,l),h===T&&(h=this._$AH[l]),n||(n=!u(h)||h!==this._$AH[l]),h===A?t=A:t!==A&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class k extends R{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}const H=s$1?s$1.emptyScript:"";class I extends R{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==A?this.element.setAttribute(this.name,H):this.element.removeAttribute(this.name);}}class L extends R{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=N(this,t,i,0))&&void 0!==s?s:A)===T)return;const e=this._$AH,o=t===A&&e!==A||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==A&&(e===A||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){N(this,t);}}const Z={O:o$5,P:n$3,A:l$2,C:1,M:P,L:S,D:v,R:N,I:M,V:R,H:I,N:L,U:k,F:z},j=i$4.litHtmlPolyfillSupport;null==j||j(V,M),(null!==(t$2=i$4.litHtmlVersions)&&void 0!==t$2?t$2:i$4.litHtmlVersions=[]).push("2.7.2");const B=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new M(i.insertBefore(d(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
 
     var litHtml = /*#__PURE__*/Object.freeze({
         __proto__: null,
@@ -60,9 +60,9 @@
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var l$1,o$3;class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=B(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return T}}s.finalized=!0,s._$litElement$=!0,null===(l$1=globalThis.litElementHydrateSupport)||void 0===l$1||l$1.call(globalThis,{LitElement:s});const n$1=globalThis.litElementPolyfillSupport;null==n$1||n$1({LitElement:s});(null!==(o$3=globalThis.litElementVersions)&&void 0!==o$3?o$3:globalThis.litElementVersions=[]).push("3.3.1");
+     */var l$1,o$4;class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=B(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return T}}s.finalized=!0,s._$litElement$=!0,null===(l$1=globalThis.litElementHydrateSupport)||void 0===l$1||l$1.call(globalThis,{LitElement:s});const n$2=globalThis.litElementPolyfillSupport;null==n$2||n$2({LitElement:s});(null!==(o$4=globalThis.litElementVersions)&&void 0!==o$4?o$4:globalThis.litElementVersions=[]).push("3.3.1");
 
-    const bootstrapStyles = i$4`
+    const bootstrapStyles = i$5`
 /*!
  * Bootstrap v4.6.0 (https://getbootstrap.com/)
  * Copyright 2011-2021 The Bootstrap Authors
@@ -84,7 +84,7 @@
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const i$2=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}};function e$2(e){return (n,t)=>void 0!==t?((i,e,n)=>{e.constructor.createProperty(n,i);})(e,n,t):i$2(e,n)}
+    const i$3=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}};function e$2(e){return (n,t)=>void 0!==t?((i,e,n)=>{e.constructor.createProperty(n,i);})(e,n,t):i$3(e,n)}
 
     /**
      * @license
@@ -97,25 +97,25 @@
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const o$2=({finisher:e,descriptor:t})=>(o,n)=>{var r;if(void 0===n){const n=null!==(r=o.originalKey)&&void 0!==r?r:o.key,i=null!=t?{kind:"method",placement:"prototype",key:n,descriptor:t(o.key)}:{...o,key:n};return null!=e&&(i.finisher=function(t){e(t,n);}),i}{const r=o.constructor;void 0!==t&&Object.defineProperty(o,n,t(n)),null==e||e(r,n);}};
+    const o$3=({finisher:e,descriptor:t})=>(o,n)=>{var r;if(void 0===n){const n=null!==(r=o.originalKey)&&void 0!==r?r:o.key,i=null!=t?{kind:"method",placement:"prototype",key:n,descriptor:t(o.key)}:{...o,key:n};return null!=e&&(i.finisher=function(t){e(t,n);}),i}{const r=o.constructor;void 0!==t&&Object.defineProperty(o,n,t(n)),null==e||e(r,n);}};
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */function i$1(i,n){return o$2({descriptor:o=>{const t={get(){var o,n;return null!==(n=null===(o=this.renderRoot)||void 0===o?void 0:o.querySelector(i))&&void 0!==n?n:null},enumerable:!0,configurable:!0};if(n){const n="symbol"==typeof o?Symbol():"__"+o;t.get=function(){var o,t;return void 0===this[n]&&(this[n]=null!==(t=null===(o=this.renderRoot)||void 0===o?void 0:o.querySelector(i))&&void 0!==t?t:null),this[n]};}return t}})}
+     */function i$2(i,n){return o$3({descriptor:o=>{const t={get(){var o,n;return null!==(n=null===(o=this.renderRoot)||void 0===o?void 0:o.querySelector(i))&&void 0!==n?n:null},enumerable:!0,configurable:!0};if(n){const n="symbol"==typeof o?Symbol():"__"+o;t.get=function(){var o,t;return void 0===this[n]&&(this[n]=null!==(t=null===(o=this.renderRoot)||void 0===o?void 0:o.querySelector(i))&&void 0!==t?t:null),this[n]};}return t}})}
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */function e$1(e){return o$2({descriptor:r=>({get(){var r,o;return null!==(o=null===(r=this.renderRoot)||void 0===r?void 0:r.querySelectorAll(e))&&void 0!==o?o:[]},enumerable:!0,configurable:!0})})}
+     */function e$1(e){return o$3({descriptor:r=>({get(){var r,o;return null!==(o=null===(r=this.renderRoot)||void 0===r?void 0:r.querySelectorAll(e))&&void 0!==o?o:[]},enumerable:!0,configurable:!0})})}
 
     /**
      * @license
      * Copyright 2021 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var n;null!=(null===(n=window.HTMLSlotElement)||void 0===n?void 0:n.prototype.assignedElements)?(o,n)=>o.assignedElements(n):(o,n)=>o.assignedNodes(n).filter((o=>o.nodeType===Node.ELEMENT_NODE));
+     */var n$1;null!=(null===(n$1=window.HTMLSlotElement)||void 0===n$1?void 0:n$1.prototype.assignedElements)?(o,n)=>o.assignedElements(n):(o,n)=>o.assignedNodes(n).filter((o=>o.nodeType===Node.ELEMENT_NODE));
 
     let LMSAnchor = class LMSAnchor extends s {
         constructor() {
@@ -184,7 +184,7 @@
     };
     LMSAnchor.styles = [
         bootstrapStyles,
-        i$4 `
+        i$5 `
       :host {
         display: inline-flex;
       }
@@ -242,7 +242,7 @@
     };
     LMSCard.styles = [
         bootstrapStyles,
-        i$4 `
+        i$5 `
       .card:hover {
         cursor: pointer;
         postion: relative;
@@ -277,13 +277,13 @@
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const t={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e=t=>(...e)=>({_$litDirective$:t,values:e});class i{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
+    const t={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e=t=>(...e)=>({_$litDirective$:t,values:e});class i$1{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
 
     /**
      * @license
      * Copyright 2018 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const o$1=e(class extends i{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.it){this.it=new Set,void 0!==i.strings&&(this.nt=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.nt)||void 0===r?void 0:r.has(t))&&this.it.add(t);return this.render(s)}const e=i.element.classList;this.it.forEach((t=>{t in s||(e.remove(t),this.it.delete(t));}));for(const t in s){const i=!!s[t];i===this.it.has(t)||(null===(o=this.nt)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.it.add(t)):(e.remove(t),this.it.delete(t)));}return T}});
+     */const o$2=e(class extends i$1{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.it){this.it=new Set,void 0!==i.strings&&(this.nt=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.nt)||void 0===r?void 0:r.has(t))&&this.it.add(t);return this.render(s)}const e=i.element.classList;this.it.forEach((t=>{t in s||(e.remove(t),this.it.delete(t));}));for(const t in s){const i=!!s[t];i===this.it.has(t)||(null===(o=this.nt)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.it.add(t)):(e.remove(t),this.it.delete(t)));}return T}});
 
     function getAugmentedNamespace(n) {
       if (n.__esModule) return n;
@@ -480,7 +480,7 @@
      * Copyright 2021 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    function*o(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
+    function*o$1(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
 
     /*! gettext.js - Guillaume Potier - MIT Licensed */
     var i18n = function (options) {
@@ -758,7 +758,7 @@
             console.error(`Error loading translations for locale ${locale}:`, error);
         }
     }
-    class TranslateDirective extends i {
+    class TranslateDirective extends i$1 {
         constructor(partInfo) {
             super(partInfo);
             this._element = null;
@@ -824,7 +824,7 @@
     }
     const __ = e(TranslateDirective);
 
-    const skeletonStyles = i$4 `
+    const skeletonStyles = i$5 `
   .skeleton {
     opacity: 0.7;
     animation: skeleton-loading 1s linear infinite alternate;
@@ -937,7 +937,7 @@
             return x `
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
-        class="modal fade ${o$1({
+        class="modal fade ${o$2({
             "d-block": this.isOpen,
             show: this.isOpen,
         })}"
@@ -1010,7 +1010,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        ${o(target_groups, (target_group) => {
+                        ${o$1(target_groups, (target_group) => {
             if (target_group.hasOwnProperty("target_group_id")) {
                 return A;
             }
@@ -1087,7 +1087,7 @@
     LMSCardDetailsModal.styles = [
         bootstrapStyles,
         skeletonStyles,
-        i$4 `
+        i$5 `
       .backdrop {
         position: fixed;
         top: 0;
@@ -1131,7 +1131,7 @@
         t$1()
     ], LMSCardDetailsModal.prototype, "locale", void 0);
     __decorate([
-        i$1(".close")
+        i$2(".close")
     ], LMSCardDetailsModal.prototype, "closeButton", void 0);
     LMSCardDetailsModal = __decorate([
         e$3("lms-card-details-modal")
@@ -1327,13 +1327,13 @@
             return x `
       <div class="card" @change=${this.handleChange}>
         <div
-          class="card-header d-flex ${o$1({
+          class="card-header d-flex ${o$2({
             "justify-content-between": !this.isHidden,
             "justify-content-center": this.isHidden,
         })} sticky-top bg-white"
         >
           <h5
-            class="card-title ${o$1({
+            class="card-title ${o$2({
             "d-inline": !this.isHidden,
             "d-none": this.isHidden,
         })}"
@@ -1353,7 +1353,7 @@
             </button>
             <button
               type="button"
-              class="btn btn-sm btn-outline-secondary ${o$1({
+              class="btn btn-sm btn-outline-secondary ${o$2({
             "d-none": this.isHidden,
         })}"
               @click=${this.handleReset}
@@ -1362,10 +1362,10 @@
             </button>
           </div>
         </div>
-        <div class="card-body ${o$1({ "d-none": this.isHidden })}">
+        <div class="card-body ${o$2({ "d-none": this.isHidden })}">
           <div class="form-group">
             <label for="event_type">${__("Event Type")}</label>
-            ${o(this.facets.eventTypeIds, (eventTypeId) => {
+            ${o$1(this.facets.eventTypeIds, (eventTypeId) => {
             var _a;
             return x `
                 <div class="form-group form-check">
@@ -1384,7 +1384,7 @@
           </div>
           <div class="form-group">
             <label for="target_group">${__("Target Group")}</label>
-            ${o(this.facets.targetGroupIds, (targetGroupId) => {
+            ${o$1(this.facets.targetGroupIds, (targetGroupId) => {
             var _a;
             return x ` <div class="form-group form-check">
                 <input
@@ -1451,7 +1451,7 @@
           </div>
           <div class="form-group">
             <label for="location">${__("Location")}</label>
-            ${o(this.facets.locationIds, (locationId) => {
+            ${o$1(this.facets.locationIds, (locationId) => {
             var _a;
             return x ` <div class="form-group form-check">
                   <input
@@ -1568,7 +1568,7 @@
     LMSFloatingMenu.styles = [
         bootstrapStyles,
         skeletonStyles,
-        i$4 `
+        i$5 `
       svg {
         width: 1rem;
         height: 1rem;
@@ -1683,7 +1683,7 @@
             return x `
       <div class="container-fluid">
         <div class="card-deck">
-          ${o(this.uploadedImages, (uploadedImage, index) => {
+          ${o$1(this.uploadedImages, (uploadedImage, index) => {
             const { image, metadata } = uploadedImage;
             const { dtcreated, filename, hashvalue } = metadata;
             const filetype = filename.split(".").pop();
@@ -1756,7 +1756,7 @@
     LMSImageBrowser.styles = [
         bootstrapStyles,
         skeletonStyles,
-        i$4 `
+        i$5 `
       img {
         aspect-ratio: 4 / 3;
         object-fit: cover;
@@ -1805,6 +1805,12 @@
     ], LMSImageBrowser);
     var LMSImageBrowser$1 = LMSImageBrowser;
 
+    /**
+     * @license
+     * Copyright 2018 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */const i="important",n=" !"+i,o=e(class extends i$1{constructor(t$1){var e;if(super(t$1),t$1.type!==t.ATTRIBUTE||"style"!==t$1.name||(null===(e=t$1.strings)||void 0===e?void 0:e.length)>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(t){return Object.keys(t).reduce(((e,r)=>{const s=t[r];return null==s?e:e+`${r=r.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${s};`}),"")}update(e,[r]){const{style:s}=e.element;if(void 0===this.ut){this.ut=new Set;for(const t in r)this.ut.add(t);return this.render(r)}this.ut.forEach((t=>{null==r[t]&&(this.ut.delete(t),t.includes("-")?s.removeProperty(t):s[t]="");}));for(const t in r){const e=r[t];if(null!=e){this.ut.add(t);const r="string"==typeof e&&e.endsWith(n);t.includes("-")||r?s.setProperty(t,r?e.slice(0,-11):e,r?i:""):s[t]=e;}}return T}});
+
     let LMSModal = class LMSModal extends s {
         constructor() {
             super(...arguments);
@@ -1818,13 +1824,8 @@
             this.modalTitle = "";
         }
         toggleModal() {
-            const { renderRoot } = this;
             this.isOpen = !this.isOpen;
             document.body.style.overflow = this.isOpen ? "hidden" : "auto";
-            const lmsModal = renderRoot.getElementById("lms-modal");
-            if (lmsModal) {
-                lmsModal.style.overflowY = this.isOpen ? "scroll" : "auto";
-            }
         }
         async create(e) {
             e.preventDefault();
@@ -1873,18 +1874,27 @@
         render() {
             var _a;
             return x `
-      <div class="btn-modal-wrapper">
+      <div
+        class="btn-modal-wrapper"
+        style=${o({
+            zIndex: this.isOpen ? "1051" : "1049",
+        })}
+      >
         <button
           @click=${this.toggleModal}
-          class="btn-modal ${o$1({ tilted: this.isOpen })}"
+          class="btn-modal ${o$2({ tilted: this.isOpen })}"
           type="button"
         >
           ${litFontawesome_2(faPlus)}
         </button>
       </div>
-      <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
-        class="modal fade ${o$1({
+        class="backdrop"
+        ?hidden=${!this.isOpen}
+        @click=${this.toggleModal}
+      ></div>
+      <div
+        class="modal fade ${o$2({
             "d-block": this.isOpen,
             show: this.isOpen,
         })}"
@@ -1893,6 +1903,9 @@
         role="dialog"
         aria-labelledby="lms-modal-title"
         aria-hidden="true"
+        style=${o({
+            overflowY: this.isOpen ? "scroll" : "auto",
+        })}
       >
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
@@ -1914,7 +1927,7 @@
                 <div
                   role="alert"
                   ?hidden=${!this.alertMessage}
-                  class="alert ${o$1({
+                  class="alert ${o$2({
             "alert-danger": this.alertMessage.includes("Sorry!"),
         })} alert-dismissible fade show"
                 >
@@ -1929,7 +1942,7 @@
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                ${o(this.fields, (value) => this.getFieldMarkup(value))}
+                ${o$1(this.fields, (value) => this.getFieldMarkup(value))}
               </div>
               <div class="modal-footer">
                 <button
@@ -2010,7 +2023,7 @@
     LMSModal.styles = [
         bootstrapStyles,
         skeletonStyles,
-        i$4 `
+        i$5 `
       .btn-modal-wrapper {
         position: fixed;
         bottom: 1em;
@@ -2051,9 +2064,9 @@
         transition-timing-function: ease-in-out;
         transform: translateX(2px) translateY(1px) rotate(45deg);
       }
-      .btn-modal-wrapper:has(.tilted) {
+      /* .btn-modal-wrapper:has(.tilted) {
         z-index: 1051;
-      }
+      } */
       svg {
         display: inline-block;
         width: 1em;
@@ -2099,7 +2112,7 @@
     LMSStaffEventCardAttendees.styles = [
         bootstrapStyles,
         skeletonStyles,
-        i$4 `
+        i$5 `
       svg {
         display: inline-block;
         width: 1em;
@@ -2150,7 +2163,7 @@
         name="event_type"
         disabled
       >
-        ${o(data, ({ id, name }) => x `<option
+        ${o$1(data, ({ id, name }) => x `<option
               value=${id}
               ?selected=${id === parseInt(value, 10)}
             >
@@ -2158,9 +2171,16 @@
             </option>`)};
       </select>`,
                 target_groups: (value, data) => x `
-        <table class="table table-sm mb-0">
+        <table class="table table-sm table-bordered table-striped mb-0">
+          <thead>
+            <tr>
+              <th scope="col">${__("target_group")}</th>
+              <th scope="col">${__("selected")}</th>
+              <th scope="col">${__("fee")}</th>
+            </tr>
+          </thead>
           <tbody>
-            ${o(data, ({ id, name }) => {
+            ${o$1(data, ({ id, name }) => {
                 var _a, _b;
                 const targetGroupFee = value.find((targetGroupFee) => targetGroupFee.target_group_id === id);
                 const selected = (_a = targetGroupFee === null || targetGroupFee === void 0 ? void 0 : targetGroupFee.selected) !== null && _a !== void 0 ? _a : false;
@@ -2223,22 +2243,22 @@
         name="location"
         disabled
       >
-        ${o(data, ({ id, name }) => x `<option value=${id} ?selected=${id === value}>${name}</option>`)};
+        ${o$1(data, ({ id, name }) => x `<option value=${id} ?selected=${id === value}>${name}</option>`)};
       </select>`,
                 image: (value) => x `<input
         class="form-control"
-        type="number"
+        type="text"
         name="image"
         value=${value}
         disabled
       />`,
-                description: (value) => x `<input
-        class="form-control"
-        type="text"
+                description: (value) => x `<textarea
+        class="form-control overflow-hidden h-100"
         name="description"
-        value=${value}
         disabled
-      />`,
+      >
+${value}</textarea
+      >`,
                 open_registration: (value) => x `<input
         class="form-control"
         type="checkbox"
@@ -2391,7 +2411,7 @@
     };
     LMSStaffEventCardPreview.styles = [
         bootstrapStyles, skeletonStyles,
-        i$4 `
+        i$5 `
       svg {
         display: inline-block;
         width: 1em;
@@ -2644,7 +2664,7 @@
     LMSStaffEventCardForm.styles = [
         bootstrapStyles,
         skeletonStyles,
-        i$4 `
+        i$5 `
       svg {
         display: inline-block;
         width: 1em;
@@ -2681,10 +2701,16 @@
             this.locations = [];
             this.data = [];
             this.cardStates = new Map();
+            this.inputConverter = new InputConverter();
         }
         connectedCallback() {
             super.connectedCallback();
             this.hydrate();
+        }
+        *getColumnData(query, data) {
+            for (const [name, value] of Object.entries(query)) {
+                yield [name, this.inputConverter.getInputTemplate({ name, value, data })];
+            }
         }
         hydrate() {
             /** Here we initialize the card states so we can track them
@@ -2693,10 +2719,11 @@
                 this.cardStates.set(crypto.getRandomValues(new Uint32Array(2)).join("-"), ["data"]);
             });
             const data = this.events.map((event) => {
-                const entries = Object.entries(event).map(([name, value]) => {
-                    return [name, this.getInputFromColumn({ name, value })];
-                });
-                return Object.fromEntries(entries);
+                return Object.fromEntries(this.getColumnData(event, [
+                    ["target_groups", this.target_groups],
+                    ["location", this.locations],
+                    ["event_type", this.event_types],
+                ]));
             });
             /** Here we tag every datum with the uuid we generated earlier. */
             this.data = data.map((datum, index) => {
@@ -2706,247 +2733,6 @@
                     uuid,
                 };
             });
-        }
-        getInputFromColumn({ name, value, }) {
-            const inputs = new Map([
-                [
-                    "name",
-                    x `<input
-          class="form-control"
-          type="text"
-          name="name"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "event_type",
-                    x `<select class="form-control" name="event_type" disabled>
-          ${o(this.event_types, ({ id, name }) => x `<option
-                value=${id}
-                ?selected=${id === parseInt(value, 10)}
-              >
-                ${name}
-              </option>`)};
-        </select>`,
-                ],
-                [
-                    "target_groups",
-                    x `
-          <table class="table table-sm table-bordered table-striped">
-            <thead>
-              <tr>
-                <th scope="col">${__("target_group")}</th>
-                <th scope="col">${__("selected")}</th>
-                <th scope="col">${__("fee")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${o(this.target_groups, ({ id, name }) => {
-                    var _a, _b;
-                    const target_group = value.find((target_group) => target_group.target_group_id === id);
-                    const selected = (_a = target_group === null || target_group === void 0 ? void 0 : target_group.selected) !== null && _a !== void 0 ? _a : false;
-                    const fee = (_b = target_group === null || target_group === void 0 ? void 0 : target_group.fee) !== null && _b !== void 0 ? _b : 0;
-                    return x `
-                  <tr>
-                    <td
-                      id=${id}
-                      data-group="target_groups"
-                      data-name="id"
-                      class="align-middle"
-                    >
-                      ${name}
-                    </td>
-                    <td class="align-middle">
-                      <input
-                        type="checkbox"
-                        data-group="target_groups"
-                        data-name="selected"
-                        id=${id}
-                        class="form-control"
-                        ?checked=${selected}
-                        disabled
-                      />
-                    </td>
-                    <td class="align-middle">
-                      <input
-                        type="number"
-                        data-group="target_groups"
-                        data-name="fee"
-                        id=${id}
-                        step="0.01"
-                        class="form-control"
-                        value=${fee}
-                        disabled
-                      />
-                    </td>
-                  </tr>
-                `;
-                })}
-            </tbody>
-          </table>
-        `,
-                ],
-                [
-                    "min_age",
-                    x `<input
-          class="form-control"
-          type="number"
-          name="min_age"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "max_age",
-                    x `<input
-          class="form-control"
-          type="number"
-          name="max_age"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "max_participants",
-                    x `<input
-          class="form-control"
-          type="number"
-          name="max_participants"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "start_time",
-                    x `<input
-          class="form-control"
-          type="datetime-local"
-          name="start_time"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "end_time",
-                    x `<input
-          class="form-control"
-          type="datetime-local"
-          name="end_time"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "registration_start",
-                    x `<input
-          class="form-control"
-          type="datetime-local"
-          name="registration_start"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "registration_end",
-                    x `<input
-          class="form-control"
-          type="datetime-local"
-          name="registration_end"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "fee",
-                    x `<input
-          class="form-control"
-          type="number"
-          step="0.01"
-          name="fee"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "location",
-                    x `<select class="form-control" name="location" disabled>
-          ${o(this.locations, ({ id, name }) => x `<option value=${id}>${name}</option>`)}
-        </select>`,
-                ],
-                [
-                    "image",
-                    x `<input
-          class="form-control"
-          type="text"
-          name="image"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "description",
-                    x `<textarea
-          class="form-control overflow-hidden h-100"
-          name="description"
-          disabled
-        >
-${value}</textarea
-        >`,
-                ],
-                [
-                    "status",
-                    x `<select class="form-control" name="status" disabled>
-          <option value="pending" ?selected=${value === "pending"}>
-            ${__("Pending")}
-          </option>
-          <option
-            value="confirmed"
-            ?selected=${value === "confirmed"}
-          >
-            ${__("Confirmed")}
-          </option>
-          <option
-            value="canceled"
-            ?selected=${value === "canceled"}
-          >
-            ${__("Canceled")}
-          </option>
-          <option
-            value="sold_out"
-            ?selected=${value === "sold_out"}
-          >
-            ${__("Sold Out")}
-          </option>
-        </select>`,
-                ],
-                [
-                    "registration_link",
-                    x `<input
-          class="form-control"
-          type="text"
-          name="registration_link"
-          value=${value}
-          disabled
-        />`,
-                ],
-                [
-                    "open_registration",
-                    x `<input
-          @change=${(e) => {
-                    const target = e.target;
-                    target.value = (target.checked ? 1 : 0).toString();
-                }}
-          class="form-check-input"
-          type="checkbox"
-          name="open_registration"
-          ?checked=${value}
-          disabled
-        />`,
-                ],
-                ["default", x `${value}`],
-            ]);
-            return inputs.get(name) ? inputs.get(name) : inputs.get("default");
         }
         handleTabClick(event) {
             var _a, _b;
@@ -2970,7 +2756,7 @@ ${value}</textarea
             return x `
       <div class="container-fluid mx-0">
         <div class="card-deck card-deck-responsive">
-          ${o(this.data, (datum, index) => {
+          ${o$1(this.data, (datum, index) => {
             const { name, uuid } = datum;
             const [title] = new TemplateResultConverter(name).getRenderValues();
             const [state] = this.cardStates.get(uuid) || "data";
@@ -3032,7 +2818,7 @@ ${value}</textarea
     LMSStaffEventCardDeck.styles = [
         bootstrapStyles,
         skeletonStyles,
-        i$4 `
+        i$5 `
       .card-deck-responsive {
         display: flex;
         flex-wrap: wrap;
@@ -3166,7 +2952,7 @@ ${value}</textarea
     `;
         }
     };
-    LMSTooltip.styles = i$4 `
+    LMSTooltip.styles = i$5 `
     :host {
       display: inline-block;
     }
@@ -3257,13 +3043,13 @@ ${value}</textarea
       <table class="table table-bordered" id=${field.name}>
         <thead>
           <tr>
-            ${o(field.headers, ([name]) => x `<th scope="col">${name}</th>`)}
+            ${o$1(field.headers, ([name]) => x `<th scope="col">${name}</th>`)}
           </tr>
         </thead>
         <tbody>
-          ${o(field.dbData, (row) => x `<tr>
+          ${o$1(field.dbData, (row) => x `<tr>
               <td class="align-middle">${row.name}</td>
-              ${o(field.headers, (header) => this.getMatrixInputMarkup({ field, row, header }))}
+              ${o$1(field.headers, (header) => this.getMatrixInputMarkup({ field, row, header }))}
             </tr>`)}
         </tbody>
       </table>`;
@@ -3353,7 +3139,7 @@ ${value}</textarea
     // @state() private hasTransformedField = false;
     LMSMatrix.styles = [
         bootstrapStyles,
-        i$4 `
+        i$5 `
       input[type="checkbox"].form-control {
         font-size: 0.375rem;
       }
@@ -3446,7 +3232,7 @@ ${value}</textarea
         }}
           ?required=${required}
         >
-          ${o(dbData, ({ id, name }) => x `<option
+          ${o$1(dbData, ({ id, name }) => x `<option
                 value=${id}
                 ?selected=${id === this.defaultOption.id}
               >
@@ -3542,6 +3328,7 @@ ${value}</textarea
             this.hydrate();
         }
         hydrate() {
+            this.modalTitle = __("Create Event");
             this.fields = [
                 {
                     name: "name",
@@ -3764,6 +3551,7 @@ ${value}</textarea
             this.hydrate();
         }
         hydrate() {
+            this.modalTitle = __("Create Event Type");
             this.fields = [
                 {
                     name: "name",
@@ -3983,7 +3771,7 @@ ${value}</textarea
             >
               <thead>
                 <tr>
-                  ${o(this.headers, (key) => x `<th scope="col">
+                  ${o$1(this.headers, (key) => x `<th scope="col">
                         <div class="d-flex">
                           ${__(key)}
                           <button
@@ -4012,9 +3800,9 @@ ${value}</textarea
                 </tr>
               </thead>
               <tbody>
-                ${o(this.data, (datum) => x `
+                ${o$1(this.data, (datum) => x `
                     <tr>
-                      ${o(this.headers, (header) => x `<td class="align-middle">${datum[header]}</td>`)}
+                      ${o$1(this.headers, (header) => x `<td class="align-middle">${datum[header]}</td>`)}
                       ${this.isEditable
                 ? x `
                             <td class="align-middle">
@@ -4059,7 +3847,7 @@ ${value}</textarea
     LMSTable.styles = [
         bootstrapStyles,
         skeletonStyles,
-        i$4 `
+        i$5 `
       table {
         background: white;
         padding: 1em;
@@ -4128,7 +3916,7 @@ ${value}</textarea
                     parent = parent.parentElement;
                 }
                 if (parent) {
-                    inputs = parent === null || parent === void 0 ? void 0 : parent.querySelectorAll("input, select");
+                    inputs = parent === null || parent === void 0 ? void 0 : parent.querySelectorAll("input, select, textarea");
                     inputs === null || inputs === void 0 ? void 0 : inputs.forEach((input) => {
                         input.disabled = false;
                     });
@@ -4151,7 +3939,7 @@ ${value}</textarea
             let id, inputs = undefined;
             if (parent) {
                 id = (_b = (_a = parent.firstElementChild) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();
-                inputs = parent.querySelectorAll("input, select");
+                inputs = parent.querySelectorAll("input, select, textarea");
             }
             if (!id || !inputs) {
                 return;
@@ -4222,14 +4010,6 @@ ${value}</textarea
             this.target_groups = [];
             this.locations = [];
             this.event_types = [];
-            this.href = {
-                path: "/cgi-bin/koha/plugins/run.pl",
-                query: true,
-                params: {
-                    class: "Koha::Plugin::Com::LMSCloud::EventManagement",
-                    method: "configure",
-                },
-            };
             this.order = [
                 "id",
                 "name",
@@ -4244,28 +4024,6 @@ ${value}</textarea
             ];
             this.isEditable = true;
             this.isDeletable = true;
-            this.emptyTableMessage = x `${__("You have to create a")}&nbsp;
-      <lms-anchor
-        .href=${{
-            ...this.href,
-            params: {
-                ...this.href.params,
-                op: "target-groups",
-            },
-        }}
-        >${__("target group")}</lms-anchor
-      >&nbsp;${__("and a")}&nbsp;
-      <lms-anchor
-        .href=${{
-            ...this.href,
-            params: {
-                ...this.href.params,
-                op: "locations",
-            },
-        }}
-        >${__("location")}</lms-anchor
-      >
-      &nbsp;${__("first")}.`;
         }
         connectedCallback() {
             super.connectedCallback();
@@ -4289,9 +4047,6 @@ ${value}</textarea
     __decorate([
         e$2({ type: Array })
     ], LMSEventTypesTable$1.prototype, "event_types", void 0);
-    __decorate([
-        e$2({ type: Object, attribute: false })
-    ], LMSEventTypesTable$1.prototype, "href", void 0);
     LMSEventTypesTable$1 = __decorate([
         e$3("lms-event-types-table")
     ], LMSEventTypesTable$1);
@@ -4310,6 +4065,7 @@ ${value}</textarea
             this.hydrate();
         }
         hydrate() {
+            this.modalTitle = __("Create Location");
             this.fields = [
                 {
                     name: "name",
@@ -4489,6 +4245,7 @@ ${value}</textarea
             this.hydrate();
         }
         hydrate() {
+            this.modalTitle = __("Create Target Group");
             this.fields = [
                 {
                     name: "name",
@@ -4747,7 +4504,7 @@ ${value}</textarea
             </div>
           </div>
           <div
-            class="${o$1({
+            class="${o$2({
             "col-xl-3": !this.hasHiddenFacets,
             "col-xl-1": this.hasHiddenFacets,
             "col-lg-4": !this.hasHiddenFacets,
@@ -4765,7 +4522,7 @@ ${value}</textarea
             ></lms-events-filter>
           </div>
           <div
-            class="${o$1({
+            class="${o$2({
             "col-xl-9": !this.hasHiddenFacets,
             "col-xl-11": this.hasHiddenFacets,
             "col-lg-8": !this.hasHiddenFacets,
@@ -4776,7 +4533,7 @@ ${value}</textarea
             ?hidden=${!this.events.length}
           >
             <div class="card-deck">
-              ${(_a = o(this.events, (event) => x `
+              ${(_a = o$1(this.events, (event) => x `
                   <lms-card
                     tabindex="0"
                     @keyup=${(e) => {
@@ -4807,7 +4564,7 @@ ${value}</textarea
     LMSEventsView.styles = [
         bootstrapStyles,
         skeletonStyles,
-        i$4 `
+        i$5 `
       .card-deck {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
@@ -4935,43 +4692,41 @@ ${value}</textarea
         }
         render() {
             if (!this.hasData()) {
-                return x `
-        <h1 class="text-center">
-          ${__("You have to create a")}&nbsp;
-          <lms-anchor
-            .href=${{
+                return x ` <h1 class="text-center">
+        ${__("You have to create a")}&nbsp;
+        <lms-anchor
+          .href=${{
                 ...this.href,
                 params: {
                     ...this.href.params,
                     op: "target-groups",
                 },
             }}
-            >${__("target group")}</lms-anchor
-          >, ${__("a")}&nbsp;
-          <lms-anchor
-            .href=${{
+          >${__("target group")}</lms-anchor
+        >, ${__("a")}&nbsp;
+        <lms-anchor
+          .href=${{
                 ...this.href,
                 params: {
                     ...this.href.params,
                     op: "locations",
                 },
             }}
-            >${__("location")}</lms-anchor
-          >
-          &nbsp;${__("and an")}&nbsp;
-          <lms-anchor
-            .href=${{
+          >${__("location")}</lms-anchor
+        >
+        &nbsp;${__("and an")}&nbsp;
+        <lms-anchor
+          .href=${{
                 ...this.href,
                 params: {
                     ...this.href.params,
                     op: "event-types",
                 },
             }}
-            >${__("event type")}</lms-anchor
-          >
-          &nbsp;${__("first")}.
-        </h1>
-      </div>`;
+          >${__("event type")}</lms-anchor
+        >
+        &nbsp;${__("first")}.
+      </h1>`;
             }
             return x `
       <lms-staff-event-card-deck
@@ -4999,6 +4754,14 @@ ${value}</textarea
             this.event_types = [];
             this.target_groups = [];
             this.locations = [];
+            this.href = {
+                path: "/cgi-bin/koha/plugins/run.pl",
+                query: true,
+                params: {
+                    class: "Koha::Plugin::Com::LMSCloud::EventManagement",
+                    method: "configure",
+                },
+            };
         }
         connectedCallback() {
             super.connectedCallback();
@@ -5019,7 +4782,30 @@ ${value}</textarea
         }
         render() {
             if (!this.hasData()) {
-                return x `<div class="skeleton"></div>`;
+                return x ` <h1 class="text-center">
+        ${__("You have to create a")}&nbsp;
+        <lms-anchor
+          .href=${{
+                ...this.href,
+                params: {
+                    ...this.href.params,
+                    op: "target-groups",
+                },
+            }}
+          >${__("target group")}</lms-anchor
+        >&nbsp;${__("and a")}&nbsp;
+        <lms-anchor
+          .href=${{
+                ...this.href,
+                params: {
+                    ...this.href.params,
+                    op: "locations",
+                },
+            }}
+          >${__("location")}</lms-anchor
+        >
+        &nbsp;${__("first")}.
+      </h1>`;
             }
             return x `
       <lms-event-types-table
@@ -5031,9 +4817,13 @@ ${value}</textarea
     `;
         }
     };
+    StaffEventTypesView$1.styles = [bootstrapStyles, skeletonStyles];
     __decorate([
         t$1()
     ], StaffEventTypesView$1.prototype, "event_types", void 0);
+    __decorate([
+        e$2({ type: Object, attribute: false })
+    ], StaffEventTypesView$1.prototype, "href", void 0);
     StaffEventTypesView$1 = __decorate([
         e$3("lms-staff-event-types-view")
     ], StaffEventTypesView$1);
@@ -5055,7 +4845,7 @@ ${value}</textarea
         }
         render() {
             if (!this.locations.length) {
-                return x `<div class="skeleton"></div>`;
+                return x ` <h1 class="text-center">${__("No data to display")}.</h1>`;
             }
             return x `
       <lms-locations-table .locations=${this.locations}></lms-locations-table>
@@ -5063,6 +4853,7 @@ ${value}</textarea
     `;
         }
     };
+    StaffLocationsView.styles = [bootstrapStyles, skeletonStyles];
     __decorate([
         t$1()
     ], StaffLocationsView.prototype, "locations", void 0);
@@ -5102,7 +4893,7 @@ ${value}</textarea
         }
         render() {
             if (!this.target_groups.length) {
-                return x `<div class="skeleton"></div>`;
+                return x ` <h1 class="text-center">${__("No data to display")}.</h1>`;
             }
             return x `
       <lms-target-groups-table
@@ -5112,6 +4903,7 @@ ${value}</textarea
     `;
         }
     };
+    StaffEventTypesView.styles = [bootstrapStyles, skeletonStyles];
     __decorate([
         t$1()
     ], StaffEventTypesView.prototype, "target_groups", void 0);
