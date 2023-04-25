@@ -15,6 +15,67 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit"
 
+#: src/dynamically_added_strings.ts:8
+msgid "id"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:9
+msgid "name"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:10 src/dynamically_added_strings.ts:18
+msgid "min_age"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:11 src/dynamically_added_strings.ts:19
+msgid "max_age"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:12
+msgid "street"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:13
+msgid "number"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:14
+msgid "city"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:15
+msgid "zip"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:16
+msgid "country"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:17
+msgid "target_groups"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:20
+msgid "max_participants"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:21 src/extensions/LMSEventTypesTable.ts:201
+#: src/views/StaffEventsView.ts:83
+msgid "location"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:22
+msgid "image"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:23
+msgid "description"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:24
+msgid "open_registration"
+msgstr ""
+
 #: src/components/LMSCardDetailsModal.ts:222
 msgid "Date and Time"
 msgstr ""
@@ -102,7 +163,7 @@ msgstr ""
 msgid "End Date"
 msgstr ""
 
-#: src/components/LMSFloatingMenu.ts:84
+#: src/components/LMSFloatingMenu.ts:86
 msgid "current"
 msgstr ""
 
@@ -126,47 +187,47 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:114
+#: src/components/LMSStaffEventCardDeck.ts:156
 msgid "target_group"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:115
+#: src/components/LMSStaffEventCardDeck.ts:157
 msgid "selected"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:116
+#: src/components/LMSStaffEventCardDeck.ts:158
 msgid "fee"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:281
-#: src/extensions/LMSEventsModal.ts:139
+#: src/components/LMSStaffEventCardDeck.ts:323
+#: src/extensions/LMSEventsModal.ts:139 src/lib/converters.ts:266
 msgid "Pending"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:287
-#: src/extensions/LMSEventsModal.ts:140
+#: src/components/LMSStaffEventCardDeck.ts:329
+#: src/extensions/LMSEventsModal.ts:140 src/lib/converters.ts:272
 msgid "Confirmed"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:293
-#: src/extensions/LMSEventsModal.ts:141
+#: src/components/LMSStaffEventCardDeck.ts:335
+#: src/extensions/LMSEventsModal.ts:141 src/lib/converters.ts:275
 msgid "Canceled"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:299
-#: src/extensions/LMSEventsModal.ts:142
+#: src/components/LMSStaffEventCardDeck.ts:341
+#: src/extensions/LMSEventsModal.ts:142 src/lib/converters.ts:278
 msgid "Sold Out"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:369
+#: src/components/LMSStaffEventCardDeck.ts:411
 msgid "Data"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:377
+#: src/components/LMSStaffEventCardDeck.ts:419
 msgid "Waitlist"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:385
+#: src/components/LMSStaffEventCardDeck.ts:427
 msgid "Preview"
 msgstr ""
 
@@ -174,19 +235,19 @@ msgstr ""
 msgid "No data to display"
 msgstr ""
 
-#: src/components/LMSTable.ts:239
+#: src/components/LMSTable.ts:252
 msgid "actions"
 msgstr ""
 
-#: src/components/LMSTable.ts:263
+#: src/components/LMSTable.ts:276
 msgid "Edit"
 msgstr ""
 
-#: src/components/LMSTable.ts:271
+#: src/components/LMSTable.ts:284
 msgid "Save"
 msgstr ""
 
-#: src/components/LMSTable.ts:280
+#: src/components/LMSTable.ts:293
 msgid "Delete"
 msgstr ""
 
@@ -236,23 +297,19 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
-#: src/extensions/LMSEventTypesTable.ts:183 src/views/StaffEventsView.ts:64
+#: src/extensions/LMSEventTypesTable.ts:182 src/views/StaffEventsView.ts:64
 msgid "You have to create a"
 msgstr ""
 
-#: src/extensions/LMSEventTypesTable.ts:192 src/views/StaffEventsView.ts:73
+#: src/extensions/LMSEventTypesTable.ts:191 src/views/StaffEventsView.ts:73
 msgid "target group"
 msgstr ""
 
-#: src/extensions/LMSEventTypesTable.ts:193
+#: src/extensions/LMSEventTypesTable.ts:192
 msgid "and a"
 msgstr ""
 
-#: src/extensions/LMSEventTypesTable.ts:202 src/views/StaffEventsView.ts:83
-msgid "location"
-msgstr ""
-
-#: src/extensions/LMSEventTypesTable.ts:204 src/views/StaffEventsView.ts:96
+#: src/extensions/LMSEventTypesTable.ts:203 src/views/StaffEventsView.ts:96
 msgid "first"
 msgstr ""
 
@@ -298,6 +355,10 @@ msgstr ""
 
 #: src/extensions/LMSLocationsModal.ts:58
 msgid "Country"
+msgstr ""
+
+#: src/lib/converters.ts:327
+msgid "Error"
 msgstr ""
 
 #: src/views/LMSEventsView.ts:232

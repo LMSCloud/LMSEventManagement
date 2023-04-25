@@ -12,7 +12,7 @@
     "ktd:copy": "docker cp Koha koha-koha-1:/var/lib/koha/kohadev/plugins/",
     "ktd:restart": "docker exec -ti koha-koha-1 bash -c \"koha-plack --restart kohadev\"",
     "ktd:install": "npm run ktd:copy && docker exec -ti koha-koha-1 /kohadevbox/koha/misc/devel/install_plugins.pl && (test \"$RESTART\" = \"true\" && npm run ktd:restart || true)",
-    "translate:extract": "./tools/extract_translations.sh --output com.lmscloud.eventmanagement.pot --source \"src/**/*.ts\" --source \"Koha/Plugin/Com/LMSCloud/EventManagement/**/*.pm\" --template \"Koha/Plugin/Com/LMSCloud/EventManagement/views/**/*.tt\"",
+    "translate:extract": "./tools/extract_translations.sh --output com.lmscloud.eventmanagement.pot --source \"src/*.ts\" --source \"src/**/*.ts\" --source \"Koha/Plugin/Com/LMSCloud/EventManagement/**/*.pm\" --template \"Koha/Plugin/Com/LMSCloud/EventManagement/views/**/*.tt\"",
     "translate:instantiate": "[[ -z \"$LOCALE\" ]] && echo \"LOCALE not set\" || (if [ ! -f locales/$LOCALE.po ]; then msginit --input=com.lmscloud.eventmanagement.pot --locale=$LOCALE --output-file=locales/$LOCALE.po; else msgmerge --update locales/$LOCALE.po com.lmscloud.eventmanagement.pot; fi)",
     "translate:package": "./tools/package_translations.mjs && ./tools/add_static_routes.mjs"
   },
