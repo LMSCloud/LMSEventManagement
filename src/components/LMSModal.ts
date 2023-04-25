@@ -56,7 +56,7 @@ export default class LMSModal extends LitElement {
         bottom: 1em;
         right: 1em;
         border-radius: 50%;
-        background-color: var(--background-color);
+        background-color: var(--primary-color);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -91,20 +91,17 @@ export default class LMSModal extends LitElement {
         transition-timing-function: ease-in-out;
         transform: translateX(2px) translateY(1px) rotate(45deg);
       }
-      /* .btn-modal-wrapper:has(.tilted) {
-        z-index: 1051;
-      } */
       svg {
         display: inline-block;
         width: 1em;
         height: 1em;
-        color: #ffffff;
+        color: var(--background-color);
       }
       button {
         white-space: nowrap;
       }
       button.btn-modal > svg {
-        color: var(--text-color);
+        color: var(--background-color);
       }
     `,
   ];
@@ -155,6 +152,8 @@ export default class LMSModal extends LitElement {
   }
 
   override firstUpdated() {
+    this.initIntersectionObserver();
+
     const dbDataPopulated = this.fields.map(async (field: ModalField) => {
       if (field.logic) {
         return {
@@ -319,5 +318,31 @@ export default class LMSModal extends LitElement {
     return fieldTypes.has(type)
       ? fieldTypes.get(type)
       : fieldTypes.get("default");
+  }
+
+  initIntersectionObserver() {
+    const footer = document.getElementById("i18nMenu")?.parentElement;
+    const btnModalWrapper = this.shadowRoot?.querySelector(
+      ".btn-modal-wrapper"
+    ) as HTMLElement;
+    if (!footer || !btnModalWrapper) return;
+
+    const observer = new IntersectionObserver(
+      (entries: IntersectionObserverEntry[]) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0) {
+            let bottom = parseFloat(getComputedStyle(btnModalWrapper).bottom);
+            bottom = bottom + footer.offsetHeight;
+            btnModalWrapper.style.bottom = `${bottom}px`;
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "0px",
+        threshold: 1.0,
+      }
+    );
+    observer.observe(footer);
   }
 }
