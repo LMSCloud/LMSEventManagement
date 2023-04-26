@@ -1,19 +1,9 @@
-/* eslint-disable no-underscore-dangle */
-import {
-  LitElement,
-  html,
-  css,
-  // PropertyValues,
-  nothing,
-  TemplateResult,
-} from "lit";
+import { LitElement, html, css, nothing, TemplateResult } from "lit";
 import { map } from "lit/directives/map.js";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
-// import translate from "../lib/TranslationHandler";
 import { customElement, property, state } from "lit/decorators.js";
-// import { Gettext } from "gettext.js";
 import { CreateOpts, MatrixGroup, ModalField } from "../sharedDeclarations";
 import LMSSelect from "./Inputs/LMSSelect";
 import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
