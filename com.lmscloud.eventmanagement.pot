@@ -20,14 +20,17 @@ msgid "id"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:9
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroups.pm:61
 msgid "name"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:10 src/dynamically_added_strings.ts:18
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroups.pm:65
 msgid "min_age"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:11 src/dynamically_added_strings.ts:19
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroups.pm:73
 msgid "max_age"
 msgstr ""
 
@@ -59,8 +62,8 @@ msgstr ""
 msgid "max_participants"
 msgstr ""
 
-#: src/dynamically_added_strings.ts:21 src/views/StaffEventTypesView.ts:76
-#: src/views/StaffEventsView.ts:82
+#: src/dynamically_added_strings.ts:21 src/views/StaffEventTypesView.ts:81
+#: src/views/StaffEventsView.ts:87
 msgid "location"
 msgstr ""
 
@@ -109,7 +112,7 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:303 src/components/LMSModal.ts:253
+#: src/components/LMSCardDetailsModal.ts:303 src/components/LMSModal.ts:266
 msgid "Close"
 msgstr ""
 
@@ -171,11 +174,11 @@ msgstr ""
 msgid "Copy to clipboard"
 msgstr ""
 
-#: src/components/LMSModal.ts:212
+#: src/components/LMSModal.ts:225
 msgid "Add"
 msgstr ""
 
-#: src/components/LMSModal.ts:257
+#: src/components/LMSModal.ts:270
 msgid "Create"
 msgstr ""
 
@@ -187,36 +190,36 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:165
+#: src/components/LMSStaffEventCardDeck.ts:173
 msgid "Data"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:173
+#: src/components/LMSStaffEventCardDeck.ts:181
 msgid "Waitlist"
 msgstr ""
 
-#: src/components/LMSStaffEventCardDeck.ts:181
+#: src/components/LMSStaffEventCardDeck.ts:189
 msgid "Preview"
 msgstr ""
 
-#: src/components/LMSTable.ts:46 src/views/StaffLocationsView.ts:35
+#: src/components/LMSTable.ts:46 src/views/StaffLocationsView.ts:40
 #: src/views/StaffTargetGroupsView.ts:42
 msgid "No data to display"
 msgstr ""
 
-#: src/components/LMSTable.ts:252
+#: src/components/LMSTable.ts:249
 msgid "actions"
 msgstr ""
 
-#: src/components/LMSTable.ts:276
+#: src/components/LMSTable.ts:273
 msgid "Edit"
 msgstr ""
 
-#: src/components/LMSTable.ts:284
+#: src/components/LMSTable.ts:281
 msgid "Save"
 msgstr ""
 
-#: src/components/LMSTable.ts:293
+#: src/components/LMSTable.ts:290
 msgid "Delete"
 msgstr ""
 
@@ -362,31 +365,31 @@ msgstr ""
 msgid "There are no events to display"
 msgstr ""
 
-#: src/views/StaffEventTypesView.ts:57 src/views/StaffEventsView.ts:63
+#: src/views/StaffEventTypesView.ts:62 src/views/StaffEventsView.ts:68
 msgid "You have to create a"
 msgstr ""
 
-#: src/views/StaffEventTypesView.ts:66 src/views/StaffEventsView.ts:72
+#: src/views/StaffEventTypesView.ts:71 src/views/StaffEventsView.ts:77
 msgid "target group"
 msgstr ""
 
-#: src/views/StaffEventTypesView.ts:67
+#: src/views/StaffEventTypesView.ts:72
 msgid "and a"
 msgstr ""
 
-#: src/views/StaffEventTypesView.ts:78 src/views/StaffEventsView.ts:95
+#: src/views/StaffEventTypesView.ts:83 src/views/StaffEventsView.ts:100
 msgid "first"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:73
+#: src/views/StaffEventsView.ts:78
 msgid "a"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:84
+#: src/views/StaffEventsView.ts:89
 msgid "and an"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:93
+#: src/views/StaffEventsView.ts:98
 msgid "event type"
 msgstr ""
 
@@ -394,9 +397,9 @@ msgstr ""
 msgid "Not implemented"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:38
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:64
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:112
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:46
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:72
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:120
 msgid "Event not found"
 msgstr ""
 
@@ -416,6 +419,78 @@ msgstr ""
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:61
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:89
 msgid "Target Group not found"
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:76
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:108
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:190
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:217
+msgid "The given value is not defined."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:92
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:138
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:174
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:204
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:228
+msgid "The given value for "
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:92
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:138
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:174
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:204
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:228
+msgid "The given value: "
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:93
+msgid " is not alphanumeric."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:94
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:140
+msgid " has not the given length."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:95
+msgid " exceeds the maximum length."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:139
+msgid " is not a number."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:141
+msgid " is not positive."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:142
+msgid " exceeds the maximum value."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:143
+msgid " is not in the given range."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:175
+msgid " is not a datetime in the format YYYY-MM-DDTHH:mm."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:176
+msgid " is not after the current localtime."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:177
+msgid " is not before the given datetime."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:205
+msgid " is not a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0)."
+msgstr ""
+
+#: Koha/Plugin/Com/LMSCloud/EventManagement/lib/Validator.pm:229
+msgid " is not a time in the format HH:mm."
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/EventManagement/views/opac/events.tt:8
