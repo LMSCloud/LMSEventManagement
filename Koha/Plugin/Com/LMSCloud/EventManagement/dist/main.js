@@ -732,8 +732,8 @@
     let translationsLoaded = false;
     let callbacks = [];
     let loadTranslationsCalled = false;
+    let locale = document.documentElement.lang.slice(0, 2);
     async function loadTranslations(localeUrl = "/api/v1/contrib/eventmanagement/static/locales") {
-        const locale = document.documentElement.lang.slice(0, 2);
         if (locale.startsWith("en") || translationsLoaded) {
             return;
         }
@@ -1820,17 +1820,30 @@
             };
             this.editable = false;
             this.isOpen = false;
-            this.alertMessage = "";
+            this.alert = { active: false, message: undefined };
             this.modalTitle = "";
         }
         toggleModal() {
             this.isOpen = !this.isOpen;
             document.body.style.overflow = this.isOpen ? "hidden" : "auto";
+            if (!this.isOpen) {
+                this.alert = {
+                    active: false,
+                    message: undefined,
+                };
+            }
+        }
+        getEndpointUrl(endpoint, locale) {
+            const _endpoint = new URL(endpoint, window.location.origin);
+            if (locale !== "en") {
+                _endpoint.searchParams.append("lang", locale);
+            }
+            return _endpoint.toString();
         }
         async create(e) {
             e.preventDefault();
             const { endpoint, method } = this.createOpts;
-            const response = await fetch(endpoint, {
+            const response = await fetch(this.getEndpointUrl(endpoint, locale), {
                 method,
                 body: JSON.stringify({
                     ...Object.assign({}, ...this.fields.map((field) => ({
@@ -1846,7 +1859,15 @@
             if (!response.ok) {
                 const result = await response.json();
                 if (result.error) {
-                    this.alertMessage = `Sorry! ${result.error}`;
+                    this.alert = {
+                        active: true,
+                        message: Array.isArray(result.error)
+                            ? x `<span>Sorry!</span>
+                <ol>
+                  ${o$1(result.error, (message) => x `<li>${message}</li>`)}
+                </ol>`
+                            : x `<span>Sorry! ${result.error}</span>`,
+                    };
                     return;
                 }
                 if (result.errors) {
@@ -1855,7 +1876,10 @@
             }
         }
         dismissAlert() {
-            this.alertMessage = "";
+            this.alert = {
+                active: false,
+                message: undefined,
+            };
         }
         firstUpdated() {
             this.initIntersectionObserver();
@@ -1927,12 +1951,12 @@
               <div class="modal-body">
                 <div
                   role="alert"
-                  ?hidden=${!this.alertMessage}
+                  ?hidden=${!this.alert.active}
                   class="alert ${o$2({
-            "alert-danger": this.alertMessage.includes("Sorry!"),
+            "alert-danger": this.alert.active,
         })} alert-dismissible fade show"
                 >
-                  ${this.alertMessage}
+                  ${this.alert.message}
                   <button
                     @click=${this.dismissAlert}
                     type="button"
@@ -2029,15 +2053,11 @@
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting && entry.intersectionRatio > 0) {
-                        let bottom = parseFloat(getComputedStyle(btnModalWrapper).bottom);
-                        bottom = bottom + footer.offsetHeight;
+                        const bottom = parseFloat(getComputedStyle(btnModalWrapper).bottom) +
+                            footer.offsetHeight;
                         btnModalWrapper.style.bottom = `${bottom}px`;
                     }
                 });
-            }, {
-                root: null,
-                rootMargin: "0px",
-                threshold: 1.0,
             });
             observer.observe(footer);
         }
@@ -2114,7 +2134,7 @@
     ], LMSModal.prototype, "isOpen", void 0);
     __decorate([
         t$1()
-    ], LMSModal.prototype, "alertMessage", void 0);
+    ], LMSModal.prototype, "alert", void 0);
     __decorate([
         t$1()
     ], LMSModal.prototype, "modalTitle", void 0);

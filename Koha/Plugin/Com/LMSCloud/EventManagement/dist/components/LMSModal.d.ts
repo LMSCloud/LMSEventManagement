@@ -14,15 +14,20 @@ declare global {
         "lms-matrix": LMSMatrix;
     }
 }
+export type Alert = {
+    active: boolean;
+    message: TemplateResult | undefined;
+};
 export default class LMSModal extends LitElement {
     fields: ModalField[];
     createOpts: CreateOpts;
     editable: boolean;
     protected isOpen: boolean;
-    protected alertMessage: string;
+    protected alert: Alert;
     protected modalTitle: string | DirectiveResult<typeof TranslateDirective>;
     static styles: import("lit").CSSResult[];
     private toggleModal;
+    private getEndpointUrl;
     private create;
     private dismissAlert;
     firstUpdated(): void;

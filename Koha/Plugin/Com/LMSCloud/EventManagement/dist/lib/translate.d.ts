@@ -1,5 +1,6 @@
 import { Directive, PartInfo } from "lit/directive.js";
 import { Part } from "lit/html.js";
+export declare let locale: string;
 export declare class TranslateDirective extends Directive {
     private _element;
     private _textNode;

@@ -11,7 +11,7 @@ import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { TranslateDirective, __ } from "../lib/translate";
+import { TranslateDirective, __, locale } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { DirectiveResult } from "lit/directive";
 
@@ -24,6 +24,11 @@ declare global {
   }
 }
 
+export type Alert = {
+  active: boolean;
+  message: TemplateResult | undefined;
+};
+
 @customElement("lms-modal")
 export default class LMSModal extends LitElement {
   @property({ type: Array }) fields: ModalField[] = [];
@@ -32,7 +37,7 @@ export default class LMSModal extends LitElement {
   };
   @property({ type: Boolean }) editable = false;
   @state() protected isOpen = false;
-  @state() protected alertMessage = "";
+  @state() protected alert: Alert = { active: false, message: undefined };
   @state() protected modalTitle:
     | string
     | DirectiveResult<typeof TranslateDirective> = "";
@@ -99,12 +104,27 @@ export default class LMSModal extends LitElement {
   private toggleModal() {
     this.isOpen = !this.isOpen;
     document.body.style.overflow = this.isOpen ? "hidden" : "auto";
+
+    if (!this.isOpen) {
+      this.alert = {
+        active: false,
+        message: undefined,
+      };
+    }
+  }
+
+  private getEndpointUrl(endpoint: string, locale: string): string {
+    const _endpoint = new URL(endpoint, window.location.origin);
+    if (locale !== "en") {
+      _endpoint.searchParams.append("lang", locale);
+    }
+    return _endpoint.toString();
   }
 
   private async create(e: Event) {
     e.preventDefault();
     const { endpoint, method } = this.createOpts;
-    const response = await fetch(endpoint, {
+    const response = await fetch(this.getEndpointUrl(endpoint, locale), {
       method,
       body: JSON.stringify({
         ...Object.assign(
@@ -127,7 +147,18 @@ export default class LMSModal extends LitElement {
       const result = await response.json();
 
       if (result.error) {
-        this.alertMessage = `Sorry! ${result.error}`;
+        this.alert = {
+          active: true,
+          message: Array.isArray(result.error)
+            ? html`<span>Sorry!</span>
+                <ol>
+                  ${map(
+                    result.error,
+                    (message: string) => html`<li>${message}</li>`
+                  )}
+                </ol>`
+            : html`<span>Sorry! ${result.error}</span>`,
+        };
         return;
       }
 
@@ -138,7 +169,10 @@ export default class LMSModal extends LitElement {
   }
 
   private dismissAlert() {
-    this.alertMessage = "";
+    this.alert = {
+      active: false,
+      message: undefined,
+    };
   }
 
   override firstUpdated() {
@@ -213,12 +247,12 @@ export default class LMSModal extends LitElement {
               <div class="modal-body">
                 <div
                   role="alert"
-                  ?hidden=${!this.alertMessage}
+                  ?hidden=${!this.alert.active}
                   class="alert ${classMap({
-                    "alert-danger": this.alertMessage.includes("Sorry!"),
+                    "alert-danger": this.alert.active,
                   })} alert-dismissible fade show"
                 >
-                  ${this.alertMessage}
+                  ${this.alert.message}
                   <button
                     @click=${this.dismissAlert}
                     type="button"
@@ -317,22 +351,16 @@ export default class LMSModal extends LitElement {
     ) as HTMLElement;
     if (!footer || !btnModalWrapper) return;
 
-    const observer = new IntersectionObserver(
-      (entries: IntersectionObserverEntry[]) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0) {
-            let bottom = parseFloat(getComputedStyle(btnModalWrapper).bottom);
-            bottom = bottom + footer.offsetHeight;
-            btnModalWrapper.style.bottom = `${bottom}px`;
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: "0px",
-        threshold: 1.0,
-      }
-    );
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0) {
+          const bottom =
+            parseFloat(getComputedStyle(btnModalWrapper).bottom) +
+            footer.offsetHeight;
+          btnModalWrapper.style.bottom = `${bottom}px`;
+        }
+      });
+    });
     observer.observe(footer);
   }
 }
