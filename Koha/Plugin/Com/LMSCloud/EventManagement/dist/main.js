@@ -835,7 +835,7 @@
     width: 100%;
     height: 1em;
     margin-bottom: 0.25rem;
-    border-radius: 0.125rem;
+    border-radius: 5px;
   }
 
   .skeleton-text:last-child {
@@ -2534,6 +2534,11 @@ ${value}</textarea
                 target === null || target === void 0 ? void 0 : target.querySelectorAll("input, select, textarea").forEach((input) => {
                     input.setAttribute("disabled", "");
                 });
+                this.dispatchEvent(new CustomEvent("updated", {
+                    detail: id,
+                    bubbles: true,
+                    composed: true,
+                }));
                 return;
             }
             if (response.status >= 400) {
@@ -2549,6 +2554,11 @@ ${value}</textarea
             }
             const response = await fetch(`/api/v1/contrib/eventmanagement/events/${id}`, { method: "DELETE" });
             if (response.status >= 200 && response.status <= 299) {
+                this.dispatchEvent(new CustomEvent("deleted", {
+                    detail: id,
+                    bubbles: true,
+                    composed: true,
+                }));
                 return;
             }
             if (response.status >= 400) {
@@ -2752,6 +2762,13 @@ ${value}</textarea
                     uuid,
                 };
             });
+        }
+        updated(changedProperties) {
+            super.updated(changedProperties);
+            if (changedProperties.has("events")) {
+                this.hydrate();
+                this.requestUpdate();
+            }
         }
         handleTabClick(event) {
             var _a, _b;
@@ -4706,6 +4723,10 @@ ${value}</textarea
                 },
             };
         }
+        async fetchUpdate() {
+            const response = await fetch("/api/v1/contrib/eventmanagement/events");
+            this.events = await response.json();
+        }
         connectedCallback() {
             super.connectedCallback();
             Promise.all([
@@ -4774,8 +4795,10 @@ ${value}</textarea
         .event_types=${this.event_types}
         .target_groups=${this.target_groups}
         .locations=${this.locations}
+        @updated=${this.fetchUpdate}
+        @deleted=${this.fetchUpdate}
       ></lms-staff-event-card-deck>
-      <lms-events-modal></lms-events-modal>
+      <lms-events-modal @created=${this.fetchUpdate}></lms-events-modal>
     `;
         }
     };

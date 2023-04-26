@@ -24,6 +24,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
     connectedCallback(): void;
     protected getColumnData(query: Record<string, string | number | boolean | any[]>, data?: TaggedData[]): Generator<(string | import("lit").TemplateResult<2 | 1>)[], void, unknown>;
     private hydrate;
+    updated(changedProperties: Map<string, any>): void;
     private handleTabClick;
     render(): import("lit").TemplateResult<1>;
 }

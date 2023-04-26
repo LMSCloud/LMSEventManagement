@@ -15,6 +15,7 @@ export default class StaffEventsView extends LitElement {
     private locations;
     private href;
     static styles: import("lit").CSSResult[];
+    fetchUpdate(): Promise<void>;
     connectedCallback(): void;
     hasData(): boolean;
     render(): import("lit").TemplateResult<1>;
