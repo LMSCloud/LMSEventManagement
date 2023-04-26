@@ -11,7 +11,7 @@ export const skeletonStyles = css`
     width: 100%;
     height: 1em;
     margin-bottom: 0.25rem;
-    border-radius: 0.125rem;
+    border-radius: 5px;
   }
 
   .skeleton-text:last-child {
