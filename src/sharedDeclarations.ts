@@ -27,6 +27,15 @@ export type InputType =
   | "reset"
   | "button";
 
+export type SpecialFieldType = "select" | "info" | "checkbox";
+
+export enum Status {
+  Pending = "Pending",
+  Confirmed = "Confirmed",
+  Canceled = "Canceled",
+  SoldOut = "Sold Out",
+}
+
 export type HandlerCallbackFunction = ({
   e,
   value,
@@ -37,15 +46,10 @@ export type HandlerCallbackFunction = ({
   fields: ModalField[];
 }) => Promise<void>;
 
-export enum Status {
-  Pending = "Pending",
-  Confirmed = "Confirmed",
-  Canceled = "Canceled",
-  SoldOut = "Sold Out",
-}
+type ColumnValue = string | number | TemplateResult;
 
 export type Column = {
-  [key: string]: string | number | TemplateResult;
+  [key: string]: ColumnValue;
 };
 
 export type TaggedColumn = Column & {
@@ -86,45 +90,44 @@ export type Input = {
   value: string;
 };
 
+type TranslatedString = DirectiveResult<typeof TranslateDirective>;
+
 export type SelectOption = {
   id: string | number;
-  name: string | DirectiveResult<typeof TranslateDirective>;
+  name: string | TranslatedString;
 };
 
 export type BaseField = {
   name: string;
-  desc?: string | DirectiveResult<typeof TranslateDirective>;
-  logic?: () => Promise<
-    {
-      id: string | number;
-      name: string | DirectiveResult<typeof TranslateDirective>;
-    }[]
-  >;
-  required?: boolean;
-  value?: string | { [key: string]: string }[];
-  dbData?: {
-    id: string | number;
-    name: string | DirectiveResult<typeof TranslateDirective>;
-  }[];
-  attributes?: [string, string | number][];
-};
+  desc?: string | TranslatedString;
+  logic?: () => Promise<SelectOption[]>;
+} & Partial<{
+  required: boolean;
+  value: string | { [key: string]: string }[];
+  dbData: SelectOption[];
+  attributes: [string, string | number][];
+}>;
 
 export type Field = BaseField & {
   type: InputType;
 };
 
 export type SpecialField = BaseField & {
-  type: "select" | "info" | "checkbox";
+  type: SpecialFieldType;
+};
+
+type FieldType = {
+  headers?: string[][];
+  matrixInputType?: InputType;
 };
 
 export type ModalField = BaseField & {
-  type?: InputType | "select" | "info" | "checkbox" | "matrix";
-  headers?: string[][];
-  matrixInputType?: InputType;
+  type?: InputType | SpecialFieldType | "matrix";
   handler?: HandlerCallbackFunction;
-};
+} & FieldType;
 
-export type CreateOpts = RequestInit & {
+
+export type CreateOpts = Omit<RequestInit, "endpoint"> & {
   endpoint: string;
 };
 
@@ -161,15 +164,17 @@ export type EventType = {
   open_registration: boolean;
 };
 
+type StringRecord = Record<string, string>;
+
 export type URIComponents = {
   path?: string;
   query?: boolean;
-  params?: Record<string, string>;
+  params?: StringRecord;
   fragment?: string;
 };
 
 export type MatrixGroup = {
-  [key: string]: string;
+  [key in InputType]?: string;
 };
 
 export type TaggedData = ["target_groups" | "location" | "event_type", any[]];
