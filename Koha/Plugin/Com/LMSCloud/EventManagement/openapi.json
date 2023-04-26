@@ -3170,6 +3170,13 @@
               }
             }
           }
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -3201,7 +3208,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
