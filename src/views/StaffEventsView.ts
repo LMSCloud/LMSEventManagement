@@ -30,6 +30,11 @@ export default class StaffEventsView extends LitElement {
 
   static override styles = [bootstrapStyles, skeletonStyles];
 
+  async fetchUpdate() {
+    const response = await fetch("/api/v1/contrib/eventmanagement/events");
+    this.events = await response.json();
+  }
+
   override connectedCallback() {
     super.connectedCallback();
 
@@ -102,8 +107,10 @@ export default class StaffEventsView extends LitElement {
         .event_types=${this.event_types}
         .target_groups=${this.target_groups}
         .locations=${this.locations}
+        @updated=${this.fetchUpdate}
+        @deleted=${this.fetchUpdate}
       ></lms-staff-event-card-deck>
-      <lms-events-modal></lms-events-modal>
+      <lms-events-modal @created=${this.fetchUpdate}></lms-events-modal>
     `;
   }
 }

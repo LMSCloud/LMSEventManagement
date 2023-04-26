@@ -126,6 +126,14 @@ export default class LMSStaffEventCardDeck extends LitElement {
     });
   }
 
+  override updated(changedProperties: Map<string, any>) {
+    super.updated(changedProperties);
+    if (changedProperties.has("events")) {
+      this.hydrate();
+      this.requestUpdate();
+    }
+  }
+
   private handleTabClick(event: Event) {
     event.preventDefault();
     const target = event.target as HTMLElement;

@@ -130,6 +130,13 @@ export default class LMSStaffEventCardForm extends LitElement {
       target?.querySelectorAll("input, select, textarea").forEach((input) => {
         input.setAttribute("disabled", "");
       });
+      this.dispatchEvent(
+        new CustomEvent("updated", {
+          detail: id,
+          bubbles: true,
+          composed: true,
+        })
+      );
       return;
     }
 
@@ -153,6 +160,13 @@ export default class LMSStaffEventCardForm extends LitElement {
     );
 
     if (response.status >= 200 && response.status <= 299) {
+      this.dispatchEvent(
+        new CustomEvent("deleted", {
+          detail: id,
+          bubbles: true,
+          composed: true,
+        })
+      );
       return;
     }
 
