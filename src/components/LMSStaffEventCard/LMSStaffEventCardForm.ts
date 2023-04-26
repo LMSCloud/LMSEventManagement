@@ -7,6 +7,7 @@ import { Column /* Input */ } from "../../sharedDeclarations";
 import { TemplateResultConverter } from "../../lib/converters";
 import { __ } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";
+import { classMap } from "lit/directives/class-map.js";
 @customElement("lms-staff-event-card-form")
 export default class LMSStaffEventCardForm extends LitElement {
   @property({ type: Array }) datum: Column = {} as Column;
@@ -24,6 +25,10 @@ export default class LMSStaffEventCardForm extends LitElement {
         width: 1em;
         height: 1em;
         color: #ffffff;
+      }
+
+      .btn-warning svg {
+        color: #000000;
       }
 
       button {
@@ -178,6 +183,7 @@ export default class LMSStaffEventCardForm extends LitElement {
 
   override render() {
     const { datum } = this;
+    const shouldFold = window.innerWidth <= 420;
     return html`
       <form @submit=${this.handleSave}>
         <div class="form-row">
@@ -272,23 +278,32 @@ export default class LMSStaffEventCardForm extends LitElement {
 
         <div class="form-row pt-5">
           <div class="col">
-            <div class="d-flex">
+            <div
+              class=${classMap({
+                "btn-group": !shouldFold,
+                "w-100": !shouldFold,
+                "btn-group-vertical": shouldFold,
+                "d-flex": shouldFold,
+              })}
+              role="group"
+              aria-label="${__("Event controls")}"
+            >
               <button
                 @click=${this.handleEdit}
                 type="button"
-                class="btn btn-dark mr-2"
+                class="btn btn-secondary"
               >
                 ${litFontawesome(faEdit)}
                 <span>&nbsp;${__("Edit")}</span>
               </button>
-              <button type="submit" class="btn btn-dark mr-2">
+              <button type="submit" class="btn btn-warning">
                 ${litFontawesome(faSave)}
                 <span>&nbsp;${__("Save")}</span>
               </button>
               <button
                 @click=${this.handleDelete}
                 type="button"
-                class="btn btn-danger mr-2"
+                class="btn btn-danger"
               >
                 ${litFontawesome(faTrash)}
                 <span>&nbsp;${__("Delete")}</span>
