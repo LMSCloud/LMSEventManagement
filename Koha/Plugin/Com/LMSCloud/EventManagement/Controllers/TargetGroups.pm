@@ -6,14 +6,34 @@ use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
 use Try::Tiny;
+use Readonly;
+use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
+use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
+use POSIX qw(setlocale);
+use Encode;
 
 use Koha::Plugin::Com::LMSCloud::EventManagement;
 use Koha::LMSCloud::EventManagement::TargetGroup;
 use Koha::LMSCloud::EventManagement::TargetGroups;
+use Koha::Plugin::Com::LMSCloud::EventManagement::lib::Validator;
 
 our $VERSION = '1.0.0';
 
 my $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
+
+setlocale Locale::Messages::LC_MESSAGES(), q{};
+textdomain 'com.lmscloud.eventmanagement';
+bind_textdomain_filter 'com.lmscloud.eventmanagement', \&Encode::decode_utf8;
+bindtextdomain 'com.lmscloud.eventmanagement' => $self->bundle_path . '/locales/';
+
+my Readonly::Scalar $UPPER_AGE_BOUNDARY => 255;
+
+sub _validate {
+    my ($args) = @_;
+
+    my $validator = Koha::Plugin::Com::LMSCloud::EventManagement::lib::Validator->new( { schema => $args->{'schema'}, lang => $args->{'lang'} } );
+    return $validator->validate();
+}
 
 sub list {
     my $c = shift->openapi->valid_input or return;
@@ -33,7 +53,42 @@ sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        my $lang = $c->validation->param('lang') || 'en';
+        local $ENV{LANGUAGE}       = $lang;
+        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
+
         my $body = $c->validation->param('body');
+
+        my ( $is_valid, $errors ) = _validate(
+            {   schema => [
+                    {   key   => __('name'),
+                        value => $body->{'name'},
+                        type  => 'string',
+                    },
+                    {   key     => __('min_age'),
+                        value   => $body->{'min_age'},
+                        type    => 'number',
+                        options => {
+                            positive => 1,
+                            range    => [ 0, $UPPER_AGE_BOUNDARY ],
+                        }
+                    },
+                    {   key     => __('max_age'),
+                        value   => $body->{'max_age'},
+                        type    => 'number',
+                        options => {
+                            positive => 1,
+                            range    => [ 0, $UPPER_AGE_BOUNDARY ],
+                        }
+                    },
+                ],
+                lang => $lang
+            }
+        );
+
+        if ( !$is_valid ) {
+            return $c->render( status => 400, openapi => { error => $errors } );
+        }
 
         my $target_group = Koha::LMSCloud::EventManagement::TargetGroup->new_from_api($body)->store;
 
