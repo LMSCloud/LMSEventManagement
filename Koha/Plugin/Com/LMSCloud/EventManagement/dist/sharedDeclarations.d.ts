@@ -2,19 +2,21 @@ import { TemplateResult } from "lit";
 import { DirectiveResult } from "lit/directive";
 import { TranslateDirective } from "./lib/translate";
 export type InputType = "hidden" | "text" | "search" | "tel" | "url" | "email" | "password" | "datetime" | "date" | "month" | "week" | "time" | "datetime-local" | "number" | "range" | "color" | "checkbox" | "radio" | "file" | "submit" | "image" | "reset" | "button";
-export type HandlerCallbackFunction = ({ e, value, fields, }: {
-    e?: Event;
-    value?: string | number;
-    fields: ModalField[];
-}) => Promise<void>;
+export type SpecialFieldType = "select" | "info" | "checkbox";
 export declare enum Status {
     Pending = "Pending",
     Confirmed = "Confirmed",
     Canceled = "Canceled",
     SoldOut = "Sold Out"
 }
+export type HandlerCallbackFunction = ({ e, value, fields, }: {
+    e?: Event;
+    value?: string | number;
+    fields: ModalField[];
+}) => Promise<void>;
+type ColumnValue = string | number | TemplateResult;
 export type Column = {
-    [key: string]: string | number | TemplateResult;
+    [key: string]: ColumnValue;
 };
 export type TaggedColumn = Column & {
     uuid: string;
@@ -50,40 +52,38 @@ export type Input = {
     name: string;
     value: string;
 };
+type TranslatedString = DirectiveResult<typeof TranslateDirective>;
 export type SelectOption = {
     id: string | number;
-    name: string | DirectiveResult<typeof TranslateDirective>;
+    name: string | TranslatedString;
 };
 export type BaseField = {
     name: string;
-    desc?: string | DirectiveResult<typeof TranslateDirective>;
-    logic?: () => Promise<{
-        id: string | number;
-        name: string | DirectiveResult<typeof TranslateDirective>;
-    }[]>;
-    required?: boolean;
-    value?: string | {
+    desc?: string | TranslatedString;
+    logic?: () => Promise<SelectOption[]>;
+} & Partial<{
+    required: boolean;
+    value: string | {
         [key: string]: string;
     }[];
-    dbData?: {
-        id: string | number;
-        name: string | DirectiveResult<typeof TranslateDirective>;
-    }[];
-    attributes?: [string, string | number][];
-};
+    dbData: SelectOption[];
+    attributes: [string, string | number][];
+}>;
 export type Field = BaseField & {
     type: InputType;
 };
 export type SpecialField = BaseField & {
-    type: "select" | "info" | "checkbox";
+    type: SpecialFieldType;
 };
-export type ModalField = BaseField & {
-    type?: InputType | "select" | "info" | "checkbox" | "matrix";
+type FieldType = {
     headers?: string[][];
     matrixInputType?: InputType;
-    handler?: HandlerCallbackFunction;
 };
-export type CreateOpts = RequestInit & {
+export type ModalField = BaseField & {
+    type?: InputType | SpecialFieldType | "matrix";
+    handler?: HandlerCallbackFunction;
+} & FieldType;
+export type CreateOpts = Omit<RequestInit, "endpoint"> & {
     endpoint: string;
 };
 export type TargetGroup = {
@@ -115,14 +115,16 @@ export type EventType = {
     description: string;
     open_registration: boolean;
 };
+type StringRecord = Record<string, string>;
 export type URIComponents = {
     path?: string;
     query?: boolean;
-    params?: Record<string, string>;
+    params?: StringRecord;
     fragment?: string;
 };
 export type MatrixGroup = {
-    [key: string]: string;
+    [key in InputType]?: string;
 };
 export type TaggedData = ["target_groups" | "location" | "event_type", any[]];
+export {};
 //# sourceMappingURL=sharedDeclarations.d.ts.map

@@ -2568,6 +2568,7 @@ ${value}</textarea
         }
         render() {
             const { datum } = this;
+            const shouldFold = window.innerWidth <= 420;
             return x `
       <form @submit=${this.handleSave}>
         <div class="form-row">
@@ -2662,23 +2663,32 @@ ${value}</textarea
 
         <div class="form-row pt-5">
           <div class="col">
-            <div class="d-flex">
+            <div
+              class=${o$2({
+            "btn-group": !shouldFold,
+            "w-100": !shouldFold,
+            "btn-group-vertical": shouldFold,
+            "d-flex": shouldFold,
+        })}
+              role="group"
+              aria-label="${__("Event controls")}"
+            >
               <button
                 @click=${this.handleEdit}
                 type="button"
-                class="btn btn-dark mr-2"
+                class="btn btn-secondary"
               >
                 ${litFontawesome_2(faEdit)}
                 <span>&nbsp;${__("Edit")}</span>
               </button>
-              <button type="submit" class="btn btn-dark mr-2">
+              <button type="submit" class="btn btn-warning">
                 ${litFontawesome_2(faSave)}
                 <span>&nbsp;${__("Save")}</span>
               </button>
               <button
                 @click=${this.handleDelete}
                 type="button"
-                class="btn btn-danger mr-2"
+                class="btn btn-danger"
               >
                 ${litFontawesome_2(faTrash)}
                 <span>&nbsp;${__("Delete")}</span>
@@ -2699,6 +2709,10 @@ ${value}</textarea
         width: 1em;
         height: 1em;
         color: #ffffff;
+      }
+
+      .btn-warning svg {
+        color: #000000;
       }
 
       button {
