@@ -14,6 +14,7 @@ use Encode;
 use Koha::Plugin::Com::LMSCloud::EventManagement;
 use Koha::LMSCloud::EventManagement::Location;
 use Koha::LMSCloud::EventManagement::Locations;
+use Koha::Plugin::Com::LMSCloud::EventManagement::lib::Validator;
 
 our $VERSION = '1.0.0';
 
@@ -51,7 +52,8 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
+        my $lang = $c->validation->param('lang') || 'en';
+        local $ENV{LANGUAGE}       = $lang;
         local $ENV{OUTPUT_CHARSET} = 'UTF-8';
         my $id       = $c->validation->param('id');
         my $body     = $c->validation->param('body');
@@ -59,6 +61,52 @@ sub update {
 
         if ( !$location ) {
             return $c->render( status => 404, openapi => { error => __('Location not found') } );
+        }
+
+        my ( $is_valid, $errors ) = _validate(
+            {   schema => [
+                    {   key     => __('name'),
+                        value   => $body->{'name'},
+                        type    => 'string',
+                        options => { is_alphanumeric => { skip => 1, } },
+                    },
+                    {   key     => __('street'),
+                        value   => $body->{'street'},
+                        type    => 'string',
+                        options => { is_alphanumeric => { skip => 1, } },
+
+                    },
+                    {   key     => __('number'),
+                        value   => $body->{'number'},
+                        type    => 'string',
+                        options => { is_alphanumeric => { skip => 1, } },
+
+                    },
+                    {   key     => __('city'),
+                        value   => $body->{'city'},
+                        type    => 'string',
+                        options => { is_alphanumeric => { skip => 1, } },
+
+                    },
+                    {   key     => __('zip'),
+                        value   => $body->{'zip'},
+                        type    => 'string',
+                        options => { is_alphanumeric => { skip => 1, } },
+
+                    },
+                    {   key     => __('country'),
+                        value   => $body->{'country'},
+                        type    => 'string',
+                        options => { is_alphanumeric => { skip => 1, } },
+
+                    },
+                ],
+                lang => $lang
+            }
+        );
+
+        if ( !$is_valid ) {
+            return $c->render( status => 400, openapi => { error => $errors } );
         }
 
         $location->set_from_api($body);

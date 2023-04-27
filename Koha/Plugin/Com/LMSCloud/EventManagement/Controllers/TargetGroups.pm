@@ -61,9 +61,11 @@ sub add {
 
         my ( $is_valid, $errors ) = _validate(
             {   schema => [
-                    {   key   => __('name'),
-                        value => $body->{'name'},
-                        type  => 'string',
+                    {   key     => __('name'),
+                        value   => $body->{'name'},
+                        type    => 'string',
+                        options => { is_alphanumeric => { skip => 1, } },
+
                     },
                     {   key     => __('min_age'),
                         value   => $body->{'min_age'},
