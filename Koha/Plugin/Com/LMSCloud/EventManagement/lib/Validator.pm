@@ -62,11 +62,8 @@ sub validate {
     return (1);
 }
 
-# possible options: nullable: boolean, length: int
-sub is_valid_string {
+sub is_valid {
     my ( $self, $args ) = @_;
-    local $ENV{LANGUAGE}       = $self->lang || 'en';
-    local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
     # Return immediately if the given value is nullish and the nullable option is true.
     return ( 1, [] ) if !$args->{'value'} && $args->{'nullable'};
@@ -74,8 +71,38 @@ sub is_valid_string {
     # Return immediately if the given value is not defined.
     return ( 0, [ __('The given value is not defined.') ] ) if !defined $args->{'value'};
 
+    return (1);
+}
+
+# possible options: nullable: boolean, length: int
+sub is_valid_string {
+    my ( $self, $args ) = @_;
+    local $ENV{LANGUAGE}       = $self->lang || 'en';
+    local $ENV{OUTPUT_CHARSET} = 'UTF-8';
+
+    my ( $is_valid, $errors ) = $self->is_valid($args);
+    if ( !$is_valid ) {
+        return ( $is_valid, $errors );
+    }
+
     # Uses a regular expression to check whether the given value is alphanumeric.
-    my $is_alphanumeric = defined $args->{'alphanumeric'} && $args->{'alphanumeric'} ? 1 : $args->{'value'} =~ m/^[[:alpha:]\d\/\s\-]+$/smx;
+    my $skip_is_alphanumeric = $args->{'is_alphanumeric'}->{'skip'} // 0;
+    my $is_alphanumeric;
+
+    if ($skip_is_alphanumeric) {
+        $is_alphanumeric = 1;
+    }
+    else {
+        my $alphanumeric_regex = '^[[:alnum:]';
+        my $allow_chars        = $args->{'is_alphanumeric'}->{'allow_chars'} // [];
+        if ($allow_chars) {
+            foreach my $char ( $allow_chars->@* ) {
+                $alphanumeric_regex .= quotemeta $char;
+            }
+        }
+        $alphanumeric_regex .= ']+$';
+        $is_alphanumeric = $args->{'value'} =~ m/$alphanumeric_regex/smx;
+    }
 
     # Uses a regular expression to check whether the given value has a certain length using the supplied length.
     my $has_given_length = defined $args->{'length'} ? $args->{'value'} =~ m/^.{1,$args->{'length'}}$/smx : 1;
@@ -87,7 +114,7 @@ sub is_valid_string {
         return (1);
     }
 
-    my $errors         = [];
+    $errors = [];
     my $given_argument = defined $args->{'key'} ? __('The given value for ') . $args->{'key'} : __('The given value: ') . $args->{'value'};
     push @{$errors}, $given_argument . __(' is not alphanumeric.')        if !$is_alphanumeric;
     push @{$errors}, $given_argument . __(' has not the given length.')   if !$has_given_length;
@@ -102,11 +129,10 @@ sub is_valid_number {
     local $ENV{LANGUAGE}       = $self->lang || 'en';
     local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
-    # Return immediately if the given value is nullish and the nullable option is true.
-    return ( 1, [] ) if !$args->{'value'} && $args->{'nullable'};
-
-    # Return immediately if the given value is not defined.
-    return ( 0, [ __('The given value is not defined.') ] ) if !defined $args->{'value'};
+    my ( $is_valid, $errors ) = $self->is_valid($args);
+    if ( !$is_valid ) {
+        return ( $is_valid, $errors );
+    }
 
     my ( $min, $max ) = defined $args->{'range'} ? @{ $args->{'range'} } : ( 0, $MAX_LENGTH_INT );
 
@@ -135,7 +161,7 @@ sub is_valid_number {
         return (1);
     }
 
-    my $errors         = [];
+    $errors = [];
     my $given_argument = defined $args->{'key'} ? __('The given value for ') . $args->{'key'} : __('The given value: ') . $args->{'value'};
     push @{$errors}, $given_argument . __(' is not a number.')           if !$is_number;
     push @{$errors}, $given_argument . __(' has not the given length.')  if !$has_given_length;
@@ -152,11 +178,10 @@ sub is_valid_datetime {
     local $ENV{LANGUAGE}       = $self->lang || 'en';
     local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
-    # Return immediately if the given value is nullish and the nullable option is true.
-    return ( 1, [] ) if !$args->{'value'} && $args->{'nullable'};
-
-    # Return immediately if the given value is not defined.
-    return ( 0, ['The given value is not defined.'] ) if !defined $args->{'value'};
+    my ( $is_valid, $errors ) = $self->is_valid($args);
+    if ( !$is_valid ) {
+        return ( $is_valid, $errors );
+    }
 
     # Uses a regular expression to check whether the given value is a datetime in the format YYYY-MM-DDTHH:mm.
     my $is_valid_datetime = $args->{'value'} =~ m/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/smx;
@@ -173,7 +198,7 @@ sub is_valid_datetime {
         return (1);
     }
 
-    my $errors         = [];
+    $errors = [];
     my $given_argument = defined $args->{'key'} ? __('The given value for ') . $args->{'key'} : __('The given value: ') . $args->{'value'};
     push @{$errors}, $given_argument . __(' is not a datetime in the format YYYY-MM-DDTHH:mm.') if !$is_valid_datetime;
     push @{$errors}, $given_argument . __(' is not after the current localtime.')               if !$is_after_localtime;
@@ -188,24 +213,23 @@ sub is_valid_color {
     local $ENV{LANGUAGE}       = $self->lang || 'en';
     local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
-    # Return immediately if the given value is nullish and the nullable option is true.
-    return ( 1, [] ) if !$args->{'value'} && $args->{'nullable'};
-
-    # Return immediately if the given value is not defined.
-    return ( 0, [ __('The given value is not defined.') ] ) if !defined $args->{'value'};
+    my ( $is_valid, $errors ) = $self->is_valid($args);
+    if ( !$is_valid ) {
+        return ( $is_valid, $errors );
+    }
 
     # Uses a regular expression to check whether the given value is a color in the format
     # #RRGGBB or
     # rgb([0-9]{3}, [0-9]{3}, [0-9]{3}) or
     # rgba([0-9]{3}, [0-9]{3}, [0-9]{3}, (0(\.\d+)?|1(\.0+)?)).
-    my $is_valid_color = $args->{'value'} =~ m/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$|^rgb\((\d{1,3},\s*){2}\d{1,3}\)$|^rgba\((\d{1,3},\s*){3}(0(\.\d+)?|1(\.0+)?)\)$/smx;
+    my $is_valid_color = $args->{'value'} =~ m/^#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$|^rgb\((\d{1,3},\s*){2}\d{1,3}\)$|^rgba\((\d{1,3},\s*){3}(0(\.\d+)?|1(\.0+)?)\)$/smx;
 
     # Check if all options specified in args are true.
     if ($is_valid_color) {
         return (1);
     }
 
-    my $errors         = [];
+    $errors = [];
     my $given_argument = defined $args->{'key'} ? __('The given value for ') . $args->{'key'} : __('The given value: ') . $args->{'value'};
     push @{$errors}, $given_argument . __(' is not a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0).') if !$is_valid_color;
 
@@ -217,11 +241,10 @@ sub is_valid_time {
     local $ENV{LANGUAGE}       = $self->lang || 'en';
     local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
-    # Return immediately if the given value is nullish and the nullable option is true.
-    return ( 1, [] ) if !$args->{'value'} && $args->{'nullable'};
-
-    # Return immediately if the given value is not defined.
-    return ( 0, [ __('The given value is not defined.') ] ) if !defined $args->{'value'};
+    my ( $is_valid, $errors ) = $self->is_valid($args);
+    if ( !$is_valid ) {
+        return ( $is_valid, $errors );
+    }
 
     # Uses a regular expression to check whether the given value is a time in the format HH:mm.
     my $is_valid_time = $args->{'value'} =~ m/^\d{2}:\d{2}$/smx;
@@ -231,7 +254,7 @@ sub is_valid_time {
         return (1);
     }
 
-    my $errors         = [];
+    $errors = [];
     my $given_argument = defined $args->{'key'} ? __('The given value for ') . $args->{'key'} : __('The given value: ') . $args->{'value'};
     push @{$errors}, $given_argument . __(' is not a time in the format HH:mm.') if !$is_valid_time;
 
