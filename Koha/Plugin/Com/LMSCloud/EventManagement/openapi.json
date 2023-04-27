@@ -194,7 +194,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -332,7 +332,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -447,7 +447,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -553,7 +553,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -741,7 +741,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -939,7 +939,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -1097,7 +1097,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -1312,7 +1312,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -1415,7 +1415,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -1553,7 +1553,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -1740,7 +1740,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -1891,7 +1891,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -2092,7 +2092,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -2195,7 +2195,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -2327,7 +2327,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -2442,7 +2442,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -2583,7 +2583,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -2711,7 +2711,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -2869,7 +2869,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -2972,7 +2972,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -3078,7 +3078,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -3327,7 +3327,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -3464,7 +3464,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
@@ -3567,7 +3567,7 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": "string"
+                "type": ["string", "array"]
               }
             }
           }
