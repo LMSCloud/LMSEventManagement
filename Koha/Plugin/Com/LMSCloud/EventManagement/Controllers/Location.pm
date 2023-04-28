@@ -25,6 +25,13 @@ textdomain 'com.lmscloud.eventmanagement';
 bind_textdomain_filter 'com.lmscloud.eventmanagement', \&Encode::decode_utf8;
 bindtextdomain 'com.lmscloud.eventmanagement' => $self->bundle_path . '/locales/';
 
+sub _validate {
+    my ($args) = @_;
+
+    my $validator = Koha::Plugin::Com::LMSCloud::EventManagement::lib::Validator->new( { schema => $args->{'schema'}, lang => $args->{'lang'} } );
+    return $validator->validate();
+}
+
 sub get {
     my $c = shift->openapi->valid_input or return;
 

@@ -28,6 +28,13 @@ bindtextdomain 'com.lmscloud.eventmanagement' => $self->bundle_path . '/locales/
 
 my Readonly::Scalar $UPPER_AGE_BOUNDARY => 255;
 
+sub _validate {
+    my ($args) = @_;
+
+    my $validator = Koha::Plugin::Com::LMSCloud::EventManagement::lib::Validator->new( { schema => $args->{'schema'}, lang => $args->{'lang'} } );
+    return $validator->validate();
+}
+
 sub get {
     my $c = shift->openapi->valid_input or return;
 

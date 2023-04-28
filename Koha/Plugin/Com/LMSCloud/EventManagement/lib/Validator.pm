@@ -28,6 +28,7 @@ has 'lang' => (
 );
 
 Readonly::Scalar our $MAX_LENGTH_VARCHAR => 255;
+Readonly::Scalar our $MAX_LENGTH_TEXT    => 65_535;
 Readonly::Scalar our $MAX_LENGTH_INT     => 2_147_483_647;
 
 sub BUILD {
@@ -107,8 +108,17 @@ sub is_valid_string {
     # Uses a regular expression to check whether the given value has a certain length using the supplied length.
     my $has_given_length = defined $args->{'length'} ? $args->{'value'} =~ m/^.{1,$args->{'length'}}$/smx : 1;
 
-    # Checks whether the given value exceeds the $MAX_LENGTH_VARCHAR.
-    my $exceeds_max_length = length $args->{'value'} >= $MAX_LENGTH_VARCHAR;
+    # Checks whether the given value exceeds the $MAX_LENGTH_VARCHAR, $MAX_LENGTH_TEXT or a user specified length.
+    my $exceeds_max_length = 0;
+    if ( $args->{'exceeds_max_length'}->{'TEXT'} ) {
+        $exceeds_max_length = length $args->{'value'} >= $MAX_LENGTH_TEXT;
+    }
+    elsif ( $args->{'exceeds_max_length'}->{'length'} ) {
+        $exceeds_max_length = length $args->{'value'} >= $args->{'exceeds_max_length'}->{'length'};
+    }
+    else {
+        $exceeds_max_length = length $args->{'value'} >= $MAX_LENGTH_VARCHAR;
+    }
 
     if ( $is_alphanumeric && $has_given_length && !$exceeds_max_length ) {
         return (1);
