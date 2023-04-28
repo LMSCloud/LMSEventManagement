@@ -872,6 +872,13 @@
               }
             }
           }
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -1178,13 +1185,6 @@
           "type": "integer"
         },
         {
-          "name": "lang",
-          "in": "query",
-          "description": "Language code of the navigator",
-          "required": false,
-          "type": "string"
-        },
-        {
           "name": "body",
           "in": "body",
           "description": "Event object that needs to be added",
@@ -1242,6 +1242,13 @@
               }
             }
           }
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -1677,6 +1684,13 @@
               }
             }
           }
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -1972,13 +1986,6 @@
           "type": "integer"
         },
         {
-          "name": "lang",
-          "in": "query",
-          "description": "Language code of the navigator",
-          "required": false,
-          "type": "string"
-        },
-        {
           "name": "body",
           "in": "body",
           "description": "Event type data",
@@ -2029,6 +2036,13 @@
               }
             }
           }
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -2543,6 +2557,13 @@
               }
             }
           }
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -2792,13 +2813,6 @@
           "type": "integer"
         },
         {
-          "name": "lang",
-          "in": "query",
-          "description": "Language code of the navigator",
-          "required": false,
-          "type": "string"
-        },
-        {
           "name": "body",
           "in": "body",
           "description": "Location data",
@@ -2829,6 +2843,13 @@
               }
             }
           }
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -3408,13 +3429,6 @@
           "type": "integer"
         },
         {
-          "name": "lang",
-          "in": "query",
-          "description": "Language code of the navigator",
-          "required": false,
-          "type": "string"
-        },
-        {
           "name": "body",
           "in": "body",
           "description": "Target group data",
@@ -3433,6 +3447,13 @@
               }
             }
           }
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
