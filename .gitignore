@@ -1,3 +1,4 @@
+ValidatorXSC/
 node_modules/
 img/
 
@@ -6,3 +7,6 @@ pnpm-lock.yaml
 *.kpz
 p-kpz
 TO-DO.md
+
+.DS_Store
+.vscode/
