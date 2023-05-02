@@ -688,8 +688,22 @@
                 "event_type": {
                   "type": ["string", "null"]
                 },
-                "target_group": {
-                  "type": ["string", "null"]
+                "target_groups": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "selected": {
+                        "type": "boolean"
+                      },
+                      "fee": {
+                        "type": "number"
+                      }
+                    }
+                  }
                 },
                 "min_age": {
                   "type": ["integer", "null"]
@@ -711,9 +725,6 @@
                 },
                 "registration_end": {
                   "type": ["string", "null"]
-                },
-                "fee": {
-                  "type": ["number", "null"]
                 },
                 "location": {
                   "type": ["string", "null"]
@@ -828,8 +839,22 @@
               "event_type": {
                 "type": ["string", "null"]
               },
-              "target_group": {
-                "type": ["string", "null"]
+              "target_groups": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "selected": {
+                      "type": "boolean"
+                    },
+                    "fee": {
+                      "type": "number"
+                    }
+                  }
+                }
               },
               "min_age": {
                 "type": ["integer", "null"]
@@ -851,9 +876,6 @@
               },
               "registration_end": {
                 "type": ["string", "null"]
-              },
-              "fee": {
-                "type": ["number", "null"]
               },
               "location": {
                 "type": ["string", "null"]
@@ -1052,8 +1074,22 @@
               "event_type": {
                 "type": ["string", "null"]
               },
-              "target_group": {
-                "type": ["string", "null"]
+              "target_groups": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "selected": {
+                      "type": "boolean"
+                    },
+                    "fee": {
+                      "type": "number"
+                    }
+                  }
+                }
               },
               "min_age": {
                 "type": ["integer", "null"]
@@ -1075,9 +1111,6 @@
               },
               "registration_end": {
                 "type": ["string", "null"]
-              },
-              "fee": {
-                "type": ["number", "null"]
               },
               "location": {
                 "type": ["string", "null"]
@@ -1198,8 +1231,22 @@
               "event_type": {
                 "type": ["string", "null"]
               },
-              "target_group": {
-                "type": ["string", "null"]
+              "target_groups": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "selected": {
+                      "type": "boolean"
+                    },
+                    "fee": {
+                      "type": "number"
+                    }
+                  }
+                }
               },
               "min_age": {
                 "type": ["integer", "null"]
@@ -1221,9 +1268,6 @@
               },
               "registration_end": {
                 "type": ["string", "null"]
-              },
-              "fee": {
-                "type": ["number", "null"]
               },
               "location": {
                 "type": ["string", "null"]
