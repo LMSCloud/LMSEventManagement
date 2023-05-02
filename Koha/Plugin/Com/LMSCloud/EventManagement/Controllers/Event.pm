@@ -6,10 +6,13 @@ use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
 use Try::Tiny;
+use Readonly;
 use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
 use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
 use POSIX qw(setlocale);
 use Encode;
+use DateTime;
+use DateTime::Format::Strptime;
 
 use Koha::Plugin::Com::LMSCloud::EventManagement;
 use Koha::LMSCloud::EventManagement::Events;
@@ -26,10 +29,13 @@ textdomain 'com.lmscloud.eventmanagement';
 bind_textdomain_filter 'com.lmscloud.eventmanagement', \&Encode::decode_utf8;
 bindtextdomain 'com.lmscloud.eventmanagement' => $self->bundle_path . '/locales/';
 
-sub validate {
-    my ($schema) = @_;
+Readonly::Scalar my $UPPER_AGE_BOUNDARY          => 255;
+Readonly::Scalar my $UPPER_PARTICIPANTS_BOUNDARY => 65535;
 
-    my $validator = Koha::Plugin::Com::LMSCloud::EventManagement::lib::Validator->new( { schema => $schema } );
+sub _validate {
+    my ($args) = @_;
+
+    my $validator = Koha::Plugin::Com::LMSCloud::EventManagement::lib::Validator->new( { schema => $args->{'schema'}, lang => $args->{'lang'} } );
     return $validator->validate();
 }
 
@@ -62,14 +68,88 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
+        my $lang = $c->validation->param('lang') || 'en';
+        local $ENV{LANGUAGE}       = $lang;
         local $ENV{OUTPUT_CHARSET} = 'UTF-8';
-        my $id    = $c->validation->param('id');
-        my $body  = $c->validation->param('body');
+        my $id   = $c->validation->param('id');
+        my $body = $c->validation->param('body');
+
         my $event = Koha::LMSCloud::EventManagement::Events->find($id);
 
         if ( !$event ) {
             return $c->render( status => 404, openapi => { error => __('Event not found') } );
+        }
+
+        my ( $is_valid, $errors ) = _validate(
+            {   schema => [
+                    {   key     => __('name'),
+                        value   => $body->{'name'},
+                        type    => 'string',
+                        options => { is_alphanumeric => { skip => 1, }, nullable => 1, },
+                    },
+                    {   key     => __('max_age'),
+                        value   => $body->{'max_age'},
+                        type    => 'number',
+                        options => {
+                            positive => 1,
+                            range    => [ 0, $UPPER_AGE_BOUNDARY ],
+                            nullable => 1,
+                        },
+                    },
+                    {   key     => __('min_age'),
+                        value   => $body->{'min_age'},
+                        type    => 'number',
+                        options => {
+                            positive => 1,
+                            range    => [ 0, $UPPER_AGE_BOUNDARY ],
+                            nullable => 1,
+                        },
+                    },
+                    {   key     => __('max_participants'),
+                        value   => $body->{'max_participants'},
+                        type    => 'number',
+                        options => {
+                            positive => 1,
+                            range    => [ 0, $UPPER_PARTICIPANTS_BOUNDARY ],
+                            nullable => 1,
+                        },
+                    },
+                    {   key     => __('start_time'),
+                        value   => $body->{'start_time'},
+                        type    => 'datetime',
+                        options => { nullable => 1, },
+                    },
+                    {   key     => __('end_time'),
+                        value   => $body->{'end_time'},
+                        type    => 'datetime',
+                        options => { nullable => 1, },
+                    },
+                    {   key     => __('registration_start'),
+                        value   => $body->{'registration_start'},
+                        type    => 'datetime',
+                        options => { nullable => 1, },
+                    },
+                    {   key     => __('registration_end'),
+                        value   => $body->{'registration_end'},
+                        type    => 'datetime',
+                        options => { nullable => 1, },
+                    },
+                    {   key     => __('description'),
+                        value   => $body->{'description'},
+                        type    => 'string',
+                        options => {
+                            is_alphanumeric    => { skip => 1, },
+                            exceeds_max_length => { TEXT => 1, },
+                            nullable           => 1,
+                        },
+                    }
+                ],
+                lang => $lang
+            }
+        );
+
+        if ( !$is_valid ) {
+            return $c->render( status => 400, openapi => { error => $errors } );
         }
 
         my $target_groups = delete $body->{'target_groups'};
@@ -97,7 +177,7 @@ sub update {
 
         return $c->render(
             status  => 200,
-            openapi => { %{ $event->unblessed }, target_groups => $event_target_group_fees->as_list } || {}
+            openapi => { %{ $event->unblessed }, target_groups => $event_target_group_fees->unblessed } || {}
         );
     }
     catch {

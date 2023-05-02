@@ -28,8 +28,8 @@ textdomain 'com.lmscloud.eventmanagement';
 bind_textdomain_filter 'com.lmscloud.eventmanagement', \&Encode::decode_utf8;
 bindtextdomain 'com.lmscloud.eventmanagement' => $self->bundle_path . '/locales/';
 
-my Readonly::Scalar $UPPER_AGE_BOUNDARY          => 255;
-my Readonly::Scalar $UPPER_PARTICIPANTS_BOUNDARY => 65535;
+Readonly::Scalar my $UPPER_AGE_BOUNDARY          => 255;
+Readonly::Scalar my $UPPER_PARTICIPANTS_BOUNDARY => 65535;
 
 sub _validate {
     my ($args) = @_;
@@ -67,7 +67,7 @@ sub update {
     my $c = shift->openapi->valid_input or return;
 
     return try {
-        my $lang = $c->validation->param('lang');
+        my $lang = $c->validation->param('lang') || 'en';
         local $ENV{LANGUAGE}       = $lang;
         local $ENV{OUTPUT_CHARSET} = 'UTF-8';
         my $id         = $c->validation->param('id');

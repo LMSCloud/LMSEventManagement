@@ -37,6 +37,8 @@ sub list {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+        local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
+        local $ENV{OUTPUT_CHARSET} = 'UTF-8';
         my $locations_set = Koha::LMSCloud::EventManagement::Locations->new;
         my $locations     = $c->objects->search($locations_set);
 
