@@ -97,11 +97,8 @@ export type TargetGroupState = {
     selected: boolean;
     fee: number;
 };
-export type TargetGroupFee = {
+export type TargetGroupFee = TargetGroupState & {
     id: number;
-    target_group_id: number;
-    selected: boolean;
-    fee: number;
 };
 export type EventType = {
     id: number;
