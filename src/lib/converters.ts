@@ -177,7 +177,7 @@ export class InputConverter {
         ${map(
           data as LMSLocation[],
           ({ id, name }: LMSLocation) =>
-            html`<option value=${id} ?selected=${id === value}>${name}</option>`
+            html`<option value=${id} ?selected=${id == value}>${name}</option>`
         )};
       </select>`,
       image: (value) => html`<input
