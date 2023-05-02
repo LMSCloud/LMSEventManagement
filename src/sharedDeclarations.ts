@@ -126,7 +126,6 @@ export type ModalField = BaseField & {
   handler?: HandlerCallbackFunction;
 } & FieldType;
 
-
 export type CreateOpts = Omit<RequestInit, "endpoint"> & {
   endpoint: string;
 };
@@ -144,11 +143,8 @@ export type TargetGroupState = {
   fee: number;
 };
 
-export type TargetGroupFee = {
+export type TargetGroupFee = TargetGroupState & {
   id: number;
-  target_group_id: number;
-  selected: boolean;
-  fee: number;
 };
 
 export type EventType = {
