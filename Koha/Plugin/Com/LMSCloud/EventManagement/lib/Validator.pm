@@ -7,6 +7,8 @@ use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
 use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
 use POSIX qw(setlocale);
 use Encode;
+use DateTime;
+use DateTime::Format::Strptime;
 
 use C4::Context;
 use Koha::Plugin::Com::LMSCloud::EventManagement;
@@ -27,6 +29,12 @@ has 'lang' => (
     required => 0,
 );
 
+has '_parsers' => (
+    is      => 'ro',
+    isa     => 'ArrayRef',
+    default => sub { [] },
+);
+
 Readonly::Scalar our $MAX_LENGTH_VARCHAR => 255;
 Readonly::Scalar our $MAX_LENGTH_TEXT    => 65_535;
 Readonly::Scalar our $MAX_LENGTH_INT     => 2_147_483_647;
@@ -39,6 +47,20 @@ sub BUILD {
     textdomain 'com.lmscloud.eventmanagement';
     bind_textdomain_filter 'com.lmscloud.eventmanagement', \&Encode::decode_utf8;
     bindtextdomain 'com.lmscloud.eventmanagement' => $plugin->bundle_path . '/locales/';
+
+    $self->{'_parsers'} = [
+        DateTime::Format::Strptime->new( pattern => '%Y-%m-%dT%H:%M:%S%z',    on_error => 'undef' ),    # format with timezone and seconds
+        DateTime::Format::Strptime->new( pattern => '%Y-%m-%dT%H:%M:%S%Z',    on_error => 'undef' ),    # format with timezone and seconds
+        DateTime::Format::Strptime->new( pattern => '%Y-%m-%dT%H:%M:%S',      on_error => 'undef' ),    # format with seconds but no timezone
+        DateTime::Format::Strptime->new( pattern => '%Y-%m-%dT%H:%M:%S.%6N',  on_error => 'undef' ),    # format with microseconds and no timezone
+        DateTime::Format::Strptime->new( pattern => '%Y-%m-%dT%H:%M:%SZ',     on_error => 'undef' ),    # format with 'Z' indicating UTC timezone and no seconds
+        DateTime::Format::Strptime->new( pattern => '%Y-%m-%dT%H:%M:%S.%6NZ', on_error => 'undef' ),    # format with 'Z' indicating UTC timezone, microseconds and no seconds
+        DateTime::Format::Strptime->new( pattern => '%Y-%m-%dT%H:%M%z',       on_error => 'undef' ),    # format with timezone and no seconds
+        DateTime::Format::Strptime->new( pattern => '%Y-%m-%dT%H:%M%Z',       on_error => 'undef' ),    # format with 'Z' indicating UTC timezone and no seconds
+        DateTime::Format::Strptime->new( pattern => '%Y-%m-%dT%H:%M',         on_error => 'undef' ),    # format with no timezone and no seconds
+        DateTime::Format::Strptime->new( pattern => '%Y-%m-%d %H:%M:%S',      on_error => 'undef' ),    # format sql-friendly with no timezone
+        DateTime::Format::Strptime->new( pattern => '%Y-%m-%d %H:%M',         on_error => 'undef' ),    # format sql-friendly with no timezone and no seconds
+    ];
 
     return;
 }
@@ -153,7 +175,7 @@ sub is_valid_number {
     my $has_given_length = defined $args->{'length'} ? $args->{'value'} =~ m/^.{1,$args->{'length'}}$/smx : 1;
 
     # Uses a regular expression to check whether the given number is positive if the positive option is true.
-    my $is_positive = $args->{'positive'} ? $args->{'value'} =~ m/^[1-9]\d*$/smx : 1;
+    my $is_positive = $args->{'positive'} ? $args->{'value'} =~ m/^[0-9]\d*$/smx : 1;
 
     # Checks whether the given value exceeds a certain value if the max_value option defined.
     my $exceeds_max_value = defined $args->{'max_value'} ? $args->{'value'} > $args->{'max_value'} : 0;
@@ -193,14 +215,20 @@ sub is_valid_datetime {
         return ( $is_valid, $errors );
     }
 
-    # Uses a regular expression to check whether the given value is a datetime in the format YYYY-MM-DDTHH:mm.
-    my $is_valid_datetime = $args->{'value'} =~ m/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/smx;
+    # Use the custom parsers to check whether the given value is a valid datetime
+    my $dt;
+    for my $parser ( @{ $self->_parsers } ) {
+        $dt = eval { defined $args->{'value'} ? $parser->parse_datetime( $args->{'value'} ) : undef };
+        last if defined $dt;
+    }
+
+    my $is_valid_datetime = defined $dt ? 1 : 0;
 
     # Checks whether the given value is equal or greater than the current localtime if the after option is true.
     # This assumes that the server this is run on is in the same timezone as the client.
-    my $is_after_localtime = defined $args->{'after'} ? ( $args->{'value'} ge localtime->strftime('%Y-%m-%dT%H:%M') ) : 1;
+    my $is_after_localtime = defined $args->{'after'} ? ( $args->{'value'} ge localtime->strftime('%Y-%m-%dT%H:%M:%S%z') ) : 1;
 
-    # Checks whether the given value is equal or less than a supplied datetime in the format YYYY-MM-DDTHH:mm if the before option is defined.
+    # Checks whether the given value is equal or less than a supplied datetime in the format YYYY-MM-DDTHH:mm(:ss)(Z|(+/-)hh:mm) if the before option is defined.
     my $is_before = defined $args->{'before'} ? ( $args->{'value'} le $args->{'before'} ) : 1;
 
     # Check if all options specified in args are true.
@@ -210,9 +238,9 @@ sub is_valid_datetime {
 
     $errors = [];
     my $given_argument = defined $args->{'key'} ? __('The given value for ') . $args->{'key'} : __('The given value: ') . $args->{'value'};
-    push @{$errors}, $given_argument . __(' is not a datetime in the format YYYY-MM-DDTHH:mm.') if !$is_valid_datetime;
-    push @{$errors}, $given_argument . __(' is not after the current localtime.')               if !$is_after_localtime;
-    push @{$errors}, $given_argument . __(' is not before the given datetime.')                 if !$is_before;
+    push @{$errors}, $given_argument . __(' is not a valid datetime value.')      if !$is_valid_datetime;
+    push @{$errors}, $given_argument . __(' is not after the current localtime.') if !$is_after_localtime;
+    push @{$errors}, $given_argument . __(' is not before the given datetime.')   if !$is_before;
 
     return ( 0, $errors );
 }
