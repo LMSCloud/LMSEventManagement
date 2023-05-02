@@ -188,7 +188,7 @@ export class InputConverter {
         disabled
       />`,
       description: (value) => html`<textarea
-        class="form-control overflow-hidden h-100"
+        class="form-control"
         name="description"
         disabled
       >
