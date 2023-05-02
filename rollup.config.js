@@ -32,8 +32,8 @@ export default {
       sourceMap: true,
     }),
     typescript(),
-    // minifyHTML(),
-    // terser(),
+    minifyHTML(),
+    terser(),
     // analyze({
     //   summaryOnly: true,
     // }),

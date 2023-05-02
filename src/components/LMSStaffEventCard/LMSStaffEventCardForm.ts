@@ -32,7 +32,11 @@ export default class LMSStaffEventCardForm extends LitElement {
         display: inline-block;
         width: 1em;
         height: 1em;
-        color: #000000;
+        color: #6C757D;
+      }
+
+      .btn:hover svg {
+        color: #FFFFFF;
       }
 
       button {
