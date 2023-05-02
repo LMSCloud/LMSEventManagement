@@ -99,7 +99,11 @@ export class TranslateDirective extends Directive {
       } else {
         const rng = Math.floor(Math.random() * 10) + 4;
         this._textNode.textContent = "\u00A0".repeat(rng);
-        this._element.classList.add("skeleton", "skeleton-text");
+        this._element.classList.add(
+          "skeleton",
+          "skeleton-text",
+          "pointer-events-none"
+        );
       }
       return this._element;
     }
