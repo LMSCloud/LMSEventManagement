@@ -122,6 +122,10 @@ sub tool {
         },
         q{images} => sub {
             $template = $self->get_template( { file => 'views/tool/images.tt' } );
+            $template->param(
+                LANG    => C4::Languages::getlanguage($query) || 'en',
+                LOCALES => $self->bundle_path . '/locales/',
+            );
 
             return $self->output_html( $template->output() );
 
