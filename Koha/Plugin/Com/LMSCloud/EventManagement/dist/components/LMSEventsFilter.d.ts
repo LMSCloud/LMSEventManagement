@@ -28,6 +28,7 @@ export default class LMSEventsFilter extends LitElement {
     target_groups: TargetGroup[];
     locations: LMSLocation[];
     inputs: NodeListOf<HTMLInputElement> | undefined;
+    private shouldFold;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;
     private facetsStrategyManager;
@@ -40,6 +41,7 @@ export default class LMSEventsFilter extends LitElement {
     handleChange(): void;
     emitChange(e: Event): void;
     handleHideToggle(): void;
+    handleDropdownToggle(e: Event): void;
     urlSearchParamsToQueryParam(searchParams: URLSearchParams): string;
     render(): import("lit").TemplateResult<1>;
 }

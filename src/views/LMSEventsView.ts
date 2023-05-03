@@ -5,7 +5,6 @@ import LMSEventsFilter from "../components/LMSEventsFilter";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LMSEvent } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
-import { classMap } from "lit/directives/class-map.js";
 import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
 import LMSPaginationNav from "../components/LMSPaginationNav";
 import { __ } from "../lib/translate";
@@ -227,65 +226,46 @@ export default class LMSEventsView extends LitElement {
     return html`
       <div class="container-fluid px-0">
         <div class="row">
-          <div class="col-12" ?hidden=${this.events.length > 0}>
-            <div class="alert alert-info" role="alert">
-              ${__("There are no events to display")}!
-            </div>
-          </div>
-          <div
-            class="${classMap({
-              "col-xl-3": !this.hasHiddenFacets,
-              "col-xl-1": this.hasHiddenFacets,
-              "col-lg-4": !this.hasHiddenFacets,
-              "col-lg-2": this.hasHiddenFacets,
-              "col-md-5": !this.hasHiddenFacets,
-              "col-md-2": this.hasHiddenFacets,
-            })} col-12"
-            ?hidden=${!this.events.length}
-          >
+          <div class="col-12 mb-3">
             <lms-events-filter
               @hide=${this.handleHide}
               @filter=${this.handleFilter}
               .events=${this.events}
               .isHidden=${this.hasHiddenFacets}
-            ></lms-events-filter>
+            >
+              <div class="col-12" ?hidden=${!this.events.length}>
+                <div class="card-deck">
+                  ${map(
+                    this.events,
+                    (event) => html`
+                      <lms-card
+                        tabindex="0"
+                        @keyup=${(e: KeyboardEvent) => {
+                          if (e.key === "Enter") {
+                            this.handleShowDetails({ lmsEvent: event });
+                          }
+                        }}
+                        @click=${() => {
+                          this.handleShowDetails({ lmsEvent: event });
+                        }}
+                        .title=${event.name}
+                        .text=${event.description}
+                        .image=${{ src: event.image, alt: event.name }}
+                      ></lms-card>
+                    `
+                  ) ?? nothing}
+                  <lms-card-details-modal
+                    @close=${this.handleHideDetails}
+                    .event=${this.modalData}
+                    .isOpen=${this.hasOpenModal}
+                  ></lms-card-details-modal>
+                </div>
+              </div>
+            </lms-events-filter>
           </div>
-          <div
-            class="${classMap({
-              "col-xl-9": !this.hasHiddenFacets,
-              "col-xl-11": this.hasHiddenFacets,
-              "col-lg-8": !this.hasHiddenFacets,
-              "col-lg-10": this.hasHiddenFacets,
-              "col-md-7": !this.hasHiddenFacets,
-              "col-md-10": this.hasHiddenFacets,
-            })} col-12"
-            ?hidden=${!this.events.length}
-          >
-            <div class="card-deck">
-              ${map(
-                this.events,
-                (event) => html`
-                  <lms-card
-                    tabindex="0"
-                    @keyup=${(e: KeyboardEvent) => {
-                      if (e.key === "Enter") {
-                        this.handleShowDetails({ lmsEvent: event });
-                      }
-                    }}
-                    @click=${() => {
-                      this.handleShowDetails({ lmsEvent: event });
-                    }}
-                    .title=${event.name}
-                    .text=${event.description}
-                    .image=${{ src: event.image, alt: event.name }}
-                  ></lms-card>
-                `
-              ) ?? nothing}
-              <lms-card-details-modal
-                @close=${this.handleHideDetails}
-                .event=${this.modalData}
-                .isOpen=${this.hasOpenModal}
-              ></lms-card-details-modal>
+          <div class="col-12" ?hidden=${this.events.length > 0}>
+            <div class="alert alert-info" role="alert">
+              ${__("There are no events to display")}
             </div>
           </div>
         </div>

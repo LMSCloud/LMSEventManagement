@@ -11,6 +11,7 @@ import { map } from "lit/directives/map.js";
 import { classMap } from "lit/directives/class-map.js";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
+import { utilityStyles } from "../styles/utilities";
 
 type Facets = {
   eventTypeIds: string[];
@@ -43,8 +44,9 @@ export default class LMSEventsFilter extends LitElement {
   @state() target_groups: TargetGroup[] = [];
   @state() locations: LMSLocation[] = [];
   @queryAll("input") inputs: NodeListOf<HTMLInputElement> | undefined;
+  private shouldFold = window.innerWidth <= 420;
 
-  static override styles = [bootstrapStyles, skeletonStyles];
+  static override styles = [bootstrapStyles, skeletonStyles, utilityStyles];
 
   override connectedCallback() {
     super.connectedCallback();
@@ -260,6 +262,14 @@ export default class LMSEventsFilter extends LitElement {
     );
   }
 
+  handleDropdownToggle(e: Event) {
+    const button = e.target as HTMLButtonElement;
+    const dropdown = button.nextElementSibling as HTMLDivElement;
+    if (dropdown) {
+      dropdown.classList.toggle("show");
+    }
+  }
+
   urlSearchParamsToQueryParam(searchParams: URLSearchParams) {
     const queryParams = {};
     searchParams.forEach((value, key) => {
@@ -282,20 +292,26 @@ export default class LMSEventsFilter extends LitElement {
           class="card-header d-flex ${classMap({
             "justify-content-between": !this.isHidden,
             "justify-content-center": this.isHidden,
+            "flex-column": this.shouldFold,
           })} sticky-top bg-white"
         >
           <h5
-            class="card-title ${classMap({
-              "d-inline": !this.isHidden,
-              "d-none": this.isHidden,
-            })}"
+            class=${classMap({
+              "d-inline": !this.shouldFold,
+              "d-none": this.shouldFold,
+            })}
           >
             ${__("Filter")}
           </h5>
-          <div>
+
+          <div
+            class="btn-group ${classMap({
+              "d-none": !this.shouldFold,
+            })}"
+          >
             <button
               type="button"
-              class="btn btn-sm btn-outline-secondary me-2"
+              class="btn btn-outline-secondary btn-sm"
               @click=${this.handleHideToggle}
               aria-label=${this.isHidden
                 ? __("Show filters")
@@ -305,137 +321,276 @@ export default class LMSEventsFilter extends LitElement {
             </button>
             <button
               type="button"
-              class="btn btn-sm btn-outline-secondary ${classMap({
-                "d-none": this.isHidden,
-              })}"
+              class="btn btn-outline-secondary btn-sm"
               @click=${this.handleReset}
             >
-              ${__("Reset")}
+              ${__("Reset filters")}
             </button>
           </div>
-        </div>
-        <div class="card-body ${classMap({ "d-none": this.isHidden })}">
-          <div class="form-group">
-            <label for="event_type">${__("Event Type")}</label>
-            ${map(
-              this.facets.eventTypeIds,
-              (eventTypeId) => html`
-                <div class="form-group form-check">
+
+          <div class="dropdowns">
+            <div
+              class="btn-group ${classMap({
+                "d-none": this.isHidden,
+                "w-100": this.shouldFold,
+                "mx-2": !this.shouldFold,
+              })}"
+              dropdown-menu-wrapper
+            >
+              <button
+                type="button"
+                class="btn btn-outline-secondary dropdown-toggle ${classMap({
+                  "btn-sm": this.shouldFold,
+                })}"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                @click=${this.handleDropdownToggle}
+              >
+                ${__("Event Type")}
+              </button>
+              <div class="dropdown-menu w-100 p-2">
+                ${map(
+                  this.facets.eventTypeIds,
+                  (eventTypeId) => html`
+                    <div class="form-group form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        name="event_type"
+                        id=${eventTypeId}
+                      />
+                      <label class="form-check-label" for=${eventTypeId}
+                        >${this.event_types.find(
+                          (event_type) =>
+                            event_type.id === parseInt(eventTypeId, 10)
+                        )?.name}</label
+                      >
+                    </div>
+                  `
+                )}
+              </div>
+            </div>
+
+            <div
+              class="btn-group ${classMap({
+                "d-none": this.isHidden,
+                "w-100": this.shouldFold,
+                "mx-2": !this.shouldFold,
+              })}"
+              dropdown-menu-wrapper
+            >
+              <button
+                type="button"
+                class="btn btn-outline-secondary dropdown-toggle ${classMap({
+                  "btn-sm": this.shouldFold,
+                })}"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                @click=${this.handleDropdownToggle}
+              >
+                ${__("Target Group")}
+              </button>
+              <div class="dropdown-menu w-100 p-2">
+                ${map(
+                  this.facets.targetGroupIds,
+                  (targetGroupId) => html`
+                    <div class="form-group form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        name="target_group"
+                        id=${targetGroupId}
+                      />
+                      <label class="form-check-label" for=${targetGroupId}
+                        >${this.target_groups.find(
+                          (target_group) => target_group.id === targetGroupId
+                        )?.name}</label
+                      >
+                    </div>
+                  `
+                )}
+              </div>
+            </div>
+
+            <div
+              class="btn-group ${classMap({
+                "d-none": this.isHidden,
+                "w-100": this.shouldFold,
+                "mx-2": !this.shouldFold,
+              })}"
+              dropdown-menu-wrapper
+            >
+              <button
+                type="button"
+                class="btn btn-outline-secondary dropdown-toggle ${classMap({
+                  "btn-sm": this.shouldFold,
+                })}"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                @click=${this.handleDropdownToggle}
+              >
+                ${__("Age")}
+              </button>
+              <div class="dropdown-menu w-100 p-2">
+                <div class="form-group">
+                  <label for="min_age">${__("Min Age")}</label>
+                  <input
+                    type="number"
+                    class="form-control form-control-sm"
+                    id="min_age"
+                    name="min_age"
+                    min="0"
+                    max="120"
+                    value=""
+                    @input=${this.emitChange}
+                  />
+                  <label for="max_age">${__("Max Age")}</label>
+                  <input
+                    type="number"
+                    class="form-control form-control-sm"
+                    id="max_age"
+                    name="max_age"
+                    min="0"
+                    max="120"
+                    value=""
+                    @input=${this.emitChange}
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="btn-group ${classMap({
+                "d-none": this.isHidden,
+                "w-100": this.shouldFold,
+                "mx-2": !this.shouldFold,
+              })}"
+              dropdown-menu-wrapper
+            >
+              <button
+                type="button"
+                class="btn btn-outline-secondary dropdown-toggle ${classMap({
+                  "btn-sm": this.shouldFold,
+                })}"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                @click=${this.handleDropdownToggle}
+              >
+                ${__("Registration & Dates")}
+              </button>
+              <div class="dropdown-menu w-100 p-2">
+                <div class="form-check">
                   <input
                     type="checkbox"
                     class="form-check-input"
-                    name="event_type"
-                    id=${eventTypeId}
+                    id="open_registration"
+                    name="open_registration"
+                    checked
                   />
-                  <label class="form-check-label" for=${eventTypeId}
-                    >${this.event_types.find(
-                      (event_type) =>
-                        event_type.id === parseInt(eventTypeId, 10)
-                    )?.name}</label
+                  <label for="open_registration"
+                    >${__("Open Registration")}</label
                   >
                 </div>
-              `
-            )}
-          </div>
-          <div class="form-group">
-            <label for="target_group">${__("Target Group")}</label>
-            ${map(
-              this.facets.targetGroupIds,
-              (targetGroupId) => html` <div class="form-group form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  name="target_group"
-                  id=${targetGroupId}
-                />
-                <label class="form-check-label" for=${targetGroupId}
-                  >${this.target_groups.find(
-                    (target_group) => target_group.id === targetGroupId
-                  )?.name}</label
-                >
-              </div>`
-            )}
-          </div>
-          <div class="form-group">
-            <label for="min_age">${__("Min Age")}</label>
-            <input
-              type="number"
-              class="form-control form-control-sm"
-              id="min_age"
-              name="min_age"
-              min="0"
-              max="120"
-              value=""
-              @input=${this.emitChange}
-            />
-            <label for="max_age">${__("Max Age")}</label>
-            <input
-              type="number"
-              class="form-control form-control-sm"
-              id="max_age"
-              name="max_age"
-              min="0"
-              max="120"
-              value=""
-              @input=${this.emitChange}
-            />
-          </div>
-          <div class="form-check">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              id="open_registration"
-              name="open_registration"
-              checked
-            />
-            <label for="open_registration">${__("Open Registration")}</label>
-          </div>
-          <div class="form-group">
-            <label for="start_time">${__("Start Date")}</label>
-            <input
-              type="date"
-              class="form-control form-control-sm"
-              id="start_time"
-              name="start_time"
-            />
-            <label for="end_time">${__("End Date")}</label>
-            <input
-              type="date"
-              class="form-control form-control-sm"
-              id="end_time"
-              name="end_time"
-            />
-          </div>
-          <div class="form-group">
-            <label for="location">${__("Location")}</label>
-            ${map(
-              this.facets.locationIds,
-              (locationId) =>
-                html` <div class="form-group form-check">
+                <div class="form-group">
+                  <label for="start_time">${__("Start Date")}</label>
                   <input
-                    type="checkbox"
-                    class="form-check-input"
-                    name="location"
-                    id=${locationId}
+                    type="date"
+                    class="form-control form-control-sm"
+                    id="start_time"
+                    name="start_time"
                   />
-                  <label class="form-check-label" for=${locationId}
-                    >${this.locations.find(
-                      (location) => location.id === parseInt(locationId, 10)
-                    )?.name}</label
-                  >
-                </div>`
-            )}
+                  <label for="end_time">${__("End Date")}</label>
+                  <input
+                    type="date"
+                    class="form-control form-control-sm"
+                    id="end_time"
+                    name="end_time"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="btn-group ${classMap({
+                "d-none": this.isHidden,
+                "w-100": this.shouldFold,
+                "mx-2": !this.shouldFold,
+              })}"
+              dropdown-menu-wrapper
+            >
+              <button
+                type="button"
+                class="btn btn-outline-secondary dropdown-toggle ${classMap({
+                  "btn-sm": this.shouldFold,
+                })}"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                @click=${this.handleDropdownToggle}
+              >
+                ${__("Location")}
+              </button>
+              <div class="dropdown-menu w-100 p-2">
+                ${map(
+                  this.facets.locationIds,
+                  (locationId) =>
+                    html` <div class="form-group form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        name="location"
+                        id=${locationId}
+                      />
+                      <label class="form-check-label" for=${locationId}
+                        >${this.locations.find(
+                          (location) => location.id === parseInt(locationId, 10)
+                        )?.name}</label
+                      >
+                    </div>`
+                )}
+              </div>
+            </div>
+
+            <div
+              class="btn-group ${classMap({
+                "d-none": this.isHidden,
+                "w-100": this.shouldFold,
+                "mx-2": !this.shouldFold,
+              })}"
+              dropdown-menu-wrapper
+            >
+              <button
+                type="button"
+                class="btn btn-outline-secondary dropdown-toggle ${classMap({
+                  "btn-sm": this.shouldFold,
+                })}"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                @click=${this.handleDropdownToggle}
+              >
+                ${__("Fee")}
+              </button>
+              <div class="dropdown-menu w-100 p-2">
+                <div class="form-group">
+                  <label for="fee">${__("Fee")}</label>
+                  <input
+                    type="number"
+                    class="form-control form-control-sm"
+                    id="fee"
+                    name="fee"
+                    @input=${this.emitChange}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="fee">${__("Fee")}</label>
-            <input
-              type="number"
-              class="form-control form-control-sm"
-              id="fee"
-              name="fee"
-              @input=${this.emitChange}
-            />
-          </div>
+        </div>
+        <div class="card-body">
+          <slot></slot>
         </div>
       </div>
     `;
