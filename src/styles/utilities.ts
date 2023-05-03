@@ -4,4 +4,8 @@ export const utilityStyles = css`
   .pointer-events-none {
     pointer-events: none;
   }
+
+  .w-inherit {
+    width: inherit;
+  }
 `;

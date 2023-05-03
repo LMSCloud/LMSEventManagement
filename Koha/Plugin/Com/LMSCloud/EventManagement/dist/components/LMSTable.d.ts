@@ -10,8 +10,12 @@ export default class LMSTable extends LitElement {
     private notImplementedInBaseMessage;
     protected emptyTableMessage: TemplateResult<1>;
     private inputConverter;
+    inputs: NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
+    editButtons: NodeListOf<HTMLButtonElement>;
     static styles: import("lit").CSSResult[];
-    handleEdit(e: Event): void;
+    private updateButtonState;
+    private toggleInputs;
+    protected toggleEdit(e: Event): void;
     handleSave(e: Event): void;
     handleDelete(e: Event): void;
     protected getColumnData(query: Record<string, string | number | boolean | any[]>, data?: TaggedData[]): Generator<(string | TemplateResult<2 | 1>)[], void, unknown>;

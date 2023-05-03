@@ -2,7 +2,7 @@ import { __ } from "../../lib/translate";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { classMap } from "lit/directives/class-map.js";
 import { Column /* Input */, TargetGroupState } from "../../sharedDeclarations";
-import { customElement, property, query, queryAll } from "lit/decorators.js";
+import { customElement, property, queryAll } from "lit/decorators.js";
 import { LitElement, html, css } from "lit";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { skeletonStyles } from "../../styles/skeleton";
@@ -25,8 +25,6 @@ export default class LMSStaffEventCardForm extends LitElement {
   };
   @queryAll(".collapse") collapsibles!: NodeListOf<HTMLElement>;
   @queryAll("input, select, textarea") inputs!: NodeListOf<HTMLInputElement>;
-  @query(".start-edit") startEditSpan!: HTMLSpanElement;
-  @query(".abort-edit") abortEditSpan!: HTMLSpanElement;
 
   static override styles = [
     bootstrapStyles,
@@ -62,8 +60,8 @@ export default class LMSStaffEventCardForm extends LitElement {
 
     if (button.classList.contains("active")) {
       button.classList.remove("active");
-      this.startEditSpan.classList.remove("d-none");
-      this.abortEditSpan.classList.add("d-none");
+      button.querySelector(".start-edit")?.classList.remove("d-none");
+      button.querySelector(".abort-edit")?.classList.add("d-none");
       this.inputs.forEach((input) => {
         input.setAttribute("disabled", "");
       });
@@ -73,8 +71,8 @@ export default class LMSStaffEventCardForm extends LitElement {
     }
 
     button.classList.add("active");
-    this.startEditSpan.classList.add("d-none");
-    this.abortEditSpan.classList.remove("d-none");
+    button.querySelector(".start-edit")?.classList.add("d-none");
+    button.querySelector(".abort-edit")?.classList.remove("d-none");
     this.inputs.forEach((input) => {
       input.removeAttribute("disabled");
     });

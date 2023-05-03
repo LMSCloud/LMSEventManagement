@@ -8,8 +8,6 @@ export default class LMSStaffEventCardForm extends LitElement {
     };
     collapsibles: NodeListOf<HTMLElement>;
     inputs: NodeListOf<HTMLInputElement>;
-    startEditSpan: HTMLSpanElement;
-    abortEditSpan: HTMLSpanElement;
     static styles: import("lit").CSSResult[];
     private toggleEdit;
     private processTargetGroupElements;

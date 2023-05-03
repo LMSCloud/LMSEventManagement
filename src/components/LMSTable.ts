@@ -14,14 +14,16 @@ import {
   faTrash,
   faSortDown,
   faSortUp,
+  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property, queryAll, state } from "lit/decorators.js";
 import LMSToast from "./LMSToast";
 import { Column, TaggedData } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { InputConverter } from "../lib/converters";
+import { utilityStyles } from "../styles/utilities";
 
 type sortTask = {
   column: string;
@@ -41,14 +43,19 @@ export default class LMSTable extends LitElement {
     heading: "",
     message: "",
   };
-  @state() private notImplementedInBaseMessage =
+  private notImplementedInBaseMessage =
     "Implement this method in your extended LMSTable component.";
-  @state() protected emptyTableMessage = html`${__("No data to display")}.`;
+  protected emptyTableMessage = html`${__("No data to display")}.`;
   private inputConverter = new InputConverter();
+  @queryAll("input, select, textarea") inputs!: NodeListOf<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  >;
+  @queryAll(".btn-edit") editButtons!: NodeListOf<HTMLButtonElement>;
 
   static override styles = [
     bootstrapStyles,
     skeletonStyles,
+    utilityStyles,
     css`
       table {
         background: white;
@@ -77,8 +84,44 @@ export default class LMSTable extends LitElement {
     `,
   ];
 
-  public handleEdit(e: Event) {
-    console.info(e, this.notImplementedInBaseMessage);
+  private updateButtonState(button: HTMLButtonElement, isActive: boolean) {
+    button.classList.toggle("active", isActive);
+    button.querySelector(".start-edit")?.classList.toggle("d-none", isActive);
+    button.querySelector(".abort-edit")?.classList.toggle("d-none", !isActive);
+  }
+
+  private toggleInputs(tableRow: Element, isEnabled: boolean) {
+    const inputs = tableRow.querySelectorAll("input, select, textarea");
+    inputs.forEach((input) => {
+      isEnabled
+        ? input.removeAttribute("disabled")
+        : input.setAttribute("disabled", "");
+    });
+  }
+
+  protected toggleEdit(e: Event) {
+    const button = e.target as HTMLButtonElement;
+    if (!button) return;
+
+    this.inputs?.forEach((input) => {
+      input.setAttribute("disabled", "");
+    });
+
+    const tableRow = button.closest("tr");
+    if (button.classList.contains("active") && tableRow) {
+      this.updateButtonState(button, false);
+      this.toggleInputs(tableRow, false);
+      return;
+    }
+
+    this.editButtons?.forEach((editButton) => {
+      this.updateButtonState(editButton, false);
+    });
+
+    if (tableRow) {
+      this.updateButtonState(button, true);
+      this.toggleInputs(tableRow, true);
+    }
   }
 
   public handleSave(e: Event) {
@@ -265,12 +308,21 @@ export default class LMSTable extends LitElement {
                             <td class="align-middle">
                               <div class="d-flex">
                                 <button
-                                  @click=${this.handleEdit}
+                                  @click=${this.toggleEdit}
                                   type="button"
-                                  class="btn btn-dark mx-2"
+                                  class="btn btn-dark mx-2 btn-edit"
                                 >
-                                  ${litFontawesome(faEdit)}
-                                  <span>${__("Edit")}</span>
+                                  <span class="start-edit pointer-events-none"
+                                    >${litFontawesome(faEdit)}&nbsp;${__(
+                                      "Edit"
+                                    )}</span
+                                  >
+                                  <span
+                                    class="abort-edit d-none pointer-events-none"
+                                    >${litFontawesome(faTimes)}&nbsp;${__(
+                                      "Abort"
+                                    )}</span
+                                  >
                                 </button>
                                 <button
                                   @click=${this.handleSave}

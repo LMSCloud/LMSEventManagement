@@ -16,29 +16,6 @@ export default class LMSEventTypesTable extends LMSTable {
   @property({ type: Array }) locations: LMSLocation[] = [];
   @property({ type: Array }) event_types: EventType[] = [];
 
-  override handleEdit(e: Event) {
-    if (e.target) {
-      let inputs: NodeListOf<HTMLInputElement | HTMLSelectElement> =
-        this.renderRoot.querySelectorAll("input, select");
-      inputs.forEach((input) => {
-        input.disabled = true;
-      });
-
-      const target = e.target as HTMLElement;
-      let parent = target.parentElement;
-      while (parent && parent.tagName !== "TR") {
-        parent = parent.parentElement;
-      }
-
-      if (parent) {
-        inputs = parent?.querySelectorAll("input, select, textarea");
-        inputs?.forEach((input) => {
-          input.disabled = false;
-        });
-      }
-    }
-  }
-
   private handleInput(
     input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
     value: unknown

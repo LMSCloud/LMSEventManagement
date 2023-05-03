@@ -7,29 +7,6 @@ import { __ } from "../lib/translate";
 export default class LMSLocationsTable extends LMSTable {
   @property({ type: Array }) locations: LMSLocation[] = [];
 
-  override handleEdit(e: Event) {
-    if (e.target) {
-      let inputs: NodeListOf<HTMLInputElement> =
-        this.renderRoot.querySelectorAll("input");
-      inputs.forEach((input) => {
-        input.disabled = true;
-      });
-
-      const target = e.target as HTMLElement;
-      let parent = target.parentElement;
-      while (parent && parent.tagName !== "TR") {
-        parent = parent.parentElement;
-      }
-
-      if (parent) {
-        inputs = parent?.querySelectorAll("input");
-        inputs?.forEach((input) => {
-          input.disabled = false;
-        });
-      }
-    }
-  }
-
   override async handleSave(e: Event) {
     const target = e.target as HTMLElement;
 
