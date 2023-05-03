@@ -129,7 +129,7 @@ msgid "Fees"
 msgstr ""
 
 #: src/components/LMSCardDetailsModal.ts:254
-#: src/components/LMSEventsFilter.ts:341
+#: src/components/LMSEventsFilter.ts:362
 msgid "Target Group"
 msgstr ""
 
@@ -138,12 +138,12 @@ msgid "Age Range"
 msgstr ""
 
 #: src/components/LMSCardDetailsModal.ts:256
-#: src/components/LMSEventsFilter.ts:430
+#: src/components/LMSEventsFilter.ts:504 src/components/LMSEventsFilter.ts:508
 msgid "Fee"
 msgstr ""
 
 #: src/components/LMSCardDetailsModal.ts:285
-#: src/components/LMSEventsFilter.ts:410
+#: src/components/LMSEventsFilter.ts:473
 #: src/extensions/LMSEventTypesModal.ts:74 src/extensions/LMSEventsModal.ts:109
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:455
 msgid "Location"
@@ -157,53 +157,61 @@ msgstr ""
 msgid "Register"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:293
+#: src/components/LMSEventsFilter.ts:294
 msgid "Filter"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:301 src/components/LMSEventsFilter.ts:304
+#: src/components/LMSEventsFilter.ts:307 src/components/LMSEventsFilter.ts:310
 msgid "Show filters"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:302 src/components/LMSEventsFilter.ts:304
+#: src/components/LMSEventsFilter.ts:308 src/components/LMSEventsFilter.ts:310
 msgid "Hide filters"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:313
-msgid "Reset"
+#: src/components/LMSEventsFilter.ts:317
+msgid "Reset filters"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:319 src/extensions/LMSEventsModal.ts:31
+#: src/components/LMSEventsFilter.ts:329 src/extensions/LMSEventsModal.ts:31
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:368
 msgid "Event Type"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:360
+#: src/components/LMSEventsFilter.ts:394
+msgid "Age"
+msgstr ""
+
+#: src/components/LMSEventsFilter.ts:398
 #: src/extensions/LMSEventTypesModal.ts:53 src/extensions/LMSEventsModal.ts:67
 #: src/extensions/LMSTargetGroupsModal.ts:31
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:390
 msgid "Min Age"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:371
+#: src/components/LMSEventsFilter.ts:409
 #: src/extensions/LMSEventTypesModal.ts:60 src/extensions/LMSEventsModal.ts:73
 #: src/extensions/LMSTargetGroupsModal.ts:38
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:394
 msgid "Max Age"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:391
+#: src/components/LMSEventsFilter.ts:431
+msgid "Registration & Dates"
+msgstr ""
+
+#: src/components/LMSEventsFilter.ts:443
 #: src/extensions/LMSEventTypesModal.ts:105
 #: src/extensions/LMSEventsModal.ts:157
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:479
 msgid "Open Registration"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:394
+#: src/components/LMSEventsFilter.ts:447
 msgid "Start Date"
 msgstr ""
 
-#: src/components/LMSEventsFilter.ts:401
+#: src/components/LMSEventsFilter.ts:454
 msgid "End Date"
 msgstr ""
 
@@ -248,26 +256,26 @@ msgstr ""
 msgid "No data to display"
 msgstr ""
 
-#: src/components/LMSTable.ts:292
+#: src/components/LMSTable.ts:303
 msgid "actions"
 msgstr ""
 
-#: src/components/LMSTable.ts:317
+#: src/components/LMSTable.ts:328
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:322
 msgid "Edit"
 msgstr ""
 
-#: src/components/LMSTable.ts:323
+#: src/components/LMSTable.ts:334
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:325
 msgid "Abort"
 msgstr ""
 
-#: src/components/LMSTable.ts:333
+#: src/components/LMSTable.ts:344
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:330
 msgid "Save"
 msgstr ""
 
-#: src/components/LMSTable.ts:342
+#: src/components/LMSTable.ts:353
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:338
 msgid "Delete"
 msgstr ""
@@ -421,7 +429,7 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: src/views/LMSEventsView.ts:232
+#: src/views/LMSEventsView.ts:239
 msgid "There are no events to display"
 msgstr ""
 
