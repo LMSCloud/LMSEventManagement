@@ -39,7 +39,7 @@ export default class LMSEventTypesTable extends LMSTable {
     }
   }
 
-  handleInput(
+  private handleInput(
     input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
     value: unknown
   ) {

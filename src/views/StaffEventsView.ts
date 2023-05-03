@@ -1,11 +1,13 @@
-import { LitElement, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import LMSStaffEventCardsDeck from "../components/LMSStaffEventCardDeck";
-import LMSEventsModal from "../extensions/LMSEventsModal";
-import { Column, URIComponents } from "../sharedDeclarations";
 import { __ } from "../lib/translate";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
+import { Column, URIComponents } from "../sharedDeclarations";
+import { customElement, state } from "lit/decorators.js";
+import { LitElement, html } from "lit";
+import { map } from "lit/directives/map.js";
 import { skeletonStyles } from "../styles/skeleton";
+import LMSEventsModal from "../extensions/LMSEventsModal";
+import LMSStaffEventCardsDeck from "../components/LMSStaffEventCardDeck";
+
 declare global {
   interface HTMLElementTagNameMap {
     "lms-staff-event-card-deck": LMSStaffEventCardsDeck;
@@ -15,7 +17,9 @@ declare global {
 
 @customElement("lms-staff-events-view")
 export default class StaffEventsView extends LitElement {
-  @state() events: Column[] = [];
+  @state() hasLoaded: boolean = false;
+  private isEmpty: boolean = false;
+  private events: Column[] = [];
   private event_types: Column[] = [];
   private target_groups: Column[] = [];
   private locations: Column[] = [];
@@ -49,7 +53,11 @@ export default class StaffEventsView extends LitElement {
         this.event_types = event_types;
         this.target_groups = target_groups;
         this.locations = locations;
-        this.events = events; // Assigning events last to trigger a rerender
+        this.events = events;
+      })
+      .then(() => {
+        this.isEmpty = !this.hasData();
+        this.hasLoaded = true;
       });
   }
 
@@ -63,7 +71,16 @@ export default class StaffEventsView extends LitElement {
   }
 
   override render() {
-    if (!this.hasData()) {
+    if (!this.hasLoaded) {
+      return html` <div class="d-flex justify-content-around flex-wrap">
+        ${map(
+          [...Array(10)],
+          () => html`<div class="skeleton skeleton-card"></div>`
+        )}
+      </div>`;
+    }
+
+    if (this.hasLoaded && this.isEmpty) {
       return html` <h1 class="text-center">
         ${__("You have to create a")}&nbsp;
         <lms-anchor

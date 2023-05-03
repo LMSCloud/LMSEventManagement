@@ -16,7 +16,9 @@ declare global {
 
 @customElement("lms-staff-event-types-view")
 export default class StaffEventTypesView extends LitElement {
-  @state() event_types: Column[] = [];
+  @state() hasLoaded: boolean = false;
+  private isEmpty: boolean = false;
+  private event_types: Column[] = [];
   private target_groups: Column[] = [];
   private locations: Column[] = [];
   @property({ type: Object, attribute: false }) href: URIComponents = {
@@ -47,6 +49,10 @@ export default class StaffEventTypesView extends LitElement {
         this.target_groups = target_groups;
         this.locations = locations;
         this.event_types = event_types;
+      })
+      .then(() => {
+        this.isEmpty = !this.hasData();
+        this.hasLoaded = true;
       });
   }
 
@@ -57,7 +63,13 @@ export default class StaffEventTypesView extends LitElement {
   }
 
   override render() {
-    if (!this.hasData()) {
+    if (!this.hasLoaded) {
+      return html` <div class="container-fluid mx-0">
+        <div class="skeleton skeleton-table"></div>
+      </div>`;
+    }
+
+    if (this.hasLoaded && this.isEmpty) {
       return html` <h1 class="text-center">
         ${__("You have to create a")}&nbsp;
         <lms-anchor

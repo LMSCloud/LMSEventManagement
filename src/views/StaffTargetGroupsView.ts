@@ -16,7 +16,9 @@ declare global {
 
 @customElement("lms-staff-target-groups-view")
 export default class StaffEventTypesView extends LitElement {
-  @state() target_groups: Column[] = [];
+  @state() hasLoaded: boolean = false;
+  private isEmpty: boolean = false;
+  private target_groups: Column[] = [];
 
   static override styles = [bootstrapStyles, skeletonStyles];
 
@@ -34,11 +36,21 @@ export default class StaffEventTypesView extends LitElement {
       .then((response) => response.json())
       .then((result) => {
         this.target_groups = result;
+      })
+      .then(() => {
+        this.isEmpty = !this.target_groups.length;
+        this.hasLoaded = true;
       });
   }
 
   override render() {
-    if (!this.target_groups.length) {
+    if (!this.hasLoaded) {
+      return html` <div class="container-fluid mx-0">
+        <div class="skeleton skeleton-table"></div>
+      </div>`;
+    }
+
+    if (this.hasLoaded && this.isEmpty) {
       return html` <h1 class="text-center">${__("No data to display")}.</h1>`;
     }
 

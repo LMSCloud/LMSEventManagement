@@ -11,7 +11,7 @@ export default class LMSEventTypesTable extends LMSTable {
     locations: LMSLocation[];
     event_types: EventType[];
     handleEdit(e: Event): void;
-    handleInput(input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement, value: unknown): unknown;
+    private handleInput;
     handleSave(e: Event): Promise<void>;
     handleDelete(e: Event): Promise<void>;
     constructor();

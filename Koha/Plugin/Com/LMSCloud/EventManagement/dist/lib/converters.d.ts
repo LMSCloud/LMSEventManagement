@@ -17,6 +17,7 @@ export declare function convertToFormat(string: string, format: string, locale: 
 export declare class InputConverter {
     private conversionMap;
     constructor();
+    private toggleCollapse;
     private needsData;
     getInputTemplate({ name, value, data, }: TemplateQuery): TemplateResult;
     private findDataByName;

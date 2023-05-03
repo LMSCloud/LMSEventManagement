@@ -1,7 +1,7 @@
 import { LitElement } from "lit";
 import LMSEventTypesModal from "../extensions/LMSEventTypesModal";
 import LMSEventTypesTable from "../extensions/LMSEventTypesTable";
-import { Column, URIComponents } from "../sharedDeclarations";
+import { URIComponents } from "../sharedDeclarations";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-event-types-table": LMSEventTypesTable;
@@ -9,7 +9,9 @@ declare global {
     }
 }
 export default class StaffEventTypesView extends LitElement {
-    event_types: Column[];
+    hasLoaded: boolean;
+    private isEmpty;
+    private event_types;
     private target_groups;
     private locations;
     href: URIComponents;

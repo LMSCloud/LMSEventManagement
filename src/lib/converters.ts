@@ -98,55 +98,66 @@ export class InputConverter {
         )};
       </select>`,
       target_groups: (value, data) => html`
-        <table class="table table-sm table-bordered table-striped mb-0">
-          <thead>
-            <tr>
-              <th scope="col">${__("target_group")}</th>
-              <th scope="col">${__("selected")}</th>
-              <th scope="col">${__("fee")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${map(data as TargetGroup[], ({ id, name }: TargetGroup) => {
-              const targetGroupFee = (
-                value as unknown as TargetGroupFee[]
-              ).find(
-                (targetGroupFee: TargetGroupFee) =>
-                  targetGroupFee.target_group_id === id
-              );
-              const selected = targetGroupFee?.selected ?? false;
-              const fee = targetGroupFee?.fee ?? 0;
-              return html`
-                <tr>
-                  <td id=${id} class="align-middle">${name}</td>
-                  <td class="align-middle">
-                    <input
-                      type="checkbox"
-                      data-group="target_groups"
-                      name="selected"
-                      id=${id}
-                      class="form-control"
-                      ?checked=${selected}
-                      disabled
-                    />
-                  </td>
-                  <td class="align-middle">
-                    <input
-                      type="number"
-                      data-group="target_groups"
-                      name="fee"
-                      id=${id}
-                      step="0.01"
-                      class="form-control"
-                      value=${fee}
-                      disabled
-                    />
-                  </td>
-                </tr>
-              `;
-            })}
-          </tbody>
-        </table>
+        <button
+          type="button"
+          class="btn btn-link btn-section w-100 text-left"
+          data-toggle="collapse"
+          data-target="#targetGroups"
+          @click=${this.toggleCollapse}
+        >
+          <h4 class="pointer-events-none">${__("Target Groups")}</h4>
+        </button>
+        <div class="collapse" id="targetGroups">
+          <table class="table table-sm table-bordered table-striped mb-0">
+            <thead>
+              <tr>
+                <th scope="col">${__("target_group")}</th>
+                <th scope="col">${__("selected")}</th>
+                <th scope="col">${__("fee")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${map(data as TargetGroup[], ({ id, name }: TargetGroup) => {
+                const targetGroupFee = (
+                  value as unknown as TargetGroupFee[]
+                ).find(
+                  (targetGroupFee: TargetGroupFee) =>
+                    targetGroupFee.target_group_id === id
+                );
+                const selected = targetGroupFee?.selected ?? false;
+                const fee = targetGroupFee?.fee ?? 0;
+                return html`
+                  <tr>
+                    <td id=${id} class="align-middle">${name}</td>
+                    <td class="align-middle">
+                      <input
+                        type="checkbox"
+                        data-group="target_groups"
+                        name="selected"
+                        id=${id}
+                        class="form-control"
+                        ?checked=${selected}
+                        disabled
+                      />
+                    </td>
+                    <td class="align-middle">
+                      <input
+                        type="number"
+                        data-group="target_groups"
+                        name="fee"
+                        id=${id}
+                        step="0.01"
+                        class="form-control"
+                        value=${fee}
+                        disabled
+                      />
+                    </td>
+                  </tr>
+                `;
+              })}
+            </tbody>
+          </table>
+        </div>
       `,
       min_age: (value) => html`<input
         class="form-control"
@@ -293,6 +304,20 @@ ${value}</textarea
         disabled
       />`,
     };
+  }
+
+  private toggleCollapse(e: MouseEvent) {
+    const target = e.target as HTMLElement;
+    const button = target.closest("button");
+    if (!button) return;
+
+    const collapse = button.nextElementSibling as HTMLElement;
+    if (collapse.classList.contains("show")) {
+      collapse.classList.remove("show");
+      return;
+    }
+
+    collapse.classList.add("show");
   }
 
   private needsData(name: string): boolean {

@@ -1,7 +1,6 @@
 import { LitElement } from "lit";
-import LMSStaffEventCardsDeck from "../components/LMSStaffEventCardDeck";
 import LMSEventsModal from "../extensions/LMSEventsModal";
-import { Column } from "../sharedDeclarations";
+import LMSStaffEventCardsDeck from "../components/LMSStaffEventCardDeck";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-staff-event-card-deck": LMSStaffEventCardsDeck;
@@ -9,7 +8,9 @@ declare global {
     }
 }
 export default class StaffEventsView extends LitElement {
-    events: Column[];
+    hasLoaded: boolean;
+    private isEmpty;
+    private events;
     private event_types;
     private target_groups;
     private locations;

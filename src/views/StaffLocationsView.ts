@@ -16,7 +16,9 @@ declare global {
 
 @customElement("lms-staff-locations-view")
 export default class StaffLocationsView extends LitElement {
-  @state() locations: Column[] = [];
+  @state() hasLoaded: boolean = false;
+  private isEmpty: boolean = false;
+  private locations: Column[] = [];
 
   static override styles = [bootstrapStyles, skeletonStyles];
 
@@ -32,11 +34,21 @@ export default class StaffLocationsView extends LitElement {
       .then((response) => response.json())
       .then((result) => {
         this.locations = result;
+      })
+      .then(() => {
+        this.isEmpty = !this.locations.length;
+        this.hasLoaded = true;
       });
   }
 
   override render() {
-    if (!this.locations.length) {
+    if (!this.hasLoaded) {
+      return html` <div class="container-fluid mx-0">
+        <div class="skeleton skeleton-table"></div>
+      </div>`;
+    }
+
+    if (this.hasLoaded && this.isEmpty) {
       return html` <h1 class="text-center">${__("No data to display")}.</h1>`;
     }
 

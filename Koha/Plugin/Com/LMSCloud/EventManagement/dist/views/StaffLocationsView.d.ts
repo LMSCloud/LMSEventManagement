@@ -1,7 +1,6 @@
 import { LitElement } from "lit";
 import LMSLocationsModal from "../extensions/LMSLocationsModal";
 import LMSLocationsTable from "../extensions/LMSLocationsTable";
-import { Column } from "../sharedDeclarations";
 declare global {
     interface HTMLElementTagNameMap {
         "lms-locations-table": LMSLocationsTable;
@@ -9,7 +8,9 @@ declare global {
     }
 }
 export default class StaffLocationsView extends LitElement {
-    locations: Column[];
+    hasLoaded: boolean;
+    private isEmpty;
+    private locations;
     static styles: import("lit").CSSResult[];
     fetchUpdate(): Promise<void>;
     connectedCallback(): void;
