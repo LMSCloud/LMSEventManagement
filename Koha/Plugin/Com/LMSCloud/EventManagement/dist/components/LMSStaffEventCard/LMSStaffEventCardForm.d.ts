@@ -1,5 +1,5 @@
-import { LitElement } from "lit";
 import { Column } from "../../sharedDeclarations";
+import { LitElement } from "lit";
 export default class LMSStaffEventCardForm extends LitElement {
     datum: Column;
     _toast: {
@@ -7,8 +7,11 @@ export default class LMSStaffEventCardForm extends LitElement {
         message: string;
     };
     collapsibles: NodeListOf<HTMLElement>;
+    inputs: NodeListOf<HTMLInputElement>;
+    startEditSpan: HTMLSpanElement;
+    abortEditSpan: HTMLSpanElement;
     static styles: import("lit").CSSResult[];
-    private handleEdit;
+    private toggleEdit;
     private processTargetGroupElements;
     private processDatetimeLocalElements;
     private processOpenRegistrationElement;

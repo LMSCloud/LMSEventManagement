@@ -1,19 +1,21 @@
+import { __ } from "../../lib/translate";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
+import { classMap } from "lit/directives/class-map.js";
+import { Column /* Input */, TargetGroupState } from "../../sharedDeclarations";
+import { customElement, property, query, queryAll } from "lit/decorators.js";
 import { LitElement, html, css } from "lit";
-import { customElement, property, queryAll } from "lit/decorators.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { skeletonStyles } from "../../styles/skeleton";
+import { TemplateResultConverter } from "../../lib/converters";
+import { utilityStyles } from "../../styles/utilities";
 import {
   faEdit,
   faSave,
   faTrash,
   faCompressAlt,
+  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import { Column /* Input */, TargetGroupState } from "../../sharedDeclarations";
-import { TemplateResultConverter } from "../../lib/converters";
-import { __ } from "../../lib/translate";
-import { skeletonStyles } from "../../styles/skeleton";
-import { classMap } from "lit/directives/class-map.js";
-import { utilityStyles } from "../../styles/utilities";
+
 @customElement("lms-staff-event-card-form")
 export default class LMSStaffEventCardForm extends LitElement {
   @property({ type: Array }) datum: Column = {} as Column;
@@ -22,6 +24,9 @@ export default class LMSStaffEventCardForm extends LitElement {
     message: "",
   };
   @queryAll(".collapse") collapsibles!: NodeListOf<HTMLElement>;
+  @queryAll("input, select, textarea") inputs!: NodeListOf<HTMLInputElement>;
+  @query(".start-edit") startEditSpan!: HTMLSpanElement;
+  @query(".abort-edit") abortEditSpan!: HTMLSpanElement;
 
   static override styles = [
     bootstrapStyles,
@@ -32,11 +37,12 @@ export default class LMSStaffEventCardForm extends LitElement {
         display: inline-block;
         width: 1em;
         height: 1em;
-        color: #6C757D;
+        color: #6c757d;
       }
 
-      .btn:hover svg {
-        color: #FFFFFF;
+      .btn:hover svg,
+      .btn.active svg {
+        color: #ffffff;
       }
 
       button {
@@ -49,15 +55,29 @@ export default class LMSStaffEventCardForm extends LitElement {
     `,
   ];
 
-  private handleEdit(e: Event) {
+  private toggleEdit(e: Event) {
     e.preventDefault();
-    const shadowRoot = this.renderRoot as HTMLElement;
-    shadowRoot
-      .querySelector("form")
-      ?.querySelectorAll("input, select, textarea")
-      .forEach((input) => {
-        input.removeAttribute("disabled");
+    const button = e.target as HTMLButtonElement;
+    if (!button) return;
+
+    if (button.classList.contains("active")) {
+      button.classList.remove("active");
+      this.startEditSpan.classList.remove("d-none");
+      this.abortEditSpan.classList.add("d-none");
+      this.inputs.forEach((input) => {
+        input.setAttribute("disabled", "");
       });
+
+      this.collapseAll();
+      return;
+    }
+
+    button.classList.add("active");
+    this.startEditSpan.classList.add("d-none");
+    this.abortEditSpan.classList.remove("d-none");
+    this.inputs.forEach((input) => {
+      input.removeAttribute("disabled");
+    });
 
     const hasOpenCollapsibles = Array.from(this.collapsibles).some(
       (collapsible) => collapsible.classList.contains("show")
@@ -296,12 +316,16 @@ export default class LMSStaffEventCardForm extends LitElement {
           aria-label="${__("Event controls")}"
         >
           <button
-            @click=${this.handleEdit}
+            @click=${this.toggleEdit}
             type="button"
             class="btn btn-outline-secondary"
           >
-            ${litFontawesome(faEdit)}
-            <span>&nbsp;${__("Edit")}</span>
+            <span class="start-edit pointer-events-none"
+              >${litFontawesome(faEdit)}&nbsp;${__("Edit")}</span
+            >
+            <span class="abort-edit d-none pointer-events-none"
+              >${litFontawesome(faTimes)}&nbsp;${__("Abort")}</span
+            >
           </button>
           <button type="submit" class="btn btn-outline-secondary">
             ${litFontawesome(faSave)}
