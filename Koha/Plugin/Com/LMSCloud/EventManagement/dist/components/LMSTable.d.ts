@@ -15,6 +15,7 @@ export default class LMSTable extends LitElement {
     static styles: import("lit").CSSResult[];
     private updateButtonState;
     private toggleInputs;
+    private toggleCollapse;
     protected toggleEdit(e: Event): void;
     handleSave(e: Event): void;
     handleDelete(e: Event): void;

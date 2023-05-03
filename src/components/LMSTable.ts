@@ -99,6 +99,15 @@ export default class LMSTable extends LitElement {
     });
   }
 
+  private toggleCollapse(tableRow: Element, isExpanded: boolean) {
+    const collapsibles = tableRow.querySelectorAll(".collapse");
+    collapsibles.forEach((collapse) => {
+      isExpanded
+        ? collapse.classList.add("show")
+        : collapse.classList.remove("show");
+    });
+  }
+
   protected toggleEdit(e: Event) {
     const button = e.target as HTMLButtonElement;
     if (!button) return;
@@ -109,6 +118,7 @@ export default class LMSTable extends LitElement {
 
     const tableRow = button.closest("tr");
     if (button.classList.contains("active") && tableRow) {
+      this.toggleCollapse(tableRow, false);
       this.updateButtonState(button, false);
       this.toggleInputs(tableRow, false);
       return;
@@ -119,6 +129,7 @@ export default class LMSTable extends LitElement {
     });
 
     if (tableRow) {
+      this.toggleCollapse(tableRow, true);
       this.updateButtonState(button, true);
       this.toggleInputs(tableRow, true);
     }
