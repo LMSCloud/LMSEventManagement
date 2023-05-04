@@ -20,6 +20,7 @@ type Facets = {
     status: "pending" | "confirmed" | "canceled" | "sold_out";
 };
 export default class LMSEventsFilter extends LitElement {
+    private shouldFold;
     events: LMSEvent[];
     facetsStrategy: "preserve" | "update";
     isHidden: boolean;
@@ -29,21 +30,23 @@ export default class LMSEventsFilter extends LitElement {
     locations: LMSLocation[];
     inputs: NodeListOf<HTMLInputElement> | undefined;
     dropdownMenus: NodeListOf<HTMLDivElement>;
-    private shouldFold;
     static styles: import("lit").CSSResult[];
+    private throttle;
+    constructor();
     connectedCallback(): void;
+    disconnectedCallback(): void;
     private facetsStrategyManager;
     private deepCopy;
     private _eventsDeepCopy;
     private get eventsDeepCopy();
     private set eventsDeepCopy(value);
     willUpdate(): void;
-    handleReset(): void;
-    handleChange(): void;
-    emitChange(e: Event): void;
-    handleHideToggle(): void;
-    handleDropdownToggle(e: Event): void;
-    urlSearchParamsToQueryParam(searchParams: URLSearchParams): string;
+    private handleReset;
+    private handleChange;
+    private emitChange;
+    private handleHideToggle;
+    private handleDropdownToggle;
+    protected urlSearchParamsToQueryParam(searchParams: URLSearchParams): string;
     render(): import("lit").TemplateResult<1>;
 }
 export {};

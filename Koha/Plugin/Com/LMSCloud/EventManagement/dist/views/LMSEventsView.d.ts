@@ -15,7 +15,6 @@ declare global {
 type ReservedParam = "_match" | "_order_by" | "_page" | "_per_page" | "q";
 export default class LMSEventsView extends LitElement {
     borrowernumber: undefined;
-    hasHiddenFacets: boolean;
     events: LMSEvent[];
     modalData: LMSEvent;
     hasOpenModal: boolean;
@@ -36,7 +35,6 @@ export default class LMSEventsView extends LitElement {
     }): void;
     connectedCallback(): void;
     handleFilter(event: CustomEvent): void;
-    handleHide(e: CustomEvent): void;
     handleShowDetails({ lmsEvent }: {
         lmsEvent: LMSEvent;
     }): void;

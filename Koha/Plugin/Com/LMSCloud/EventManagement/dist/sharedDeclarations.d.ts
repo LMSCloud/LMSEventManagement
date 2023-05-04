@@ -1,7 +1,7 @@
 import { TemplateResult } from "lit";
 import { DirectiveResult } from "lit/directive";
 import { TranslateDirective } from "./lib/translate";
-export type InputType = "hidden" | "text" | "search" | "tel" | "url" | "email" | "password" | "datetime" | "date" | "month" | "week" | "time" | "datetime-local" | "number" | "range" | "color" | "checkbox" | "radio" | "file" | "submit" | "image" | "reset" | "button";
+export type InputType = "button" | "checkbox" | "color" | "date" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "number" | "password" | "radio" | "range" | "reset" | "search" | "submit" | "tel" | "text" | "time" | "url" | "week";
 export type SpecialFieldType = "select" | "info" | "checkbox";
 export declare enum Status {
     Pending = "Pending",
