@@ -28,6 +28,7 @@ export default class LMSEventsFilter extends LitElement {
     target_groups: TargetGroup[];
     locations: LMSLocation[];
     inputs: NodeListOf<HTMLInputElement> | undefined;
+    dropdownMenus: NodeListOf<HTMLDivElement>;
     private shouldFold;
     static styles: import("lit").CSSResult[];
     connectedCallback(): void;

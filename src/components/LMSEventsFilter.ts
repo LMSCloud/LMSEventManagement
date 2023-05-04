@@ -44,6 +44,7 @@ export default class LMSEventsFilter extends LitElement {
   @state() target_groups: TargetGroup[] = [];
   @state() locations: LMSLocation[] = [];
   @queryAll("input") inputs: NodeListOf<HTMLInputElement> | undefined;
+  @queryAll(".dropdown-menu") dropdownMenus!: NodeListOf<HTMLDivElement>;
   private shouldFold = window.innerWidth <= 420;
 
   static override styles = [bootstrapStyles, skeletonStyles, utilityStyles];
@@ -265,6 +266,9 @@ export default class LMSEventsFilter extends LitElement {
   handleDropdownToggle(e: Event) {
     const button = e.target as HTMLButtonElement;
     const dropdown = button.nextElementSibling as HTMLDivElement;
+    this.dropdownMenus.forEach((menu) => {
+      menu.classList.remove("show");
+    });
     if (dropdown) {
       dropdown.classList.toggle("show");
     }
