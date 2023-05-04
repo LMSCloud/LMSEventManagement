@@ -267,7 +267,9 @@ export default class LMSEventsFilter extends LitElement {
     const button = e.target as HTMLButtonElement;
     const dropdown = button.nextElementSibling as HTMLDivElement;
     this.dropdownMenus.forEach((menu) => {
-      menu.classList.remove("show");
+      if (menu !== dropdown) {
+        menu.classList.remove("show");
+      }
     });
     if (dropdown) {
       dropdown.classList.toggle("show");
