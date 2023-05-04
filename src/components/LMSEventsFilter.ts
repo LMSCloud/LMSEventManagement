@@ -39,7 +39,7 @@ export default class LMSEventsFilter extends LitElement {
   @property({ type: Array }) events: LMSEvent[] = [];
   @property({ type: String }) facetsStrategy: "preserve" | "update" =
     "preserve";
-  @property({ type: Boolean }) isHidden = true;
+  @property({ type: Boolean }) isHidden = this.shouldFold;
   @state() facets: Partial<Facets> = {};
   @state() event_types: EventType[] = [];
   @state() target_groups: TargetGroup[] = [];
