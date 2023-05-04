@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { LitElement, css, html } from "lit";
 import {
   EventType,
   LMSEvent,
@@ -35,19 +35,52 @@ type Facets = {
 
 @customElement("lms-events-filter")
 export default class LMSEventsFilter extends LitElement {
+  private shouldFold = window.innerWidth <= 992;
   @property({ type: Array }) events: LMSEvent[] = [];
   @property({ type: String }) facetsStrategy: "preserve" | "update" =
     "preserve";
-  @property({ type: Boolean }) isHidden = false;
+  @property({ type: Boolean }) isHidden = true;
   @state() facets: Partial<Facets> = {};
   @state() event_types: EventType[] = [];
   @state() target_groups: TargetGroup[] = [];
   @state() locations: LMSLocation[] = [];
   @queryAll("input") inputs: NodeListOf<HTMLInputElement> | undefined;
   @queryAll(".dropdown-menu") dropdownMenus!: NodeListOf<HTMLDivElement>;
-  private shouldFold = window.innerWidth <= 420;
 
-  static override styles = [bootstrapStyles, skeletonStyles, utilityStyles];
+  static override styles = [
+    bootstrapStyles,
+    skeletonStyles,
+    utilityStyles,
+    css`
+      .gap-3 {
+        gap: 1rem;
+      }
+    `,
+  ];
+
+  private throttle = (callback: () => void, delay: number) => {
+    let previousCall = new Date().getTime();
+    return function () {
+      const time = new Date().getTime();
+      if (time - previousCall >= delay) {
+        previousCall = time;
+        callback();
+      }
+    };
+  };
+
+  constructor() {
+    super();
+
+    window.addEventListener(
+      "resize",
+      this.throttle(() => {
+        this.shouldFold = window.innerWidth <= 992;
+        this.isHidden = this.shouldFold;
+        this.requestUpdate();
+      }, 250)
+    );
+  }
 
   override connectedCallback() {
     super.connectedCallback();
@@ -80,6 +113,11 @@ export default class LMSEventsFilter extends LitElement {
     locations().then(
       (locations: LMSLocation[]) => (this.locations = locations)
     );
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    window.removeEventListener("resize", () => {});
   }
 
   private facetsStrategyManager() {
@@ -148,7 +186,7 @@ export default class LMSEventsFilter extends LitElement {
     };
   }
 
-  handleReset() {
+  private handleReset() {
     const inputs = this.shadowRoot?.querySelectorAll("input");
     inputs?.forEach((input) => {
       switch (input.type) {
@@ -174,7 +212,6 @@ export default class LMSEventsFilter extends LitElement {
       }
     });
 
-    /** This basically works. Feels a bit ugly, though. */
     this.dispatchEvent(
       new CustomEvent("filter", {
         detail: "",
@@ -184,7 +221,7 @@ export default class LMSEventsFilter extends LitElement {
     );
   }
 
-  handleChange() {
+  private handleChange() {
     const inputHandlers = new Map<
       string,
       (input: HTMLInputElement) => string | boolean | undefined
@@ -243,7 +280,7 @@ export default class LMSEventsFilter extends LitElement {
     );
   }
 
-  emitChange(e: Event) {
+  private emitChange(e: Event) {
     const target = e.target as HTMLInputElement;
     if (target) {
       target.dispatchEvent(
@@ -252,7 +289,7 @@ export default class LMSEventsFilter extends LitElement {
     }
   }
 
-  handleHideToggle() {
+  private handleHideToggle() {
     this.isHidden = !this.isHidden;
     this.dispatchEvent(
       new CustomEvent("hide", {
@@ -263,7 +300,7 @@ export default class LMSEventsFilter extends LitElement {
     );
   }
 
-  handleDropdownToggle(e: Event) {
+  private handleDropdownToggle(e: Event) {
     const button = e.target as HTMLButtonElement;
     const dropdown = button.nextElementSibling as HTMLDivElement;
     this.dropdownMenus.forEach((menu) => {
@@ -276,7 +313,7 @@ export default class LMSEventsFilter extends LitElement {
     }
   }
 
-  urlSearchParamsToQueryParam(searchParams: URLSearchParams) {
+  protected urlSearchParamsToQueryParam(searchParams: URLSearchParams) {
     const queryParams = {};
     searchParams.forEach((value, key) => {
       const keys = key.split(".");
@@ -305,6 +342,7 @@ export default class LMSEventsFilter extends LitElement {
             class=${classMap({
               "d-inline": !this.shouldFold,
               "d-none": this.shouldFold,
+              "mr-3": !this.shouldFold,
             })}
           >
             ${__("Filter")}
@@ -334,12 +372,17 @@ export default class LMSEventsFilter extends LitElement {
             </button>
           </div>
 
-          <div class="dropdowns">
+          <div
+            class="dropdowns ${classMap({
+              "d-flex": !this.shouldFold,
+              "flex-wrap": !this.shouldFold,
+              "gap-3": !this.shouldFold,
+            })}"
+          >
             <div
               class="btn-group ${classMap({
                 "d-none": this.isHidden,
                 "w-100": this.shouldFold,
-                "mx-2": !this.shouldFold,
               })}"
               dropdown-menu-wrapper
             >
@@ -382,7 +425,6 @@ export default class LMSEventsFilter extends LitElement {
               class="btn-group ${classMap({
                 "d-none": this.isHidden,
                 "w-100": this.shouldFold,
-                "mx-2": !this.shouldFold,
               })}"
               dropdown-menu-wrapper
             >
@@ -424,7 +466,6 @@ export default class LMSEventsFilter extends LitElement {
               class="btn-group ${classMap({
                 "d-none": this.isHidden,
                 "w-100": this.shouldFold,
-                "mx-2": !this.shouldFold,
               })}"
               dropdown-menu-wrapper
             >
@@ -467,11 +508,11 @@ export default class LMSEventsFilter extends LitElement {
                 </div>
               </div>
             </div>
+
             <div
               class="btn-group ${classMap({
                 "d-none": this.isHidden,
                 "w-100": this.shouldFold,
-                "mx-2": !this.shouldFold,
               })}"
               dropdown-menu-wrapper
             >
@@ -523,7 +564,6 @@ export default class LMSEventsFilter extends LitElement {
               class="btn-group ${classMap({
                 "d-none": this.isHidden,
                 "w-100": this.shouldFold,
-                "mx-2": !this.shouldFold,
               })}"
               dropdown-menu-wrapper
             >
@@ -564,7 +604,6 @@ export default class LMSEventsFilter extends LitElement {
               class="btn-group ${classMap({
                 "d-none": this.isHidden,
                 "w-100": this.shouldFold,
-                "mx-2": !this.shouldFold,
               })}"
               dropdown-menu-wrapper
             >
@@ -595,6 +634,8 @@ export default class LMSEventsFilter extends LitElement {
             </div>
           </div>
         </div>
+
+        <!-- Here we slot the content, e.g. the events into the card body -->
         <div class="card-body">
           <slot></slot>
         </div>

@@ -24,8 +24,6 @@ type ReservedParam = "_match" | "_order_by" | "_page" | "_per_page" | "q";
 @customElement("lms-events-view")
 export default class LMSEventsView extends LitElement {
   @property({ type: String }) borrowernumber = undefined;
-  @property({ attribute: "has-hidden-facets", reflect: true }) hasHiddenFacets =
-    false;
   @state() events: LMSEvent[] = [];
   @state() modalData: LMSEvent = {} as LMSEvent;
   @state() hasOpenModal = false;
@@ -49,42 +47,26 @@ export default class LMSEventsView extends LitElement {
           grid-gap: 1rem;
         }
 
-        :host([has-hidden-facets="true"]) .card-deck {
+         .card-deck {
           grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
-        }
-
-        :host([has-hidden-facets="false"]) .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(50%, 1fr));
         }
       }
 
       @media (min-width: 992px) {
-        :host([has-hidden-facets="true"]) .card-deck {
+         .card-deck {
           grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
-        }
-
-        :host([has-hidden-facets="false"]) .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
         }
       }
 
       @media (min-width: 1200px) {
-        :host([has-hidden-facets="true"]) .card-deck {
+         .card-deck {
           grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
-        }
-
-        :host([has-hidden-facets="false"]) .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
         }
       }
 
       @media (min-width: 1600px) {
-        :host([has-hidden-facets="true"]) .card-deck {
+         .card-deck {
           grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
-        }
-
-        :host([has-hidden-facets="false"]) .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
         }
       }
     `,
@@ -147,10 +129,6 @@ export default class LMSEventsView extends LitElement {
 
     this.getReservedQueryParams();
 
-    if (window.innerWidth < 768) {
-      this.handleHide({ detail: true } as CustomEvent);
-    }
-
     const reservedQueryString = this.getReservedQueryString();
     const response = async () =>
       await fetch(
@@ -207,11 +185,6 @@ export default class LMSEventsView extends LitElement {
       });
   }
 
-  handleHide(e: CustomEvent) {
-    const shouldHide = e.detail;
-    this.hasHiddenFacets = shouldHide;
-  }
-
   handleShowDetails({ lmsEvent }: { lmsEvent: LMSEvent }) {
     this.modalData = lmsEvent;
     this.hasOpenModal = true;
@@ -228,10 +201,8 @@ export default class LMSEventsView extends LitElement {
         <div class="row">
           <div class="col-12 mb-3">
             <lms-events-filter
-              @hide=${this.handleHide}
               @filter=${this.handleFilter}
               .events=${this.events}
-              .isHidden=${this.hasHiddenFacets}
             >
               <div class="col-12" ?hidden=${!this.events.length}>
                 <div class="card-deck">
