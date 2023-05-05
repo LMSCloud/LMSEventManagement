@@ -32,6 +32,7 @@ export default class LMSEventsView extends LitElement {
   @state() _page: number = 1;
   @state() _per_page: number = 20;
   @state() q?: string;
+  private hasLoaded = false;
 
   static override styles = [
     bootstrapStyles,
@@ -47,32 +48,34 @@ export default class LMSEventsView extends LitElement {
           grid-gap: 1rem;
         }
 
-         .card-deck {
+        .card-deck {
           grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
         }
       }
 
       @media (min-width: 992px) {
-         .card-deck {
+        .card-deck {
           grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
         }
       }
 
       @media (min-width: 1200px) {
-         .card-deck {
+        .card-deck {
           grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
         }
       }
 
       @media (min-width: 1600px) {
-         .card-deck {
+        .card-deck {
           grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
         }
       }
     `,
   ];
 
-  getReservedQueryParams(this: { [key in ReservedParam]?: number | string }) {
+  private getReservedQueryParams(this: {
+    [key in ReservedParam]?: number | string;
+  }) {
     const params = new URLSearchParams(window.location.search);
 
     const reservedParams: ReservedParam[] = [
@@ -90,7 +93,7 @@ export default class LMSEventsView extends LitElement {
     });
   }
 
-  getReservedQueryString(
+  private getReservedQueryString(
     this: { [key in ReservedParam]?: number | string },
     useParams: ReservedParam[] = [
       "_match",
@@ -112,7 +115,7 @@ export default class LMSEventsView extends LitElement {
     return params.toString();
   }
 
-  updateUrlWithReservedParams(reservedParams: {
+  private updateUrlWithReservedParams(reservedParams: {
     [key in ReservedParam]?: string | number;
   }) {
     const url = new URL(window.location.href);
@@ -146,6 +149,7 @@ export default class LMSEventsView extends LitElement {
         throw new Error("Something went wrong");
       })
       .then((events: LMSEvent[]) => {
+        this.hasLoaded = true;
         this.events = events;
         this.updateUrlWithReservedParams({
           _match: this._match,
@@ -160,7 +164,7 @@ export default class LMSEventsView extends LitElement {
       });
   }
 
-  handleFilter(event: CustomEvent) {
+  private handleQuery(event: CustomEvent) {
     const query = event.detail;
     const response = async () =>
       await fetch(
@@ -185,12 +189,12 @@ export default class LMSEventsView extends LitElement {
       });
   }
 
-  handleShowDetails({ lmsEvent }: { lmsEvent: LMSEvent }) {
+  private handleShowDetails({ lmsEvent }: { lmsEvent: LMSEvent }) {
     this.modalData = lmsEvent;
     this.hasOpenModal = true;
   }
 
-  handleHideDetails() {
+  private handleHideDetails() {
     this.modalData = {} as LMSEvent;
     this.hasOpenModal = false;
   }
@@ -201,9 +205,25 @@ export default class LMSEventsView extends LitElement {
         <div class="row">
           <div class="col-12 mb-3">
             <lms-events-filter
-              @filter=${this.handleFilter}
+              @filter=${this.handleQuery}
+              @search=${this.handleQuery}
               .events=${this.events}
             >
+              ${!this.hasLoaded
+                ? html`<div class="d-flex justify-content-around flex-wrap">
+                    ${map(
+                      [...Array(10)],
+                      () => html`<div class="skeleton skeleton-card"></div>`
+                    )}
+                  </div>`
+                : nothing}
+              ${this.hasLoaded && !this.events.length
+                ? html`<div class="col-12" ?hidden=${this.events.length > 0}>
+                    <div class="alert alert-info" role="alert">
+                      ${__("There are no events to display")}
+                    </div>
+                  </div>`
+                : nothing}
               <div class="col-12" ?hidden=${!this.events.length}>
                 <div class="card-deck">
                   ${map(
@@ -233,11 +253,6 @@ export default class LMSEventsView extends LitElement {
                 </div>
               </div>
             </lms-events-filter>
-          </div>
-          <div class="col-12" ?hidden=${this.events.length > 0}>
-            <div class="alert alert-info" role="alert">
-              ${__("There are no events to display")}
-            </div>
           </div>
         </div>
       </div>

@@ -12,7 +12,6 @@ declare global {
         "lms-pagination-nav": LMSPaginationNav;
     }
 }
-type ReservedParam = "_match" | "_order_by" | "_page" | "_per_page" | "q";
 export default class LMSEventsView extends LitElement {
     borrowernumber: undefined;
     events: LMSEvent[];
@@ -23,23 +22,15 @@ export default class LMSEventsView extends LitElement {
     _page: number;
     _per_page: number;
     q?: string;
+    private hasLoaded;
     static styles: import("lit").CSSResult[];
-    getReservedQueryParams(this: {
-        [key in ReservedParam]?: number | string;
-    }): void;
-    getReservedQueryString(this: {
-        [key in ReservedParam]?: number | string;
-    }, useParams?: ReservedParam[]): string;
-    updateUrlWithReservedParams(reservedParams: {
-        [key in ReservedParam]?: string | number;
-    }): void;
+    private getReservedQueryParams;
+    private getReservedQueryString;
+    private updateUrlWithReservedParams;
     connectedCallback(): void;
-    handleFilter(event: CustomEvent): void;
-    handleShowDetails({ lmsEvent }: {
-        lmsEvent: LMSEvent;
-    }): void;
-    handleHideDetails(): void;
+    private handleQuery;
+    private handleShowDetails;
+    private handleHideDetails;
     render(): import("lit").TemplateResult<1>;
 }
-export {};
 //# sourceMappingURL=LMSEventsView.d.ts.map

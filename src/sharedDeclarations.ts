@@ -173,3 +173,23 @@ export type MatrixGroup = {
 };
 
 export type TaggedData = ["target_groups" | "location" | "event_type", any[]];
+
+export type Facets = {
+  eventTypeIds: string[];
+  targetGroupIds: number[];
+  locationIds: string[];
+  description: string;
+  end_time: Date;
+  id: number;
+  image: string;
+  max_age: number;
+  max_participants: number;
+  min_age: number;
+  name: string;
+  open_registration: boolean;
+  registration_end: Date;
+  registration_link: string;
+  registration_start: Date;
+  start_time: Date;
+  status: "pending" | "confirmed" | "canceled" | "sold_out";
+};

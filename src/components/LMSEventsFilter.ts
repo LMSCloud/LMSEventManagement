@@ -4,6 +4,7 @@ import {
   LMSEvent,
   LMSLocation,
   TargetGroup,
+  Facets,
 } from "../sharedDeclarations";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { customElement, property, queryAll, state } from "lit/decorators.js";
@@ -12,26 +13,15 @@ import { classMap } from "lit/directives/class-map.js";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { utilityStyles } from "../styles/utilities";
+import LMSSearch from "./LMSSearch";
+import LMSDropdown from "./LMSDropdown";
 
-type Facets = {
-  eventTypeIds: string[];
-  targetGroupIds: number[];
-  locationIds: string[];
-  description: string;
-  end_time: Date;
-  id: number;
-  image: string;
-  max_age: number;
-  max_participants: number;
-  min_age: number;
-  name: string;
-  open_registration: boolean;
-  registration_end: Date;
-  registration_link: string;
-  registration_start: Date;
-  start_time: Date;
-  status: "pending" | "confirmed" | "canceled" | "sold_out";
-};
+declare global {
+  interface HTMLElementTagNameMap {
+    "lms-search": LMSSearch;
+    "lms-dropdown": LMSDropdown;
+  }
+}
 
 @customElement("lms-events-filter")
 export default class LMSEventsFilter extends LitElement {
@@ -44,8 +34,9 @@ export default class LMSEventsFilter extends LitElement {
   @state() event_types: EventType[] = [];
   @state() target_groups: TargetGroup[] = [];
   @state() locations: LMSLocation[] = [];
+  @state() activeFilters: [string, string | boolean][] = [];
   @queryAll("input") inputs: NodeListOf<HTMLInputElement> | undefined;
-  @queryAll(".dropdown-menu") dropdownMenus!: NodeListOf<HTMLDivElement>;
+  @queryAll("lms-dropdown") lmsDropdowns!: NodeListOf<LMSDropdown>;
 
   static override styles = [
     bootstrapStyles,
@@ -228,15 +219,12 @@ export default class LMSEventsFilter extends LitElement {
     >([
       [
         "checkbox",
-        (input) => {
-          if (input.id === "open_registration") {
-            return input.checked;
-          }
-          if (input.checked) {
-            return input.id;
-          }
-          return false;
-        },
+        (input) =>
+          input.id === "open_registration"
+            ? input.checked
+            : input.checked
+            ? input.id
+            : false,
       ],
       ["date", (input) => input.value],
       ["number", (input) => input.value],
@@ -263,11 +251,11 @@ export default class LMSEventsFilter extends LitElement {
           )
       );
 
-    /** TODO: This could be shortened */
     const query = new URLSearchParams();
     params.forEach(([name, value]) => {
       if (typeof name === "string" && value !== undefined) {
-        query.append(name, value?.toString());
+        this.activeFilters.push([name, value]);
+        return query.append(name, value?.toString());
       }
     });
 
@@ -280,13 +268,15 @@ export default class LMSEventsFilter extends LitElement {
     );
   }
 
-  private emitChange(e: Event) {
-    const target = e.target as HTMLInputElement;
-    if (target) {
-      target.dispatchEvent(
-        new Event("change", { composed: true, bubbles: true })
-      );
-    }
+  private handleSearch(e: CustomEvent) {
+    const { detail } = e;
+    this.dispatchEvent(
+      new CustomEvent("search", {
+        detail,
+        composed: true,
+        bubbles: true,
+      })
+    );
   }
 
   private handleHideToggle() {
@@ -301,16 +291,12 @@ export default class LMSEventsFilter extends LitElement {
   }
 
   private handleDropdownToggle(e: Event) {
-    const button = e.target as HTMLButtonElement;
-    const dropdown = button.nextElementSibling as HTMLDivElement;
-    this.dropdownMenus.forEach((menu) => {
-      if (menu !== dropdown) {
-        menu.classList.remove("show");
+    const target = e.target as LMSDropdown;
+    this.lmsDropdowns.forEach((lmsDropdown) => {
+      if (lmsDropdown !== target) {
+        lmsDropdown.isOpen = false;
       }
     });
-    if (dropdown) {
-      dropdown.classList.toggle("show");
-    }
   }
 
   protected urlSearchParamsToQueryParam(searchParams: URLSearchParams) {
@@ -332,310 +318,250 @@ export default class LMSEventsFilter extends LitElement {
     return html`
       <div class="card" @change=${this.handleChange}>
         <div
-          class="card-header d-flex ${classMap({
+          class="card-header container-fluid ${classMap({
             "justify-content-between": !this.isHidden,
             "justify-content-center": this.isHidden,
             "flex-column": this.shouldFold,
           })} sticky-top bg-white"
         >
-          <h5
-            class=${classMap({
-              "d-inline": !this.shouldFold,
-              "d-none": this.shouldFold,
-              "mr-3": !this.shouldFold,
-            })}
-          >
-            ${__("Filter")}
-          </h5>
+          <div class="row">
+            <div class="col-auto">
+              <h5
+                class=${classMap({
+                  "d-inline": !this.shouldFold,
+                  "d-none": this.shouldFold,
+                  "mr-3": !this.shouldFold,
+                })}
+              >
+                ${__("Filter")}
+              </h5>
+            </div>
 
-          <div
-            class="btn-group ${classMap({
-              "d-none": !this.shouldFold,
-            })}"
-          >
-            <button
-              type="button"
-              class="btn btn-outline-secondary btn-sm"
-              @click=${this.handleHideToggle}
-              aria-label=${this.isHidden
-                ? __("Show filters")
-                : __("Hide filters")}
-            >
-              ${this.isHidden ? __("Show filters") : __("Hide filters")}
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-secondary btn-sm"
-              @click=${this.handleReset}
-            >
-              ${__("Reset filters")}
-            </button>
+            <div class="col-auto">
+              <lms-search
+                @search=${this.handleSearch}
+                class=${classMap({
+                  "mr-3": !this.shouldFold,
+                  "mb-3": this.shouldFold,
+                })}
+              ></lms-search>
+            </div>
+
+            <div class="col-auto">
+              <div
+                class="btn-group ${classMap({
+                  "d-none": !this.shouldFold,
+                })}"
+              >
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm"
+                  @click=${this.handleHideToggle}
+                  aria-label=${this.isHidden
+                    ? __("Show filters")
+                    : __("Hide filters")}
+                >
+                  ${this.isHidden ? __("Show filters") : __("Hide filters")}
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm"
+                  @click=${this.handleReset}
+                >
+                  ${__("Reset filters")}
+                </button>
+              </div>
+
+              <div
+                class="dropdowns ${classMap({
+                  "d-flex": !this.shouldFold,
+                  "flex-wrap": !this.shouldFold,
+                  "gap-3": !this.shouldFold,
+                })}"
+              >
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .structure=${{
+                    type: "uniform",
+                    ids: this.facets.eventTypeIds,
+                    group: "event_type",
+                    inputType: "checkbox",
+                    classes: ["form-check-input"],
+                    fields: {
+                      ...this.event_types.reduce(
+                        (acc, event_type: EventType) => {
+                          acc[event_type.id] = {
+                            value: event_type.name,
+                          };
+                          return acc;
+                        },
+                        {} as Record<number, { value: string }>
+                      ),
+                    },
+                  }}
+                  .label=${__("Event Type")}
+                  @toggle=${this.handleDropdownToggle}
+                ></lms-dropdown>
+
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .structure=${{
+                    type: "uniform",
+                    ids: this.facets.targetGroupIds,
+                    group: "target_group",
+                    inputType: "checkbox",
+                    classes: ["form-check-input"],
+                    fields: {
+                      ...this.target_groups.reduce(
+                        (acc, target_group: TargetGroup) => {
+                          acc[target_group.id] = {
+                            value: target_group.name,
+                          };
+                          return acc;
+                        },
+                        {} as Record<number, { value: string }>
+                      ),
+                    },
+                  }}
+                  .label=${__("Target Group")}
+                  @toggle=${this.handleDropdownToggle}
+                ></lms-dropdown>
+
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .structure=${{
+                    type: "varying",
+                    fields: {
+                      min_age: {
+                        label: __("Min Age"),
+                        type: "number",
+                        classes: ["form-control", "form-control-sm"],
+                        additionalProperties: {
+                          min: 0,
+                          max: 120,
+                        },
+                      },
+                      max_age: {
+                        label: __("Max Age"),
+                        type: "number",
+                        classes: ["form-control", "form-control-sm"],
+                        additionalProperties: {
+                          min: 0,
+                          max: 120,
+                        },
+                      },
+                    },
+                  }}
+                  .label=${__("Age")}
+                  @toggle=${this.handleDropdownToggle}
+                ></lms-dropdown>
+
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .structure=${{
+                    type: "varying",
+                    fields: {
+                      open_registration: {
+                        type: "checkbox",
+                        classes: ["form-check-input"],
+                        value: true,
+                        label: __("Open Registration"),
+                        name: "open_registration",
+                      },
+                      start_time: {
+                        type: "date",
+                        classes: ["form-control", "form-control-sm"],
+                        value: "",
+                        label: __("Start Date"),
+                        name: "start_time",
+                      },
+                      end_time: {
+                        type: "date",
+                        classes: ["form-control", "form-control-sm"],
+                        value: "",
+                        label: __("End Date"),
+                        name: "end_time",
+                      },
+                    },
+                  }}
+                  .label=${__("Registration & Dates")}
+                  @toggle=${this.handleDropdownToggle}
+                ></lms-dropdown>
+
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .structure=${{
+                    type: "uniform",
+                    ids: this.facets.locationIds,
+                    group: "location",
+                    inputType: "checkbox",
+                    classes: ["form-check-input"],
+                    fields: {
+                      ...this.locations.reduce((acc, location: LMSLocation) => {
+                        acc[location.id] = {
+                          value: location.name,
+                        };
+                        return acc;
+                      }, {} as Record<number, { value: string }>),
+                    },
+                  }}
+                  .label=${__("Location")}
+                  @toggle=${this.handleDropdownToggle}
+                ></lms-dropdown>
+
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .structure=${{
+                    type: "varying",
+                    fields: {
+                      fee: {
+                        type: "number",
+                        classes: ["form-control", "form-control-sm"],
+                        value: "",
+                        label: __("Fee"),
+                        name: "fee",
+                        additionalProperties: {
+                          min: 0,
+                          max: 4294967295,
+                        },
+                      },
+                    },
+                  }}
+                  .label=${__("Fee")}
+                  @toggle=${this.handleDropdownToggle}
+                ></lms-dropdown>
+              </div>
+            </div>
           </div>
 
-          <div
-            class="dropdowns ${classMap({
-              "d-flex": !this.shouldFold,
-              "flex-wrap": !this.shouldFold,
-              "gap-3": !this.shouldFold,
-            })}"
-          >
-            <div
-              class="btn-group ${classMap({
-                "d-none": this.isHidden,
-                "w-100": this.shouldFold,
-              })}"
-              dropdown-menu-wrapper
-            >
-              <button
-                type="button"
-                class="btn btn-outline-secondary dropdown-toggle ${classMap({
-                  "btn-sm": this.shouldFold,
-                })}"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-                @click=${this.handleDropdownToggle}
-              >
-                ${__("Event Type")}
-              </button>
-              <div class="dropdown-menu w-100 p-2">
-                ${map(
-                  this.facets.eventTypeIds,
-                  (eventTypeId) => html`
-                    <div class="form-group form-check">
-                      <input
-                        type="checkbox"
-                        class="form-check-input"
-                        name="event_type"
-                        id=${eventTypeId}
-                      />
-                      <label class="form-check-label" for=${eventTypeId}
-                        >${this.event_types.find(
-                          (event_type) =>
-                            event_type.id === parseInt(eventTypeId, 10)
-                        )?.name}</label
-                      >
-                    </div>
-                  `
-                )}
-              </div>
-            </div>
-
-            <div
-              class="btn-group ${classMap({
-                "d-none": this.isHidden,
-                "w-100": this.shouldFold,
-              })}"
-              dropdown-menu-wrapper
-            >
-              <button
-                type="button"
-                class="btn btn-outline-secondary dropdown-toggle ${classMap({
-                  "btn-sm": this.shouldFold,
-                })}"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-                @click=${this.handleDropdownToggle}
-              >
-                ${__("Target Group")}
-              </button>
-              <div class="dropdown-menu w-100 p-2">
-                ${map(
-                  this.facets.targetGroupIds,
-                  (targetGroupId) => html`
-                    <div class="form-group form-check">
-                      <input
-                        type="checkbox"
-                        class="form-check-input"
-                        name="target_group"
-                        id=${targetGroupId}
-                      />
-                      <label class="form-check-label" for=${targetGroupId}
-                        >${this.target_groups.find(
-                          (target_group) => target_group.id === targetGroupId
-                        )?.name}</label
-                      >
-                    </div>
-                  `
-                )}
-              </div>
-            </div>
-
-            <div
-              class="btn-group ${classMap({
-                "d-none": this.isHidden,
-                "w-100": this.shouldFold,
-              })}"
-              dropdown-menu-wrapper
-            >
-              <button
-                type="button"
-                class="btn btn-outline-secondary dropdown-toggle ${classMap({
-                  "btn-sm": this.shouldFold,
-                })}"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-                @click=${this.handleDropdownToggle}
-              >
-                ${__("Age")}
-              </button>
-              <div class="dropdown-menu w-100 p-2">
-                <div class="form-group">
-                  <label for="min_age">${__("Min Age")}</label>
-                  <input
-                    type="number"
-                    class="form-control form-control-sm"
-                    id="min_age"
-                    name="min_age"
-                    min="0"
-                    max="120"
-                    value=""
-                    @input=${this.emitChange}
-                  />
-                  <label for="max_age">${__("Max Age")}</label>
-                  <input
-                    type="number"
-                    class="form-control form-control-sm"
-                    id="max_age"
-                    name="max_age"
-                    min="0"
-                    max="120"
-                    value=""
-                    @input=${this.emitChange}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="btn-group ${classMap({
-                "d-none": this.isHidden,
-                "w-100": this.shouldFold,
-              })}"
-              dropdown-menu-wrapper
-            >
-              <button
-                type="button"
-                class="btn btn-outline-secondary dropdown-toggle ${classMap({
-                  "btn-sm": this.shouldFold,
-                })}"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-                @click=${this.handleDropdownToggle}
-              >
-                ${__("Registration & Dates")}
-              </button>
-              <div class="dropdown-menu w-100 p-2">
-                <div class="form-check">
-                  <input
-                    type="checkbox"
-                    class="form-check-input"
-                    id="open_registration"
-                    name="open_registration"
-                    checked
-                  />
-                  <label for="open_registration"
-                    >${__("Open Registration")}</label
+          <div class="row">
+            <div class="active-filters ">
+              ${map(
+                this.activeFilters,
+                ([name, value]) => html` <span class="badge badge-primary"
+                  >${typeof value === "boolean"
+                    ? __(name)
+                    : parseInt(value, 10) !== Number.NaN
+                    ? __(name) + ": " + __(value)
+                    : __(value)}&nbsp;<button
+                    type="button"
+                    class="close"
+                    aria-label="Close"
                   >
-                </div>
-                <div class="form-group">
-                  <label for="start_time">${__("Start Date")}</label>
-                  <input
-                    type="date"
-                    class="form-control form-control-sm"
-                    id="start_time"
-                    name="start_time"
-                  />
-                  <label for="end_time">${__("End Date")}</label>
-                  <input
-                    type="date"
-                    class="form-control form-control-sm"
-                    id="end_time"
-                    name="end_time"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="btn-group ${classMap({
-                "d-none": this.isHidden,
-                "w-100": this.shouldFold,
-              })}"
-              dropdown-menu-wrapper
-            >
-              <button
-                type="button"
-                class="btn btn-outline-secondary dropdown-toggle ${classMap({
-                  "btn-sm": this.shouldFold,
-                })}"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-                @click=${this.handleDropdownToggle}
-              >
-                ${__("Location")}
-              </button>
-              <div class="dropdown-menu w-100 p-2">
-                ${map(
-                  this.facets.locationIds,
-                  (locationId) =>
-                    html` <div class="form-group form-check">
-                      <input
-                        type="checkbox"
-                        class="form-check-input"
-                        name="location"
-                        id=${locationId}
-                      />
-                      <label class="form-check-label" for=${locationId}
-                        >${this.locations.find(
-                          (location) => location.id === parseInt(locationId, 10)
-                        )?.name}</label
-                      >
-                    </div>`
-                )}
-              </div>
-            </div>
-
-            <div
-              class="btn-group ${classMap({
-                "d-none": this.isHidden,
-                "w-100": this.shouldFold,
-              })}"
-              dropdown-menu-wrapper
-            >
-              <button
-                type="button"
-                class="btn btn-outline-secondary dropdown-toggle ${classMap({
-                  "btn-sm": this.shouldFold,
-                })}"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-                @click=${this.handleDropdownToggle}
-              >
-                ${__("Fee")}
-              </button>
-              <div class="dropdown-menu w-100 p-2">
-                <div class="form-group">
-                  <label for="fee">${__("Fee")}</label>
-                  <input
-                    type="number"
-                    class="form-control form-control-sm"
-                    id="fee"
-                    name="fee"
-                    @input=${this.emitChange}
-                  />
-                </div>
-              </div>
+                    <span aria-hidden="true" class="text-light">&times;</span>
+                  </button></span
+                >`
+              )}
             </div>
           </div>
         </div>
 
-        <!-- Here we slot the content, e.g. the events into the card body -->
         <div class="card-body">
           <slot></slot>
         </div>

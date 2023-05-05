@@ -4,11 +4,13 @@ import "./main.css";
 import LMSAnchor from "./components/LMSAnchor";
 import LMSCard from "./components/LMSCard";
 import LMSCardDetailsModal from "./components/LMSCardDetailsModal";
+import LMSDropdown from "./components/LMSDropdown";
 import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
 import LMSImageBrowser from "./components/LMSImageBrowser";
 import LMSModal from "./components/LMSModal";
 // import LMSPaginationNav from "./components/LMSPaginationNav";
+import LMSSearch from "./components/LMSSearch";
 import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventCardForm";
@@ -43,11 +45,13 @@ export default {
   LMSAnchor,
   LMSCard,
   LMSCardDetailsModal,
+  LMSDropdown,
   LMSEventsFilter,
   LMSFloatingMenu,
   LMSImageBrowser,
   LMSModal,
   // LMSPaginationNav,
+  LMSSearch,
   LMSStaffEventCardAttendees,
   LMSStaffEventCardPreview,
   LMSStaffEventCardForm,
