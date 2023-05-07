@@ -71,6 +71,13 @@
           }
         },
         {
+          "name": "description",
+          "in": "query",
+          "description": "Description of the event",
+          "required": false,
+          "type": "string"
+        },
+        {
           "name": "start_time",
           "in": "query",
           "description": "Starting time of the event",

@@ -6,7 +6,7 @@ import { customElement } from "lit/decorators.js";
 
 @customElement("lms-search")
 export default class LMSSearch extends LitElement {
-  private debouncedSearch = this.debounce(this.search, 300, false);
+  private debouncedSearch = this.debounce(this.search, 250, false);
 
   static override styles = [
     bootstrapStyles,
@@ -50,7 +50,7 @@ export default class LMSSearch extends LitElement {
       new CustomEvent("search", {
         detail: query,
         bubbles: true,
-        composed: true,
+        composed: false,
       })
     );
   }

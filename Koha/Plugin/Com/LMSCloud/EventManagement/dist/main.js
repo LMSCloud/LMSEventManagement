@@ -1183,94 +1183,6 @@
             this.dispatchEvent(new CustomEvent("toggle", { bubbles: true, composed: true }));
             this.isOpen = !this.isOpen;
         }
-        isUniform(structure) {
-            return structure.type === "uniform";
-        }
-        renderUniformStructure(structure) {
-            return o$1(structure.ids, (id) => {
-                const { inputType, classes, group } = structure;
-                const field = structure.fields[id];
-                if (!field)
-                    return A;
-                const { value } = field;
-                return x ` <div
-        class="form-group ${o$2({
-                "form-check": inputType === "checkbox",
-            })}"
-      >
-        ${inputType !== "checkbox"
-                ? x `<label for=${id}>${value}</label>`
-                : A}
-        ${inputType === "checkbox"
-                ? x `<input
-              type=${inputType}
-              class=${classes.join(" ")}
-              name=${group}
-              id=${id}
-              ?checked=${(typeof value === "boolean" && value) || false}
-            />`
-                : x `<input
-              type=${inputType}
-              class=${classes.join(" ")}
-              name=${group}
-              id=${id}
-            />`}
-        ${inputType === "checkbox"
-                ? x `<label class="form-check-label" for=${id}
-              >${field.value}</label
-            >`
-                : A}
-      </div>`;
-            });
-        }
-        renderVaryingStructure(structure) {
-            const { fields } = structure;
-            return o$1(Object.keys(fields), (id) => {
-                const field = fields[id];
-                if (!field)
-                    return A;
-                const { type, classes, name, value, label, additionalProperties } = field;
-                return x ` <div
-        class="form-group ${o$2({
-                "form-check": type === "checkbox",
-            })}"
-      >
-        ${type !== "checkbox"
-                ? x `<label for=${id}>${label}</label>`
-                : A}
-        ${type === "checkbox"
-                ? x `<input
-              type=${type}
-              class=${classes.join(" ")}
-              name=${name}
-              id=${id}
-              ?checked=${value}
-            />`
-                : type === "number"
-                    ? x `
-              <input
-                type=${type}
-                class=${classes.join(" ")}
-                name=${name}
-                id=${id}
-                min=${additionalProperties.min}
-                max=${additionalProperties.max}
-              />
-            `
-                    : x `
-              <input
-                type=${type}
-                class=${classes.join(" ")}
-                name=${name}
-                id=${id}
-              />
-            `}
-        ${type === "checkbox"
-                ? x `<label class="form-check-label" for=${id}>${label}</label>`
-                : A}
-      </div>`;
-            });
-        }
         render() {
             return x `
       <div
@@ -1285,7 +1197,6 @@
           class="btn btn-outline-secondary dropdown-toggle ${o$2({
             "btn-sm": this.shouldFold,
         })}"
-          data-bs-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded=${this.isOpen}
           @click=${this.handleDropdownToggle}
@@ -1293,9 +1204,7 @@
           ${this.label}
         </button>
         <div class="dropdown-menu w-100 p-2 ${o$2({ show: this.isOpen })}">
-          ${this.isUniform(this.structure)
-            ? this.renderUniformStructure(this.structure)
-            : this.renderVaryingStructure(this.structure)}
+          <slot></slot>
         </div>
       </div>
     `;
@@ -1315,8 +1224,8 @@
         e$2({ type: String })
     ], LMSDropdown.prototype, "label", void 0);
     __decorate([
-        e$2({ type: Object })
-    ], LMSDropdown.prototype, "structure", void 0);
+        e$1("input")
+    ], LMSDropdown.prototype, "inputs", void 0);
     LMSDropdown = __decorate([
         e$3("lms-dropdown")
     ], LMSDropdown);
@@ -1343,7 +1252,18 @@
             this.event_types = [];
             this.target_groups = [];
             this.locations = [];
-            this.activeFilters = [];
+            this.activeFilters = new Map();
+            this.inputHandlers = {
+                checkbox: (input) => {
+                    if (input.id === "open_registration") {
+                        return input.checked;
+                    }
+                    return input.checked ? input.id : false;
+                },
+                date: (input) => input.value,
+                number: (input) => input.value,
+                default: (input) => input.value,
+            };
             this.throttle = (callback, delay) => {
                 let previousCall = new Date().getTime();
                 return function () {
@@ -1465,25 +1385,13 @@
                 bubbles: true,
             }));
         }
-        handleChange() {
+        getParamsFromActiveFilters() {
             var _a;
-            const inputHandlers = new Map([
-                [
-                    "checkbox",
-                    (input) => input.id === "open_registration"
-                        ? input.checked
-                        : input.checked
-                            ? input.id
-                            : false,
-                ],
-                ["date", (input) => input.value],
-                ["number", (input) => input.value],
-                ["default", (input) => input.value],
-            ]);
-            const params = [...((_a = this.inputs) !== null && _a !== void 0 ? _a : [])]
+            return [...((_a = this.inputs) !== null && _a !== void 0 ? _a : [])]
                 .filter((input) => input.value || input.checked)
                 .map((input) => {
-                const handler = inputHandlers.get(input.type) || inputHandlers.get("default");
+                var _a;
+                const handler = ((_a = this.inputHandlers) === null || _a === void 0 ? void 0 : _a[input.type]) || this.inputHandlers.default;
                 if (!handler)
                     return [input.name, undefined];
                 const value = handler(input);
@@ -1492,10 +1400,11 @@
                 .filter(([name, value]) => !(name &&
                 ["event_type", "target_group", "location"].includes(name.toString()) &&
                 value === false));
+        }
+        handleChange() {
             const query = new URLSearchParams();
-            params.forEach(([name, value]) => {
+            this.getParamsFromActiveFilters().forEach(([name, value]) => {
                 if (typeof name === "string" && value !== undefined) {
-                    this.activeFilters.push([name, value]);
                     return query.append(name, value === null || value === void 0 ? void 0 : value.toString());
                 }
             });
@@ -1507,20 +1416,26 @@
         }
         handleSearch(e) {
             const { detail } = e;
+            const query = new URLSearchParams();
+            this.getParamsFromActiveFilters().forEach(([name, value]) => {
+                if (typeof name === "string" && value !== undefined) {
+                    return query.append(name, value === null || value === void 0 ? void 0 : value.toString());
+                }
+            });
+            query.append("name", detail);
+            query.append("description", detail);
             this.dispatchEvent(new CustomEvent("search", {
-                detail,
+                detail: query.toString(),
                 composed: true,
                 bubbles: true,
             }));
         }
-        // private emitChange(e: Event) {
-        //   const target = e.target as HTMLInputElement;
-        //   if (target) {
-        //     target.dispatchEvent(
-        //       new Event("change", { composed: true, bubbles: true })
-        //     );
-        //   }
-        // }
+        emitChange(e) {
+            const target = e.target;
+            if (target) {
+                target.dispatchEvent(new Event("change", { composed: true, bubbles: true }));
+            }
+        }
         handleHideToggle() {
             this.isHidden = !this.isHidden;
             this.dispatchEvent(new CustomEvent("hide", {
@@ -1562,32 +1477,40 @@
         })} sticky-top bg-white"
         >
           <div class="row">
-            <div class="col-auto">
+            <div
+              class="col-1 ${o$2({
+            "d-none": this.shouldFold,
+        })}"
+            >
               <h5
                 class=${o$2({
             "d-inline": !this.shouldFold,
-            "d-none": this.shouldFold,
-            "mr-3": !this.shouldFold,
         })}
               >
                 ${__("Filter")}
               </h5>
             </div>
 
-            <div class="col-auto">
-              <lms-search
-                @search=${this.handleSearch}
-                class=${o$2({
-            "mr-3": !this.shouldFold,
+            <div
+              class=${o$2({
+            "col-3": !this.shouldFold,
             "mb-3": this.shouldFold,
+            "col-12": this.shouldFold,
         })}
-              ></lms-search>
+            >
+              <lms-search @search=${this.handleSearch}></lms-search>
             </div>
 
-            <div class="col-auto">
+            <div
+              class=${o$2({
+            col: !this.shouldFold,
+            "col-12": this.shouldFold,
+        })}
+            >
               <div
                 class="btn-group ${o$2({
             "d-none": !this.shouldFold,
+            "w-100": this.shouldFold,
         })}"
               >
                 <button
@@ -1619,177 +1542,173 @@
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
-                  .structure=${{
-            type: "uniform",
-            ids: this.facets.eventTypeIds,
-            group: "event_type",
-            inputType: "checkbox",
-            classes: ["form-check-input"],
-            fields: {
-                ...this.event_types.reduce((acc, event_type) => {
-                    acc[event_type.id] = {
-                        value: event_type.name,
-                    };
-                    return acc;
-                }, {}),
-            },
-        }}
                   .label=${__("Event Type")}
                   @toggle=${this.handleDropdownToggle}
-                ></lms-dropdown>
+                >
+                  ${o$1(this.facets.eventTypeIds, (eventTypeId) => {
+            var _a;
+            return x `
+                      <div class="form-group form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          name="event_type"
+                          id=${eventTypeId}
+                        />
+                        <label class="form-check-label" for=${eventTypeId}
+                          >${(_a = this.event_types.find((event_type) => event_type.id === parseInt(eventTypeId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
+                        >
+                      </div>
+                    `;
+        })}
+                </lms-dropdown>
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
-                  .structure=${{
-            type: "uniform",
-            ids: this.facets.targetGroupIds,
-            group: "target_group",
-            inputType: "checkbox",
-            classes: ["form-check-input"],
-            fields: {
-                ...this.target_groups.reduce((acc, target_group) => {
-                    acc[target_group.id] = {
-                        value: target_group.name,
-                    };
-                    return acc;
-                }, {}),
-            },
-        }}
                   .label=${__("Target Group")}
                   @toggle=${this.handleDropdownToggle}
-                ></lms-dropdown>
+                >
+                  ${o$1(this.facets.targetGroupIds, (targetGroupId) => {
+            var _a;
+            return x `
+                      <div class="form-group form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          name="target_group"
+                          id=${targetGroupId}
+                        />
+                        <label class="form-check-label" for=${targetGroupId}
+                          >${(_a = this.target_groups.find((target_group) => target_group.id === targetGroupId)) === null || _a === void 0 ? void 0 : _a.name}</label
+                        >
+                      </div>
+                    `;
+        })}
+                </lms-dropdown>
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
-                  .structure=${{
-            type: "varying",
-            fields: {
-                min_age: {
-                    label: __("Min Age"),
-                    type: "number",
-                    classes: ["form-control", "form-control-sm"],
-                    additionalProperties: {
-                        min: 0,
-                        max: 120,
-                    },
-                },
-                max_age: {
-                    label: __("Max Age"),
-                    type: "number",
-                    classes: ["form-control", "form-control-sm"],
-                    additionalProperties: {
-                        min: 0,
-                        max: 120,
-                    },
-                },
-            },
-        }}
                   .label=${__("Age")}
                   @toggle=${this.handleDropdownToggle}
-                ></lms-dropdown>
+                >
+                  <div class="form-group">
+                    <label for="min_age">${__("Min Age")}</label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      id="min_age"
+                      name="min_age"
+                      min="0"
+                      max="120"
+                      value=""
+                      @input=${this.emitChange}
+                    />
+                    <label for="max_age">${__("Max Age")}</label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      id="max_age"
+                      name="max_age"
+                      min="0"
+                      max="120"
+                      value=""
+                      @input=${this.emitChange}
+                    />
+                  </div>
+                </lms-dropdown>
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
-                  .structure=${{
-            type: "varying",
-            fields: {
-                open_registration: {
-                    type: "checkbox",
-                    classes: ["form-check-input"],
-                    value: true,
-                    label: __("Open Registration"),
-                    name: "open_registration",
-                },
-                start_time: {
-                    type: "date",
-                    classes: ["form-control", "form-control-sm"],
-                    value: "",
-                    label: __("Start Date"),
-                    name: "start_time",
-                },
-                end_time: {
-                    type: "date",
-                    classes: ["form-control", "form-control-sm"],
-                    value: "",
-                    label: __("End Date"),
-                    name: "end_time",
-                },
-            },
-        }}
                   .label=${__("Registration & Dates")}
                   @toggle=${this.handleDropdownToggle}
+                >
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="open_registration"
+                      name="open_registration"
+                      checked
+                    />
+                    <label for="open_registration"
+                      >${__("Open Registration")}</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <label for="start_time">${__("Start Date")}</label>
+                    <input
+                      type="date"
+                      class="form-control form-control-sm"
+                      id="start_time"
+                      name="start_time"
+                    />
+                    <label for="end_time">${__("End Date")}</label>
+                    <input
+                      type="date"
+                      class="form-control form-control-sm"
+                      id="end_time"
+                      name="end_time"
+                    /></div
                 ></lms-dropdown>
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
-                  .structure=${{
-            type: "uniform",
-            ids: this.facets.locationIds,
-            group: "location",
-            inputType: "checkbox",
-            classes: ["form-check-input"],
-            fields: {
-                ...this.locations.reduce((acc, location) => {
-                    acc[location.id] = {
-                        value: location.name,
-                    };
-                    return acc;
-                }, {}),
-            },
-        }}
                   .label=${__("Location")}
                   @toggle=${this.handleDropdownToggle}
-                ></lms-dropdown>
+                >
+                  ${o$1(this.facets.locationIds, (locationId) => {
+            var _a;
+            return x ` <div class="form-group form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          name="location"
+                          id=${locationId}
+                        />
+                        <label class="form-check-label" for=${locationId}
+                          >${(_a = this.locations.find((location) => location.id === parseInt(locationId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
+                        >
+                      </div>`;
+        })}
+                </lms-dropdown>
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
-                  .structure=${{
-            type: "varying",
-            fields: {
-                fee: {
-                    type: "number",
-                    classes: ["form-control", "form-control-sm"],
-                    value: "",
-                    label: __("Fee"),
-                    name: "fee",
-                    additionalProperties: {
-                        min: 0,
-                        max: 4294967295,
-                    },
-                },
-            },
-        }}
                   .label=${__("Fee")}
                   @toggle=${this.handleDropdownToggle}
-                ></lms-dropdown>
+                >
+                  <div class="form-group">
+                    <label for="fee">${__("Fee")}</label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      id="fee"
+                      name="fee"
+                      @input=${this.emitChange}
+                    />
+                  </div>
+                </lms-dropdown>
               </div>
             </div>
           </div>
-
-          <div class="row">
-            <div class="active-filters ">
-              ${o$1(this.activeFilters, ([name, value]) => x ` <span class="badge badge-primary"
-                  >${typeof value === "boolean"
-            ? __(name)
-            : parseInt(value, 10) !== Number.NaN
-                ? __(name) + ": " + __(value)
-                : __(value)}&nbsp;<button
-                    type="button"
-                    class="close"
-                    aria-label="Close"
-                  >
-                    <span aria-hidden="true" class="text-light">&times;</span>
-                  </button></span
-                >`)}
+          <!-- <div class="row">
+            <div class="col">
+              <div class="active-filters">
+                ${o$1(this.activeFilters, ([name, value]) => x ` <span class="badge badge-dark text-light"
+              >${name} ${value}&nbsp;
+              <button type="button" class="close" aria-label="Close">
+                <span aria-hidden="true" class="text-light">&times;</span>
+              </button></span
+            >`)}
+              </div>
             </div>
-          </div>
+          </div> -->
         </div>
-
         <div class="card-body">
           <slot></slot>
         </div>
@@ -2477,7 +2396,7 @@
     let LMSSearch = class LMSSearch extends s {
         constructor() {
             super(...arguments);
-            this.debouncedSearch = this.debounce(this.search, 300, false);
+            this.debouncedSearch = this.debounce(this.search, 250, false);
         }
         debounce(func, wait, immediate) {
             let timeout = null;
@@ -2502,7 +2421,7 @@
             this.dispatchEvent(new CustomEvent("search", {
                 detail: query,
                 bubbles: true,
-                composed: true,
+                composed: false,
             }));
         }
         handleInput(e) {

@@ -17,9 +17,10 @@ export default class LMSEventsFilter extends LitElement {
     event_types: EventType[];
     target_groups: TargetGroup[];
     locations: LMSLocation[];
-    activeFilters: [string, string | boolean][];
-    inputs: NodeListOf<HTMLInputElement> | undefined;
+    activeFilters: Map<string, string | boolean>;
+    inputs: NodeListOf<HTMLInputElement>;
     lmsDropdowns: NodeListOf<LMSDropdown>;
+    private inputHandlers;
     static styles: import("lit").CSSResult[];
     private throttle;
     constructor();
@@ -32,8 +33,10 @@ export default class LMSEventsFilter extends LitElement {
     private set eventsDeepCopy(value);
     willUpdate(): void;
     private handleReset;
+    private getParamsFromActiveFilters;
     private handleChange;
     private handleSearch;
+    private emitChange;
     private handleHideToggle;
     private handleDropdownToggle;
     protected urlSearchParamsToQueryParam(searchParams: URLSearchParams): string;

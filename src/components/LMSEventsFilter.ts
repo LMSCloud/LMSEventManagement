@@ -34,9 +34,23 @@ export default class LMSEventsFilter extends LitElement {
   @state() event_types: EventType[] = [];
   @state() target_groups: TargetGroup[] = [];
   @state() locations: LMSLocation[] = [];
-  @state() activeFilters: [string, string | boolean][] = [];
-  @queryAll("input") inputs: NodeListOf<HTMLInputElement> | undefined;
+  @state() activeFilters: Map<string, string | boolean> = new Map();
+  @queryAll("input") inputs!: NodeListOf<HTMLInputElement>;
   @queryAll("lms-dropdown") lmsDropdowns!: NodeListOf<LMSDropdown>;
+  private inputHandlers: {
+    [type: string]: (input: HTMLInputElement) => string | boolean;
+  } = {
+    checkbox: (input: HTMLInputElement) => {
+      if (input.id === "open_registration") {
+        return input.checked;
+      }
+
+      return input.checked ? input.id : false;
+    },
+    date: (input: HTMLInputElement) => input.value,
+    number: (input: HTMLInputElement) => input.value,
+    default: (input: HTMLInputElement) => input.value,
+  };
 
   static override styles = [
     bootstrapStyles,
@@ -212,30 +226,12 @@ export default class LMSEventsFilter extends LitElement {
     );
   }
 
-  private handleChange() {
-    const inputHandlers = new Map<
-      string,
-      (input: HTMLInputElement) => string | boolean | undefined
-    >([
-      [
-        "checkbox",
-        (input) =>
-          input.id === "open_registration"
-            ? input.checked
-            : input.checked
-            ? input.id
-            : false,
-      ],
-      ["date", (input) => input.value],
-      ["number", (input) => input.value],
-      ["default", (input) => input.value],
-    ]);
-
-    const params = [...(this.inputs ?? [])]
+  private getParamsFromActiveFilters() {
+    return [...(this.inputs ?? [])]
       .filter((input) => input.value || input.checked)
       .map((input) => {
         const handler =
-          inputHandlers.get(input.type) || inputHandlers.get("default");
+          this.inputHandlers?.[input.type] || this.inputHandlers.default;
         if (!handler) return [input.name, undefined];
         const value = handler(input);
         return [input.name, value];
@@ -250,11 +246,12 @@ export default class LMSEventsFilter extends LitElement {
             value === false
           )
       );
+  }
 
+  private handleChange() {
     const query = new URLSearchParams();
-    params.forEach(([name, value]) => {
+    this.getParamsFromActiveFilters().forEach(([name, value]) => {
       if (typeof name === "string" && value !== undefined) {
-        this.activeFilters.push([name, value]);
         return query.append(name, value?.toString());
       }
     });
@@ -270,13 +267,30 @@ export default class LMSEventsFilter extends LitElement {
 
   private handleSearch(e: CustomEvent) {
     const { detail } = e;
+    const query = new URLSearchParams();
+    this.getParamsFromActiveFilters().forEach(([name, value]) => {
+      if (typeof name === "string" && value !== undefined) {
+        return query.append(name, value?.toString());
+      }
+    });
+    query.append("name", detail);
+    query.append("description", detail);
     this.dispatchEvent(
       new CustomEvent("search", {
-        detail,
+        detail: query.toString(),
         composed: true,
         bubbles: true,
       })
     );
+  }
+
+  private emitChange(e: Event) {
+    const target = e.target as HTMLInputElement;
+    if (target) {
+      target.dispatchEvent(
+        new Event("change", { composed: true, bubbles: true })
+      );
+    }
   }
 
   private handleHideToggle() {
@@ -325,32 +339,40 @@ export default class LMSEventsFilter extends LitElement {
           })} sticky-top bg-white"
         >
           <div class="row">
-            <div class="col-auto">
+            <div
+              class="col-1 ${classMap({
+                "d-none": this.shouldFold,
+              })}"
+            >
               <h5
                 class=${classMap({
                   "d-inline": !this.shouldFold,
-                  "d-none": this.shouldFold,
-                  "mr-3": !this.shouldFold,
                 })}
               >
                 ${__("Filter")}
               </h5>
             </div>
 
-            <div class="col-auto">
-              <lms-search
-                @search=${this.handleSearch}
-                class=${classMap({
-                  "mr-3": !this.shouldFold,
-                  "mb-3": this.shouldFold,
-                })}
-              ></lms-search>
+            <div
+              class=${classMap({
+                "col-3": !this.shouldFold,
+                "mb-3": this.shouldFold,
+                "col-12": this.shouldFold,
+              })}
+            >
+              <lms-search @search=${this.handleSearch}></lms-search>
             </div>
 
-            <div class="col-auto">
+            <div
+              class=${classMap({
+                col: !this.shouldFold,
+                "col-12": this.shouldFold,
+              })}
+            >
               <div
                 class="btn-group ${classMap({
                   "d-none": !this.shouldFold,
+                  "w-100": this.shouldFold,
                 })}"
               >
                 <button
@@ -382,186 +404,185 @@ export default class LMSEventsFilter extends LitElement {
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
-                  .structure=${{
-                    type: "uniform",
-                    ids: this.facets.eventTypeIds,
-                    group: "event_type",
-                    inputType: "checkbox",
-                    classes: ["form-check-input"],
-                    fields: {
-                      ...this.event_types.reduce(
-                        (acc, event_type: EventType) => {
-                          acc[event_type.id] = {
-                            value: event_type.name,
-                          };
-                          return acc;
-                        },
-                        {} as Record<number, { value: string }>
-                      ),
-                    },
-                  }}
                   .label=${__("Event Type")}
                   @toggle=${this.handleDropdownToggle}
-                ></lms-dropdown>
+                >
+                  ${map(
+                    this.facets.eventTypeIds,
+                    (eventTypeId) => html`
+                      <div class="form-group form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          name="event_type"
+                          id=${eventTypeId}
+                        />
+                        <label class="form-check-label" for=${eventTypeId}
+                          >${this.event_types.find(
+                            (event_type) =>
+                              event_type.id === parseInt(eventTypeId, 10)
+                          )?.name}</label
+                        >
+                      </div>
+                    `
+                  )}
+                </lms-dropdown>
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
-                  .structure=${{
-                    type: "uniform",
-                    ids: this.facets.targetGroupIds,
-                    group: "target_group",
-                    inputType: "checkbox",
-                    classes: ["form-check-input"],
-                    fields: {
-                      ...this.target_groups.reduce(
-                        (acc, target_group: TargetGroup) => {
-                          acc[target_group.id] = {
-                            value: target_group.name,
-                          };
-                          return acc;
-                        },
-                        {} as Record<number, { value: string }>
-                      ),
-                    },
-                  }}
                   .label=${__("Target Group")}
                   @toggle=${this.handleDropdownToggle}
-                ></lms-dropdown>
+                >
+                  ${map(
+                    this.facets.targetGroupIds,
+                    (targetGroupId) => html`
+                      <div class="form-group form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          name="target_group"
+                          id=${targetGroupId}
+                        />
+                        <label class="form-check-label" for=${targetGroupId}
+                          >${this.target_groups.find(
+                            (target_group) => target_group.id === targetGroupId
+                          )?.name}</label
+                        >
+                      </div>
+                    `
+                  )}
+                </lms-dropdown>
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
-                  .structure=${{
-                    type: "varying",
-                    fields: {
-                      min_age: {
-                        label: __("Min Age"),
-                        type: "number",
-                        classes: ["form-control", "form-control-sm"],
-                        additionalProperties: {
-                          min: 0,
-                          max: 120,
-                        },
-                      },
-                      max_age: {
-                        label: __("Max Age"),
-                        type: "number",
-                        classes: ["form-control", "form-control-sm"],
-                        additionalProperties: {
-                          min: 0,
-                          max: 120,
-                        },
-                      },
-                    },
-                  }}
                   .label=${__("Age")}
                   @toggle=${this.handleDropdownToggle}
-                ></lms-dropdown>
+                >
+                  <div class="form-group">
+                    <label for="min_age">${__("Min Age")}</label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      id="min_age"
+                      name="min_age"
+                      min="0"
+                      max="120"
+                      value=""
+                      @input=${this.emitChange}
+                    />
+                    <label for="max_age">${__("Max Age")}</label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      id="max_age"
+                      name="max_age"
+                      min="0"
+                      max="120"
+                      value=""
+                      @input=${this.emitChange}
+                    />
+                  </div>
+                </lms-dropdown>
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
-                  .structure=${{
-                    type: "varying",
-                    fields: {
-                      open_registration: {
-                        type: "checkbox",
-                        classes: ["form-check-input"],
-                        value: true,
-                        label: __("Open Registration"),
-                        name: "open_registration",
-                      },
-                      start_time: {
-                        type: "date",
-                        classes: ["form-control", "form-control-sm"],
-                        value: "",
-                        label: __("Start Date"),
-                        name: "start_time",
-                      },
-                      end_time: {
-                        type: "date",
-                        classes: ["form-control", "form-control-sm"],
-                        value: "",
-                        label: __("End Date"),
-                        name: "end_time",
-                      },
-                    },
-                  }}
                   .label=${__("Registration & Dates")}
                   @toggle=${this.handleDropdownToggle}
+                >
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="open_registration"
+                      name="open_registration"
+                      checked
+                    />
+                    <label for="open_registration"
+                      >${__("Open Registration")}</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <label for="start_time">${__("Start Date")}</label>
+                    <input
+                      type="date"
+                      class="form-control form-control-sm"
+                      id="start_time"
+                      name="start_time"
+                    />
+                    <label for="end_time">${__("End Date")}</label>
+                    <input
+                      type="date"
+                      class="form-control form-control-sm"
+                      id="end_time"
+                      name="end_time"
+                    /></div
                 ></lms-dropdown>
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
-                  .structure=${{
-                    type: "uniform",
-                    ids: this.facets.locationIds,
-                    group: "location",
-                    inputType: "checkbox",
-                    classes: ["form-check-input"],
-                    fields: {
-                      ...this.locations.reduce((acc, location: LMSLocation) => {
-                        acc[location.id] = {
-                          value: location.name,
-                        };
-                        return acc;
-                      }, {} as Record<number, { value: string }>),
-                    },
-                  }}
                   .label=${__("Location")}
                   @toggle=${this.handleDropdownToggle}
-                ></lms-dropdown>
+                >
+                  ${map(
+                    this.facets.locationIds,
+                    (locationId) =>
+                      html` <div class="form-group form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          name="location"
+                          id=${locationId}
+                        />
+                        <label class="form-check-label" for=${locationId}
+                          >${this.locations.find(
+                            (location) =>
+                              location.id === parseInt(locationId, 10)
+                          )?.name}</label
+                        >
+                      </div>`
+                  )}
+                </lms-dropdown>
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
-                  .structure=${{
-                    type: "varying",
-                    fields: {
-                      fee: {
-                        type: "number",
-                        classes: ["form-control", "form-control-sm"],
-                        value: "",
-                        label: __("Fee"),
-                        name: "fee",
-                        additionalProperties: {
-                          min: 0,
-                          max: 4294967295,
-                        },
-                      },
-                    },
-                  }}
                   .label=${__("Fee")}
                   @toggle=${this.handleDropdownToggle}
-                ></lms-dropdown>
+                >
+                  <div class="form-group">
+                    <label for="fee">${__("Fee")}</label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      id="fee"
+                      name="fee"
+                      @input=${this.emitChange}
+                    />
+                  </div>
+                </lms-dropdown>
               </div>
             </div>
           </div>
-
-          <div class="row">
-            <div class="active-filters ">
-              ${map(
-                this.activeFilters,
-                ([name, value]) => html` <span class="badge badge-primary"
-                  >${typeof value === "boolean"
-                    ? __(name)
-                    : parseInt(value, 10) !== Number.NaN
-                    ? __(name) + ": " + __(value)
-                    : __(value)}&nbsp;<button
-                    type="button"
-                    class="close"
-                    aria-label="Close"
-                  >
-                    <span aria-hidden="true" class="text-light">&times;</span>
-                  </button></span
-                >`
-              )}
+          <!-- <div class="row">
+            <div class="col">
+              <div class="active-filters">
+                ${map(
+            this.activeFilters,
+            ([name, value]) => html` <span class="badge badge-dark text-light"
+              >${name} ${value}&nbsp;
+              <button type="button" class="close" aria-label="Close">
+                <span aria-hidden="true" class="text-light">&times;</span>
+              </button></span
+            >`
+          )}
+              </div>
             </div>
-          </div>
+          </div> -->
         </div>
-
         <div class="card-body">
           <slot></slot>
         </div>
