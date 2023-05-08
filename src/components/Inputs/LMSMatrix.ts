@@ -93,14 +93,16 @@ export default class LMSMatrix extends LitElement {
     };
 
     switch (type) {
-      case "number":
+      case "number": {
         const { value } = e.target;
         updateOrCreateItem(value.toString());
         break;
-      case "checkbox":
+      }
+      case "checkbox": {
         const { checked } = e.target;
         updateOrCreateItem((checked ? 1 : 0).toString());
         break;
+      }
       default:
         break;
     }
@@ -119,7 +121,6 @@ export default class LMSMatrix extends LitElement {
             .value=${field.value instanceof Array
               ? field.value.find((item) => item.id == row.id)?.[name] ?? ""
               : ""}
-            step="0.01"
             class="form-control"
             step=${ifDefined(
               field.attributes

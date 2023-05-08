@@ -15,7 +15,6 @@ import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPrevi
 import LMSAnchor from "./LMSAnchor";
 import { InputConverter, TemplateResultConverter } from "../lib/converters";
 import { map } from "lit/directives/map.js";
-import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 
@@ -126,7 +125,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
     });
   }
 
-  override updated(changedProperties: Map<string, any>) {
+  override updated(changedProperties: Map<string, never>) {
     super.updated(changedProperties);
     if (changedProperties.has("events")) {
       this.hydrate();
@@ -156,7 +155,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
     return html`
       <div class="container-fluid mx-0">
         <div class="card-deck card-deck-responsive">
-          ${map(this.data, (datum, index) => {
+          ${map(this.data, (datum) => {
             const { name, uuid } = datum;
             const [title] = new TemplateResultConverter(name).getRenderValues();
             const [state] = this.cardStates.get(uuid) || "data";
@@ -207,7 +206,6 @@ export default class LMSStaffEventCardDeck extends LitElement {
                   ></lms-staff-event-card-preview>
                 </div>
               </div>
-              <!-- ${insertResponsiveWrapper(index)} -->
             `;
           })}
         </div>

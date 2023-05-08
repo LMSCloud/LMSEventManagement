@@ -1,7 +1,6 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
 import { Input, LMSLocation } from "../sharedDeclarations";
-import { __ } from "../lib/translate";
 
 @customElement("lms-locations-table")
 export default class LMSLocationsTable extends LMSTable {
@@ -116,7 +115,7 @@ export default class LMSLocationsTable extends LMSTable {
     });
   }
 
-  override updated(changedProperties: Map<string, any>) {
+  override updated(changedProperties: Map<string, never>) {
     super.updated(changedProperties);
     if (changedProperties.has("locations")) {
       this.hydrate();

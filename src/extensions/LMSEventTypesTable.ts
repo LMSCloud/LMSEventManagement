@@ -2,7 +2,6 @@ import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
 import { EventType, TargetGroup, LMSLocation } from "../sharedDeclarations";
 import LMSAnchor from "../components/LMSAnchor";
-import { __ } from "../lib/translate";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -165,7 +164,7 @@ export default class LMSEventTypesTable extends LMSTable {
     });
   }
 
-  override updated(changedProperties: Map<string, any>) {
+  override updated(changedProperties: Map<string, never>) {
     super.updated(changedProperties);
     if (changedProperties.has("event_types")) {
       this.hydrate();

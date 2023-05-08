@@ -4,9 +4,9 @@ import { Part } from "lit/html.js";
 
 let i18nInstance: Gettext.Gettext;
 let translationsLoaded = false;
-let callbacks: { text: string; callback: () => void }[] = [];
+const callbacks: { text: string; callback: () => void }[] = [];
 let loadTranslationsCalled = false;
-export let locale = document.documentElement.lang.slice(0, 2);
+export const locale = document.documentElement.lang.slice(0, 2);
 
 async function loadTranslations(
   localeUrl = "/api/v1/contrib/eventmanagement/static/locales"

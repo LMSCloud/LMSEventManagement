@@ -3,7 +3,6 @@ import {
   css,
   LitElement,
   PropertyValueMap,
-  TemplateResult,
   nothing,
 } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
@@ -12,8 +11,6 @@ import {
   faEdit,
   faSave,
   faTrash,
-  faSortDown,
-  faSortUp,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { customElement, property, queryAll, state } from "lit/decorators.js";
@@ -24,11 +21,6 @@ import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { InputConverter } from "../lib/converters";
 import { utilityStyles } from "../styles/utilities";
-
-type sortTask = {
-  column: string;
-  direction: "asc" | "desc";
-};
 
 @customElement("lms-table")
 export default class LMSTable extends LitElement {
@@ -220,43 +212,8 @@ export default class LMSTable extends LitElement {
     }
   }
 
-  private sortColumnByValue({ column, direction }: sortTask) {
-    const { data } = this;
-    const hasData = data?.length > 0 ?? false;
-
-    if (hasData) {
-      this.data = data.sort((a, b) => {
-        let aValue = a[column];
-        let bValue = b[column];
-
-        if (aValue instanceof Object) {
-          [aValue] = (aValue as TemplateResult).values as unknown as (
-            | string
-            | number
-          )[];
-        }
-        if (bValue instanceof Object) {
-          [bValue] = (bValue as TemplateResult).values as unknown as (
-            | string
-            | number
-          )[];
-        }
-
-        if (aValue < bValue) {
-          return direction === "asc" ? -1 : 1;
-        }
-        if (aValue > bValue) {
-          return direction === "asc" ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-
-    this.requestUpdate();
-  }
-
   protected override willUpdate(
-    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+    _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
   ): void {
     super.willUpdate(_changedProperties);
     this.sortColumns();
@@ -274,30 +231,7 @@ export default class LMSTable extends LitElement {
                 <tr>
                   ${map(
                     this.headers,
-                    (key) =>
-                      html`<th scope="col">
-                        ${__(key)}
-                        <!-- <button
-                          class="btn btn-sm btn-sort"
-                          @click=${() =>
-                          this.sortColumnByValue({
-                            column: key,
-                            direction: "asc",
-                          })}
-                        >
-                          ${litFontawesome(faSortUp)}
-                        </button>
-                        <button
-                          class="btn btn-sm btn-sort"
-                          @click=${() =>
-                          this.sortColumnByValue({
-                            column: key,
-                            direction: "desc",
-                          })}
-                        >
-                          ${litFontawesome(faSortDown)}
-                        </button> -->
-                      </th>`
+                    (key) => html`<th scope="col">${__(key)}</th>`
                   )}
                   ${this.isEditable
                     ? html`<th scope="col">${__("actions")}</th>`

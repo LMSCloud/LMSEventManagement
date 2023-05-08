@@ -16,8 +16,8 @@ declare global {
 
 @customElement("lms-staff-target-groups-view")
 export default class StaffEventTypesView extends LitElement {
-  @state() hasLoaded: boolean = false;
-  private isEmpty: boolean = false;
+  @state() hasLoaded = false;
+  private isEmpty = false;
   private target_groups: Column[] = [];
 
   static override styles = [bootstrapStyles, skeletonStyles];

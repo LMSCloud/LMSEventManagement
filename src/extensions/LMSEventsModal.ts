@@ -1,6 +1,6 @@
 import { customElement, property, state } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
-import { CreateOpts, EventType } from "../sharedDeclarations";
+import { CreateOpts, EventType, LMSLocation, TargetGroup } from "../sharedDeclarations";
 import { __ } from "../lib/translate";
 
 @customElement("lms-events-modal")
@@ -34,7 +34,7 @@ export default class LMSEventsModal extends LMSModal {
             "/api/v1/contrib/eventmanagement/event_types"
           );
           const result = await response.json();
-          return result.map((event_type: any) => ({
+          return result.map((event_type: EventType) => ({
             id: event_type.id,
             name: event_type.name,
           }));
@@ -54,7 +54,7 @@ export default class LMSEventsModal extends LMSModal {
             "/api/v1/contrib/eventmanagement/target_groups"
           );
           const result = await response.json();
-          return result.map((target_group: any) => ({
+          return result.map((target_group: TargetGroup) => ({
             id: target_group.id,
             name: target_group.name,
           }));
@@ -112,7 +112,7 @@ export default class LMSEventsModal extends LMSModal {
             "/api/v1/contrib/eventmanagement/locations"
           );
           const result = await response.json();
-          return result.map((location: any) => ({
+          return result.map((location: LMSLocation) => ({
             id: location.id,
             name: location.name,
           }));

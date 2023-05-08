@@ -19,7 +19,7 @@ export default class LMSSearch extends LitElement {
     `,
   ];
 
-  private debounce<F extends (...args: any[]) => void>(
+  private debounce<F extends (...args: never[]) => void>(
     func: F,
     wait: number,
     immediate: boolean
@@ -27,10 +27,9 @@ export default class LMSSearch extends LitElement {
     let timeout: ReturnType<typeof setTimeout> | null = null;
 
     return function (this: ThisParameterType<F>, ...args: Parameters<F>) {
-      const context = this;
-      const later = function () {
+      const later = function (this: unknown) {
         timeout = null;
-        if (!immediate) func.apply(context, args);
+        if (!immediate) func.apply(this, args);
       };
 
       const callNow = immediate && !timeout;
@@ -40,7 +39,7 @@ export default class LMSSearch extends LitElement {
       timeout = setTimeout(later, wait);
 
       if (callNow) {
-        func.apply(context, args);
+        func.apply(this, args);
       }
     };
   }

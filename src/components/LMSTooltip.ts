@@ -1,16 +1,17 @@
 import { LitElement, html, css, PropertyValues } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 
 @customElement("lms-tooltip")
 export default class LMSTooltip extends LitElement {
-  @property({ type: String, attribute: "data-text" })
-  text: string = "";
-  @property({ type: Object })
-  target: HTMLElement | null = null;
-  @property({ type: String, attribute: "data-placement" })
-  placement: "top" | "bottom" | "left" | "right" = "bottom";
-  @property({ type: Number, attribute: "data-timeout" })
-  timeout: number = 3000;
+  @property({ type: String, attribute: "data-text" }) text = "";
+  @property({ type: Object }) target: HTMLElement | null = null;
+  @property({ type: String, attribute: "data-placement" }) placement:
+    | "top"
+    | "bottom"
+    | "left"
+    | "right" = "bottom";
+  @property({ type: Number, attribute: "data-timeout" }) timeout = 3000;
+  @query("span.tooltip") tooltip!: HTMLElement;
 
   private showTooltipBound = this.showTooltip.bind(this);
 
@@ -53,63 +54,56 @@ export default class LMSTooltip extends LitElement {
       const targetElement = target as HTMLElement;
       const targetRect = targetElement.getBoundingClientRect();
 
-      const tooltipSpan = this.shadowRoot!.querySelector(
-        "span.tooltip"
-      ) as HTMLElement;
-
       switch (this.placement) {
         case "top":
-          tooltipSpan.style.top = `${
-            window.scrollY + targetRect.top - tooltipSpan.offsetHeight
+          this.tooltip.style.top = `${
+            window.scrollY + targetRect.top - this.tooltip.offsetHeight
           }px`;
-          tooltipSpan.style.left = `${
+          this.tooltip.style.left = `${
             window.scrollX +
             targetRect.left +
-            (targetRect.width - tooltipSpan.offsetWidth) / 2
+            (targetRect.width - this.tooltip.offsetWidth) / 2
           }px`;
           break;
         case "bottom":
-          tooltipSpan.style.top = `${
+          this.tooltip.style.top = `${
             window.scrollY + targetRect.top + targetRect.height
           }px`;
-          tooltipSpan.style.left = `${
+          this.tooltip.style.left = `${
             window.scrollX +
             targetRect.left +
-            (targetRect.width - tooltipSpan.offsetWidth) / 2
+            (targetRect.width - this.tooltip.offsetWidth) / 2
           }px`;
           break;
         case "left":
-          tooltipSpan.style.top = `${
+          this.tooltip.style.top = `${
             window.scrollY +
             targetRect.top +
-            (targetRect.height - tooltipSpan.offsetHeight) / 2
+            (targetRect.height - this.tooltip.offsetHeight) / 2
           }px`;
-          tooltipSpan.style.left = `${
-            window.scrollX + targetRect.left - tooltipSpan.offsetWidth
+          this.tooltip.style.left = `${
+            window.scrollX + targetRect.left - this.tooltip.offsetWidth
           }px`;
           break;
         case "right":
-          tooltipSpan.style.top = `${
+          this.tooltip.style.top = `${
             window.scrollY +
             targetRect.top +
-            (targetRect.height - tooltipSpan.offsetHeight) / 2
+            (targetRect.height - this.tooltip.offsetHeight) / 2
           }px`;
-          tooltipSpan.style.left = `${
+          this.tooltip.style.left = `${
             window.scrollX + targetRect.left + targetRect.width
           }px`;
           break;
       }
 
-      tooltipSpan.style.visibility = "visible";
+      this.tooltip.style.visibility = "visible";
       setTimeout(() => this.hideTooltip(), this.timeout);
     }
   }
 
   hideTooltip() {
-    const tooltipSpan = this.shadowRoot!.querySelector(
-      "span.tooltip"
-    ) as HTMLElement;
-    tooltipSpan.style.visibility = "hidden";
+    this.tooltip.style.visibility = "hidden";
   }
 
   handleSlotChange(event: Event) {

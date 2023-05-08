@@ -9,6 +9,7 @@ import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
 import LMSPaginationNav from "../components/LMSPaginationNav";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
+import { requestHandler } from "../lib/RequestHandler";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -29,8 +30,8 @@ export default class LMSEventsView extends LitElement {
   @state() hasOpenModal = false;
   @state() _match?: string;
   @state() _order_by?: string = "start_time";
-  @state() _page: number = 1;
-  @state() _per_page: number = 20;
+  @state() _page = 1;
+  @state() _per_page = 20;
   @state() q?: string;
   @state() additionalParams: URLSearchParams = new URLSearchParams();
   private hasLoaded = false;
@@ -74,11 +75,13 @@ export default class LMSEventsView extends LitElement {
     `,
   ];
 
+  /** This method is used to get the currently set reserved
+   *  query params from the URL. If a query param is reserved
+   *  but unset, the method will default to the class member. */
   private getReservedQueryParams(this: {
     [key in ReservedParam]?: number | string;
   }) {
     const params = new URLSearchParams(window.location.search);
-
     const reservedParams: ReservedParam[] = [
       "_match",
       "_order_by",
@@ -105,7 +108,6 @@ export default class LMSEventsView extends LitElement {
     ]
   ) {
     const params = new URLSearchParams();
-
     useParams.forEach((usedParam) => {
       const value = this[usedParam];
       if (value) {
@@ -192,10 +194,10 @@ export default class LMSEventsView extends LitElement {
     this.getAdditionalQueryParams();
 
     const response = async () =>
-      await fetch(
-        `/api/v1/contrib/eventmanagement/public/events${this.getFullQueryString()}`
+      await requestHandler.request(
+        "getEventsPublic",
+        this.getFullQueryString()
       );
-
     response()
       .then((response) => {
         if (response.ok) {
@@ -228,10 +230,10 @@ export default class LMSEventsView extends LitElement {
     this.getAdditionalQueryParams(query);
 
     const response = async () =>
-      await fetch(
-        `/api/v1/contrib/eventmanagement/public/events${this.getFullQueryString()}`
+      await requestHandler.request(
+        "getEventsPublic",
+        this.getFullQueryString()
       );
-
     response()
       .then((response) => {
         if (response.ok) {
@@ -264,6 +266,40 @@ export default class LMSEventsView extends LitElement {
   private handleHideDetails() {
     this.modalData = {} as LMSEvent;
     this.hasOpenModal = false;
+  }
+
+  private handleLoadMore() {
+    this._page = this._page + 1;
+    this.getReservedQueryParams();
+    this.getAdditionalQueryParams();
+
+    const response = async () =>
+      await requestHandler.request(
+        "getEventsPublic",
+        this.getFullQueryString()
+      );
+    response()
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+
+        throw new Error("Something went wrong");
+      })
+      .then((events: LMSEvent[]) => {
+        this.events = [...this.events, ...events];
+        this.updateUrlWithReservedParams({
+          _match: this._match,
+          _order_by: this._order_by,
+          _page: this._page,
+          _per_page: this._per_page,
+          q: this.q,
+        });
+        this.updateUrlWithAdditionalParams(this.additionalParams);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   override render() {
@@ -317,6 +353,15 @@ export default class LMSEventsView extends LitElement {
                     .event=${this.modalData}
                     .isOpen=${this.hasOpenModal}
                   ></lms-card-details-modal>
+                </div>
+                <div class="d-flex justify-content-center">
+                  <button
+                    class="btn btn-primary btn-block mt-3 w-25"
+                    ?hidden=${!this.events.length}
+                    @click=${this.handleLoadMore}
+                  >
+                    ${__("Load more")}
+                  </button>
                 </div>
               </div>
             </lms-events-filter>

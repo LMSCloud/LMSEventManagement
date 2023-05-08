@@ -172,7 +172,7 @@ export type MatrixGroup = {
   [key in InputType]?: string;
 };
 
-export type TaggedData = ["target_groups" | "location" | "event_type", any[]];
+export type TaggedData = ["target_groups" | "location" | "event_type", unknown[]];
 
 export type Facets = {
   eventTypeIds: string[];

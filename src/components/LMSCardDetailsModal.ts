@@ -37,7 +37,7 @@ export default class LMSCardDetailsModal extends LitElement {
   @state() event_types: EventType[] = [];
   @state() locations: LMSLocation[] = [];
   @state() target_groups: TargetGroupFee[] = [];
-  @state() locale: string = "en";
+  @state() locale = "en";
   @query(".close") closeButton: HTMLButtonElement | undefined;
 
   static override styles = [
@@ -150,7 +150,9 @@ export default class LMSCardDetailsModal extends LitElement {
 
     if (
       target_groups &&
-      target_groups.every((tg) => tg.hasOwnProperty("target_group_id"))
+      target_groups.every((tg) =>
+        ({}.hasOwnProperty.call(tg, "target_group_id"))
+      )
     ) {
       const selectedTargetGroups = this.target_groups.filter((target_group) =>
         target_groups.some((tg) => tg.target_group_id === target_group.id)
@@ -258,7 +260,12 @@ export default class LMSCardDetailsModal extends LitElement {
                       </thead>
                       <tbody>
                         ${map(target_groups, (target_group) => {
-                          if (target_group.hasOwnProperty("target_group_id")) {
+                          if (
+                            {}.hasOwnProperty.call(
+                              target_group,
+                              "target_group_id"
+                            )
+                          ) {
                             return nothing;
                           }
                           const { name, fee, min_age, max_age } =

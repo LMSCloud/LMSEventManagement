@@ -17,8 +17,8 @@ declare global {
 
 @customElement("lms-staff-events-view")
 export default class StaffEventsView extends LitElement {
-  @state() hasLoaded: boolean = false;
-  private isEmpty: boolean = false;
+  @state() hasLoaded = false;
+  private isEmpty = false;
   private events: Column[] = [];
   private event_types: Column[] = [];
   private target_groups: Column[] = [];

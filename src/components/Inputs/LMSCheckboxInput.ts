@@ -6,7 +6,7 @@ import { ModalField } from "../../sharedDeclarations";
 @customElement("lms-checkbox-input")
 export default class LMSCheckboxInput extends LitElement {
   @property({ type: Object }) field: ModalField = {} as ModalField;
-  @property({ type: Object }) value: string = "";
+  @property({ type: Object }) value = "";
 
   static override styles = [bootstrapStyles];
 

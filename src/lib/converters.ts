@@ -108,7 +108,9 @@ export class InputConverter {
           <h4 class="pointer-events-none">${__("Target Groups")}</h4>
         </button>
         <div class="collapse" id="targetGroups">
-          <table class="table table-sm table-bordered table-striped mb-0 mx-3 w-inherit">
+          <table
+            class="table table-sm table-bordered table-striped mb-0 mx-3 w-inherit"
+          >
             <thead>
               <tr>
                 <th scope="col">${__("target_group")}</th>
@@ -347,7 +349,8 @@ ${value}</textarea
   ): TargetGroup[] | LMSLocation[] | EventType[] | undefined {
     if (!data) return undefined;
 
-    const [, foundData] = data.find(([tag]) => tag === name) ?? [, undefined];
+    const [, foundData] =
+      data.find(([tag]) => tag === name) ?? new Array(2).fill(undefined);
     return foundData;
   }
 

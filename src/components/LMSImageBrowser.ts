@@ -45,7 +45,7 @@ export default class LMSImageBrowser extends LitElement {
   uploadedImages: UploadedImage[] = [];
   @queryAll('[id^="button-"]') buttonReferences!: NodeListOf<HTMLButtonElement>;
   @queryAll('[id^="tooltip-"]') tooltipReferences!: NodeListOf<LMSTooltip>;
-  private boundEventHandler: (event: MessageEvent) => void = () => {};
+  private boundEventHandler: (event: MessageEvent) => void = () => undefined;
 
   static override styles = [
     bootstrapStyles,

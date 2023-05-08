@@ -106,7 +106,7 @@ export default class LMSEventTypesTable extends LMSTable {
     });
   }
 
-  override updated(changedProperties: Map<string, any>) {
+  override updated(changedProperties: Map<string, never>) {
     super.updated(changedProperties);
     if (changedProperties.has("target_groups")) {
       this.hydrate();

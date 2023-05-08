@@ -16,8 +16,8 @@ declare global {
 
 @customElement("lms-staff-locations-view")
 export default class StaffLocationsView extends LitElement {
-  @state() hasLoaded: boolean = false;
-  private isEmpty: boolean = false;
+  @state() hasLoaded = false;
+  private isEmpty = false;
   private locations: Column[] = [];
 
   static override styles = [bootstrapStyles, skeletonStyles];
