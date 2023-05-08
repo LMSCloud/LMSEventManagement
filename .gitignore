@@ -11,4 +11,9 @@ TO-DO.md
 .DS_Store
 .vscode/
 
-dist/**/*.d.ts
+# Ignore .d.ts and .map files in the "dist" directory
+Koha/Plugin/Com/LMSCloud/EventManagement/dist/**/*.d.ts
+Koha/Plugin/Com/LMSCloud/EventManagement/dist/**/*.d.ts.map
+
+# Ignore .d.ts.map files in subdirectories of the "dist" directory
+Koha/Plugin/Com/LMSCloud/EventManagement/dist/**/**/*.d.ts.map
