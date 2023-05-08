@@ -273,8 +273,11 @@ export default class LMSEventsFilter extends LitElement {
         return query.append(name, value?.toString());
       }
     });
-    query.append("name", detail);
-    query.append("description", detail);
+    const q = [
+      { name: { "-like": `%${detail}%` } },
+      { description: { "-like": `%${detail}%` } },
+    ];
+    query.append("q", JSON.stringify(q));
     this.dispatchEvent(
       new CustomEvent("search", {
         detail: query.toString(),

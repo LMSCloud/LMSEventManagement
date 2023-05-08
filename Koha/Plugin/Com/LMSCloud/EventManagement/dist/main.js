@@ -1422,8 +1422,11 @@
                     return query.append(name, value === null || value === void 0 ? void 0 : value.toString());
                 }
             });
-            query.append("name", detail);
-            query.append("description", detail);
+            const q = [
+                { name: { "-like": `%${detail}%` } },
+                { description: { "-like": `%${detail}%` } },
+            ];
+            query.append("q", JSON.stringify(q));
             this.dispatchEvent(new CustomEvent("search", {
                 detail: query.toString(),
                 composed: true,
