@@ -22,11 +22,15 @@ export default class LMSEventsView extends LitElement {
     _page: number;
     _per_page: number;
     q?: string;
+    additionalParams: URLSearchParams;
     private hasLoaded;
     static styles: import("lit").CSSResult[];
     private getReservedQueryParams;
     private getReservedQueryString;
+    private getAdditionalQueryParams;
     private updateUrlWithReservedParams;
+    private updateUrlWithAdditionalParams;
+    private getFullQueryString;
     connectedCallback(): void;
     private handleQuery;
     private handleShowDetails;

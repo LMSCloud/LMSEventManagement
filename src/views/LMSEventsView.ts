@@ -32,6 +32,7 @@ export default class LMSEventsView extends LitElement {
   @state() _page: number = 1;
   @state() _per_page: number = 20;
   @state() q?: string;
+  @state() additionalParams: URLSearchParams = new URLSearchParams();
   private hasLoaded = false;
 
   static override styles = [
@@ -115,6 +116,35 @@ export default class LMSEventsView extends LitElement {
     return params.toString();
   }
 
+  private getAdditionalQueryParams(query = undefined) {
+    const urlParams = new URLSearchParams(window.location.search);
+    let queryParams = undefined;
+    let queryKeys: string[] | undefined = undefined;
+    if (query) {
+      queryParams = new URLSearchParams(query);
+      queryKeys = [...queryParams.keys()];
+    }
+    const additionalParams = new URLSearchParams();
+
+    urlParams.forEach((value, key) => {
+      if (!["_match", "_order_by", "_page", "_per_page", "q"].includes(key)) {
+        additionalParams.set(key, value);
+      }
+
+      if (queryKeys && !queryKeys.includes(key)) {
+        additionalParams.delete(key);
+      }
+    });
+
+    if (queryParams) {
+      queryParams.forEach((value, key) => {
+        additionalParams.set(key, value);
+      });
+    }
+
+    this.additionalParams = additionalParams;
+  }
+
   private updateUrlWithReservedParams(reservedParams: {
     [key in ReservedParam]?: string | number;
   }) {
@@ -127,17 +157,43 @@ export default class LMSEventsView extends LitElement {
     history.pushState(null, "", url.toString());
   }
 
+  private updateUrlWithAdditionalParams(additionalParams: URLSearchParams) {
+    const url = new URL(window.location.href);
+    additionalParams.forEach((value, key) => {
+      if (value) {
+        url.searchParams.set(key, value);
+      }
+    });
+    history.pushState(null, "", url.toString());
+  }
+
+  private getFullQueryString() {
+    const reservedQueryString = this.getReservedQueryString();
+    const additionalQueryString = this.additionalParams.toString();
+
+    const hasReservedQueryParams = Boolean(reservedQueryString);
+    const hasAdditionalQueryParams = Boolean(additionalQueryString);
+    if (!hasReservedQueryParams && !hasAdditionalQueryParams) {
+      return "";
+    }
+    const reservedQueryParams = hasReservedQueryParams
+      ? `?${reservedQueryString}`
+      : "";
+    const additionalQueryParams = hasAdditionalQueryParams
+      ? `&${additionalQueryString}`
+      : "";
+    return `${reservedQueryParams}${additionalQueryParams}`;
+  }
+
   override connectedCallback() {
     super.connectedCallback();
 
     this.getReservedQueryParams();
+    this.getAdditionalQueryParams();
 
-    const reservedQueryString = this.getReservedQueryString();
     const response = async () =>
       await fetch(
-        `/api/v1/contrib/eventmanagement/public/events${
-          reservedQueryString ? `?${reservedQueryString}` : ""
-        }`
+        `/api/v1/contrib/eventmanagement/public/events${this.getFullQueryString()}`
       );
 
     response()
@@ -158,6 +214,7 @@ export default class LMSEventsView extends LitElement {
           _per_page: this._per_page,
           q: this.q,
         });
+        this.updateUrlWithAdditionalParams(this.additionalParams);
       })
       .catch((error) => {
         console.error(error);
@@ -166,11 +223,13 @@ export default class LMSEventsView extends LitElement {
 
   private handleQuery(event: CustomEvent) {
     const query = event.detail;
+
+    this.getReservedQueryParams();
+    this.getAdditionalQueryParams(query);
+
     const response = async () =>
       await fetch(
-        `/api/v1/contrib/eventmanagement/public/events?${new URLSearchParams(
-          query
-        )}`
+        `/api/v1/contrib/eventmanagement/public/events${this.getFullQueryString()}`
       );
 
     response()
@@ -183,6 +242,14 @@ export default class LMSEventsView extends LitElement {
       })
       .then((events: LMSEvent[]) => {
         this.events = events;
+        this.updateUrlWithReservedParams({
+          _match: this._match,
+          _order_by: this._order_by,
+          _page: this._page,
+          _per_page: this._per_page,
+          q: this.q,
+        });
+        this.updateUrlWithAdditionalParams(this.additionalParams);
       })
       .catch((error) => {
         console.error(error);

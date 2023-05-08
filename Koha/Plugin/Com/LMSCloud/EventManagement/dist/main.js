@@ -4975,6 +4975,7 @@ ${value}</textarea
             this._order_by = "start_time";
             this._page = 1;
             this._per_page = 20;
+            this.additionalParams = new URLSearchParams();
             this.hasLoaded = false;
         }
         getReservedQueryParams() {
@@ -5009,6 +5010,30 @@ ${value}</textarea
             });
             return params.toString();
         }
+        getAdditionalQueryParams(query = undefined) {
+            const urlParams = new URLSearchParams(window.location.search);
+            let queryParams = undefined;
+            let queryKeys = undefined;
+            if (query) {
+                queryParams = new URLSearchParams(query);
+                queryKeys = [...queryParams.keys()];
+            }
+            const additionalParams = new URLSearchParams();
+            urlParams.forEach((value, key) => {
+                if (!["_match", "_order_by", "_page", "_per_page", "q"].includes(key)) {
+                    additionalParams.set(key, value);
+                }
+                if (queryKeys && !queryKeys.includes(key)) {
+                    additionalParams.delete(key);
+                }
+            });
+            if (queryParams) {
+                queryParams.forEach((value, key) => {
+                    additionalParams.set(key, value);
+                });
+            }
+            this.additionalParams = additionalParams;
+        }
         updateUrlWithReservedParams(reservedParams) {
             const url = new URL(window.location.href);
             Object.entries(reservedParams).forEach(([key, value]) => {
@@ -5018,11 +5043,36 @@ ${value}</textarea
             });
             history.pushState(null, "", url.toString());
         }
+        updateUrlWithAdditionalParams(additionalParams) {
+            const url = new URL(window.location.href);
+            additionalParams.forEach((value, key) => {
+                if (value) {
+                    url.searchParams.set(key, value);
+                }
+            });
+            history.pushState(null, "", url.toString());
+        }
+        getFullQueryString() {
+            const reservedQueryString = this.getReservedQueryString();
+            const additionalQueryString = this.additionalParams.toString();
+            const hasReservedQueryParams = Boolean(reservedQueryString);
+            const hasAdditionalQueryParams = Boolean(additionalQueryString);
+            if (!hasReservedQueryParams && !hasAdditionalQueryParams) {
+                return "";
+            }
+            const reservedQueryParams = hasReservedQueryParams
+                ? `?${reservedQueryString}`
+                : "";
+            const additionalQueryParams = hasAdditionalQueryParams
+                ? `&${additionalQueryString}`
+                : "";
+            return `${reservedQueryParams}${additionalQueryParams}`;
+        }
         connectedCallback() {
             super.connectedCallback();
             this.getReservedQueryParams();
-            const reservedQueryString = this.getReservedQueryString();
-            const response = async () => await fetch(`/api/v1/contrib/eventmanagement/public/events${reservedQueryString ? `?${reservedQueryString}` : ""}`);
+            this.getAdditionalQueryParams();
+            const response = async () => await fetch(`/api/v1/contrib/eventmanagement/public/events${this.getFullQueryString()}`);
             response()
                 .then((response) => {
                 if (response.ok) {
@@ -5040,6 +5090,7 @@ ${value}</textarea
                     _per_page: this._per_page,
                     q: this.q,
                 });
+                this.updateUrlWithAdditionalParams(this.additionalParams);
             })
                 .catch((error) => {
                 console.error(error);
@@ -5047,7 +5098,9 @@ ${value}</textarea
         }
         handleQuery(event) {
             const query = event.detail;
-            const response = async () => await fetch(`/api/v1/contrib/eventmanagement/public/events?${new URLSearchParams(query)}`);
+            this.getReservedQueryParams();
+            this.getAdditionalQueryParams(query);
+            const response = async () => await fetch(`/api/v1/contrib/eventmanagement/public/events${this.getFullQueryString()}`);
             response()
                 .then((response) => {
                 if (response.ok) {
@@ -5057,6 +5110,14 @@ ${value}</textarea
             })
                 .then((events) => {
                 this.events = events;
+                this.updateUrlWithReservedParams({
+                    _match: this._match,
+                    _order_by: this._order_by,
+                    _page: this._page,
+                    _per_page: this._per_page,
+                    q: this.q,
+                });
+                this.updateUrlWithAdditionalParams(this.additionalParams);
             })
                 .catch((error) => {
                 console.error(error);
@@ -5190,6 +5251,9 @@ ${value}</textarea
     __decorate([
         t$1()
     ], LMSEventsView.prototype, "q", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsView.prototype, "additionalParams", void 0);
     LMSEventsView = __decorate([
         e$3("lms-events-view")
     ], LMSEventsView);
