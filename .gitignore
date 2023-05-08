@@ -10,3 +10,5 @@ TO-DO.md
 
 .DS_Store
 .vscode/
+
+dist/**/*.d.ts
