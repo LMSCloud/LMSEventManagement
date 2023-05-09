@@ -66,7 +66,7 @@ fi
 
 # Extract strings from specified files
 xgettext --from-code=utf-8 --force-po --output="$OUTPUT_FILE" \
-    --keyword=__ --keyword=gtx.gettext --keyword=i18n:1,2 \
+    --keyword=__ --keyword=attr__ --keyword=gtx.gettext --keyword=i18n:1,2  \
     $SOURCE_FILES
 
 # Extract strings from .tt files and merge with existing .pot file
