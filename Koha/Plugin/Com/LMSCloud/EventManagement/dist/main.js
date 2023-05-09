@@ -379,11 +379,6 @@
       icon: [512, 512, ["compress-alt"], "f422", "M439 7c9.4-9.4 24.6-9.4 33.9 0l32 32c9.4 9.4 9.4 24.6 0 33.9l-87 87 39 39c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H296c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2l39 39L439 7zM72 272H216c13.3 0 24 10.7 24 24V440c0 9.7-5.8 18.5-14.8 22.2s-19.3 1.7-26.2-5.2l-39-39L73 505c-9.4 9.4-24.6 9.4-33.9 0L7 473c-9.4-9.4-9.4-24.6 0-33.9l87-87L55 313c-6.9-6.9-8.9-17.2-5.2-26.2s12.5-14.8 22.2-14.8z"]
     };
     var faCompressAlt = faDownLeftAndUpRightToCenter;
-    var faSortDown = {
-      prefix: 'fas',
-      iconName: 'sort-down',
-      icon: [320, 512, ["sort-desc"], "f0dd", "M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8H288c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z"]
-    };
     var faList = {
       prefix: 'fas',
       iconName: 'list',
@@ -422,11 +417,6 @@
       icon: [448, 512, [128190, 128426, "save"], "f0c7", "M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V173.3c0-17-6.7-33.3-18.7-45.3L352 50.7C340 38.7 323.7 32 306.7 32H64zm0 96c0-17.7 14.3-32 32-32H288c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V128zM224 288a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
     };
     var faSave = faFloppyDisk;
-    var faSortUp = {
-      prefix: 'fas',
-      iconName: 'sort-up',
-      icon: [320, 512, ["sort-asc"], "f0de", "M182.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z"]
-    };
     var faTrash = {
       prefix: 'fas',
       iconName: 'trash',
@@ -743,9 +733,9 @@
 
     let i18nInstance;
     let translationsLoaded = false;
-    let callbacks = [];
+    const callbacks = [];
     let loadTranslationsCalled = false;
-    let locale = document.documentElement.lang.slice(0, 2);
+    const locale = document.documentElement.lang.slice(0, 2);
     async function loadTranslations(localeUrl = "/api/v1/contrib/eventmanagement/static/locales") {
         if (locale.startsWith("en") || translationsLoaded) {
             return;
@@ -949,7 +939,7 @@
                 this.event.location = loc !== null && loc !== void 0 ? loc : {};
             }
             if (target_groups &&
-                target_groups.every((tg) => tg.hasOwnProperty("target_group_id"))) {
+                target_groups.every((tg) => ({}.hasOwnProperty.call(tg, "target_group_id")))) {
                 const selectedTargetGroups = this.target_groups.filter((target_group) => target_groups.some((tg) => tg.target_group_id === target_group.id));
                 this.event.target_groups = selectedTargetGroups.map((tg) => {
                     var _a, _b;
@@ -1044,7 +1034,7 @@
                       </thead>
                       <tbody>
                         ${o$1(target_groups, (target_group) => {
-            if (target_group.hasOwnProperty("target_group_id")) {
+            if ({}.hasOwnProperty.call(target_group, "target_group_id")) {
                 return A;
             }
             const { name, fee, min_age, max_age } = target_group;
@@ -1241,7 +1231,133 @@
   }
 `;
 
+    class RequestHandler {
+        constructor(endpoints) {
+            this.endpoints = {};
+            if (endpoints instanceof Map) {
+                endpoints.forEach((value, key) => {
+                    this.endpoints[key] = value;
+                });
+            }
+            else {
+                this.endpoints = endpoints;
+            }
+        }
+        async request(endpoint, queryParams) {
+            const endpointData = this.endpoints[endpoint];
+            if (!endpointData) {
+                throw new Error(`Endpoint not found: ${endpoint}`);
+            }
+            const requestInfo = endpointData.requestInfo || {};
+            const cacheMode = endpointData.ignoreCache
+                ? "no-cache"
+                : endpointData.cache
+                    ? "default"
+                    : "force-cache";
+            let url = endpointData.url;
+            if (queryParams) {
+                const searchParams = new URLSearchParams(queryParams);
+                url += `?${searchParams.toString()}`;
+            }
+            else if (endpointData.queryParams) {
+                const searchParams = new URLSearchParams(endpointData.queryParams);
+                url += `?${searchParams.toString()}`;
+            }
+            const response = await fetch(url, {
+                cache: cacheMode,
+                headers: {
+                    ...requestInfo.headers,
+                    "Content-Type": "application/json",
+                },
+                method: requestInfo.method || "GET",
+                body: requestInfo.body ? JSON.stringify(requestInfo.body) : undefined,
+            });
+            return response;
+        }
+    }
+    const endpoints = {
+        getEventsPublic: {
+            url: "/api/v1/contrib/eventmanagement/public/events",
+            cache: false,
+        },
+        getTargetGroupsPublic: {
+            url: "/api/v1/contrib/eventmanagement/public/target_groups",
+            cache: true,
+        },
+        getEventTypesPublic: {
+            url: "/api/v1/contrib/eventmanagement/public/event_types",
+            cache: true,
+        },
+        getLocationsPublic: {
+            url: "/api/v1/contrib/eventmanagement/public/locations",
+            cache: true,
+        },
+    };
+    const requestHandler = new RequestHandler(endpoints);
+
+    function deepCopy(obj) {
+        if (obj === null || typeof obj !== "object")
+            return obj;
+        if (obj instanceof Date)
+            return new Date(obj.getTime());
+        if (Array.isArray(obj))
+            return obj.map((item) => deepCopy(item));
+        const newObj = Object.create(Object.getPrototypeOf(obj));
+        for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                newObj[key] = deepCopy(obj[key]);
+            }
+        }
+        return newObj;
+    }
+    function throttle(callback, delay) {
+        let previousCall = new Date().getTime();
+        return function () {
+            const time = new Date().getTime();
+            if (time - previousCall >= delay) {
+                previousCall = time;
+                callback();
+            }
+        };
+    }
+    function debounce(func, wait, immediate) {
+        let timeout = null;
+        return function (...args) {
+            const later = function () {
+                timeout = null;
+                if (!immediate)
+                    func.apply(this, args);
+            };
+            const callNow = immediate && !timeout;
+            if (timeout !== null) {
+                clearTimeout(timeout);
+            }
+            timeout = setTimeout(later, wait);
+            if (callNow) {
+                func.apply(this, args);
+            }
+        };
+    }
+
     let LMSEventsFilter = class LMSEventsFilter extends s {
+        get eventsDeepCopy() {
+            return this._eventsDeepCopy;
+        }
+        set eventsDeepCopy(value) {
+            if (this._eventsDeepCopy.length === 0) {
+                this._eventsDeepCopy = value;
+            }
+        }
+        facetsStrategyManager() {
+            switch (this.facetsStrategy) {
+                case "preserve":
+                    return this.eventsDeepCopy;
+                case "update":
+                    return this.events;
+                default:
+                    throw new Error("Invalid facetsStrategy");
+            }
+        }
         constructor() {
             super();
             this.shouldFold = window.innerWidth <= 992;
@@ -1260,22 +1376,38 @@
                     }
                     return input.checked ? input.id : false;
                 },
+                radio: (input) => (input.checked ? input.value : false),
                 date: (input) => input.value,
                 number: (input) => input.value,
                 default: (input) => input.value,
             };
-            this.throttle = (callback, delay) => {
-                let previousCall = new Date().getTime();
-                return function () {
-                    const time = new Date().getTime();
-                    if (time - previousCall >= delay) {
-                        previousCall = time;
-                        callback();
+            this.resetHandlers = {
+                checkbox: (input) => {
+                    if (input.id === "open_registration") {
+                        input.checked = true;
+                        return;
                     }
-                };
+                    input.checked = false;
+                },
+                radio: (input) => {
+                    input.checked = false;
+                },
+                date: (input) => {
+                    input.value = "";
+                },
+                number: (input) => {
+                    if (["min_age", "max_age"].includes(input.id)) {
+                        input.value = "";
+                        return;
+                    }
+                    input.value = input.min;
+                },
+                default: (input) => {
+                    input.value = "";
+                },
             };
             this._eventsDeepCopy = [];
-            window.addEventListener("resize", this.throttle(() => {
+            window.addEventListener("resize", throttle(() => {
                 this.shouldFold = window.innerWidth <= 992;
                 this.isHidden = this.shouldFold;
                 this.requestUpdate();
@@ -1283,61 +1415,25 @@
         }
         connectedCallback() {
             super.connectedCallback();
-            const event_types = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
-                return response.json();
-            };
-            event_types().then((event_types) => (this.event_types = event_types));
-            const target_groups = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/public/target_groups");
-                return response.json();
-            };
-            target_groups().then((target_groups) => (this.target_groups = target_groups));
-            const locations = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/public/locations");
-                return response.json();
-            };
-            locations().then((locations) => (this.locations = locations));
+            requestHandler
+                .request("getEventTypesPublic")
+                .then((response) => response.json())
+                .then((event_types) => (this.event_types = event_types));
+            requestHandler
+                .request("getTargetGroupsPublic")
+                .then((response) => response.json())
+                .then((target_groups) => (this.target_groups = target_groups));
+            requestHandler
+                .request("getLocationsPublic")
+                .then((response) => response.json())
+                .then((locations) => (this.locations = locations));
         }
         disconnectedCallback() {
             super.disconnectedCallback();
-            window.removeEventListener("resize", () => { });
-        }
-        facetsStrategyManager() {
-            switch (this.facetsStrategy) {
-                case "preserve":
-                    return this.eventsDeepCopy;
-                case "update":
-                    return this.events;
-                default:
-                    throw new Error("Invalid facetsStrategy");
-            }
-        }
-        deepCopy(obj) {
-            if (obj === null || typeof obj !== "object")
-                return obj;
-            if (obj instanceof Date)
-                return new Date(obj.getTime());
-            if (Array.isArray(obj))
-                return obj.map((item) => this.deepCopy(item));
-            const newObj = Object.create(Object.getPrototypeOf(obj));
-            for (const key in obj) {
-                if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                    newObj[key] = this.deepCopy(obj[key]);
-                }
-            }
-            return newObj;
-        }
-        get eventsDeepCopy() {
-            return this._eventsDeepCopy;
-        }
-        set eventsDeepCopy(value) {
-            if (this._eventsDeepCopy.length === 0) {
-                this._eventsDeepCopy = value;
-            }
+            window.removeEventListener("resize", () => undefined);
         }
         willUpdate() {
-            this.eventsDeepCopy = this.deepCopy(this.events);
+            this.eventsDeepCopy = deepCopy(this.events);
             const events = this.facetsStrategyManager();
             if (!events.length)
                 return;
@@ -1349,41 +1445,24 @@
                 locationIds: [...new Set(events.map((event) => event.location))],
                 ...events
                     .map((event) => {
-                    const { event_type, location, target_groups, ...rest } = event;
+                    const { event_type, location, target_groups, ...rest } = event; // eslint-disable-line @typescript-eslint/no-unused-vars
                     return rest;
                 })
                     .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
             };
         }
         handleReset() {
-            var _a;
-            const inputs = (_a = this.shadowRoot) === null || _a === void 0 ? void 0 : _a.querySelectorAll("input");
-            inputs === null || inputs === void 0 ? void 0 : inputs.forEach((input) => {
-                switch (input.type) {
-                    case "checkbox":
-                        if (input.id === "open_registration") {
-                            input.checked = true;
-                            break;
-                        }
-                        input.checked = false;
-                        break;
-                    case "date":
-                        input.value = "";
-                        break;
-                    case "number":
-                        if (["min_age", "max_age"].includes(input.id)) {
-                            input.value = "";
-                            break;
-                        }
-                        input.value = input.min;
-                        break;
-                }
-            });
+            this.inputs.forEach((input) => this.resetHandlers[input.type](input));
             this.dispatchEvent(new CustomEvent("filter", {
                 detail: "",
                 composed: true,
                 bubbles: true,
             }));
+        }
+        isAllowedFilter(name, value, exclude) {
+            if (!name)
+                return false;
+            return !(name && exclude.includes(name.toString()) && value === false);
         }
         getParamsFromActiveFilters() {
             var _a;
@@ -1397,9 +1476,12 @@
                 const value = handler(input);
                 return [input.name, value];
             })
-                .filter(([name, value]) => !(name &&
-                ["event_type", "target_group", "location"].includes(name.toString()) &&
-                value === false));
+                .filter(([name, value]) => this.isAllowedFilter(name, value, [
+                "event_type",
+                "target_group",
+                "location",
+                "_order_by",
+            ]));
         }
         handleChange() {
             const query = new URLSearchParams();
@@ -1422,11 +1504,16 @@
                     return query.append(name, value === null || value === void 0 ? void 0 : value.toString());
                 }
             });
-            const q = [
-                { name: { "-like": `%${detail}%` } },
-                { description: { "-like": `%${detail}%` } },
-            ];
-            query.append("q", JSON.stringify(q));
+            if (detail) {
+                const q = [
+                    { name: { "-like": `%${detail}%` } },
+                    { description: { "-like": `%${detail}%` } },
+                ];
+                query.append("q", JSON.stringify(q));
+            }
+            else {
+                query.append("q", JSON.stringify({}));
+            }
             this.dispatchEvent(new CustomEvent("search", {
                 detail: query.toString(),
                 composed: true,
@@ -1455,20 +1542,6 @@
                 }
             });
         }
-        urlSearchParamsToQueryParam(searchParams) {
-            const queryParams = {};
-            searchParams.forEach((value, key) => {
-                const keys = key.split(".");
-                let currentParam = queryParams;
-                keys.forEach((k, i) => {
-                    if (!currentParam[k]) {
-                        currentParam[k] = i === keys.length - 1 ? value : {};
-                    }
-                    currentParam = currentParam[k];
-                });
-            });
-            return `q=${JSON.stringify(queryParams)}`;
-        }
         render() {
             return x `
       <div class="card" @change=${this.handleChange}>
@@ -1486,9 +1559,9 @@
         })}"
             >
               <h5
-                class=${o$2({
+                class="nobr ${o$2({
             "d-inline": !this.shouldFold,
-        })}
+        })}"
               >
                 ${__("Filter")}
               </h5>
@@ -1542,6 +1615,26 @@
             "gap-3": !this.shouldFold,
         })}"
               >
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .label=${__("Sort by")}
+                  @toggle=${this.handleDropdownToggle}
+                >
+                  ${o$1(["start_time", "end_time", "event_type", "location"], (value, index) => x `
+                      <div>
+                        <input
+                          type="radio"
+                          id="_order_by_${value}"
+                          name="_order_by"
+                          value=${value}
+                          ?checked=${index === 0}
+                        />
+                        <label for="_order_by_${value}">${__(value)}</label>
+                      </div>
+                    `)}
+                </lms-dropdown>
+
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
@@ -1699,18 +1792,6 @@
               </div>
             </div>
           </div>
-          <!-- <div class="row">
-            <div class="col">
-              <div class="active-filters">
-                ${o$1(this.activeFilters, ([name, value]) => x ` <span class="badge badge-dark text-light"
-              >${name} ${value}&nbsp;
-              <button type="button" class="close" aria-label="Close">
-                <span aria-hidden="true" class="text-light">&times;</span>
-              </button></span
-            >`)}
-              </div>
-            </div>
-          </div> -->
         </div>
         <div class="card-body">
           <slot></slot>
@@ -1726,6 +1807,10 @@
         i$5 `
       .gap-3 {
         gap: 1rem;
+      }
+
+      .nobr {
+        white-space: nowrap;
       }
     `,
     ];
@@ -1881,7 +1966,7 @@
         constructor() {
             super(...arguments);
             this.uploadedImages = [];
-            this.boundEventHandler = () => { };
+            this.boundEventHandler = () => undefined;
         }
         loadImages() {
             const uploadedImages = async () => await fetch("/api/v1/contrib/eventmanagement/images");
@@ -2399,37 +2484,18 @@
     let LMSSearch = class LMSSearch extends s {
         constructor() {
             super(...arguments);
-            this.debouncedSearch = this.debounce(this.search, 250, false);
-        }
-        debounce(func, wait, immediate) {
-            let timeout = null;
-            return function (...args) {
-                const context = this;
-                const later = function () {
-                    timeout = null;
-                    if (!immediate)
-                        func.apply(context, args);
-                };
-                const callNow = immediate && !timeout;
-                if (timeout !== null) {
-                    clearTimeout(timeout);
-                }
-                timeout = setTimeout(later, wait);
-                if (callNow) {
-                    func.apply(context, args);
-                }
-            };
-        }
-        search(query) {
-            this.dispatchEvent(new CustomEvent("search", {
-                detail: query,
-                bubbles: true,
-                composed: false,
-            }));
+            this.debouncedSearch = debounce((query) => {
+                this.dispatchEvent(new CustomEvent("search", {
+                    detail: query,
+                    bubbles: true,
+                    composed: false,
+                }));
+            }, 250, false);
         }
         handleInput(e) {
             const inputElement = e.target;
-            this.debouncedSearch.call(this, inputElement.value);
+            console.log(inputElement.value);
+            this.debouncedSearch(inputElement.value);
         }
         render() {
             return x `
@@ -2543,7 +2609,9 @@
           <h4 class="pointer-events-none">${__("Target Groups")}</h4>
         </button>
         <div class="collapse" id="targetGroups">
-          <table class="table table-sm table-bordered table-striped mb-0 mx-3 w-inherit">
+          <table
+            class="table table-sm table-bordered table-striped mb-0 mx-3 w-inherit"
+          >
             <thead>
               <tr>
                 <th scope="col">${__("target_group")}</th>
@@ -2763,7 +2831,7 @@ ${value}</textarea
             var _a;
             if (!data)
                 return undefined;
-            const [, foundData] = (_a = data.find(([tag]) => tag === name)) !== null && _a !== void 0 ? _a : [, undefined];
+            const [, foundData] = (_a = data.find(([tag]) => tag === name)) !== null && _a !== void 0 ? _a : new Array(2).fill(undefined);
             return foundData;
         }
         renderValue(value) {
@@ -3326,7 +3394,7 @@ ${value}</textarea
             return x `
       <div class="container-fluid mx-0">
         <div class="card-deck card-deck-responsive">
-          ${o$1(this.data, (datum, index) => {
+          ${o$1(this.data, (datum) => {
             const { name, uuid } = datum;
             const [title] = new TemplateResultConverter(name).getRenderValues();
             const [state] = this.cardStates.get(uuid) || "data";
@@ -3377,7 +3445,6 @@ ${value}</textarea
                   ></lms-staff-event-card-preview>
                 </div>
               </div>
-              <!-- ${insertResponsiveWrapper(index)} -->
             `;
         })}
         </div>
@@ -3411,14 +3478,14 @@ ${value}</textarea
         }
       }
 
-      @media (max-width: 1200px) {
+      @media (max-width: 1600px) {
         .card-deck-responsive .card {
           width: calc(
             50% - 2rem
           ); /* Adjust the width to 50% for screens smaller than 1200px */
         }
       }
-
+      
       @media (max-width: 768px) {
         .card-deck-responsive .card {
           width: calc(
@@ -3470,40 +3537,38 @@ ${value}</textarea
             if (target) {
                 const targetElement = target;
                 const targetRect = targetElement.getBoundingClientRect();
-                const tooltipSpan = this.shadowRoot.querySelector("span.tooltip");
                 switch (this.placement) {
                     case "top":
-                        tooltipSpan.style.top = `${window.scrollY + targetRect.top - tooltipSpan.offsetHeight}px`;
-                        tooltipSpan.style.left = `${window.scrollX +
+                        this.tooltip.style.top = `${window.scrollY + targetRect.top - this.tooltip.offsetHeight}px`;
+                        this.tooltip.style.left = `${window.scrollX +
                         targetRect.left +
-                        (targetRect.width - tooltipSpan.offsetWidth) / 2}px`;
+                        (targetRect.width - this.tooltip.offsetWidth) / 2}px`;
                         break;
                     case "bottom":
-                        tooltipSpan.style.top = `${window.scrollY + targetRect.top + targetRect.height}px`;
-                        tooltipSpan.style.left = `${window.scrollX +
+                        this.tooltip.style.top = `${window.scrollY + targetRect.top + targetRect.height}px`;
+                        this.tooltip.style.left = `${window.scrollX +
                         targetRect.left +
-                        (targetRect.width - tooltipSpan.offsetWidth) / 2}px`;
+                        (targetRect.width - this.tooltip.offsetWidth) / 2}px`;
                         break;
                     case "left":
-                        tooltipSpan.style.top = `${window.scrollY +
+                        this.tooltip.style.top = `${window.scrollY +
                         targetRect.top +
-                        (targetRect.height - tooltipSpan.offsetHeight) / 2}px`;
-                        tooltipSpan.style.left = `${window.scrollX + targetRect.left - tooltipSpan.offsetWidth}px`;
+                        (targetRect.height - this.tooltip.offsetHeight) / 2}px`;
+                        this.tooltip.style.left = `${window.scrollX + targetRect.left - this.tooltip.offsetWidth}px`;
                         break;
                     case "right":
-                        tooltipSpan.style.top = `${window.scrollY +
+                        this.tooltip.style.top = `${window.scrollY +
                         targetRect.top +
-                        (targetRect.height - tooltipSpan.offsetHeight) / 2}px`;
-                        tooltipSpan.style.left = `${window.scrollX + targetRect.left + targetRect.width}px`;
+                        (targetRect.height - this.tooltip.offsetHeight) / 2}px`;
+                        this.tooltip.style.left = `${window.scrollX + targetRect.left + targetRect.width}px`;
                         break;
                 }
-                tooltipSpan.style.visibility = "visible";
+                this.tooltip.style.visibility = "visible";
                 setTimeout(() => this.hideTooltip(), this.timeout);
             }
         }
         hideTooltip() {
-            const tooltipSpan = this.shadowRoot.querySelector("span.tooltip");
-            tooltipSpan.style.visibility = "hidden";
+            this.tooltip.style.visibility = "hidden";
         }
         handleSlotChange(event) {
             const slot = event.target;
@@ -3550,6 +3615,9 @@ ${value}</textarea
     __decorate([
         e$2({ type: Number, attribute: "data-timeout" })
     ], LMSTooltip.prototype, "timeout", void 0);
+    __decorate([
+        i$2("span.tooltip")
+    ], LMSTooltip.prototype, "tooltip", void 0);
     LMSTooltip = __decorate([
         e$3("lms-tooltip")
     ], LMSTooltip);
@@ -3650,14 +3718,16 @@ ${value}</textarea
                 field.value.push({ id: id.toString(), [name]: value });
             };
             switch (type) {
-                case "number":
+                case "number": {
                     const { value } = e.target;
                     updateOrCreateItem(value.toString());
                     break;
-                case "checkbox":
+                }
+                case "checkbox": {
                     const { checked } = e.target;
                     updateOrCreateItem((checked ? 1 : 0).toString());
                     break;
+                }
             }
         }
         getMatrixInputMarkup({ field, row, header }) {
@@ -3674,7 +3744,6 @@ ${value}</textarea
             .value=${field.value instanceof Array
                     ? (_b = (_a = field.value.find((item) => item.id == row.id)) === null || _a === void 0 ? void 0 : _a[name]) !== null && _b !== void 0 ? _b : ""
                     : ""}
-            step="0.01"
             class="form-control"
             step=${l((_d = (_c = field.attributes) === null || _c === void 0 ? void 0 : _c.find(([attribute]) => attribute === "step")) === null || _d === void 0 ? void 0 : _d.slice(-1)[0])}
             @input=${(e) => this.handleInput({ e, id: row.id, header })}
@@ -4344,31 +4413,6 @@ ${value}</textarea
                     : data;
             }
         }
-        sortColumnByValue({ column, direction }) {
-            var _a;
-            const { data } = this;
-            const hasData = (_a = (data === null || data === void 0 ? void 0 : data.length) > 0) !== null && _a !== void 0 ? _a : false;
-            if (hasData) {
-                this.data = data.sort((a, b) => {
-                    let aValue = a[column];
-                    let bValue = b[column];
-                    if (aValue instanceof Object) {
-                        [aValue] = aValue.values;
-                    }
-                    if (bValue instanceof Object) {
-                        [bValue] = bValue.values;
-                    }
-                    if (aValue < bValue) {
-                        return direction === "asc" ? -1 : 1;
-                    }
-                    if (aValue > bValue) {
-                        return direction === "asc" ? 1 : -1;
-                    }
-                    return 0;
-                });
-            }
-            this.requestUpdate();
-        }
         willUpdate(_changedProperties) {
             super.willUpdate(_changedProperties);
             this.sortColumns();
@@ -4383,27 +4427,7 @@ ${value}</textarea
             >
               <thead>
                 <tr>
-                  ${o$1(this.headers, (key) => x `<th scope="col">
-                        ${__(key)}
-                        <!-- <button
-                          class="btn btn-sm btn-sort"
-                          @click=${() => this.sortColumnByValue({
-                column: key,
-                direction: "asc",
-            })}
-                        >
-                          ${litFontawesome_2(faSortUp)}
-                        </button>
-                        <button
-                          class="btn btn-sm btn-sort"
-                          @click=${() => this.sortColumnByValue({
-                column: key,
-                direction: "desc",
-            })}
-                        >
-                          ${litFontawesome_2(faSortDown)}
-                        </button> -->
-                      </th>`)}
+                  ${o$1(this.headers, (key) => x `<th scope="col">${__(key)}</th>`)}
                   ${this.isEditable
                 ? x `<th scope="col">${__("actions")}</th>`
                 : A}
@@ -4965,114 +4989,98 @@ ${value}</textarea
     ], LMSEventTypesTable);
     var LMSTargetGroupsTable = LMSEventTypesTable;
 
+    class QueryBuilder {
+        constructor() {
+            this._query = new URLSearchParams();
+            this._reservedParams = [];
+            this._disallowedParams = [];
+            this._areRepeatable = [];
+        }
+        set reservedParams(reservedParams) {
+            this._reservedParams = reservedParams;
+        }
+        set disallowedParams(disallowedParams) {
+            this._disallowedParams = disallowedParams;
+        }
+        set areRepeatable(areRepeatable) {
+            this._areRepeatable = areRepeatable;
+        }
+        set query(query) {
+            if (typeof query === "string") {
+                this._query = new URLSearchParams(query);
+            }
+            else {
+                this._query = query;
+            }
+        }
+        get query() {
+            return this._query;
+        }
+        getParamValue(key) {
+            return this._query.get(key);
+        }
+        updateQuery(query) {
+            const newQueryParams = new URLSearchParams(query);
+            // Remove keys that are not in the new query if they are not reserved
+            this._query.forEach((_, key) => {
+                if (this._reservedParams.includes(key)) {
+                    return;
+                }
+                if (!newQueryParams.has(key)) {
+                    this._query.delete(key);
+                }
+            });
+            newQueryParams.forEach((value, key) => {
+                // If key is disallowed, do nothing
+                if (this._disallowedParams.includes(key)) {
+                    return;
+                }
+                // Handle different cases based on key
+                switch (true) {
+                    // If key is reserved, update its value
+                    case this._reservedParams.includes(key):
+                        this._query.set(key, value);
+                        break;
+                    // If key is repeatable, update its values
+                    case this._areRepeatable.includes(key): {
+                        const existingValues = this._query.getAll(key);
+                        const newValues = newQueryParams.getAll(key);
+                        const valuesToRemove = existingValues.filter((v) => !newValues.includes(v));
+                        valuesToRemove.forEach(() => this._query.delete(key));
+                        newValues.forEach((v) => this._query.append(key, v));
+                        break;
+                    }
+                    // If key is not reserved and not repeatable, set its value
+                    default:
+                        this._query.set(key, value);
+                        break;
+                }
+            });
+        }
+        updateUrl() {
+            const url = new URL(window.location.href);
+            url.search = this._query.toString();
+            window.history.pushState({}, "", url.toString());
+        }
+    }
+
     let LMSEventsView = class LMSEventsView extends s {
         constructor() {
-            super(...arguments);
+            super();
             this.borrowernumber = undefined;
             this.events = [];
             this.modalData = {};
             this.hasOpenModal = false;
-            this._order_by = "start_time";
-            this._page = 1;
-            this._per_page = 20;
-            this.additionalParams = new URLSearchParams();
             this.hasLoaded = false;
-        }
-        getReservedQueryParams() {
-            const params = new URLSearchParams(window.location.search);
-            const reservedParams = [
-                "_match",
-                "_order_by",
-                "_page",
-                "_per_page",
-                "q",
-            ];
-            reservedParams.forEach((reservedParam) => {
-                const value = params.get(reservedParam);
-                if (value) {
-                    this[reservedParam] = parseInt(value) || value;
-                }
-            });
-        }
-        getReservedQueryString(useParams = [
-            "_match",
-            "_order_by",
-            "_page",
-            "_per_page",
-            "q",
-        ]) {
-            const params = new URLSearchParams();
-            useParams.forEach((usedParam) => {
-                const value = this[usedParam];
-                if (value) {
-                    params.set(usedParam, value.toString());
-                }
-            });
-            return params.toString();
-        }
-        getAdditionalQueryParams(query = undefined) {
-            const urlParams = new URLSearchParams(window.location.search);
-            let queryParams = undefined;
-            let queryKeys = undefined;
-            if (query) {
-                queryParams = new URLSearchParams(query);
-                queryKeys = [...queryParams.keys()];
-            }
-            const additionalParams = new URLSearchParams();
-            urlParams.forEach((value, key) => {
-                if (!["_match", "_order_by", "_page", "_per_page", "q"].includes(key)) {
-                    additionalParams.set(key, value);
-                }
-                if (queryKeys && !queryKeys.includes(key)) {
-                    additionalParams.delete(key);
-                }
-            });
-            if (queryParams) {
-                queryParams.forEach((value, key) => {
-                    additionalParams.set(key, value);
-                });
-            }
-            this.additionalParams = additionalParams;
-        }
-        updateUrlWithReservedParams(reservedParams) {
-            const url = new URL(window.location.href);
-            Object.entries(reservedParams).forEach(([key, value]) => {
-                if (value) {
-                    url.searchParams.set(key, value.toString());
-                }
-            });
-            history.pushState(null, "", url.toString());
-        }
-        updateUrlWithAdditionalParams(additionalParams) {
-            const url = new URL(window.location.href);
-            additionalParams.forEach((value, key) => {
-                if (value) {
-                    url.searchParams.set(key, value);
-                }
-            });
-            history.pushState(null, "", url.toString());
-        }
-        getFullQueryString() {
-            const reservedQueryString = this.getReservedQueryString();
-            const additionalQueryString = this.additionalParams.toString();
-            const hasReservedQueryParams = Boolean(reservedQueryString);
-            const hasAdditionalQueryParams = Boolean(additionalQueryString);
-            if (!hasReservedQueryParams && !hasAdditionalQueryParams) {
-                return "";
-            }
-            const reservedQueryParams = hasReservedQueryParams
-                ? `?${reservedQueryString}`
-                : "";
-            const additionalQueryParams = hasAdditionalQueryParams
-                ? `&${additionalQueryString}`
-                : "";
-            return `${reservedQueryParams}${additionalQueryParams}`;
+            this.qb = new QueryBuilder();
+            this.qb.reservedParams = ["_match", "_order_by", "_page", "_per_page", "q"];
+            this.qb.areRepeatable = ["event_type", "target_group", "location"];
+            this.qb.query = window.location.search;
+            this.qb.updateQuery("_order_by=start_time&_page=1&_per_page=20&open_registration=true");
         }
         connectedCallback() {
             super.connectedCallback();
-            this.getReservedQueryParams();
-            this.getAdditionalQueryParams();
-            const response = async () => await fetch(`/api/v1/contrib/eventmanagement/public/events${this.getFullQueryString()}`);
+            const response = async () => await requestHandler.request("getEventsPublic", this.qb.query.toString());
             response()
                 .then((response) => {
                 if (response.ok) {
@@ -5083,14 +5091,7 @@ ${value}</textarea
                 .then((events) => {
                 this.hasLoaded = true;
                 this.events = events;
-                this.updateUrlWithReservedParams({
-                    _match: this._match,
-                    _order_by: this._order_by,
-                    _page: this._page,
-                    _per_page: this._per_page,
-                    q: this.q,
-                });
-                this.updateUrlWithAdditionalParams(this.additionalParams);
+                this.qb.updateUrl();
             })
                 .catch((error) => {
                 console.error(error);
@@ -5098,9 +5099,8 @@ ${value}</textarea
         }
         handleQuery(event) {
             const query = event.detail;
-            this.getReservedQueryParams();
-            this.getAdditionalQueryParams(query);
-            const response = async () => await fetch(`/api/v1/contrib/eventmanagement/public/events${this.getFullQueryString()}`);
+            this.qb.updateQuery(query);
+            const response = async () => await requestHandler.request("getEventsPublic", this.qb.query.toString());
             response()
                 .then((response) => {
                 if (response.ok) {
@@ -5110,14 +5110,7 @@ ${value}</textarea
             })
                 .then((events) => {
                 this.events = events;
-                this.updateUrlWithReservedParams({
-                    _match: this._match,
-                    _order_by: this._order_by,
-                    _page: this._page,
-                    _per_page: this._per_page,
-                    q: this.q,
-                });
-                this.updateUrlWithAdditionalParams(this.additionalParams);
+                this.qb.updateUrl();
             })
                 .catch((error) => {
                 console.error(error);
@@ -5130,6 +5123,34 @@ ${value}</textarea
         handleHideDetails() {
             this.modalData = {};
             this.hasOpenModal = false;
+        }
+        handleLoadMore() {
+            const currentPage = this.qb.getParamValue("_page");
+            if (!currentPage)
+                return;
+            const nextPage = parseInt(currentPage, 10) + 1;
+            this.qb.updateQuery(`_page=${nextPage}`);
+            const response = async () => await requestHandler.request("getEventsPublic", this.qb.query.toString());
+            response()
+                .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Something went wrong");
+            })
+                .then((events) => {
+                var _a, _b;
+                if (!events.length) {
+                    this.qb.updateQuery(`_page=${currentPage}`);
+                    (_a = this.loadMore.querySelector("button")) === null || _a === void 0 ? void 0 : _a.classList.add("d-none");
+                    (_b = this.loadMore.firstElementChild) === null || _b === void 0 ? void 0 : _b.classList.remove("d-none");
+                    return;
+                }
+                this.events = [...this.events, ...events];
+            })
+                .catch((error) => {
+                console.error(error);
+            });
         }
         render() {
             var _a;
@@ -5177,6 +5198,18 @@ ${value}</textarea
                     .event=${this.modalData}
                     .isOpen=${this.hasOpenModal}
                   ></lms-card-details-modal>
+                </div>
+                <div class="d-flex justify-content-center load-more">
+                  <span class="d-none text-center mt-3"
+                    >${__("You've reached the end")}</span
+                  >
+                  <button
+                    class="btn btn-primary btn-block mt-3 w-25"
+                    ?hidden=${!this.events.length}
+                    @click=${this.handleLoadMore}
+                  >
+                    ${__("Load more")}
+                  </button>
                 </div>
               </div>
             </lms-events-filter>
@@ -5237,23 +5270,8 @@ ${value}</textarea
         t$1()
     ], LMSEventsView.prototype, "hasOpenModal", void 0);
     __decorate([
-        t$1()
-    ], LMSEventsView.prototype, "_match", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsView.prototype, "_order_by", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsView.prototype, "_page", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsView.prototype, "_per_page", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsView.prototype, "q", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsView.prototype, "additionalParams", void 0);
+        i$2(".load-more")
+    ], LMSEventsView.prototype, "loadMore", void 0);
     LMSEventsView = __decorate([
         e$3("lms-events-view")
     ], LMSEventsView);
