@@ -3,11 +3,10 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
+import { debounce } from "../lib/utilities";
 
 @customElement("lms-search")
 export default class LMSSearch extends LitElement {
-  private debouncedSearch = this.debounce(this.search, 250, false);
-
   static override styles = [
     bootstrapStyles,
     css`
@@ -19,44 +18,24 @@ export default class LMSSearch extends LitElement {
     `,
   ];
 
-  private debounce<F extends (...args: never[]) => void>(
-    func: F,
-    wait: number,
-    immediate: boolean
-  ): (...args: Parameters<F>) => void {
-    let timeout: ReturnType<typeof setTimeout> | null = null;
-
-    return function (this: ThisParameterType<F>, ...args: Parameters<F>) {
-      const later = function (this: unknown) {
-        timeout = null;
-        if (!immediate) func.apply(this, args);
-      };
-
-      const callNow = immediate && !timeout;
-      if (timeout !== null) {
-        clearTimeout(timeout);
-      }
-      timeout = setTimeout(later, wait);
-
-      if (callNow) {
-        func.apply(this, args);
-      }
-    };
-  }
-
-  private search(query: string) {
-    this.dispatchEvent(
-      new CustomEvent("search", {
-        detail: query,
-        bubbles: true,
-        composed: false,
-      })
-    );
-  }
+  private debouncedSearch = debounce(
+    (query: string) => {
+      this.dispatchEvent(
+        new CustomEvent("search", {
+          detail: query,
+          bubbles: true,
+          composed: false,
+        })
+      );
+    },
+    250,
+    false
+  );
 
   private handleInput(e: InputEvent) {
     const inputElement = e.target as HTMLInputElement;
-    this.debouncedSearch.call(this, inputElement.value);
+    console.log(inputElement.value);
+    this.debouncedSearch(inputElement.value);
   }
 
   override render() {
