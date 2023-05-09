@@ -1,5 +1,5 @@
 import { LitElement, html, nothing, css } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators.js";
 import LMSCard from "../components/LMSCard";
 import LMSEventsFilter from "../components/LMSEventsFilter";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
@@ -10,6 +10,7 @@ import LMSPaginationNav from "../components/LMSPaginationNav";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { requestHandler } from "../lib/RequestHandler";
+import { QueryBuilder } from "../lib/QueryBuilder";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -20,21 +21,15 @@ declare global {
   }
 }
 
-type ReservedParam = "_match" | "_order_by" | "_page" | "_per_page" | "q";
-
 @customElement("lms-events-view")
 export default class LMSEventsView extends LitElement {
   @property({ type: String }) borrowernumber = undefined;
   @state() events: LMSEvent[] = [];
   @state() modalData: LMSEvent = {} as LMSEvent;
   @state() hasOpenModal = false;
-  @state() _match?: string;
-  @state() _order_by?: string = "start_time";
-  @state() _page = 1;
-  @state() _per_page = 20;
-  @state() q?: string;
-  @state() additionalParams: URLSearchParams = new URLSearchParams();
+  @query(".load-more") loadMore!: HTMLButtonElement;
   private hasLoaded = false;
+  private qb = new QueryBuilder();
 
   static override styles = [
     bootstrapStyles,
@@ -75,129 +70,22 @@ export default class LMSEventsView extends LitElement {
     `,
   ];
 
-  /** This method is used to get the currently set reserved
-   *  query params from the URL. If a query param is reserved
-   *  but unset, the method will default to the class member. */
-  private getReservedQueryParams(this: {
-    [key in ReservedParam]?: number | string;
-  }) {
-    const params = new URLSearchParams(window.location.search);
-    const reservedParams: ReservedParam[] = [
-      "_match",
-      "_order_by",
-      "_page",
-      "_per_page",
-      "q",
-    ];
-    reservedParams.forEach((reservedParam) => {
-      const value = params.get(reservedParam);
-      if (value) {
-        this[reservedParam] = parseInt(value) || value;
-      }
-    });
-  }
+  constructor() {
+    super();
 
-  private getReservedQueryString(
-    this: { [key in ReservedParam]?: number | string },
-    useParams: ReservedParam[] = [
-      "_match",
-      "_order_by",
-      "_page",
-      "_per_page",
-      "q",
-    ]
-  ) {
-    const params = new URLSearchParams();
-    useParams.forEach((usedParam) => {
-      const value = this[usedParam];
-      if (value) {
-        params.set(usedParam, value.toString());
-      }
-    });
-
-    return params.toString();
-  }
-
-  private getAdditionalQueryParams(query = undefined) {
-    const urlParams = new URLSearchParams(window.location.search);
-    let queryParams = undefined;
-    let queryKeys: string[] | undefined = undefined;
-    if (query) {
-      queryParams = new URLSearchParams(query);
-      queryKeys = [...queryParams.keys()];
-    }
-    const additionalParams = new URLSearchParams();
-
-    urlParams.forEach((value, key) => {
-      if (!["_match", "_order_by", "_page", "_per_page", "q"].includes(key)) {
-        additionalParams.set(key, value);
-      }
-
-      if (queryKeys && !queryKeys.includes(key)) {
-        additionalParams.delete(key);
-      }
-    });
-
-    if (queryParams) {
-      queryParams.forEach((value, key) => {
-        additionalParams.set(key, value);
-      });
-    }
-
-    this.additionalParams = additionalParams;
-  }
-
-  private updateUrlWithReservedParams(reservedParams: {
-    [key in ReservedParam]?: string | number;
-  }) {
-    const url = new URL(window.location.href);
-    Object.entries(reservedParams).forEach(([key, value]) => {
-      if (value) {
-        url.searchParams.set(key, value.toString());
-      }
-    });
-    history.pushState(null, "", url.toString());
-  }
-
-  private updateUrlWithAdditionalParams(additionalParams: URLSearchParams) {
-    const url = new URL(window.location.href);
-    additionalParams.forEach((value, key) => {
-      if (value) {
-        url.searchParams.set(key, value);
-      }
-    });
-    history.pushState(null, "", url.toString());
-  }
-
-  private getFullQueryString() {
-    const reservedQueryString = this.getReservedQueryString();
-    const additionalQueryString = this.additionalParams.toString();
-
-    const hasReservedQueryParams = Boolean(reservedQueryString);
-    const hasAdditionalQueryParams = Boolean(additionalQueryString);
-    if (!hasReservedQueryParams && !hasAdditionalQueryParams) {
-      return "";
-    }
-    const reservedQueryParams = hasReservedQueryParams
-      ? `?${reservedQueryString}`
-      : "";
-    const additionalQueryParams = hasAdditionalQueryParams
-      ? `&${additionalQueryString}`
-      : "";
-    return `${reservedQueryParams}${additionalQueryParams}`;
+    this.qb.reservedParams = ["_match", "_order_by", "_page", "_per_page", "q"];
+    this.qb.areRepeatable = ["event_type", "target_group", "location"];
+    this.qb.query = window.location.search;
+    this.qb.updateQuery(
+      "_order_by=start_time&_page=1&_per_page=20&open_registration=true"
+    );
   }
 
   override connectedCallback() {
     super.connectedCallback();
 
-    this.getReservedQueryParams();
-    this.getAdditionalQueryParams();
-
     const response = async () =>
-      await requestHandler.request(
-        "getEventsPublic",
-        this.getFullQueryString()
-      );
+      await requestHandler.request("getEventsPublic", this.qb.query.toString());
     response()
       .then((response) => {
         if (response.ok) {
@@ -209,14 +97,7 @@ export default class LMSEventsView extends LitElement {
       .then((events: LMSEvent[]) => {
         this.hasLoaded = true;
         this.events = events;
-        this.updateUrlWithReservedParams({
-          _match: this._match,
-          _order_by: this._order_by,
-          _page: this._page,
-          _per_page: this._per_page,
-          q: this.q,
-        });
-        this.updateUrlWithAdditionalParams(this.additionalParams);
+        this.qb.updateUrl();
       })
       .catch((error) => {
         console.error(error);
@@ -225,15 +106,10 @@ export default class LMSEventsView extends LitElement {
 
   private handleQuery(event: CustomEvent) {
     const query = event.detail;
-
-    this.getReservedQueryParams();
-    this.getAdditionalQueryParams(query);
+    this.qb.updateQuery(query);
 
     const response = async () =>
-      await requestHandler.request(
-        "getEventsPublic",
-        this.getFullQueryString()
-      );
+      await requestHandler.request("getEventsPublic", this.qb.query.toString());
     response()
       .then((response) => {
         if (response.ok) {
@@ -244,14 +120,7 @@ export default class LMSEventsView extends LitElement {
       })
       .then((events: LMSEvent[]) => {
         this.events = events;
-        this.updateUrlWithReservedParams({
-          _match: this._match,
-          _order_by: this._order_by,
-          _page: this._page,
-          _per_page: this._per_page,
-          q: this.q,
-        });
-        this.updateUrlWithAdditionalParams(this.additionalParams);
+        this.qb.updateUrl();
       })
       .catch((error) => {
         console.error(error);
@@ -269,15 +138,13 @@ export default class LMSEventsView extends LitElement {
   }
 
   private handleLoadMore() {
-    this._page = this._page + 1;
-    this.getReservedQueryParams();
-    this.getAdditionalQueryParams();
+    const currentPage = this.qb.getParamValue("_page");
+    if (!currentPage) return;
 
+    const nextPage = parseInt(currentPage, 10) + 1;
+    this.qb.updateQuery(`_page=${nextPage}`);
     const response = async () =>
-      await requestHandler.request(
-        "getEventsPublic",
-        this.getFullQueryString()
-      );
+      await requestHandler.request("getEventsPublic", this.qb.query.toString());
     response()
       .then((response) => {
         if (response.ok) {
@@ -287,15 +154,13 @@ export default class LMSEventsView extends LitElement {
         throw new Error("Something went wrong");
       })
       .then((events: LMSEvent[]) => {
+        if (!events.length) {
+          this.qb.updateQuery(`_page=${currentPage}`);
+          this.loadMore.querySelector("button")?.classList.add("d-none");
+          this.loadMore.firstElementChild?.classList.remove("d-none");
+          return;
+        }
         this.events = [...this.events, ...events];
-        this.updateUrlWithReservedParams({
-          _match: this._match,
-          _order_by: this._order_by,
-          _page: this._page,
-          _per_page: this._per_page,
-          q: this.q,
-        });
-        this.updateUrlWithAdditionalParams(this.additionalParams);
       })
       .catch((error) => {
         console.error(error);
@@ -354,7 +219,10 @@ export default class LMSEventsView extends LitElement {
                     .isOpen=${this.hasOpenModal}
                   ></lms-card-details-modal>
                 </div>
-                <div class="d-flex justify-content-center">
+                <div class="d-flex justify-content-center load-more">
+                  <span class="d-none text-center mt-3"
+                    >${__("You've reached the end")}</span
+                  >
                   <button
                     class="btn btn-primary btn-block mt-3 w-25"
                     ?hidden=${!this.events.length}
