@@ -247,6 +247,10 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
+#: src/components/LMSSearch.ts:53
+msgid "Search"
+msgstr ""
+
 #: src/components/LMSStaffEventCardDeck.ts:172
 msgid "Data"
 msgstr ""
