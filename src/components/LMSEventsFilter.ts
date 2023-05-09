@@ -15,6 +15,8 @@ import { skeletonStyles } from "../styles/skeleton";
 import { utilityStyles } from "../styles/utilities";
 import LMSSearch from "./LMSSearch";
 import LMSDropdown from "./LMSDropdown";
+import { requestHandler } from "../lib/RequestHandler";
+import { deepCopy, throttle } from "../lib/utilities";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -47,84 +49,47 @@ export default class LMSEventsFilter extends LitElement {
 
       return input.checked ? input.id : false;
     },
+    radio: (input: HTMLInputElement) => (input.checked ? input.value : false),
     date: (input: HTMLInputElement) => input.value,
     number: (input: HTMLInputElement) => input.value,
     default: (input: HTMLInputElement) => input.value,
   };
-
-  static override styles = [
-    bootstrapStyles,
-    skeletonStyles,
-    utilityStyles,
-    css`
-      .gap-3 {
-        gap: 1rem;
+  private resetHandlers: {
+    [type: string]: (input: HTMLInputElement) => void;
+  } = {
+    checkbox: (input: HTMLInputElement) => {
+      if (input.id === "open_registration") {
+        input.checked = true;
+        return;
       }
-    `,
-  ];
-
-  private throttle = (callback: () => void, delay: number) => {
-    let previousCall = new Date().getTime();
-    return function () {
-      const time = new Date().getTime();
-      if (time - previousCall >= delay) {
-        previousCall = time;
-        callback();
+      input.checked = false;
+    },
+    radio: (input: HTMLInputElement) => {
+      input.checked = false;
+    },
+    date: (input: HTMLInputElement) => {
+      input.value = "";
+    },
+    number: (input: HTMLInputElement) => {
+      if (["min_age", "max_age"].includes(input.id)) {
+        input.value = "";
+        return;
       }
-    };
+      input.value = input.min;
+    },
+    default: (input: HTMLInputElement) => {
+      input.value = "";
+    },
   };
-
-  constructor() {
-    super();
-
-    window.addEventListener(
-      "resize",
-      this.throttle(() => {
-        this.shouldFold = window.innerWidth <= 992;
-        this.isHidden = this.shouldFold;
-        this.requestUpdate();
-      }, 250)
-    );
+  private _eventsDeepCopy: LMSEvent[] = [];
+  private get eventsDeepCopy(): LMSEvent[] {
+    return this._eventsDeepCopy;
   }
-
-  override connectedCallback() {
-    super.connectedCallback();
-
-    const event_types = async () => {
-      const response = await fetch(
-        "/api/v1/contrib/eventmanagement/public/event_types"
-      );
-      return response.json();
-    };
-    event_types().then(
-      (event_types: EventType[]) => (this.event_types = event_types)
-    );
-    const target_groups = async () => {
-      const response = await fetch(
-        "/api/v1/contrib/eventmanagement/public/target_groups"
-      );
-      return response.json();
-    };
-    target_groups().then(
-      (target_groups: TargetGroup[]) => (this.target_groups = target_groups)
-    );
-
-    const locations = async () => {
-      const response = await fetch(
-        "/api/v1/contrib/eventmanagement/public/locations"
-      );
-      return response.json();
-    };
-    locations().then(
-      (locations: LMSLocation[]) => (this.locations = locations)
-    );
+  private set eventsDeepCopy(value: LMSEvent[]) {
+    if (this._eventsDeepCopy.length === 0) {
+      this._eventsDeepCopy = value;
+    }
   }
-
-  override disconnectedCallback(): void {
-    super.disconnectedCallback();
-    window.removeEventListener("resize", () => {});
-  }
-
   private facetsStrategyManager() {
     switch (this.facetsStrategy) {
       case "preserve":
@@ -136,38 +101,62 @@ export default class LMSEventsFilter extends LitElement {
     }
   }
 
-  private deepCopy<T>(obj: T): T {
-    if (obj === null || typeof obj !== "object") return obj as T;
-    if (obj instanceof Date) return new Date(obj.getTime()) as T;
-    if (Array.isArray(obj))
-      return obj.map((item) => this.deepCopy(item)) as unknown as T;
-
-    const newObj = Object.create(Object.getPrototypeOf(obj)) as T;
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        (newObj as Record<string, unknown>)[key] = this.deepCopy(
-          (obj as Record<string, unknown>)[key]
-        );
+  static override styles = [
+    bootstrapStyles,
+    skeletonStyles,
+    utilityStyles,
+    css`
+      .gap-3 {
+        gap: 1rem;
       }
-    }
 
-    return newObj;
+      .nobr {
+        white-space: nowrap;
+      }
+    `,
+  ];
+
+  constructor() {
+    super();
+
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        this.shouldFold = window.innerWidth <= 992;
+        this.isHidden = this.shouldFold;
+        this.requestUpdate();
+      }, 250)
+    );
   }
 
-  private _eventsDeepCopy: LMSEvent[] = [];
+  override connectedCallback() {
+    super.connectedCallback();
 
-  private get eventsDeepCopy(): LMSEvent[] {
-    return this._eventsDeepCopy;
+    requestHandler
+      .request("getEventTypesPublic")
+      .then((response) => response.json())
+      .then((event_types: EventType[]) => (this.event_types = event_types));
+
+    requestHandler
+      .request("getTargetGroupsPublic")
+      .then((response) => response.json())
+      .then(
+        (target_groups: TargetGroup[]) => (this.target_groups = target_groups)
+      );
+
+    requestHandler
+      .request("getLocationsPublic")
+      .then((response) => response.json())
+      .then((locations: LMSLocation[]) => (this.locations = locations));
   }
 
-  private set eventsDeepCopy(value: LMSEvent[]) {
-    if (this._eventsDeepCopy.length === 0) {
-      this._eventsDeepCopy = value;
-    }
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    window.removeEventListener("resize", () => undefined);
   }
 
   override willUpdate() {
-    this.eventsDeepCopy = this.deepCopy(this.events);
+    this.eventsDeepCopy = deepCopy(this.events);
     const events = this.facetsStrategyManager();
     if (!events.length) return;
     this.facets = {
@@ -184,7 +173,7 @@ export default class LMSEventsFilter extends LitElement {
       locationIds: [...new Set(events.map((event) => event.location))],
       ...events
         .map((event) => {
-          const { event_type, location, target_groups, ...rest } = event;
+          const { event_type, location, target_groups, ...rest } = event; // eslint-disable-line @typescript-eslint/no-unused-vars
           return rest;
         })
         .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
@@ -192,31 +181,7 @@ export default class LMSEventsFilter extends LitElement {
   }
 
   private handleReset() {
-    const inputs = this.shadowRoot?.querySelectorAll("input");
-    inputs?.forEach((input) => {
-      switch (input.type) {
-        case "checkbox":
-          if (input.id === "open_registration") {
-            input.checked = true;
-            break;
-          }
-          input.checked = false;
-          break;
-        case "date":
-          input.value = "";
-          break;
-        case "number":
-          if (["min_age", "max_age"].includes(input.id)) {
-            input.value = "";
-            break;
-          }
-          input.value = input.min;
-          break;
-        default:
-          break;
-      }
-    });
-
+    this.inputs.forEach((input) => this.resetHandlers[input.type](input));
     this.dispatchEvent(
       new CustomEvent("filter", {
         detail: "",
@@ -224,6 +189,15 @@ export default class LMSEventsFilter extends LitElement {
         bubbles: true,
       })
     );
+  }
+
+  private isAllowedFilter(
+    name: string | boolean | undefined,
+    value: unknown,
+    exclude: string[]
+  ) {
+    if (!name) return false;
+    return !(name && exclude.includes(name.toString()) && value === false);
   }
 
   private getParamsFromActiveFilters() {
@@ -236,15 +210,13 @@ export default class LMSEventsFilter extends LitElement {
         const value = handler(input);
         return [input.name, value];
       })
-      .filter(
-        ([name, value]) =>
-          !(
-            name &&
-            ["event_type", "target_group", "location"].includes(
-              name.toString()
-            ) &&
-            value === false
-          )
+      .filter(([name, value]) =>
+        this.isAllowedFilter(name, value, [
+          "event_type",
+          "target_group",
+          "location",
+          "_order_by",
+        ])
       );
   }
 
@@ -273,11 +245,15 @@ export default class LMSEventsFilter extends LitElement {
         return query.append(name, value?.toString());
       }
     });
-    const q = [
-      { name: { "-like": `%${detail}%` } },
-      { description: { "-like": `%${detail}%` } },
-    ];
-    query.append("q", JSON.stringify(q));
+    if (detail) {
+      const q = [
+        { name: { "-like": `%${detail}%` } },
+        { description: { "-like": `%${detail}%` } },
+      ];
+      query.append("q", JSON.stringify(q));
+    } else {
+      query.append("q", JSON.stringify({}));
+    }
     this.dispatchEvent(
       new CustomEvent("search", {
         detail: query.toString(),
@@ -316,21 +292,6 @@ export default class LMSEventsFilter extends LitElement {
     });
   }
 
-  protected urlSearchParamsToQueryParam(searchParams: URLSearchParams) {
-    const queryParams = {};
-    searchParams.forEach((value, key) => {
-      const keys = key.split(".");
-      let currentParam: Record<string, unknown> = queryParams;
-      keys.forEach((k, i) => {
-        if (!currentParam[k]) {
-          currentParam[k] = i === keys.length - 1 ? value : {};
-        }
-        currentParam = currentParam[k] as Record<string, unknown>;
-      });
-    });
-    return `q=${JSON.stringify(queryParams)}`;
-  }
-
   override render() {
     return html`
       <div class="card" @change=${this.handleChange}>
@@ -348,9 +309,9 @@ export default class LMSEventsFilter extends LitElement {
               })}"
             >
               <h5
-                class=${classMap({
+                class="nobr ${classMap({
                   "d-inline": !this.shouldFold,
-                })}
+                })}"
               >
                 ${__("Filter")}
               </h5>
@@ -404,6 +365,29 @@ export default class LMSEventsFilter extends LitElement {
                   "gap-3": !this.shouldFold,
                 })}"
               >
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .label=${__("Sort by")}
+                  @toggle=${this.handleDropdownToggle}
+                >
+                  ${map(
+                    ["start_time", "end_time", "event_type", "location"],
+                    (value, index) => html`
+                      <div>
+                        <input
+                          type="radio"
+                          id="_order_by_${value}"
+                          name="_order_by"
+                          value=${value}
+                          ?checked=${index === 0}
+                        />
+                        <label for="_order_by_${value}">${__(value)}</label>
+                      </div>
+                    `
+                  )}
+                </lms-dropdown>
+
                 <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
@@ -570,21 +554,6 @@ export default class LMSEventsFilter extends LitElement {
               </div>
             </div>
           </div>
-          <!-- <div class="row">
-            <div class="col">
-              <div class="active-filters">
-                ${map(
-            this.activeFilters,
-            ([name, value]) => html` <span class="badge badge-dark text-light"
-              >${name} ${value}&nbsp;
-              <button type="button" class="close" aria-label="Close">
-                <span aria-hidden="true" class="text-light">&times;</span>
-              </button></span
-            >`
-          )}
-              </div>
-            </div>
-          </div> -->
         </div>
         <div class="card-body">
           <slot></slot>
