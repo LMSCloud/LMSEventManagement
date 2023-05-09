@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-24 12:16+0200\n"
-"PO-Revision-Date: 2023-05-03 18:38+0200\n"
+"PO-Revision-Date: 2023-05-09 17:35+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -118,104 +118,108 @@ msgstr "Beschreibung"
 msgid "open_registration"
 msgstr "Offene Registrierung"
 
-#: src/components/LMSCardDetailsModal.ts:222
+#: src/components/LMSCardDetailsModal.ts:224
 msgid "Date and Time"
 msgstr "Datum und Uhrzeit"
 
-#: src/components/LMSCardDetailsModal.ts:234
+#: src/components/LMSCardDetailsModal.ts:236
 #: src/extensions/LMSEventTypesModal.ts:98 src/extensions/LMSEventsModal.ts:131
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:486
 msgid "Description"
 msgstr "Beschreibung"
 
-#: src/components/LMSCardDetailsModal.ts:249
+#: src/components/LMSCardDetailsModal.ts:251
 msgid "Fees"
 msgstr "Beiträge"
 
-#: src/components/LMSCardDetailsModal.ts:254
-#: src/components/LMSEventsFilter.ts:362
+#: src/components/LMSCardDetailsModal.ts:256
+#: src/components/LMSEventsFilter.ts:421
 msgid "Target Group"
 msgstr "Zielgruppe"
 
-#: src/components/LMSCardDetailsModal.ts:255
+#: src/components/LMSCardDetailsModal.ts:257
 msgid "Age Range"
 msgstr "Altersspanne"
 
-#: src/components/LMSCardDetailsModal.ts:256
-#: src/components/LMSEventsFilter.ts:504 src/components/LMSEventsFilter.ts:508
+#: src/components/LMSCardDetailsModal.ts:258
+#: src/components/LMSEventsFilter.ts:540 src/components/LMSEventsFilter.ts:544
 msgid "Fee"
 msgstr "Beitrag"
 
-#: src/components/LMSCardDetailsModal.ts:285
-#: src/components/LMSEventsFilter.ts:473
+#: src/components/LMSCardDetailsModal.ts:292
+#: src/components/LMSEventsFilter.ts:514
 #: src/extensions/LMSEventTypesModal.ts:74 src/extensions/LMSEventsModal.ts:109
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:455
 msgid "Location"
 msgstr "Veranstaltungsort"
 
-#: src/components/LMSCardDetailsModal.ts:303 src/components/LMSModal.ts:276
+#: src/components/LMSCardDetailsModal.ts:310 src/components/LMSModal.ts:276
 msgid "Close"
 msgstr "Schließen"
 
-#: src/components/LMSCardDetailsModal.ts:311
+#: src/components/LMSCardDetailsModal.ts:318
 msgid "Register"
 msgstr "Registrieren"
 
-#: src/components/LMSEventsFilter.ts:294
+#: src/components/LMSEventsFilter.ts:316
 msgid "Filter"
 msgstr "Filtern"
 
-#: src/components/LMSEventsFilter.ts:307 src/components/LMSEventsFilter.ts:310
+#: src/components/LMSEventsFilter.ts:347 src/components/LMSEventsFilter.ts:350
 msgid "Show filters"
 msgstr "Filter anzeigen"
 
-#: src/components/LMSEventsFilter.ts:308 src/components/LMSEventsFilter.ts:310
+#: src/components/LMSEventsFilter.ts:348 src/components/LMSEventsFilter.ts:350
 msgid "Hide filters"
 msgstr "Filter ausblenden"
 
-#: src/components/LMSEventsFilter.ts:317
+#: src/components/LMSEventsFilter.ts:357
 msgid "Reset filters"
 msgstr "Filter zurücksetzen"
 
-#: src/components/LMSEventsFilter.ts:329 src/extensions/LMSEventsModal.ts:31
+#: src/components/LMSEventsFilter.ts:371
+msgid "Sort by"
+msgstr "Sortieren nach"
+
+#: src/components/LMSEventsFilter.ts:394 src/extensions/LMSEventsModal.ts:31
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:368
 msgid "Event Type"
 msgstr "Veranstaltungstyp"
 
-#: src/components/LMSEventsFilter.ts:394
+#: src/components/LMSEventsFilter.ts:447
 msgid "Age"
 msgstr "Alterspanne"
 
-#: src/components/LMSEventsFilter.ts:398
+#: src/components/LMSEventsFilter.ts:451
 #: src/extensions/LMSEventTypesModal.ts:53 src/extensions/LMSEventsModal.ts:67
 #: src/extensions/LMSTargetGroupsModal.ts:31
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:390
 msgid "Min Age"
 msgstr "Mindestalter"
 
-#: src/components/LMSEventsFilter.ts:409
+#: src/components/LMSEventsFilter.ts:462
 #: src/extensions/LMSEventTypesModal.ts:60 src/extensions/LMSEventsModal.ts:73
 #: src/extensions/LMSTargetGroupsModal.ts:38
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:394
 msgid "Max Age"
 msgstr "Maximalalter"
 
-#: src/components/LMSEventsFilter.ts:431
+#: src/components/LMSEventsFilter.ts:479
 msgid "Registration & Dates"
 msgstr "Registrierung und Zeiten"
 
-#: src/components/LMSEventsFilter.ts:443
+#: src/components/LMSEventsFilter.ts:491
 #: src/extensions/LMSEventTypesModal.ts:105
 #: src/extensions/LMSEventsModal.ts:157
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:479
 msgid "Open Registration"
 msgstr "Offene Registrierung"
 
-#: src/components/LMSEventsFilter.ts:447
+#: src/components/LMSEventsFilter.ts:495
 msgid "Start Date"
 msgstr "Von"
 
-#: src/components/LMSEventsFilter.ts:454
+#: src/components/LMSEventsFilter.ts:502
 msgid "End Date"
 msgstr "Bis"
 
@@ -243,43 +247,43 @@ msgstr "Zurück"
 msgid "Next"
 msgstr "Vor"
 
-#: src/components/LMSStaffEventCardDeck.ts:173
+#: src/components/LMSStaffEventCardDeck.ts:172
 msgid "Data"
 msgstr "Daten"
 
-#: src/components/LMSStaffEventCardDeck.ts:181
+#: src/components/LMSStaffEventCardDeck.ts:180
 msgid "Waitlist"
 msgstr "Warteliste"
 
-#: src/components/LMSStaffEventCardDeck.ts:189
+#: src/components/LMSStaffEventCardDeck.ts:188
 msgid "Preview"
 msgstr "Vorschau"
 
-#: src/components/LMSTable.ts:48 src/views/StaffLocationsView.ts:52
+#: src/components/LMSTable.ts:40 src/views/StaffLocationsView.ts:52
 #: src/views/StaffTargetGroupsView.ts:54
 msgid "No data to display"
 msgstr "Keine Daten vorhanden"
 
-#: src/components/LMSTable.ts:303
+#: src/components/LMSTable.ts:237
 msgid "actions"
 msgstr "Aktionen"
 
-#: src/components/LMSTable.ts:328
+#: src/components/LMSTable.ts:262
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:322
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: src/components/LMSTable.ts:334
+#: src/components/LMSTable.ts:268
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:325
 msgid "Abort"
 msgstr "Abbrechen"
 
-#: src/components/LMSTable.ts:344
+#: src/components/LMSTable.ts:278
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:330
 msgid "Save"
 msgstr "Speichern"
 
-#: src/components/LMSTable.ts:353
+#: src/components/LMSTable.ts:287
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:338
 msgid "Delete"
 msgstr "Löschen"
@@ -368,19 +372,19 @@ msgstr "Registrierungsende"
 msgid "Status"
 msgstr "Status"
 
-#: src/extensions/LMSEventsModal.ts:140 src/lib/converters.ts:284
+#: src/extensions/LMSEventsModal.ts:140 src/lib/converters.ts:286
 msgid "Pending"
 msgstr "Ausstehend"
 
-#: src/extensions/LMSEventsModal.ts:141 src/lib/converters.ts:290
+#: src/extensions/LMSEventsModal.ts:141 src/lib/converters.ts:292
 msgid "Confirmed"
 msgstr "Bestätigt"
 
-#: src/extensions/LMSEventsModal.ts:142 src/lib/converters.ts:293
+#: src/extensions/LMSEventsModal.ts:142 src/lib/converters.ts:295
 msgid "Canceled"
 msgstr "Abgesagt"
 
-#: src/extensions/LMSEventsModal.ts:143 src/lib/converters.ts:296
+#: src/extensions/LMSEventsModal.ts:143 src/lib/converters.ts:298
 msgid "Sold Out"
 msgstr "Ausverkauft"
 
@@ -417,25 +421,33 @@ msgstr "Land"
 msgid "Create Target Group"
 msgstr "Zielgruppe hinzufügen"
 
-#: src/lib/converters.ts:114
+#: src/lib/converters.ts:116
 msgid "target_group"
 msgstr "Zielgruppe"
 
-#: src/lib/converters.ts:115
+#: src/lib/converters.ts:117
 msgid "selected"
 msgstr "Ausgewählt"
 
-#: src/lib/converters.ts:116
+#: src/lib/converters.ts:118
 msgid "fee"
 msgstr "Beitrag"
 
-#: src/lib/converters.ts:359
+#: src/lib/converters.ts:362
 msgid "Error"
 msgstr "Fehler"
 
-#: src/views/LMSEventsView.ts:239
+#: src/views/LMSEventsView.ts:191
 msgid "There are no events to display"
-msgstr "Es sind derzeit keine Events vorhanden"
+msgstr "Es sind keine Veranstaltungen vorhanden, die angezeigt werden könnten"
+
+#: src/views/LMSEventsView.ts:224
+msgid "You've reached the end"
+msgstr "Sie haben das Ende erreicht"
+
+#: src/views/LMSEventsView.ts:231
+msgid "Load more"
+msgstr "Mehr anzeigen"
 
 #: src/views/StaffEventTypesView.ts:74 src/views/StaffEventsView.ts:85
 msgid "You have to create a"
