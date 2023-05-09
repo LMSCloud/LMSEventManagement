@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-24 12:16+0200\n"
-"PO-Revision-Date: 2023-05-09 17:35+0200\n"
+"PO-Revision-Date: 2023-05-09 17:39+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -90,6 +90,10 @@ msgid "target_groups"
 msgstr "Zielgruppen"
 
 #: src/dynamically_added_strings.ts:20
+msgid "event_type"
+msgstr "Veranstaltungstyp"
+
+#: src/dynamically_added_strings.ts:21
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:108
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:104
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:95
@@ -97,16 +101,16 @@ msgstr "Zielgruppen"
 msgid "max_participants"
 msgstr "Maximale Anzahl Teilnehmender"
 
-#: src/dynamically_added_strings.ts:21 src/views/StaffEventTypesView.ts:93
+#: src/dynamically_added_strings.ts:22 src/views/StaffEventTypesView.ts:93
 #: src/views/StaffEventsView.ts:104
 msgid "location"
 msgstr "Veranstaltungsort"
 
-#: src/dynamically_added_strings.ts:22
+#: src/dynamically_added_strings.ts:23
 msgid "image"
 msgstr "Bild"
 
-#: src/dynamically_added_strings.ts:23
+#: src/dynamically_added_strings.ts:24
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:137
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:112
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:103
@@ -114,7 +118,7 @@ msgstr "Bild"
 msgid "description"
 msgstr "Beschreibung"
 
-#: src/dynamically_added_strings.ts:24
+#: src/dynamically_added_strings.ts:25
 msgid "open_registration"
 msgstr "Offene Registrierung"
 

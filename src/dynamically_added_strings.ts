@@ -17,6 +17,7 @@ __("country");
 __("target_groups");
 __("min_age");
 __("max_age");
+__("event_type");
 __("max_participants");
 __("location");
 __("image");

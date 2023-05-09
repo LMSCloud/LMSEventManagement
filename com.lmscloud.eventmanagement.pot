@@ -86,6 +86,10 @@ msgid "target_groups"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:20
+msgid "event_type"
+msgstr ""
+
+#: src/dynamically_added_strings.ts:21
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:108
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:104
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:95
@@ -93,16 +97,16 @@ msgstr ""
 msgid "max_participants"
 msgstr ""
 
-#: src/dynamically_added_strings.ts:21 src/views/StaffEventTypesView.ts:93
+#: src/dynamically_added_strings.ts:22 src/views/StaffEventTypesView.ts:93
 #: src/views/StaffEventsView.ts:104
 msgid "location"
 msgstr ""
 
-#: src/dynamically_added_strings.ts:22
+#: src/dynamically_added_strings.ts:23
 msgid "image"
 msgstr ""
 
-#: src/dynamically_added_strings.ts:23
+#: src/dynamically_added_strings.ts:24
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:137
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:112
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:103
@@ -110,7 +114,7 @@ msgstr ""
 msgid "description"
 msgstr ""
 
-#: src/dynamically_added_strings.ts:24
+#: src/dynamically_added_strings.ts:25
 msgid "open_registration"
 msgstr ""
 
