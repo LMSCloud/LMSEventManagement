@@ -10,7 +10,7 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { classMap } from "lit/directives/class-map.js";
-import { __ } from "../lib/translate";
+import { __, attr__ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { utilityStyles } from "../styles/utilities";
 import LMSSearch from "./LMSSearch";
@@ -344,8 +344,8 @@ export default class LMSEventsFilter extends LitElement {
                   class="btn btn-outline-secondary btn-sm"
                   @click=${this.handleHideToggle}
                   aria-label=${this.isHidden
-                    ? __("Show filters")
-                    : __("Hide filters")}
+                    ? attr__("Show filters")
+                    : attr__("Hide filters")}
                 >
                   ${this.isHidden ? __("Show filters") : __("Hide filters")}
                 </button>

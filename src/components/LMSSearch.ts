@@ -4,6 +4,7 @@ import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { debounce } from "../lib/utilities";
+import { attr__ } from "../lib/translate";
 
 @customElement("lms-search")
 export default class LMSSearch extends LitElement {
@@ -42,15 +43,15 @@ export default class LMSSearch extends LitElement {
     return html`
       <div class="input-group flex-nowrap">
         <div class="input-group-prepend">
-          <span class="input-group-text" id="addon-wrapping"
+          <span class="input-group-text" id="addon-wrapping" aria
             >${litFontawesome(faSearch)}</span
           >
         </div>
         <input
           type="text"
           class="form-control"
-          placeholder="Search"
-          aria-label="Search"
+          placeholder=${attr__("Search")}
+          aria-label=${attr__("Search")}
           aria-describedby="addon-wrapping"
           @input=${this.handleInput}
         />

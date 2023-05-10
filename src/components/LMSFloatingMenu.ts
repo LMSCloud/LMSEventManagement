@@ -1,9 +1,9 @@
 import { LitElement, html, css } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import { TranslateDirective, __ } from "../lib/translate";
+import { TranslateDirective, __, attr__ } from "../lib/translate";
 import { DirectiveResult } from "lit/directive.js";
 import { skeletonStyles } from "../styles/skeleton";
 
@@ -26,6 +26,8 @@ export default class LMSFloatingMenu extends LitElement {
     window.location.href;
   @property({ type: String, attribute: false }) _currentSearchParams =
     new URLSearchParams(window.location.search);
+  @query("#navbarNav") navbarNav!: HTMLElement;
+  private isOpen = false;
 
   static override styles = [
     bootstrapStyles,
@@ -44,24 +46,30 @@ export default class LMSFloatingMenu extends LitElement {
     `,
   ];
 
+  private toggleNavbarCollapse() {
+    this.navbarNav.classList.toggle("collapse");
+    if (this.navbarNav.classList.contains("show")) {
+      this.isOpen = true;
+      return;
+    }
+
+    this.isOpen = false;
+  }
+
   override render() {
     return html` <nav
       class="navbar navbar-expand-lg navbar-light mx-2 mt-3 mb-5 rounded"
     >
       <a class="navbar-brand" href="#"><strong>${this.brand}</strong></a>
       <button
-        @click=${() => {
-          (this.renderRoot as ShadowRoot)
-            .getElementById("navbarNav")
-            ?.classList.toggle("collapse");
-        }}
+        @click=${this.toggleNavbarCollapse}
         class="navbar-toggler"
         type="button"
         data-toggle="collapse"
         data-target="#navbarNav"
         aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
+        aria-expanded=${this.isOpen}
+        aria-label=${attr__("Toggle navigation")}
       >
         <span class="navbar-toggler-icon"></span>
       </button>

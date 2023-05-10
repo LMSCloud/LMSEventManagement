@@ -10,7 +10,7 @@ import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import LMSTooltip from "./LMSTooltip";
 import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
-import { __ } from "../lib/translate";
+import { __, attr__ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 
 type UploadedImage = {
@@ -177,7 +177,7 @@ export default class LMSImageBrowser extends LitElement {
                 <div class="card-body">
                   <p
                     data-placement="top"
-                    title="${__("Link constructed!")}"
+                    title=${attr__("Link constructed!")}
                     @click=${() => {
                       this.handleClipboardCopy(hashvalue);
                     }}
@@ -189,13 +189,13 @@ export default class LMSImageBrowser extends LitElement {
                     <lms-tooltip
                       id="tooltip-${hashvalue}"
                       data-placement="top"
-                      data-text="Link constructed!"
+                      data-text="${attr__("Link constructed")}!"
                       data-timeout="1000"
                     >
                       <button
                         id="button-${hashvalue}"
                         data-placement="bottom"
-                        title="Link constructed!"
+                        title="${attr__("Link constructed")}!"
                         @click=${() => {
                           this.handleClipboardCopy(hashvalue);
                         }}

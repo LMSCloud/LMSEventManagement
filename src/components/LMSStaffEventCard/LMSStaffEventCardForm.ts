@@ -1,4 +1,4 @@
-import { __ } from "../../lib/translate";
+import { __, attr__ } from "../../lib/translate";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { classMap } from "lit/directives/class-map.js";
 import { Column /* Input */, TargetGroupState } from "../../sharedDeclarations";
@@ -311,7 +311,7 @@ export default class LMSStaffEventCardForm extends LitElement {
             "d-flex": shouldFold,
           })}"
           role="group"
-          aria-label="${__("Event controls")}"
+          aria-label=${attr__("Event controls")}
         >
           <button
             @click=${this.toggleEdit}

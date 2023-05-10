@@ -11,7 +11,7 @@ import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
 import LMSMatrix from "./Inputs/LMSMatrix";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { TranslateDirective, __, locale } from "../lib/translate";
+import { TranslateDirective, __, attr__, locale } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { DirectiveResult } from "lit/directive";
 
@@ -223,7 +223,7 @@ export default class LMSModal extends LitElement {
         tabindex="-1"
         role="dialog"
         aria-labelledby="lms-modal-title"
-        aria-hidden="true"
+        aria-hidden=${!this.isOpen}
         style=${styleMap({
           overflowY: this.isOpen ? "scroll" : "auto",
         })}
@@ -238,7 +238,7 @@ export default class LMSModal extends LitElement {
                 @click=${this.toggleModal}
                 type="button"
                 class="close"
-                aria-label="Close"
+                aria-label=${attr__("Close")}
               >
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -258,7 +258,7 @@ export default class LMSModal extends LitElement {
                     type="button"
                     class="close"
                     data-dismiss="alert"
-                    aria-label="Close"
+                    aria-label=${attr__("Close")}
                   >
                     <span aria-hidden="true">&times;</span>
                   </button>

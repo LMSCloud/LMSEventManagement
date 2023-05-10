@@ -1,10 +1,4 @@
-import {
-  html,
-  css,
-  LitElement,
-  PropertyValueMap,
-  nothing,
-} from "lit";
+import { html, css, LitElement, PropertyValueMap, nothing } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import {
@@ -159,8 +153,8 @@ export default class LMSTable extends LitElement {
       this.toast = {
         heading: status,
         message: Object.values(result.errors)
-          .map(({ message, path }) => `Sorry! ${message} at ${path}`)
-          .join(" & "),
+          .map(({ message, path }) => `Sorry! ${message} → ${path}`)
+          .join("\n"),
       };
     }
 

@@ -63,14 +63,14 @@ export default class LMSStaffEventCardDeck extends LitElement {
         }
       }
 
-      @media (max-width: 1200px) {
+      @media (max-width: 1600px) {
         .card-deck-responsive .card {
           width: calc(
             50% - 2rem
           ); /* Adjust the width to 50% for screens smaller than 1200px */
         }
       }
-
+      
       @media (max-width: 768px) {
         .card-deck-responsive .card {
           width: calc(
