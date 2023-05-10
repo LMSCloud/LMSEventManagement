@@ -253,11 +253,14 @@ export default class LMSTable extends LitElement {
                                   aria-label=${attr__("Edit")}
                                 >
                                   <span class="start-edit pointer-events-none"
-                                    >${litFontawesome(faEdit)}</span
+                                    >${litFontawesome(faEdit)}
+                                    <span>${__("Edit")}</span></span
                                   >
                                   <span
                                     class="abort-edit d-none pointer-events-none"
-                                    >${litFontawesome(faTimes)}</span
+                                    >${litFontawesome(faTimes)}<span
+                                      >${__("Abort")}</span
+                                    ></span
                                   >
                                 </button>
                                 <button
