@@ -7,7 +7,13 @@ import {
   faTrash,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import { customElement, property, queryAll, state } from "lit/decorators.js";
+import {
+  customElement,
+  property,
+  query,
+  queryAll,
+  state,
+} from "lit/decorators.js";
 import LMSToast from "./LMSToast";
 import { Column, TaggedData } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
@@ -15,28 +21,43 @@ import { __, attr__ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { InputConverter } from "../lib/converters";
 import { utilityStyles } from "../styles/utilities";
+import { throttle } from "../lib/utilities";
 
 @customElement("lms-table")
 export default class LMSTable extends LitElement {
   @property({ type: Array }) data: Column[] = [];
+
   @property({ type: Array }) order: string[] = [];
+
   @property({ type: Array }) private headers: string[] = [];
+
   @property({ type: Boolean, attribute: "is-editable" }) protected isEditable =
     false;
+
   @property({ type: Boolean, attribute: "is-deletable" })
   protected isDeletable = false;
-  @state() private toast = {
+
+  @state()
+  private toast = {
     heading: "",
     message: "",
   };
-  private notImplementedInBaseMessage =
-    "Implement this method in your extended LMSTable component.";
-  protected emptyTableMessage = html`${__("No data to display")}.`;
-  private inputConverter = new InputConverter();
   @queryAll("input, select, textarea") inputs!: NodeListOf<
     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   >;
+
   @queryAll(".btn-edit") editButtons!: NodeListOf<HTMLButtonElement>;
+
+  @query("table") table!: HTMLTableElement;
+
+  protected emptyTableMessage = html`${__("No data to display")}.`;
+
+  private notImplementedInBaseMessage =
+    "Implement this method in your extended LMSTable component.";
+
+  private inputConverter = new InputConverter();
+
+  private throttledHandleResize: () => void;
 
   static override styles = [
     bootstrapStyles,
@@ -67,8 +88,44 @@ export default class LMSTable extends LitElement {
       input[type="checkbox"].form-control {
         font-size: 0.375rem;
       }
+
+      .table tr {
+        height: 100%;
+      }
+
+      input:not([type="checkbox"]),
+      select,
+      textarea {
+        border: none !important;
+        border-radius: 0 !important;
+        height: inherit !important;
+        width: 100%;
+        min-width: fit-content;
+        padding: 1.5rem 0.75rem;
+      }
+
+      .table td {
+        padding: 0;
+        text-align: center;
+        height: inherit;
+      }
     `,
   ];
+
+  constructor() {
+    super();
+    this.throttledHandleResize = throttle(this.handleResize.bind(this), 250);
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    window.addEventListener("resize", this.throttledHandleResize);
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    window.removeEventListener("resize", this.throttledHandleResize);
+  }
 
   private updateButtonState(button: HTMLButtonElement, isActive: boolean) {
     button.classList.toggle("active", isActive);
@@ -213,14 +270,28 @@ export default class LMSTable extends LitElement {
     this.sortColumns();
   }
 
+  protected override firstUpdated(
+    _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+  ): void {
+    super.firstUpdated(_changedProperties);
+    this.handleResize();
+  }
+
+  private handleResize() {
+    const { width } = this.table.getBoundingClientRect();
+    if (width > window.innerWidth) {
+      this.table.classList.add("table-responsive");
+      return;
+    }
+    this.table.classList.remove("table-responsive");
+  }
+
   override render() {
     return !this.data.length
       ? html`<h1 class="text-center">${this.emptyTableMessage}</h1>`
       : html`
           <div class="container-fluid mx-0">
-            <table
-              class="table table-striped table-bordered table-hover table-responsive-xl"
-            >
+            <table class="table table-striped table-bordered table-hover">
               <thead>
                 <tr>
                   ${map(
