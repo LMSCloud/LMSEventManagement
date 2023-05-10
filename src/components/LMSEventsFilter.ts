@@ -101,6 +101,8 @@ export default class LMSEventsFilter extends LitElement {
     }
   }
 
+  private throttledHandleResize: () => void;
+
   static override styles = [
     bootstrapStyles,
     skeletonStyles,
@@ -118,19 +120,19 @@ export default class LMSEventsFilter extends LitElement {
 
   constructor() {
     super();
+    this.throttledHandleResize = throttle(this.handleResize.bind(this), 250);
+  }
 
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        this.shouldFold = window.innerWidth <= 992;
-        this.isHidden = this.shouldFold;
-        this.requestUpdate();
-      }, 250)
-    );
+  private handleResize() {
+    this.shouldFold = window.innerWidth <= 992;
+    this.isHidden = this.shouldFold;
+    this.requestUpdate();
   }
 
   override connectedCallback() {
     super.connectedCallback();
+
+    window.addEventListener("resize", this.throttledHandleResize);
 
     requestHandler
       .request("getEventTypesPublic")
@@ -152,7 +154,7 @@ export default class LMSEventsFilter extends LitElement {
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    window.removeEventListener("resize", () => undefined);
+    window.removeEventListener("resize", this.throttledHandleResize);
   }
 
   override willUpdate() {
