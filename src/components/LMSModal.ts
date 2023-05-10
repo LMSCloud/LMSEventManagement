@@ -52,9 +52,6 @@ export default class LMSModal extends LitElement {
         right: 1em;
         border-radius: 50%;
         background-color: var(--primary-color);
-        display: flex;
-        justify-content: center;
-        align-items: center;
         box-shadow: var(--shadow-hv);
         cursor: pointer;
         z-index: 1049;
@@ -66,6 +63,9 @@ export default class LMSModal extends LitElement {
         font-size: 2em;
         width: 2em;
         height: 2em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       .backdrop {
         position: fixed;
@@ -79,12 +79,11 @@ export default class LMSModal extends LitElement {
       button.btn-modal:not(.tilted) {
         transition: 0.2s;
         transition-timing-function: ease-in-out;
-        transform: translateX(1px) rotate(0deg);
       }
       .tilted {
         transition: 0.2s;
         transition-timing-function: ease-in-out;
-        transform: translateX(2px) translateY(1px) rotate(45deg);
+        transform: rotate(45deg);
       }
       svg {
         display: inline-block;
