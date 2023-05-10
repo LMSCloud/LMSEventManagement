@@ -11,7 +11,7 @@ import { customElement, property, queryAll, state } from "lit/decorators.js";
 import LMSToast from "./LMSToast";
 import { Column, TaggedData } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
-import { __ } from "../lib/translate";
+import { __, attr__ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { InputConverter } from "../lib/converters";
 import { utilityStyles } from "../styles/utilities";
@@ -250,23 +250,21 @@ export default class LMSTable extends LitElement {
                                   @click=${this.toggleEdit}
                                   type="button"
                                   class="btn btn-dark mx-2 btn-edit"
+                                  aria-label=${attr__("Edit")}
                                 >
                                   <span class="start-edit pointer-events-none"
-                                    >${litFontawesome(faEdit)}&nbsp;${__(
-                                      "Edit"
-                                    )}</span
+                                    >${litFontawesome(faEdit)}</span
                                   >
                                   <span
                                     class="abort-edit d-none pointer-events-none"
-                                    >${litFontawesome(faTimes)}&nbsp;${__(
-                                      "Abort"
-                                    )}</span
+                                    >${litFontawesome(faTimes)}</span
                                   >
                                 </button>
                                 <button
                                   @click=${this.handleSave}
                                   type="button"
                                   class="btn btn-dark mx-2"
+                                  aria-label=${attr__("Save")}
                                 >
                                   ${litFontawesome(faSave)}
                                   <span>${__("Save")}</span>
@@ -276,6 +274,7 @@ export default class LMSTable extends LitElement {
                                   ?hidden=${!this.isDeletable}
                                   type="button"
                                   class="btn btn-danger mx-2"
+                                  aria-label=${attr__("Delete")}
                                 >
                                   ${litFontawesome(faTrash)}
                                   <span>${__("Delete")}</span>
