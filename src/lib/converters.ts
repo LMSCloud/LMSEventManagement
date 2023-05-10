@@ -109,7 +109,7 @@ export class InputConverter {
         </button>
         <div class="collapse" id="targetGroups">
           <table
-            class="table table-sm table-bordered table-striped mb-0 mx-3 w-inherit"
+            class="table table-sm table-bordered table-striped mx-3 w-inherit"
           >
             <thead>
               <tr>
@@ -314,12 +314,14 @@ ${value}</textarea
     if (!button) return;
 
     const collapse = button.nextElementSibling as HTMLElement;
+    const parent = collapse.parentElement;
     if (collapse.classList.contains("show")) {
+      parent?.classList.remove("pip");
       collapse.classList.remove("show");
-      return;
+    } else {
+      parent?.classList.add("pip");
+      collapse.classList.add("show");
     }
-
-    collapse.classList.add("show");
   }
 
   private needsData(name: string): boolean {

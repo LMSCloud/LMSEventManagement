@@ -109,6 +109,19 @@ export default class LMSTable extends LitElement {
         text-align: center;
         height: inherit;
       }
+
+      .pip {
+        background: #ffffff;
+        bottom: 4em;
+        box-shadow: var(--shadow-hv);
+        height: fit-content;
+        left: 1em;
+        max-height: 30vh;
+        max-height: 30dvh;
+        overflow-y: scroll;
+        padding: 1em;
+        position: absolute;
+      }
     `,
   ];
 
@@ -145,9 +158,14 @@ export default class LMSTable extends LitElement {
   private toggleCollapse(tableRow: Element, isExpanded: boolean) {
     const collapsibles = tableRow.querySelectorAll(".collapse");
     collapsibles.forEach((collapse) => {
-      isExpanded
-        ? collapse.classList.add("show")
-        : collapse.classList.remove("show");
+      const parent = collapse.parentElement;
+      if (isExpanded) {
+        parent?.classList.add("pip");
+        collapse.classList.add("show");
+      } else {
+        parent?.classList.remove("pip");
+        collapse.classList.remove("show");
+      }
     });
   }
 
@@ -278,12 +296,13 @@ export default class LMSTable extends LitElement {
   }
 
   private handleResize() {
-    const { width } = this.table.getBoundingClientRect();
+    this.table.classList.remove("table-responsive");
+    const width =
+      this.table.offsetWidth +
+      78; /* 4.875rem, combined paddings & margings of parents. TODO: We need a generic solution for this. */
     if (width > window.innerWidth) {
       this.table.classList.add("table-responsive");
-      return;
     }
-    this.table.classList.remove("table-responsive");
   }
 
   override render() {
@@ -316,7 +335,7 @@ export default class LMSTable extends LitElement {
                       ${this.isEditable
                         ? html`
                             <td class="align-middle">
-                              <div class="d-flex">
+                              <div class="d-flex justify-content-center">
                                 <button
                                   @click=${this.toggleEdit}
                                   type="button"
