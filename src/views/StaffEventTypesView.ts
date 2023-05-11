@@ -35,6 +35,7 @@ export default class StaffEventTypesView extends LitElement {
   async fetchUpdate() {
     const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
     this.event_types = await response.json();
+    this.requestUpdate();
   }
 
   override connectedCallback() {

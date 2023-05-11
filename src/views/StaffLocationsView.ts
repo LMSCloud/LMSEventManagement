@@ -25,6 +25,7 @@ export default class StaffLocationsView extends LitElement {
   async fetchUpdate() {
     const response = await fetch("/api/v1/contrib/eventmanagement/locations");
     this.locations = await response.json();
+    this.requestUpdate();
   }
 
   override connectedCallback() {

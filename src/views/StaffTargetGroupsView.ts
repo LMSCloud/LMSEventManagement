@@ -27,6 +27,7 @@ export default class StaffEventTypesView extends LitElement {
       "/api/v1/contrib/eventmanagement/target_groups"
     );
     this.target_groups = await response.json();
+    this.requestUpdate();
   }
 
   override connectedCallback() {
