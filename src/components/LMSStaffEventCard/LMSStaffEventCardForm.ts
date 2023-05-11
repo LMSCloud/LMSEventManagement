@@ -212,7 +212,6 @@ export default class LMSStaffEventCardForm extends LitElement {
 
     requestBody.target_groups = Object.values(target_groups);
     requestBody.open_registration = openRegistration;
-    console.log(JSON.stringify(requestBody));
     const response = await fetch(
       `/api/v1/contrib/eventmanagement/events/${id}`,
       { method: "PUT", body: JSON.stringify(requestBody) }
