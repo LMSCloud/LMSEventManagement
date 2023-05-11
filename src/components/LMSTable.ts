@@ -271,7 +271,7 @@ export default class LMSTable extends LitElement {
     const [headers] = hasData ? data : [];
     this.headers = this.order.filter(
       (header) =>
-        headers && Object.prototype.hasOwnProperty.call(headers, header)
+        headers && {}.hasOwnProperty.call(headers, header)
     );
 
     if (hasData) {
