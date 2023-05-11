@@ -31,7 +31,10 @@ export default {
       minimize: true,
       sourceMap: true,
     }),
-    typescript(),
+    typescript({
+      declaration: false,
+      declarationMap: false,
+    }),
     // minifyHTML(),
     // terser(),
     // analyze({
