@@ -2,7 +2,7 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
-import { ModalField, SelectOption } from "../../sharedDeclarations";
+import { ModalField, SelectOption } from "../../../sharedDeclarations";
 
 @customElement("lms-select")
 export default class LMSSelect extends LitElement {

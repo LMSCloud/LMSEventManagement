@@ -1,7 +1,7 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { ModalField } from "../../sharedDeclarations";
+import { ModalField } from "../../../sharedDeclarations";
 
 @customElement("lms-checkbox-input")
 export default class LMSCheckboxInput extends LitElement {

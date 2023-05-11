@@ -2,10 +2,10 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { LitElement, html, TemplateResult, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
-import { MatrixGroup, ModalField } from "../../sharedDeclarations";
+import { MatrixGroup, ModalField } from "../../../sharedDeclarations";
 import { map } from "lit/directives/map.js";
 import { DirectiveResult } from "lit/directive";
-import { TranslateDirective } from "../../lib/translate";
+import { TranslateDirective } from "../../../lib/translate";
 
 type MatrixMarkupGenArgs = {
   field: ModalField;

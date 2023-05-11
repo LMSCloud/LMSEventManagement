@@ -3,17 +3,18 @@ import { map } from "lit/directives/map.js";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators.js";
 import { CreateOpts, MatrixGroup, ModalField } from "../sharedDeclarations";
-import LMSSelect from "./Inputs/LMSSelect";
-import LMSCheckboxInput from "./Inputs/LMSCheckboxInput";
-import LMSPrimitivesInput from "./Inputs/LMSPrimitivesInput";
-import LMSMatrix from "./Inputs/LMSMatrix";
+import LMSSelect from "./Inputs/Modal/LMSSelect";
+import LMSCheckboxInput from "./Inputs/Modal/LMSCheckboxInput";
+import LMSPrimitivesInput from "./Inputs/Modal/LMSPrimitivesInput";
+import LMSMatrix from "./Inputs/Modal/LMSMatrix";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { TranslateDirective, __, attr__, locale } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { DirectiveResult } from "lit/directive";
+import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -41,6 +42,13 @@ export default class LMSModal extends LitElement {
   @state() protected modalTitle:
     | string
     | DirectiveResult<typeof TranslateDirective> = "";
+
+  @query(".btn-modal-wrapper") btnModalWrapper!: HTMLElement;
+  /** TODO: Maybe we can find a cleaner way to do the intersection observations than in the base modal component */
+  private footer: HTMLElement | undefined | null =
+    document.getElementById("i18nMenu")?.parentElement;
+  private intersectionObserverHandler: IntersectionObserverHandler | null =
+    null;
 
   static override styles = [
     bootstrapStyles,
@@ -175,7 +183,26 @@ export default class LMSModal extends LitElement {
   }
 
   override firstUpdated() {
-    this.initIntersectionObserver();
+    if (this.footer && this.btnModalWrapper) {
+      this.intersectionObserverHandler = new IntersectionObserverHandler({
+        intersecting: {
+          ref: this.btnModalWrapper,
+          do: () => {
+            const bottom = parseFloat(
+              getComputedStyle(this.btnModalWrapper).bottom
+            );
+            this.btnModalWrapper.style.bottom = `${
+              bottom + (this.footer ? this.footer.offsetHeight : 0)
+            }px`;
+          },
+        },
+        intersected: {
+          ref: this.footer,
+        },
+      });
+
+      this.intersectionObserverHandler.init();
+    }
 
     const dbDataPopulated = this.fields.map(async (field: ModalField) => {
       if (field.logic) {
@@ -341,25 +368,5 @@ export default class LMSModal extends LitElement {
     return fieldTypes.has(type)
       ? fieldTypes.get(type)
       : fieldTypes.get("default");
-  }
-
-  initIntersectionObserver() {
-    const footer = document.getElementById("i18nMenu")?.parentElement;
-    const btnModalWrapper = this.shadowRoot?.querySelector(
-      ".btn-modal-wrapper"
-    ) as HTMLElement;
-    if (!footer || !btnModalWrapper) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && entry.intersectionRatio > 0) {
-          const bottom =
-            parseFloat(getComputedStyle(btnModalWrapper).bottom) +
-            footer.offsetHeight;
-          btnModalWrapper.style.bottom = `${bottom}px`;
-        }
-      });
-    });
-    observer.observe(footer);
   }
 }

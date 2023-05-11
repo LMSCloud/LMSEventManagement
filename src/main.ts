@@ -18,10 +18,13 @@ import LMSStaffEventCardsDeck from "./components/LMSStaffEventCardDeck";
 import LMSTooltip from "./components/LMSTooltip";
 
 /** Inputs */
-import LMSCheckboxInput from "./components/Inputs/LMSCheckboxInput";
-import LMSMatrix from "./components/Inputs/LMSMatrix";
-import LMSPrimitivesInput from "./components/Inputs/LMSPrimitivesInput";
-import LMSSelect from "./components/Inputs/LMSSelect";
+/** - Modal */
+import LMSCheckboxInput from "./components/Inputs/Modal/LMSCheckboxInput";
+import LMSMatrix from "./components/Inputs/Modal/LMSMatrix";
+import LMSPrimitivesInput from "./components/Inputs/Modal/LMSPrimitivesInput";
+import LMSSelect from "./components/Inputs/Modal/LMSSelect";
+/** - Atomic */
+
 
 /** extensions */
 import LMSEventMangementMenu from "./extensions/LMSEventManagementMenu";
