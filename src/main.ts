@@ -1,6 +1,22 @@
 import "./main.css";
 
 /** components */
+/**   /Inputs */
+/**     /Modal */
+import LMSCheckboxInput from "./components/Inputs/Modal/LMSCheckboxInput";
+import LMSMatrix from "./components/Inputs/Modal/LMSMatrix";
+import LMSPrimitivesInput from "./components/Inputs/Modal/LMSPrimitivesInput";
+import LMSSelect from "./components/Inputs/Modal/LMSSelect";
+
+/**   /LMSStaffEventCard */
+import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffEventCardAttendees";
+import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEventCardPreview";
+import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventCardForm";
+import LMSStaffEventCardsDeck from "./components/LMSStaffEventCardDeck";
+
+/**   /LMSTable */
+import LMSTableControls from "./components/LMSTable/LMSTableControls";
+
 import LMSAnchor from "./components/LMSAnchor";
 import LMSCard from "./components/LMSCard";
 import LMSCardDetailsModal from "./components/LMSCardDetailsModal";
@@ -9,22 +25,9 @@ import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
 import LMSImageBrowser from "./components/LMSImageBrowser";
 import LMSModal from "./components/LMSModal";
-// import LMSPaginationNav from "./components/LMSPaginationNav";
+import LMSPagination from "./components/LMSPagination";
 import LMSSearch from "./components/LMSSearch";
-import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffEventCardAttendees";
-import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEventCardPreview";
-import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventCardForm";
-import LMSStaffEventCardsDeck from "./components/LMSStaffEventCardDeck";
 import LMSTooltip from "./components/LMSTooltip";
-
-/** Inputs */
-/** - Modal */
-import LMSCheckboxInput from "./components/Inputs/Modal/LMSCheckboxInput";
-import LMSMatrix from "./components/Inputs/Modal/LMSMatrix";
-import LMSPrimitivesInput from "./components/Inputs/Modal/LMSPrimitivesInput";
-import LMSSelect from "./components/Inputs/Modal/LMSSelect";
-/** - Atomic */
-
 
 /** extensions */
 import LMSEventMangementMenu from "./extensions/LMSEventManagementMenu";
@@ -45,6 +48,15 @@ import StaffSettingsView from "./views/StaffSettingsView";
 import StaffTargetGroupsView from "./views/StaffTargetGroupsView";
 
 export default {
+  LMSCheckboxInput,
+  LMSMatrix,
+  LMSPrimitivesInput,
+  LMSSelect,
+  LMSStaffEventCardAttendees,
+  LMSStaffEventCardPreview,
+  LMSStaffEventCardForm,
+  LMSStaffEventCardsDeck,
+  LMSTableControls,
   LMSAnchor,
   LMSCard,
   LMSCardDetailsModal,
@@ -53,17 +65,9 @@ export default {
   LMSFloatingMenu,
   LMSImageBrowser,
   LMSModal,
-  // LMSPaginationNav,
+  LMSPagination,
   LMSSearch,
-  LMSStaffEventCardAttendees,
-  LMSStaffEventCardPreview,
-  LMSStaffEventCardForm,
-  LMSStaffEventCardsDeck,
   LMSTooltip,
-  LMSCheckboxInput,
-  LMSMatrix,
-  LMSPrimitivesInput,
-  LMSSelect,
   LMSEventMangementMenu,
   LMSEventsModal,
   LMSEventTypesModal,
