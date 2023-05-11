@@ -1,5 +1,5 @@
 import { customElement, property } from "lit/decorators.js";
-import LMSTable from "../components/LMSTable";
+import LMSTable from "../components/LMSTable/LMSTable";
 import { Input, TargetGroup } from "../sharedDeclarations";
 
 @customElement("lms-target-groups-table")

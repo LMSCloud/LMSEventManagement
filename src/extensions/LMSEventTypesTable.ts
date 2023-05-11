@@ -1,5 +1,5 @@
 import { customElement, property } from "lit/decorators.js";
-import LMSTable from "../components/LMSTable";
+import LMSTable from "../components/LMSTable/LMSTable";
 import { EventType, TargetGroup, LMSLocation } from "../sharedDeclarations";
 import LMSAnchor from "../components/LMSAnchor";
 
@@ -144,6 +144,7 @@ export default class LMSEventTypesTable extends LMSTable {
       "description",
       "open_registration",
     ];
+    this.unsortableColumns = ["target_groups"];
     this.isEditable = true;
     this.isDeletable = true;
   }
