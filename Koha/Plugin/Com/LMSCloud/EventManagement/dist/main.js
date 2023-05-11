@@ -761,6 +761,11 @@
             console.error(`Error loading translations for locale ${locale}:`, error);
         }
     }
+    /**
+     * TranslateDirective is used for translating text content within Lit templates.
+     * It fetches translations from an external source and automatically updates the DOM.
+     * Usage: html`<div>${__(text)}</div>`
+     */
     class TranslateDirective extends i$1 {
         constructor(partInfo) {
             super(partInfo);
@@ -803,6 +808,10 @@
                 return translatedText;
             }
         }
+        generatePlaceholder() {
+            const rng = Math.floor(Math.random() * 5) + 8;
+            return "\u00A0".repeat(rng);
+        }
         update(_part, [text]) {
             this.____(text).then((translatedText) => {
                 this.updateTranslation(text);
@@ -816,8 +825,7 @@
                     this._textNode.textContent = _text;
                 }
                 else {
-                    const rng = Math.floor(Math.random() * 10) + 4;
-                    this._textNode.textContent = "\u00A0".repeat(rng);
+                    this._textNode.textContent = this.generatePlaceholder();
                     this._element.classList.add("skeleton", "skeleton-text", "pointer-events-none");
                 }
                 return this._element;
@@ -825,6 +833,64 @@
             return _text;
         }
     }
+    /**
+     * TranslateAttributeDirective is used for translating attribute values within Lit templates.
+     * It fetches translations from an external source and automatically updates the DOM.
+     * Usage: html`<div title=${attr__(title)}></div>`
+     */
+    class TranslateAttributeDirective extends i$1 {
+        constructor(partInfo) {
+            super(partInfo);
+            this._element = null;
+            this._name = null;
+            this._locale = document.documentElement.lang.slice(0, 2);
+            if (partInfo.type !== t.PROPERTY &&
+                partInfo.type !== t.ATTRIBUTE) {
+                throw new Error("Use of TranslateAttributeDirective on non-attribute/non-property is forbidden.");
+            }
+        }
+        async updateTranslation(text) {
+            if (translationsLoaded && this._element && this._name) {
+                const translatedText = i18nInstance.gettext(text);
+                this._element[this._name] = translatedText;
+            }
+        }
+        async ____(part, text) {
+            this._element = part.element;
+            this._name = part.name;
+            if (!translationsLoaded) {
+                callbacks.push({
+                    text,
+                    callback: () => {
+                        this.updateTranslation(text);
+                        if (this._element) {
+                            this._element.classList.remove("skeleton", "skeleton-text");
+                        }
+                    },
+                });
+                if (this._locale.startsWith("en")) {
+                    return text;
+                }
+                else {
+                    return "";
+                }
+            }
+            else {
+                const translatedText = i18nInstance.gettext(text);
+                return translatedText;
+            }
+        }
+        update(part, [text]) {
+            this.____(part, text).then((translatedText) => {
+                this.updateTranslation(translatedText);
+            });
+            return this.render(text);
+        }
+        render(_text) {
+            return _text;
+        }
+    }
+    const attr__ = e(TranslateAttributeDirective);
     const __ = e(TranslateDirective);
 
     const skeletonStyles = i$5 `
@@ -1407,14 +1473,16 @@
                 },
             };
             this._eventsDeepCopy = [];
-            window.addEventListener("resize", throttle(() => {
-                this.shouldFold = window.innerWidth <= 992;
-                this.isHidden = this.shouldFold;
-                this.requestUpdate();
-            }, 250));
+            this.throttledHandleResize = throttle(this.handleResize.bind(this), 250);
+        }
+        handleResize() {
+            this.shouldFold = window.innerWidth <= 992;
+            this.isHidden = this.shouldFold;
+            this.requestUpdate();
         }
         connectedCallback() {
             super.connectedCallback();
+            window.addEventListener("resize", this.throttledHandleResize);
             requestHandler
                 .request("getEventTypesPublic")
                 .then((response) => response.json())
@@ -1430,7 +1498,7 @@
         }
         disconnectedCallback() {
             super.disconnectedCallback();
-            window.removeEventListener("resize", () => undefined);
+            window.removeEventListener("resize", this.throttledHandleResize);
         }
         willUpdate() {
             this.eventsDeepCopy = deepCopy(this.events);
@@ -1594,8 +1662,8 @@
                   class="btn btn-outline-secondary btn-sm"
                   @click=${this.handleHideToggle}
                   aria-label=${this.isHidden
-            ? __("Show filters")
-            : __("Hide filters")}
+            ? attr__("Show filters")
+            : attr__("Hide filters")}
                 >
                   ${this.isHidden ? __("Show filters") : __("Hide filters")}
                 </button>
@@ -1856,6 +1924,15 @@
             this.items = [];
             this._currentUrl = window.location.href;
             this._currentSearchParams = new URLSearchParams(window.location.search);
+            this.isOpen = false;
+        }
+        toggleNavbarCollapse() {
+            this.navbarNav.classList.toggle("collapse");
+            if (this.navbarNav.classList.contains("show")) {
+                this.isOpen = true;
+                return;
+            }
+            this.isOpen = false;
         }
         render() {
             return x ` <nav
@@ -1863,18 +1940,14 @@
     >
       <a class="navbar-brand" href="#"><strong>${this.brand}</strong></a>
       <button
-        @click=${() => {
-            var _a;
-            (_a = this.renderRoot
-                .getElementById("navbarNav")) === null || _a === void 0 ? void 0 : _a.classList.toggle("collapse");
-        }}
+        @click=${this.toggleNavbarCollapse}
         class="navbar-toggler"
         type="button"
         data-toggle="collapse"
         data-target="#navbarNav"
         aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
+        aria-expanded=${this.isOpen}
+        aria-label=${attr__("Toggle navigation")}
       >
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -1934,6 +2007,9 @@
     __decorate([
         e$2({ type: String, attribute: false })
     ], LMSFloatingMenu.prototype, "_currentSearchParams", void 0);
+    __decorate([
+        i$2("#navbarNav")
+    ], LMSFloatingMenu.prototype, "navbarNav", void 0);
     LMSFloatingMenu = __decorate([
         e$3("lms-floating-menu")
     ], LMSFloatingMenu);
@@ -2047,7 +2123,7 @@
                 <div class="card-body">
                   <p
                     data-placement="top"
-                    title="${__("Link constructed!")}"
+                    title=${attr__("Link constructed!")}
                     @click=${() => {
                 this.handleClipboardCopy(hashvalue);
             }}
@@ -2059,13 +2135,13 @@
                     <lms-tooltip
                       id="tooltip-${hashvalue}"
                       data-placement="top"
-                      data-text="Link constructed!"
+                      data-text="${attr__("Link constructed")}!"
                       data-timeout="1000"
                     >
                       <button
                         id="button-${hashvalue}"
                         data-placement="bottom"
-                        title="Link constructed!"
+                        title="${attr__("Link constructed")}!"
                         @click=${() => {
                 this.handleClipboardCopy(hashvalue);
             }}
@@ -2149,8 +2225,42 @@
      * SPDX-License-Identifier: BSD-3-Clause
      */const i="important",n=" !"+i,o=e(class extends i$1{constructor(t$1){var e;if(super(t$1),t$1.type!==t.ATTRIBUTE||"style"!==t$1.name||(null===(e=t$1.strings)||void 0===e?void 0:e.length)>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(t){return Object.keys(t).reduce(((e,r)=>{const s=t[r];return null==s?e:e+`${r=r.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${s};`}),"")}update(e,[r]){const{style:s}=e.element;if(void 0===this.ut){this.ut=new Set;for(const t in r)this.ut.add(t);return this.render(r)}this.ut.forEach((t=>{null==r[t]&&(this.ut.delete(t),t.includes("-")?s.removeProperty(t):s[t]="");}));for(const t in r){const e=r[t];if(null!=e){this.ut.add(t);const r="string"==typeof e&&e.endsWith(n);t.includes("-")||r?s.setProperty(t,r?e.slice(0,-11):e,r?i:""):s[t]=e;}}return T}});
 
+    class IntersectionObserverHandler {
+        constructor({ intersecting, intersected }) {
+            this.observer = null;
+            this.intersecting = intersecting;
+            this.intersected = intersected;
+        }
+        init() {
+            if (this.intersecting.ref instanceof HTMLElement &&
+                this.intersected.ref instanceof HTMLElement) {
+                this.observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        var _a, _b, _c, _d;
+                        if (entry.target === this.intersecting.ref &&
+                            entry.isIntersecting &&
+                            entry.intersectionRatio > 0) {
+                            (_b = (_a = this.intersecting).do) === null || _b === void 0 ? void 0 : _b.call(_a);
+                        }
+                        else if (entry.target === this.intersected.ref &&
+                            entry.isIntersecting &&
+                            entry.intersectionRatio > 0) {
+                            (_d = (_c = this.intersected).do) === null || _d === void 0 ? void 0 : _d.call(_c);
+                        }
+                    });
+                });
+                this.observer.observe(this.intersecting.ref);
+                this.observer.observe(this.intersected.ref);
+            }
+            else {
+                throw new Error("Invalid parameters supplied to IntersectionObserverClass. Please ensure both 'intersecting' and 'intersected' are valid Intersectable types.");
+            }
+        }
+    }
+
     let LMSModal = class LMSModal extends s {
         constructor() {
+            var _a;
             super(...arguments);
             this.fields = [];
             this.createOpts = {
@@ -2160,6 +2270,9 @@
             this.isOpen = false;
             this.alert = { active: false, message: undefined };
             this.modalTitle = "";
+            /** TODO: Maybe we can find a cleaner way to do the intersection observations than in the base modal component */
+            this.footer = (_a = document.getElementById("i18nMenu")) === null || _a === void 0 ? void 0 : _a.parentElement;
+            this.intersectionObserverHandler = null;
         }
         toggleModal() {
             this.isOpen = !this.isOpen;
@@ -2220,7 +2333,21 @@
             };
         }
         firstUpdated() {
-            this.initIntersectionObserver();
+            if (this.footer && this.btnModalWrapper) {
+                this.intersectionObserverHandler = new IntersectionObserverHandler({
+                    intersecting: {
+                        ref: this.btnModalWrapper,
+                        do: () => {
+                            const bottom = parseFloat(getComputedStyle(this.btnModalWrapper).bottom);
+                            this.btnModalWrapper.style.bottom = `${bottom + (this.footer ? this.footer.offsetHeight : 0)}px`;
+                        },
+                    },
+                    intersected: {
+                        ref: this.footer,
+                    },
+                });
+                this.intersectionObserverHandler.init();
+            }
             const dbDataPopulated = this.fields.map(async (field) => {
                 if (field.logic) {
                     return {
@@ -2265,7 +2392,7 @@
         tabindex="-1"
         role="dialog"
         aria-labelledby="lms-modal-title"
-        aria-hidden="true"
+        aria-hidden=${!this.isOpen}
         style=${o({
             overflowY: this.isOpen ? "scroll" : "auto",
         })}
@@ -2280,7 +2407,7 @@
                 @click=${this.toggleModal}
                 type="button"
                 class="close"
-                aria-label="Close"
+                aria-label=${attr__("Close")}
               >
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -2300,7 +2427,7 @@
                     type="button"
                     class="close"
                     data-dismiss="alert"
-                    aria-label="Close"
+                    aria-label=${attr__("Close")}
                   >
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -2382,23 +2509,6 @@
                 ? fieldTypes.get(type)
                 : fieldTypes.get("default");
         }
-        initIntersectionObserver() {
-            var _a, _b;
-            const footer = (_a = document.getElementById("i18nMenu")) === null || _a === void 0 ? void 0 : _a.parentElement;
-            const btnModalWrapper = (_b = this.shadowRoot) === null || _b === void 0 ? void 0 : _b.querySelector(".btn-modal-wrapper");
-            if (!footer || !btnModalWrapper)
-                return;
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting && entry.intersectionRatio > 0) {
-                        const bottom = parseFloat(getComputedStyle(btnModalWrapper).bottom) +
-                            footer.offsetHeight;
-                        btnModalWrapper.style.bottom = `${bottom}px`;
-                    }
-                });
-            });
-            observer.observe(footer);
-        }
     };
     LMSModal.styles = [
         bootstrapStyles,
@@ -2410,9 +2520,6 @@
         right: 1em;
         border-radius: 50%;
         background-color: var(--primary-color);
-        display: flex;
-        justify-content: center;
-        align-items: center;
         box-shadow: var(--shadow-hv);
         cursor: pointer;
         z-index: 1049;
@@ -2424,6 +2531,9 @@
         font-size: 2em;
         width: 2em;
         height: 2em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       .backdrop {
         position: fixed;
@@ -2437,12 +2547,11 @@
       button.btn-modal:not(.tilted) {
         transition: 0.2s;
         transition-timing-function: ease-in-out;
-        transform: translateX(1px) rotate(0deg);
       }
       .tilted {
         transition: 0.2s;
         transition-timing-function: ease-in-out;
-        transform: translateX(2px) translateY(1px) rotate(45deg);
+        transform: rotate(45deg);
       }
       svg {
         display: inline-block;
@@ -2476,6 +2585,9 @@
     __decorate([
         t$1()
     ], LMSModal.prototype, "modalTitle", void 0);
+    __decorate([
+        i$2(".btn-modal-wrapper")
+    ], LMSModal.prototype, "btnModalWrapper", void 0);
     LMSModal = __decorate([
         e$3("lms-modal")
     ], LMSModal);
@@ -2501,15 +2613,15 @@
             return x `
       <div class="input-group flex-nowrap">
         <div class="input-group-prepend">
-          <span class="input-group-text" id="addon-wrapping"
+          <span class="input-group-text" id="addon-wrapping" aria
             >${litFontawesome_2(faSearch)}</span
           >
         </div>
         <input
           type="text"
           class="form-control"
-          placeholder="Search"
-          aria-label="Search"
+          placeholder=${attr__("Search")}
+          aria-label=${attr__("Search")}
           aria-describedby="addon-wrapping"
           @input=${this.handleInput}
         />
@@ -2610,7 +2722,7 @@
         </button>
         <div class="collapse" id="targetGroups">
           <table
-            class="table table-sm table-bordered table-striped mb-0 mx-3 w-inherit"
+            class="table table-sm table-bordered table-striped mx-3 w-inherit"
           >
             <thead>
               <tr>
@@ -2806,11 +2918,15 @@ ${value}</textarea
             if (!button)
                 return;
             const collapse = button.nextElementSibling;
+            const parent = collapse.parentElement;
             if (collapse.classList.contains("show")) {
+                parent === null || parent === void 0 ? void 0 : parent.classList.remove("pip");
                 collapse.classList.remove("show");
-                return;
             }
-            collapse.classList.add("show");
+            else {
+                parent === null || parent === void 0 ? void 0 : parent.classList.add("pip");
+                collapse.classList.add("show");
+            }
         }
         needsData(name) {
             return ["target_groups", "event_type", "location"].includes(name);
@@ -3023,7 +3139,6 @@ ${value}</textarea
             }, {});
             requestBody.target_groups = Object.values(target_groups);
             requestBody.open_registration = openRegistration;
-            console.log(JSON.stringify(requestBody));
             const response = await fetch(`/api/v1/contrib/eventmanagement/events/${id}`, { method: "PUT", body: JSON.stringify(requestBody) });
             if (response.ok) {
                 target === null || target === void 0 ? void 0 : target.querySelectorAll("input, select, textarea").forEach((input) => {
@@ -3098,7 +3213,7 @@ ${value}</textarea
             "d-flex": shouldFold,
         })}"
           role="group"
-          aria-label="${__("Event controls")}"
+          aria-label=${attr__("Event controls")}
         >
           <button
             @click=${this.toggleEdit}
@@ -4289,7 +4404,7 @@ ${value}</textarea
 
     let LMSTable = class LMSTable extends s {
         constructor() {
-            super(...arguments);
+            super();
             this.data = [];
             this.order = [];
             this.headers = [];
@@ -4299,9 +4414,18 @@ ${value}</textarea
                 heading: "",
                 message: "",
             };
-            this.notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
             this.emptyTableMessage = x `${__("No data to display")}.`;
+            this.notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
             this.inputConverter = new InputConverter();
+            this.throttledHandleResize = throttle(this.handleResize.bind(this), 250);
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            window.addEventListener("resize", this.throttledHandleResize);
+        }
+        disconnectedCallback() {
+            super.disconnectedCallback();
+            window.removeEventListener("resize", this.throttledHandleResize);
         }
         updateButtonState(button, isActive) {
             var _a, _b;
@@ -4320,9 +4444,15 @@ ${value}</textarea
         toggleCollapse(tableRow, isExpanded) {
             const collapsibles = tableRow.querySelectorAll(".collapse");
             collapsibles.forEach((collapse) => {
-                isExpanded
-                    ? collapse.classList.add("show")
-                    : collapse.classList.remove("show");
+                const parent = collapse.parentElement;
+                if (isExpanded) {
+                    parent === null || parent === void 0 ? void 0 : parent.classList.add("pip");
+                    collapse.classList.add("show");
+                }
+                else {
+                    parent === null || parent === void 0 ? void 0 : parent.classList.remove("pip");
+                    collapse.classList.remove("show");
+                }
             });
         }
         toggleEdit(e) {
@@ -4371,8 +4501,8 @@ ${value}</textarea
                 this.toast = {
                     heading: status,
                     message: Object.values(result.errors)
-                        .map(({ message, path }) => `Sorry! ${message} at ${path}`)
-                        .join(" & "),
+                        .map(({ message, path }) => `Sorry! ${message} → ${path}`)
+                        .join("\n"),
                 };
             }
             const lmsToast = document.createElement("lms-toast", {
@@ -4406,7 +4536,7 @@ ${value}</textarea
             const { data } = this;
             const hasData = (_a = (data === null || data === void 0 ? void 0 : data.length) > 0) !== null && _a !== void 0 ? _a : false;
             const [headers] = hasData ? data : [];
-            this.headers = this.order.filter((header) => headers && Object.prototype.hasOwnProperty.call(headers, header));
+            this.headers = this.order.filter((header) => headers && {}.hasOwnProperty.call(headers, header));
             if (hasData) {
                 this.data = this.order.length
                     ? this.sortByOrder(data, this.order)
@@ -4417,14 +4547,24 @@ ${value}</textarea
             super.willUpdate(_changedProperties);
             this.sortColumns();
         }
+        firstUpdated(_changedProperties) {
+            super.firstUpdated(_changedProperties);
+            this.handleResize();
+        }
+        handleResize() {
+            this.table.classList.remove("table-responsive");
+            const width = this.table.offsetWidth +
+                78; /* 4.875rem, combined paddings & margings of parents. TODO: We need a generic solution for this. */
+            if (width > window.innerWidth) {
+                this.table.classList.add("table-responsive");
+            }
+        }
         render() {
             return !this.data.length
                 ? x `<h1 class="text-center">${this.emptyTableMessage}</h1>`
                 : x `
           <div class="container-fluid mx-0">
-            <table
-              class="table table-striped table-bordered table-hover table-responsive-xl"
-            >
+            <table class="table table-striped table-bordered table-hover">
               <thead>
                 <tr>
                   ${o$1(this.headers, (key) => x `<th scope="col">${__(key)}</th>`)}
@@ -4440,24 +4580,29 @@ ${value}</textarea
                       ${this.isEditable
                 ? x `
                             <td class="align-middle">
-                              <div class="d-flex">
+                              <div class="d-flex justify-content-center">
                                 <button
                                   @click=${this.toggleEdit}
                                   type="button"
                                   class="btn btn-dark mx-2 btn-edit"
+                                  aria-label=${attr__("Edit")}
                                 >
                                   <span class="start-edit pointer-events-none"
-                                    >${litFontawesome_2(faEdit)}&nbsp;${__("Edit")}</span
+                                    >${litFontawesome_2(faEdit)}
+                                    <span>${__("Edit")}</span></span
                                   >
                                   <span
                                     class="abort-edit d-none pointer-events-none"
-                                    >${litFontawesome_2(faTimes)}&nbsp;${__("Abort")}</span
+                                    >${litFontawesome_2(faTimes)}<span
+                                      >${__("Abort")}</span
+                                    ></span
                                   >
                                 </button>
                                 <button
                                   @click=${this.handleSave}
                                   type="button"
                                   class="btn btn-dark mx-2"
+                                  aria-label=${attr__("Save")}
                                 >
                                   ${litFontawesome_2(faSave)}
                                   <span>${__("Save")}</span>
@@ -4467,6 +4612,7 @@ ${value}</textarea
                                   ?hidden=${!this.isDeletable}
                                   type="button"
                                   class="btn btn-danger mx-2"
+                                  aria-label=${attr__("Delete")}
                                 >
                                   ${litFontawesome_2(faTrash)}
                                   <span>${__("Delete")}</span>
@@ -4512,6 +4658,40 @@ ${value}</textarea
       input[type="checkbox"].form-control {
         font-size: 0.375rem;
       }
+
+      .table tr {
+        height: 100%;
+      }
+
+      input:not([type="checkbox"]),
+      select,
+      textarea {
+        border: none !important;
+        border-radius: 0 !important;
+        height: inherit !important;
+        width: 100%;
+        min-width: fit-content;
+        padding: 1.5rem 0.75rem;
+      }
+
+      .table td {
+        padding: 0;
+        text-align: center;
+        height: inherit;
+      }
+
+      .pip {
+        background: #ffffff;
+        bottom: 4em;
+        box-shadow: var(--shadow-hv);
+        height: fit-content;
+        left: 1em;
+        max-height: 30vh;
+        max-height: 30dvh;
+        overflow-y: scroll;
+        padding: 1em;
+        position: absolute;
+      }
     `,
     ];
     __decorate([
@@ -4538,6 +4718,9 @@ ${value}</textarea
     __decorate([
         e$1(".btn-edit")
     ], LMSTable.prototype, "editButtons", void 0);
+    __decorate([
+        i$2("table")
+    ], LMSTable.prototype, "table", void 0);
     LMSTable = __decorate([
         e$3("lms-table")
     ], LMSTable);
@@ -5298,6 +5481,7 @@ ${value}</textarea
         async fetchUpdate() {
             const response = await fetch("/api/v1/contrib/eventmanagement/events");
             this.events = await response.json();
+            this.requestUpdate();
         }
         connectedCallback() {
             super.connectedCallback();
@@ -5412,6 +5596,7 @@ ${value}</textarea
         async fetchUpdate() {
             const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
             this.event_types = await response.json();
+            this.requestUpdate();
         }
         connectedCallback() {
             super.connectedCallback();
@@ -5502,6 +5687,7 @@ ${value}</textarea
         async fetchUpdate() {
             const response = await fetch("/api/v1/contrib/eventmanagement/locations");
             this.locations = await response.json();
+            this.requestUpdate();
         }
         connectedCallback() {
             super.connectedCallback();
@@ -5565,6 +5751,7 @@ ${value}</textarea
         async fetchUpdate() {
             const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
             this.target_groups = await response.json();
+            this.requestUpdate();
         }
         connectedCallback() {
             super.connectedCallback();

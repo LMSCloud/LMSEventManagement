@@ -10,6 +10,7 @@ TO-DO.md
 
 .DS_Store
 .vscode/
+.idea/
 
 # Ignore .d.ts and .map files in the "dist" directory
 Koha/Plugin/Com/LMSCloud/EventManagement/dist/**/*.d.ts

@@ -1,1 +1,0 @@
-{"version":3,"file":"GenericSingleton.d.ts","sourceRoot":"","sources":["../../../../../../../src/lib/GenericSingleton.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,OAAO,CAAC,QAAQ,OAAO,gBAAgB,CAAC,CAAC,SAAS,gBAAgB,CAAC,CAAC,CAAC;IACxE,OAAO,CAAC,MAAM,CAAC,SAAS,CAA4C;;IAUpE,MAAM,CAAC,WAAW,CAAC,CAAC,SAAS,gBAAgB,CAAC,CAAC,CAAC,EAAE,IAAI,EAAE,UAAU,CAAC,GAAG,CAAC;CAOxE"}
