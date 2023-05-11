@@ -1,14 +1,20 @@
 export class QueryBuilder {
   private _query: URLSearchParams;
+
   private _reservedParams: string[];
+
   private _disallowedParams: string[];
+
   private _areRepeatable: string[];
+
+  private _staticParams: URLSearchParams;
 
   constructor() {
     this._query = new URLSearchParams();
     this._reservedParams = [];
     this._disallowedParams = [];
     this._areRepeatable = [];
+    this._staticParams = new URLSearchParams();
   }
 
   set reservedParams(reservedParams: string[]) {
@@ -21,6 +27,18 @@ export class QueryBuilder {
 
   set areRepeatable(areRepeatable: string[]) {
     this._areRepeatable = areRepeatable;
+  }
+
+  set staticParams(staticParams: string[]) {
+    if (!this._query) {
+      throw new Error("Cannot set static params before query");
+    }
+    staticParams.forEach((key) => {
+      const value = this._query.get(key);
+      if (value) {
+        this._staticParams.set(key, value);
+      }
+    });
   }
 
   set query(query: URLSearchParams | string) {
@@ -42,8 +60,11 @@ export class QueryBuilder {
   public updateQuery(query: URLSearchParams | string) {
     const newQueryParams = new URLSearchParams(query);
 
-    // Remove keys that are not in the new query if they are not reserved
-    this._query.forEach((_, key) => {
+    /** Remove keys that are not in the new query if they are not reserved.
+     *  WARNING! Alywas use Array.from() when iterating over URLSearchParams
+     *  because it is a live collection and will be modified during iteration
+     *  otherwise. */
+    Array.from(this._query).forEach(([key]) => {
       if (this._reservedParams.includes(key)) {
         return;
       }
@@ -85,7 +106,10 @@ export class QueryBuilder {
 
   public updateUrl() {
     const url = new URL(window.location.href);
-    url.search = this._query.toString();
+    const updatedUrl = new URLSearchParams(
+      this._query.toString() + "&" + this._staticParams.toString()
+    );
+    url.search = updatedUrl.toString();
     window.history.pushState({}, "", url.toString());
   }
 }
