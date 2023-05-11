@@ -6,7 +6,6 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { LMSEvent } from "../sharedDeclarations";
 import { map } from "lit/directives/map.js";
 import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
-import LMSPaginationNav from "../components/LMSPaginationNav";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { requestHandler } from "../lib/RequestHandler";
@@ -17,7 +16,6 @@ declare global {
     "lms-card": LMSCard;
     "lms-events-filter": LMSEventsFilter;
     "lms-card-details-modal": LMSCardDetailsModal;
-    "lms-pagination-nav": LMSPaginationNav;
   }
 }
 
@@ -29,7 +27,7 @@ export default class LMSEventsView extends LitElement {
   @state() hasOpenModal = false;
   @query(".load-more") loadMore!: HTMLButtonElement;
   private hasLoaded = false;
-  private qb = new QueryBuilder();
+  private queryBuilder = new QueryBuilder();
 
   static override styles = [
     bootstrapStyles,
@@ -73,10 +71,10 @@ export default class LMSEventsView extends LitElement {
   constructor() {
     super();
 
-    this.qb.reservedParams = ["_match", "_order_by", "_page", "_per_page", "q"];
-    this.qb.areRepeatable = ["event_type", "target_group", "location"];
-    this.qb.query = window.location.search;
-    this.qb.updateQuery(
+    this.queryBuilder.reservedParams = ["_match", "_order_by", "_page", "_per_page", "q"];
+    this.queryBuilder.areRepeatable = ["event_type", "target_group", "location"];
+    this.queryBuilder.query = window.location.search;
+    this.queryBuilder.updateQuery(
       "_order_by=start_time&_page=1&_per_page=20&open_registration=true"
     );
   }
@@ -85,7 +83,7 @@ export default class LMSEventsView extends LitElement {
     super.connectedCallback();
 
     const response = async () =>
-      await requestHandler.request("getEventsPublic", this.qb.query.toString());
+      await requestHandler.request("getEventsPublic", this.queryBuilder.query.toString());
     response()
       .then((response) => {
         if (response.ok) {
@@ -97,7 +95,7 @@ export default class LMSEventsView extends LitElement {
       .then((events: LMSEvent[]) => {
         this.hasLoaded = true;
         this.events = events;
-        this.qb.updateUrl();
+        this.queryBuilder.updateUrl();
       })
       .catch((error) => {
         console.error(error);
@@ -106,10 +104,10 @@ export default class LMSEventsView extends LitElement {
 
   private handleQuery(event: CustomEvent) {
     const query = event.detail;
-    this.qb.updateQuery(query);
+    this.queryBuilder.updateQuery(query);
 
     const response = async () =>
-      await requestHandler.request("getEventsPublic", this.qb.query.toString());
+      await requestHandler.request("getEventsPublic", this.queryBuilder.query.toString());
     response()
       .then((response) => {
         if (response.ok) {
@@ -120,7 +118,7 @@ export default class LMSEventsView extends LitElement {
       })
       .then((events: LMSEvent[]) => {
         this.events = events;
-        this.qb.updateUrl();
+        this.queryBuilder.updateUrl();
       })
       .catch((error) => {
         console.error(error);
@@ -138,13 +136,13 @@ export default class LMSEventsView extends LitElement {
   }
 
   private handleLoadMore() {
-    const currentPage = this.qb.getParamValue("_page");
+    const currentPage = this.queryBuilder.getParamValue("_page");
     if (!currentPage) return;
 
     const nextPage = parseInt(currentPage, 10) + 1;
-    this.qb.updateQuery(`_page=${nextPage}`);
+    this.queryBuilder.updateQuery(`_page=${nextPage}`);
     const response = async () =>
-      await requestHandler.request("getEventsPublic", this.qb.query.toString());
+      await requestHandler.request("getEventsPublic", this.queryBuilder.query.toString());
     response()
       .then((response) => {
         if (response.ok) {
@@ -155,7 +153,7 @@ export default class LMSEventsView extends LitElement {
       })
       .then((events: LMSEvent[]) => {
         if (!events.length) {
-          this.qb.updateQuery(`_page=${currentPage}`);
+          this.queryBuilder.updateQuery(`_page=${currentPage}`);
           this.loadMore.querySelector("button")?.classList.add("d-none");
           this.loadMore.firstElementChild?.classList.remove("d-none");
           return;
