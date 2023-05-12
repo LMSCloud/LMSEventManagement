@@ -50,6 +50,16 @@ export default class LMSStaffEventCardForm extends LitElement {
       input[type="checkbox"].form-control {
         font-size: 0.375rem;
       }
+
+      form {
+        container-type: inline-size;
+      }
+
+      @container (max-width: 360px) {
+        form .btn-group {
+          flex-direction: column;
+        }
+      }
     `,
   ];
 
