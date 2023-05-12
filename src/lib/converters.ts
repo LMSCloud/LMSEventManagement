@@ -34,7 +34,18 @@ export class TemplateResultConverter {
     this._templateResult = templateResult;
   }
 
-  getRenderString(data = this._templateResult): string {
+  public getValueByIndex(
+    templateResult: TemplateResult,
+    index: number
+  ): string {
+    this.templateResult = templateResult;
+    const renderValue = this.getRenderValues()[index];
+    return typeof renderValue === "string"
+      ? renderValue
+      : (renderValue as any).toString();
+  }
+
+  public getRenderString(data = this._templateResult): string {
     const { strings, values } = data as TemplateResult;
     const v = [...values, ""].map((e) =>
       typeof e === "object" ? this.getRenderString(e) : e
@@ -42,7 +53,7 @@ export class TemplateResultConverter {
     return strings.reduce((acc, s, i) => acc + s + v[i], "");
   }
 
-  getRenderValues(data = this._templateResult): unknown[] {
+  public getRenderValues(data = this._templateResult): unknown[] {
     const { values } = data as TemplateResult;
     return [...values, ""].map((e) =>
       typeof e === "object" ? this.getRenderValues(e) : e
