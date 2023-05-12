@@ -117,373 +117,280 @@
      * SPDX-License-Identifier: BSD-3-Clause
      */var n$1;null!=(null===(n$1=window.HTMLSlotElement)||void 0===n$1?void 0:n$1.prototype.assignedElements)?(o,n)=>o.assignedElements(n):(o,n)=>o.assignedNodes(n).filter((o=>o.nodeType===Node.ELEMENT_NODE));
 
-    let LMSAnchor = class LMSAnchor extends s {
+    let LMSCheckboxInput = class LMSCheckboxInput extends s {
         constructor() {
             super(...arguments);
-            this.href = {};
-            this.target = "_self";
-        }
-        assembleURI() {
-            const { path, query, params, fragment } = this.href;
-            let uri = path !== null && path !== void 0 ? path : "";
-            if (query) {
-                uri += "?";
-            }
-            if (params) {
-                uri += Object.entries(params)
-                    .map(([key, value]) => `${key}=${value}`)
-                    .join("&");
-            }
-            if (fragment) {
-                uri += `#${fragment}`;
-            }
-            return uri;
-        }
-        hasChanged() {
-            return (newValues, oldValues) => {
-                return Object.keys(newValues).some((key) => newValues.get(key) !== oldValues.get(key));
-            };
-        }
-        handleClick(e) {
-            e.preventDefault();
-            const assembledURI = this.assembleURI();
-            switch (this.target) {
-                case "_blank":
-                    window.open(assembledURI, "_blank");
-                    break;
-                case "_parent":
-                    if (window.parent) {
-                        window.parent.location.href = assembledURI;
-                    }
-                    break;
-                case "_top":
-                    if (window.top) {
-                        window.top.location.href = assembledURI;
-                    }
-                    break;
-                case "_self":
-                default:
-                    window.location.href = assembledURI;
-            }
+            this.field = {};
+            this.value = "";
         }
         render() {
-            if (Object.values(this.href).every((value) => value === undefined)) {
-                console.error("href is not a valid URIComponents object");
-                return A;
-            }
+            var _a;
+            const { name, value, desc, required } = this.field;
             return x `
-      <a
-        @click=${this.handleClick}
-        .href=${this.assembleURI()}
-        .target=${this.target}
-      >
-        <slot></slot>
-      </a>
-    `;
-        }
-    };
-    LMSAnchor.styles = [
-        bootstrapStyles,
-        i$5 `
-      :host {
-        display: inline-flex;
-      }
-    `,
-    ];
-    __decorate([
-        e$2({ type: Object, attribute: "data-href" })
-    ], LMSAnchor.prototype, "href", void 0);
-    __decorate([
-        e$2({ type: String })
-    ], LMSAnchor.prototype, "target", void 0);
-    LMSAnchor = __decorate([
-        e$3("lms-anchor")
-    ], LMSAnchor);
-    var LMSAnchor$1 = LMSAnchor;
-
-    let LMSCard = class LMSCard extends s {
-        constructor() {
-            super(...arguments);
-            this.title = "Card title";
-            this.text = "Some quick example text to build on the card title and make up the bulk of the card's content.";
-            this.image = {};
-            this.links = [];
-            this.listItems = [];
-        }
-        render() {
-            return x `
-      <div class="card">
-        <img
-          src=${this.image.src}
-          class="card-img-top"
-          alt=${this.image.alt}
-          ?hidden=${!this.image.src}
+      <div class="form-check">
+        <input
+          type="checkbox"
+          name=${name}
+          id=${name}
+          value=${(_a = value) !== null && _a !== void 0 ? _a : "1"}
+          class="form-check-input"
+          @input=${(e) => {
+            this.field.value = (e.target.checked ? 1 : 0).toString();
+        }}
+          ?required=${required}
+          ?checked=${[true, "true", "1"].includes(this.value)}
         />
-        <div class="card-body">
-          <h5 class="card-title" ?hidden=${!this.title}>${this.title}</h5>
-          <p class="card-text" ?hidden=${!this.text}>${this.text}</p>
-        </div>
-        <ul
-          class="list-group list-group-flush"
-          ?hidden=${!this.listItems.length}
-        >
-          ${this.listItems.map((listItem) => x `<li class="list-group-item">${listItem}</li>`)}
-        </ul>
-        <div class="card-body" ?hidden=${!this.links.length}>
-          ${this.links.length
-            ? this.links.map((link) => x `<a href="${link.href}" class="card-link"
-                    >${link.text}</a
-                  >`)
-            : A}
-        </div>
+        <label for="${name}">&nbsp;${desc}</label>
       </div>
     `;
         }
     };
-    LMSCard.styles = [
-        bootstrapStyles,
-        i$5 `
-      .card:hover {
-        cursor: pointer;
-        postion: relative;
-        top: -3px;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        border: 1px solid var(--primary);
-      }
-    `,
-    ];
-    __decorate([
-        e$2({ type: String })
-    ], LMSCard.prototype, "title", void 0);
-    __decorate([
-        e$2({ type: String })
-    ], LMSCard.prototype, "text", void 0);
+    LMSCheckboxInput.styles = [bootstrapStyles];
     __decorate([
         e$2({ type: Object })
-    ], LMSCard.prototype, "image", void 0);
+    ], LMSCheckboxInput.prototype, "field", void 0);
     __decorate([
-        e$2({ type: Array })
-    ], LMSCard.prototype, "links", void 0);
-    __decorate([
-        e$2({ type: Array })
-    ], LMSCard.prototype, "listItems", void 0);
-    LMSCard = __decorate([
-        e$3("lms-card")
-    ], LMSCard);
-    var LMSCard$1 = LMSCard;
-
-    /**
-     * @license
-     * Copyright 2017 Google LLC
-     * SPDX-License-Identifier: BSD-3-Clause
-     */
-    const t={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e=t=>(...e)=>({_$litDirective$:t,values:e});class i$1{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
+        e$2({ type: Object })
+    ], LMSCheckboxInput.prototype, "value", void 0);
+    LMSCheckboxInput = __decorate([
+        e$3("lms-checkbox-input")
+    ], LMSCheckboxInput);
+    var LMSCheckboxInput$1 = LMSCheckboxInput;
 
     /**
      * @license
      * Copyright 2018 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const o$2=e(class extends i$1{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.it){this.it=new Set,void 0!==i.strings&&(this.nt=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.nt)||void 0===r?void 0:r.has(t))&&this.it.add(t);return this.render(s)}const e=i.element.classList;this.it.forEach((t=>{t in s||(e.remove(t),this.it.delete(t));}));for(const t in s){const i=!!s[t];i===this.it.has(t)||(null===(o=this.nt)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.it.add(t)):(e.remove(t),this.it.delete(t)));}return T}});
-
-    function getAugmentedNamespace(n) {
-      if (n.__esModule) return n;
-      var f = n.default;
-    	if (typeof f == "function") {
-    		var a = function a () {
-    			if (this instanceof a) {
-    				var args = [null];
-    				args.push.apply(args, arguments);
-    				var Ctor = Function.bind.apply(f, args);
-    				return new Ctor();
-    			}
-    			return f.apply(this, arguments);
-    		};
-    		a.prototype = f.prototype;
-      } else a = {};
-      Object.defineProperty(a, '__esModule', {value: true});
-    	Object.keys(n).forEach(function (k) {
-    		var d = Object.getOwnPropertyDescriptor(n, k);
-    		Object.defineProperty(a, k, d.get ? d : {
-    			enumerable: true,
-    			get: function () {
-    				return n[k];
-    			}
-    		});
-    	});
-    	return a;
-    }
-
-    var litFontawesome$1 = {};
-
-    var require$$0 = /*@__PURE__*/getAugmentedNamespace(litHtml);
-
-    Object.defineProperty(litFontawesome$1, "__esModule", { value: true });
-    litFontawesome$1.urlFontawesome = litFontawesome_2 = litFontawesome$1.litFontawesome = void 0;
-    const lit_html_1 = require$$0;
-    function litFontawesome(definition, { className, color } = {}) {
-        return lit_html_1.svg `
-        <svg
-            aria-hidden="true"
-            focusable="false"
-            data-prefix="${definition.prefix}"
-            data-icon="${definition.iconName}"
-            role="img"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 ${definition.icon[0]} ${definition.icon[1]}"
-            class="${className || ''} ${definition.prefix}_${definition.iconName} fa-${definition.iconName}"
-            fill="${color || 'currentColor'}"
-        >
-            ${(Array.isArray(definition.icon[4]) ? definition.icon[4] : [definition.icon[4]]).map((icon) => lit_html_1.svg `<path d="${icon}"></path>`)}
-        </svg>
-    `;
-    }
-    var litFontawesome_2 = litFontawesome$1.litFontawesome = litFontawesome;
-    function uncachedUrlFontawesome(definition, options) {
-        const mount = window.document.createElement('div');
-        lit_html_1.render(litFontawesome(definition, options), mount);
-        return `data:image/svg+xml;base64,${btoa(mount.innerHTML.replace(/ {4}|<!---->|\n/g, ''))}`;
-    }
-    const cachedURL = new Map();
-    function urlFontawesome(definition, options = {}) {
-        let dataUrl;
-        const foundDefinition = cachedURL.get(definition);
-        let foundClassName;
-        if (foundDefinition !== undefined) {
-            foundClassName = foundDefinition.get(options.className);
-            if (foundClassName !== undefined) {
-                const foundColor = foundClassName.get(options.color);
-                if (foundColor !== undefined) {
-                    dataUrl = foundColor;
-                }
-            }
-        }
-        if (dataUrl === undefined) {
-            dataUrl = uncachedUrlFontawesome(definition, options);
-            if (foundDefinition === undefined) {
-                cachedURL.set(definition, new Map([[options.className, new Map([[options.color, dataUrl]])]]));
-            }
-            else if (foundClassName === undefined) {
-                foundDefinition.set(options.className, new Map([[options.color, dataUrl]]));
-            }
-            else {
-                foundClassName.set(options.color, dataUrl);
-            }
-        }
-        return dataUrl;
-    }
-    litFontawesome$1.urlFontawesome = urlFontawesome;
-
-    var faDownLeftAndUpRightToCenter = {
-      prefix: 'fas',
-      iconName: 'down-left-and-up-right-to-center',
-      icon: [512, 512, ["compress-alt"], "f422", "M439 7c9.4-9.4 24.6-9.4 33.9 0l32 32c9.4 9.4 9.4 24.6 0 33.9l-87 87 39 39c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H296c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2l39 39L439 7zM72 272H216c13.3 0 24 10.7 24 24V440c0 9.7-5.8 18.5-14.8 22.2s-19.3 1.7-26.2-5.2l-39-39L73 505c-9.4 9.4-24.6 9.4-33.9 0L7 473c-9.4-9.4-9.4-24.6 0-33.9l87-87L55 313c-6.9-6.9-8.9-17.2-5.2-26.2s12.5-14.8 22.2-14.8z"]
-    };
-    var faCompressAlt = faDownLeftAndUpRightToCenter;
-    var faList = {
-      prefix: 'fas',
-      iconName: 'list',
-      icon: [512, 512, ["list-squares"], "f03a", "M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"]
-    };
-    var faPenToSquare = {
-      prefix: 'fas',
-      iconName: 'pen-to-square',
-      icon: [512, 512, ["edit"], "f044", "M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"]
-    };
-    var faEdit = faPenToSquare;
-    var faBullseye = {
-      prefix: 'fas',
-      iconName: 'bullseye',
-      icon: [512, 512, [], "f140", "M448 256A192 192 0 1 0 64 256a192 192 0 1 0 384 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 80a80 80 0 1 0 0-160 80 80 0 1 0 0 160zm0-224a144 144 0 1 1 0 288 144 144 0 1 1 0-288zM224 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"]
-    };
-    var faImage = {
-      prefix: 'fas',
-      iconName: 'image',
-      icon: [512, 512, [], "f03e", "M0 96C0 60.7 28.7 32 64 32H448c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM323.8 202.5c-4.5-6.6-11.9-10.5-19.8-10.5s-15.4 3.9-19.8 10.5l-87 127.6L170.7 297c-4.6-5.7-11.5-9-18.7-9s-14.2 3.3-18.7 9l-64 80c-5.8 7.2-6.9 17.1-2.9 25.4s12.4 13.6 21.6 13.6h96 32H424c8.9 0 17.1-4.9 21.2-12.8s3.6-17.4-1.4-24.7l-120-176zM112 192a48 48 0 1 0 0-96 48 48 0 1 0 0 96z"]
-    };
-    var faLocationPin = {
-      prefix: 'fas',
-      iconName: 'location-pin',
-      icon: [384, 512, ["map-marker"], "f041", "M384 192c0 87.4-117 243-168.3 307.2c-12.3 15.3-35.1 15.3-47.4 0C117 435 0 279.4 0 192C0 86 86 0 192 0S384 86 384 192z"]
-    };
-    var faMapMarker = faLocationPin;
-    var faArrowRight = {
-      prefix: 'fas',
-      iconName: 'arrow-right',
-      icon: [448, 512, [8594], "f061", "M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"]
-    };
-    var faFloppyDisk = {
-      prefix: 'fas',
-      iconName: 'floppy-disk',
-      icon: [448, 512, [128190, 128426, "save"], "f0c7", "M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V173.3c0-17-6.7-33.3-18.7-45.3L352 50.7C340 38.7 323.7 32 306.7 32H64zm0 96c0-17.7 14.3-32 32-32H288c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V128zM224 288a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
-    };
-    var faSave = faFloppyDisk;
-    var faTrash = {
-      prefix: 'fas',
-      iconName: 'trash',
-      icon: [448, 512, [], "f1f8", "M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"]
-    };
-    var faTag = {
-      prefix: 'fas',
-      iconName: 'tag',
-      icon: [448, 512, [127991], "f02b", "M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"]
-    };
-    var faCircleInfo = {
-      prefix: 'fas',
-      iconName: 'circle-info',
-      icon: [512, 512, ["info-circle"], "f05a", "M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"]
-    };
-    var faInfoCircle = faCircleInfo;
-    var faGear = {
-      prefix: 'fas',
-      iconName: 'gear',
-      icon: [512, 512, [9881, "cog"], "f013", "M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"]
-    };
-    var faCog = faGear;
-    var faCreditCard = {
-      prefix: 'fas',
-      iconName: 'credit-card',
-      icon: [576, 512, [128179, 62083, "credit-card-alt"], "f09d", "M64 32C28.7 32 0 60.7 0 96v32H576V96c0-35.3-28.7-64-64-64H64zM576 224H0V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V224zM112 352h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm112 16c0-8.8 7.2-16 16-16H368c8.8 0 16 7.2 16 16s-7.2 16-16 16H240c-8.8 0-16-7.2-16-16z"]
-    };
-    var faLocationDot = {
-      prefix: 'fas',
-      iconName: 'location-dot',
-      icon: [384, 512, ["map-marker-alt"], "f3c5", "M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
-    };
-    var faMagnifyingGlass = {
-      prefix: 'fas',
-      iconName: 'magnifying-glass',
-      icon: [512, 512, [128269, "search"], "f002", "M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"]
-    };
-    var faSearch = faMagnifyingGlass;
-    var faCopy = {
-      prefix: 'fas',
-      iconName: 'copy',
-      icon: [512, 512, [], "f0c5", "M272 0H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V336c0 26.5-21.5 48-48 48H272c-26.5 0-48-21.5-48-48V48c0-26.5 21.5-48 48-48zM48 128H192v64H64V448H256V416h64v48c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V176c0-26.5 21.5-48 48-48z"]
-    };
-    var faPlus = {
-      prefix: 'fas',
-      iconName: 'plus',
-      icon: [448, 512, [10133, 61543, "add"], "2b", "M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"]
-    };
-    var faXmark = {
-      prefix: 'fas',
-      iconName: 'xmark',
-      icon: [384, 512, [128473, 10005, 10006, 10060, 215, "close", "multiply", "remove", "times"], "f00d", "M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"]
-    };
-    var faClose = faXmark;
-    var faTimes = faXmark;
-    var faCalendar = {
-      prefix: 'fas',
-      iconName: 'calendar',
-      icon: [448, 512, [128197, 128198], "f133", "M96 32V64H48C21.5 64 0 85.5 0 112v48H448V112c0-26.5-21.5-48-48-48H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32V64H160V32c0-17.7-14.3-32-32-32S96 14.3 96 32zM448 192H0V464c0 26.5 21.5 48 48 48H400c26.5 0 48-21.5 48-48V192z"]
-    };
+     */const l=l=>null!=l?l:A;
 
     /**
      * @license
      * Copyright 2021 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    function*o$1(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
+    function*o$2(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
+
+    let LMSMatrix = class LMSMatrix extends s {
+        constructor() {
+            super(...arguments);
+            this.field = {};
+            this.value = [];
+        }
+        render() {
+            const { field } = this;
+            return x ` <label for=${field.name}>${field.desc}</label>
+      <table class="table table-bordered" id=${field.name}>
+        <thead>
+          <tr>
+            ${o$2(field.headers, ([name]) => x `<th scope="col">${name}</th>`)}
+          </tr>
+        </thead>
+        <tbody>
+          ${o$2(field.dbData, (row) => x `<tr>
+              <td class="align-middle">${row.name}</td>
+              ${o$2(field.headers, (header) => this.getMatrixInputMarkup({ field, row, header }))}
+            </tr>`)}
+        </tbody>
+      </table>`;
+        }
+        handleInput({ e, id, header }) {
+            if (!(e.target instanceof HTMLInputElement))
+                return;
+            const { field } = this;
+            const { type } = e.target;
+            const [name] = header;
+            const updateOrCreateItem = (value) => {
+                /** If there's no Array present in field.value
+                 *  we create one and add the item to it. */
+                if (!((field === null || field === void 0 ? void 0 : field.value) instanceof Array)) {
+                    field.value = [{ id: id.toString(), [name]: value }];
+                    return;
+                }
+                /** Now it must be an array because the guard clause
+                 *  didn't return in the previous step. We check if
+                 *  the item exists and update it if it does. */
+                const item = field.value.find((item) => item.id == id);
+                if (item) {
+                    item[name] = value;
+                    return;
+                }
+                /** If it is an Array but we didn't find an item  we
+                 *  have to add a new one. */
+                field.value.push({ id: id.toString(), [name]: value });
+            };
+            switch (type) {
+                case "number": {
+                    const { value } = e.target;
+                    updateOrCreateItem(value.toString());
+                    break;
+                }
+                case "checkbox": {
+                    const { checked } = e.target;
+                    updateOrCreateItem((checked ? 1 : 0).toString());
+                    break;
+                }
+            }
+        }
+        getMatrixInputMarkup({ field, row, header }) {
+            var _a, _b, _c, _d, _e;
+            const [name, type] = header;
+            const inputTypes = new Map([
+                [
+                    "number",
+                    x `<td class="align-middle">
+          <input
+            type="number"
+            name=${row.name}
+            id=${row.id}
+            .value=${field.value instanceof Array
+                    ? (_b = (_a = field.value.find((item) => item.id == row.id)) === null || _a === void 0 ? void 0 : _a[name]) !== null && _b !== void 0 ? _b : ""
+                    : ""}
+            class="form-control"
+            step=${l((_d = (_c = field.attributes) === null || _c === void 0 ? void 0 : _c.find(([attribute]) => attribute === "step")) === null || _d === void 0 ? void 0 : _d.slice(-1)[0])}
+            @input=${(e) => this.handleInput({ e, id: row.id, header })}
+            ?required=${field.required}
+          />
+        </td>`,
+                ],
+                [
+                    "checkbox",
+                    x ` <td class="align-middle">
+          <input
+            type="checkbox"
+            name=${row.name}
+            id=${row.id}
+            class="form-control"
+            @input=${(e) => this.handleInput({ e, id: row.id, header })}
+            ?required=${field.required}
+            .checked=${field.value instanceof Array
+                    ? ((_e = field.value.find((item) => item.id == row.id)) === null || _e === void 0 ? void 0 : _e[name]) === "1"
+                        ? true
+                        : false
+                    : false}
+          />
+        </td>`,
+                ],
+            ]);
+            return inputTypes.has(type)
+                ? inputTypes.get(type)
+                : inputTypes.get("default");
+        }
+    };
+    // @state() private hasTransformedField = false;
+    LMSMatrix.styles = [
+        bootstrapStyles,
+        i$5 `
+      input[type="checkbox"].form-control {
+        font-size: 0.375rem;
+      }
+    `,
+    ];
+    __decorate([
+        e$2({ type: Object })
+    ], LMSMatrix.prototype, "field", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSMatrix.prototype, "value", void 0);
+    LMSMatrix = __decorate([
+        e$3("lms-matrix")
+    ], LMSMatrix);
+    var LMSMatrix$1 = LMSMatrix;
+
+    let LMSPrimitivesInput = class LMSPrimitivesInput extends s {
+        constructor() {
+            super(...arguments);
+            this.field = {};
+            this.value = "";
+        }
+        render() {
+            var _a;
+            const { name, value, desc, type, required } = this.field;
+            return x ` <div class="form-group">
+      <label for=${name}>${desc}</label>
+      <input
+        type=${l(type)}
+        name=${name}
+        id=${name}
+        value=${l(typeof this.value === "string" ? this.value : (_a = this.value) === null || _a === void 0 ? void 0 : _a.toString())}
+        class="form-control"
+        @input=${(e) => {
+            var _a;
+            this.field.value = (_a = e.target.value) !== null && _a !== void 0 ? _a : value;
+        }}
+        ?required=${required}
+      />
+    </div>`;
+        }
+    };
+    LMSPrimitivesInput.styles = [bootstrapStyles];
+    __decorate([
+        e$2({ type: Object })
+    ], LMSPrimitivesInput.prototype, "field", void 0);
+    __decorate([
+        e$2({ type: Object })
+    ], LMSPrimitivesInput.prototype, "value", void 0);
+    LMSPrimitivesInput = __decorate([
+        e$3("lms-primitives-input")
+    ], LMSPrimitivesInput);
+    var LMSPrimitivesInput$1 = LMSPrimitivesInput;
+
+    let LMSSelect = class LMSSelect extends s {
+        constructor() {
+            super(...arguments);
+            this.defaultOption = {};
+            this.field = {};
+        }
+        firstUpdated() {
+            const { dbData } = this.field;
+            if (dbData === null || dbData === void 0 ? void 0 : dbData.length) {
+                const [defaultOption] = dbData;
+                const { id } = defaultOption;
+                this.field.value = id.toString();
+                this.defaultOption = defaultOption;
+            }
+        }
+        render() {
+            const { name, desc, value, required, dbData } = this.field;
+            return x `
+      <div class="form-group">
+        <label for=${name}>${desc}</label>
+        <select
+          name=${name}
+          id=${name}
+          class="form-control"
+          @change=${(e) => {
+            var _a;
+            this.field.value = (_a = e.target.value) !== null && _a !== void 0 ? _a : value;
+            this.dispatchEvent(new CustomEvent("change", {
+                detail: {
+                    name,
+                    value: this.field.value,
+                },
+                composed: true,
+                bubbles: true,
+            }));
+        }}
+          ?required=${required}
+        >
+          ${o$2(dbData, ({ id, name }) => x `<option
+                value=${id}
+                ?selected=${id === this.defaultOption.id}
+              >
+                ${name}
+              </option>`)}
+        </select>
+      </div>
+    `;
+        }
+    };
+    LMSSelect.styles = [bootstrapStyles];
+    __decorate([
+        e$2({ type: Object })
+    ], LMSSelect.prototype, "field", void 0);
+    LMSSelect = __decorate([
+        e$3("lms-select")
+    ], LMSSelect);
+    var LMSSelect$1 = LMSSelect;
 
     /*! gettext.js - Guillaume Potier - MIT Licensed */
     var i18n = function (options) {
@@ -731,6 +638,13 @@
      };
     };
 
+    /**
+     * @license
+     * Copyright 2017 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */
+    const t={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e=t=>(...e)=>({_$litDirective$:t,values:e});class i$1{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
+
     let i18nInstance;
     let translationsLoaded = false;
     const callbacks = [];
@@ -943,1707 +857,6 @@
   }
 `;
 
-    let LMSCardDetailsModal = class LMSCardDetailsModal extends s {
-        constructor() {
-            super(...arguments);
-            this.event = {};
-            this.isOpen = false;
-            this.event_types = [];
-            this.locations = [];
-            this.target_groups = [];
-            this.locale = "en";
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            const event_types = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
-                return response.json();
-            };
-            event_types().then((event_types) => (this.event_types = event_types));
-            const locations = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/public/locations");
-                return response.json();
-            };
-            locations().then((locations) => (this.locations = locations));
-            const target_groups = async () => {
-                const response = await fetch("/api/v1/contrib/eventmanagement/public/target_groups");
-                return response.json();
-            };
-            target_groups().then((target_groups) => (this.target_groups = target_groups));
-            this.locale = document.documentElement.lang;
-        }
-        handleSimulatedBackdropClick(event) {
-            if (event.target === event.currentTarget) {
-                this.toggleModal();
-            }
-        }
-        toggleModal() {
-            const { renderRoot } = this;
-            this.isOpen = !this.isOpen;
-            document.body.style.overflow = this.isOpen ? "hidden" : "auto";
-            const lmsModal = renderRoot.getElementById("lms-modal");
-            if (lmsModal) {
-                lmsModal.style.overflowY = this.isOpen ? "scroll" : "auto";
-            }
-            if (!this.isOpen) {
-                this.dispatchEvent(new CustomEvent("close", {
-                    bubbles: true,
-                    composed: true,
-                }));
-            }
-        }
-        willUpdate() {
-            const { event } = this;
-            const { event_type, location, target_groups } = event;
-            // Resolve event_type and location ids to their state representations
-            if (event_type && typeof event_type === "string") {
-                const et = this.event_types.find((type) => type.id === parseInt(event_type, 10));
-                this.event.event_type = et !== null && et !== void 0 ? et : {};
-            }
-            if (location && typeof location === "string") {
-                const loc = this.locations.find((loc) => loc.id === parseInt(location, 10));
-                this.event.location = loc !== null && loc !== void 0 ? loc : {};
-            }
-            if (target_groups &&
-                target_groups.every((tg) => ({}.hasOwnProperty.call(tg, "target_group_id")))) {
-                const selectedTargetGroups = this.target_groups.filter((target_group) => target_groups.some((tg) => tg.target_group_id === target_group.id));
-                this.event.target_groups = selectedTargetGroups.map((tg) => {
-                    var _a, _b;
-                    return ({
-                        ...tg,
-                        fee: (_b = (_a = target_groups.find((etg) => etg.target_group_id === tg.id)) === null || _a === void 0 ? void 0 : _a.fee) !== null && _b !== void 0 ? _b : 0,
-                    });
-                });
-            }
-        }
-        updated() {
-            if (this.isOpen && this.closeButton) {
-                this.closeButton.focus();
-            }
-        }
-        render() {
-            const { name, description, location, image, registration_link, start_time, end_time, target_groups, } = this.event;
-            return x `
-      <div class="backdrop" ?hidden=${!this.isOpen}></div>
-      <div
-        class="modal fade ${o$2({
-            "d-block": this.isOpen,
-            show: this.isOpen,
-        })}"
-        id="lms-modal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="lms-modal-title"
-        aria-hidden="true"
-        @click=${this.handleSimulatedBackdropClick}
-      >
-        <div
-          class="modal-dialog modal-xl modal-dialog-centered"
-          role="document"
-        >
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="lms-modal-title">
-                ${name !== null && name !== void 0 ? name : "Event"}
-              </h5>
-              <button
-                @click=${this.toggleModal}
-                type="button"
-                class="close"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="col">
-                  <div>
-                    <p class="wrapper">
-                      <span>${litFontawesome_2(faCalendar)}</span>
-                      <strong>${__("Date and Time")}</strong>
-                    </p>
-                    <p class="wrapper">
-                      ${this.formatDatetimeByLocale(start_time)}
-                      <span>${litFontawesome_2(faArrowRight)}</span>
-                      ${this.formatDatetimeByLocale(end_time)}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p class="wrapper">
-                      <span>${litFontawesome_2(faInfoCircle)}</span>
-                      <strong>${__("Description")}</strong>
-                    </p>
-                    <p>${description}</p>
-                  </div>
-                </div>
-                <div class="col">
-                  <img
-                    src=${image}
-                    ?hidden=${!image}
-                    class="w-100 mb-4 rounded"
-                  />
-
-                  <div>
-                    <p class="wrapper">
-                      <span>${litFontawesome_2(faCreditCard)}</span>
-                      <strong>${__("Fees")}</strong>
-                    </p>
-                    <table class="table table-sm table-borderless">
-                      <thead>
-                        <tr>
-                          <th scope="col">${__("Target Group")}</th>
-                          <th scope="col">${__("Age Range")}</th>
-                          <th scope="col">${__("Fee")}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        ${o$1(target_groups, (target_group) => {
-            if ({}.hasOwnProperty.call(target_group, "target_group_id")) {
-                return A;
-            }
-            const { name, fee, min_age, max_age } = target_group;
-            return x `
-                            <tr>
-                              <td>${name}</td>
-                              <td>${min_age} - ${max_age}</td>
-                              <td>${fee}</td>
-                            </tr>
-                          `;
-        })}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div>
-                    <p class="wrapper">
-                      <span>${litFontawesome_2(faMapMarker)}</span>
-                      <strong>${__("Location")}</strong>
-                    </p>
-                    <p>
-                      ${typeof location === "string"
-            ? A
-            : this.formatAddressByLocale(location)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-                @click=${this.toggleModal}
-              >
-                ${__("Close")}
-              </button>
-              <a
-                role="button"
-                class="btn btn-primary"
-                ?hidden=${!registration_link}
-                href=${registration_link}
-              >
-                ${__("Register")}
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-        }
-        formatDatetimeByLocale(datetime) {
-            if (datetime) {
-                return new Intl.DateTimeFormat(this.locale, {
-                    dateStyle: "full",
-                    timeStyle: "short",
-                }).format(new Date(datetime));
-            }
-            return A;
-        }
-        formatAddressByLocale(address) {
-            if (address) {
-                const { name, street, number, city, zip, country } = address;
-                return x ` <strong>${name}</strong><br />
-        ${street} ${number}<br />
-        ${zip} ${city}<br />
-        ${country}`;
-            }
-            return A;
-        }
-    };
-    LMSCardDetailsModal.styles = [
-        bootstrapStyles,
-        skeletonStyles,
-        i$5 `
-      .backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgb(0 0 0 / 50%);
-        z-index: 1048;
-      }
-
-      svg {
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        color: #6c757d;
-      }
-
-      .wrapper {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25em;
-      }
-    `,
-    ];
-    __decorate([
-        e$2({ type: Object })
-    ], LMSCardDetailsModal.prototype, "event", void 0);
-    __decorate([
-        e$2({ type: Boolean })
-    ], LMSCardDetailsModal.prototype, "isOpen", void 0);
-    __decorate([
-        t$1()
-    ], LMSCardDetailsModal.prototype, "event_types", void 0);
-    __decorate([
-        t$1()
-    ], LMSCardDetailsModal.prototype, "locations", void 0);
-    __decorate([
-        t$1()
-    ], LMSCardDetailsModal.prototype, "target_groups", void 0);
-    __decorate([
-        t$1()
-    ], LMSCardDetailsModal.prototype, "locale", void 0);
-    __decorate([
-        i$2(".close")
-    ], LMSCardDetailsModal.prototype, "closeButton", void 0);
-    LMSCardDetailsModal = __decorate([
-        e$3("lms-card-details-modal")
-    ], LMSCardDetailsModal);
-    var LMSCardDetailsModal$1 = LMSCardDetailsModal;
-
-    let LMSDropdown = class LMSDropdown extends s {
-        constructor() {
-            super(...arguments);
-            this.isHidden = false;
-            this.shouldFold = false;
-            this.isOpen = false;
-            this.label = "";
-        }
-        handleDropdownToggle() {
-            this.dispatchEvent(new CustomEvent("toggle", { bubbles: true, composed: true }));
-            this.isOpen = !this.isOpen;
-        }
-        render() {
-            return x `
-      <div
-        class="btn-group ${o$2({
-            "d-none": this.isHidden,
-            "w-100": this.shouldFold,
-        })}"
-        dropdown-menu-wrapper
-      >
-        <button
-          type="button"
-          class="btn btn-outline-secondary dropdown-toggle ${o$2({
-            "btn-sm": this.shouldFold,
-        })}"
-          aria-haspopup="true"
-          aria-expanded=${this.isOpen}
-          @click=${this.handleDropdownToggle}
-        >
-          ${this.label}
-        </button>
-        <div class="dropdown-menu w-100 p-2 ${o$2({ show: this.isOpen })}">
-          <slot></slot>
-        </div>
-      </div>
-    `;
-        }
-    };
-    LMSDropdown.styles = [bootstrapStyles];
-    __decorate([
-        e$2({ type: Boolean })
-    ], LMSDropdown.prototype, "isHidden", void 0);
-    __decorate([
-        e$2({ type: Boolean })
-    ], LMSDropdown.prototype, "shouldFold", void 0);
-    __decorate([
-        e$2({ type: Boolean })
-    ], LMSDropdown.prototype, "isOpen", void 0);
-    __decorate([
-        e$2({ type: String })
-    ], LMSDropdown.prototype, "label", void 0);
-    __decorate([
-        e$1("input")
-    ], LMSDropdown.prototype, "inputs", void 0);
-    LMSDropdown = __decorate([
-        e$3("lms-dropdown")
-    ], LMSDropdown);
-    var LMSDropdown$1 = LMSDropdown;
-
-    const utilityStyles = i$5 `
-  .pointer-events-none {
-    pointer-events: none;
-  }
-
-  .w-inherit {
-    width: inherit;
-  }
-`;
-
-    class RequestHandler {
-        constructor(endpoints) {
-            this.endpoints = {};
-            if (endpoints instanceof Map) {
-                endpoints.forEach((value, key) => {
-                    this.endpoints[key] = value;
-                });
-            }
-            else {
-                this.endpoints = endpoints;
-            }
-        }
-        async request(endpoint, queryParams) {
-            const endpointData = this.endpoints[endpoint];
-            if (!endpointData) {
-                throw new Error(`Endpoint not found: ${endpoint}`);
-            }
-            const requestInfo = endpointData.requestInfo || {};
-            const cacheMode = endpointData.ignoreCache
-                ? "no-cache"
-                : endpointData.cache
-                    ? "default"
-                    : "force-cache";
-            let url = endpointData.url;
-            if (queryParams) {
-                const searchParams = new URLSearchParams(queryParams);
-                url += `?${searchParams.toString()}`;
-            }
-            else if (endpointData.queryParams) {
-                const searchParams = new URLSearchParams(endpointData.queryParams);
-                url += `?${searchParams.toString()}`;
-            }
-            const response = await fetch(url, {
-                cache: cacheMode,
-                headers: {
-                    ...requestInfo.headers,
-                    "Content-Type": "application/json",
-                },
-                method: requestInfo.method || "GET",
-                body: requestInfo.body ? JSON.stringify(requestInfo.body) : undefined,
-            });
-            return response;
-        }
-    }
-    const endpoints = {
-        getEventsPublic: {
-            url: "/api/v1/contrib/eventmanagement/public/events",
-            cache: false,
-        },
-        getTargetGroupsPublic: {
-            url: "/api/v1/contrib/eventmanagement/public/target_groups",
-            cache: true,
-        },
-        getEventTypesPublic: {
-            url: "/api/v1/contrib/eventmanagement/public/event_types",
-            cache: true,
-        },
-        getLocationsPublic: {
-            url: "/api/v1/contrib/eventmanagement/public/locations",
-            cache: true,
-        },
-    };
-    const requestHandler = new RequestHandler(endpoints);
-
-    function deepCopy(obj) {
-        if (obj === null || typeof obj !== "object")
-            return obj;
-        if (obj instanceof Date)
-            return new Date(obj.getTime());
-        if (Array.isArray(obj))
-            return obj.map((item) => deepCopy(item));
-        const newObj = Object.create(Object.getPrototypeOf(obj));
-        for (const key in obj) {
-            if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                newObj[key] = deepCopy(obj[key]);
-            }
-        }
-        return newObj;
-    }
-    function throttle(callback, delay) {
-        let previousCall = new Date().getTime();
-        return function () {
-            const time = new Date().getTime();
-            if (time - previousCall >= delay) {
-                previousCall = time;
-                callback();
-            }
-        };
-    }
-    function debounce(func, wait, immediate) {
-        let timeout = null;
-        return function (...args) {
-            const later = function () {
-                timeout = null;
-                if (!immediate)
-                    func.apply(this, args);
-            };
-            const callNow = immediate && !timeout;
-            if (timeout !== null) {
-                clearTimeout(timeout);
-            }
-            timeout = setTimeout(later, wait);
-            if (callNow) {
-                func.apply(this, args);
-            }
-        };
-    }
-
-    let LMSEventsFilter = class LMSEventsFilter extends s {
-        get eventsDeepCopy() {
-            return this._eventsDeepCopy;
-        }
-        set eventsDeepCopy(value) {
-            if (this._eventsDeepCopy.length === 0) {
-                this._eventsDeepCopy = value;
-            }
-        }
-        facetsStrategyManager() {
-            switch (this.facetsStrategy) {
-                case "preserve":
-                    return this.eventsDeepCopy;
-                case "update":
-                    return this.events;
-                default:
-                    throw new Error("Invalid facetsStrategy");
-            }
-        }
-        constructor() {
-            super();
-            this.shouldFold = window.innerWidth <= 992;
-            this.events = [];
-            this.facetsStrategy = "preserve";
-            this.isHidden = this.shouldFold;
-            this.facets = {};
-            this.event_types = [];
-            this.target_groups = [];
-            this.locations = [];
-            this.activeFilters = new Map();
-            this.inputHandlers = {
-                checkbox: (input) => {
-                    if (input.id === "open_registration") {
-                        return input.checked;
-                    }
-                    return input.checked ? input.id : false;
-                },
-                radio: (input) => (input.checked ? input.value : false),
-                date: (input) => input.value,
-                number: (input) => input.value,
-                default: (input) => input.value,
-            };
-            this.resetHandlers = {
-                checkbox: (input) => {
-                    if (input.id === "open_registration") {
-                        input.checked = true;
-                        return;
-                    }
-                    input.checked = false;
-                },
-                radio: (input) => {
-                    input.checked = false;
-                },
-                date: (input) => {
-                    input.value = "";
-                },
-                number: (input) => {
-                    if (["min_age", "max_age"].includes(input.id)) {
-                        input.value = "";
-                        return;
-                    }
-                    input.value = input.min;
-                },
-                default: (input) => {
-                    input.value = "";
-                },
-            };
-            this._eventsDeepCopy = [];
-            this.throttledHandleResize = throttle(this.handleResize.bind(this), 250);
-        }
-        handleResize() {
-            this.shouldFold = window.innerWidth <= 992;
-            this.isHidden = this.shouldFold;
-            this.requestUpdate();
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            window.addEventListener("resize", this.throttledHandleResize);
-            requestHandler
-                .request("getEventTypesPublic")
-                .then((response) => response.json())
-                .then((event_types) => (this.event_types = event_types));
-            requestHandler
-                .request("getTargetGroupsPublic")
-                .then((response) => response.json())
-                .then((target_groups) => (this.target_groups = target_groups));
-            requestHandler
-                .request("getLocationsPublic")
-                .then((response) => response.json())
-                .then((locations) => (this.locations = locations));
-        }
-        disconnectedCallback() {
-            super.disconnectedCallback();
-            window.removeEventListener("resize", this.throttledHandleResize);
-        }
-        willUpdate() {
-            this.eventsDeepCopy = deepCopy(this.events);
-            const events = this.facetsStrategyManager();
-            if (!events.length)
-                return;
-            this.facets = {
-                eventTypeIds: [...new Set(events.map((event) => event.event_type))],
-                targetGroupIds: [
-                    ...new Set(events.flatMap((event) => event.target_groups.map((target_group) => target_group.selected ? target_group.target_group_id : NaN))),
-                ].filter(Number.isInteger),
-                locationIds: [...new Set(events.map((event) => event.location))],
-                ...events
-                    .map((event) => {
-                    const { event_type, location, target_groups, ...rest } = event; // eslint-disable-line @typescript-eslint/no-unused-vars
-                    return rest;
-                })
-                    .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
-            };
-        }
-        handleReset() {
-            this.inputs.forEach((input) => this.resetHandlers[input.type](input));
-            this.dispatchEvent(new CustomEvent("filter", {
-                detail: "",
-                composed: true,
-                bubbles: true,
-            }));
-        }
-        isAllowedFilter(name, value, exclude) {
-            if (!name)
-                return false;
-            return !(name && exclude.includes(name.toString()) && value === false);
-        }
-        getParamsFromActiveFilters() {
-            var _a;
-            return [...((_a = this.inputs) !== null && _a !== void 0 ? _a : [])]
-                .filter((input) => input.value || input.checked)
-                .map((input) => {
-                var _a;
-                const handler = ((_a = this.inputHandlers) === null || _a === void 0 ? void 0 : _a[input.type]) || this.inputHandlers.default;
-                if (!handler)
-                    return [input.name, undefined];
-                const value = handler(input);
-                return [input.name, value];
-            })
-                .filter(([name, value]) => this.isAllowedFilter(name, value, [
-                "event_type",
-                "target_group",
-                "location",
-                "_order_by",
-            ]));
-        }
-        handleChange() {
-            const query = new URLSearchParams();
-            this.getParamsFromActiveFilters().forEach(([name, value]) => {
-                if (typeof name === "string" && value !== undefined) {
-                    return query.append(name, value === null || value === void 0 ? void 0 : value.toString());
-                }
-            });
-            this.dispatchEvent(new CustomEvent("filter", {
-                detail: query.toString(),
-                composed: true,
-                bubbles: true,
-            }));
-        }
-        handleSearch(e) {
-            const { detail } = e;
-            const query = new URLSearchParams();
-            this.getParamsFromActiveFilters().forEach(([name, value]) => {
-                if (typeof name === "string" && value !== undefined) {
-                    return query.append(name, value === null || value === void 0 ? void 0 : value.toString());
-                }
-            });
-            if (detail) {
-                const q = [
-                    { name: { "-like": `%${detail}%` } },
-                    { description: { "-like": `%${detail}%` } },
-                ];
-                query.append("q", JSON.stringify(q));
-            }
-            else {
-                query.append("q", JSON.stringify({}));
-            }
-            this.dispatchEvent(new CustomEvent("search", {
-                detail: query.toString(),
-                composed: true,
-                bubbles: true,
-            }));
-        }
-        emitChange(e) {
-            const target = e.target;
-            if (target) {
-                target.dispatchEvent(new Event("change", { composed: true, bubbles: true }));
-            }
-        }
-        handleHideToggle() {
-            this.isHidden = !this.isHidden;
-            this.dispatchEvent(new CustomEvent("hide", {
-                detail: this.isHidden,
-                composed: true,
-                bubbles: true,
-            }));
-        }
-        handleDropdownToggle(e) {
-            const target = e.target;
-            this.lmsDropdowns.forEach((lmsDropdown) => {
-                if (lmsDropdown !== target) {
-                    lmsDropdown.isOpen = false;
-                }
-            });
-        }
-        render() {
-            return x `
-      <div class="card" @change=${this.handleChange}>
-        <div
-          class="card-header container-fluid ${o$2({
-            "justify-content-between": !this.isHidden,
-            "justify-content-center": this.isHidden,
-            "flex-column": this.shouldFold,
-        })} sticky-top bg-white"
-        >
-          <div class="row">
-            <div
-              class="col-1 ${o$2({
-            "d-none": this.shouldFold,
-        })}"
-            >
-              <h5
-                class="nobr ${o$2({
-            "d-inline": !this.shouldFold,
-        })}"
-              >
-                ${__("Filter")}
-              </h5>
-            </div>
-
-            <div
-              class=${o$2({
-            "col-3": !this.shouldFold,
-            "mb-3": this.shouldFold,
-            "col-12": this.shouldFold,
-        })}
-            >
-              <lms-search @search=${this.handleSearch}></lms-search>
-            </div>
-
-            <div
-              class=${o$2({
-            col: !this.shouldFold,
-            "col-12": this.shouldFold,
-        })}
-            >
-              <div
-                class="btn-group ${o$2({
-            "d-none": !this.shouldFold,
-            "w-100": this.shouldFold,
-        })}"
-              >
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary btn-sm"
-                  @click=${this.handleHideToggle}
-                  aria-label=${this.isHidden
-            ? attr__("Show filters")
-            : attr__("Hide filters")}
-                >
-                  ${this.isHidden ? __("Show filters") : __("Hide filters")}
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary btn-sm"
-                  @click=${this.handleReset}
-                >
-                  ${__("Reset filters")}
-                </button>
-              </div>
-
-              <div
-                class="dropdowns ${o$2({
-            "d-flex": !this.shouldFold,
-            "flex-wrap": !this.shouldFold,
-            "gap-3": !this.shouldFold,
-        })}"
-              >
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Sort by")}
-                  @toggle=${this.handleDropdownToggle}
-                >
-                  ${o$1(["start_time", "end_time", "event_type", "location"], (value, index) => x `
-                      <div>
-                        <input
-                          type="radio"
-                          id="_order_by_${value}"
-                          name="_order_by"
-                          value=${value}
-                          ?checked=${index === 0}
-                        />
-                        <label for="_order_by_${value}">${__(value)}</label>
-                      </div>
-                    `)}
-                </lms-dropdown>
-
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Event Type")}
-                  @toggle=${this.handleDropdownToggle}
-                >
-                  ${o$1(this.facets.eventTypeIds, (eventTypeId) => {
-            var _a;
-            return x `
-                      <div class="form-group form-check">
-                        <input
-                          type="checkbox"
-                          class="form-check-input"
-                          name="event_type"
-                          id=${eventTypeId}
-                        />
-                        <label class="form-check-label" for=${eventTypeId}
-                          >${(_a = this.event_types.find((event_type) => event_type.id === parseInt(eventTypeId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
-                        >
-                      </div>
-                    `;
-        })}
-                </lms-dropdown>
-
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Target Group")}
-                  @toggle=${this.handleDropdownToggle}
-                >
-                  ${o$1(this.facets.targetGroupIds, (targetGroupId) => {
-            var _a;
-            return x `
-                      <div class="form-group form-check">
-                        <input
-                          type="checkbox"
-                          class="form-check-input"
-                          name="target_group"
-                          id=${targetGroupId}
-                        />
-                        <label class="form-check-label" for=${targetGroupId}
-                          >${(_a = this.target_groups.find((target_group) => target_group.id === targetGroupId)) === null || _a === void 0 ? void 0 : _a.name}</label
-                        >
-                      </div>
-                    `;
-        })}
-                </lms-dropdown>
-
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Age")}
-                  @toggle=${this.handleDropdownToggle}
-                >
-                  <div class="form-group">
-                    <label for="min_age">${__("Min Age")}</label>
-                    <input
-                      type="number"
-                      class="form-control form-control-sm"
-                      id="min_age"
-                      name="min_age"
-                      min="0"
-                      max="120"
-                      value=""
-                      @input=${this.emitChange}
-                    />
-                    <label for="max_age">${__("Max Age")}</label>
-                    <input
-                      type="number"
-                      class="form-control form-control-sm"
-                      id="max_age"
-                      name="max_age"
-                      min="0"
-                      max="120"
-                      value=""
-                      @input=${this.emitChange}
-                    />
-                  </div>
-                </lms-dropdown>
-
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Registration & Dates")}
-                  @toggle=${this.handleDropdownToggle}
-                >
-                  <div class="form-check">
-                    <input
-                      type="checkbox"
-                      class="form-check-input"
-                      id="open_registration"
-                      name="open_registration"
-                      checked
-                    />
-                    <label for="open_registration"
-                      >${__("Open Registration")}</label
-                    >
-                  </div>
-                  <div class="form-group">
-                    <label for="start_time">${__("Start Date")}</label>
-                    <input
-                      type="date"
-                      class="form-control form-control-sm"
-                      id="start_time"
-                      name="start_time"
-                    />
-                    <label for="end_time">${__("End Date")}</label>
-                    <input
-                      type="date"
-                      class="form-control form-control-sm"
-                      id="end_time"
-                      name="end_time"
-                    /></div
-                ></lms-dropdown>
-
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Location")}
-                  @toggle=${this.handleDropdownToggle}
-                >
-                  ${o$1(this.facets.locationIds, (locationId) => {
-            var _a;
-            return x ` <div class="form-group form-check">
-                        <input
-                          type="checkbox"
-                          class="form-check-input"
-                          name="location"
-                          id=${locationId}
-                        />
-                        <label class="form-check-label" for=${locationId}
-                          >${(_a = this.locations.find((location) => location.id === parseInt(locationId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
-                        >
-                      </div>`;
-        })}
-                </lms-dropdown>
-
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Fee")}
-                  @toggle=${this.handleDropdownToggle}
-                >
-                  <div class="form-group">
-                    <label for="fee">${__("Fee")}</label>
-                    <input
-                      type="number"
-                      class="form-control form-control-sm"
-                      id="fee"
-                      name="fee"
-                      @input=${this.emitChange}
-                    />
-                  </div>
-                </lms-dropdown>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <slot></slot>
-        </div>
-      </div>
-    `;
-        }
-    };
-    LMSEventsFilter.styles = [
-        bootstrapStyles,
-        skeletonStyles,
-        utilityStyles,
-        i$5 `
-      .gap-3 {
-        gap: 1rem;
-      }
-
-      .nobr {
-        white-space: nowrap;
-      }
-    `,
-    ];
-    __decorate([
-        e$2({ type: Array })
-    ], LMSEventsFilter.prototype, "events", void 0);
-    __decorate([
-        e$2({ type: String })
-    ], LMSEventsFilter.prototype, "facetsStrategy", void 0);
-    __decorate([
-        e$2({ type: Boolean })
-    ], LMSEventsFilter.prototype, "isHidden", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsFilter.prototype, "facets", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsFilter.prototype, "event_types", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsFilter.prototype, "target_groups", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsFilter.prototype, "locations", void 0);
-    __decorate([
-        t$1()
-    ], LMSEventsFilter.prototype, "activeFilters", void 0);
-    __decorate([
-        e$1("input")
-    ], LMSEventsFilter.prototype, "inputs", void 0);
-    __decorate([
-        e$1("lms-dropdown")
-    ], LMSEventsFilter.prototype, "lmsDropdowns", void 0);
-    LMSEventsFilter = __decorate([
-        e$3("lms-events-filter")
-    ], LMSEventsFilter);
-    var LMSEventsFilter$1 = LMSEventsFilter;
-
-    let LMSFloatingMenu = class LMSFloatingMenu extends s {
-        constructor() {
-            super(...arguments);
-            this.brand = "Navigation";
-            this.items = [];
-            this._currentUrl = window.location.href;
-            this._currentSearchParams = new URLSearchParams(window.location.search);
-            this.isOpen = false;
-        }
-        toggleNavbarCollapse() {
-            this.navbarNav.classList.toggle("collapse");
-            if (this.navbarNav.classList.contains("show")) {
-                this.isOpen = true;
-                return;
-            }
-            this.isOpen = false;
-        }
-        render() {
-            return x ` <nav
-      class="navbar navbar-expand-lg navbar-light mx-2 mt-3 mb-5 rounded"
-    >
-      <a class="navbar-brand" href="#"><strong>${this.brand}</strong></a>
-      <button
-        @click=${this.toggleNavbarCollapse}
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded=${this.isOpen}
-        aria-label=${attr__("Toggle navigation")}
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          ${this.items.map((item) => {
-            /** We split the searchParams from the URL and
-             *  compare them to the currentSearchParams of
-             *  the window.location. If they match, we add
-             *  the "active" class to the item. */
-            let [, itemSearchParams] = item.url.split("?");
-            itemSearchParams = new URLSearchParams(itemSearchParams !== null && itemSearchParams !== void 0 ? itemSearchParams : "");
-            const matches = itemSearchParams.toString() ===
-                this._currentSearchParams.toString();
-            return x ` <li class="nav-item ${matches ? "active" : ""}">
-              <a class="nav-link" href="${item.url}"
-                >${litFontawesome_2(item.icon)}
-                ${item.name}${matches
-                ? x ` <span class="sr-only">(${__("current")})</span>`
-                : ""}</a
-              >
-            </li>`;
-        })}
-        </ul>
-      </div>
-    </nav>`;
-        }
-    };
-    LMSFloatingMenu.styles = [
-        bootstrapStyles,
-        skeletonStyles,
-        i$5 `
-      svg {
-        width: 1rem;
-        height: 1rem;
-      }
-
-      nav {
-        background-color: var(--background-color);
-        backdrop-filter: blur(5px);
-        box-shadow: var(--shadow-hv);
-      }
-    `,
-    ];
-    __decorate([
-        e$2({ type: String })
-    ], LMSFloatingMenu.prototype, "brand", void 0);
-    __decorate([
-        e$2({
-            type: Array,
-            converter: (value) => (value ? JSON.parse(value) : []),
-        })
-    ], LMSFloatingMenu.prototype, "items", void 0);
-    __decorate([
-        e$2({ type: String, attribute: false })
-    ], LMSFloatingMenu.prototype, "_currentUrl", void 0);
-    __decorate([
-        e$2({ type: String, attribute: false })
-    ], LMSFloatingMenu.prototype, "_currentSearchParams", void 0);
-    __decorate([
-        i$2("#navbarNav")
-    ], LMSFloatingMenu.prototype, "navbarNav", void 0);
-    LMSFloatingMenu = __decorate([
-        e$3("lms-floating-menu")
-    ], LMSFloatingMenu);
-    var LMSFloatingMenu$1 = LMSFloatingMenu;
-
-    function createWrapper(breakpoints) {
-        const [block, none] = breakpoints;
-        return x `
-    <div
-      class="w-100 d-none ${`d-${block}-block`} ${none
-        ? `d-${none}-none`
-        : `d-none`}"
-    ></div>
-  `;
-    }
-    function insertResponsiveWrapper(index) {
-        const breakpoints = [
-            { n: 2, breakpoints: ["sm", "md"] },
-            { n: 3, breakpoints: ["md", "lg"] },
-            { n: 4, breakpoints: ["lg", "xl"] },
-            { n: 5, breakpoints: ["xl", ""] },
-        ];
-        const wrappers = breakpoints
-            .filter(({ n }) => (index + 1) % n === 0)
-            .map(({ breakpoints }) => createWrapper(breakpoints));
-        return wrappers;
-    }
-
-    let LMSImageBrowser = class LMSImageBrowser extends s {
-        constructor() {
-            super(...arguments);
-            this.uploadedImages = [];
-            this.boundEventHandler = () => undefined;
-        }
-        loadImages() {
-            const uploadedImages = async () => await fetch("/api/v1/contrib/eventmanagement/images");
-            uploadedImages()
-                .then(async (response) => await response.json())
-                .then((uploadedImages) => {
-                this.uploadedImages = uploadedImages;
-            })
-                .catch((error) => {
-                console.error(error);
-            });
-        }
-        handleClipboardCopy(hashvalue) {
-            navigator.clipboard.writeText(`/cgi-bin/koha/opac-retrieve-file.pl?id=${hashvalue}`);
-        }
-        handleMessageEvent(event) {
-            if (event.data === "reloaded") {
-                this.loadImages();
-            }
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            /** This is the counterpart to the script in the intranet_js hook */
-            this.boundEventHandler = this.handleMessageEvent.bind(this);
-            window.addEventListener("message", this.boundEventHandler);
-            /** This loadImages call is independent of the eventListener. */
-            this.loadImages();
-        }
-        disconnectedCallback() {
-            super.disconnectedCallback();
-            window.removeEventListener("message", this.boundEventHandler);
-        }
-        updated(changedProperties) {
-            const shouldUpdateTooltipTargets = changedProperties.has("uploadedImages") &&
-                this.buttonReferences &&
-                this.tooltipReferences;
-            if (shouldUpdateTooltipTargets) {
-                this.tooltipReferences.forEach((tooltipReference) => {
-                    const { id } = tooltipReference;
-                    const tooltipHashvalue = id.split("-").pop();
-                    tooltipReference.target = Array.from(this.buttonReferences).find((buttonReference) => {
-                        const { id } = buttonReference;
-                        const buttonHashvalue = id.split("-").pop();
-                        return buttonHashvalue === tooltipHashvalue
-                            ? buttonReference
-                            : null;
-                    });
-                });
-            }
-        }
-        render() {
-            return x `
-      <div class="container-fluid">
-        <div class="card-deck">
-          ${o$1(this.uploadedImages, (uploadedImage, index) => {
-            const { image, metadata } = uploadedImage;
-            const { dtcreated, filename, hashvalue } = metadata;
-            const filetype = filename.split(".").pop();
-            let isValidFiletype;
-            if (filetype) {
-                isValidFiletype = [
-                    "png",
-                    "jpg",
-                    "jpeg",
-                    "webp",
-                    "avif",
-                    "gif",
-                ].includes(filetype);
-            }
-            return x `
-              <div class="card mb-5">
-                <img
-                  ?hidden=${!isValidFiletype}
-                  src="data:image/${filetype};base64,${image}"
-                  class="card-img-top"
-                  alt=${filename}
-                />
-                <div class="card-body">
-                  <p
-                    data-placement="top"
-                    title=${attr__("Link constructed!")}
-                    @click=${() => {
-                this.handleClipboardCopy(hashvalue);
-            }}
-                    class="font-weight-bold p-2 border border-secondary rounded text-center"
-                  >
-                    ${hashvalue}
-                  </p>
-                  <div class="text-center">
-                    <lms-tooltip
-                      id="tooltip-${hashvalue}"
-                      data-placement="top"
-                      data-text="${attr__("Link constructed")}!"
-                      data-timeout="1000"
-                    >
-                      <button
-                        id="button-${hashvalue}"
-                        data-placement="bottom"
-                        title="${attr__("Link constructed")}!"
-                        @click=${() => {
-                this.handleClipboardCopy(hashvalue);
-            }}
-                        class="btn btn-primary text-center"
-                      >
-                        ${litFontawesome_2(faCopy)}
-                        <span>${__("Copy to clipboard")}</span>
-                      </button>
-                    </lms-tooltip>
-                  </div>
-                </div>
-                <div class="card-footer">
-                  <p class="font-weight-light text-muted font-size-sm">
-                    ${filename}&nbsp;-&nbsp;${dtcreated}
-                  </p>
-                </div>
-              </div>
-              ${insertResponsiveWrapper(index)}
-            `;
-        })}
-        </div>
-      </div>
-    `;
-        }
-    };
-    LMSImageBrowser.styles = [
-        bootstrapStyles,
-        skeletonStyles,
-        i$5 `
-      img {
-        aspect-ratio: 4 / 3;
-        object-fit: cover;
-      }
-
-      img,
-      .card {
-        max-width: 300px;
-      }
-
-      .font-size-sm {
-        font-size: 1rem;
-      }
-
-      svg {
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        color: #ffffff;
-      }
-
-      button {
-        white-space: nowrap;
-      }
-
-      button.btn-modal > svg {
-        color: var(--text-color);
-      }
-    `,
-    ];
-    __decorate([
-        e$2({
-            type: Array,
-            attribute: "uploaded-images",
-            converter: { fromAttribute: (value) => (value ? JSON.parse(value) : []) },
-        })
-    ], LMSImageBrowser.prototype, "uploadedImages", void 0);
-    __decorate([
-        e$1('[id^="button-"]')
-    ], LMSImageBrowser.prototype, "buttonReferences", void 0);
-    __decorate([
-        e$1('[id^="tooltip-"]')
-    ], LMSImageBrowser.prototype, "tooltipReferences", void 0);
-    LMSImageBrowser = __decorate([
-        e$3("lms-image-browser")
-    ], LMSImageBrowser);
-    var LMSImageBrowser$1 = LMSImageBrowser;
-
-    /**
-     * @license
-     * Copyright 2018 Google LLC
-     * SPDX-License-Identifier: BSD-3-Clause
-     */const i="important",n=" !"+i,o=e(class extends i$1{constructor(t$1){var e;if(super(t$1),t$1.type!==t.ATTRIBUTE||"style"!==t$1.name||(null===(e=t$1.strings)||void 0===e?void 0:e.length)>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(t){return Object.keys(t).reduce(((e,r)=>{const s=t[r];return null==s?e:e+`${r=r.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${s};`}),"")}update(e,[r]){const{style:s}=e.element;if(void 0===this.ut){this.ut=new Set;for(const t in r)this.ut.add(t);return this.render(r)}this.ut.forEach((t=>{null==r[t]&&(this.ut.delete(t),t.includes("-")?s.removeProperty(t):s[t]="");}));for(const t in r){const e=r[t];if(null!=e){this.ut.add(t);const r="string"==typeof e&&e.endsWith(n);t.includes("-")||r?s.setProperty(t,r?e.slice(0,-11):e,r?i:""):s[t]=e;}}return T}});
-
-    class IntersectionObserverHandler {
-        constructor({ intersecting, intersected }) {
-            this.observer = null;
-            this.intersecting = intersecting;
-            this.intersected = intersected;
-        }
-        init() {
-            if (this.intersecting.ref instanceof HTMLElement &&
-                this.intersected.ref instanceof HTMLElement) {
-                this.observer = new IntersectionObserver((entries) => {
-                    entries.forEach((entry) => {
-                        var _a, _b, _c, _d;
-                        if (entry.target === this.intersecting.ref &&
-                            entry.isIntersecting &&
-                            entry.intersectionRatio > 0) {
-                            (_b = (_a = this.intersecting).do) === null || _b === void 0 ? void 0 : _b.call(_a);
-                        }
-                        else if (entry.target === this.intersected.ref &&
-                            entry.isIntersecting &&
-                            entry.intersectionRatio > 0) {
-                            (_d = (_c = this.intersected).do) === null || _d === void 0 ? void 0 : _d.call(_c);
-                        }
-                    });
-                });
-                this.observer.observe(this.intersecting.ref);
-                this.observer.observe(this.intersected.ref);
-            }
-            else {
-                throw new Error("Invalid parameters supplied to IntersectionObserverClass. Please ensure both 'intersecting' and 'intersected' are valid Intersectable types.");
-            }
-        }
-    }
-
-    let LMSModal = class LMSModal extends s {
-        constructor() {
-            var _a;
-            super(...arguments);
-            this.fields = [];
-            this.createOpts = {
-                endpoint: "",
-            };
-            this.editable = false;
-            this.isOpen = false;
-            this.alert = { active: false, message: undefined };
-            this.modalTitle = "";
-            /** TODO: Maybe we can find a cleaner way to do the intersection observations than in the base modal component */
-            this.footer = (_a = document.getElementById("i18nMenu")) === null || _a === void 0 ? void 0 : _a.parentElement;
-            this.intersectionObserverHandler = null;
-        }
-        toggleModal() {
-            this.isOpen = !this.isOpen;
-            document.body.style.overflow = this.isOpen ? "hidden" : "auto";
-            if (!this.isOpen) {
-                this.alert = {
-                    active: false,
-                    message: undefined,
-                };
-            }
-        }
-        getEndpointUrl(endpoint, locale) {
-            const _endpoint = new URL(endpoint, window.location.origin);
-            if (locale !== "en") {
-                _endpoint.searchParams.append("lang", locale);
-            }
-            return _endpoint.toString();
-        }
-        async create(e) {
-            e.preventDefault();
-            const { endpoint, method } = this.createOpts;
-            const response = await fetch(this.getEndpointUrl(endpoint, locale), {
-                method,
-                body: JSON.stringify({
-                    ...Object.assign({}, ...this.fields.map((field) => ({
-                        [field.name]: field.value,
-                    }))),
-                }),
-            });
-            if (response.ok) {
-                this.toggleModal();
-                const event = new CustomEvent("created", { bubbles: true });
-                this.dispatchEvent(event);
-            }
-            if (!response.ok) {
-                const result = await response.json();
-                if (result.error) {
-                    this.alert = {
-                        active: true,
-                        message: Array.isArray(result.error)
-                            ? x `<span>Sorry!</span>
-                <ol>
-                  ${o$1(result.error, (message) => x `<li>${message}</li>`)}
-                </ol>`
-                            : x `<span>Sorry! ${result.error}</span>`,
-                    };
-                    return;
-                }
-                if (result.errors) {
-                    console.trace(result.errors);
-                }
-            }
-        }
-        dismissAlert() {
-            this.alert = {
-                active: false,
-                message: undefined,
-            };
-        }
-        firstUpdated() {
-            if (this.footer && this.btnModalWrapper) {
-                this.intersectionObserverHandler = new IntersectionObserverHandler({
-                    intersecting: {
-                        ref: this.btnModalWrapper,
-                        do: () => {
-                            const bottom = parseFloat(getComputedStyle(this.btnModalWrapper).bottom);
-                            this.btnModalWrapper.style.bottom = `${bottom + (this.footer ? this.footer.offsetHeight : 0)}px`;
-                        },
-                    },
-                    intersected: {
-                        ref: this.footer,
-                    },
-                });
-                this.intersectionObserverHandler.init();
-            }
-            const dbDataPopulated = this.fields.map(async (field) => {
-                if (field.logic) {
-                    return {
-                        ...field,
-                        dbData: await field.logic(),
-                    };
-                }
-                return field;
-            });
-            Promise.all(dbDataPopulated).then((fields) => {
-                this.fields = fields;
-            });
-        }
-        render() {
-            var _a;
-            return x `
-      <div
-        class="btn-modal-wrapper"
-        style=${o({
-            zIndex: this.isOpen ? "1051" : "1049",
-        })}
-      >
-        <button
-          @click=${this.toggleModal}
-          class="btn-modal ${o$2({ tilted: this.isOpen })}"
-          type="button"
-        >
-          ${litFontawesome_2(faPlus)}
-        </button>
-      </div>
-      <div
-        class="backdrop"
-        ?hidden=${!this.isOpen}
-        @click=${this.toggleModal}
-      ></div>
-      <div
-        class="modal fade ${o$2({
-            "d-block": this.isOpen,
-            show: this.isOpen,
-        })}"
-        id="lms-modal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="lms-modal-title"
-        aria-hidden=${!this.isOpen}
-        style=${o({
-            overflowY: this.isOpen ? "scroll" : "auto",
-        })}
-      >
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="lms-modal-title">
-                ${(_a = this.modalTitle) !== null && _a !== void 0 ? _a : `${__("Add")}`}
-              </h5>
-              <button
-                @click=${this.toggleModal}
-                type="button"
-                class="close"
-                aria-label=${attr__("Close")}
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <form @submit=${this.create}>
-              <div class="modal-body">
-                <div
-                  role="alert"
-                  ?hidden=${!this.alert.active}
-                  class="alert ${o$2({
-            "alert-danger": this.alert.active,
-        })} alert-dismissible fade show"
-                >
-                  ${this.alert.message}
-                  <button
-                    @click=${this.dismissAlert}
-                    type="button"
-                    class="close"
-                    data-dismiss="alert"
-                    aria-label=${attr__("Close")}
-                  >
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                ${o$1(this.fields, (value) => this.getFieldMarkup(value))}
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-dismiss="modal"
-                  @click=${this.toggleModal}
-                >
-                  ${litFontawesome_2(faClose)}
-                  <span>${__("Close")}</span>
-                </button>
-                <button type="submit" class="btn btn-primary">
-                  ${litFontawesome_2(faPlus)}
-                  <span>${__("Create")}</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    `;
-        }
-        mediateChange(e) {
-            const { name, value } = e.detail;
-            this.fields = [
-                ...this.fields.map((field) => {
-                    if (field.name === name) {
-                        return {
-                            ...field,
-                            value,
-                        };
-                    }
-                    return field;
-                }),
-            ];
-        }
-        getFieldMarkup(field) {
-            const { type, desc } = field;
-            if (!type || !desc)
-                return A;
-            const { value } = field;
-            const fieldTypes = new Map([
-                [
-                    "select",
-                    x `<lms-select
-          @change=${this.mediateChange}
-          .field=${field}
-        ></lms-select>`,
-                ],
-                [
-                    "checkbox",
-                    x `<lms-checkbox-input
-          .field=${field}
-          .value=${value}
-        ></lms-checkbox-input>`,
-                ],
-                ["info", x `<p>${desc}</p>`],
-                [
-                    "matrix",
-                    x `<lms-matrix
-          .field=${field}
-          .value=${value}
-        ></lms-matrix>`,
-                ],
-                [
-                    "default",
-                    x `<lms-primitives-input
-          .field=${field}
-          .value=${value}
-        ></lms-primitives-input>`,
-                ],
-            ]);
-            return fieldTypes.has(type)
-                ? fieldTypes.get(type)
-                : fieldTypes.get("default");
-        }
-    };
-    LMSModal.styles = [
-        bootstrapStyles,
-        skeletonStyles,
-        i$5 `
-      .btn-modal-wrapper {
-        position: fixed;
-        bottom: 1em;
-        right: 1em;
-        border-radius: 50%;
-        background-color: var(--primary-color);
-        box-shadow: var(--shadow-hv);
-        cursor: pointer;
-        z-index: 1049;
-      }
-      .btn-modal-wrapper > .btn-modal {
-        background: none;
-        border: none;
-        color: var(--text-color);
-        font-size: 2em;
-        width: 2em;
-        height: 2em;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgb(0 0 0 / 50%);
-        z-index: 1048;
-      }
-      button.btn-modal:not(.tilted) {
-        transition: 0.2s;
-        transition-timing-function: ease-in-out;
-      }
-      .tilted {
-        transition: 0.2s;
-        transition-timing-function: ease-in-out;
-        transform: rotate(45deg);
-      }
-      svg {
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        color: var(--background-color);
-      }
-      button {
-        white-space: nowrap;
-      }
-      button.btn-modal > svg {
-        color: var(--background-color);
-      }
-    `,
-    ];
-    __decorate([
-        e$2({ type: Array })
-    ], LMSModal.prototype, "fields", void 0);
-    __decorate([
-        e$2({ type: Object })
-    ], LMSModal.prototype, "createOpts", void 0);
-    __decorate([
-        e$2({ type: Boolean })
-    ], LMSModal.prototype, "editable", void 0);
-    __decorate([
-        t$1()
-    ], LMSModal.prototype, "isOpen", void 0);
-    __decorate([
-        t$1()
-    ], LMSModal.prototype, "alert", void 0);
-    __decorate([
-        t$1()
-    ], LMSModal.prototype, "modalTitle", void 0);
-    __decorate([
-        i$2(".btn-modal-wrapper")
-    ], LMSModal.prototype, "btnModalWrapper", void 0);
-    LMSModal = __decorate([
-        e$3("lms-modal")
-    ], LMSModal);
-    var LMSModal$1 = LMSModal;
-
-    let LMSSearch = class LMSSearch extends s {
-        constructor() {
-            super(...arguments);
-            this.debouncedSearch = debounce((query) => {
-                this.dispatchEvent(new CustomEvent("search", {
-                    detail: query,
-                    bubbles: true,
-                    composed: false,
-                }));
-            }, 250, false);
-        }
-        handleInput(e) {
-            const inputElement = e.target;
-            console.log(inputElement.value);
-            this.debouncedSearch(inputElement.value);
-        }
-        render() {
-            return x `
-      <div class="input-group flex-nowrap">
-        <div class="input-group-prepend">
-          <span class="input-group-text" id="addon-wrapping" aria
-            >${litFontawesome_2(faSearch)}</span
-          >
-        </div>
-        <input
-          type="text"
-          class="form-control"
-          placeholder=${attr__("Search")}
-          aria-label=${attr__("Search")}
-          aria-describedby="addon-wrapping"
-          @input=${this.handleInput}
-        />
-      </div>
-    `;
-        }
-    };
-    LMSSearch.styles = [
-        bootstrapStyles,
-        i$5 `
-      svg {
-        color: #000000;
-        height: 1rem;
-        width: 1rem;
-      }
-    `,
-    ];
-    LMSSearch = __decorate([
-        e$3("lms-search")
-    ], LMSSearch);
-    var LMSSearch$1 = LMSSearch;
-
     let LMSStaffEventCardAttendees = class LMSStaffEventCardAttendees extends s {
         render() {
             return x ` <h1 class="text-center">${__("Not implemented")}!</h1> `;
@@ -2703,7 +916,7 @@
         name="event_type"
         disabled
       >
-        ${o$1(data, ({ id, name }) => x `<option
+        ${data === null || data === void 0 ? void 0 : data.map(({ id, name }) => x `<option
               value=${id}
               ?selected=${id === parseInt(value, 10)}
             >
@@ -2732,39 +945,39 @@
               </tr>
             </thead>
             <tbody>
-              ${o$1(data, ({ id, name }) => {
+              ${data.map(({ id, name }) => {
                 var _a, _b;
                 const targetGroupFee = value.find((targetGroupFee) => targetGroupFee.target_group_id === id);
                 const selected = (_a = targetGroupFee === null || targetGroupFee === void 0 ? void 0 : targetGroupFee.selected) !== null && _a !== void 0 ? _a : false;
                 const fee = (_b = targetGroupFee === null || targetGroupFee === void 0 ? void 0 : targetGroupFee.fee) !== null && _b !== void 0 ? _b : 0;
                 return x `
-                  <tr>
-                    <td id=${id} class="align-middle">${name}</td>
-                    <td class="align-middle">
-                      <input
-                        type="checkbox"
-                        data-group="target_groups"
-                        name="selected"
-                        id=${id}
-                        class="form-control"
-                        ?checked=${selected}
-                        disabled
-                      />
-                    </td>
-                    <td class="align-middle">
-                      <input
-                        type="number"
-                        data-group="target_groups"
-                        name="fee"
-                        id=${id}
-                        step="0.01"
-                        class="form-control"
-                        value=${fee}
-                        disabled
-                      />
-                    </td>
-                  </tr>
-                `;
+                    <tr>
+                      <td id=${id} class="align-middle">${name}</td>
+                      <td class="align-middle">
+                        <input
+                          type="checkbox"
+                          data-group="target_groups"
+                          name="selected"
+                          id=${id}
+                          class="form-control"
+                          ?checked=${selected}
+                          disabled
+                        />
+                      </td>
+                      <td class="align-middle">
+                        <input
+                          type="number"
+                          data-group="target_groups"
+                          name="fee"
+                          id=${id}
+                          step="0.01"
+                          class="form-control"
+                          value=${fee}
+                          disabled
+                        />
+                      </td>
+                    </tr>
+                  `;
             })}
             </tbody>
           </table>
@@ -2796,7 +1009,7 @@
         name="location"
         disabled
       >
-        ${o$1(data, ({ id, name }) => x `<option value=${id} ?selected=${id == value}>${name}</option>`)};
+        ${data === null || data === void 0 ? void 0 : data.map(({ id, name }) => x `<option value=${id} ?selected=${id == value}>${name}</option>`)}
       </select>`,
                 image: (value) => x `<input
         class="form-control"
@@ -3010,6 +1223,215 @@ ${value}</textarea
     ], LMSStaffEventCardPreview);
     var LMSStaffEventCardPreview$1 = LMSStaffEventCardPreview;
 
+    /**
+     * @license
+     * Copyright 2018 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */const o$1=e(class extends i$1{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.it){this.it=new Set,void 0!==i.strings&&(this.nt=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.nt)||void 0===r?void 0:r.has(t))&&this.it.add(t);return this.render(s)}const e=i.element.classList;this.it.forEach((t=>{t in s||(e.remove(t),this.it.delete(t));}));for(const t in s){const i=!!s[t];i===this.it.has(t)||(null===(o=this.nt)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.it.add(t)):(e.remove(t),this.it.delete(t)));}return T}});
+
+    function getAugmentedNamespace(n) {
+      if (n.__esModule) return n;
+      var f = n.default;
+    	if (typeof f == "function") {
+    		var a = function a () {
+    			if (this instanceof a) {
+    				var args = [null];
+    				args.push.apply(args, arguments);
+    				var Ctor = Function.bind.apply(f, args);
+    				return new Ctor();
+    			}
+    			return f.apply(this, arguments);
+    		};
+    		a.prototype = f.prototype;
+      } else a = {};
+      Object.defineProperty(a, '__esModule', {value: true});
+    	Object.keys(n).forEach(function (k) {
+    		var d = Object.getOwnPropertyDescriptor(n, k);
+    		Object.defineProperty(a, k, d.get ? d : {
+    			enumerable: true,
+    			get: function () {
+    				return n[k];
+    			}
+    		});
+    	});
+    	return a;
+    }
+
+    var litFontawesome$1 = {};
+
+    var require$$0 = /*@__PURE__*/getAugmentedNamespace(litHtml);
+
+    Object.defineProperty(litFontawesome$1, "__esModule", { value: true });
+    litFontawesome$1.urlFontawesome = litFontawesome_2 = litFontawesome$1.litFontawesome = void 0;
+    const lit_html_1 = require$$0;
+    function litFontawesome(definition, { className, color } = {}) {
+        return lit_html_1.svg `
+        <svg
+            aria-hidden="true"
+            focusable="false"
+            data-prefix="${definition.prefix}"
+            data-icon="${definition.iconName}"
+            role="img"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 ${definition.icon[0]} ${definition.icon[1]}"
+            class="${className || ''} ${definition.prefix}_${definition.iconName} fa-${definition.iconName}"
+            fill="${color || 'currentColor'}"
+        >
+            ${(Array.isArray(definition.icon[4]) ? definition.icon[4] : [definition.icon[4]]).map((icon) => lit_html_1.svg `<path d="${icon}"></path>`)}
+        </svg>
+    `;
+    }
+    var litFontawesome_2 = litFontawesome$1.litFontawesome = litFontawesome;
+    function uncachedUrlFontawesome(definition, options) {
+        const mount = window.document.createElement('div');
+        lit_html_1.render(litFontawesome(definition, options), mount);
+        return `data:image/svg+xml;base64,${btoa(mount.innerHTML.replace(/ {4}|<!---->|\n/g, ''))}`;
+    }
+    const cachedURL = new Map();
+    function urlFontawesome(definition, options = {}) {
+        let dataUrl;
+        const foundDefinition = cachedURL.get(definition);
+        let foundClassName;
+        if (foundDefinition !== undefined) {
+            foundClassName = foundDefinition.get(options.className);
+            if (foundClassName !== undefined) {
+                const foundColor = foundClassName.get(options.color);
+                if (foundColor !== undefined) {
+                    dataUrl = foundColor;
+                }
+            }
+        }
+        if (dataUrl === undefined) {
+            dataUrl = uncachedUrlFontawesome(definition, options);
+            if (foundDefinition === undefined) {
+                cachedURL.set(definition, new Map([[options.className, new Map([[options.color, dataUrl]])]]));
+            }
+            else if (foundClassName === undefined) {
+                foundDefinition.set(options.className, new Map([[options.color, dataUrl]]));
+            }
+            else {
+                foundClassName.set(options.color, dataUrl);
+            }
+        }
+        return dataUrl;
+    }
+    litFontawesome$1.urlFontawesome = urlFontawesome;
+
+    const utilityStyles = i$5 `
+  .pointer-events-none {
+    pointer-events: none;
+  }
+
+  .w-inherit {
+    width: inherit;
+  }
+`;
+
+    var faDownLeftAndUpRightToCenter = {
+      prefix: 'fas',
+      iconName: 'down-left-and-up-right-to-center',
+      icon: [512, 512, ["compress-alt"], "f422", "M439 7c9.4-9.4 24.6-9.4 33.9 0l32 32c9.4 9.4 9.4 24.6 0 33.9l-87 87 39 39c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H296c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2l39 39L439 7zM72 272H216c13.3 0 24 10.7 24 24V440c0 9.7-5.8 18.5-14.8 22.2s-19.3 1.7-26.2-5.2l-39-39L73 505c-9.4 9.4-24.6 9.4-33.9 0L7 473c-9.4-9.4-9.4-24.6 0-33.9l87-87L55 313c-6.9-6.9-8.9-17.2-5.2-26.2s12.5-14.8 22.2-14.8z"]
+    };
+    var faCompressAlt = faDownLeftAndUpRightToCenter;
+    var faList = {
+      prefix: 'fas',
+      iconName: 'list',
+      icon: [512, 512, ["list-squares"], "f03a", "M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"]
+    };
+    var faPenToSquare = {
+      prefix: 'fas',
+      iconName: 'pen-to-square',
+      icon: [512, 512, ["edit"], "f044", "M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"]
+    };
+    var faEdit = faPenToSquare;
+    var faBullseye = {
+      prefix: 'fas',
+      iconName: 'bullseye',
+      icon: [512, 512, [], "f140", "M448 256A192 192 0 1 0 64 256a192 192 0 1 0 384 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 80a80 80 0 1 0 0-160 80 80 0 1 0 0 160zm0-224a144 144 0 1 1 0 288 144 144 0 1 1 0-288zM224 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"]
+    };
+    var faImage = {
+      prefix: 'fas',
+      iconName: 'image',
+      icon: [512, 512, [], "f03e", "M0 96C0 60.7 28.7 32 64 32H448c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM323.8 202.5c-4.5-6.6-11.9-10.5-19.8-10.5s-15.4 3.9-19.8 10.5l-87 127.6L170.7 297c-4.6-5.7-11.5-9-18.7-9s-14.2 3.3-18.7 9l-64 80c-5.8 7.2-6.9 17.1-2.9 25.4s12.4 13.6 21.6 13.6h96 32H424c8.9 0 17.1-4.9 21.2-12.8s3.6-17.4-1.4-24.7l-120-176zM112 192a48 48 0 1 0 0-96 48 48 0 1 0 0 96z"]
+    };
+    var faLocationPin = {
+      prefix: 'fas',
+      iconName: 'location-pin',
+      icon: [384, 512, ["map-marker"], "f041", "M384 192c0 87.4-117 243-168.3 307.2c-12.3 15.3-35.1 15.3-47.4 0C117 435 0 279.4 0 192C0 86 86 0 192 0S384 86 384 192z"]
+    };
+    var faMapMarker = faLocationPin;
+    var faArrowRight = {
+      prefix: 'fas',
+      iconName: 'arrow-right',
+      icon: [448, 512, [8594], "f061", "M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"]
+    };
+    var faFloppyDisk = {
+      prefix: 'fas',
+      iconName: 'floppy-disk',
+      icon: [448, 512, [128190, 128426, "save"], "f0c7", "M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V173.3c0-17-6.7-33.3-18.7-45.3L352 50.7C340 38.7 323.7 32 306.7 32H64zm0 96c0-17.7 14.3-32 32-32H288c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V128zM224 288a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
+    };
+    var faSave = faFloppyDisk;
+    var faTrash = {
+      prefix: 'fas',
+      iconName: 'trash',
+      icon: [448, 512, [], "f1f8", "M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"]
+    };
+    var faTag = {
+      prefix: 'fas',
+      iconName: 'tag',
+      icon: [448, 512, [127991], "f02b", "M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"]
+    };
+    var faCircleInfo = {
+      prefix: 'fas',
+      iconName: 'circle-info',
+      icon: [512, 512, ["info-circle"], "f05a", "M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"]
+    };
+    var faInfoCircle = faCircleInfo;
+    var faGear = {
+      prefix: 'fas',
+      iconName: 'gear',
+      icon: [512, 512, [9881, "cog"], "f013", "M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"]
+    };
+    var faCog = faGear;
+    var faCreditCard = {
+      prefix: 'fas',
+      iconName: 'credit-card',
+      icon: [576, 512, [128179, 62083, "credit-card-alt"], "f09d", "M64 32C28.7 32 0 60.7 0 96v32H576V96c0-35.3-28.7-64-64-64H64zM576 224H0V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V224zM112 352h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm112 16c0-8.8 7.2-16 16-16H368c8.8 0 16 7.2 16 16s-7.2 16-16 16H240c-8.8 0-16-7.2-16-16z"]
+    };
+    var faLocationDot = {
+      prefix: 'fas',
+      iconName: 'location-dot',
+      icon: [384, 512, ["map-marker-alt"], "f3c5", "M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"]
+    };
+    var faMagnifyingGlass = {
+      prefix: 'fas',
+      iconName: 'magnifying-glass',
+      icon: [512, 512, [128269, "search"], "f002", "M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"]
+    };
+    var faSearch = faMagnifyingGlass;
+    var faCopy = {
+      prefix: 'fas',
+      iconName: 'copy',
+      icon: [512, 512, [], "f0c5", "M272 0H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V336c0 26.5-21.5 48-48 48H272c-26.5 0-48-21.5-48-48V48c0-26.5 21.5-48 48-48zM48 128H192v64H64V448H256V416h64v48c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V176c0-26.5 21.5-48 48-48z"]
+    };
+    var faPlus = {
+      prefix: 'fas',
+      iconName: 'plus',
+      icon: [448, 512, [10133, 61543, "add"], "2b", "M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"]
+    };
+    var faXmark = {
+      prefix: 'fas',
+      iconName: 'xmark',
+      icon: [384, 512, [128473, 10005, 10006, 10060, 215, "close", "multiply", "remove", "times"], "f00d", "M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"]
+    };
+    var faClose = faXmark;
+    var faTimes = faXmark;
+    var faCalendar = {
+      prefix: 'fas',
+      iconName: 'calendar',
+      icon: [448, 512, [128197, 128198], "f133", "M96 32V64H48C21.5 64 0 85.5 0 112v48H448V112c0-26.5-21.5-48-48-48H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32V64H160V32c0-17.7-14.3-32-32-32S96 14.3 96 32zM448 192H0V464c0 26.5 21.5 48 48 48H400c26.5 0 48-21.5 48-48V192z"]
+    };
+
     let LMSStaffEventCardForm = class LMSStaffEventCardForm extends s {
         constructor() {
             super(...arguments);
@@ -3206,7 +1628,7 @@ ${value}</textarea
             return x `
       <form @submit=${this.handleSave}>
         <div
-          class="mb-3 ${o$2({
+          class="mb-3 ${o$1({
             "btn-group": !shouldFold,
             "w-100": !shouldFold,
             "btn-group-vertical": shouldFold,
@@ -3508,61 +1930,63 @@ ${value}</textarea
         render() {
             return x `
       <div class="container-fluid mx-0">
-        <div class="card-deck card-deck-responsive">
-          ${o$1(this.data, (datum) => {
+        <lms-events-filter>
+          <div class="card-deck card-deck-responsive">
+            ${o$2(this.data, (datum) => {
             const { name, uuid } = datum;
             const [title] = new TemplateResultConverter(name).getRenderValues();
             const [state] = this.cardStates.get(uuid) || "data";
             return x `
-              <div class="card mt-5">
-                <div class="card-header">
-                  <ul class="nav nav-tabs card-header-tabs">
-                    <li
-                      class="nav-item"
-                      data-content="data"
-                      data-uuid=${datum.uuid}
-                      @click=${this.handleTabClick}
-                    >
-                      <a class="nav-link active" href="#">${__("Data")}</a>
-                    </li>
-                    <li
-                      class="nav-item"
-                      data-content="attendees"
-                      data-uuid=${datum.uuid}
-                      @click=${this.handleTabClick}
-                    >
-                      <a class="nav-link" href="#">${__("Waitlist")}</a>
-                    </li>
-                    <li
-                      class="nav-item"
-                      data-content="preview"
-                      data-uuid=${datum.uuid}
-                      @click=${this.handleTabClick}
-                    >
-                      <a class="nav-link">${__("Preview")}</a>
-                    </li>
-                  </ul>
+                <div class="card mt-5">
+                  <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                      <li
+                        class="nav-item"
+                        data-content="data"
+                        data-uuid=${datum.uuid}
+                        @click=${this.handleTabClick}
+                      >
+                        <a class="nav-link active" href="#">${__("Data")}</a>
+                      </li>
+                      <li
+                        class="nav-item"
+                        data-content="attendees"
+                        data-uuid=${datum.uuid}
+                        @click=${this.handleTabClick}
+                      >
+                        <a class="nav-link" href="#">${__("Waitlist")}</a>
+                      </li>
+                      <li
+                        class="nav-item"
+                        data-content="preview"
+                        data-uuid=${datum.uuid}
+                        @click=${this.handleTabClick}
+                      >
+                        <a class="nav-link">${__("Preview")}</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="card-body">
+                    <h3 class="card-title">
+                      ${x `<span class="badge badge-primary">${title}</span>`}
+                    </h3>
+                    <lms-staff-event-card-form
+                      .datum=${datum}
+                      ?hidden=${!(state === "data")}
+                    ></lms-staff-event-card-form>
+                    <lms-staff-event-card-attendees
+                      ?hidden=${!(state === "attendees")}
+                    ></lms-staff-event-card-attendees>
+                    <lms-staff-event-card-preview
+                      ?hidden=${!(state === "preview")}
+                      .datum=${datum}
+                    ></lms-staff-event-card-preview>
+                  </div>
                 </div>
-                <div class="card-body">
-                  <h3 class="card-title">
-                    ${x `<span class="badge badge-primary">${title}</span>`}
-                  </h3>
-                  <lms-staff-event-card-form
-                    .datum=${datum}
-                    ?hidden=${!(state === "data")}
-                  ></lms-staff-event-card-form>
-                  <lms-staff-event-card-attendees
-                    ?hidden=${!(state === "attendees")}
-                  ></lms-staff-event-card-attendees>
-                  <lms-staff-event-card-preview
-                    ?hidden=${!(state === "preview")}
-                    .datum=${datum}
-                  ></lms-staff-event-card-preview>
-                </div>
-              </div>
-            `;
+              `;
         })}
-        </div>
+          </div>
+        </lms-events-filter>
       </div>
     `;
         }
@@ -3600,7 +2024,7 @@ ${value}</textarea
           ); /* Adjust the width to 50% for screens smaller than 1200px */
         }
       }
-      
+
       @media (max-width: 768px) {
         .card-deck-responsive .card {
           width: calc(
@@ -3626,6 +2050,2077 @@ ${value}</textarea
         e$3("lms-staff-event-card-deck")
     ], LMSStaffEventCardDeck);
     var LMSStaffEventCardsDeck = LMSStaffEventCardDeck;
+
+    let LMSTableControls = class LMSTableControls extends s {
+        render() {
+            return x `
+      <nav class="navbar navbar-light bg-white border border-bottom-0">
+        <slot></slot>
+      </nav>
+    `;
+        }
+    };
+    LMSTableControls.styles = [bootstrapStyles];
+    LMSTableControls = __decorate([
+        e$3("lms-table-controls")
+    ], LMSTableControls);
+    var LMSTableControls$1 = LMSTableControls;
+
+    let LMSAnchor = class LMSAnchor extends s {
+        constructor() {
+            super(...arguments);
+            this.target = "_self";
+            this.href = {};
+        }
+        assembleURI() {
+            const { path, query, params, fragment } = this.href;
+            let uri = path !== null && path !== void 0 ? path : "";
+            if (query) {
+                uri += "?";
+            }
+            if (params) {
+                uri += Object.entries(params)
+                    .map(([key, value]) => `${key}=${value}`)
+                    .join("&");
+            }
+            if (fragment) {
+                uri += `#${fragment}`;
+            }
+            return uri;
+        }
+        hasChanged() {
+            return (newValues, oldValues) => {
+                return Object.keys(newValues).some((key) => newValues.get(key) !== oldValues.get(key));
+            };
+        }
+        handleClick(e) {
+            e.preventDefault();
+            const assembledURI = this.assembleURI();
+            switch (this.target) {
+                case "_blank":
+                    window.open(assembledURI, "_blank");
+                    break;
+                case "_parent":
+                    if (window.parent) {
+                        window.parent.location.href = assembledURI;
+                    }
+                    break;
+                case "_top":
+                    if (window.top) {
+                        window.top.location.href = assembledURI;
+                    }
+                    break;
+                case "_self":
+                default:
+                    window.location.href = assembledURI;
+            }
+        }
+        render() {
+            if (Object.values(this.href).every((value) => value === undefined)) {
+                console.error("href is not a valid URIComponents object");
+                return A;
+            }
+            return x `
+      <a
+        @click=${this.handleClick}
+        .href=${this.assembleURI()}
+        .target=${this.target}
+      >
+        <slot></slot>
+      </a>
+    `;
+        }
+    };
+    LMSAnchor.styles = [
+        bootstrapStyles,
+        i$5 `
+      :host {
+        display: inline-flex;
+      }
+    `,
+    ];
+    __decorate([
+        e$2({ type: Object, attribute: "data-href" }),
+        e$2({ type: String })
+    ], LMSAnchor.prototype, "target", void 0);
+    LMSAnchor = __decorate([
+        e$3("lms-anchor")
+    ], LMSAnchor);
+    var LMSAnchor$1 = LMSAnchor;
+
+    let LMSCard = class LMSCard extends s {
+        constructor() {
+            super(...arguments);
+            this.title = "Card title";
+            this.text = "Some quick example text to build on the card title and make up the bulk of the card's content.";
+            this.image = {};
+            this.links = [];
+            this.listItems = [];
+        }
+        render() {
+            return x `
+      <div class="card">
+        <img
+          src=${this.image.src}
+          class="card-img-top"
+          alt=${this.image.alt}
+          ?hidden=${!this.image.src}
+        />
+        <div class="card-body">
+          <h5 class="card-title" ?hidden=${!this.title}>${this.title}</h5>
+          <p class="card-text" ?hidden=${!this.text}>${this.text}</p>
+        </div>
+        <ul
+          class="list-group list-group-flush"
+          ?hidden=${!this.listItems.length}
+        >
+          ${this.listItems.map((listItem) => x `<li class="list-group-item">${listItem}</li>`)}
+        </ul>
+        <div class="card-body" ?hidden=${!this.links.length}>
+          ${this.links.length
+            ? this.links.map((link) => x `<a href="${link.href}" class="card-link"
+                    >${link.text}</a
+                  >`)
+            : A}
+        </div>
+      </div>
+    `;
+        }
+    };
+    LMSCard.styles = [
+        bootstrapStyles,
+        i$5 `
+      .card:hover {
+        cursor: pointer;
+        postion: relative;
+        top: -3px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        border: 1px solid var(--primary);
+      }
+    `,
+    ];
+    __decorate([
+        e$2({ type: String })
+    ], LMSCard.prototype, "title", void 0);
+    __decorate([
+        e$2({ type: String })
+    ], LMSCard.prototype, "text", void 0);
+    __decorate([
+        e$2({ type: Object })
+    ], LMSCard.prototype, "image", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSCard.prototype, "links", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSCard.prototype, "listItems", void 0);
+    LMSCard = __decorate([
+        e$3("lms-card")
+    ], LMSCard);
+    var LMSCard$1 = LMSCard;
+
+    let LMSCardDetailsModal = class LMSCardDetailsModal extends s {
+        constructor() {
+            super(...arguments);
+            this.event = {};
+            this.isOpen = false;
+            this.event_types = [];
+            this.locations = [];
+            this.target_groups = [];
+            this.locale = "en";
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            const event_types = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/event_types");
+                return response.json();
+            };
+            event_types().then((event_types) => (this.event_types = event_types));
+            const locations = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/locations");
+                return response.json();
+            };
+            locations().then((locations) => (this.locations = locations));
+            const target_groups = async () => {
+                const response = await fetch("/api/v1/contrib/eventmanagement/public/target_groups");
+                return response.json();
+            };
+            target_groups().then((target_groups) => (this.target_groups = target_groups));
+            this.locale = document.documentElement.lang;
+        }
+        handleSimulatedBackdropClick(event) {
+            if (event.target === event.currentTarget) {
+                this.toggleModal();
+            }
+        }
+        toggleModal() {
+            const { renderRoot } = this;
+            this.isOpen = !this.isOpen;
+            document.body.style.overflow = this.isOpen ? "hidden" : "auto";
+            const lmsModal = renderRoot.getElementById("lms-modal");
+            if (lmsModal) {
+                lmsModal.style.overflowY = this.isOpen ? "scroll" : "auto";
+            }
+            if (!this.isOpen) {
+                this.dispatchEvent(new CustomEvent("close", {
+                    bubbles: true,
+                    composed: true,
+                }));
+            }
+        }
+        willUpdate() {
+            const { event } = this;
+            const { event_type, location, target_groups } = event;
+            // Resolve event_type and location ids to their state representations
+            if (event_type && typeof event_type === "string") {
+                const et = this.event_types.find((type) => type.id === parseInt(event_type, 10));
+                this.event.event_type = et !== null && et !== void 0 ? et : {};
+            }
+            if (location && typeof location === "string") {
+                const loc = this.locations.find((loc) => loc.id === parseInt(location, 10));
+                this.event.location = loc !== null && loc !== void 0 ? loc : {};
+            }
+            if (target_groups &&
+                target_groups.every((tg) => ({}.hasOwnProperty.call(tg, "target_group_id")))) {
+                const selectedTargetGroups = this.target_groups.filter((target_group) => target_groups.some((tg) => tg.target_group_id === target_group.id));
+                this.event.target_groups = selectedTargetGroups.map((tg) => {
+                    var _a, _b;
+                    return ({
+                        ...tg,
+                        fee: (_b = (_a = target_groups.find((etg) => etg.target_group_id === tg.id)) === null || _a === void 0 ? void 0 : _a.fee) !== null && _b !== void 0 ? _b : 0,
+                    });
+                });
+            }
+        }
+        updated() {
+            if (this.isOpen && this.closeButton) {
+                this.closeButton.focus();
+            }
+        }
+        render() {
+            const { name, description, location, image, registration_link, start_time, end_time, target_groups, } = this.event;
+            return x `
+      <div class="backdrop" ?hidden=${!this.isOpen}></div>
+      <div
+        class="modal fade ${o$1({
+            "d-block": this.isOpen,
+            show: this.isOpen,
+        })}"
+        id="lms-modal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="lms-modal-title"
+        aria-hidden="true"
+        @click=${this.handleSimulatedBackdropClick}
+      >
+        <div
+          class="modal-dialog modal-xl modal-dialog-centered"
+          role="document"
+        >
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="lms-modal-title">
+                ${name !== null && name !== void 0 ? name : "Event"}
+              </h5>
+              <button
+                @click=${this.toggleModal}
+                type="button"
+                class="close"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col">
+                  <div>
+                    <p class="wrapper">
+                      <span>${litFontawesome_2(faCalendar)}</span>
+                      <strong>${__("Date and Time")}</strong>
+                    </p>
+                    <p class="wrapper">
+                      ${this.formatDatetimeByLocale(start_time)}
+                      <span>${litFontawesome_2(faArrowRight)}</span>
+                      ${this.formatDatetimeByLocale(end_time)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="wrapper">
+                      <span>${litFontawesome_2(faInfoCircle)}</span>
+                      <strong>${__("Description")}</strong>
+                    </p>
+                    <p>${description}</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <img
+                    src=${image}
+                    ?hidden=${!image}
+                    class="w-100 mb-4 rounded"
+                  />
+
+                  <div>
+                    <p class="wrapper">
+                      <span>${litFontawesome_2(faCreditCard)}</span>
+                      <strong>${__("Fees")}</strong>
+                    </p>
+                    <table class="table table-sm table-borderless">
+                      <thead>
+                        <tr>
+                          <th scope="col">${__("Target Group")}</th>
+                          <th scope="col">${__("Age Range")}</th>
+                          <th scope="col">${__("Fee")}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${o$2(target_groups, (target_group) => {
+            if ({}.hasOwnProperty.call(target_group, "target_group_id")) {
+                return A;
+            }
+            const { name, fee, min_age, max_age } = target_group;
+            return x `
+                            <tr>
+                              <td>${name}</td>
+                              <td>${min_age} - ${max_age}</td>
+                              <td>${fee}</td>
+                            </tr>
+                          `;
+        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div>
+                    <p class="wrapper">
+                      <span>${litFontawesome_2(faMapMarker)}</span>
+                      <strong>${__("Location")}</strong>
+                    </p>
+                    <p>
+                      ${typeof location === "string"
+            ? A
+            : this.formatAddressByLocale(location)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+                @click=${this.toggleModal}
+              >
+                ${__("Close")}
+              </button>
+              <a
+                role="button"
+                class="btn btn-primary"
+                ?hidden=${!registration_link}
+                href=${registration_link}
+              >
+                ${__("Register")}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+        }
+        formatDatetimeByLocale(datetime) {
+            if (datetime) {
+                return new Intl.DateTimeFormat(this.locale, {
+                    dateStyle: "full",
+                    timeStyle: "short",
+                }).format(new Date(datetime));
+            }
+            return A;
+        }
+        formatAddressByLocale(address) {
+            if (address) {
+                const { name, street, number, city, zip, country } = address;
+                return x ` <strong>${name}</strong><br />
+        ${street} ${number}<br />
+        ${zip} ${city}<br />
+        ${country}`;
+            }
+            return A;
+        }
+    };
+    LMSCardDetailsModal.styles = [
+        bootstrapStyles,
+        skeletonStyles,
+        i$5 `
+      .backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(0 0 0 / 50%);
+        z-index: 1048;
+      }
+
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: #6c757d;
+      }
+
+      .wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25em;
+      }
+    `,
+    ];
+    __decorate([
+        e$2({ type: Object })
+    ], LMSCardDetailsModal.prototype, "event", void 0);
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSCardDetailsModal.prototype, "isOpen", void 0);
+    __decorate([
+        t$1()
+    ], LMSCardDetailsModal.prototype, "event_types", void 0);
+    __decorate([
+        t$1()
+    ], LMSCardDetailsModal.prototype, "locations", void 0);
+    __decorate([
+        t$1()
+    ], LMSCardDetailsModal.prototype, "target_groups", void 0);
+    __decorate([
+        t$1()
+    ], LMSCardDetailsModal.prototype, "locale", void 0);
+    __decorate([
+        i$2(".close")
+    ], LMSCardDetailsModal.prototype, "closeButton", void 0);
+    LMSCardDetailsModal = __decorate([
+        e$3("lms-card-details-modal")
+    ], LMSCardDetailsModal);
+    var LMSCardDetailsModal$1 = LMSCardDetailsModal;
+
+    let LMSDropdown = class LMSDropdown extends s {
+        constructor() {
+            super(...arguments);
+            this.isHidden = false;
+            this.shouldFold = false;
+            this.isOpen = false;
+            this.label = "";
+        }
+        handleDropdownToggle() {
+            this.dispatchEvent(new CustomEvent("toggle", { bubbles: true, composed: true }));
+            this.isOpen = !this.isOpen;
+        }
+        render() {
+            return x `
+      <div
+        class="btn-group ${o$1({
+            "d-none": this.isHidden,
+            "w-100": this.shouldFold,
+        })}"
+        dropdown-menu-wrapper
+      >
+        <button
+          type="button"
+          class="btn btn-outline-secondary dropdown-toggle ${o$1({
+            "btn-sm": this.shouldFold,
+        })}"
+          aria-haspopup="true"
+          aria-expanded=${this.isOpen}
+          @click=${this.handleDropdownToggle}
+        >
+          ${this.label}
+        </button>
+        <div class="dropdown-menu w-100 p-2 ${o$1({ show: this.isOpen })}">
+          <slot></slot>
+        </div>
+      </div>
+    `;
+        }
+    };
+    LMSDropdown.styles = [bootstrapStyles];
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSDropdown.prototype, "isHidden", void 0);
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSDropdown.prototype, "shouldFold", void 0);
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSDropdown.prototype, "isOpen", void 0);
+    __decorate([
+        e$2({ type: String })
+    ], LMSDropdown.prototype, "label", void 0);
+    __decorate([
+        e$1("input")
+    ], LMSDropdown.prototype, "inputs", void 0);
+    LMSDropdown = __decorate([
+        e$3("lms-dropdown")
+    ], LMSDropdown);
+    var LMSDropdown$1 = LMSDropdown;
+
+    class RequestHandler {
+        constructor(endpoints) {
+            this.endpoints = {};
+            if (endpoints instanceof Map) {
+                endpoints.forEach((value, key) => {
+                    this.endpoints[key] = value;
+                });
+            }
+            else {
+                this.endpoints = endpoints;
+            }
+        }
+        async request(endpoint, queryParams) {
+            const endpointData = this.endpoints[endpoint];
+            if (!endpointData) {
+                throw new Error(`Endpoint not found: ${endpoint}`);
+            }
+            const requestInfo = endpointData.requestInfo || {};
+            const cacheMode = endpointData.ignoreCache
+                ? "no-cache"
+                : endpointData.cache
+                    ? "default"
+                    : "force-cache";
+            let url = endpointData.url;
+            if (queryParams) {
+                const searchParams = new URLSearchParams(queryParams);
+                url += `?${searchParams.toString()}`;
+            }
+            else if (endpointData.queryParams) {
+                const searchParams = new URLSearchParams(endpointData.queryParams);
+                url += `?${searchParams.toString()}`;
+            }
+            const response = await fetch(url, {
+                cache: cacheMode,
+                headers: {
+                    ...requestInfo.headers,
+                    "Content-Type": "application/json",
+                },
+                method: requestInfo.method || "GET",
+                body: requestInfo.body ? JSON.stringify(requestInfo.body) : undefined,
+            });
+            return response;
+        }
+    }
+    const endpoints = {
+        getEventsPublic: {
+            url: "/api/v1/contrib/eventmanagement/public/events",
+            cache: false,
+        },
+        getTargetGroupsPublic: {
+            url: "/api/v1/contrib/eventmanagement/public/target_groups",
+            cache: true,
+        },
+        getEventTypesPublic: {
+            url: "/api/v1/contrib/eventmanagement/public/event_types",
+            cache: true,
+        },
+        getLocationsPublic: {
+            url: "/api/v1/contrib/eventmanagement/public/locations",
+            cache: true,
+        },
+    };
+    const requestHandler = new RequestHandler(endpoints);
+
+    function deepCopy(obj) {
+        if (obj === null || typeof obj !== "object")
+            return obj;
+        if (obj instanceof Date)
+            return new Date(obj.getTime());
+        if (Array.isArray(obj))
+            return obj.map((item) => deepCopy(item));
+        const newObj = Object.create(Object.getPrototypeOf(obj));
+        for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                newObj[key] = deepCopy(obj[key]);
+            }
+        }
+        return newObj;
+    }
+    function isDeepEqual(obj1, obj2) {
+        if (obj1 === obj2) {
+            return true;
+        }
+        if (typeof obj1 !== "object" ||
+            obj1 === null ||
+            typeof obj2 !== "object" ||
+            obj2 === null) {
+            return false;
+        }
+        const keys1 = Object.keys(obj1);
+        const keys2 = Object.keys(obj2);
+        if (keys1.length !== keys2.length) {
+            return false;
+        }
+        for (const key of keys1) {
+            if (!keys2.includes(key)) {
+                return false;
+            }
+            if (typeof obj1[key] === "function" ||
+                typeof obj2[key] === "function") {
+                if (obj1[key].toString() !== obj2[key].toString()) {
+                    return false;
+                }
+            }
+            else if (typeof obj1[key] === "object" &&
+                typeof obj2[key] === "object") {
+                if (!isDeepEqual(obj1[key], obj2[key])) {
+                    return false;
+                }
+            }
+            else if (obj1[key] !== obj2[key]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    function throttle(callback, delay) {
+        let previousCall = new Date().getTime();
+        return function () {
+            const time = new Date().getTime();
+            if (time - previousCall >= delay) {
+                previousCall = time;
+                callback();
+            }
+        };
+    }
+    function debounce(func, wait, immediate) {
+        let timeout = null;
+        return function (...args) {
+            const later = function () {
+                timeout = null;
+                if (!immediate)
+                    func.apply(this, args);
+            };
+            const callNow = immediate && !timeout;
+            if (timeout !== null) {
+                clearTimeout(timeout);
+            }
+            timeout = setTimeout(later, wait);
+            if (callNow) {
+                func.apply(this, args);
+            }
+        };
+    }
+
+    let LMSEventsFilter = class LMSEventsFilter extends s {
+        get eventsDeepCopy() {
+            return this._eventsDeepCopy;
+        }
+        set eventsDeepCopy(value) {
+            if (this._eventsDeepCopy.length === 0) {
+                this._eventsDeepCopy = value;
+            }
+        }
+        facetsStrategyManager() {
+            switch (this.facetsStrategy) {
+                case "preserve":
+                    return this.eventsDeepCopy;
+                case "update":
+                    return this.events;
+                default:
+                    throw new Error("Invalid facetsStrategy");
+            }
+        }
+        constructor() {
+            super();
+            this.shouldFold = window.innerWidth <= 992;
+            this.events = [];
+            this.facetsStrategy = "preserve";
+            this.isHidden = this.shouldFold;
+            this.facets = {};
+            this.event_types = [];
+            this.target_groups = [];
+            this.locations = [];
+            this.activeFilters = new Map();
+            this.inputHandlers = {
+                checkbox: (input) => {
+                    if (input.id === "open_registration") {
+                        return input.checked;
+                    }
+                    return input.checked ? input.id : false;
+                },
+                radio: (input) => (input.checked ? input.value : false),
+                date: (input) => input.value,
+                number: (input) => input.value,
+                default: (input) => input.value,
+            };
+            this.resetHandlers = {
+                checkbox: (input) => {
+                    if (input.id === "open_registration") {
+                        input.checked = true;
+                        return;
+                    }
+                    input.checked = false;
+                },
+                radio: (input) => {
+                    input.checked = false;
+                },
+                date: (input) => {
+                    input.value = "";
+                },
+                number: (input) => {
+                    if (["min_age", "max_age"].includes(input.id)) {
+                        input.value = "";
+                        return;
+                    }
+                    input.value = input.min;
+                },
+                default: (input) => {
+                    input.value = "";
+                },
+            };
+            this._eventsDeepCopy = [];
+            this.throttledHandleResize = throttle(this.handleResize.bind(this), 250);
+        }
+        handleResize() {
+            this.shouldFold = window.innerWidth <= 992;
+            this.isHidden = this.shouldFold;
+            this.requestUpdate();
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            window.addEventListener("resize", this.throttledHandleResize);
+            requestHandler
+                .request("getEventTypesPublic")
+                .then((response) => response.json())
+                .then((event_types) => (this.event_types = event_types));
+            requestHandler
+                .request("getTargetGroupsPublic")
+                .then((response) => response.json())
+                .then((target_groups) => (this.target_groups = target_groups));
+            requestHandler
+                .request("getLocationsPublic")
+                .then((response) => response.json())
+                .then((locations) => (this.locations = locations));
+        }
+        disconnectedCallback() {
+            super.disconnectedCallback();
+            window.removeEventListener("resize", this.throttledHandleResize);
+        }
+        willUpdate() {
+            this.eventsDeepCopy = deepCopy(this.events);
+            const events = this.facetsStrategyManager();
+            if (!events.length)
+                return;
+            this.facets = {
+                eventTypeIds: [...new Set(events.map((event) => event.event_type))],
+                targetGroupIds: [
+                    ...new Set(events.flatMap((event) => event.target_groups.map((target_group) => target_group.selected ? target_group.target_group_id : NaN))),
+                ].filter(Number.isInteger),
+                locationIds: [...new Set(events.map((event) => event.location))],
+                ...events
+                    .map((event) => {
+                    const { event_type, location, target_groups, ...rest } = event; // eslint-disable-line @typescript-eslint/no-unused-vars
+                    return rest;
+                })
+                    .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+            };
+        }
+        handleReset() {
+            this.inputs.forEach((input) => this.resetHandlers[input.type](input));
+            this.dispatchEvent(new CustomEvent("filter", {
+                detail: "",
+                composed: true,
+                bubbles: true,
+            }));
+        }
+        isAllowedFilter(name, value, exclude) {
+            if (!name)
+                return false;
+            return !(name && exclude.includes(name.toString()) && value === false);
+        }
+        getParamsFromActiveFilters() {
+            var _a;
+            return [...((_a = this.inputs) !== null && _a !== void 0 ? _a : [])]
+                .filter((input) => input.value || input.checked)
+                .map((input) => {
+                var _a;
+                const handler = ((_a = this.inputHandlers) === null || _a === void 0 ? void 0 : _a[input.type]) || this.inputHandlers.default;
+                if (!handler)
+                    return [input.name, undefined];
+                const value = handler(input);
+                return [input.name, value];
+            })
+                .filter(([name, value]) => this.isAllowedFilter(name, value, [
+                "event_type",
+                "target_group",
+                "location",
+                "_order_by",
+            ]));
+        }
+        handleChange() {
+            const query = new URLSearchParams();
+            this.getParamsFromActiveFilters().forEach(([name, value]) => {
+                if (typeof name === "string" && value !== undefined) {
+                    return query.append(name, value === null || value === void 0 ? void 0 : value.toString());
+                }
+            });
+            this.dispatchEvent(new CustomEvent("filter", {
+                detail: query.toString(),
+                composed: true,
+                bubbles: true,
+            }));
+        }
+        handleSearch(e) {
+            const { detail } = e;
+            const query = new URLSearchParams();
+            this.getParamsFromActiveFilters().forEach(([name, value]) => {
+                if (typeof name === "string" && value !== undefined) {
+                    return query.append(name, value === null || value === void 0 ? void 0 : value.toString());
+                }
+            });
+            if (detail) {
+                const q = [
+                    { name: { "-like": `%${detail}%` } },
+                    { description: { "-like": `%${detail}%` } },
+                ];
+                query.append("q", JSON.stringify(q));
+            }
+            else {
+                query.append("q", JSON.stringify({}));
+            }
+            this.dispatchEvent(new CustomEvent("search", {
+                detail: query.toString(),
+                composed: true,
+                bubbles: true,
+            }));
+        }
+        emitChange(e) {
+            const target = e.target;
+            if (target) {
+                target.dispatchEvent(new Event("change", { composed: true, bubbles: true }));
+            }
+        }
+        handleHideToggle() {
+            this.isHidden = !this.isHidden;
+            this.dispatchEvent(new CustomEvent("hide", {
+                detail: this.isHidden,
+                composed: true,
+                bubbles: true,
+            }));
+        }
+        handleDropdownToggle(e) {
+            const target = e.target;
+            this.lmsDropdowns.forEach((lmsDropdown) => {
+                if (lmsDropdown !== target) {
+                    lmsDropdown.isOpen = false;
+                }
+            });
+        }
+        render() {
+            return x `
+      <div class="card" @change=${this.handleChange}>
+        <div
+          class="card-header container-fluid ${o$1({
+            "justify-content-between": !this.isHidden,
+            "justify-content-center": this.isHidden,
+            "flex-column": this.shouldFold,
+        })} sticky-top bg-white"
+        >
+          <div class="row">
+            <div
+              class="col-1 ${o$1({
+            "d-none": this.shouldFold,
+        })}"
+            >
+              <h5
+                class="nobr ${o$1({
+            "d-inline": !this.shouldFold,
+        })}"
+              >
+                ${__("Filter")}
+              </h5>
+            </div>
+
+            <div
+              class=${o$1({
+            "col-3": !this.shouldFold,
+            "mb-3": this.shouldFold,
+            "col-12": this.shouldFold,
+        })}
+            >
+              <lms-search @search=${this.handleSearch}></lms-search>
+            </div>
+
+            <div
+              class=${o$1({
+            col: !this.shouldFold,
+            "col-12": this.shouldFold,
+        })}
+            >
+              <div
+                class="btn-group ${o$1({
+            "d-none": !this.shouldFold,
+            "w-100": this.shouldFold,
+        })}"
+              >
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm"
+                  @click=${this.handleHideToggle}
+                  aria-label=${this.isHidden
+            ? attr__("Show filters")
+            : attr__("Hide filters")}
+                >
+                  ${this.isHidden ? __("Show filters") : __("Hide filters")}
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm"
+                  @click=${this.handleReset}
+                >
+                  ${__("Reset filters")}
+                </button>
+              </div>
+
+              <div
+                class="dropdowns ${o$1({
+            "d-flex": !this.shouldFold,
+            "flex-wrap": !this.shouldFold,
+            "gap-3": !this.shouldFold,
+        })}"
+              >
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .label=${__("Sort by")}
+                  @toggle=${this.handleDropdownToggle}
+                >
+                  ${o$2(["start_time", "end_time", "event_type", "location"], (value, index) => x `
+                      <div>
+                        <input
+                          type="radio"
+                          id="_order_by_${value}"
+                          name="_order_by"
+                          value=${value}
+                          ?checked=${index === 0}
+                        />
+                        <label for="_order_by_${value}">${__(value)}</label>
+                      </div>
+                    `)}
+                </lms-dropdown>
+
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .label=${__("Event Type")}
+                  @toggle=${this.handleDropdownToggle}
+                >
+                  ${o$2(this.facets.eventTypeIds, (eventTypeId) => {
+            var _a;
+            return x `
+                      <div class="form-group form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          name="event_type"
+                          id=${eventTypeId}
+                        />
+                        <label class="form-check-label" for=${eventTypeId}
+                          >${(_a = this.event_types.find((event_type) => event_type.id === parseInt(eventTypeId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
+                        >
+                      </div>
+                    `;
+        })}
+                </lms-dropdown>
+
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .label=${__("Target Group")}
+                  @toggle=${this.handleDropdownToggle}
+                >
+                  ${o$2(this.facets.targetGroupIds, (targetGroupId) => {
+            var _a;
+            return x `
+                      <div class="form-group form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          name="target_group"
+                          id=${targetGroupId}
+                        />
+                        <label class="form-check-label" for=${targetGroupId}
+                          >${(_a = this.target_groups.find((target_group) => target_group.id === targetGroupId)) === null || _a === void 0 ? void 0 : _a.name}</label
+                        >
+                      </div>
+                    `;
+        })}
+                </lms-dropdown>
+
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .label=${__("Age")}
+                  @toggle=${this.handleDropdownToggle}
+                >
+                  <div class="form-group">
+                    <label for="min_age">${__("Min Age")}</label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      id="min_age"
+                      name="min_age"
+                      min="0"
+                      max="120"
+                      value=""
+                      @input=${this.emitChange}
+                    />
+                    <label for="max_age">${__("Max Age")}</label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      id="max_age"
+                      name="max_age"
+                      min="0"
+                      max="120"
+                      value=""
+                      @input=${this.emitChange}
+                    />
+                  </div>
+                </lms-dropdown>
+
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .label=${__("Registration & Dates")}
+                  @toggle=${this.handleDropdownToggle}
+                >
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="open_registration"
+                      name="open_registration"
+                      checked
+                    />
+                    <label for="open_registration"
+                      >${__("Open Registration")}</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <label for="start_time">${__("Start Date")}</label>
+                    <input
+                      type="date"
+                      class="form-control form-control-sm"
+                      id="start_time"
+                      name="start_time"
+                    />
+                    <label for="end_time">${__("End Date")}</label>
+                    <input
+                      type="date"
+                      class="form-control form-control-sm"
+                      id="end_time"
+                      name="end_time"
+                    /></div
+                ></lms-dropdown>
+
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .label=${__("Location")}
+                  @toggle=${this.handleDropdownToggle}
+                >
+                  ${o$2(this.facets.locationIds, (locationId) => {
+            var _a;
+            return x ` <div class="form-group form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          name="location"
+                          id=${locationId}
+                        />
+                        <label class="form-check-label" for=${locationId}
+                          >${(_a = this.locations.find((location) => location.id === parseInt(locationId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
+                        >
+                      </div>`;
+        })}
+                </lms-dropdown>
+
+                <lms-dropdown
+                  .isHidden=${this.isHidden}
+                  .shouldFold=${this.shouldFold}
+                  .label=${__("Fee")}
+                  @toggle=${this.handleDropdownToggle}
+                >
+                  <div class="form-group">
+                    <label for="fee">${__("Fee")}</label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      id="fee"
+                      name="fee"
+                      @input=${this.emitChange}
+                    />
+                  </div>
+                </lms-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <slot></slot>
+        </div>
+      </div>
+    `;
+        }
+    };
+    LMSEventsFilter.styles = [
+        bootstrapStyles,
+        skeletonStyles,
+        utilityStyles,
+        i$5 `
+      .gap-3 {
+        gap: 1rem;
+      }
+
+      .nobr {
+        white-space: nowrap;
+      }
+    `,
+    ];
+    __decorate([
+        e$2({ type: Array })
+    ], LMSEventsFilter.prototype, "events", void 0);
+    __decorate([
+        e$2({ type: String })
+    ], LMSEventsFilter.prototype, "facetsStrategy", void 0);
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSEventsFilter.prototype, "isHidden", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "facets", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "event_types", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "target_groups", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "locations", void 0);
+    __decorate([
+        t$1()
+    ], LMSEventsFilter.prototype, "activeFilters", void 0);
+    __decorate([
+        e$1("input")
+    ], LMSEventsFilter.prototype, "inputs", void 0);
+    __decorate([
+        e$1("lms-dropdown")
+    ], LMSEventsFilter.prototype, "lmsDropdowns", void 0);
+    LMSEventsFilter = __decorate([
+        e$3("lms-events-filter")
+    ], LMSEventsFilter);
+    var LMSEventsFilter$1 = LMSEventsFilter;
+
+    let LMSFloatingMenu = class LMSFloatingMenu extends s {
+        constructor() {
+            super(...arguments);
+            this.brand = "Navigation";
+            this.items = [];
+            this._currentUrl = window.location.href;
+            this._currentSearchParams = new URLSearchParams(window.location.search);
+            this.isOpen = false;
+        }
+        toggleNavbarCollapse() {
+            this.navbarNav.classList.toggle("collapse");
+            if (this.navbarNav.classList.contains("show")) {
+                this.isOpen = true;
+                return;
+            }
+            this.isOpen = false;
+        }
+        render() {
+            return x ` <nav
+      class="navbar navbar-expand-lg navbar-light mx-2 mt-3 mb-5 rounded"
+    >
+      <a class="navbar-brand" href="#"><strong>${this.brand}</strong></a>
+      <button
+        @click=${this.toggleNavbarCollapse}
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded=${this.isOpen}
+        aria-label=${attr__("Toggle navigation")}
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          ${this.items.map((item) => {
+            /** We split the searchParams from the URL and
+             *  compare them to the currentSearchParams of
+             *  the window.location. If they match, we add
+             *  the "active" class to the item. */
+            let [, itemSearchParams] = item.url.split("?");
+            itemSearchParams = new URLSearchParams(itemSearchParams !== null && itemSearchParams !== void 0 ? itemSearchParams : "");
+            const matches = itemSearchParams.toString() ===
+                this._currentSearchParams.toString();
+            return x ` <li class="nav-item ${matches ? "active" : ""}">
+              <a class="nav-link" href="${item.url}"
+                >${litFontawesome_2(item.icon)}
+                ${item.name}${matches
+                ? x ` <span class="sr-only">(${__("current")})</span>`
+                : ""}</a
+              >
+            </li>`;
+        })}
+        </ul>
+      </div>
+    </nav>`;
+        }
+    };
+    LMSFloatingMenu.styles = [
+        bootstrapStyles,
+        skeletonStyles,
+        i$5 `
+      svg {
+        width: 1rem;
+        height: 1rem;
+      }
+
+      nav {
+        background-color: var(--background-color);
+        backdrop-filter: blur(5px);
+        box-shadow: var(--shadow-hv);
+      }
+    `,
+    ];
+    __decorate([
+        e$2({ type: String })
+    ], LMSFloatingMenu.prototype, "brand", void 0);
+    __decorate([
+        e$2({
+            type: Array,
+            converter: (value) => (value ? JSON.parse(value) : []),
+        })
+    ], LMSFloatingMenu.prototype, "items", void 0);
+    __decorate([
+        e$2({ type: String, attribute: false })
+    ], LMSFloatingMenu.prototype, "_currentUrl", void 0);
+    __decorate([
+        e$2({ type: String, attribute: false })
+    ], LMSFloatingMenu.prototype, "_currentSearchParams", void 0);
+    __decorate([
+        i$2("#navbarNav")
+    ], LMSFloatingMenu.prototype, "navbarNav", void 0);
+    LMSFloatingMenu = __decorate([
+        e$3("lms-floating-menu")
+    ], LMSFloatingMenu);
+    var LMSFloatingMenu$1 = LMSFloatingMenu;
+
+    function createWrapper(breakpoints) {
+        const [block, none] = breakpoints;
+        return x `
+    <div
+      class="w-100 d-none ${`d-${block}-block`} ${none
+        ? `d-${none}-none`
+        : `d-none`}"
+    ></div>
+  `;
+    }
+    function insertResponsiveWrapper(index) {
+        const breakpoints = [
+            { n: 2, breakpoints: ["sm", "md"] },
+            { n: 3, breakpoints: ["md", "lg"] },
+            { n: 4, breakpoints: ["lg", "xl"] },
+            { n: 5, breakpoints: ["xl", ""] },
+        ];
+        const wrappers = breakpoints
+            .filter(({ n }) => (index + 1) % n === 0)
+            .map(({ breakpoints }) => createWrapper(breakpoints));
+        return wrappers;
+    }
+
+    let LMSImageBrowser = class LMSImageBrowser extends s {
+        constructor() {
+            super(...arguments);
+            this.uploadedImages = [];
+            this.boundEventHandler = () => undefined;
+        }
+        loadImages() {
+            const uploadedImages = async () => await fetch("/api/v1/contrib/eventmanagement/images");
+            uploadedImages()
+                .then(async (response) => await response.json())
+                .then((uploadedImages) => {
+                this.uploadedImages = uploadedImages;
+            })
+                .catch((error) => {
+                console.error(error);
+            });
+        }
+        handleClipboardCopy(hashvalue) {
+            navigator.clipboard.writeText(`/cgi-bin/koha/opac-retrieve-file.pl?id=${hashvalue}`);
+        }
+        handleMessageEvent(event) {
+            if (event.data === "reloaded") {
+                this.loadImages();
+            }
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            /** This is the counterpart to the script in the intranet_js hook */
+            this.boundEventHandler = this.handleMessageEvent.bind(this);
+            window.addEventListener("message", this.boundEventHandler);
+            /** This loadImages call is independent of the eventListener. */
+            this.loadImages();
+        }
+        disconnectedCallback() {
+            super.disconnectedCallback();
+            window.removeEventListener("message", this.boundEventHandler);
+        }
+        updated(changedProperties) {
+            const shouldUpdateTooltipTargets = changedProperties.has("uploadedImages") &&
+                this.buttonReferences &&
+                this.tooltipReferences;
+            if (shouldUpdateTooltipTargets) {
+                this.tooltipReferences.forEach((tooltipReference) => {
+                    const { id } = tooltipReference;
+                    const tooltipHashvalue = id.split("-").pop();
+                    tooltipReference.target = Array.from(this.buttonReferences).find((buttonReference) => {
+                        const { id } = buttonReference;
+                        const buttonHashvalue = id.split("-").pop();
+                        return buttonHashvalue === tooltipHashvalue
+                            ? buttonReference
+                            : null;
+                    });
+                });
+            }
+        }
+        render() {
+            return x `
+      <div class="container-fluid">
+        <div class="card-deck">
+          ${o$2(this.uploadedImages, (uploadedImage, index) => {
+            const { image, metadata } = uploadedImage;
+            const { dtcreated, filename, hashvalue } = metadata;
+            const filetype = filename.split(".").pop();
+            let isValidFiletype;
+            if (filetype) {
+                isValidFiletype = [
+                    "png",
+                    "jpg",
+                    "jpeg",
+                    "webp",
+                    "avif",
+                    "gif",
+                ].includes(filetype);
+            }
+            return x `
+              <div class="card mb-5">
+                <img
+                  ?hidden=${!isValidFiletype}
+                  src="data:image/${filetype};base64,${image}"
+                  class="card-img-top"
+                  alt=${filename}
+                />
+                <div class="card-body">
+                  <p
+                    data-placement="top"
+                    title=${attr__("Link constructed!")}
+                    @click=${() => {
+                this.handleClipboardCopy(hashvalue);
+            }}
+                    class="font-weight-bold p-2 border border-secondary rounded text-center"
+                  >
+                    ${hashvalue}
+                  </p>
+                  <div class="text-center">
+                    <lms-tooltip
+                      id="tooltip-${hashvalue}"
+                      data-placement="top"
+                      data-text="${attr__("Link constructed")}!"
+                      data-timeout="1000"
+                    >
+                      <button
+                        id="button-${hashvalue}"
+                        data-placement="bottom"
+                        title="${attr__("Link constructed")}!"
+                        @click=${() => {
+                this.handleClipboardCopy(hashvalue);
+            }}
+                        class="btn btn-primary text-center"
+                      >
+                        ${litFontawesome_2(faCopy)}
+                        <span>${__("Copy to clipboard")}</span>
+                      </button>
+                    </lms-tooltip>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <p class="font-weight-light text-muted font-size-sm">
+                    ${filename}&nbsp;-&nbsp;${dtcreated}
+                  </p>
+                </div>
+              </div>
+              ${insertResponsiveWrapper(index)}
+            `;
+        })}
+        </div>
+      </div>
+    `;
+        }
+    };
+    LMSImageBrowser.styles = [
+        bootstrapStyles,
+        skeletonStyles,
+        i$5 `
+      img {
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+      }
+
+      img,
+      .card {
+        max-width: 300px;
+      }
+
+      .font-size-sm {
+        font-size: 1rem;
+      }
+
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: #ffffff;
+      }
+
+      button {
+        white-space: nowrap;
+      }
+
+      button.btn-modal > svg {
+        color: var(--text-color);
+      }
+    `,
+    ];
+    __decorate([
+        e$2({
+            type: Array,
+            attribute: "uploaded-images",
+            converter: { fromAttribute: (value) => (value ? JSON.parse(value) : []) },
+        })
+    ], LMSImageBrowser.prototype, "uploadedImages", void 0);
+    __decorate([
+        e$1('[id^="button-"]')
+    ], LMSImageBrowser.prototype, "buttonReferences", void 0);
+    __decorate([
+        e$1('[id^="tooltip-"]')
+    ], LMSImageBrowser.prototype, "tooltipReferences", void 0);
+    LMSImageBrowser = __decorate([
+        e$3("lms-image-browser")
+    ], LMSImageBrowser);
+    var LMSImageBrowser$1 = LMSImageBrowser;
+
+    /**
+     * @license
+     * Copyright 2018 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */const i="important",n=" !"+i,o=e(class extends i$1{constructor(t$1){var e;if(super(t$1),t$1.type!==t.ATTRIBUTE||"style"!==t$1.name||(null===(e=t$1.strings)||void 0===e?void 0:e.length)>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(t){return Object.keys(t).reduce(((e,r)=>{const s=t[r];return null==s?e:e+`${r=r.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${s};`}),"")}update(e,[r]){const{style:s}=e.element;if(void 0===this.ut){this.ut=new Set;for(const t in r)this.ut.add(t);return this.render(r)}this.ut.forEach((t=>{null==r[t]&&(this.ut.delete(t),t.includes("-")?s.removeProperty(t):s[t]="");}));for(const t in r){const e=r[t];if(null!=e){this.ut.add(t);const r="string"==typeof e&&e.endsWith(n);t.includes("-")||r?s.setProperty(t,r?e.slice(0,-11):e,r?i:""):s[t]=e;}}return T}});
+
+    class IntersectionObserverHandler {
+        constructor({ intersecting, intersected }) {
+            this.observer = null;
+            this.intersecting = intersecting;
+            this.intersected = intersected;
+        }
+        init() {
+            if (this.intersecting.ref instanceof HTMLElement &&
+                this.intersected.ref instanceof HTMLElement) {
+                this.observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        var _a, _b, _c, _d;
+                        if (entry.target === this.intersecting.ref &&
+                            entry.isIntersecting &&
+                            entry.intersectionRatio > 0) {
+                            (_b = (_a = this.intersecting).do) === null || _b === void 0 ? void 0 : _b.call(_a);
+                        }
+                        else if (entry.target === this.intersected.ref &&
+                            entry.isIntersecting &&
+                            entry.intersectionRatio > 0) {
+                            (_d = (_c = this.intersected).do) === null || _d === void 0 ? void 0 : _d.call(_c);
+                        }
+                    });
+                });
+                this.observer.observe(this.intersecting.ref);
+                this.observer.observe(this.intersected.ref);
+            }
+            else {
+                throw new Error("Invalid parameters supplied to IntersectionObserverClass. Please ensure both 'intersecting' and 'intersected' are valid Intersectable types.");
+            }
+        }
+    }
+
+    let LMSModal = class LMSModal extends s {
+        constructor() {
+            var _a;
+            super(...arguments);
+            this.fields = [];
+            this.createOpts = {
+                endpoint: "",
+            };
+            this.editable = false;
+            this.isOpen = false;
+            this.alert = { active: false, message: undefined };
+            this.modalTitle = "";
+            /** TODO: Maybe we can find a cleaner way to do the intersection observations than in the base modal component */
+            this.footer = (_a = document.getElementById("i18nMenu")) === null || _a === void 0 ? void 0 : _a.parentElement;
+            this.intersectionObserverHandler = null;
+        }
+        toggleModal() {
+            this.isOpen = !this.isOpen;
+            document.body.style.overflow = this.isOpen ? "hidden" : "auto";
+            if (!this.isOpen) {
+                this.alert = {
+                    active: false,
+                    message: undefined,
+                };
+            }
+        }
+        getEndpointUrl(endpoint, locale) {
+            const _endpoint = new URL(endpoint, window.location.origin);
+            if (locale !== "en") {
+                _endpoint.searchParams.append("lang", locale);
+            }
+            return _endpoint.toString();
+        }
+        async create(e) {
+            e.preventDefault();
+            const { endpoint, method } = this.createOpts;
+            const response = await fetch(this.getEndpointUrl(endpoint, locale), {
+                method,
+                body: JSON.stringify({
+                    ...Object.assign({}, ...this.fields.map((field) => ({
+                        [field.name]: field.value,
+                    }))),
+                }),
+            });
+            if (response.ok) {
+                this.toggleModal();
+                const event = new CustomEvent("created", { bubbles: true });
+                this.dispatchEvent(event);
+            }
+            if (!response.ok) {
+                const result = await response.json();
+                if (result.error) {
+                    this.alert = {
+                        active: true,
+                        message: Array.isArray(result.error)
+                            ? x `<span>Sorry!</span>
+                <ol>
+                  ${o$2(result.error, (message) => x `<li>${message}</li>`)}
+                </ol>`
+                            : x `<span>Sorry! ${result.error}</span>`,
+                    };
+                    return;
+                }
+                if (result.errors) {
+                    console.trace(result.errors);
+                }
+            }
+        }
+        dismissAlert() {
+            this.alert = {
+                active: false,
+                message: undefined,
+            };
+        }
+        firstUpdated() {
+            if (this.footer && this.btnModalWrapper) {
+                this.intersectionObserverHandler = new IntersectionObserverHandler({
+                    intersecting: {
+                        ref: this.btnModalWrapper,
+                        do: () => {
+                            const bottom = parseFloat(getComputedStyle(this.btnModalWrapper).bottom);
+                            this.btnModalWrapper.style.bottom = `${bottom + (this.footer ? this.footer.offsetHeight : 0)}px`;
+                        },
+                    },
+                    intersected: {
+                        ref: this.footer,
+                    },
+                });
+                this.intersectionObserverHandler.init();
+            }
+            const dbDataPopulated = this.fields.map(async (field) => {
+                if (field.logic) {
+                    return {
+                        ...field,
+                        dbData: await field.logic(),
+                    };
+                }
+                return field;
+            });
+            Promise.all(dbDataPopulated).then((fields) => {
+                this.fields = fields;
+            });
+        }
+        render() {
+            var _a;
+            return x `
+      <div
+        class="btn-modal-wrapper"
+        style=${o({
+            zIndex: this.isOpen ? "1051" : "1049",
+        })}
+      >
+        <button
+          @click=${this.toggleModal}
+          class="btn-modal ${o$1({ tilted: this.isOpen })}"
+          type="button"
+        >
+          ${litFontawesome_2(faPlus)}
+        </button>
+      </div>
+      <div
+        class="backdrop"
+        ?hidden=${!this.isOpen}
+        @click=${this.toggleModal}
+      ></div>
+      <div
+        class="modal fade ${o$1({
+            "d-block": this.isOpen,
+            show: this.isOpen,
+        })}"
+        id="lms-modal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="lms-modal-title"
+        aria-hidden=${!this.isOpen}
+        style=${o({
+            overflowY: this.isOpen ? "scroll" : "auto",
+        })}
+      >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="lms-modal-title">
+                ${(_a = this.modalTitle) !== null && _a !== void 0 ? _a : `${__("Add")}`}
+              </h5>
+              <button
+                @click=${this.toggleModal}
+                type="button"
+                class="close"
+                aria-label=${attr__("Close")}
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form @submit=${this.create}>
+              <div class="modal-body">
+                <div
+                  role="alert"
+                  ?hidden=${!this.alert.active}
+                  class="alert ${o$1({
+            "alert-danger": this.alert.active,
+        })} alert-dismissible fade show"
+                >
+                  ${this.alert.message}
+                  <button
+                    @click=${this.dismissAlert}
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label=${attr__("Close")}
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                ${o$2(this.fields, (value) => this.getFieldMarkup(value))}
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+                  @click=${this.toggleModal}
+                >
+                  ${litFontawesome_2(faClose)}
+                  <span>${__("Close")}</span>
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  ${litFontawesome_2(faPlus)}
+                  <span>${__("Create")}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    `;
+        }
+        mediateChange(e) {
+            const { name, value } = e.detail;
+            this.fields = [
+                ...this.fields.map((field) => {
+                    if (field.name === name) {
+                        return {
+                            ...field,
+                            value,
+                        };
+                    }
+                    return field;
+                }),
+            ];
+        }
+        getFieldMarkup(field) {
+            const { type, desc } = field;
+            if (!type || !desc)
+                return A;
+            const { value } = field;
+            const fieldTypes = new Map([
+                [
+                    "select",
+                    x `<lms-select
+          @change=${this.mediateChange}
+          .field=${field}
+        ></lms-select>`,
+                ],
+                [
+                    "checkbox",
+                    x `<lms-checkbox-input
+          .field=${field}
+          .value=${value}
+        ></lms-checkbox-input>`,
+                ],
+                ["info", x `<p>${desc}</p>`],
+                [
+                    "matrix",
+                    x `<lms-matrix
+          .field=${field}
+          .value=${value}
+        ></lms-matrix>`,
+                ],
+                [
+                    "default",
+                    x `<lms-primitives-input
+          .field=${field}
+          .value=${value}
+        ></lms-primitives-input>`,
+                ],
+            ]);
+            return fieldTypes.has(type)
+                ? fieldTypes.get(type)
+                : fieldTypes.get("default");
+        }
+    };
+    LMSModal.styles = [
+        bootstrapStyles,
+        skeletonStyles,
+        i$5 `
+      .btn-modal-wrapper {
+        position: fixed;
+        bottom: 1em;
+        right: 1em;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        box-shadow: var(--shadow-hv);
+        cursor: pointer;
+        z-index: 1049;
+      }
+      .btn-modal-wrapper > .btn-modal {
+        background: none;
+        border: none;
+        color: var(--text-color);
+        font-size: 2em;
+        width: 2em;
+        height: 2em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(0 0 0 / 50%);
+        z-index: 1048;
+      }
+      button.btn-modal:not(.tilted) {
+        transition: 0.2s;
+        transition-timing-function: ease-in-out;
+      }
+      .tilted {
+        transition: 0.2s;
+        transition-timing-function: ease-in-out;
+        transform: rotate(45deg);
+      }
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: var(--background-color);
+      }
+      button {
+        white-space: nowrap;
+      }
+      button.btn-modal > svg {
+        color: var(--background-color);
+      }
+    `,
+    ];
+    __decorate([
+        e$2({ type: Array })
+    ], LMSModal.prototype, "fields", void 0);
+    __decorate([
+        e$2({ type: Object })
+    ], LMSModal.prototype, "createOpts", void 0);
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSModal.prototype, "editable", void 0);
+    __decorate([
+        t$1()
+    ], LMSModal.prototype, "isOpen", void 0);
+    __decorate([
+        t$1()
+    ], LMSModal.prototype, "alert", void 0);
+    __decorate([
+        t$1()
+    ], LMSModal.prototype, "modalTitle", void 0);
+    __decorate([
+        i$2(".btn-modal-wrapper")
+    ], LMSModal.prototype, "btnModalWrapper", void 0);
+    LMSModal = __decorate([
+        e$3("lms-modal")
+    ], LMSModal);
+    var LMSModal$1 = LMSModal;
+
+    let LMSPagination = class LMSPagination extends s {
+        constructor() {
+            super(...arguments);
+            this.pageSizes = [
+                10, 20, 50, 100,
+            ];
+            this.hasPrevious = false;
+            this.hasNext = undefined;
+            this.nextPage = undefined;
+            this._page = 1;
+            this._per_page = 20;
+            this.url = new URL(window.location.href);
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.getPaginationState();
+            this.prefetchNextPage();
+        }
+        prefetchNextPage() {
+            this.dispatchEvent(new CustomEvent("prefetch", {
+                detail: {
+                    _page: this._page + 1,
+                    _per_page: this._per_page,
+                },
+                bubbles: true,
+                composed: true,
+            }));
+        }
+        getPaginationState() {
+            const { searchParams } = this.url;
+            const _page = searchParams.get("_page");
+            const _per_page = searchParams.get("_per_page");
+            if (_page && _page !== this._page.toString()) {
+                this._page = parseInt(_page);
+                this.hasPrevious = this._page > 1;
+            }
+            if (_per_page && _per_page !== this._per_page.toString()) {
+                this._per_page = parseInt(_per_page);
+            }
+        }
+        updated(changedProperties) {
+            if (changedProperties.has("nextPage") &&
+                this.nextPage !== undefined &&
+                !isDeepEqual(changedProperties.get("nextPage"), this.nextPage)) {
+                this.hasNext = this.nextPage !== undefined && this.nextPage.length > 0;
+                if (this.hasNext) {
+                    this.prefetchNextPage();
+                }
+            }
+            if (changedProperties.has("_page") || changedProperties.has("_per_page")) {
+                this.hasPrevious = this._page > 1;
+                this.prefetchNextPage();
+            }
+        }
+        getLinkForPageSize(pageSize) {
+            const urlCopy = new URL(this.url.href);
+            urlCopy.searchParams.set("_per_page", pageSize.toString());
+            return urlCopy.href;
+        }
+        getLinkForPage(page, direction) {
+            const urlCopy = new URL(this.url.href);
+            if (direction === "next") {
+                urlCopy.searchParams.set("_page", (page + 1).toString());
+            }
+            if (direction === "previous" && page > 1) {
+                urlCopy.searchParams.set("_page", (page - 1).toString());
+            }
+            return urlCopy.href;
+        }
+        handlePaginationChange(e) {
+            e.preventDefault();
+            const target = e.target;
+            const anchor = target.closest("a");
+            if (!anchor)
+                return;
+            const url = new URL(anchor.href);
+            let _page = url.searchParams.get("_page");
+            let _per_page = url.searchParams.get("_per_page");
+            if (_page && _per_page) {
+                _page = parseInt(_page, 10);
+                _per_page = parseInt(_per_page, 10);
+                this.dispatchEvent(new CustomEvent("page", {
+                    detail: {
+                        _page,
+                        _per_page,
+                    },
+                    bubbles: true,
+                    composed: true,
+                }));
+            }
+        }
+        render() {
+            return x `
+      <nav aria-label=${attr__("Table navigation")}>
+        <ul class="pagination justify-content-end mb-0">
+          <li
+            class="page-item ${o$1({
+            disabled: !this.hasPrevious,
+        })}"
+          >
+            <a
+              class="page-link"
+              href=${this.getLinkForPage(this._page, "previous")}
+              @click=${this.handlePaginationChange}
+              >${__("Previous")}</a
+            >
+          </li>
+          ${o$2(this.pageSizes, (pageSize) => x `
+              <li
+                class="page-item ${o$1({
+            active: pageSize === this._per_page,
+        })}"
+              >
+                <a
+                  class="page-link"
+                  href=${this.getLinkForPageSize(pageSize)}
+                  @click=${this.handlePaginationChange}
+                  >${pageSize}</a
+                >
+              </li>
+            `)}
+          <li
+            class="page-item
+            ${o$1({
+            disabled: !this.hasNext,
+        })}"
+          >
+            <a
+              class="page-link"
+              href=${this.getLinkForPage(this._page, "next")}
+              @click=${this.handlePaginationChange}
+              ><span
+                class=${o$1({
+            "d-none": this.hasNext === undefined,
+        })}
+                >${__("Next")}</span
+              >
+              <div
+                class="spinner-border spinner-border-sm align-middle text-primary ${o$1({
+            "d-none": this.hasNext !== undefined,
+        })}"
+                role="status"
+              >
+                <span class="sr-only">${__("Loading")}...</span>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    `;
+        }
+    };
+    LMSPagination.styles = [bootstrapStyles, skeletonStyles];
+    __decorate([
+        e$2({ type: Array, attribute: "page-sizes" })
+    ], LMSPagination.prototype, "pageSizes", void 0);
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSPagination.prototype, "hasPrevious", void 0);
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSPagination.prototype, "hasNext", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSPagination.prototype, "nextPage", void 0);
+    __decorate([
+        e$2({ type: Number })
+    ], LMSPagination.prototype, "_page", void 0);
+    __decorate([
+        e$2({ type: Number })
+    ], LMSPagination.prototype, "_per_page", void 0);
+    LMSPagination = __decorate([
+        e$3("lms-pagination")
+    ], LMSPagination);
+    var LMSPagination$1 = LMSPagination;
+
+    let LMSSearch = class LMSSearch extends s {
+        constructor() {
+            super(...arguments);
+            this.debouncedSearch = debounce((query) => {
+                this.dispatchEvent(new CustomEvent("search", {
+                    detail: query,
+                    bubbles: true,
+                    composed: false,
+                }));
+            }, 250, false);
+        }
+        handleInput(e) {
+            const inputElement = e.target;
+            this.debouncedSearch(inputElement.value);
+        }
+        render() {
+            return x `
+      <div class="input-group flex-nowrap">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="addon-wrapping" aria
+            >${litFontawesome_2(faSearch)}</span
+          >
+        </div>
+        <input
+          type="text"
+          class="form-control"
+          placeholder=${attr__("Search")}
+          aria-label=${attr__("Search")}
+          aria-describedby="addon-wrapping"
+          @input=${this.handleInput}
+        />
+      </div>
+    `;
+        }
+    };
+    LMSSearch.styles = [
+        bootstrapStyles,
+        i$5 `
+      svg {
+        color: #000000;
+        height: 1rem;
+        width: 1rem;
+      }
+    `,
+    ];
+    LMSSearch = __decorate([
+        e$3("lms-search")
+    ], LMSSearch);
+    var LMSSearch$1 = LMSSearch;
 
     let LMSTooltip = class LMSTooltip extends s {
         constructor() {
@@ -3737,274 +4232,6 @@ ${value}</textarea
         e$3("lms-tooltip")
     ], LMSTooltip);
     var LMSTooltip$1 = LMSTooltip;
-
-    let LMSCheckboxInput = class LMSCheckboxInput extends s {
-        constructor() {
-            super(...arguments);
-            this.field = {};
-            this.value = "";
-        }
-        render() {
-            var _a;
-            const { name, value, desc, required } = this.field;
-            return x `
-      <div class="form-check">
-        <input
-          type="checkbox"
-          name=${name}
-          id=${name}
-          value=${(_a = value) !== null && _a !== void 0 ? _a : "1"}
-          class="form-check-input"
-          @input=${(e) => {
-            this.field.value = (e.target.checked ? 1 : 0).toString();
-        }}
-          ?required=${required}
-          ?checked=${[true, "true", "1"].includes(this.value)}
-        />
-        <label for="${name}">&nbsp;${desc}</label>
-      </div>
-    `;
-        }
-    };
-    LMSCheckboxInput.styles = [bootstrapStyles];
-    __decorate([
-        e$2({ type: Object })
-    ], LMSCheckboxInput.prototype, "field", void 0);
-    __decorate([
-        e$2({ type: Object })
-    ], LMSCheckboxInput.prototype, "value", void 0);
-    LMSCheckboxInput = __decorate([
-        e$3("lms-checkbox-input")
-    ], LMSCheckboxInput);
-    var LMSCheckboxInput$1 = LMSCheckboxInput;
-
-    /**
-     * @license
-     * Copyright 2018 Google LLC
-     * SPDX-License-Identifier: BSD-3-Clause
-     */const l=l=>null!=l?l:A;
-
-    let LMSMatrix = class LMSMatrix extends s {
-        constructor() {
-            super(...arguments);
-            this.field = {};
-            this.value = [];
-        }
-        render() {
-            const { field } = this;
-            return x ` <label for=${field.name}>${field.desc}</label>
-      <table class="table table-bordered" id=${field.name}>
-        <thead>
-          <tr>
-            ${o$1(field.headers, ([name]) => x `<th scope="col">${name}</th>`)}
-          </tr>
-        </thead>
-        <tbody>
-          ${o$1(field.dbData, (row) => x `<tr>
-              <td class="align-middle">${row.name}</td>
-              ${o$1(field.headers, (header) => this.getMatrixInputMarkup({ field, row, header }))}
-            </tr>`)}
-        </tbody>
-      </table>`;
-        }
-        handleInput({ e, id, header }) {
-            if (!(e.target instanceof HTMLInputElement))
-                return;
-            const { field } = this;
-            const { type } = e.target;
-            const [name] = header;
-            const updateOrCreateItem = (value) => {
-                /** If there's no Array present in field.value
-                 *  we create one and add the item to it. */
-                if (!((field === null || field === void 0 ? void 0 : field.value) instanceof Array)) {
-                    field.value = [{ id: id.toString(), [name]: value }];
-                    return;
-                }
-                /** Now it must be an array because the guard clause
-                 *  didn't return in the previous step. We check if
-                 *  the item exists and update it if it does. */
-                const item = field.value.find((item) => item.id == id);
-                if (item) {
-                    item[name] = value;
-                    return;
-                }
-                /** If it is an Array but we didn't find an item  we
-                 *  have to add a new one. */
-                field.value.push({ id: id.toString(), [name]: value });
-            };
-            switch (type) {
-                case "number": {
-                    const { value } = e.target;
-                    updateOrCreateItem(value.toString());
-                    break;
-                }
-                case "checkbox": {
-                    const { checked } = e.target;
-                    updateOrCreateItem((checked ? 1 : 0).toString());
-                    break;
-                }
-            }
-        }
-        getMatrixInputMarkup({ field, row, header }) {
-            var _a, _b, _c, _d, _e;
-            const [name, type] = header;
-            const inputTypes = new Map([
-                [
-                    "number",
-                    x `<td class="align-middle">
-          <input
-            type="number"
-            name=${row.name}
-            id=${row.id}
-            .value=${field.value instanceof Array
-                    ? (_b = (_a = field.value.find((item) => item.id == row.id)) === null || _a === void 0 ? void 0 : _a[name]) !== null && _b !== void 0 ? _b : ""
-                    : ""}
-            class="form-control"
-            step=${l((_d = (_c = field.attributes) === null || _c === void 0 ? void 0 : _c.find(([attribute]) => attribute === "step")) === null || _d === void 0 ? void 0 : _d.slice(-1)[0])}
-            @input=${(e) => this.handleInput({ e, id: row.id, header })}
-            ?required=${field.required}
-          />
-        </td>`,
-                ],
-                [
-                    "checkbox",
-                    x ` <td class="align-middle">
-          <input
-            type="checkbox"
-            name=${row.name}
-            id=${row.id}
-            class="form-control"
-            @input=${(e) => this.handleInput({ e, id: row.id, header })}
-            ?required=${field.required}
-            .checked=${field.value instanceof Array
-                    ? ((_e = field.value.find((item) => item.id == row.id)) === null || _e === void 0 ? void 0 : _e[name]) === "1"
-                        ? true
-                        : false
-                    : false}
-          />
-        </td>`,
-                ],
-            ]);
-            return inputTypes.has(type)
-                ? inputTypes.get(type)
-                : inputTypes.get("default");
-        }
-    };
-    // @state() private hasTransformedField = false;
-    LMSMatrix.styles = [
-        bootstrapStyles,
-        i$5 `
-      input[type="checkbox"].form-control {
-        font-size: 0.375rem;
-      }
-    `,
-    ];
-    __decorate([
-        e$2({ type: Object })
-    ], LMSMatrix.prototype, "field", void 0);
-    __decorate([
-        e$2({ type: Array })
-    ], LMSMatrix.prototype, "value", void 0);
-    LMSMatrix = __decorate([
-        e$3("lms-matrix")
-    ], LMSMatrix);
-    var LMSMatrix$1 = LMSMatrix;
-
-    let LMSPrimitivesInput = class LMSPrimitivesInput extends s {
-        constructor() {
-            super(...arguments);
-            this.field = {};
-            this.value = "";
-        }
-        render() {
-            var _a;
-            const { name, value, desc, type, required } = this.field;
-            return x ` <div class="form-group">
-      <label for=${name}>${desc}</label>
-      <input
-        type=${l(type)}
-        name=${name}
-        id=${name}
-        value=${l(typeof this.value === "string" ? this.value : (_a = this.value) === null || _a === void 0 ? void 0 : _a.toString())}
-        class="form-control"
-        @input=${(e) => {
-            var _a;
-            this.field.value = (_a = e.target.value) !== null && _a !== void 0 ? _a : value;
-        }}
-        ?required=${required}
-      />
-    </div>`;
-        }
-    };
-    LMSPrimitivesInput.styles = [bootstrapStyles];
-    __decorate([
-        e$2({ type: Object })
-    ], LMSPrimitivesInput.prototype, "field", void 0);
-    __decorate([
-        e$2({ type: Object })
-    ], LMSPrimitivesInput.prototype, "value", void 0);
-    LMSPrimitivesInput = __decorate([
-        e$3("lms-primitives-input")
-    ], LMSPrimitivesInput);
-    var LMSPrimitivesInput$1 = LMSPrimitivesInput;
-
-    let LMSSelect = class LMSSelect extends s {
-        constructor() {
-            super(...arguments);
-            this.defaultOption = {};
-            this.field = {};
-        }
-        firstUpdated() {
-            const { dbData } = this.field;
-            if (dbData === null || dbData === void 0 ? void 0 : dbData.length) {
-                const [defaultOption] = dbData;
-                const { id } = defaultOption;
-                this.field.value = id.toString();
-                this.defaultOption = defaultOption;
-            }
-        }
-        render() {
-            const { name, desc, value, required, dbData } = this.field;
-            return x `
-      <div class="form-group">
-        <label for=${name}>${desc}</label>
-        <select
-          name=${name}
-          id=${name}
-          class="form-control"
-          @change=${(e) => {
-            var _a;
-            this.field.value = (_a = e.target.value) !== null && _a !== void 0 ? _a : value;
-            this.dispatchEvent(new CustomEvent("change", {
-                detail: {
-                    name,
-                    value: this.field.value,
-                },
-                composed: true,
-                bubbles: true,
-            }));
-        }}
-          ?required=${required}
-        >
-          ${o$1(dbData, ({ id, name }) => x `<option
-                value=${id}
-                ?selected=${id === this.defaultOption.id}
-              >
-                ${name}
-              </option>`)}
-        </select>
-      </div>
-    `;
-        }
-    };
-    LMSSelect.styles = [bootstrapStyles];
-    __decorate([
-        e$2({ type: Object })
-    ], LMSSelect.prototype, "field", void 0);
-    LMSSelect = __decorate([
-        e$3("lms-select")
-    ], LMSSelect);
-    var LMSSelect$1 = LMSSelect;
 
     let LMSEventMangementMenu = class LMSEventMangementMenu extends LMSFloatingMenu$1 {
         constructor() {
@@ -4410,11 +4637,17 @@ ${value}</textarea
             this.headers = [];
             this.isEditable = false;
             this.isDeletable = false;
+            this.nextPage = undefined;
+            this.hasNoResults = false;
+            this._page = 1;
+            this._per_page = 20;
             this.toast = {
                 heading: "",
                 message: "",
             };
             this.emptyTableMessage = x `${__("No data to display")}.`;
+            this.sortableColumns = ["id"];
+            this.unsortableColumns = [];
             this.notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
             this.inputConverter = new InputConverter();
             this.throttledHandleResize = throttle(this.handleResize.bind(this), 250);
@@ -4549,84 +4782,178 @@ ${value}</textarea
         }
         firstUpdated(_changedProperties) {
             super.firstUpdated(_changedProperties);
+            this.order.forEach((column) => {
+                const preexistingColumns = [
+                    ...this.sortableColumns,
+                    ...this.unsortableColumns,
+                ];
+                if (!preexistingColumns.includes(column)) {
+                    this.sortableColumns.push(column);
+                }
+            });
             this.handleResize();
         }
         handleResize() {
             this.table.classList.remove("table-responsive");
-            const width = this.table.offsetWidth +
-                78; /* 4.875rem, combined paddings & margings of parents. TODO: We need a generic solution for this. */
-            if (width > window.innerWidth) {
+            let totalSourroundingWidth = 0;
+            let element = this.table;
+            const props = [
+                "marginLeft",
+                "marginRight",
+                "paddingLeft",
+                "paddingRight",
+            ];
+            while (element) {
+                const style = window.getComputedStyle(element);
+                totalSourroundingWidth += props.reduce((total, prop) => total + parseFloat(style[prop]), 0);
+                element =
+                    element.getRootNode() instanceof ShadowRoot
+                        ? element.getRootNode().host
+                        : element.parentElement;
+            }
+            if (this.table.offsetWidth + totalSourroundingWidth > window.innerWidth) {
                 this.table.classList.add("table-responsive");
             }
         }
+        handleSortChange(e) {
+            const target = e.target;
+            const tableHeader = target.closest("th");
+            if (!tableHeader)
+                return;
+            const { name } = tableHeader.dataset;
+            this.dispatchEvent(new CustomEvent("sort", {
+                detail: {
+                    _order_by: name,
+                },
+                bubbles: true,
+                composed: true,
+            }));
+        }
+        handleSearch(e) {
+            const { detail } = e;
+            let q = "";
+            if (detail) {
+                const number = Number(detail);
+                q = this.sortableColumns.map((column) => {
+                    return Number.isNaN(number)
+                        ? { [column]: { "-like": `%${detail}%` } }
+                        : { [column]: detail };
+                });
+                q = JSON.stringify(q);
+            }
+            else {
+                q = JSON.stringify({});
+            }
+            this.dispatchEvent(new CustomEvent("search", {
+                detail: {
+                    q,
+                },
+                composed: true,
+                bubbles: true,
+            }));
+        }
         render() {
-            return !this.data.length
-                ? x `<h1 class="text-center">${this.emptyTableMessage}</h1>`
-                : x `
-          <div class="container-fluid mx-0">
-            <table class="table table-striped table-bordered table-hover">
-              <thead>
+            if (!this.data.length) {
+                x `<h1 class="text-center">${this.emptyTableMessage}</h1>`;
+            }
+            return x `
+      <div class="container-fluid mx-0">
+        <lms-table-controls>
+          <lms-search @search=${this.handleSearch}></lms-search>
+          <lms-pagination
+            .nextPage=${this.nextPage}
+            ._page=${this._page}
+            ._per_page=${this._per_page}
+          ></lms-pagination>
+        </lms-table-controls>
+        <div
+          class="alert alert-info text-center ${o$1({
+            "d-none": !this.hasNoResults,
+        })}"
+          role="alert"
+        >
+          <h4 class="alert-heading">${__("No matches found")}.</h4>
+          <p>${__("Try refining your search.")}</p>
+        </div>
+
+        <table
+          class="table table-striped table-bordered table-hover ${o$1({
+            "d-none": this.hasNoResults,
+        })}"
+        >
+          <thead>
+            <tr>
+              ${o$2(this.headers, (key) => {
+            if (!this.sortableColumns.includes(key)) {
+                return x `<th scope="col">${__(key)}</th>`;
+            }
+            return x `<th
+                  scope="col"
+                  data-name=${key}
+                  @click=${this.handleSortChange}
+                >
+                  ${__(key)}
+                </th>`;
+        })}
+              ${this.isEditable
+            ? x `<th scope="col">${__("actions")}</th>`
+            : A}
+            </tr>
+          </thead>
+          <tbody>
+            ${o$2(this.data, (datum) => x `
                 <tr>
-                  ${o$1(this.headers, (key) => x `<th scope="col">${__(key)}</th>`)}
+                  ${o$2(this.headers, (header) => x `<td class="align-middle">${datum[header]}</td>`)}
                   ${this.isEditable
-                ? x `<th scope="col">${__("actions")}</th>`
-                : A}
+            ? x `
+                        <td class="align-middle">
+                          <div class="d-flex justify-content-center">
+                            <button
+                              @click=${this.toggleEdit}
+                              type="button"
+                              class="btn btn-dark mx-2 btn-edit"
+                              aria-label=${attr__("Edit")}
+                            >
+                              <span class="start-edit pointer-events-none"
+                                >${litFontawesome_2(faEdit)}
+                                <span>${__("Edit")}</span></span
+                              >
+                              <span
+                                class="abort-edit d-none pointer-events-none"
+                                >${litFontawesome_2(faTimes)}<span
+                                  >${__("Abort")}</span
+                                ></span
+                              >
+                            </button>
+                            <button
+                              @click=${this.handleSave}
+                              type="button"
+                              class="btn btn-dark mx-2"
+                              aria-label=${attr__("Save")}
+                            >
+                              ${litFontawesome_2(faSave)}
+                              <span>${__("Save")}</span>
+                            </button>
+                            <button
+                              @click=${this.handleDelete}
+                              ?hidden=${!this.isDeletable}
+                              type="button"
+                              class="btn btn-danger mx-2"
+                              aria-label=${attr__("Delete")}
+                            >
+                              ${litFontawesome_2(faTrash)}
+                              <span>${__("Delete")}</span>
+                            </button>
+                          </div>
+                        </td>
+                      `
+            : A}
                 </tr>
-              </thead>
-              <tbody>
-                ${o$1(this.data, (datum) => x `
-                    <tr>
-                      ${o$1(this.headers, (header) => x `<td class="align-middle">${datum[header]}</td>`)}
-                      ${this.isEditable
-                ? x `
-                            <td class="align-middle">
-                              <div class="d-flex justify-content-center">
-                                <button
-                                  @click=${this.toggleEdit}
-                                  type="button"
-                                  class="btn btn-dark mx-2 btn-edit"
-                                  aria-label=${attr__("Edit")}
-                                >
-                                  <span class="start-edit pointer-events-none"
-                                    >${litFontawesome_2(faEdit)}
-                                    <span>${__("Edit")}</span></span
-                                  >
-                                  <span
-                                    class="abort-edit d-none pointer-events-none"
-                                    >${litFontawesome_2(faTimes)}<span
-                                      >${__("Abort")}</span
-                                    ></span
-                                  >
-                                </button>
-                                <button
-                                  @click=${this.handleSave}
-                                  type="button"
-                                  class="btn btn-dark mx-2"
-                                  aria-label=${attr__("Save")}
-                                >
-                                  ${litFontawesome_2(faSave)}
-                                  <span>${__("Save")}</span>
-                                </button>
-                                <button
-                                  @click=${this.handleDelete}
-                                  ?hidden=${!this.isDeletable}
-                                  type="button"
-                                  class="btn btn-danger mx-2"
-                                  aria-label=${attr__("Delete")}
-                                >
-                                  ${litFontawesome_2(faTrash)}
-                                  <span>${__("Delete")}</span>
-                                </button>
-                              </div>
-                            </td>
-                          `
-                : A}
-                    </tr>
-                  `)}
-              </tbody>
-            </table>
-          </div>
-        `;
+              `)}
+          </tbody>
+        </table>
+      </div>
+    `;
         }
     };
     LMSTable.styles = [
@@ -4674,6 +5001,10 @@ ${value}</textarea
         padding: 1.5rem 0.75rem;
       }
 
+      .table th {
+        cursor: pointer;
+      }
+
       .table td {
         padding: 0;
         text-align: center;
@@ -4709,6 +5040,21 @@ ${value}</textarea
     __decorate([
         e$2({ type: Boolean, attribute: "is-deletable" })
     ], LMSTable.prototype, "isDeletable", void 0);
+    __decorate([
+        e$2({ type: Object })
+    ], LMSTable.prototype, "queryBuilder", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSTable.prototype, "nextPage", void 0);
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSTable.prototype, "hasNoResults", void 0);
+    __decorate([
+        e$2({ type: Number })
+    ], LMSTable.prototype, "_page", void 0);
+    __decorate([
+        e$2({ type: Number })
+    ], LMSTable.prototype, "_per_page", void 0);
     __decorate([
         t$1()
     ], LMSTable.prototype, "toast", void 0);
@@ -4828,6 +5174,7 @@ ${value}</textarea
                 "description",
                 "open_registration",
             ];
+            this.unsortableColumns = ["target_groups", "actions"];
             this.isEditable = true;
             this.isDeletable = true;
         }
@@ -5002,7 +5349,6 @@ ${value}</textarea
                 "street",
                 "number",
                 "city",
-                "state",
                 "zip",
                 "country",
             ];
@@ -5178,6 +5524,7 @@ ${value}</textarea
             this._reservedParams = [];
             this._disallowedParams = [];
             this._areRepeatable = [];
+            this._staticParams = new URLSearchParams();
         }
         set reservedParams(reservedParams) {
             this._reservedParams = reservedParams;
@@ -5187,6 +5534,17 @@ ${value}</textarea
         }
         set areRepeatable(areRepeatable) {
             this._areRepeatable = areRepeatable;
+        }
+        set staticParams(staticParams) {
+            if (!this._query) {
+                throw new Error("Cannot set static params before query");
+            }
+            staticParams.forEach((key) => {
+                const value = this._query.get(key);
+                if (value) {
+                    this._staticParams.set(key, value);
+                }
+            });
         }
         set query(query) {
             if (typeof query === "string") {
@@ -5204,8 +5562,11 @@ ${value}</textarea
         }
         updateQuery(query) {
             const newQueryParams = new URLSearchParams(query);
-            // Remove keys that are not in the new query if they are not reserved
-            this._query.forEach((_, key) => {
+            /** Remove keys that are not in the new query if they are not reserved.
+             *  WARNING! Alywas use Array.from() when iterating over URLSearchParams
+             *  because it is a live collection and will be modified during iteration
+             *  otherwise. */
+            Array.from(this._query).forEach(([key]) => {
                 if (this._reservedParams.includes(key)) {
                     return;
                 }
@@ -5242,7 +5603,8 @@ ${value}</textarea
         }
         updateUrl() {
             const url = new URL(window.location.href);
-            url.search = this._query.toString();
+            const updatedUrl = new URLSearchParams(this._query.toString() + "&" + this._staticParams.toString());
+            url.search = updatedUrl.toString();
             window.history.pushState({}, "", url.toString());
         }
     }
@@ -5255,15 +5617,27 @@ ${value}</textarea
             this.modalData = {};
             this.hasOpenModal = false;
             this.hasLoaded = false;
-            this.qb = new QueryBuilder();
-            this.qb.reservedParams = ["_match", "_order_by", "_page", "_per_page", "q"];
-            this.qb.areRepeatable = ["event_type", "target_group", "location"];
-            this.qb.query = window.location.search;
-            this.qb.updateQuery("_order_by=start_time&_page=1&_per_page=20&open_registration=true");
+            this.queryBuilder = new QueryBuilder();
+            this.boundHandlePopState = this.handlePopState.bind(this);
+            this.queryBuilder.reservedParams = [
+                "_match",
+                "_order_by",
+                "_page",
+                "_per_page",
+                "q",
+            ];
+            this.queryBuilder.areRepeatable = [
+                "event_type",
+                "target_group",
+                "location",
+            ];
+            this.queryBuilder.query = window.location.search;
+            this.queryBuilder.updateQuery("_order_by=start_time&_page=1&_per_page=20&open_registration=true");
         }
         connectedCallback() {
             super.connectedCallback();
-            const response = async () => await requestHandler.request("getEventsPublic", this.qb.query.toString());
+            window.addEventListener("popstate", this.boundHandlePopState);
+            const response = async () => await requestHandler.request("getEventsPublic", this.queryBuilder.query.toString());
             response()
                 .then((response) => {
                 if (response.ok) {
@@ -5274,16 +5648,25 @@ ${value}</textarea
                 .then((events) => {
                 this.hasLoaded = true;
                 this.events = events;
-                this.qb.updateUrl();
+                this.queryBuilder.updateUrl();
             })
                 .catch((error) => {
                 console.error(error);
             });
         }
-        handleQuery(event) {
+        disconnectedCallback() {
+            super.disconnectedCallback();
+            window.removeEventListener("popstate", this.boundHandlePopState);
+        }
+        handlePopState(e) {
+            const { state } = e;
+            const url = new URL((state === null || state === void 0 ? void 0 : state.url) || window.location.href);
+            this.handleQuery(new CustomEvent("query", { detail: url.search }), false);
+        }
+        handleQuery(event, updateUrl = true) {
             const query = event.detail;
-            this.qb.updateQuery(query);
-            const response = async () => await requestHandler.request("getEventsPublic", this.qb.query.toString());
+            this.queryBuilder.updateQuery(query);
+            const response = async () => await requestHandler.request("getEventsPublic", this.queryBuilder.query.toString());
             response()
                 .then((response) => {
                 if (response.ok) {
@@ -5293,7 +5676,9 @@ ${value}</textarea
             })
                 .then((events) => {
                 this.events = events;
-                this.qb.updateUrl();
+                if (updateUrl) {
+                    this.queryBuilder.updateUrl();
+                }
             })
                 .catch((error) => {
                 console.error(error);
@@ -5308,12 +5693,12 @@ ${value}</textarea
             this.hasOpenModal = false;
         }
         handleLoadMore() {
-            const currentPage = this.qb.getParamValue("_page");
+            const currentPage = this.queryBuilder.getParamValue("_page");
             if (!currentPage)
                 return;
             const nextPage = parseInt(currentPage, 10) + 1;
-            this.qb.updateQuery(`_page=${nextPage}`);
-            const response = async () => await requestHandler.request("getEventsPublic", this.qb.query.toString());
+            this.queryBuilder.updateQuery(`_page=${nextPage}`);
+            const response = async () => await requestHandler.request("getEventsPublic", this.queryBuilder.query.toString());
             response()
                 .then((response) => {
                 if (response.ok) {
@@ -5324,7 +5709,7 @@ ${value}</textarea
                 .then((events) => {
                 var _a, _b;
                 if (!events.length) {
-                    this.qb.updateQuery(`_page=${currentPage}`);
+                    this.queryBuilder.updateQuery(`_page=${currentPage}`);
                     (_a = this.loadMore.querySelector("button")) === null || _a === void 0 ? void 0 : _a.classList.add("d-none");
                     (_b = this.loadMore.firstElementChild) === null || _b === void 0 ? void 0 : _b.classList.remove("d-none");
                     return;
@@ -5348,7 +5733,7 @@ ${value}</textarea
             >
               ${!this.hasLoaded
             ? x `<div class="d-flex justify-content-around flex-wrap">
-                    ${o$1([...Array(10)], () => x `<div class="skeleton skeleton-card"></div>`)}
+                    ${o$2([...Array(10)], () => x `<div class="skeleton skeleton-card"></div>`)}
                   </div>`
             : A}
               ${this.hasLoaded && !this.events.length
@@ -5360,7 +5745,7 @@ ${value}</textarea
             : A}
               <div class="col-12" ?hidden=${!this.events.length}>
                 <div class="card-deck">
-                  ${(_a = o$1(this.events, (event) => x `
+                  ${(_a = o$2(this.events, (event) => x `
                       <lms-card
                         tabindex="0"
                         @keyup=${(e) => {
@@ -5514,7 +5899,7 @@ ${value}</textarea
         render() {
             if (!this.hasLoaded) {
                 return x ` <div class="d-flex justify-content-around flex-wrap">
-        ${o$1([...Array(10)], () => x `<div class="skeleton skeleton-card"></div>`)}
+        ${o$2([...Array(10)], () => x `<div class="skeleton skeleton-card"></div>`)}
       </div>`;
             }
             if (this.hasLoaded && this.isEmpty) {
@@ -5578,12 +5963,7 @@ ${value}</textarea
 
     let StaffEventTypesView$1 = class StaffEventTypesView extends s {
         constructor() {
-            super(...arguments);
-            this.hasLoaded = false;
-            this.isEmpty = false;
-            this.event_types = [];
-            this.target_groups = [];
-            this.locations = [];
+            super();
             this.href = {
                 path: "/cgi-bin/koha/plugins/run.pl",
                 query: true,
@@ -5592,18 +5972,33 @@ ${value}</textarea
                     method: "configure",
                 },
             };
-        }
-        async fetchUpdate() {
-            const response = await fetch("/api/v1/contrib/eventmanagement/event_types");
-            this.event_types = await response.json();
-            this.requestUpdate();
+            this.hasLoaded = false;
+            this.nextPage = [];
+            this._page = 1;
+            this._per_page = 10;
+            this.isEmpty = false;
+            this.hasNoResults = false;
+            this.event_types = [];
+            this.target_groups = [];
+            this.locations = [];
+            this.queryBuilder = new QueryBuilder();
+            this.queryBuilder.reservedParams = [
+                "_match",
+                "_order_by",
+                "_page",
+                "_per_page",
+                "q",
+            ];
+            this.queryBuilder.query = window.location.search;
+            this.queryBuilder.staticParams = ["class", "method", "op"];
+            this.queryBuilder.updateQuery(`_order_by=id&_page=${this._page}&_per_page=${this._per_page}`);
         }
         connectedCallback() {
             super.connectedCallback();
             Promise.all([
                 fetch("/api/v1/contrib/eventmanagement/target_groups"),
                 fetch("/api/v1/contrib/eventmanagement/locations"),
-                fetch("/api/v1/contrib/eventmanagement/event_types"),
+                fetch(`/api/v1/contrib/eventmanagement/event_types?${this.queryBuilder.query.toString()}`),
             ])
                 .then((results) => Promise.all(results.map((result) => result.json())))
                 .then(([target_groups, locations, event_types]) => {
@@ -5612,9 +6007,44 @@ ${value}</textarea
                 this.event_types = event_types;
             })
                 .then(() => {
+                this.queryBuilder.updateUrl();
                 this.isEmpty = !this.hasData();
                 this.hasLoaded = true;
             });
+        }
+        async fetchUpdate() {
+            const response = await fetch(`/api/v1/contrib/eventmanagement/event_types?${this.queryBuilder.query.toString()}`);
+            this.event_types = await response.json();
+            this.hasNoResults = this.event_types.length === 0;
+            this.queryBuilder.updateUrl();
+            this.requestUpdate();
+        }
+        async prefetchUpdate(e) {
+            const { _page, _per_page } = e.detail;
+            this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
+            const response = await fetch(`/api/v1/contrib/eventmanagement/event_types?${this.queryBuilder.query.toString()}`);
+            this.nextPage = await response.json();
+            this.queryBuilder.updateQuery(`_page=${this._page}&_per_page=${this._per_page}`);
+        }
+        handleSort(e) {
+            const { _order_by } = e.detail;
+            this.queryBuilder.updateQuery(`_order_by=${_order_by}`);
+            this.fetchUpdate();
+        }
+        handleSearch(e) {
+            const { q } = e.detail;
+            this.queryBuilder.updateQuery(`q=${q}`);
+            this.fetchUpdate();
+        }
+        handleFilter(e) {
+            console.log(e.detail);
+        }
+        handlePageChange(e) {
+            const { _page, _per_page } = e.detail;
+            this._page = _page;
+            this._per_page = _per_page;
+            this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
+            this.fetchUpdate();
         }
         hasData() {
             return [this.target_groups, this.locations, this.event_types].every((data) => data.length > 0);
@@ -5656,8 +6086,17 @@ ${value}</textarea
         .target_groups=${this.target_groups}
         .locations=${this.locations}
         .event_types=${this.event_types}
+        ._page=${this._page}
+        ._per_page=${this._per_page}
+        .nextPage=${this.nextPage}
+        .hasNoResults=${this.hasNoResults}
         @updated=${this.fetchUpdate}
         @deleted=${this.fetchUpdate}
+        @sort=${this.handleSort}
+        @search=${this.handleSearch}
+        @filter=${this.handleFilter}
+        @page=${this.handlePageChange}
+        @prefetch=${this.prefetchUpdate}
       ></lms-event-types-table>
       <lms-event-types-modal
         @created=${this.fetchUpdate}
@@ -5667,11 +6106,14 @@ ${value}</textarea
     };
     StaffEventTypesView$1.styles = [bootstrapStyles, skeletonStyles];
     __decorate([
+        e$2({ type: Object, attribute: false })
+    ], StaffEventTypesView$1.prototype, "href", void 0);
+    __decorate([
         t$1()
     ], StaffEventTypesView$1.prototype, "hasLoaded", void 0);
     __decorate([
-        e$2({ type: Object, attribute: false })
-    ], StaffEventTypesView$1.prototype, "href", void 0);
+        t$1()
+    ], StaffEventTypesView$1.prototype, "nextPage", void 0);
     StaffEventTypesView$1 = __decorate([
         e$3("lms-staff-event-types-view")
     ], StaffEventTypesView$1);
@@ -5679,28 +6121,73 @@ ${value}</textarea
 
     let StaffLocationsView = class StaffLocationsView extends s {
         constructor() {
-            super(...arguments);
+            super();
             this.hasLoaded = false;
+            this.nextPage = [];
+            this._page = 1;
+            this._per_page = 10;
             this.isEmpty = false;
+            this.hasNoResults = false;
             this.locations = [];
-        }
-        async fetchUpdate() {
-            const response = await fetch("/api/v1/contrib/eventmanagement/locations");
-            this.locations = await response.json();
-            this.requestUpdate();
+            this.queryBuilder = new QueryBuilder();
+            this.queryBuilder.reservedParams = [
+                "_match",
+                "_order_by",
+                "_page",
+                "_per_page",
+                "q",
+            ];
+            this.queryBuilder.query = window.location.search;
+            this.queryBuilder.staticParams = ["class", "method", "op"];
+            this.queryBuilder.updateQuery(`_order_by=id&_page=${this._page}&_per_page=${this._per_page}`);
         }
         connectedCallback() {
             super.connectedCallback();
-            const locations = fetch("/api/v1/contrib/eventmanagement/locations");
+            const locations = fetch(`/api/v1/contrib/eventmanagement/locations?${this.queryBuilder.query.toString()}`);
             locations
                 .then((response) => response.json())
                 .then((result) => {
                 this.locations = result;
             })
                 .then(() => {
-                this.isEmpty = !this.locations.length;
+                this.queryBuilder.updateUrl();
+                this.isEmpty = this.locations.length === 0;
                 this.hasLoaded = true;
             });
+        }
+        async fetchUpdate() {
+            const response = await fetch(`/api/v1/contrib/eventmanagement/locations?${this.queryBuilder.query.toString()}`);
+            this.locations = await response.json();
+            this.hasNoResults = this.locations.length === 0;
+            this.queryBuilder.updateUrl();
+            this.requestUpdate();
+        }
+        async prefetchUpdate(e) {
+            const { _page, _per_page } = e.detail;
+            this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
+            const response = await fetch(`/api/v1/contrib/eventmanagement/locations?${this.queryBuilder.query.toString()}`);
+            this.nextPage = await response.json();
+            this.queryBuilder.updateQuery(`_page=${this._page}&_per_page=${this._per_page}`);
+        }
+        handleSort(e) {
+            const { _order_by } = e.detail;
+            this.queryBuilder.updateQuery(`_order_by=${_order_by}`);
+            this.fetchUpdate();
+        }
+        handleSearch(e) {
+            const { q } = e.detail;
+            this.queryBuilder.updateQuery(`q=${q}`);
+            this.fetchUpdate();
+        }
+        handleFilter(e) {
+            console.log(e.detail);
+        }
+        handlePageChange(e) {
+            const { _page, _per_page } = e.detail;
+            this._page = _page;
+            this._per_page = _per_page;
+            this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
+            this.fetchUpdate();
         }
         render() {
             if (!this.hasLoaded) {
@@ -5714,8 +6201,17 @@ ${value}</textarea
             return x `
       <lms-locations-table
         .locations=${this.locations}
+        ._page=${this._page}
+        ._per_page=${this._per_page}
+        .nextPage=${this.nextPage}
+        .hasNoResults=${this.hasNoResults}
         @updated=${this.fetchUpdate}
         @deleted=${this.fetchUpdate}
+        @sort=${this.handleSort}
+        @search=${this.handleSearch}
+        @filter=${this.handleFilter}
+        @page=${this.handlePageChange}
+        @prefetch=${this.prefetchUpdate}
       ></lms-locations-table>
       <lms-locations-modal @created=${this.fetchUpdate}></lms-locations-modal>
     `;
@@ -5725,6 +6221,9 @@ ${value}</textarea
     __decorate([
         t$1()
     ], StaffLocationsView.prototype, "hasLoaded", void 0);
+    __decorate([
+        t$1()
+    ], StaffLocationsView.prototype, "nextPage", void 0);
     StaffLocationsView = __decorate([
         e$3("lms-staff-locations-view")
     ], StaffLocationsView);
@@ -5743,28 +6242,73 @@ ${value}</textarea
 
     let StaffEventTypesView = class StaffEventTypesView extends s {
         constructor() {
-            super(...arguments);
+            super();
             this.hasLoaded = false;
+            this.nextPage = [];
+            this._page = 1;
+            this._per_page = 10;
             this.isEmpty = false;
+            this.hasNoResults = false;
             this.target_groups = [];
-        }
-        async fetchUpdate() {
-            const response = await fetch("/api/v1/contrib/eventmanagement/target_groups");
-            this.target_groups = await response.json();
-            this.requestUpdate();
+            this.queryBuilder = new QueryBuilder();
+            this.queryBuilder.reservedParams = [
+                "_match",
+                "_order_by",
+                "_page",
+                "_per_page",
+                "q",
+            ];
+            this.queryBuilder.query = window.location.search;
+            this.queryBuilder.staticParams = ["class", "method", "op"];
+            this.queryBuilder.updateQuery(`_order_by=id&_page=${this._page}&_per_page=${this._per_page}`);
         }
         connectedCallback() {
             super.connectedCallback();
-            const locations = fetch("/api/v1/contrib/eventmanagement/target_groups");
-            locations
+            const target_groups = fetch(`/api/v1/contrib/eventmanagement/target_groups?${this.queryBuilder.query.toString()}`);
+            target_groups
                 .then((response) => response.json())
                 .then((result) => {
                 this.target_groups = result;
             })
                 .then(() => {
-                this.isEmpty = !this.target_groups.length;
+                this.queryBuilder.updateUrl();
+                this.isEmpty = this.target_groups.length === 0;
                 this.hasLoaded = true;
             });
+        }
+        async fetchUpdate() {
+            const response = await fetch(`/api/v1/contrib/eventmanagement/target_groups?${this.queryBuilder.query.toString()}`);
+            this.target_groups = await response.json();
+            this.hasNoResults = this.target_groups.length === 0;
+            this.queryBuilder.updateUrl();
+            this.requestUpdate();
+        }
+        async prefetchUpdate(e) {
+            const { _page, _per_page } = e.detail;
+            this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
+            const response = await fetch(`/api/v1/contrib/eventmanagement/target_groups?${this.queryBuilder.query.toString()}`);
+            this.nextPage = await response.json();
+            this.queryBuilder.updateQuery(`_page=${this._page}&_per_page=${this._per_page}`);
+        }
+        handleSort(e) {
+            const { _order_by } = e.detail;
+            this.queryBuilder.updateQuery(`_order_by=${_order_by}`);
+            this.fetchUpdate();
+        }
+        handleSearch(e) {
+            const { q } = e.detail;
+            this.queryBuilder.updateQuery(`q=${q}`);
+            this.fetchUpdate();
+        }
+        handleFilter(e) {
+            console.log(e.detail);
+        }
+        handlePageChange(e) {
+            const { _page, _per_page } = e.detail;
+            this._page = _page;
+            this._per_page = _per_page;
+            this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
+            this.fetchUpdate();
         }
         render() {
             if (!this.hasLoaded) {
@@ -5778,8 +6322,17 @@ ${value}</textarea
             return x `
       <lms-target-groups-table
         .target_groups=${this.target_groups}
+        ._page=${this._page}
+        ._per_page=${this._per_page}
+        .nextPage=${this.nextPage}
+        .hasNoResults=${this.hasNoResults}
         @updated=${this.fetchUpdate}
         @deleted=${this.fetchUpdate}
+        @sort=${this.handleSort}
+        @search=${this.handleSearch}
+        @filter=${this.handleFilter}
+        @page=${this.handlePageChange}
+        @prefetch=${this.prefetchUpdate}
       ></lms-target-groups-table>
       <lms-target-groups-modal
         @created=${this.fetchUpdate}
@@ -5791,12 +6344,24 @@ ${value}</textarea
     __decorate([
         t$1()
     ], StaffEventTypesView.prototype, "hasLoaded", void 0);
+    __decorate([
+        t$1()
+    ], StaffEventTypesView.prototype, "nextPage", void 0);
     StaffEventTypesView = __decorate([
         e$3("lms-staff-target-groups-view")
     ], StaffEventTypesView);
     var StaffTargetGroupsView = StaffEventTypesView;
 
     var main = {
+        LMSCheckboxInput: LMSCheckboxInput$1,
+        LMSMatrix: LMSMatrix$1,
+        LMSPrimitivesInput: LMSPrimitivesInput$1,
+        LMSSelect: LMSSelect$1,
+        LMSStaffEventCardAttendees: LMSStaffEventCardAttendees$1,
+        LMSStaffEventCardPreview: LMSStaffEventCardPreview$1,
+        LMSStaffEventCardForm: LMSStaffEventCardForm$1,
+        LMSStaffEventCardsDeck,
+        LMSTableControls: LMSTableControls$1,
         LMSAnchor: LMSAnchor$1,
         LMSCard: LMSCard$1,
         LMSCardDetailsModal: LMSCardDetailsModal$1,
@@ -5805,17 +6370,9 @@ ${value}</textarea
         LMSFloatingMenu: LMSFloatingMenu$1,
         LMSImageBrowser: LMSImageBrowser$1,
         LMSModal: LMSModal$1,
-        // LMSPaginationNav,
+        LMSPagination: LMSPagination$1,
         LMSSearch: LMSSearch$1,
-        LMSStaffEventCardAttendees: LMSStaffEventCardAttendees$1,
-        LMSStaffEventCardPreview: LMSStaffEventCardPreview$1,
-        LMSStaffEventCardForm: LMSStaffEventCardForm$1,
-        LMSStaffEventCardsDeck,
         LMSTooltip: LMSTooltip$1,
-        LMSCheckboxInput: LMSCheckboxInput$1,
-        LMSMatrix: LMSMatrix$1,
-        LMSPrimitivesInput: LMSPrimitivesInput$1,
-        LMSSelect: LMSSelect$1,
         LMSEventMangementMenu: LMSEventMangementMenu$1,
         LMSEventsModal: LMSEventsModal$1,
         LMSEventTypesModal: LMSEventTypesModal$1,

@@ -25,15 +25,24 @@ import { throttle } from "../../lib/utilities";
 import LMSTableControls from "./LMSTableControls";
 import { QueryBuilder } from "../../lib/QueryBuilder";
 import LMSPagination from "../LMSPagination";
+import LMSSearch from "../LMSSearch";
+import { classMap } from "lit/directives/class-map.js";
 
 declare global {
   interface HTMLElementTagNameMap {
     "lms-table-controls": LMSTableControls;
     "lms-pagination": LMSPagination;
+    "lms-search": LMSSearch;
   }
 }
 
 type SortableColumns = string[] & { 0: "id" };
+
+type HorizontalWidthProps =
+  | "marginLeft"
+  | "marginRight"
+  | "paddingLeft"
+  | "paddingRight";
 
 @customElement("lms-table")
 export default class LMSTable extends LitElement {
@@ -50,6 +59,14 @@ export default class LMSTable extends LitElement {
   protected isDeletable = false;
 
   @property({ type: Object }) queryBuilder?: QueryBuilder;
+
+  @property({ type: Array }) nextPage: Column[] | undefined = undefined;
+
+  @property({ type: Boolean }) hasNoResults = false;
+
+  @property({ type: Number }) _page = 1;
+
+  @property({ type: Number }) _per_page = 20;
 
   @state()
   private toast = {
@@ -327,10 +344,32 @@ export default class LMSTable extends LitElement {
 
   private handleResize() {
     this.table.classList.remove("table-responsive");
-    const width =
-      this.table.offsetWidth +
-      78; /* 4.875rem, combined paddings & margings of parents. TODO: We need a generic solution for this. */
-    if (width > window.innerWidth) {
+
+    let totalSourroundingWidth = 0;
+    let element: HTMLElement | null = this.table;
+
+    const props: HorizontalWidthProps[] = [
+      "marginLeft",
+      "marginRight",
+      "paddingLeft",
+      "paddingRight",
+    ];
+
+    while (element) {
+      const style = window.getComputedStyle(element);
+
+      totalSourroundingWidth += props.reduce(
+        (total, prop) => total + parseFloat(style[prop]),
+        0
+      );
+
+      element =
+        element.getRootNode() instanceof ShadowRoot
+          ? ((element.getRootNode() as ShadowRoot).host as HTMLElement)
+          : element.parentElement;
+    }
+
+    if (this.table.offsetWidth + totalSourroundingWidth > window.innerWidth) {
       this.table.classList.add("table-responsive");
     }
   }
@@ -352,6 +391,31 @@ export default class LMSTable extends LitElement {
     );
   }
 
+  private handleSearch(e: CustomEvent) {
+    const { detail } = e;
+    let q: string | Array<Record<string, { "-like": string } | number>> = "";
+    if (detail) {
+      const number = Number(detail);
+      q = this.sortableColumns.map((column) => {
+        return Number.isNaN(number)
+          ? { [column]: { "-like": `%${detail}%` } }
+          : { [column]: detail };
+      });
+      q = JSON.stringify(q);
+    } else {
+      q = JSON.stringify({});
+    }
+    this.dispatchEvent(
+      new CustomEvent("search", {
+        detail: {
+          q,
+        },
+        composed: true,
+        bubbles: true,
+      })
+    );
+  }
+
   override render() {
     if (!this.data.length) {
       html`<h1 class="text-center">${this.emptyTableMessage}</h1>`;
@@ -360,9 +424,28 @@ export default class LMSTable extends LitElement {
     return html`
       <div class="container-fluid mx-0">
         <lms-table-controls>
-          <lms-pagination></lms-pagination>
+          <lms-search @search=${this.handleSearch}></lms-search>
+          <lms-pagination
+            .nextPage=${this.nextPage}
+            ._page=${this._page}
+            ._per_page=${this._per_page}
+          ></lms-pagination>
         </lms-table-controls>
-        <table class="table table-striped table-bordered table-hover">
+        <div
+          class="alert alert-info text-center ${classMap({
+            "d-none": !this.hasNoResults,
+          })}"
+          role="alert"
+        >
+          <h4 class="alert-heading">${__("No matches found")}.</h4>
+          <p>${__("Try refining your search.")}</p>
+        </div>
+
+        <table
+          class="table table-striped table-bordered table-hover ${classMap({
+            "d-none": this.hasNoResults,
+          })}"
+        >
           <thead>
             <tr>
               ${map(this.headers, (key) => {
