@@ -35,7 +35,6 @@ export default class LMSSearch extends LitElement {
 
   private handleInput(e: InputEvent) {
     const inputElement = e.target as HTMLInputElement;
-    console.log(inputElement.value);
     this.debouncedSearch(inputElement.value);
   }
 
