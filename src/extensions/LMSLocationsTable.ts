@@ -96,7 +96,6 @@ export default class LMSLocationsTable extends LMSTable {
       "street",
       "number",
       "city",
-      "state",
       "zip",
       "country",
     ];

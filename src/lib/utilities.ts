@@ -16,6 +16,53 @@ export function deepCopy<T>(obj: T): T {
   return newObj;
 }
 
+export function isDeepEqual<T>(obj1: T, obj2: T): boolean {
+  if (obj1 === obj2) {
+    return true;
+  }
+
+  if (
+    typeof obj1 !== "object" ||
+    obj1 === null ||
+    typeof obj2 !== "object" ||
+    obj2 === null
+  ) {
+    return false;
+  }
+
+  const keys1 = Object.keys(obj1 as object);
+  const keys2 = Object.keys(obj2 as object);
+
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  for (const key of keys1) {
+    if (!keys2.includes(key)) {
+      return false;
+    }
+    if (
+      typeof (obj1 as any)[key] === "function" ||
+      typeof (obj2 as any)[key] === "function"
+    ) {
+      if ((obj1 as any)[key].toString() !== (obj2 as any)[key].toString()) {
+        return false;
+      }
+    } else if (
+      typeof (obj1 as any)[key] === "object" &&
+      typeof (obj2 as any)[key] === "object"
+    ) {
+      if (!isDeepEqual((obj1 as any)[key], (obj2 as any)[key])) {
+        return false;
+      }
+    } else if ((obj1 as any)[key] !== (obj2 as any)[key]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export function throttle(callback: () => void, delay: number) {
   let previousCall = new Date().getTime();
   return function () {

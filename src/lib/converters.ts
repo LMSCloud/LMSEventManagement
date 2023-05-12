@@ -7,7 +7,7 @@ import {
   TargetGroup,
   TargetGroupFee,
 } from "../sharedDeclarations";
-import { map } from "lit/directives/map.js";
+// import { map } from "lit/directives/map.js";
 import { __ } from "../lib/translate";
 
 type InputTypeValue = string | number | boolean | TargetGroupFee[];
@@ -86,8 +86,7 @@ export class InputConverter {
         name="event_type"
         disabled
       >
-        ${map(
-          data as EventType[],
+        ${(data as EventType[])?.map(
           ({ id, name }: EventType) =>
             html`<option
               value=${id}
@@ -119,44 +118,46 @@ export class InputConverter {
               </tr>
             </thead>
             <tbody>
-              ${map(data as TargetGroup[], ({ id, name }: TargetGroup) => {
-                const targetGroupFee = (
-                  value as unknown as TargetGroupFee[]
-                ).find(
-                  (targetGroupFee: TargetGroupFee) =>
-                    targetGroupFee.target_group_id === id
-                );
-                const selected = targetGroupFee?.selected ?? false;
-                const fee = targetGroupFee?.fee ?? 0;
-                return html`
-                  <tr>
-                    <td id=${id} class="align-middle">${name}</td>
-                    <td class="align-middle">
-                      <input
-                        type="checkbox"
-                        data-group="target_groups"
-                        name="selected"
-                        id=${id}
-                        class="form-control"
-                        ?checked=${selected}
-                        disabled
-                      />
-                    </td>
-                    <td class="align-middle">
-                      <input
-                        type="number"
-                        data-group="target_groups"
-                        name="fee"
-                        id=${id}
-                        step="0.01"
-                        class="form-control"
-                        value=${fee}
-                        disabled
-                      />
-                    </td>
-                  </tr>
-                `;
-              })}
+              ${(data as unknown as TargetGroup[]).map(
+                ({ id, name }: TargetGroup) => {
+                  const targetGroupFee = (
+                    value as unknown as TargetGroupFee[]
+                  ).find(
+                    (targetGroupFee: TargetGroupFee) =>
+                      targetGroupFee.target_group_id === id
+                  );
+                  const selected = targetGroupFee?.selected ?? false;
+                  const fee = targetGroupFee?.fee ?? 0;
+                  return html`
+                    <tr>
+                      <td id=${id} class="align-middle">${name}</td>
+                      <td class="align-middle">
+                        <input
+                          type="checkbox"
+                          data-group="target_groups"
+                          name="selected"
+                          id=${id}
+                          class="form-control"
+                          ?checked=${selected}
+                          disabled
+                        />
+                      </td>
+                      <td class="align-middle">
+                        <input
+                          type="number"
+                          data-group="target_groups"
+                          name="fee"
+                          id=${id}
+                          step="0.01"
+                          class="form-control"
+                          value=${fee}
+                          disabled
+                        />
+                      </td>
+                    </tr>
+                  `;
+                }
+              )}
             </tbody>
           </table>
         </div>
@@ -187,11 +188,10 @@ export class InputConverter {
         name="location"
         disabled
       >
-        ${map(
-          data as LMSLocation[],
+        ${(data as unknown as LMSLocation[])?.map(
           ({ id, name }: LMSLocation) =>
             html`<option value=${id} ?selected=${id == value}>${name}</option>`
-        )};
+        )}
       </select>`,
       image: (value) => html`<input
         class="form-control"

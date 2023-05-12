@@ -29,6 +29,8 @@ export default class LMSEventsView extends LitElement {
   private hasLoaded = false;
   private queryBuilder = new QueryBuilder();
 
+  private boundHandlePopState = this.handlePopState.bind(this);
+
   static override styles = [
     bootstrapStyles,
     skeletonStyles,
@@ -71,8 +73,18 @@ export default class LMSEventsView extends LitElement {
   constructor() {
     super();
 
-    this.queryBuilder.reservedParams = ["_match", "_order_by", "_page", "_per_page", "q"];
-    this.queryBuilder.areRepeatable = ["event_type", "target_group", "location"];
+    this.queryBuilder.reservedParams = [
+      "_match",
+      "_order_by",
+      "_page",
+      "_per_page",
+      "q",
+    ];
+    this.queryBuilder.areRepeatable = [
+      "event_type",
+      "target_group",
+      "location",
+    ];
     this.queryBuilder.query = window.location.search;
     this.queryBuilder.updateQuery(
       "_order_by=start_time&_page=1&_per_page=20&open_registration=true"
@@ -82,8 +94,13 @@ export default class LMSEventsView extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
 
+    window.addEventListener("popstate", this.boundHandlePopState);
+
     const response = async () =>
-      await requestHandler.request("getEventsPublic", this.queryBuilder.query.toString());
+      await requestHandler.request(
+        "getEventsPublic",
+        this.queryBuilder.query.toString()
+      );
     response()
       .then((response) => {
         if (response.ok) {
@@ -102,12 +119,26 @@ export default class LMSEventsView extends LitElement {
       });
   }
 
-  private handleQuery(event: CustomEvent) {
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener("popstate", this.boundHandlePopState);
+  }
+
+  private handlePopState(e: PopStateEvent) {
+    const { state } = e;
+    const url = new URL(state?.url || window.location.href);
+    this.handleQuery(new CustomEvent("query", { detail: url.search }), false);
+  }
+
+  private handleQuery(event: CustomEvent, updateUrl = true) {
     const query = event.detail;
     this.queryBuilder.updateQuery(query);
 
     const response = async () =>
-      await requestHandler.request("getEventsPublic", this.queryBuilder.query.toString());
+      await requestHandler.request(
+        "getEventsPublic",
+        this.queryBuilder.query.toString()
+      );
     response()
       .then((response) => {
         if (response.ok) {
@@ -118,7 +149,9 @@ export default class LMSEventsView extends LitElement {
       })
       .then((events: LMSEvent[]) => {
         this.events = events;
-        this.queryBuilder.updateUrl();
+        if (updateUrl) {
+          this.queryBuilder.updateUrl();
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -142,7 +175,10 @@ export default class LMSEventsView extends LitElement {
     const nextPage = parseInt(currentPage, 10) + 1;
     this.queryBuilder.updateQuery(`_page=${nextPage}`);
     const response = async () =>
-      await requestHandler.request("getEventsPublic", this.queryBuilder.query.toString());
+      await requestHandler.request(
+        "getEventsPublic",
+        this.queryBuilder.query.toString()
+      );
     response()
       .then((response) => {
         if (response.ok) {
