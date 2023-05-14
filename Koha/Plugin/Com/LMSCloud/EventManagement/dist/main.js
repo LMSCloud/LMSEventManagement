@@ -890,6 +890,13 @@
         set templateResult(templateResult) {
             this._templateResult = templateResult;
         }
+        getValueByIndex(templateResult, index) {
+            this.templateResult = templateResult;
+            const renderValue = this.getRenderValues()[index];
+            return typeof renderValue === "string"
+                ? renderValue
+                : renderValue.toString();
+        }
         getRenderString(data = this._templateResult) {
             const { strings, values } = data;
             const v = [...values, ""].map((e) => typeof e === "object" ? this.getRenderString(e) : e);
@@ -1182,17 +1189,16 @@ ${value}</textarea
         connectedCallback() {
             super.connectedCallback();
             const { name, description } = this.datum;
-            this.templateResultConverter.templateResult = name;
-            this.title = this.templateResultConverter.getRenderValues()[0];
-            this.templateResultConverter.templateResult = description;
-            this.text = this.templateResultConverter.getRenderValues()[0];
+            this.title = this.templateResultConverter.getValueByIndex(name, 0);
+            this.text = this.templateResultConverter.getValueByIndex(description, 0);
         }
         render() {
             return x `<lms-card .title=${this.title} .text=${this.text}> </lms-card>`;
         }
     };
     LMSStaffEventCardPreview.styles = [
-        bootstrapStyles, skeletonStyles,
+        bootstrapStyles,
+        skeletonStyles,
         i$5 `
       svg {
         display: inline-block;
@@ -1215,9 +1221,6 @@ ${value}</textarea
     __decorate([
         e$2({ type: String })
     ], LMSStaffEventCardPreview.prototype, "text", void 0);
-    __decorate([
-        e$2({ type: Object, attribute: false })
-    ], LMSStaffEventCardPreview.prototype, "templateResultConverter", void 0);
     LMSStaffEventCardPreview = __decorate([
         e$3("lms-staff-event-card-preview")
     ], LMSStaffEventCardPreview);
@@ -1841,6 +1844,16 @@ ${value}</textarea
       input[type="checkbox"].form-control {
         font-size: 0.375rem;
       }
+
+      form {
+        container-type: inline-size;
+      }
+
+      @container (max-width: 360px) {
+        form .btn-group {
+          flex-direction: column;
+        }
+      }
     `,
     ];
     __decorate([
@@ -1862,14 +1875,37 @@ ${value}</textarea
 
     let LMSStaffEventCardDeck = class LMSStaffEventCardDeck extends s {
         constructor() {
-            super(...arguments);
+            super();
             this.events = [];
             this.event_types = [];
             this.target_groups = [];
             this.locations = [];
+            this.nextPage = undefined;
+            this.hasNoResults = false;
+            this._page = 1;
+            this._per_page = 20;
             this.data = [];
             this.cardStates = new Map();
             this.inputConverter = new InputConverter();
+            this.sortableColumns = ["id"];
+            this.sortableColumns = [
+                ...this.sortableColumns,
+                "name",
+                "event_type",
+                "min_age",
+                "max_age",
+                "max_participants",
+                "start_time",
+                "end_time",
+                "registration_start",
+                "registration_end",
+                "location",
+                "image",
+                "status",
+                "registration_link",
+                "open_registration",
+                "description",
+            ];
         }
         connectedCallback() {
             super.connectedCallback();
@@ -1927,66 +1963,100 @@ ${value}</textarea
             this.cardStates.set(uuid, [content]);
             this.requestUpdate();
         }
+        handleSearch(e) {
+            const { detail } = e;
+            let q = "";
+            if (detail) {
+                const number = Number(detail);
+                q = this.sortableColumns.map((column) => {
+                    return Number.isNaN(number)
+                        ? { [column]: { "-like": `%${detail}%` } }
+                        : { [column]: detail };
+                });
+                q = JSON.stringify(q);
+            }
+            else {
+                q = JSON.stringify({});
+            }
+            this.dispatchEvent(new CustomEvent("search", {
+                detail: {
+                    q,
+                },
+                composed: true,
+                bubbles: true,
+            }));
+        }
         render() {
             return x `
       <div class="container-fluid mx-0">
-        <lms-events-filter>
-          <div class="card-deck card-deck-responsive">
-            ${o$2(this.data, (datum) => {
+        <lms-staff-events-filter
+          .sortableColumns=${this.sortableColumns}
+          .event_types=${this.event_types}
+          .target_groups=${this.target_groups}
+          .locations=${this.locations}
+        >
+          <lms-search @search=${this.handleSearch}></lms-search>
+          <lms-pagination
+            .nextPage=${this.nextPage}
+            ._page=${this._page}
+            ._per_page=${this._per_page}
+          ></lms-pagination>
+        </lms-staff-events-filter>
+        <div class="card-deck card-deck-responsive">
+          ${o$2(this.data, (datum) => {
             const { name, uuid } = datum;
             const [title] = new TemplateResultConverter(name).getRenderValues();
             const [state] = this.cardStates.get(uuid) || "data";
             return x `
-                <div class="card mt-5">
-                  <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs">
-                      <li
-                        class="nav-item"
-                        data-content="data"
-                        data-uuid=${datum.uuid}
-                        @click=${this.handleTabClick}
-                      >
-                        <a class="nav-link active" href="#">${__("Data")}</a>
-                      </li>
-                      <li
-                        class="nav-item"
-                        data-content="attendees"
-                        data-uuid=${datum.uuid}
-                        @click=${this.handleTabClick}
-                      >
-                        <a class="nav-link" href="#">${__("Waitlist")}</a>
-                      </li>
-                      <li
-                        class="nav-item"
-                        data-content="preview"
-                        data-uuid=${datum.uuid}
-                        @click=${this.handleTabClick}
-                      >
-                        <a class="nav-link">${__("Preview")}</a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="card-body">
-                    <h3 class="card-title">
-                      ${x `<span class="badge badge-primary">${title}</span>`}
-                    </h3>
-                    <lms-staff-event-card-form
-                      .datum=${datum}
-                      ?hidden=${!(state === "data")}
-                    ></lms-staff-event-card-form>
-                    <lms-staff-event-card-attendees
-                      ?hidden=${!(state === "attendees")}
-                    ></lms-staff-event-card-attendees>
-                    <lms-staff-event-card-preview
-                      ?hidden=${!(state === "preview")}
-                      .datum=${datum}
-                    ></lms-staff-event-card-preview>
-                  </div>
+              <div class="card mt-5">
+                <div class="card-header">
+                  <ul class="nav nav-tabs card-header-tabs">
+                    <li
+                      class="nav-item"
+                      data-content="data"
+                      data-uuid=${datum.uuid}
+                      @click=${this.handleTabClick}
+                    >
+                      <a class="nav-link active" href="#">${__("Data")}</a>
+                    </li>
+                    <li
+                      class="nav-item"
+                      data-content="attendees"
+                      data-uuid=${datum.uuid}
+                      @click=${this.handleTabClick}
+                    >
+                      <a class="nav-link" href="#">${__("Waitlist")}</a>
+                    </li>
+                    <li
+                      class="nav-item"
+                      data-content="preview"
+                      data-uuid=${datum.uuid}
+                      @click=${this.handleTabClick}
+                    >
+                      <a class="nav-link">${__("Preview")}</a>
+                    </li>
+                  </ul>
                 </div>
-              `;
+                <div class="card-body">
+                  <h3 class="card-title">
+                    ${x `<span class="badge badge-primary">${title}</span>`}
+                  </h3>
+                  <lms-staff-event-card-form
+                    .datum=${datum}
+                    ?hidden=${!(state === "data")}
+                  ></lms-staff-event-card-form>
+                  <lms-staff-event-card-attendees
+                    ?hidden=${!(state === "attendees")}
+                  ></lms-staff-event-card-attendees>
+                  <lms-staff-event-card-preview
+                    ?hidden=${!(state === "preview")}
+                    .datum=${datum}
+                  ></lms-staff-event-card-preview>
+                </div>
+              </div>
+            `;
         })}
-          </div>
-        </lms-events-filter>
+        </div>
       </div>
     `;
         }
@@ -1995,41 +2065,36 @@ ${value}</textarea
         bootstrapStyles,
         skeletonStyles,
         i$5 `
-      .card-deck-responsive {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+      .card-deck {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
       }
 
-      .card-deck-responsive .card {
-        flex: 0 0 auto;
-        margin: 1rem;
-        width: calc(
-          20% - 2rem
-        ); /* Adjust the width to 20% for larger screens */
-      }
+      @media (min-width: 992px) {
+        .card-deck {
+          grid-gap: 1rem;
+        }
 
-      @media (max-width: 1920px) {
-        .card-deck-responsive .card {
-          width: calc(
-            25% - 2rem
-          ); /* Adjust the width to 25% for 1080p screens */
+        .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
         }
       }
 
-      @media (max-width: 1600px) {
-        .card-deck-responsive .card {
-          width: calc(
-            50% - 2rem
-          ); /* Adjust the width to 50% for screens smaller than 1200px */
+      @media (min-width: 1200px) {
+        .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
         }
       }
 
-      @media (max-width: 768px) {
-        .card-deck-responsive .card {
-          width: calc(
-            100% - 2rem
-          ); /* Adjust the width to 100% for screens smaller than 768px */
+      @media (min-width: 1600px) {
+        .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+        }
+      }
+
+      @media (min-width: 1920px) {
+        .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
         }
       }
     `,
@@ -2046,10 +2111,78 @@ ${value}</textarea
     __decorate([
         e$2({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "locations", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSStaffEventCardDeck.prototype, "nextPage", void 0);
+    __decorate([
+        e$2({ type: Boolean })
+    ], LMSStaffEventCardDeck.prototype, "hasNoResults", void 0);
+    __decorate([
+        e$2({ type: Number })
+    ], LMSStaffEventCardDeck.prototype, "_page", void 0);
+    __decorate([
+        e$2({ type: Number })
+    ], LMSStaffEventCardDeck.prototype, "_per_page", void 0);
     LMSStaffEventCardDeck = __decorate([
         e$3("lms-staff-event-card-deck")
     ], LMSStaffEventCardDeck);
     var LMSStaffEventCardsDeck = LMSStaffEventCardDeck;
+
+    let LMSStaffEventsFilter = class LMSStaffEventsFilter extends s {
+        constructor() {
+            super(...arguments);
+            this.sortableColumns = ["id"];
+            this.event_types = [];
+            this.target_groups = [];
+            this.locations = [];
+        }
+        handleSort(e) {
+            const target = e.target;
+            this.dispatchEvent(new CustomEvent("sort", {
+                detail: { _order_by: target.value },
+                bubbles: true,
+                composed: true,
+            }));
+        }
+        render() {
+            return x `
+      <nav class="navbar navbar-light bg-white">
+        <lms-dropdown .label=${__("Sort by")} @change=${this.handleSort}>
+          ${o$2(this.sortableColumns, (column) => x `
+              <div class="dropdown-item">
+                <input
+                  type="radio"
+                  name="_order_by"
+                  id="_order_by_${column}"
+                  value=${column}
+                  ?checked=${column === "id"}
+                />
+                <label for="_order_by_${column}"> ${__(column)} </label>
+              </div>
+            `)}
+        </lms-dropdown>
+        <slot></slot>
+      </nav>
+    `;
+        }
+    };
+    LMSStaffEventsFilter.styles = [bootstrapStyles, utilityStyles];
+    __decorate([
+        e$2({ type: Array })
+    ], LMSStaffEventsFilter.prototype, "sortableColumns", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSStaffEventsFilter.prototype, "event_types", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSStaffEventsFilter.prototype, "target_groups", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSStaffEventsFilter.prototype, "locations", void 0);
+    LMSStaffEventsFilter = __decorate([
+        e$3("lms-staff-events-filter")
+    ], LMSStaffEventsFilter);
+    var LMSStaffEventsFilter$1 = LMSStaffEventsFilter;
 
     let LMSTableControls = class LMSTableControls extends s {
         render() {
@@ -2535,7 +2668,7 @@ ${value}</textarea
         >
           ${this.label}
         </button>
-        <div class="dropdown-menu w-100 p-2 ${o$1({ show: this.isOpen })}">
+        <div class="dropdown-menu p-2 ${o$1({ show: this.isOpen })}">
           <slot></slot>
         </div>
       </div>
@@ -2993,7 +3126,7 @@ ${value}</textarea
                   @toggle=${this.handleDropdownToggle}
                 >
                   ${o$2(["start_time", "end_time", "event_type", "location"], (value, index) => x `
-                      <div>
+                      <div class="dropdown-item">
                         <input
                           type="radio"
                           id="_order_by_${value}"
@@ -3015,7 +3148,7 @@ ${value}</textarea
                   ${o$2(this.facets.eventTypeIds, (eventTypeId) => {
             var _a;
             return x `
-                      <div class="form-group form-check">
+                      <div class="form-group form-check dropdown-item">
                         <input
                           type="checkbox"
                           class="form-check-input"
@@ -3039,7 +3172,7 @@ ${value}</textarea
                   ${o$2(this.facets.targetGroupIds, (targetGroupId) => {
             var _a;
             return x `
-                      <div class="form-group form-check">
+                      <div class="form-group form-check dropdown-item">
                         <input
                           type="checkbox"
                           class="form-check-input"
@@ -3060,7 +3193,7 @@ ${value}</textarea
                   .label=${__("Age")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  <div class="form-group">
+                  <div class="form-group dropdown-item">
                     <label for="min_age">${__("Min Age")}</label>
                     <input
                       type="number"
@@ -3092,7 +3225,7 @@ ${value}</textarea
                   .label=${__("Registration & Dates")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  <div class="form-check">
+                  <div class="form-check dropdown-item">
                     <input
                       type="checkbox"
                       class="form-check-input"
@@ -3104,7 +3237,7 @@ ${value}</textarea
                       >${__("Open Registration")}</label
                     >
                   </div>
-                  <div class="form-group">
+                  <div class="form-group dropdown-item">
                     <label for="start_time">${__("Start Date")}</label>
                     <input
                       type="date"
@@ -3129,7 +3262,7 @@ ${value}</textarea
                 >
                   ${o$2(this.facets.locationIds, (locationId) => {
             var _a;
-            return x ` <div class="form-group form-check">
+            return x ` <div class="form-group form-check dropdown-item">
                         <input
                           type="checkbox"
                           class="form-check-input"
@@ -3149,7 +3282,7 @@ ${value}</textarea
                   .label=${__("Fee")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  <div class="form-group">
+                  <div class="form-group dropdown-item">
                     <label for="fee">${__("Fee")}</label>
                     <input
                       type="number"
@@ -4782,11 +4915,11 @@ ${value}</textarea
         }
         firstUpdated(_changedProperties) {
             super.firstUpdated(_changedProperties);
+            const preexistingColumns = [
+                ...this.sortableColumns,
+                ...this.unsortableColumns,
+            ];
             this.order.forEach((column) => {
-                const preexistingColumns = [
-                    ...this.sortableColumns,
-                    ...this.unsortableColumns,
-                ];
                 if (!preexistingColumns.includes(column)) {
                     this.sortableColumns.push(column);
                 }
@@ -5174,7 +5307,7 @@ ${value}</textarea
                 "description",
                 "open_registration",
             ];
-            this.unsortableColumns = ["target_groups", "actions"];
+            this.unsortableColumns = ["target_groups"];
             this.isEditable = true;
             this.isDeletable = true;
         }
@@ -5847,13 +5980,18 @@ ${value}</textarea
 
     let StaffEventsView = class StaffEventsView extends s {
         constructor() {
-            super(...arguments);
+            super();
             this.hasLoaded = false;
+            this.nextPage = [];
+            this._page = 1;
+            this._per_page = 10;
             this.isEmpty = false;
+            this.hasNoResults = false;
             this.events = [];
             this.event_types = [];
             this.target_groups = [];
             this.locations = [];
+            this.queryBuilder = new QueryBuilder();
             this.href = {
                 path: "/cgi-bin/koha/plugins/run.pl",
                 query: true,
@@ -5862,16 +6000,21 @@ ${value}</textarea
                     method: "configure",
                 },
             };
-        }
-        async fetchUpdate() {
-            const response = await fetch("/api/v1/contrib/eventmanagement/events");
-            this.events = await response.json();
-            this.requestUpdate();
+            this.queryBuilder.reservedParams = [
+                "_match",
+                "_order_by",
+                "_page",
+                "_per_page",
+                "q",
+            ];
+            this.queryBuilder.query = window.location.search;
+            this.queryBuilder.staticParams = ["class", "method", "op"];
+            this.queryBuilder.updateQuery(`_order_by=id&_page=${this._page}&_per_page=${this._per_page}`);
         }
         connectedCallback() {
             super.connectedCallback();
             Promise.all([
-                fetch("/api/v1/contrib/eventmanagement/events"),
+                fetch(`/api/v1/contrib/eventmanagement/events?${this.queryBuilder.query.toString()}`),
                 fetch("/api/v1/contrib/eventmanagement/event_types"),
                 fetch("/api/v1/contrib/eventmanagement/target_groups"),
                 fetch("/api/v1/contrib/eventmanagement/locations"),
@@ -5884,6 +6027,7 @@ ${value}</textarea
                 this.events = events;
             })
                 .then(() => {
+                this.queryBuilder.updateUrl();
                 this.isEmpty = !this.hasData();
                 this.hasLoaded = true;
             });
@@ -5895,6 +6039,40 @@ ${value}</textarea
                 this.target_groups,
                 this.locations,
             ].every((data) => data.length > 0);
+        }
+        async fetchUpdate() {
+            const response = await fetch(`/api/v1/contrib/eventmanagement/events?${this.queryBuilder.query.toString()}`);
+            this.events = await response.json();
+            this.hasNoResults = this.events.length === 0;
+            this.queryBuilder.updateUrl();
+            this.requestUpdate();
+        }
+        async prefetchUpdate(e) {
+            const { _page, _per_page } = e.detail;
+            this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
+            const response = await fetch(`/api/v1/contrib/eventmanagement/events?${this.queryBuilder.query.toString()}`);
+            this.nextPage = await response.json();
+            this.queryBuilder.updateQuery(`_page=${this._page}&_per_page=${this._per_page}`);
+        }
+        handleSort(e) {
+            const { _order_by } = e.detail;
+            this.queryBuilder.updateQuery(`_order_by=${_order_by}`);
+            this.fetchUpdate();
+        }
+        handleSearch(e) {
+            const { q } = e.detail;
+            this.queryBuilder.updateQuery(`q=${q}`);
+            this.fetchUpdate();
+        }
+        handleFilter(e) {
+            console.log(e.detail);
+        }
+        handlePageChange(e) {
+            const { _page, _per_page } = e.detail;
+            this._page = _page;
+            this._per_page = _per_page;
+            this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
+            this.fetchUpdate();
         }
         render() {
             if (!this.hasLoaded) {
@@ -5945,8 +6123,17 @@ ${value}</textarea
         .event_types=${this.event_types}
         .target_groups=${this.target_groups}
         .locations=${this.locations}
+        ._page=${this._page}
+        ._per_page=${this._per_page}
+        .nextPage=${this.nextPage}
+        .hasNoResults=${this.hasNoResults}
         @updated=${this.fetchUpdate}
         @deleted=${this.fetchUpdate}
+        @sort=${this.handleSort}
+        @search=${this.handleSearch}
+        @filter=${this.handleFilter}
+        @page=${this.handlePageChange}
+        @prefetch=${this.prefetchUpdate}
       ></lms-staff-event-card-deck>
       <lms-events-modal @created=${this.fetchUpdate}></lms-events-modal>
     `;
@@ -5956,6 +6143,9 @@ ${value}</textarea
     __decorate([
         t$1()
     ], StaffEventsView.prototype, "hasLoaded", void 0);
+    __decorate([
+        t$1()
+    ], StaffEventsView.prototype, "nextPage", void 0);
     StaffEventsView = __decorate([
         e$3("lms-staff-events-view")
     ], StaffEventsView);
@@ -6361,6 +6551,7 @@ ${value}</textarea
         LMSStaffEventCardPreview: LMSStaffEventCardPreview$1,
         LMSStaffEventCardForm: LMSStaffEventCardForm$1,
         LMSStaffEventCardsDeck,
+        LMSStaffEventsFilter: LMSStaffEventsFilter$1,
         LMSTableControls: LMSTableControls$1,
         LMSAnchor: LMSAnchor$1,
         LMSCard: LMSCard$1,
