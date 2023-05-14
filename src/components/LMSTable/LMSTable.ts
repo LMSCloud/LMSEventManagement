@@ -15,7 +15,7 @@ import {
   state,
 } from "lit/decorators.js";
 import LMSToast from "../LMSToast";
-import { Column, TaggedData } from "../../sharedDeclarations";
+import { Column, SortableColumns, TaggedData } from "../../sharedDeclarations";
 import { map } from "lit/directives/map.js";
 import { __, attr__ } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";
@@ -35,8 +35,6 @@ declare global {
     "lms-search": LMSSearch;
   }
 }
-
-type SortableColumns = string[] & { 0: "id" };
 
 type HorizontalWidthProps =
   | "marginLeft"
@@ -330,11 +328,11 @@ export default class LMSTable extends LitElement {
     _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
   ): void {
     super.firstUpdated(_changedProperties);
+    const preexistingColumns = [
+      ...this.sortableColumns,
+      ...this.unsortableColumns,
+    ];
     this.order.forEach((column) => {
-      const preexistingColumns = [
-        ...this.sortableColumns,
-        ...this.unsortableColumns,
-      ];
       if (!preexistingColumns.includes(column)) {
         this.sortableColumns.push(column);
       }
