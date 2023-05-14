@@ -43,7 +43,7 @@ export default class LMSStaffEventsFilter extends LitElement {
 
   override render() {
     return html`
-      <nav class="navbar navbar-light bg-white">
+      <nav class="navbar navbar-light bg-white border rounded sticky-top">
         <lms-dropdown .label=${__("Sort by")} @change=${this.handleSort}>
           ${map(
             this.sortableColumns,

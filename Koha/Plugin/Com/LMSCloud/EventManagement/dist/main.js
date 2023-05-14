@@ -2146,7 +2146,7 @@ ${value}</textarea
         }
         render() {
             return x `
-      <nav class="navbar navbar-light bg-white">
+      <nav class="navbar navbar-light bg-white border rounded sticky-top">
         <lms-dropdown .label=${__("Sort by")} @change=${this.handleSort}>
           ${o$2(this.sortableColumns, (column) => x `
               <div class="dropdown-item">
@@ -2187,7 +2187,9 @@ ${value}</textarea
     let LMSTableControls = class LMSTableControls extends s {
         render() {
             return x `
-      <nav class="navbar navbar-light bg-white border border-bottom-0">
+      <nav
+        class="navbar navbar-light bg-white border border-bottom-0 sticky-top"
+      >
         <slot></slot>
       </nav>
     `;

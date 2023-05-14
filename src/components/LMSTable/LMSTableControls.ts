@@ -7,7 +7,9 @@ export default class LMSTableControls extends LitElement {
 
   override render() {
     return html`
-      <nav class="navbar navbar-light bg-white border border-bottom-0">
+      <nav
+        class="navbar navbar-light bg-white border border-bottom-0 sticky-top"
+      >
         <slot></slot>
       </nav>
     `;
