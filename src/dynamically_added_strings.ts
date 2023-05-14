@@ -23,3 +23,5 @@ __("location");
 __("image");
 __("description");
 __("open_registration");
+__("status");
+__("registration_link");
