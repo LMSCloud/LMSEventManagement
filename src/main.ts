@@ -12,7 +12,8 @@ import LMSSelect from "./components/Inputs/Modal/LMSSelect";
 import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventCardForm";
-import LMSStaffEventCardsDeck from "./components/LMSStaffEventCardDeck";
+import LMSStaffEventCardsDeck from "./components/LMSStaffEventCard/LMSStaffEventCardDeck";
+import LMSStaffEventsFilter from "./components/LMSStaffEventCard/LMSStaffEventsFilter";
 
 /**   /LMSTable */
 import LMSTableControls from "./components/LMSTable/LMSTableControls";
@@ -56,6 +57,7 @@ export default {
   LMSStaffEventCardPreview,
   LMSStaffEventCardForm,
   LMSStaffEventCardsDeck,
+  LMSStaffEventsFilter,
   LMSTableControls,
   LMSAnchor,
   LMSCard,

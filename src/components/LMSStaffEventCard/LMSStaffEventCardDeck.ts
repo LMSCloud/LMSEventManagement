@@ -1,7 +1,7 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import LMSStaffEventCardForm from "./LMSStaffEventCard/LMSStaffEventCardForm";
+import LMSStaffEventCardForm from "./LMSStaffEventCardForm";
 import {
   TaggedColumn,
   TargetGroup,
@@ -9,77 +9,116 @@ import {
   LMSLocation,
   LMSEvent,
   TaggedData,
-} from "../sharedDeclarations";
-import LMSStaffEventCardAttendees from "./LMSStaffEventCard/LMSStaffEventCardAttendees";
-import LMSStaffEventCardPreview from "./LMSStaffEventCard/LMSStaffEventCardPreview";
-import LMSAnchor from "./LMSAnchor";
-import { InputConverter, TemplateResultConverter } from "../lib/converters";
+  SortableColumns,
+  Column,
+} from "../../sharedDeclarations";
+import LMSStaffEventCardAttendees from "./LMSStaffEventCardAttendees";
+import LMSStaffEventCardPreview from "./LMSStaffEventCardPreview";
+import LMSAnchor from "../LMSAnchor";
+import { InputConverter, TemplateResultConverter } from "../../lib/converters";
 import { map } from "lit/directives/map.js";
-import { __ } from "../lib/translate";
-import { skeletonStyles } from "../styles/skeleton";
+import { __ } from "../../lib/translate";
+import { skeletonStyles } from "../../styles/skeleton";
+import LMSSearch from "../LMSSearch";
+import LMSStaffEventsFilter from "./LMSStaffEventsFilter";
 
 declare global {
   interface HTMLElementTagNameMap {
     "lms-staff-event-card-form": LMSStaffEventCardForm;
     "lms-staff-event-card-attendees": LMSStaffEventCardAttendees;
     "lms-staff-event-card-preview": LMSStaffEventCardPreview;
+    "lms-staff-events-filter": LMSStaffEventsFilter;
     "lms-anchor": LMSAnchor;
+    "lms-search": LMSSearch;
   }
 }
 
 @customElement("lms-staff-event-card-deck")
 export default class LMSStaffEventCardDeck extends LitElement {
   @property({ type: Array }) events: LMSEvent[] = [];
+
   @property({ type: Array }) event_types: EventType[] = [];
+
   @property({ type: Array }) target_groups: TargetGroup[] = [];
+
   @property({ type: Array }) locations: LMSLocation[] = [];
+
+  @property({ type: Array }) nextPage: Column[] | undefined = undefined;
+
+  @property({ type: Boolean }) hasNoResults = false;
+
+  @property({ type: Number }) _page = 1;
+
+  @property({ type: Number }) _per_page = 20;
+
   private data: TaggedColumn[] = [];
+
   private cardStates: Map<string, string[]> = new Map();
+
   private inputConverter = new InputConverter();
+
+  private sortableColumns: SortableColumns = ["id"];
 
   static override styles = [
     bootstrapStyles,
     skeletonStyles,
     css`
-      .card-deck-responsive {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+      .card-deck {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
       }
 
-      .card-deck-responsive .card {
-        flex: 0 0 auto;
-        margin: 1rem;
-        width: calc(
-          20% - 2rem
-        ); /* Adjust the width to 20% for larger screens */
-      }
+      @media (min-width: 992px) {
+        .card-deck {
+          grid-gap: 1rem;
+        }
 
-      @media (max-width: 1920px) {
-        .card-deck-responsive .card {
-          width: calc(
-            25% - 2rem
-          ); /* Adjust the width to 25% for 1080p screens */
+        .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
         }
       }
 
-      @media (max-width: 1600px) {
-        .card-deck-responsive .card {
-          width: calc(
-            50% - 2rem
-          ); /* Adjust the width to 50% for screens smaller than 1200px */
+      @media (min-width: 1200px) {
+        .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
         }
       }
-      
-      @media (max-width: 768px) {
-        .card-deck-responsive .card {
-          width: calc(
-            100% - 2rem
-          ); /* Adjust the width to 100% for screens smaller than 768px */
+
+      @media (min-width: 1600px) {
+        .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+        }
+      }
+
+      @media (min-width: 1920px) {
+        .card-deck {
+          grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
         }
       }
     `,
   ];
+
+  constructor() {
+    super();
+    this.sortableColumns = [
+      ...(this.sortableColumns as ["id"]),
+      "name",
+      "event_type",
+      "min_age",
+      "max_age",
+      "max_participants",
+      "start_time",
+      "end_time",
+      "registration_start",
+      "registration_end",
+      "location",
+      "image",
+      "status",
+      "registration_link",
+      "open_registration",
+      "description",
+    ];
+  }
 
   override connectedCallback() {
     super.connectedCallback();
@@ -151,9 +190,47 @@ export default class LMSStaffEventCardDeck extends LitElement {
     this.requestUpdate();
   }
 
+  private handleSearch(e: CustomEvent) {
+    const { detail } = e;
+    let q: string | Array<Record<string, { "-like": string } | number>> = "";
+    if (detail) {
+      const number = Number(detail);
+      q = this.sortableColumns.map((column) => {
+        return Number.isNaN(number)
+          ? { [column]: { "-like": `%${detail}%` } }
+          : { [column]: detail };
+      });
+      q = JSON.stringify(q);
+    } else {
+      q = JSON.stringify({});
+    }
+    this.dispatchEvent(
+      new CustomEvent("search", {
+        detail: {
+          q,
+        },
+        composed: true,
+        bubbles: true,
+      })
+    );
+  }
+
   override render() {
     return html`
       <div class="container-fluid mx-0">
+        <lms-staff-events-filter
+          .sortableColumns=${this.sortableColumns}
+          .event_types=${this.event_types}
+          .target_groups=${this.target_groups}
+          .locations=${this.locations}
+        >
+          <lms-search @search=${this.handleSearch}></lms-search>
+          <lms-pagination
+            .nextPage=${this.nextPage}
+            ._page=${this._page}
+            ._per_page=${this._per_page}
+          ></lms-pagination>
+        </lms-staff-events-filter>
         <div class="card-deck card-deck-responsive">
           ${map(this.data, (datum) => {
             const { name, uuid } = datum;

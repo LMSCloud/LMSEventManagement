@@ -172,7 +172,10 @@ export type MatrixGroup = {
   [key in InputType]?: string;
 };
 
-export type TaggedData = ["target_groups" | "location" | "event_type", unknown[]];
+export type TaggedData = [
+  "target_groups" | "location" | "event_type",
+  unknown[]
+];
 
 export type Facets = {
   eventTypeIds: string[];
@@ -193,3 +196,5 @@ export type Facets = {
   start_time: Date;
   status: "pending" | "confirmed" | "canceled" | "sold_out";
 };
+
+export type SortableColumns = string[] & { 0: "id" };
