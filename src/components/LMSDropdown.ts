@@ -5,10 +5,15 @@ import { classMap } from "lit/directives/class-map.js";
 @customElement("lms-dropdown")
 export default class LMSDropdown extends LitElement {
   @property({ type: Boolean }) isHidden = false;
+
   @property({ type: Boolean }) shouldFold = false;
+
   @property({ type: Boolean }) isOpen = false;
+
   @property({ type: String }) label = "";
+
   @queryAll("input") inputs!: NodeListOf<HTMLInputElement>;
+
   static override styles = [bootstrapStyles];
 
   private handleDropdownToggle() {
@@ -38,7 +43,7 @@ export default class LMSDropdown extends LitElement {
         >
           ${this.label}
         </button>
-        <div class="dropdown-menu w-100 p-2 ${classMap({ show: this.isOpen })}">
+        <div class="dropdown-menu p-2 ${classMap({ show: this.isOpen })}">
           <slot></slot>
         </div>
       </div>
