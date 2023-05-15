@@ -2332,6 +2332,11 @@ ${value}</textarea
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         border: 1px solid var(--primary);
       }
+
+      .card img {
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+      }
     `,
     ];
     __decorate([
