@@ -391,23 +391,9 @@ export default class LMSTable extends LitElement {
 
   private handleSearch(e: CustomEvent) {
     const { detail } = e;
-    let q: string | Array<Record<string, { "-like": string } | number>> = "";
-    if (detail) {
-      const number = Number(detail);
-      q = this.sortableColumns.map((column) => {
-        return Number.isNaN(number)
-          ? { [column]: { "-like": `%${detail}%` } }
-          : { [column]: detail };
-      });
-      q = JSON.stringify(q);
-    } else {
-      q = JSON.stringify({});
-    }
     this.dispatchEvent(
       new CustomEvent("search", {
-        detail: {
-          q,
-        },
+        detail,
         composed: true,
         bubbles: true,
       })
@@ -422,7 +408,10 @@ export default class LMSTable extends LitElement {
     return html`
       <div class="container-fluid mx-0">
         <lms-table-controls>
-          <lms-search @search=${this.handleSearch}></lms-search>
+          <lms-search
+            @search=${this.handleSearch}
+            .sortableColumns=${this.sortableColumns}
+          ></lms-search>
           <lms-pagination
             .nextPage=${this.nextPage}
             ._page=${this._page}
@@ -437,6 +426,7 @@ export default class LMSTable extends LitElement {
         >
           <h4 class="alert-heading">${__("No matches found")}.</h4>
           <p>${__("Try refining your search.")}</p>
+
         </div>
 
         <table

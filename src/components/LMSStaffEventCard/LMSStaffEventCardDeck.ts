@@ -192,23 +192,9 @@ export default class LMSStaffEventCardDeck extends LitElement {
 
   private handleSearch(e: CustomEvent) {
     const { detail } = e;
-    let q: string | Array<Record<string, { "-like": string } | number>> = "";
-    if (detail) {
-      const number = Number(detail);
-      q = this.sortableColumns.map((column) => {
-        return Number.isNaN(number)
-          ? { [column]: { "-like": `%${detail}%` } }
-          : { [column]: detail };
-      });
-      q = JSON.stringify(q);
-    } else {
-      q = JSON.stringify({});
-    }
     this.dispatchEvent(
       new CustomEvent("search", {
-        detail: {
-          q,
-        },
+        detail,
         composed: true,
         bubbles: true,
       })
@@ -224,7 +210,10 @@ export default class LMSStaffEventCardDeck extends LitElement {
           .target_groups=${this.target_groups}
           .locations=${this.locations}
         >
-          <lms-search @search=${this.handleSearch}></lms-search>
+          <lms-search
+            @search=${this.handleSearch}
+            .sortableColumns=${this.sortableColumns}
+          ></lms-search>
           <lms-pagination
             .nextPage=${this.nextPage}
             ._page=${this._page}
