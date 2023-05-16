@@ -9,6 +9,7 @@
     "lint": "eslint \"src/**/*.{js,ts}\"",
     "build": "npx rollup -c && ./p-kpz -r \"lms-event-management\" -p \"Koha/Plugin/Com/LMSCloud/EventManagement.pm\"",
     "test": "mocha \"test/**/*.test.mjs\"",
+    "docs:package": "./tools/generate_docs.mjs",
     "ktd:copy": "docker cp Koha koha-koha-1:/var/lib/koha/kohadev/plugins/",
     "ktd:restart": "docker exec -ti koha-koha-1 bash -c \"koha-plack --restart kohadev\"",
     "ktd:install": "npm run ktd:copy && docker exec -ti koha-koha-1 /kohadevbox/koha/misc/devel/install_plugins.pl && (test \"$RESTART\" = \"true\" && npm run ktd:restart || true)",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.1",
     "@rollup/plugin-typescript": "^11.1.0",
+    "@types/showdown": "^2.0.1",
     "@typescript-eslint/eslint-plugin": "^5.59.2",
     "autoprefixer": "^10.4.14",
     "chai": "^4.3.7",
@@ -42,6 +44,8 @@
     "gulp": "^4.0.2",
     "gulp-github-release": "^1.2.1",
     "gulp-run": "^1.7.1",
+    "he": "^1.2.0",
+    "htmlparser2": "^9.0.0",
     "mocha": "^10.2.0",
     "node-datetime": "^2.1.2",
     "node-fetch": "^3.3.1",
@@ -50,6 +54,7 @@
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-postcss": "^4.0.2",
+    "showdown": "^2.1.0",
     "ts-lit-plugin": "^1.2.1",
     "tslib": "^2.5.0",
     "typescript": "^4.9.5"
