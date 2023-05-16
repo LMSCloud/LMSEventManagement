@@ -240,25 +240,16 @@ export default class LMSEventsFilter extends LitElement {
   }
 
   private handleSearch(e: CustomEvent) {
-    const { detail } = e;
+    const { q } = e.detail;
     const query = new URLSearchParams();
     this.getParamsFromActiveFilters().forEach(([name, value]) => {
       if (typeof name === "string" && value !== undefined) {
         return query.append(name, value?.toString());
       }
     });
-    if (detail) {
-      const q = [
-        { name: { "-like": `%${detail}%` } },
-        { description: { "-like": `%${detail}%` } },
-      ];
-      query.append("q", JSON.stringify(q));
-    } else {
-      query.append("q", JSON.stringify({}));
-    }
     this.dispatchEvent(
       new CustomEvent("search", {
-        detail: query.toString(),
+        detail: query.toString() + (q ? `&q=${q}` : ""),
         composed: true,
         bubbles: true,
       })
@@ -326,7 +317,10 @@ export default class LMSEventsFilter extends LitElement {
                 "col-12": this.shouldFold,
               })}
             >
-              <lms-search @search=${this.handleSearch}></lms-search>
+              <lms-search
+                @search=${this.handleSearch}
+                .sortableColumns=${["name", "description"]}
+              ></lms-search>
             </div>
 
             <div

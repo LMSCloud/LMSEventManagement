@@ -130,8 +130,8 @@ export default class LMSEventsView extends LitElement {
     this.handleQuery(new CustomEvent("query", { detail: url.search }), false);
   }
 
-  private handleQuery(event: CustomEvent, updateUrl = true) {
-    const query = event.detail;
+  private handleQuery(e: CustomEvent, updateUrl = true) {
+    const query = e.detail;
     this.queryBuilder.updateQuery(query);
 
     const response = async () =>

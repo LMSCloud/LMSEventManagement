@@ -2608,7 +2608,7 @@ ${value}</textarea
       }
 
       img {
-        aspect-ratio: 16 /9;
+        aspect-ratio: 16 / 9;
         object-fit: cover;
       }
     `,
@@ -3004,25 +3004,15 @@ ${value}</textarea
             }));
         }
         handleSearch(e) {
-            const { detail } = e;
+            const { q } = e.detail;
             const query = new URLSearchParams();
             this.getParamsFromActiveFilters().forEach(([name, value]) => {
                 if (typeof name === "string" && value !== undefined) {
                     return query.append(name, value === null || value === void 0 ? void 0 : value.toString());
                 }
             });
-            if (detail) {
-                const q = [
-                    { name: { "-like": `%${detail}%` } },
-                    { description: { "-like": `%${detail}%` } },
-                ];
-                query.append("q", JSON.stringify(q));
-            }
-            else {
-                query.append("q", JSON.stringify({}));
-            }
             this.dispatchEvent(new CustomEvent("search", {
-                detail: query.toString(),
+                detail: query.toString() + (q ? `&q=${q}` : ""),
                 composed: true,
                 bubbles: true,
             }));
@@ -3081,7 +3071,10 @@ ${value}</textarea
             "col-12": this.shouldFold,
         })}
             >
-              <lms-search @search=${this.handleSearch}></lms-search>
+              <lms-search
+                @search=${this.handleSearch}
+                .sortableColumns=${["name", "description"]}
+              ></lms-search>
             </div>
 
             <div
@@ -5920,8 +5913,8 @@ ${value}</textarea
             const url = new URL((state === null || state === void 0 ? void 0 : state.url) || window.location.href);
             this.handleQuery(new CustomEvent("query", { detail: url.search }), false);
         }
-        handleQuery(event, updateUrl = true) {
-            const query = event.detail;
+        handleQuery(e, updateUrl = true) {
+            const query = e.detail;
             this.queryBuilder.updateQuery(query);
             const response = async () => await requestHandler.request("getEventsPublic", this.queryBuilder.query.toString());
             response()
