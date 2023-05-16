@@ -136,7 +136,6 @@ export default class StaffEventsView extends LitElement {
   }
 
   private handleFilter(e: CustomEvent) {
-    console.log("detail", e.detail);
     const { detail } = e;
     const currentQ = this.queryBuilder.getParamValue("q");
     const [detailKey, detailValue] = Object.entries(detail)[0];
