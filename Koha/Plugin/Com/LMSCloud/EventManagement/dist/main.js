@@ -686,6 +686,7 @@
             this._element = null;
             this._textNode = null;
             this._element = document.createElement("span");
+            this._element.classList.add("pointer-events-none");
             this._textNode = document.createTextNode("");
             this._element.appendChild(this._textNode);
             this._locale = document.documentElement.lang.slice(0, 2);
@@ -740,7 +741,7 @@
                 }
                 else {
                     this._textNode.textContent = this.generatePlaceholder();
-                    this._element.classList.add("skeleton", "skeleton-text", "pointer-events-none");
+                    this._element.classList.add("skeleton", "skeleton-text");
                 }
                 return this._element;
             }
@@ -1965,23 +1966,8 @@ ${value}</textarea
         }
         handleSearch(e) {
             const { detail } = e;
-            let q = "";
-            if (detail) {
-                const number = Number(detail);
-                q = this.sortableColumns.map((column) => {
-                    return Number.isNaN(number)
-                        ? { [column]: { "-like": `%${detail}%` } }
-                        : { [column]: detail };
-                });
-                q = JSON.stringify(q);
-            }
-            else {
-                q = JSON.stringify({});
-            }
             this.dispatchEvent(new CustomEvent("search", {
-                detail: {
-                    q,
-                },
+                detail,
                 composed: true,
                 bubbles: true,
             }));
@@ -1995,7 +1981,10 @@ ${value}</textarea
           .target_groups=${this.target_groups}
           .locations=${this.locations}
         >
-          <lms-search @search=${this.handleSearch}></lms-search>
+          <lms-search
+            @search=${this.handleSearch}
+            .sortableColumns=${this.sortableColumns}
+          ></lms-search>
           <lms-pagination
             .nextPage=${this.nextPage}
             ._page=${this._page}
@@ -2204,8 +2193,8 @@ ${value}</textarea
     let LMSAnchor = class LMSAnchor extends s {
         constructor() {
             super(...arguments);
-            this.target = "_self";
             this.href = {};
+            this.target = "_self";
         }
         assembleURI() {
             const { path, query, params, fragment } = this.href;
@@ -2275,7 +2264,9 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: Object, attribute: "data-href" }),
+        e$2({ type: Object, attribute: "data-href" })
+    ], LMSAnchor.prototype, "href", void 0);
+    __decorate([
         e$2({ type: String })
     ], LMSAnchor.prototype, "target", void 0);
     LMSAnchor = __decorate([
@@ -4215,13 +4206,115 @@ ${value}</textarea
     let LMSSearch = class LMSSearch extends s {
         constructor() {
             super(...arguments);
+            this.sortableColumns = ["id"];
             this.debouncedSearch = debounce((query) => {
                 this.dispatchEvent(new CustomEvent("search", {
-                    detail: query,
+                    detail: {
+                        q: this.getQuery(query),
+                    },
                     bubbles: true,
                     composed: false,
                 }));
             }, 250, false);
+        }
+        parseQuery(query) {
+            const entries = {};
+            const parts = query.split(" AND ");
+            const operators = {
+                ">=": ">=",
+                "<=": "<=",
+                ">": ">",
+                "<": "<",
+                "~": "-like",
+                "!~": "-not_like",
+            };
+            parts.forEach((part) => {
+                const [rawKey, rawValue] = part.split(":").map((s) => s.trim());
+                if (!rawKey || rawValue === undefined)
+                    return;
+                let value = rawValue;
+                let operator = "=";
+                // Handle OR queries
+                if (rawValue.includes(" OR ")) {
+                    operator = "||";
+                    value = rawValue.split("OR").map((s) => s.trim());
+                }
+                // Handle numeric and quoted values
+                else if (!isNaN(parseFloat(rawValue))) {
+                    value = parseFloat(rawValue);
+                }
+                else if (rawValue.startsWith('"') && rawValue.endsWith('"')) {
+                    value = rawValue.slice(1, -1);
+                }
+                // Handle operators
+                else {
+                    for (const op of Object.keys(operators)) {
+                        if (rawValue.includes(op)) {
+                            operator = operators[op];
+                            [, value] = rawValue.split(op);
+                            value = value.trim();
+                            break;
+                        }
+                    }
+                }
+                entries[rawKey] = { operator, value };
+            });
+            return entries;
+        }
+        buildQuery(query) {
+            let builtQuery = [];
+            for (const [key, { operator, value }] of Object.entries(query)) {
+                switch (operator) {
+                    case "=":
+                        builtQuery.push({ [key]: value });
+                        break;
+                    case "||":
+                        if (Array.isArray(value)) {
+                            value.forEach((v) => builtQuery.push({ [key]: v }));
+                        }
+                        else {
+                            builtQuery.push({ [key]: value });
+                        }
+                        break;
+                    default:
+                        builtQuery.push({ [key]: { [operator]: value } });
+                }
+            }
+            if (builtQuery.length === 1) {
+                [builtQuery] = builtQuery;
+            }
+            return builtQuery;
+        }
+        getQuery(query) {
+            let q = undefined;
+            if (query) {
+                if (query.includes(":")) {
+                    // It's a structured query
+                    const parsedQuery = this.parseQuery(query);
+                    const builtQuery = this.buildQuery(parsedQuery);
+                    q = JSON.stringify(builtQuery);
+                }
+                else {
+                    // It's a bare search term, build a wildcard query for each field
+                    const encoded = {
+                        "%": window.encodeURIComponent("%"),
+                        query: window.encodeURIComponent(query),
+                    };
+                    const wildcardQuery = this.sortableColumns.reduce((entries, field) => {
+                        entries.push({
+                            [field]: {
+                                "-like": `${encoded["%"]}${encoded.query}${encoded["%"]}`,
+                            },
+                        });
+                        return entries;
+                    }, []);
+                    q = JSON.stringify(wildcardQuery);
+                }
+            }
+            else {
+                q = JSON.stringify({});
+            }
+            return q;
         }
         handleInput(e) {
             const inputElement = e.target;
@@ -4257,6 +4350,9 @@ ${value}</textarea
       }
     `,
     ];
+    __decorate([
+        e$2({ type: Array })
+    ], LMSSearch.prototype, "sortableColumns", void 0);
     LMSSearch = __decorate([
         e$3("lms-search")
     ], LMSSearch);
@@ -4769,6 +4865,8 @@ ${value}</textarea
     ], LMSEventTypesModal);
     var LMSEventTypesModal$1 = LMSEventTypesModal;
 
+    const searchSyntax = x `<h4>${__("Advanced Search Syntax")}</h4><h5>${__("Field Equality Matches")}</h5><p>${__("Syntax: ")}<code>fieldname:value</code></p><p>${__("This will match results where the given field name matches the specified value.")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>age:25</code>${__(" will return results where the age field equals 25.")}</p><h5>${__("Complex Matching Clauses")}</h5><p>${__("Syntax: ")}<code>fieldname:operator value</code></p><p>${__("This allows the use of various matching clauses including ")}<code>&#x3E;</code>${__(", ")}<code>&#x3C;</code>${__(", ")}<code>&#x3E;=</code>${__(", ")}<code>&#x3C;=</code>${__(", ")}<code>-like</code>${__(", and ")}<code>-not_like</code>${__(".")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>age:&#x3E;25</code>${__(" will return results where the age field is greater than 25.")}</p><h5>${__("Multi-field Filtering")}</h5><p>${__("Syntax: ")}<code>field1:value1 AND field2:value2</code></p><p>${__("This will filter the response to only those results where both field1 contains value1 AND field2 contains value2.")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>name:John AND age:25</code>${__(" will return results where the name field is John AND the age field equals 25.")}</p><h5>${__("OR Queries")}</h5><p>${__("Syntax: ")}<code>fieldname:value1 OR value2</code></p><p>${__("This will return results where the fieldname is either value1 OR value2.")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>surname:Acevedo OR Bernardo</code>${__(" will return any result whose surname is \"Acevedo\" OR \"Bernardo\".")}</p><h5>${__("Exact Matches")}</h5><p>${__("If you quote the search term in double quotes, it will find only exact matches.")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>name:&#x22;John Doe&#x22;</code>${__(" will return results where the name field is exactly \"John Doe\".")}</p><h5>${__("Wildcard Matches")}</h5><p>${__("If a value is not quoted, it will perform a search with wildcard matches, meaning it will return results where the field contains the specified value.")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>name:John</code>${__(" will return results where the name field contains \"John\" (such as \"John Doe\", \"Johnny\", etc.).")}</p><h5>${__("Nested Data Query")}</h5><p>${__("If you are requesting related data be embedded into the response one can query on the related data using dot notation in the field names.")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>extended_attributes.code:internet AND extended_attributes.attribute:1</code>${__(" will return results where the code field of extended")}<em>${__("attributes is \"internet\" AND the attribute field of extended")}</em>${__("attributes is 1.")}</p><h5>${__("Bare Search")}</h5><p>${__("A bare search without keywords will search all fields with forward and backward truncation meaning *SEARCH_TERM*. This can be used for broad queries where the specific field isn't known.")}</p><p><strong>${__("Example:")}</strong>${__(" John will return any result that contains \"John\" in any of the fields.")}</p>`;
+
     let LMSTable = class LMSTable extends s {
         constructor() {
             super();
@@ -4971,26 +5069,18 @@ ${value}</textarea
         }
         handleSearch(e) {
             const { detail } = e;
-            let q = "";
-            if (detail) {
-                const number = Number(detail);
-                q = this.sortableColumns.map((column) => {
-                    return Number.isNaN(number)
-                        ? { [column]: { "-like": `%${detail}%` } }
-                        : { [column]: detail };
-                });
-                q = JSON.stringify(q);
-            }
-            else {
-                q = JSON.stringify({});
-            }
             this.dispatchEvent(new CustomEvent("search", {
-                detail: {
-                    q,
-                },
+                detail,
                 composed: true,
                 bubbles: true,
             }));
+        }
+        toggleDoc(e) {
+            const target = e.target;
+            const doc = target.nextElementSibling;
+            if (!doc)
+                return;
+            doc.classList.toggle("d-none");
         }
         render() {
             if (!this.data.length) {
@@ -4999,7 +5089,10 @@ ${value}</textarea
             return x `
       <div class="container-fluid mx-0">
         <lms-table-controls>
-          <lms-search @search=${this.handleSearch}></lms-search>
+          <lms-search
+            @search=${this.handleSearch}
+            .sortableColumns=${this.sortableColumns}
+          ></lms-search>
           <lms-pagination
             .nextPage=${this.nextPage}
             ._page=${this._page}
@@ -5014,8 +5107,14 @@ ${value}</textarea
         >
           <h4 class="alert-heading">${__("No matches found")}.</h4>
           <p>${__("Try refining your search.")}</p>
+          <button class="btn btn-outline-info" @click=${this.toggleDoc}>
+            ${__("Help")}
+          </button>
+          <div class="text-left d-none">
+            <hr />
+            ${searchSyntax}
+          </div>
         </div>
-
         <table
           class="table table-striped table-bordered table-hover ${o$1({
             "d-none": this.hasNoResults,
