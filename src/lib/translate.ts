@@ -58,6 +58,7 @@ export class TranslateDirective extends Directive {
   constructor(partInfo: PartInfo) {
     super(partInfo);
     this._element = document.createElement("span");
+    this._element.classList.add("pointer-events-none");
     this._textNode = document.createTextNode("");
     this._element.appendChild(this._textNode);
     this._locale = document.documentElement.lang.slice(0, 2);
@@ -115,11 +116,7 @@ export class TranslateDirective extends Directive {
         this._textNode.textContent = _text;
       } else {
         this._textNode.textContent = this.generatePlaceholder();
-        this._element.classList.add(
-          "skeleton",
-          "skeleton-text",
-          "pointer-events-none"
-        );
+        this._element.classList.add("skeleton", "skeleton-text");
       }
       return this._element;
     }
