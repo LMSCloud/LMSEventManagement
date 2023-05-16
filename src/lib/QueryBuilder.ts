@@ -61,7 +61,7 @@ export class QueryBuilder {
     const newQueryParams = new URLSearchParams(query);
 
     /** Remove keys that are not in the new query if they are not reserved.
-     *  WARNING! Alywas use Array.from() when iterating over URLSearchParams
+     *  WARNING! Always use Array.from() when iterating over URLSearchParams
      *  because it is a live collection and will be modified during iteration
      *  otherwise. */
     Array.from(this._query).forEach(([key]) => {
@@ -88,14 +88,30 @@ export class QueryBuilder {
         // If key is repeatable, update its values
         case this._areRepeatable.includes(key): {
           const existingValues = this._query.getAll(key);
-          const newValues = newQueryParams.getAll(key);
-          const valuesToRemove = existingValues.filter(
-            (v) => !newValues.includes(v)
-          );
-          valuesToRemove.forEach(() => this._query.delete(key));
-          newValues.forEach((v) => this._query.append(key, v));
+          const newValues = new Set(newQueryParams.getAll(key));
+
+          // Create a new URLSearchParams instance to hold the updated parameters
+          const updatedQuery = new URLSearchParams();
+
+          // Add the values that are present in both existing and new values
+          for (const [k, v] of this._query.entries()) {
+            if (k !== key || (k === key && newValues.has(v))) {
+              updatedQuery.append(k, v);
+            }
+          }
+
+          // Add new values that are not in the existing values
+          for (const v of newValues) {
+            if (!existingValues.includes(v)) {
+              updatedQuery.append(key, v);
+            }
+          }
+
+          // Replace the old query parameters with the updated parameters
+          this._query = updatedQuery;
           break;
         }
+
         // If key is not reserved and not repeatable, set its value
         default:
           this._query.set(key, value);
