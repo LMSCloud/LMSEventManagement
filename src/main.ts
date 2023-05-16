@@ -3,10 +3,10 @@ import "./main.css";
 /** components */
 /**   /Inputs */
 /**     /Modal */
-import LMSCheckboxInput from "./components/Inputs/Modal/LMSCheckboxInput";
-import LMSMatrix from "./components/Inputs/Modal/LMSMatrix";
-import LMSPrimitivesInput from "./components/Inputs/Modal/LMSPrimitivesInput";
-import LMSSelect from "./components/Inputs/Modal/LMSSelect";
+import LMSCheckboxInput from "./components/inputs/modal/LMSCheckboxInput";
+import LMSMatrix from "./components/inputs/modal/LMSMatrix";
+import LMSPrimitivesInput from "./components/inputs/modal/LMSPrimitivesInput";
+import LMSSelect from "./components/inputs/modal/LMSSelect";
 
 /**   /LMSStaffEventCard */
 import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffEventCardAttendees";
