@@ -8,11 +8,9 @@ type AnchorTarget = "_self" | "_blank" | "_parent" | "_top";
 
 @customElement("lms-anchor")
 export default class LMSAnchor extends LitElement {
-  @property({ type: Object, attribute: "data-href" })
-  
+  @property({ type: Object, attribute: "data-href" }) href: URIComponents = {};
+
   @property({ type: String }) target: AnchorTarget = "_self";
-  
-  href: URIComponents = {};
 
   static override styles = [
     bootstrapStyles,
