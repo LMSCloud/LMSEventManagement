@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-24 12:16+0200\n"
-"PO-Revision-Date: 2023-05-14 17:27+0200\n"
+"PO-Revision-Date: 2023-05-16 17:19+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.3\n"
 
 #: src/dynamically_added_strings.ts:8
 msgid "id"
@@ -278,13 +278,189 @@ msgstr "Vor"
 msgid "Loading"
 msgstr "Läd"
 
-#: src/components/LMSSearch.ts:52 src/components/LMSSearch.ts:53
+#: src/components/LMSSearch.ts:164 src/components/LMSSearch.ts:165
 msgid "Search"
 msgstr "Suche"
 
 #: src/components/LMSToast.ts:37
 msgid "sec ago"
 msgstr "Sek."
+
+#: src/docs/searchSyntax.ts:5
+msgid "Advanced Search Syntax"
+msgstr "Fortgeschrittene Abfrage-Syntax"
+
+#: src/docs/searchSyntax.ts:5
+msgid "Field Equality Matches"
+msgstr "Feld-Gleicheits-Matches"
+
+#: src/docs/searchSyntax.ts:5
+msgid "Syntax: "
+msgstr "Syntax: "
+
+#: src/docs/searchSyntax.ts:5
+msgid ""
+"This will match results where the given field name matches the specified "
+"value."
+msgstr ""
+"Diese Option liefert Treffer, bei denen der Wert des Feldnamens dem "
+"spezifizierten Wert entspricht."
+
+#: src/docs/searchSyntax.ts:5
+msgid "Example:"
+msgstr "Beispiel:"
+
+#: src/docs/searchSyntax.ts:5
+msgid " will return results where the age field equals 25."
+msgstr " liefert Ergebnisse, bei denen das “age”-Feld den Wert 25 enthält."
+
+#: src/docs/searchSyntax.ts:5
+msgid "Complex Matching Clauses"
+msgstr "Komplexe Matching-Abragen"
+
+#: src/docs/searchSyntax.ts:5
+msgid "This allows the use of various matching clauses including "
+msgstr ""
+"Dies Option erlaubt den Einsatz verschiedener Matching-Abfragen, unter "
+"Anderem "
+
+#: src/docs/searchSyntax.ts:5
+msgid ", "
+msgstr ", "
+
+#: src/docs/searchSyntax.ts:5
+msgid ", and "
+msgstr ", und "
+
+#: src/docs/searchSyntax.ts:5
+msgid "."
+msgstr "."
+
+#: src/docs/searchSyntax.ts:5
+msgid " will return results where the age field is greater than 25."
+msgstr ""
+" liefert Ergebnisse, bei denen das “age”-Feld einen Wert größer 25 enthält."
+
+#: src/docs/searchSyntax.ts:5
+msgid "Multi-field Filtering"
+msgstr "Multi-Feld-Filterung"
+
+#: src/docs/searchSyntax.ts:5
+msgid ""
+"This will filter the response to only those results where both field1 "
+"contains value1 AND field2 contains value2."
+msgstr ""
+"Dies Option filtert das Ergebnis so, dass nur solche Matches angezeigt "
+"werden, bei denen “field1” “value1” UND “field2” “value2” enthält."
+
+#: src/docs/searchSyntax.ts:5
+msgid ""
+" will return results where the name field is John AND the age field equals "
+"25."
+msgstr ""
+" liefert Ergebnisse, bei denen das “name”-Feld den Wert John UND das “age”-"
+"Feld den Wert 25 enthält."
+
+#: src/docs/searchSyntax.ts:5
+msgid "OR Queries"
+msgstr "OR Abfragen"
+
+#: src/docs/searchSyntax.ts:5
+msgid ""
+"This will return results where the fieldname is either value1 OR value2."
+msgstr ""
+"Diese Option liefert Ergebnisse, bei denen ein Feldname entweder “value1” "
+"ODER “value2” enthält."
+
+#: src/docs/searchSyntax.ts:5
+msgid " will return any result whose surname is \"Acevedo\" OR \"Bernardo\"."
+msgstr ""
+" liefert Ergebnisse, bei denen das “surname”-Feld “Acevedo” ODER “Bernardo” "
+"enthält."
+
+#: src/docs/searchSyntax.ts:5
+msgid "Exact Matches"
+msgstr "Exakte Matches"
+
+#: src/docs/searchSyntax.ts:5
+msgid ""
+"If you quote the search term in double quotes, it will find only exact "
+"matches."
+msgstr ""
+"Wenn Sie den Suchterm in doppelte Anführungszeichen setzen, werden nur "
+"exakte Treffer zurückgeliefert."
+
+#: src/docs/searchSyntax.ts:5
+msgid " will return results where the name field is exactly \"John Doe\"."
+msgstr ""
+" liefert Ergebnisse, bei denen das “name”-Feld den exakten Wert “John Doe” "
+"enthält."
+
+#: src/docs/searchSyntax.ts:5
+msgid "Wildcard Matches"
+msgstr "Wildcard Matches"
+
+#: src/docs/searchSyntax.ts:5
+msgid ""
+"If a value is not quoted, it will perform a search with wildcard matches, "
+"meaning it will return results where the field contains the specified value."
+msgstr ""
+"Wenn ein Wert nicht in doppelte Anführungszeichen gesetzt wird, wird eine "
+"Suche mit Wildcard Matches durchgeführt, d.h. dass Ergebnisse "
+"zurückgeliefert werden, bei denen Felder den spezifizierten Wert enthalten."
+
+#: src/docs/searchSyntax.ts:5
+msgid ""
+" will return results where the name field contains \"John\" (such as \"John "
+"Doe\", \"Johnny\", etc.)."
+msgstr ""
+" liefert Ergebnisse, bei denen das “name”-Feld den Wert “John” enthält (bsp. "
+"“John Doe”, “Johnny”, usw.)."
+
+#: src/docs/searchSyntax.ts:5
+msgid "Nested Data Query"
+msgstr "Verschachtelte Daten-Abfragen"
+
+#: src/docs/searchSyntax.ts:5
+msgid ""
+"If you are requesting related data be embedded into the response one can "
+"query on the related data using dot notation in the field names."
+msgstr ""
+"Wenn Sie in Ihrer Abfrage relationale Daten einbetten, können Sie in der "
+"Antwort relationale Abfragen mithilfe der Punkt-Notation in den Feldnamen "
+"durchführen."
+
+#: src/docs/searchSyntax.ts:5
+msgid " will return results where the code field of extended"
+msgstr " liefert Ergebnisse, bei denen das “code”-Feld der extended"
+
+#: src/docs/searchSyntax.ts:5
+msgid "attributes is \"internet\" AND the attribute field of extended"
+msgstr "attributes “internet” ist UND das “attribute”-Feld der extended"
+
+#: src/docs/searchSyntax.ts:5
+msgid "attributes is 1."
+msgstr "attributes den Wert 1 enthält."
+
+#: src/docs/searchSyntax.ts:5
+msgid "Bare Search"
+msgstr "Einfache Suche"
+
+#: src/docs/searchSyntax.ts:5
+msgid ""
+"A bare search without keywords will search all fields with forward and "
+"backward truncation meaning *SEARCH_TERM*. This can be used for broad "
+"queries where the specific field isn't known."
+msgstr ""
+"Eine einfache Suche ohne Schlüsselworte durchsucht alle Felder mit vorwärts- "
+"und rückwärtsgerichteter Trunkierung, d.h. *SUCHTERM*. Diese Option kann für "
+"umfängliche Suchen benutzt werden, in denen das Zielfeld unbekannt ist."
+
+#: src/docs/searchSyntax.ts:5
+msgid ""
+" John will return any result that contains \"John\" in any of the fields."
+msgstr ""
+" John liefert Ergebnisse, bei denen “John” in irgendeinem Feld vorkommt."
 
 #: src/extensions/LMSEventManagementMenu.ts:26
 msgid "Settings"
@@ -472,7 +648,7 @@ msgid "event type"
 msgstr "Veranstaltungstyp"
 
 #: src/views/StaffLocationsView.ts:125 src/views/StaffTargetGroupsView.ts:125
-#: src/components/LMSTable/LMSTable.ts:82
+#: src/components/LMSTable/LMSTable.ts:83
 msgid "No data to display"
 msgstr "Keine Daten vorhanden"
 
@@ -481,15 +657,15 @@ msgstr "Keine Daten vorhanden"
 msgid "Not implemented"
 msgstr "Nicht implementiert"
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:249
+#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:238
 msgid "Data"
 msgstr "Daten"
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:257
+#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:246
 msgid "Waitlist"
 msgstr "Warteliste"
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:265
+#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:254
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -498,25 +674,25 @@ msgid "Event controls"
 msgstr "Veranstaltungssteuerung"
 
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:331
-#: src/components/LMSTable/LMSTable.ts:485
 #: src/components/LMSTable/LMSTable.ts:489
+#: src/components/LMSTable/LMSTable.ts:493
 msgid "Edit"
 msgstr "Bearbeiten"
 
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:334
-#: src/components/LMSTable/LMSTable.ts:494
+#: src/components/LMSTable/LMSTable.ts:498
 msgid "Abort"
 msgstr "Abbrechen"
 
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:339
-#: src/components/LMSTable/LMSTable.ts:502
-#: src/components/LMSTable/LMSTable.ts:505
+#: src/components/LMSTable/LMSTable.ts:506
+#: src/components/LMSTable/LMSTable.ts:509
 msgid "Save"
 msgstr "Speichern"
 
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:347
-#: src/components/LMSTable/LMSTable.ts:512
-#: src/components/LMSTable/LMSTable.ts:515
+#: src/components/LMSTable/LMSTable.ts:516
+#: src/components/LMSTable/LMSTable.ts:519
 msgid "Delete"
 msgstr "Löschen"
 
@@ -540,15 +716,19 @@ msgstr "Veranstaltungszeiten"
 msgid "Additional Information"
 msgstr "Zusätzliche Informationen"
 
-#: src/components/LMSTable/LMSTable.ts:438
+#: src/components/LMSTable/LMSTable.ts:436
 msgid "No matches found"
 msgstr "Keine Treffer gefunden"
 
-#: src/components/LMSTable/LMSTable.ts:439
+#: src/components/LMSTable/LMSTable.ts:437
 msgid "Try refining your search."
 msgstr "Versuchen Sie, Ihre Suche zu verfeinern."
 
-#: src/components/LMSTable/LMSTable.ts:463
+#: src/components/LMSTable/LMSTable.ts:439
+msgid "Help"
+msgstr "Hilfe"
+
+#: src/components/LMSTable/LMSTable.ts:467
 msgid "actions"
 msgstr "Aktionen"
 
