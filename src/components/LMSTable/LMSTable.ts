@@ -72,6 +72,7 @@ export default class LMSTable extends LitElement {
     heading: "",
     message: "",
   };
+
   @queryAll("input, select, textarea") inputs!: NodeListOf<
     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   >;

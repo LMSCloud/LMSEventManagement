@@ -41,6 +41,18 @@ export default class LMSStaffEventsFilter extends LitElement {
     );
   }
 
+  private handleChange(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const { name, value } = target;
+    this.dispatchEvent(
+      new CustomEvent("filter", {
+        detail: { [name]: value },
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
   override render() {
     return html`
       <nav class="navbar navbar-light bg-white border rounded sticky-top">
@@ -61,6 +73,62 @@ export default class LMSStaffEventsFilter extends LitElement {
             `
           )}
         </lms-dropdown>
+        <div @change=${this.handleChange}>
+          <lms-dropdown .label=${__("Event type")}>
+            ${map(
+              this.event_types,
+              (event_type) => html`
+                <div class="dropdown-item">
+                  <input
+                    type="checkbox"
+                    name="event_type"
+                    id="event_types_${event_type.id}"
+                    value=${event_type.id}
+                  />
+                  <label for="event_types_${event_type.id}">
+                    ${event_type.name}
+                  </label>
+                </div>
+              `
+            )}
+          </lms-dropdown>
+          <lms-dropdown .label=${__("Target group")}>
+            ${map(
+              this.target_groups,
+              (target_group) => html`
+                <div class="dropdown-item">
+                  <input
+                    type="checkbox"
+                    name="target_group"
+                    id="target_groups_${target_group.id}"
+                    value=${target_group.id}
+                  />
+                  <label for="target_groups_${target_group.id}">
+                    ${target_group.name}
+                  </label>
+                </div>
+              `
+            )}
+          </lms-dropdown>
+          <lms-dropdown .label=${__("Location")}>
+            ${map(
+              this.locations,
+              (location) => html`
+                <div class="dropdown-item">
+                  <input
+                    type="checkbox"
+                    name="location"
+                    id="locations_${location.id}"
+                    value=${location.id}
+                  />
+                  <label for="locations_${location.id}">
+                    ${location.name}
+                  </label>
+                </div>
+              `
+            )}
+          </lms-dropdown>
+        </div>
         <slot></slot>
       </nav>
     `;

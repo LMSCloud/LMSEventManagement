@@ -2133,6 +2133,15 @@ ${value}</textarea
                 composed: true,
             }));
         }
+        handleChange(e) {
+            const target = e.target;
+            const { name, value } = target;
+            this.dispatchEvent(new CustomEvent("filter", {
+                detail: { [name]: value },
+                bubbles: true,
+                composed: true,
+            }));
+        }
         render() {
             return x `
       <nav class="navbar navbar-light bg-white border rounded sticky-top">
@@ -2150,6 +2159,53 @@ ${value}</textarea
               </div>
             `)}
         </lms-dropdown>
+        <div @change=${this.handleChange}>
+          <lms-dropdown .label=${__("Event type")}>
+            ${o$2(this.event_types, (event_type) => x `
+                <div class="dropdown-item">
+                  <input
+                    type="checkbox"
+                    name="event_type"
+                    id="event_types_${event_type.id}"
+                    value=${event_type.id}
+                  />
+                  <label for="event_types_${event_type.id}">
+                    ${event_type.name}
+                  </label>
+                </div>
+              `)}
+          </lms-dropdown>
+          <lms-dropdown .label=${__("Target group")}>
+            ${o$2(this.target_groups, (target_group) => x `
+                <div class="dropdown-item">
+                  <input
+                    type="checkbox"
+                    name="target_group"
+                    id="target_groups_${target_group.id}"
+                    value=${target_group.id}
+                  />
+                  <label for="target_groups_${target_group.id}">
+                    ${target_group.name}
+                  </label>
+                </div>
+              `)}
+          </lms-dropdown>
+          <lms-dropdown .label=${__("Location")}>
+            ${o$2(this.locations, (location) => x `
+                <div class="dropdown-item">
+                  <input
+                    type="checkbox"
+                    name="location"
+                    id="locations_${location.id}"
+                    value=${location.id}
+                  />
+                  <label for="locations_${location.id}">
+                    ${location.name}
+                  </label>
+                </div>
+              `)}
+          </lms-dropdown>
+        </div>
         <slot></slot>
       </nav>
     `;
@@ -6182,7 +6238,38 @@ ${value}</textarea
             this.fetchUpdate();
         }
         handleFilter(e) {
-            console.log(e.detail);
+            console.log("detail", e.detail);
+            const { detail } = e;
+            const currentQ = this.queryBuilder.getParamValue("q");
+            const [detailKey, detailValue] = Object.entries(detail)[0];
+            if (currentQ) {
+                let currentQObj = JSON.parse(currentQ);
+                // Normalize currentQObj to always be an array for easier manipulation
+                if (!Array.isArray(currentQObj)) {
+                    currentQObj = [currentQObj];
+                }
+                // Remove empty objects from currentQObj
+                currentQObj = currentQObj.filter((obj) => Object.keys(obj).length !== 0);
+                // Check if the detail key/value pair exists in currentQObj
+                const hasDetail = currentQObj.some((obj) => obj[detailKey] === detailValue);
+                if (hasDetail) {
+                    // If the detail exists, remove it
+                    const newQArr = currentQObj.filter((obj) => !(obj[detailKey] === detailValue));
+                    // If there's only one object left, we don't need to wrap it in an array
+                    const finalQValue = newQArr.length === 1 ? newQArr[0] : newQArr;
+                    this.queryBuilder.updateQuery(`q=${JSON.stringify(finalQValue)}`);
+                }
+                else {
+                    // If the detail doesn't exist, add it
+                    const newQArr = [...currentQObj, detail];
+                    this.queryBuilder.updateQuery(`q=${JSON.stringify(newQArr)}`);
+                }
+            }
+            else {
+                // If there's no current q parameter, just add the detail
+                this.queryBuilder.updateQuery(`q=${JSON.stringify(detail)}`);
+            }
+            this.fetchUpdate();
         }
         handlePageChange(e) {
             const { _page, _per_page } = e.detail;

@@ -136,7 +136,48 @@ export default class StaffEventsView extends LitElement {
   }
 
   private handleFilter(e: CustomEvent) {
-    console.log(e.detail);
+    console.log("detail", e.detail);
+    const { detail } = e;
+    const currentQ = this.queryBuilder.getParamValue("q");
+    const [detailKey, detailValue] = Object.entries(detail)[0];
+
+    if (currentQ) {
+      let currentQObj = JSON.parse(currentQ);
+
+      // Normalize currentQObj to always be an array for easier manipulation
+      if (!Array.isArray(currentQObj)) {
+        currentQObj = [currentQObj];
+      }
+
+      // Remove empty objects from currentQObj
+      currentQObj = currentQObj.filter(
+        (obj: Record<string, unknown>) => Object.keys(obj).length !== 0
+      );
+
+      // Check if the detail key/value pair exists in currentQObj
+      const hasDetail = currentQObj.some(
+        (obj: Record<string, unknown>) => obj[detailKey] === detailValue
+      );
+
+      if (hasDetail) {
+        // If the detail exists, remove it
+        const newQArr = currentQObj.filter(
+          (obj: Record<string, unknown>) => !(obj[detailKey] === detailValue)
+        );
+
+        // If there's only one object left, we don't need to wrap it in an array
+        const finalQValue = newQArr.length === 1 ? newQArr[0] : newQArr;
+        this.queryBuilder.updateQuery(`q=${JSON.stringify(finalQValue)}`);
+      } else {
+        // If the detail doesn't exist, add it
+        const newQArr = [...currentQObj, detail];
+        this.queryBuilder.updateQuery(`q=${JSON.stringify(newQArr)}`);
+      }
+    } else {
+      // If there's no current q parameter, just add the detail
+      this.queryBuilder.updateQuery(`q=${JSON.stringify(detail)}`);
+    }
+    this.fetchUpdate();
   }
 
   private handlePageChange(e: CustomEvent) {
