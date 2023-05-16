@@ -26,6 +26,15 @@ export default class LMSSearch extends LitElement {
     const entries: Record<string, any> = {};
     const parts = query.split(" AND ");
 
+    const operators = {
+      ">=": ">=",
+      "<=": "<=",
+      ">": ">",
+      "<": "<",
+      "~": "-like",
+      "!~": "-not_like",
+    };
+
     parts.forEach((part) => {
       const [rawKey, rawValue] = part.split(":").map((s) => s.trim());
       if (!rawKey || rawValue === undefined) return;
@@ -47,24 +56,15 @@ export default class LMSSearch extends LitElement {
       }
 
       // Handle operators
-      else if (rawValue.includes(">=")) {
-        operator = ">=";
-        value = rawValue.split(">=")[1].trim();
-      } else if (rawValue.includes("<=")) {
-        operator = "<=";
-        value = rawValue.split("<=")[1].trim();
-      } else if (rawValue.includes(">")) {
-        operator = ">";
-        value = rawValue.split(">")[1].trim();
-      } else if (rawValue.includes("<")) {
-        operator = "<";
-        value = rawValue.split("<")[1].trim();
-      } else if (rawValue.includes("~")) {
-        operator = "-like";
-        value = rawValue.split("~")[1].trim();
-      } else if (rawValue.includes("!~")) {
-        operator = "-not_like";
-        value = rawValue.split("!~")[1].trim();
+      else {
+        for (const op of Object.keys(operators)) {
+          if (rawValue.includes(op)) {
+            operator = operators[op as keyof typeof operators];
+            [, value] = rawValue.split(op);
+            value = value.trim();
+            break;
+          }
+        }
       }
 
       entries[rawKey] = { operator, value };
