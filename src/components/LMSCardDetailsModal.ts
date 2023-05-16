@@ -66,6 +66,11 @@ export default class LMSCardDetailsModal extends LitElement {
         align-items: center;
         gap: 0.25em;
       }
+
+      img {
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+      }
     `,
   ];
 
