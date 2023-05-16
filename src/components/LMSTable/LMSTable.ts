@@ -1,12 +1,12 @@
-import { html, css, LitElement, PropertyValueMap, nothing } from "lit";
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { litFontawesome } from "@weavedev/lit-fontawesome";
 import {
   faEdit,
   faSave,
-  faTrash,
   faTimes,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import {
   customElement,
   property,
@@ -14,19 +14,20 @@ import {
   queryAll,
   state,
 } from "lit/decorators.js";
-import LMSToast from "../LMSToast";
-import { Column, SortableColumns, TaggedData } from "../../sharedDeclarations";
+import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
-import { __, attr__ } from "../../lib/translate";
-import { skeletonStyles } from "../../styles/skeleton";
-import { InputConverter } from "../../lib/converters";
-import { utilityStyles } from "../../styles/utilities";
-import { throttle } from "../../lib/utilities";
-import LMSTableControls from "./LMSTableControls";
 import { QueryBuilder } from "../../lib/QueryBuilder";
+import { InputConverter } from "../../lib/converters";
+import { __, attr__ } from "../../lib/translate";
+import { throttle } from "../../lib/utilities";
+import { Column, SortableColumns, TaggedData } from "../../sharedDeclarations";
+import { skeletonStyles } from "../../styles/skeleton";
+import { utilityStyles } from "../../styles/utilities";
+import { searchSyntax } from "../../docs/searchSyntax";
 import LMSPagination from "../LMSPagination";
 import LMSSearch from "../LMSSearch";
-import { classMap } from "lit/directives/class-map.js";
+import LMSToast from "../LMSToast";
+import LMSTableControls from "./LMSTableControls";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -400,6 +401,14 @@ export default class LMSTable extends LitElement {
     );
   }
 
+  private toggleDoc(e: MouseEvent) {
+    const target = e.target as HTMLElement;
+    const doc = target.nextElementSibling;
+    if (!doc) return;
+
+    doc.classList.toggle("d-none");
+  }
+
   override render() {
     if (!this.data.length) {
       html`<h1 class="text-center">${this.emptyTableMessage}</h1>`;
@@ -426,9 +435,14 @@ export default class LMSTable extends LitElement {
         >
           <h4 class="alert-heading">${__("No matches found")}.</h4>
           <p>${__("Try refining your search.")}</p>
-
+          <button class="btn btn-outline-info" @click=${this.toggleDoc}>
+            ${__("Help")}
+          </button>
+          <div class="text-left d-none">
+            <hr />
+            ${searchSyntax}
+          </div>
         </div>
-
         <table
           class="table table-striped table-bordered table-hover ${classMap({
             "d-none": this.hasNoResults,
