@@ -1,6 +1,6 @@
+import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 
 type Image = {
   src: string;
@@ -15,10 +15,14 @@ type Link = {
 @customElement("lms-card")
 export default class LMSCard extends LitElement {
   @property({ type: String }) override title = "Card title";
+
   @property({ type: String }) text =
     "Some quick example text to build on the card title and make up the bulk of the card's content.";
+
   @property({ type: Object }) image = {} as Image;
+
   @property({ type: Array }) links = [] as Link[];
+
   @property({ type: Array }) listItems = [];
 
   static override styles = [
@@ -35,6 +39,13 @@ export default class LMSCard extends LitElement {
       .card img {
         aspect-ratio: 4 / 3;
         object-fit: cover;
+      }
+
+      svg {
+        display: inline-block;
+        width: 0.75em;
+        height: 0.75em;
+        color: #6c757d;
       }
     `,
   ];
@@ -64,9 +75,7 @@ export default class LMSCard extends LitElement {
           ${this.links.length
             ? this.links.map(
                 (link) =>
-                  html`<a href="${link.href}" class="card-link"
-                    >${link.text}</a
-                  >`
+                  html`<a href=${link.href} class="card-link">${link.text}</a>`
               )
             : nothing}
         </div>

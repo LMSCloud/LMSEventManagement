@@ -1,15 +1,21 @@
-import { LitElement, html, nothing, css } from "lit";
-import { customElement, property, query, state } from "lit/decorators.js";
-import LMSCard from "../components/LMSCard";
-import LMSEventsFilter from "../components/LMSEventsFilter";
+import {
+  faCalendarAlt,
+  faMapMarkerAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LMSEvent } from "../sharedDeclarations";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { LitElement, css, html, nothing } from "lit";
+import { customElement, property, query, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
+import LMSCard from "../components/LMSCard";
 import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
-import { __ } from "../lib/translate";
-import { skeletonStyles } from "../styles/skeleton";
-import { requestHandler } from "../lib/RequestHandler";
+import LMSEventsFilter from "../components/LMSEventsFilter";
 import { QueryBuilder } from "../lib/QueryBuilder";
+import { requestHandler } from "../lib/RequestHandler";
+import { convertToFormat } from "../lib/converters";
+import { __, locale } from "../lib/translate";
+import { LMSEvent, LMSLocation } from "../sharedDeclarations";
+import { skeletonStyles } from "../styles/skeleton";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -22,11 +28,19 @@ declare global {
 @customElement("lms-events-view")
 export default class LMSEventsView extends LitElement {
   @property({ type: String }) borrowernumber = undefined;
+
   @state() events: LMSEvent[] = [];
+
+  @state() locations: LMSLocation[] = [];
+
   @state() modalData: LMSEvent = {} as LMSEvent;
+
   @state() hasOpenModal = false;
+
   @query(".load-more") loadMore!: HTMLButtonElement;
+
   private hasLoaded = false;
+
   private queryBuilder = new QueryBuilder();
 
   private boundHandlePopState = this.handlePopState.bind(this);
@@ -96,22 +110,18 @@ export default class LMSEventsView extends LitElement {
 
     window.addEventListener("popstate", this.boundHandlePopState);
 
-    const response = async () =>
-      await requestHandler.request(
+    Promise.all([
+      requestHandler.request(
         "getEventsPublic",
         this.queryBuilder.query.toString()
-      );
-    response()
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-
-        throw new Error("Something went wrong");
-      })
-      .then((events: LMSEvent[]) => {
+      ),
+      requestHandler.request("getLocationsPublic"),
+    ])
+      .then((results) => Promise.all(results.map((result) => result.json())))
+      .then(([events, locations]) => {
         this.hasLoaded = true;
         this.events = events;
+        this.locations = locations;
         this.queryBuilder.updateUrl();
       })
       .catch((error) => {
@@ -243,6 +253,33 @@ export default class LMSEventsView extends LitElement {
                         }}
                         .title=${event.name}
                         .text=${event.description}
+                        .listItems=${[
+                          html`<span class="text-muted font-weight-light">
+                            <small>
+                              ${litFontawesome(faMapMarkerAlt)}
+                              ${this.locations.find(
+                                (location) =>
+                                  location.id === parseInt(event.location, 10)
+                              )?.name || __("Location not found")}
+                            </small>
+                          </span>`,
+                          html`<span class="text-muted font-weight-light">
+                            <small>
+                              ${litFontawesome(faCalendarAlt)}
+                              ${convertToFormat(
+                                event.start_time,
+                                "datetime",
+                                locale
+                              )}
+                              -
+                              ${convertToFormat(
+                                event.end_time,
+                                "datetime",
+                                locale
+                              )}</small
+                            ></span
+                          >`,
+                        ]}
                         .image=${{ src: event.image, alt: event.name }}
                       ></lms-card>
                     `
