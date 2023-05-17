@@ -83,5 +83,3 @@ INSERT INTO koha_plugin_com_lmscloud_eventmanagement_et_tg_fees (event_type_id, 
 (4, 2, 1, 5),
 (4, 3, 1, 10),
 (4, 4, 1, 15);
-
--- Note: I assumed that the target groups 1-4 correspond to the age ranges 0-17, 18-64, 65+, and teens (13-19), respectively. Therefore, I assigned target groups accordingly in the seed data for the events and fees tables.
