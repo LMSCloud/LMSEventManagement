@@ -43,24 +43,71 @@ sub _validate {
 sub list {
     my $c = shift->openapi->valid_input or return;
 
+    my $params = {
+        name              => $c->validation->param('name'),
+        event_type        => $c->validation->every_param('event_type'),
+        target_group      => $c->validation->every_param('target_group'),
+        min_age           => $c->validation->param('min_age'),
+        max_age           => $c->validation->param('max_age'),
+        open_registration => $c->validation->param('open_registration'),
+        fee               => $c->validation->param('fee'),
+        location          => $c->validation->every_param('location'),
+        start_time        => $c->validation->param('start_time'),
+        end_time          => $c->validation->param('end_time'),
+    };
+
     return try {
         local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
         local $ENV{OUTPUT_CHARSET} = 'UTF-8';
-        my $events_set = Koha::LMSCloud::EventManagement::Events->new;
-        my $events     = $c->objects->search_rs($events_set);
-
-        my $response = [];
-        while ( my $event = $events->next ) {
-            my $event = $event->unblessed;
-
-            my $event_target_group_fees =
-                Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $event->{id} }, { columns => [ 'target_group_id', 'selected', 'fee' ] } );
-            $event->{'target_groups'} = $event_target_group_fees->as_list;
-
-            push @{$response}, $event;
+        my $events_set   = Koha::LMSCloud::EventManagement::Events->new;
+        my $defined_keys = [ map { defined $params->{$_} ? $_ : () } keys %{$params} ];
+        if ( @{$defined_keys} ) {
+            $events_set = $events_set->filter($params);
+        }
+        for my $param ( @{$defined_keys} ) {
+            delete $c->validation->output->{$param};
         }
 
-        return $c->render( status => 200, openapi => $response || [] );
+        my $events = $c->objects->search($events_set);
+
+        # Preload event_target_group_fees data for all events
+        my $tg_params = { event_id => { '-in' => [ map { $_->{id} } $events->@* ] } };
+        if ( defined $params->{target_group} && @{ $params->{target_group} } ) {
+            $tg_params->{target_group_id} = { '-in' => $params->{target_group} };
+        }
+        if ( defined $params->{fee} ) {
+            $tg_params->{fee} = { '<=' => $params->{fee} };
+        }
+
+        my $event_target_group_fees =
+            Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( $tg_params, { columns => [ 'event_id', 'target_group_id', 'fee', 'selected' ] } );
+
+        my %fees_by_event_id = map { $_->event_id => [] } $event_target_group_fees->as_list;
+        for my $fee ( $event_target_group_fees->as_list ) {
+            push @{ $fees_by_event_id{ $fee->event_id } }, $fee->unblessed;
+        }
+
+        my $response = [];
+        for my $event ( $events->@* ) {
+
+            # Get the preloaded target group fees for the current event
+            my $target_groups = $fees_by_event_id{ $event->{id} } // [];
+            if ( @{$target_groups} ) {
+                push @{$response}, { %{$event}, target_groups => $target_groups };
+            }
+        }
+
+        if ( !$events ) {
+            return $c->render(
+                status  => 404,
+                openapi => []
+            );
+        }
+
+        return $c->render(
+            status  => 200,
+            openapi => $response,
+        );
     }
     catch {
         return $c->unhandled_exception($_);
