@@ -635,6 +635,92 @@
       "tags": ["events"],
       "parameters": [
         {
+          "name": "name",
+          "in": "query",
+          "description": "Title of the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "event_type",
+          "in": "query",
+          "description": "Array of multiple event types",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "target_group",
+          "in": "query",
+          "description": "Array of multiple target groups",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "min_age",
+          "in": "query",
+          "description": "Minimum required age for the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "max_age",
+          "in": "query",
+          "description": "Maximum required age for the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "open_registration",
+          "in": "query",
+          "description": "Whether the event is open for registration of non-patrons",
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "fee",
+          "in": "query",
+          "description": "Fee for the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "location",
+          "in": "query",
+          "description": "Array of multiple locations",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "description",
+          "in": "query",
+          "description": "Description of the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "start_time",
+          "in": "query",
+          "description": "Starting time of the event",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "end_time",
+          "in": "query",
+          "description": "Ending time of the event",
+          "required": false,
+          "type": "string"
+        },
+        {
           "name": "_match",
           "description": "Matching criteria",
           "enum": ["contains", "exact", "starts_with", "ends_with"],
