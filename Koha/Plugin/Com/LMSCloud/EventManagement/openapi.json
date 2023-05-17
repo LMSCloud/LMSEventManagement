@@ -17,20 +17,14 @@
           "in": "query",
           "description": "Array of multiple event types",
           "required": false,
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         {
           "name": "target_group",
           "in": "query",
           "description": "Array of multiple target groups",
           "required": false,
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         {
           "name": "min_age",
@@ -65,10 +59,7 @@
           "in": "query",
           "description": "Array of multiple locations",
           "required": false,
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         {
           "name": "description",
@@ -646,20 +637,14 @@
           "in": "query",
           "description": "Array of multiple event types",
           "required": false,
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         {
           "name": "target_group",
           "in": "query",
           "description": "Array of multiple target groups",
           "required": false,
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         {
           "name": "min_age",
@@ -694,10 +679,7 @@
           "in": "query",
           "description": "Array of multiple locations",
           "required": false,
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         {
           "name": "description",
