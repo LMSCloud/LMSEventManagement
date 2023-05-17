@@ -1,6 +1,6 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, queryAll } from "lit/decorators.js";
 import LMSDropdown from "../LMSDropdown";
 import {
   EventType,
@@ -28,6 +28,10 @@ export default class LMSStaffEventsFilter extends LitElement {
 
   @property({ type: Array }) locations: LMSLocation[] = [];
 
+  @queryAll("lms-dropdown") lmsDropdowns!: NodeListOf<LMSDropdown>;
+
+  @queryAll("input[type=checkbox]") checkboxes!: NodeListOf<HTMLInputElement>;
+
   static override styles = [bootstrapStyles, utilityStyles];
 
   private handleSort(e: Event) {
@@ -41,21 +45,33 @@ export default class LMSStaffEventsFilter extends LitElement {
     );
   }
 
-  private handleChange(e: Event) {
-    const target = e.target as HTMLInputElement;
-    const { name, value } = target;
+  private handleChange() {
     this.dispatchEvent(
       new CustomEvent("filter", {
-        detail: { [name]: value },
+        detail: {
+          filters: this.checkboxes,
+        },
         bubbles: true,
         composed: true,
       })
     );
   }
 
+  private handleDropdownToggle(e: Event) {
+    const target = e.target as LMSDropdown;
+    this.lmsDropdowns.forEach((lmsDropdown) => {
+      if (lmsDropdown !== target) {
+        lmsDropdown.isOpen = false;
+      }
+    });
+  }
+
   override render() {
     return html`
-      <nav class="navbar navbar-light bg-white border rounded sticky-top">
+      <nav
+        class="navbar navbar-light bg-white border rounded sticky-top"
+        @toggle=${this.handleDropdownToggle}
+      >
         <lms-dropdown .label=${__("Sort by")} @change=${this.handleSort}>
           ${map(
             this.sortableColumns,

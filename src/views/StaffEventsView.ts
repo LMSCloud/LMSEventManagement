@@ -40,6 +40,8 @@ export default class StaffEventsView extends LitElement {
 
   private queryBuilder = new QueryBuilder();
 
+  private filters: NodeListOf<HTMLInputElement> | undefined = undefined;
+
   private href: URIComponents = {
     path: "/cgi-bin/koha/plugins/run.pl",
     query: true,
@@ -62,6 +64,11 @@ export default class StaffEventsView extends LitElement {
     ];
     this.queryBuilder.query = window.location.search;
     this.queryBuilder.staticParams = ["class", "method", "op"];
+    this.queryBuilder.areRepeatable = [
+      "event_type",
+      "target_group",
+      "location",
+    ];
     this.queryBuilder.updateQuery(
       `_order_by=id&_page=${this._page}&_per_page=${this._per_page}`
     );
@@ -129,52 +136,36 @@ export default class StaffEventsView extends LitElement {
     this.fetchUpdate();
   }
 
-  private handleSearch(e: CustomEvent) {
-    const { q } = e.detail;
-    this.queryBuilder.updateQuery(`q=${q}`);
-    this.fetchUpdate();
+  private getParamsFromActiveFilters(filters: NodeListOf<HTMLInputElement>) {
+    const checkboxesArr = Array.from(filters);
+    return checkboxesArr
+      .filter((checkbox) => checkbox.checked)
+      .map((checkbox) => ({ [checkbox.name]: checkbox.value }))
+      .reduce((acc: string, filter: Record<string, unknown>, index) => {
+        const [entries] = Object.entries(filter);
+        const [param, value] = entries;
+        acc += `${param}=${value}${
+          index < checkboxesArr.length - 1 ? "&" : ""
+        }`;
+        return acc;
+      }, "");
   }
 
   private handleFilter(e: CustomEvent) {
-    const { detail } = e;
-    const currentQ = this.queryBuilder.getParamValue("q");
-    const [detailKey, detailValue] = Object.entries(detail)[0];
+    const { filters } = e.detail;
+    this.filters = filters;
+    const activeFilters = this.getParamsFromActiveFilters(filters);
+    this.queryBuilder.updateQuery(activeFilters);
+    this.fetchUpdate();
+  }
 
-    if (currentQ) {
-      let currentQObj = JSON.parse(currentQ);
-
-      // Normalize currentQObj to always be an array for easier manipulation
-      if (!Array.isArray(currentQObj)) {
-        currentQObj = [currentQObj];
-      }
-
-      // Remove empty objects from currentQObj
-      currentQObj = currentQObj.filter(
-        (obj: Record<string, unknown>) => Object.keys(obj).length !== 0
-      );
-
-      // Check if the detail key/value pair exists in currentQObj
-      const hasDetail = currentQObj.some(
-        (obj: Record<string, unknown>) => obj[detailKey] === detailValue
-      );
-
-      if (hasDetail) {
-        // If the detail exists, remove it
-        const newQArr = currentQObj.filter(
-          (obj: Record<string, unknown>) => !(obj[detailKey] === detailValue)
-        );
-
-        // If there's only one object left, we don't need to wrap it in an array
-        const finalQValue = newQArr.length === 1 ? newQArr[0] : newQArr;
-        this.queryBuilder.updateQuery(`q=${JSON.stringify(finalQValue)}`);
-      } else {
-        // If the detail doesn't exist, add it
-        const newQArr = [...currentQObj, detail];
-        this.queryBuilder.updateQuery(`q=${JSON.stringify(newQArr)}`);
-      }
+  private handleSearch(e: CustomEvent) {
+    const { q } = e.detail;
+    if (this.filters) {
+      const activeFilters = this.getParamsFromActiveFilters(this.filters);
+      this.queryBuilder.updateQuery(`${activeFilters}&q=${q}`);
     } else {
-      // If there's no current q parameter, just add the detail
-      this.queryBuilder.updateQuery(`q=${JSON.stringify(detail)}`);
+      this.queryBuilder.updateQuery(`q=${q}`);
     }
     this.fetchUpdate();
   }

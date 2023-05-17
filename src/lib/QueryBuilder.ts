@@ -1,3 +1,6 @@
+/**
+ * QueryBuilder class that manages URL query parameters.
+ */
 export class QueryBuilder {
   private _query: URLSearchParams;
 
@@ -9,6 +12,9 @@ export class QueryBuilder {
 
   private _staticParams: URLSearchParams;
 
+  /**
+   * Initialize the QueryBuilder with empty parameters.
+   */
   constructor() {
     this._query = new URLSearchParams();
     this._reservedParams = [];
@@ -17,18 +23,34 @@ export class QueryBuilder {
     this._staticParams = new URLSearchParams();
   }
 
+  /**
+   * Set the reserved parameters.
+   * @param {string[]} reservedParams - The reserved parameters.
+   */
   set reservedParams(reservedParams: string[]) {
     this._reservedParams = reservedParams;
   }
 
+  /**
+   * Set the disallowed parameters.
+   * @param {string[]} disallowedParams - The disallowed parameters.
+   */
   set disallowedParams(disallowedParams: string[]) {
     this._disallowedParams = disallowedParams;
   }
 
+  /**
+   * Set the repeatable parameters.
+   * @param {string[]} areRepeatable - The repeatable parameters.
+   */
   set areRepeatable(areRepeatable: string[]) {
     this._areRepeatable = areRepeatable;
   }
 
+  /**
+   * Set the static parameters.
+   * @param {string[]} staticParams - The static parameters.
+   */
   set staticParams(staticParams: string[]) {
     if (!this._query) {
       throw new Error("Cannot set static params before query");
@@ -41,6 +63,10 @@ export class QueryBuilder {
     });
   }
 
+  /**
+   * Set the query parameters.
+   * @param {URLSearchParams | string} query - The query parameters.
+   */
   set query(query: URLSearchParams | string) {
     if (typeof query === "string") {
       this._query = new URLSearchParams(query);
@@ -49,14 +75,27 @@ export class QueryBuilder {
     }
   }
 
+  /**
+   * Get the query parameters.
+   * @return {URLSearchParams} The query parameters.
+   */
   get query() {
     return this._query;
   }
 
+  /**
+   * Get the value of a query parameter.
+   * @param {string} key - The key of the query parameter.
+   * @return {string | null} The value of the query parameter.
+   */
   getParamValue(key: string) {
     return this._query.get(key);
   }
 
+  /**
+   * Updates the query parameters.
+   * @param {URLSearchParams | string} query - The new query parameters.
+   */
   public updateQuery(query: URLSearchParams | string) {
     const newQueryParams = new URLSearchParams(query);
 
@@ -120,6 +159,9 @@ export class QueryBuilder {
     });
   }
 
+  /**
+   * Updates the current URL with the current query parameters.
+   */
   public updateUrl() {
     const url = new URL(window.location.href);
     const updatedUrl = new URLSearchParams(

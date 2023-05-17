@@ -2133,18 +2133,29 @@ ${value}</textarea
                 composed: true,
             }));
         }
-        handleChange(e) {
-            const target = e.target;
-            const { name, value } = target;
+        handleChange() {
             this.dispatchEvent(new CustomEvent("filter", {
-                detail: { [name]: value },
+                detail: {
+                    filters: this.checkboxes,
+                },
                 bubbles: true,
                 composed: true,
             }));
         }
+        handleDropdownToggle(e) {
+            const target = e.target;
+            this.lmsDropdowns.forEach((lmsDropdown) => {
+                if (lmsDropdown !== target) {
+                    lmsDropdown.isOpen = false;
+                }
+            });
+        }
         render() {
             return x `
-      <nav class="navbar navbar-light bg-white border rounded sticky-top">
+      <nav
+        class="navbar navbar-light bg-white border rounded sticky-top"
+        @toggle=${this.handleDropdownToggle}
+      >
         <lms-dropdown .label=${__("Sort by")} @change=${this.handleSort}>
           ${o$2(this.sortableColumns, (column) => x `
               <div class="dropdown-item">
@@ -2224,6 +2235,12 @@ ${value}</textarea
     __decorate([
         e$2({ type: Array })
     ], LMSStaffEventsFilter.prototype, "locations", void 0);
+    __decorate([
+        e$1("lms-dropdown")
+    ], LMSStaffEventsFilter.prototype, "lmsDropdowns", void 0);
+    __decorate([
+        e$1("input[type=checkbox]")
+    ], LMSStaffEventsFilter.prototype, "checkboxes", void 0);
     LMSStaffEventsFilter = __decorate([
         e$3("lms-staff-events-filter")
     ], LMSStaffEventsFilter);
@@ -3200,7 +3217,7 @@ ${value}</textarea
                   ${o$2(this.facets.eventTypeIds, (eventTypeId) => {
             var _a;
             return x `
-                      <div class="form-group form-check dropdown-item">
+                      <div class="dropdown-item">
                         <input
                           type="checkbox"
                           class="form-check-input"
@@ -3224,7 +3241,7 @@ ${value}</textarea
                   ${o$2(this.facets.targetGroupIds, (targetGroupId) => {
             var _a;
             return x `
-                      <div class="form-group form-check dropdown-item">
+                      <div class="dropdown-item">
                         <input
                           type="checkbox"
                           class="form-check-input"
@@ -3245,7 +3262,7 @@ ${value}</textarea
                   .label=${__("Age")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  <div class="form-group dropdown-item">
+                  <div class="dropdown-item">
                     <label for="min_age">${__("Min Age")}</label>
                     <input
                       type="number"
@@ -3277,7 +3294,7 @@ ${value}</textarea
                   .label=${__("Registration & Dates")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  <div class="form-check dropdown-item">
+                  <div class="dropdown-item">
                     <input
                       type="checkbox"
                       class="form-check-input"
@@ -3289,7 +3306,7 @@ ${value}</textarea
                       >${__("Open Registration")}</label
                     >
                   </div>
-                  <div class="form-group dropdown-item">
+                  <div class="dropdown-item">
                     <label for="start_time">${__("Start Date")}</label>
                     <input
                       type="date"
@@ -3314,7 +3331,7 @@ ${value}</textarea
                 >
                   ${o$2(this.facets.locationIds, (locationId) => {
             var _a;
-            return x ` <div class="form-group form-check dropdown-item">
+            return x ` <div class="dropdown-item">
                         <input
                           type="checkbox"
                           class="form-check-input"
@@ -3334,7 +3351,7 @@ ${value}</textarea
                   .label=${__("Fee")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  <div class="form-group dropdown-item">
+                  <div class="dropdown-item">
                     <label for="fee">${__("Fee")}</label>
                     <input
                       type="number"
@@ -5811,7 +5828,13 @@ ${value}</textarea
     ], LMSEventTypesTable);
     var LMSTargetGroupsTable = LMSEventTypesTable;
 
+    /**
+     * QueryBuilder class that manages URL query parameters.
+     */
     class QueryBuilder {
+        /**
+         * Initialize the QueryBuilder with empty parameters.
+         */
         constructor() {
             this._query = new URLSearchParams();
             this._reservedParams = [];
@@ -5819,15 +5842,31 @@ ${value}</textarea
             this._areRepeatable = [];
             this._staticParams = new URLSearchParams();
         }
+        /**
+         * Set the reserved parameters.
+         * @param {string[]} reservedParams - The reserved parameters.
+         */
         set reservedParams(reservedParams) {
             this._reservedParams = reservedParams;
         }
+        /**
+         * Set the disallowed parameters.
+         * @param {string[]} disallowedParams - The disallowed parameters.
+         */
         set disallowedParams(disallowedParams) {
             this._disallowedParams = disallowedParams;
         }
+        /**
+         * Set the repeatable parameters.
+         * @param {string[]} areRepeatable - The repeatable parameters.
+         */
         set areRepeatable(areRepeatable) {
             this._areRepeatable = areRepeatable;
         }
+        /**
+         * Set the static parameters.
+         * @param {string[]} staticParams - The static parameters.
+         */
         set staticParams(staticParams) {
             if (!this._query) {
                 throw new Error("Cannot set static params before query");
@@ -5839,6 +5878,10 @@ ${value}</textarea
                 }
             });
         }
+        /**
+         * Set the query parameters.
+         * @param {URLSearchParams | string} query - The query parameters.
+         */
         set query(query) {
             if (typeof query === "string") {
                 this._query = new URLSearchParams(query);
@@ -5847,12 +5890,25 @@ ${value}</textarea
                 this._query = query;
             }
         }
+        /**
+         * Get the query parameters.
+         * @return {URLSearchParams} The query parameters.
+         */
         get query() {
             return this._query;
         }
+        /**
+         * Get the value of a query parameter.
+         * @param {string} key - The key of the query parameter.
+         * @return {string | null} The value of the query parameter.
+         */
         getParamValue(key) {
             return this._query.get(key);
         }
+        /**
+         * Updates the query parameters.
+         * @param {URLSearchParams | string} query - The new query parameters.
+         */
         updateQuery(query) {
             const newQueryParams = new URLSearchParams(query);
             /** Remove keys that are not in the new query if they are not reserved.
@@ -5907,6 +5963,9 @@ ${value}</textarea
                 }
             });
         }
+        /**
+         * Updates the current URL with the current query parameters.
+         */
         updateUrl() {
             const url = new URL(window.location.href);
             const updatedUrl = new URLSearchParams(this._query.toString() + "&" + this._staticParams.toString());
@@ -6165,6 +6224,7 @@ ${value}</textarea
             this.target_groups = [];
             this.locations = [];
             this.queryBuilder = new QueryBuilder();
+            this.filters = undefined;
             this.href = {
                 path: "/cgi-bin/koha/plugins/run.pl",
                 query: true,
@@ -6182,6 +6242,11 @@ ${value}</textarea
             ];
             this.queryBuilder.query = window.location.search;
             this.queryBuilder.staticParams = ["class", "method", "op"];
+            this.queryBuilder.areRepeatable = [
+                "event_type",
+                "target_group",
+                "location",
+            ];
             this.queryBuilder.updateQuery(`_order_by=id&_page=${this._page}&_per_page=${this._per_page}`);
         }
         connectedCallback() {
@@ -6232,42 +6297,33 @@ ${value}</textarea
             this.queryBuilder.updateQuery(`_order_by=${_order_by}`);
             this.fetchUpdate();
         }
-        handleSearch(e) {
-            const { q } = e.detail;
-            this.queryBuilder.updateQuery(`q=${q}`);
-            this.fetchUpdate();
+        getParamsFromActiveFilters(filters) {
+            const checkboxesArr = Array.from(filters);
+            return checkboxesArr
+                .filter((checkbox) => checkbox.checked)
+                .map((checkbox) => ({ [checkbox.name]: checkbox.value }))
+                .reduce((acc, filter, index) => {
+                const [entries] = Object.entries(filter);
+                const [param, value] = entries;
+                acc += `${param}=${value}${index < checkboxesArr.length - 1 ? "&" : ""}`;
+                return acc;
+            }, "");
         }
         handleFilter(e) {
-            console.log("detail", e.detail);
-            const { detail } = e;
-            const currentQ = this.queryBuilder.getParamValue("q");
-            const [detailKey, detailValue] = Object.entries(detail)[0];
-            if (currentQ) {
-                let currentQObj = JSON.parse(currentQ);
-                // Normalize currentQObj to always be an array for easier manipulation
-                if (!Array.isArray(currentQObj)) {
-                    currentQObj = [currentQObj];
-                }
-                // Remove empty objects from currentQObj
-                currentQObj = currentQObj.filter((obj) => Object.keys(obj).length !== 0);
-                // Check if the detail key/value pair exists in currentQObj
-                const hasDetail = currentQObj.some((obj) => obj[detailKey] === detailValue);
-                if (hasDetail) {
-                    // If the detail exists, remove it
-                    const newQArr = currentQObj.filter((obj) => !(obj[detailKey] === detailValue));
-                    // If there's only one object left, we don't need to wrap it in an array
-                    const finalQValue = newQArr.length === 1 ? newQArr[0] : newQArr;
-                    this.queryBuilder.updateQuery(`q=${JSON.stringify(finalQValue)}`);
-                }
-                else {
-                    // If the detail doesn't exist, add it
-                    const newQArr = [...currentQObj, detail];
-                    this.queryBuilder.updateQuery(`q=${JSON.stringify(newQArr)}`);
-                }
+            const { filters } = e.detail;
+            this.filters = filters;
+            const activeFilters = this.getParamsFromActiveFilters(filters);
+            this.queryBuilder.updateQuery(activeFilters);
+            this.fetchUpdate();
+        }
+        handleSearch(e) {
+            const { q } = e.detail;
+            if (this.filters) {
+                const activeFilters = this.getParamsFromActiveFilters(this.filters);
+                this.queryBuilder.updateQuery(`${activeFilters}&q=${q}`);
             }
             else {
-                // If there's no current q parameter, just add the detail
-                this.queryBuilder.updateQuery(`q=${JSON.stringify(detail)}`);
+                this.queryBuilder.updateQuery(`q=${q}`);
             }
             this.fetchUpdate();
         }

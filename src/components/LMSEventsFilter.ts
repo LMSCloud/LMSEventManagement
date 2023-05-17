@@ -393,7 +393,7 @@ export default class LMSEventsFilter extends LitElement {
                   ${map(
                     this.facets.eventTypeIds,
                     (eventTypeId) => html`
-                      <div class="form-group form-check dropdown-item">
+                      <div class="dropdown-item">
                         <input
                           type="checkbox"
                           class="form-check-input"
@@ -420,7 +420,7 @@ export default class LMSEventsFilter extends LitElement {
                   ${map(
                     this.facets.targetGroupIds,
                     (targetGroupId) => html`
-                      <div class="form-group form-check dropdown-item">
+                      <div class="dropdown-item">
                         <input
                           type="checkbox"
                           class="form-check-input"
@@ -443,7 +443,7 @@ export default class LMSEventsFilter extends LitElement {
                   .label=${__("Age")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  <div class="form-group dropdown-item">
+                  <div class="dropdown-item">
                     <label for="min_age">${__("Min Age")}</label>
                     <input
                       type="number"
@@ -475,7 +475,7 @@ export default class LMSEventsFilter extends LitElement {
                   .label=${__("Registration & Dates")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  <div class="form-check dropdown-item">
+                  <div class="dropdown-item">
                     <input
                       type="checkbox"
                       class="form-check-input"
@@ -487,7 +487,7 @@ export default class LMSEventsFilter extends LitElement {
                       >${__("Open Registration")}</label
                     >
                   </div>
-                  <div class="form-group dropdown-item">
+                  <div class="dropdown-item">
                     <label for="start_time">${__("Start Date")}</label>
                     <input
                       type="date"
@@ -513,7 +513,7 @@ export default class LMSEventsFilter extends LitElement {
                   ${map(
                     this.facets.locationIds,
                     (locationId) =>
-                      html` <div class="form-group form-check dropdown-item">
+                      html` <div class="dropdown-item">
                         <input
                           type="checkbox"
                           class="form-check-input"
@@ -536,7 +536,7 @@ export default class LMSEventsFilter extends LitElement {
                   .label=${__("Fee")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  <div class="form-group dropdown-item">
+                  <div class="dropdown-item">
                     <label for="fee">${__("Fee")}</label>
                     <input
                       type="number"
