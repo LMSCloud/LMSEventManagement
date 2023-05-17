@@ -1,9 +1,9 @@
 name: LMSEventManagement
 author: Tobias Engelke & Paul Derscheid @ LMSCloud GmbH
 date_authored: 2009-01-27
-date_updated: 2021-05-27
-minimum_version: 20.05
+date_updated: 2023-05-17
+minimum_version: 18.05
 maximum_version:
-version: 0.0.1
+version: 1.0.0
 description: This plugin makes managing events with koha a breeze!	
 module: Koha::Plugin::Com::LMSCloud::EventManagement
