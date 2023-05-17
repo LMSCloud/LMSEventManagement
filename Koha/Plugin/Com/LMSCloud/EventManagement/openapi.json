@@ -117,11 +117,7 @@
           "description": "Query filter sent as a request parameter",
           "in": "query",
           "required": false,
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "collectionFormat": "multi"
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
@@ -737,11 +733,7 @@
           "description": "Query filter sent as a request parameter",
           "in": "query",
           "required": false,
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "collectionFormat": "multi"
+          "type": "string"
         }
       ],
       "description": "Get all events",
@@ -1652,11 +1644,7 @@
           "description": "Query filter sent as a request parameter",
           "in": "query",
           "required": false,
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "collectionFormat": "multi"
+          "type": "string"
         }
       ],
       "responses": {
@@ -2614,11 +2602,7 @@
           "description": "Query filter sent as a request parameter",
           "in": "query",
           "required": false,
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "collectionFormat": "multi"
+          "type": "string"
         }
       ],
       "responses": {
@@ -3308,11 +3292,7 @@
           "description": "Query filter sent as a request parameter",
           "in": "query",
           "required": false,
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "collectionFormat": "multi"
+          "type": "string"
         }
       ],
       "produces": ["application/json"],
