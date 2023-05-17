@@ -17,14 +17,22 @@
           "in": "query",
           "description": "Array of multiple event types",
           "required": false,
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "collectionFormat": "multi"
         },
         {
           "name": "target_group",
           "in": "query",
           "description": "Array of multiple target groups",
           "required": false,
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "collectionFormat": "multi"
         },
         {
           "name": "min_age",
@@ -59,7 +67,11 @@
           "in": "query",
           "description": "Array of multiple locations",
           "required": false,
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "collectionFormat": "multi"
         },
         {
           "name": "description",
@@ -633,14 +645,22 @@
           "in": "query",
           "description": "Array of multiple event types",
           "required": false,
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "collectionFormat": "multi"
         },
         {
           "name": "target_group",
           "in": "query",
           "description": "Array of multiple target groups",
           "required": false,
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "collectionFormat": "multi"
         },
         {
           "name": "min_age",
@@ -675,7 +695,11 @@
           "in": "query",
           "description": "Array of multiple locations",
           "required": false,
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "collectionFormat": "multi"
         },
         {
           "name": "description",
