@@ -32,11 +32,21 @@ class RequestHandler {
     }
 
     const requestInfo = endpointData.requestInfo || {};
-    const cacheMode = endpointData.ignoreCache
-      ? "no-cache"
-      : endpointData.cache
-      ? "default"
-      : "force-cache";
+
+    let cacheMode: RequestCache;
+    const userAgent = navigator.userAgent.toLowerCase();
+    if (userAgent.includes("chrome")) {
+      cacheMode = endpointData.ignoreCache ? "no-cache" : "no-store";
+    } else if (userAgent.includes("firefox")) {
+      cacheMode = endpointData.ignoreCache ? "no-cache" : "default";
+    } else {
+      // For other browsers, use the default behavior
+      cacheMode = endpointData.ignoreCache
+        ? "no-cache"
+        : endpointData.cache
+        ? "default"
+        : "force-cache";
+    }
 
     let url = endpointData.url;
 
