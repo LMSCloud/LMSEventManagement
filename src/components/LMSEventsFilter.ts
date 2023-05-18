@@ -469,7 +469,7 @@ export default class LMSEventsFilter extends LitElement {
                   </div>
                 </lms-dropdown>
 
-                <lms-dropdown
+                <!-- <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
                   .label=${__("Registration & Dates")}
@@ -502,7 +502,7 @@ export default class LMSEventsFilter extends LitElement {
                       id="end_time"
                       name="end_time"
                     /></div
-                ></lms-dropdown>
+                ></lms-dropdown> -->
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
@@ -530,7 +530,7 @@ export default class LMSEventsFilter extends LitElement {
                   )}
                 </lms-dropdown>
 
-                <lms-dropdown
+                <!-- <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
                   .label=${__("Fee")}
@@ -546,7 +546,7 @@ export default class LMSEventsFilter extends LitElement {
                       @input=${this.emitChange}
                     />
                   </div>
-                </lms-dropdown>
+                </lms-dropdown> -->
               </div>
             </div>
           </div>

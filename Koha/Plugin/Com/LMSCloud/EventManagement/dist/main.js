@@ -1533,6 +1533,9 @@ ${value}</textarea
       icon: [448, 512, [128197, 128198], "f133", "M96 32V64H48C21.5 64 0 85.5 0 112v48H448V112c0-26.5-21.5-48-48-48H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32V64H160V32c0-17.7-14.3-32-32-32S96 14.3 96 32zM448 192H0V464c0 26.5 21.5 48 48 48H400c26.5 0 48-21.5 48-48V192z"]
     };
 
+    /**
+     * Custom element representing an event card form for staff members.
+     */
     let LMSStaffEventCardForm = class LMSStaffEventCardForm extends s {
         constructor() {
             super(...arguments);
@@ -1542,6 +1545,10 @@ ${value}</textarea
                 message: "",
             };
         }
+        /**
+         * Toggles the edit mode of the form.
+         * @param e - The click event.
+         */
         toggleEdit(e) {
             var _a, _b, _c, _d;
             e.preventDefault();
@@ -1569,10 +1576,14 @@ ${value}</textarea
                 this.expandAll();
             }
         }
+        /**
+         * Processes the target group elements in the form.
+         * We need to assure that the target_groups property is always an array of objects
+         * containing all configured target_groups.
+         * @param target - The HTMLFormElement containing the target group elements.
+         * @returns The processed target group elements.
+         */
         processTargetGroupElements(target) {
-            /** Here we have custom handling for the target_group field to assure
-             *  that this property is always an array of objects containing all
-             *  configured target_groups. */
             const targetGroupElements = Array.from(target.querySelectorAll(`[data-group="target_groups"]`));
             if (!targetGroupElements.length)
                 return;
@@ -1601,10 +1612,15 @@ ${value}</textarea
                 return target_groups;
             }, {});
         }
+        /**
+         * Processes the datetime-local elements in the form.
+         * We need to assure they aren't rejected by the api validation.
+         * We remove the idiosynchracies from the ISO8601 standard
+         * and convert straight into sql writable strings.
+         * @param target - The HTMLFormElement containing the datetime-local elements.
+         * @returns The processed datetime-local elements.
+         */
         processDatetimeLocalElements(target) {
-            /** Here we some custom handling for all datetime-local fields to assure they aren't
-             *  rejected by the api validation. We remove the idiosynchracies from the ISO8601 standard
-             *  and convert straight into sql writable strings. */
             const datetimeLocalElements = Array.from(target.querySelectorAll(`[type="datetime-local"]`));
             if (!datetimeLocalElements.length)
                 return;
@@ -1627,15 +1643,23 @@ ${value}</textarea
                 return { name, value };
             });
         }
+        /**
+         * Processes the open_registration element in the form.
+         * We need to check the state of the checked attribute instead of using the value.
+         * @param target - The HTMLFormElement containing the open_registration element.
+         * @returns The processed open_registration element.
+         */
         processOpenRegistrationElement(target) {
             var _a;
-            /** Here we have some custom handling for the open_registration field because
-             *  we need to check the state of the checked attribute instead of using the value. */
             const openRegistrationElement = (_a = target === null || target === void 0 ? void 0 : target.querySelector('[name="open_registration"]')) !== null && _a !== void 0 ? _a : undefined;
             if (!openRegistrationElement)
                 return;
             return openRegistrationElement.checked ? 1 : 0;
         }
+        /**
+         * Handles the form submission for saving changes.
+         * @param e - The submit event.
+         */
         async handleSave(e) {
             e.preventDefault();
             const target = e.target;
@@ -1667,6 +1691,7 @@ ${value}</textarea
                 target === null || target === void 0 ? void 0 : target.querySelectorAll("input, select, textarea").forEach((input) => {
                     input.setAttribute("disabled", "");
                 });
+                this.collapseAll();
                 this.dispatchEvent(new CustomEvent("updated", {
                     detail: id,
                     bubbles: true,
@@ -1679,6 +1704,10 @@ ${value}</textarea
                 console.log(error);
             }
         }
+        /**
+         * Handles the form submission for deleting the event.
+         * @param e - The click event.
+         */
         async handleDelete(e) {
             e.preventDefault();
             const [id] = new TemplateResultConverter(this.datum.id).getRenderValues();
@@ -1699,6 +1728,10 @@ ${value}</textarea
                 console.log(error);
             }
         }
+        /**
+         * Toggles the collapse state of a collapsible section.
+         * @param e - The click event.
+         */
         toggleCollapse(e) {
             const button = e.target;
             const { target } = button.dataset;
@@ -1713,16 +1746,26 @@ ${value}</textarea
             }
             collapsible.classList.add("show");
         }
+        /**
+         * Collapses all the collapsible sections.
+         */
         collapseAll() {
             this.collapsibles.forEach((collapsible) => {
                 collapsible.classList.remove("show");
             });
         }
+        /**
+         * Expands all the collapsible sections.
+         */
         expandAll() {
             this.collapsibles.forEach((collapsible) => {
                 collapsible.classList.add("show");
             });
         }
+        /**
+         * Renders the element.
+         * @returns The rendered template result.
+         */
         render() {
             const { datum } = this;
             const shouldFold = window.innerWidth <= 420;
@@ -1918,6 +1961,9 @@ ${value}</textarea
     `;
         }
     };
+    /**
+     * The static styles for the element.
+     */
     LMSStaffEventCardForm.styles = [
         bootstrapStyles,
         skeletonStyles,
@@ -3390,7 +3436,7 @@ ${value}</textarea
                   </div>
                 </lms-dropdown>
 
-                <lms-dropdown
+                <!-- <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
                   .label=${__("Registration & Dates")}
@@ -3423,7 +3469,7 @@ ${value}</textarea
                       id="end_time"
                       name="end_time"
                     /></div
-                ></lms-dropdown>
+                ></lms-dropdown> -->
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
@@ -3447,7 +3493,7 @@ ${value}</textarea
         })}
                 </lms-dropdown>
 
-                <lms-dropdown
+                <!-- <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
                   .label=${__("Fee")}
@@ -3463,7 +3509,7 @@ ${value}</textarea
                       @input=${this.emitChange}
                     />
                   </div>
-                </lms-dropdown>
+                </lms-dropdown> -->
               </div>
             </div>
           </div>
