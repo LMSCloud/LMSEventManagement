@@ -47,10 +47,11 @@ export default class LMSEventsFilter extends LitElement {
         return input.checked;
       }
 
-      const { id } = input.dataset;
-      if (id) {
-        return input.checked ? id : false;
+      const { value } = input;
+      if (value) {
+        return input.checked ? value : false;
       }
+
       return input.checked ? input.id : false;
     },
     radio: (input: HTMLInputElement) => (input.checked ? input.value : false),
@@ -403,7 +404,7 @@ export default class LMSEventsFilter extends LitElement {
                           class="form-check-input"
                           name="event_type"
                           id="event_type_${eventTypeId}"
-                          data-id=${eventTypeId}
+                          value=${eventTypeId}
                         />
                         <label
                           class="form-check-label"
@@ -433,7 +434,7 @@ export default class LMSEventsFilter extends LitElement {
                           class="form-check-input"
                           name="target_group"
                           id="target_group_${targetGroupId}"
-                          data-id=${targetGroupId}
+                          value=${targetGroupId}
                         />
                         <label
                           class="form-check-label"
@@ -529,7 +530,7 @@ export default class LMSEventsFilter extends LitElement {
                           class="form-check-input"
                           name="location"
                           id="location_${locationId}"
-                          data-id=${locationId}
+                          value=${locationId}
                         />
                         <label
                           class="form-check-label"
