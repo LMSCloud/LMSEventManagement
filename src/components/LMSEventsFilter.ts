@@ -28,17 +28,28 @@ declare global {
 @customElement("lms-events-filter")
 export default class LMSEventsFilter extends LitElement {
   private shouldFold = window.innerWidth <= 992;
+
   @property({ type: Array }) events: LMSEvent[] = [];
+
   @property({ type: String }) facetsStrategy: "preserve" | "update" =
     "preserve";
+
   @property({ type: Boolean }) isHidden = this.shouldFold;
+
   @state() facets: Partial<Facets> = {};
+
   @state() event_types: EventType[] = [];
+
   @state() target_groups: TargetGroup[] = [];
+
   @state() locations: LMSLocation[] = [];
+
   @state() activeFilters: Map<string, string | boolean> = new Map();
+
   @queryAll("input") inputs!: NodeListOf<HTMLInputElement>;
+
   @queryAll("lms-dropdown") lmsDropdowns!: NodeListOf<LMSDropdown>;
+
   private inputHandlers: {
     [type: string]: (input: HTMLInputElement) => string | boolean;
   } = {
@@ -51,7 +62,6 @@ export default class LMSEventsFilter extends LitElement {
       if (value) {
         return input.checked ? value : false;
       }
-
       return input.checked ? input.id : false;
     },
     radio: (input: HTMLInputElement) => (input.checked ? input.value : false),
@@ -59,6 +69,7 @@ export default class LMSEventsFilter extends LitElement {
     number: (input: HTMLInputElement) => input.value,
     default: (input: HTMLInputElement) => input.value,
   };
+
   private resetHandlers: {
     [type: string]: (input: HTMLInputElement) => void;
   } = {
@@ -86,15 +97,19 @@ export default class LMSEventsFilter extends LitElement {
       input.value = "";
     },
   };
+
   private _eventsDeepCopy: LMSEvent[] = [];
+
   private get eventsDeepCopy(): LMSEvent[] {
     return this._eventsDeepCopy;
   }
+
   private set eventsDeepCopy(value: LMSEvent[]) {
     if (this._eventsDeepCopy.length === 0) {
       this._eventsDeepCopy = value;
     }
   }
+
   private facetsStrategyManager() {
     switch (this.facetsStrategy) {
       case "preserve":
