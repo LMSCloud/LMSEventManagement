@@ -3148,6 +3148,10 @@ ${value}</textarea
                     if (input.id === "open_registration") {
                         return input.checked;
                     }
+                    const { id } = input.dataset;
+                    if (id) {
+                        return input.checked ? id : false;
+                    }
                     return input.checked ? input.id : false;
                 },
                 radio: (input) => (input.checked ? input.value : false),
@@ -3418,9 +3422,12 @@ ${value}</textarea
                           type="checkbox"
                           class="form-check-input"
                           name="event_type"
-                          id=${eventTypeId}
+                          id="event_type_${eventTypeId}"
+                          data-id=${eventTypeId}
                         />
-                        <label class="form-check-label" for=${eventTypeId}
+                        <label
+                          class="form-check-label"
+                          for="event_type_${eventTypeId}"
                           >${(_a = this.event_types.find((event_type) => event_type.id === parseInt(eventTypeId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
                         >
                       </div>
@@ -3442,9 +3449,12 @@ ${value}</textarea
                           type="checkbox"
                           class="form-check-input"
                           name="target_group"
-                          id=${targetGroupId}
+                          id="target_group_${targetGroupId}"
+                          data-id=${targetGroupId}
                         />
-                        <label class="form-check-label" for=${targetGroupId}
+                        <label
+                          class="form-check-label"
+                          for="target_group_${targetGroupId}"
                           >${(_a = this.target_groups.find((target_group) => target_group.id === targetGroupId)) === null || _a === void 0 ? void 0 : _a.name}</label
                         >
                       </div>
@@ -3532,9 +3542,12 @@ ${value}</textarea
                           type="checkbox"
                           class="form-check-input"
                           name="location"
-                          id=${locationId}
+                          id="location_${locationId}"
+                          data-id=${locationId}
                         />
-                        <label class="form-check-label" for=${locationId}
+                        <label
+                          class="form-check-label"
+                          for="location_${locationId}"
                           >${(_a = this.locations.find((location) => location.id === parseInt(locationId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
                         >
                       </div>`;
