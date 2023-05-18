@@ -16,6 +16,9 @@ import {
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
+/**
+ * Custom element representing an event card form for staff members.
+ */
 @customElement("lms-staff-event-card-form")
 export default class LMSStaffEventCardForm extends LitElement {
   @property({ type: Array }) datum: Column = {} as Column;
@@ -26,6 +29,9 @@ export default class LMSStaffEventCardForm extends LitElement {
   @queryAll(".collapse") collapsibles!: NodeListOf<HTMLElement>;
   @queryAll("input, select, textarea") inputs!: NodeListOf<HTMLInputElement>;
 
+  /**
+   * The static styles for the element.
+   */
   static override styles = [
     bootstrapStyles,
     skeletonStyles,
@@ -63,6 +69,10 @@ export default class LMSStaffEventCardForm extends LitElement {
     `,
   ];
 
+  /**
+   * Toggles the edit mode of the form.
+   * @param e - The click event.
+   */
   private toggleEdit(e: Event) {
     e.preventDefault();
     const button = e.target as HTMLButtonElement;
@@ -95,10 +105,14 @@ export default class LMSStaffEventCardForm extends LitElement {
     }
   }
 
+  /**
+   * Processes the target group elements in the form.
+   * We need to assure that the target_groups property is always an array of objects
+   * containing all configured target_groups.
+   * @param target - The HTMLFormElement containing the target group elements.
+   * @returns The processed target group elements.
+   */
   private processTargetGroupElements(target: HTMLFormElement) {
-    /** Here we have custom handling for the target_group field to assure
-     *  that this property is always an array of objects containing all
-     *  configured target_groups. */
     const targetGroupElements: Array<HTMLInputElement> = Array.from(
       target.querySelectorAll(`[data-group="target_groups"]`)
     );
@@ -144,10 +158,15 @@ export default class LMSStaffEventCardForm extends LitElement {
     );
   }
 
+  /**
+   * Processes the datetime-local elements in the form.
+   * We need to assure they aren't rejected by the api validation.
+   * We remove the idiosynchracies from the ISO8601 standard
+   * and convert straight into sql writable strings.
+   * @param target - The HTMLFormElement containing the datetime-local elements.
+   * @returns The processed datetime-local elements.
+   */
   private processDatetimeLocalElements(target: HTMLFormElement) {
-    /** Here we some custom handling for all datetime-local fields to assure they aren't
-     *  rejected by the api validation. We remove the idiosynchracies from the ISO8601 standard
-     *  and convert straight into sql writable strings. */
     const datetimeLocalElements: Array<HTMLInputElement> = Array.from(
       target.querySelectorAll(`[type="datetime-local"]`)
     );
@@ -176,18 +195,26 @@ export default class LMSStaffEventCardForm extends LitElement {
     });
   }
 
+  /**
+   * Processes the open_registration element in the form.
+   * We need to check the state of the checked attribute instead of using the value.
+   * @param target - The HTMLFormElement containing the open_registration element.
+   * @returns The processed open_registration element.
+   */
   private processOpenRegistrationElement(target: HTMLFormElement) {
-    /** Here we have some custom handling for the open_registration field because
-     *  we need to check the state of the checked attribute instead of using the value. */
     const openRegistrationElement: HTMLInputElement | undefined =
       (target?.querySelector(
         '[name="open_registration"]'
       ) as HTMLInputElement) ?? undefined;
     if (!openRegistrationElement) return;
 
-    return (openRegistrationElement.checked ? 1 : 0).toString();
+    return openRegistrationElement.checked ? 1 : 0;
   }
 
+  /**
+   * Handles the form submission for saving changes.
+   * @param e - The submit event.
+   */
   private async handleSave(e: Event) {
     e.preventDefault();
     const target = e.target;
@@ -231,6 +258,7 @@ export default class LMSStaffEventCardForm extends LitElement {
       target?.querySelectorAll("input, select, textarea").forEach((input) => {
         input.setAttribute("disabled", "");
       });
+      this.collapseAll();
       this.dispatchEvent(
         new CustomEvent("updated", {
           detail: id,
@@ -247,6 +275,10 @@ export default class LMSStaffEventCardForm extends LitElement {
     }
   }
 
+  /**
+   * Handles the form submission for deleting the event.
+   * @param e - The click event.
+   */
   private async handleDelete(e: Event) {
     e.preventDefault();
     const [id] = new TemplateResultConverter(this.datum.id).getRenderValues();
@@ -277,6 +309,10 @@ export default class LMSStaffEventCardForm extends LitElement {
     }
   }
 
+  /**
+   * Toggles the collapse state of a collapsible section.
+   * @param e - The click event.
+   */
   private toggleCollapse(e: Event) {
     const button = e.target as HTMLButtonElement;
     const { target } = button.dataset;
@@ -295,18 +331,28 @@ export default class LMSStaffEventCardForm extends LitElement {
     collapsible.classList.add("show");
   }
 
+  /**
+   * Collapses all the collapsible sections.
+   */
   private collapseAll() {
     this.collapsibles.forEach((collapsible) => {
       collapsible.classList.remove("show");
     });
   }
 
+  /**
+   * Expands all the collapsible sections.
+   */
   private expandAll() {
     this.collapsibles.forEach((collapsible) => {
       collapsible.classList.add("show");
     });
   }
 
+  /**
+   * Renders the element.
+   * @returns The rendered template result.
+   */
   override render() {
     const { datum } = this;
     const shouldFold = window.innerWidth <= 420;
