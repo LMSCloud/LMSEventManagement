@@ -2663,21 +2663,17 @@ ${value}</textarea
         }
         renderTargetGroupInfo(targetGroupFees, noFees) {
             var _a;
-            let quantity = (_a = targetGroupFees === null || targetGroupFees === void 0 ? void 0 : targetGroupFees.length) !== null && _a !== void 0 ? _a : 0;
+            const quantity = (_a = targetGroupFees === null || targetGroupFees === void 0 ? void 0 : targetGroupFees.length) !== null && _a !== void 0 ? _a : 0;
             return o$2(targetGroupFees, (targetGroupFee, index) => {
                 const hasTargetGroupId = {}.hasOwnProperty.call(targetGroupFee, "target_group_id");
                 if (hasTargetGroupId)
                     return A;
                 const { name, min_age, max_age, fee, selected } = targetGroupFee;
-                if (!selected) {
-                    quantity -= 1;
+                if (!selected)
                     return A;
-                }
                 return noFees
                     ? x `<span
-            >${name}${index - 1 < quantity && !(quantity === 1)
-                    ? ", "
-                    : ""}</span
+            >${name}${index - 1 < quantity && quantity > 1 ? ", " : ""}</span
           >`
                     : x `
             <tr>

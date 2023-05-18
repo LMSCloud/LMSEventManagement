@@ -191,7 +191,7 @@ export default class LMSCardDetailsModal extends LitElement {
     targetGroupFees: TargetGroupFee[],
     noFees: boolean
   ) {
-    let quantity = targetGroupFees?.length ?? 0;
+    const quantity = targetGroupFees?.length ?? 0;
     return map(targetGroupFees, (targetGroupFee, index) => {
       const hasTargetGroupId = {}.hasOwnProperty.call(
         targetGroupFee,
@@ -206,15 +206,10 @@ export default class LMSCardDetailsModal extends LitElement {
         > &
           TargetGroup;
 
-      if (!selected) {
-        quantity -= 1;
-        return nothing;
-      }
+      if (!selected) return nothing;
       return noFees
         ? html`<span
-            >${name}${index - 1 < quantity && !(quantity === 1)
-              ? ", "
-              : ""}</span
+            >${name}${index - 1 < quantity && quantity > 1 ? ", " : ""}</span
           >`
         : html`
             <tr>
