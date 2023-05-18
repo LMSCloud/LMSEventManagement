@@ -12,7 +12,7 @@ import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
 import LMSEventsFilter from "../components/LMSEventsFilter";
 import { QueryBuilder } from "../lib/QueryBuilder";
 import { requestHandler } from "../lib/RequestHandler";
-import { convertToFormat } from "../lib/converters";
+import { splitDateTime } from "../lib/converters";
 import { __, locale } from "../lib/translate";
 import { LMSEvent, LMSLocation } from "../sharedDeclarations";
 import { skeletonStyles } from "../styles/skeleton";
@@ -238,9 +238,17 @@ export default class LMSEventsView extends LitElement {
                 : nothing}
               <div class="col-12" ?hidden=${!this.events.length}>
                 <div class="card-deck">
-                  ${map(
-                    this.events,
-                    (event) => html`
+                  ${map(this.events, (event) => {
+                    const [sDate, sTime] = splitDateTime(
+                      event.start_time,
+                      locale
+                    );
+                    const [eDate, eTime] = splitDateTime(
+                      event.end_time,
+                      locale
+                    );
+                    const isSameDay = sDate === eDate;
+                    return html`
                       <lms-card
                         tabindex="0"
                         @keyup=${(e: KeyboardEvent) => {
@@ -265,25 +273,16 @@ export default class LMSEventsView extends LitElement {
                           </span>`,
                           html`<span class="text-muted font-weight-light">
                             <small>
-                              ${litFontawesome(faCalendarAlt)}
-                              ${convertToFormat(
-                                event.start_time,
-                                "datetime",
-                                locale
-                              )}
-                              -
-                              ${convertToFormat(
-                                event.end_time,
-                                "datetime",
-                                locale
-                              )}</small
+                              ${litFontawesome(faCalendarAlt)} ${sDate},
+                              ${sTime} -
+                              ${isSameDay ? eTime : `${eDate}, ${eTime}`}</small
                             ></span
                           >`,
                         ]}
                         .image=${{ src: event.image, alt: event.name }}
                       ></lms-card>
-                    `
-                  ) ?? nothing}
+                    `;
+                  }) ?? nothing}
                   <lms-card-details-modal
                     @close=${this.handleHideDetails}
                     .event=${this.modalData}

@@ -100,8 +100,8 @@ export function convertToFormat(
   locale: string
 ): string {
   if (format === "datetime") {
-    const date = new Date(string);
-    return date.toLocaleString(locale, {
+    const datetime = new Date(string);
+    return datetime.toLocaleString(locale, {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -110,7 +110,36 @@ export function convertToFormat(
     });
   }
 
+  if (format === "date") {
+    const date = new Date(string);
+    return date.toLocaleDateString(locale, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  }
+
   return string;
+}
+
+/**
+ * Splits a datetime string into date and time components.
+ * @param {string} string - The datetime string to split.
+ * @param {string} locale - The locale used for formatting the date and time.
+ * @returns {string[]} An array containing the date and time components.
+ */
+export function splitDateTime(string: string, locale: string): string[] {
+  const datetime = new Date(string);
+  const date = datetime.toLocaleDateString(locale, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const time = datetime.toLocaleTimeString(locale, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return [date, time];
 }
 
 /**

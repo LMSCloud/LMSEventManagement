@@ -936,24 +936,23 @@
         }
     }
     /**
-     * Converts a datetime string to the specified format.
-     * @param string - The datetime string to convert.
-     * @param format - The desired format for the conversion.
-     * @param locale - The locale to use for the conversion.
-     * @returns The converted datetime string.
+     * Splits a datetime string into date and time components.
+     * @param {string} string - The datetime string to split.
+     * @param {string} locale - The locale used for formatting the date and time.
+     * @returns {string[]} An array containing the date and time components.
      */
-    function convertToFormat(string, format, locale) {
-        if (format === "datetime") {
-            const date = new Date(string);
-            return date.toLocaleString(locale, {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-            });
-        }
-        return string;
+    function splitDateTime(string, locale) {
+        const datetime = new Date(string);
+        const date = datetime.toLocaleDateString(locale, {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        });
+        const time = datetime.toLocaleTimeString(locale, {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+        return [date, time];
     }
     /**
      * Normalizes a datetime string for use in an input field of type "datetime-local".
@@ -2938,11 +2937,22 @@ ${value}</textarea
                 throw new Error(`Endpoint not found: ${endpoint}`);
             }
             const requestInfo = endpointData.requestInfo || {};
-            const cacheMode = endpointData.ignoreCache
-                ? "no-cache"
-                : endpointData.cache
-                    ? "default"
-                    : "force-cache";
+            let cacheMode;
+            const userAgent = navigator.userAgent.toLowerCase();
+            if (userAgent.includes("chrome")) {
+                cacheMode = endpointData.ignoreCache ? "no-cache" : "no-store";
+            }
+            else if (userAgent.includes("firefox")) {
+                cacheMode = endpointData.ignoreCache ? "no-cache" : "default";
+            }
+            else {
+                // For other browsers, use the default behavior
+                cacheMode = endpointData.ignoreCache
+                    ? "no-cache"
+                    : endpointData.cache
+                        ? "default"
+                        : "force-cache";
+            }
             let url = endpointData.url;
             if (queryParams) {
                 const searchParams = new URLSearchParams(queryParams);
@@ -6259,6 +6269,9 @@ ${value}</textarea
                 <div class="card-deck">
                   ${(_a = o$2(this.events, (event) => {
             var _a;
+            const [sDate, sTime] = splitDateTime(event.start_time, locale);
+            const [eDate, eTime] = splitDateTime(event.end_time, locale);
+            const isSameDay = sDate === eDate;
             return x `
                       <lms-card
                         tabindex="0"
@@ -6281,10 +6294,9 @@ ${value}</textarea
                           </span>`,
                 x `<span class="text-muted font-weight-light">
                             <small>
-                              ${litFontawesome_2(faCalendarAlt)}
-                              ${convertToFormat(event.start_time, "datetime", locale)}
-                              -
-                              ${convertToFormat(event.end_time, "datetime", locale)}</small
+                              ${litFontawesome_2(faCalendarAlt)} ${sDate},
+                              ${sTime} -
+                              ${isSameDay ? eTime : `${eDate}, ${eTime}`}</small
                             ></span
                           >`,
             ]}
