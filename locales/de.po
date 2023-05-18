@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-24 12:16+0200\n"
-"PO-Revision-Date: 2023-05-16 23:07+0200\n"
+"PO-Revision-Date: 2023-05-18 15:29+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.3\n"
+"X-Generator: Poedit 3.3.1\n"
 
 #: src/dynamically_added_strings.ts:8
 msgid "id"
@@ -156,7 +156,7 @@ msgstr "Altersspanne"
 #: src/components/LMSCardDetailsModal.ts:263
 #: src/components/LMSEventsFilter.ts:536 src/components/LMSEventsFilter.ts:540
 msgid "Fee"
-msgstr "Beitrag"
+msgstr "Teilnahmegebühr"
 
 #: src/components/LMSCardDetailsModal.ts:297
 #: src/components/LMSEventsFilter.ts:510
@@ -602,7 +602,7 @@ msgstr "Ausgewählt"
 
 #: src/lib/converters.ts:128
 msgid "fee"
-msgstr "Beitrag"
+msgstr "Teilnahmegebühr"
 
 #: src/lib/converters.ts:375
 msgid "Error"
