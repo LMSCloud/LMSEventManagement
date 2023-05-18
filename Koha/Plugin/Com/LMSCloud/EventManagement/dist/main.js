@@ -2647,10 +2647,11 @@ ${value}</textarea
                 target_groups.every((tg) => ({}.hasOwnProperty.call(tg, "target_group_id")))) {
                 const selectedTargetGroups = this.target_groups.filter((target_group) => target_groups.some((tg) => tg.target_group_id === target_group.id));
                 this.event.target_groups = selectedTargetGroups.map((tg) => {
-                    var _a, _b;
+                    var _a, _b, _c, _d;
                     return ({
                         ...tg,
-                        fee: (_b = (_a = target_groups.find((etg) => etg.target_group_id === tg.id)) === null || _a === void 0 ? void 0 : _a.fee) !== null && _b !== void 0 ? _b : 0,
+                        selected: (_b = (_a = target_groups.find((etg) => etg.target_group_id === tg.id)) === null || _a === void 0 ? void 0 : _a.selected) !== null && _b !== void 0 ? _b : false,
+                        fee: (_d = (_c = target_groups.find((etg) => etg.target_group_id === tg.id)) === null || _c === void 0 ? void 0 : _c.fee) !== null && _d !== void 0 ? _d : 0,
                     });
                 });
             }
@@ -2662,12 +2663,16 @@ ${value}</textarea
         }
         renderTargetGroupInfo(targetGroupFees, noFees) {
             var _a;
-            const quantity = (_a = targetGroupFees === null || targetGroupFees === void 0 ? void 0 : targetGroupFees.length) !== null && _a !== void 0 ? _a : 0;
+            let quantity = (_a = targetGroupFees === null || targetGroupFees === void 0 ? void 0 : targetGroupFees.length) !== null && _a !== void 0 ? _a : 0;
             return o$2(targetGroupFees, (targetGroupFee, index) => {
                 const hasTargetGroupId = {}.hasOwnProperty.call(targetGroupFee, "target_group_id");
                 if (hasTargetGroupId)
                     return A;
-                const { name, min_age, max_age, fee } = targetGroupFee;
+                const { name, min_age, max_age, fee, selected } = targetGroupFee;
+                if (!selected) {
+                    quantity -= 1;
+                    return A;
+                }
                 return noFees
                     ? x `<span
             >${name}${index - 1 < quantity && !(quantity === 1)

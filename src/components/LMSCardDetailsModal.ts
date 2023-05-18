@@ -34,11 +34,17 @@ type LMSEventFull = Omit<
 @customElement("lms-card-details-modal")
 export default class LMSCardDetailsModal extends LitElement {
   @property({ type: Object }) event: LMSEvent | LMSEventFull = {} as LMSEvent;
+
   @property({ type: Boolean }) isOpen = false;
+
   @state() event_types: EventType[] = [];
+
   @state() locations: LMSLocation[] = [];
+
   @state() target_groups: TargetGroupFee[] = [];
+
   @state() locale = "en";
+
   @query(".close") closeButton: HTMLButtonElement | undefined;
 
   static override styles = [
@@ -166,6 +172,9 @@ export default class LMSCardDetailsModal extends LitElement {
 
       this.event.target_groups = selectedTargetGroups.map((tg) => ({
         ...tg,
+        selected:
+          target_groups.find((etg) => etg.target_group_id === tg.id)
+            ?.selected ?? false,
         fee:
           target_groups.find((etg) => etg.target_group_id === tg.id)?.fee ?? 0,
       }));
@@ -182,7 +191,7 @@ export default class LMSCardDetailsModal extends LitElement {
     targetGroupFees: TargetGroupFee[],
     noFees: boolean
   ) {
-    const quantity = targetGroupFees?.length ?? 0;
+    let quantity = targetGroupFees?.length ?? 0;
     return map(targetGroupFees, (targetGroupFee, index) => {
       const hasTargetGroupId = {}.hasOwnProperty.call(
         targetGroupFee,
@@ -190,11 +199,17 @@ export default class LMSCardDetailsModal extends LitElement {
       );
       if (hasTargetGroupId) return nothing;
 
-      const { name, min_age, max_age, fee } = targetGroupFee as unknown as Omit<
-        TargetGroupFee,
-        "id" | "target_group_id" | "selected"
-      > &
-        TargetGroup;
+      const { name, min_age, max_age, fee, selected } =
+        targetGroupFee as unknown as Omit<
+          TargetGroupFee,
+          "id" | "target_group_id"
+        > &
+          TargetGroup;
+
+      if (!selected) {
+        quantity -= 1;
+        return nothing;
+      }
       return noFees
         ? html`<span
             >${name}${index - 1 < quantity && !(quantity === 1)
