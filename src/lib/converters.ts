@@ -7,7 +7,6 @@ import {
   TargetGroup,
   TargetGroupFee,
 } from "../sharedDeclarations";
-// import { map } from "lit/directives/map.js";
 import { __ } from "../lib/translate";
 
 type InputTypeValue = string | number | boolean | TargetGroupFee[];
@@ -23,17 +22,34 @@ type TemplateFunction = (
   data?: EventType[] | LMSLocation[] | TargetGroup[]
 ) => TemplateResult;
 
+/**
+ * Represents a TemplateResultConverter that can extract values and render strings from a TemplateResult.
+ */
 export class TemplateResultConverter {
   private _templateResult: unknown;
 
+  /**
+   * Creates a new instance of TemplateResultConverter.
+   * @param templateResult - The TemplateResult to be converted.
+   */
   constructor(templateResult: unknown) {
     this._templateResult = templateResult;
   }
 
+  /**
+   * Sets the TemplateResult to be converted.
+   * @param templateResult - The TemplateResult to be set.
+   */
   set templateResult(templateResult: unknown) {
     this._templateResult = templateResult;
   }
 
+  /**
+   * Retrieves the value at the specified index from the TemplateResult.
+   * @param templateResult - The TemplateResult to extract the value from.
+   * @param index - The index of the value to retrieve.
+   * @returns The extracted value as a string.
+   */
   public getValueByIndex(
     templateResult: TemplateResult,
     index: number
@@ -45,6 +61,11 @@ export class TemplateResultConverter {
       : (renderValue as any).toString();
   }
 
+  /**
+   * Generates the rendered string from the TemplateResult.
+   * @param data - The data object to render. Defaults to the stored TemplateResult.
+   * @returns The rendered string.
+   */
   public getRenderString(data = this._templateResult): string {
     const { strings, values } = data as TemplateResult;
     const v = [...values, ""].map((e) =>
@@ -53,6 +74,11 @@ export class TemplateResultConverter {
     return strings.reduce((acc, s, i) => acc + s + v[i], "");
   }
 
+  /**
+   * Retrieves all the rendered values from the TemplateResult.
+   * @param data - The data object to extract values from. Defaults to the stored TemplateResult.
+   * @returns An array of the extracted values.
+   */
   public getRenderValues(data = this._templateResult): unknown[] {
     const { values } = data as TemplateResult;
     return [...values, ""].map((e) =>
@@ -61,6 +87,13 @@ export class TemplateResultConverter {
   }
 }
 
+/**
+ * Converts a datetime string to the specified format.
+ * @param string - The datetime string to convert.
+ * @param format - The desired format for the conversion.
+ * @param locale - The locale to use for the conversion.
+ * @returns The converted datetime string.
+ */
 export function convertToFormat(
   string: string,
   format: string,
@@ -80,9 +113,31 @@ export function convertToFormat(
   return string;
 }
 
+/**
+ * Normalizes a datetime string for use in an input field of type "datetime-local".
+ * @param string - The datetime string to normalize.
+ * @param format - The format of the datetime string.
+ * @returns The normalized datetime string.
+ */
+export function normalizeForInput(string: string, format: string): string {
+  if (format === "datetime-local") {
+    const datetime = new Date(string);
+    const normalizedDateTime = datetime.toISOString().slice(0, 16);
+    return normalizedDateTime;
+  }
+
+  return string;
+}
+
+/**
+ * Represents an InputConverter that handles conversion of input fields based on their name.
+ */
 export class InputConverter {
   private conversionMap: Record<string, TemplateFunction> = {};
 
+  /**
+   * Creates a new instance of InputConverter.
+   */
   constructor() {
     this.conversionMap = {
       name: (value) => html`<input
@@ -264,28 +319,28 @@ ${value}</textarea
         class="form-control"
         type="datetime-local"
         name="start_time"
-        value=${value}
+        value=${normalizeForInput(value as string, "datetime-local")}
         disabled
       />`,
       end_time: (value) => html`<input
         class="form-control"
         type="datetime-local"
         name="end_time"
-        value=${value}
+        value=${normalizeForInput(value as string, "datetime-local")}
         disabled
       />`,
       registration_start: (value) => html`<input
         class="form-control"
         type="datetime-local"
         name="registration_start"
-        value=${value}
+        value=${normalizeForInput(value as string, "datetime-local")}
         disabled
       />`,
       registration_end: (value) => html`<input
         class="form-control"
         type="datetime-local"
         name="registration_end"
-        value=${value}
+        value=${normalizeForInput(value as string, "datetime-local")}
         disabled
       />`,
       status: (value) => html`<select
@@ -319,6 +374,10 @@ ${value}</textarea
     };
   }
 
+  /**
+   * Toggles the collapse state of a target element.
+   * @param e - The MouseEvent that triggered the toggle.
+   */
   private toggleCollapse(e: MouseEvent) {
     const target = e.target as HTMLElement;
     const button = target.closest("button");
@@ -335,10 +394,20 @@ ${value}</textarea
     }
   }
 
+  /**
+   * Checks if a particular input template requires data to be rendered correctly.
+   * @param name - The name of the input template.
+   * @returns A boolean indicating whether the input template requires data.
+   */
   private needsData(name: string): boolean {
     return ["target_groups", "event_type", "location"].includes(name);
   }
 
+  /**
+   * Retrieves the appropriate input template based on the provided query.
+   * @param query - The query object containing the name, value, and optional data for the input template.
+   * @returns The TemplateResult representing the input template.
+   */
   public getInputTemplate({
     name,
     value,
@@ -356,6 +425,12 @@ ${value}</textarea
     return template(value);
   }
 
+  /**
+   * Finds the required data based on the name from the provided data array.
+   * @param name - The name of the required data.
+   * @param data - The data array to search in.
+   * @returns The found data if available, otherwise undefined.
+   */
   private findDataByName(
     name: string,
     data?: TaggedData[]
@@ -367,10 +442,19 @@ ${value}</textarea
     return foundData;
   }
 
+  /**
+   * Renders the value as a TemplateResult.
+   * @param value - The value to be rendered.
+   * @returns The rendered value as a TemplateResult.
+   */
   private renderValue(value: InputTypeValue): TemplateResult {
     return html`${value}`;
   }
 
+  /**
+   * Renders an error message as a TemplateResult.
+   * @returns The rendered error message as a TemplateResult.
+   */
   private renderError(): TemplateResult {
     return html`<strong>${__("Error")}!</strong>`;
   }

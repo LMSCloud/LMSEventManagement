@@ -884,13 +884,30 @@
     ], LMSStaffEventCardAttendees);
     var LMSStaffEventCardAttendees$1 = LMSStaffEventCardAttendees;
 
+    /**
+     * Represents a TemplateResultConverter that can extract values and render strings from a TemplateResult.
+     */
     class TemplateResultConverter {
+        /**
+         * Creates a new instance of TemplateResultConverter.
+         * @param templateResult - The TemplateResult to be converted.
+         */
         constructor(templateResult) {
             this._templateResult = templateResult;
         }
+        /**
+         * Sets the TemplateResult to be converted.
+         * @param templateResult - The TemplateResult to be set.
+         */
         set templateResult(templateResult) {
             this._templateResult = templateResult;
         }
+        /**
+         * Retrieves the value at the specified index from the TemplateResult.
+         * @param templateResult - The TemplateResult to extract the value from.
+         * @param index - The index of the value to retrieve.
+         * @returns The extracted value as a string.
+         */
         getValueByIndex(templateResult, index) {
             this.templateResult = templateResult;
             const renderValue = this.getRenderValues()[index];
@@ -898,16 +915,33 @@
                 ? renderValue
                 : renderValue.toString();
         }
+        /**
+         * Generates the rendered string from the TemplateResult.
+         * @param data - The data object to render. Defaults to the stored TemplateResult.
+         * @returns The rendered string.
+         */
         getRenderString(data = this._templateResult) {
             const { strings, values } = data;
             const v = [...values, ""].map((e) => typeof e === "object" ? this.getRenderString(e) : e);
             return strings.reduce((acc, s, i) => acc + s + v[i], "");
         }
+        /**
+         * Retrieves all the rendered values from the TemplateResult.
+         * @param data - The data object to extract values from. Defaults to the stored TemplateResult.
+         * @returns An array of the extracted values.
+         */
         getRenderValues(data = this._templateResult) {
             const { values } = data;
             return [...values, ""].map((e) => typeof e === "object" ? this.getRenderValues(e) : e);
         }
     }
+    /**
+     * Converts a datetime string to the specified format.
+     * @param string - The datetime string to convert.
+     * @param format - The desired format for the conversion.
+     * @param locale - The locale to use for the conversion.
+     * @returns The converted datetime string.
+     */
     function convertToFormat(string, format, locale) {
         if (format === "datetime") {
             const date = new Date(string);
@@ -921,7 +955,27 @@
         }
         return string;
     }
+    /**
+     * Normalizes a datetime string for use in an input field of type "datetime-local".
+     * @param string - The datetime string to normalize.
+     * @param format - The format of the datetime string.
+     * @returns The normalized datetime string.
+     */
+    function normalizeForInput(string, format) {
+        if (format === "datetime-local") {
+            const datetime = new Date(string);
+            const normalizedDateTime = datetime.toISOString().slice(0, 16);
+            return normalizedDateTime;
+        }
+        return string;
+    }
+    /**
+     * Represents an InputConverter that handles conversion of input fields based on their name.
+     */
     class InputConverter {
+        /**
+         * Creates a new instance of InputConverter.
+         */
         constructor() {
             this.conversionMap = {};
             this.conversionMap = {
@@ -1092,28 +1146,28 @@ ${value}</textarea
         class="form-control"
         type="datetime-local"
         name="start_time"
-        value=${value}
+        value=${normalizeForInput(value, "datetime-local")}
         disabled
       />`,
                 end_time: (value) => x `<input
         class="form-control"
         type="datetime-local"
         name="end_time"
-        value=${value}
+        value=${normalizeForInput(value, "datetime-local")}
         disabled
       />`,
                 registration_start: (value) => x `<input
         class="form-control"
         type="datetime-local"
         name="registration_start"
-        value=${value}
+        value=${normalizeForInput(value, "datetime-local")}
         disabled
       />`,
                 registration_end: (value) => x `<input
         class="form-control"
         type="datetime-local"
         name="registration_end"
-        value=${value}
+        value=${normalizeForInput(value, "datetime-local")}
         disabled
       />`,
                 status: (value) => x `<select
@@ -1146,6 +1200,10 @@ ${value}</textarea
       />`,
             };
         }
+        /**
+         * Toggles the collapse state of a target element.
+         * @param e - The MouseEvent that triggered the toggle.
+         */
         toggleCollapse(e) {
             const target = e.target;
             const button = target.closest("button");
@@ -1162,9 +1220,19 @@ ${value}</textarea
                 collapse.classList.add("show");
             }
         }
+        /**
+         * Checks if a particular input template requires data to be rendered correctly.
+         * @param name - The name of the input template.
+         * @returns A boolean indicating whether the input template requires data.
+         */
         needsData(name) {
             return ["target_groups", "event_type", "location"].includes(name);
         }
+        /**
+         * Retrieves the appropriate input template based on the provided query.
+         * @param query - The query object containing the name, value, and optional data for the input template.
+         * @returns The TemplateResult representing the input template.
+         */
         getInputTemplate({ name, value, data, }) {
             const template = this.conversionMap[name];
             if (!template)
@@ -1177,6 +1245,12 @@ ${value}</textarea
             }
             return template(value);
         }
+        /**
+         * Finds the required data based on the name from the provided data array.
+         * @param name - The name of the required data.
+         * @param data - The data array to search in.
+         * @returns The found data if available, otherwise undefined.
+         */
         findDataByName(name, data) {
             var _a;
             if (!data)
@@ -1184,9 +1258,18 @@ ${value}</textarea
             const [, foundData] = (_a = data.find(([tag]) => tag === name)) !== null && _a !== void 0 ? _a : new Array(2).fill(undefined);
             return foundData;
         }
+        /**
+         * Renders the value as a TemplateResult.
+         * @param value - The value to be rendered.
+         * @returns The rendered value as a TemplateResult.
+         */
         renderValue(value) {
             return x `${value}`;
         }
+        /**
+         * Renders an error message as a TemplateResult.
+         * @returns The rendered error message as a TemplateResult.
+         */
         renderError() {
             return x `<strong>${__("Error")}!</strong>`;
         }
@@ -1551,7 +1634,7 @@ ${value}</textarea
             const openRegistrationElement = (_a = target === null || target === void 0 ? void 0 : target.querySelector('[name="open_registration"]')) !== null && _a !== void 0 ? _a : undefined;
             if (!openRegistrationElement)
                 return;
-            return (openRegistrationElement.checked ? 1 : 0).toString();
+            return openRegistrationElement.checked ? 1 : 0;
         }
         async handleSave(e) {
             e.preventDefault();
