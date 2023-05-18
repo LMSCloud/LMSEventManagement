@@ -92,7 +92,27 @@ sub list {
 
             # Get the preloaded target group fees for the current event
             my $target_groups = $fees_by_event_id{ $event->{id} } // [];
-            if ( @{$target_groups} ) {
+
+            my $has_selected_target_group = 0;
+            if ( defined $params->{target_group} && @{ $params->{target_group} } ) {
+                for my $target_group ( @{$target_groups} ) {
+                    if ( $target_group->{selected} && ( grep { $_ == $target_group->{target_group_id} } @{ $params->{target_group} } ) ) {
+                        $has_selected_target_group = 1;
+                        last;
+                    }
+                }
+            }
+            else {
+                for my $target_group ( @{$target_groups} ) {
+                    if ( $target_group->{selected} ) {
+                        $has_selected_target_group = 1;
+                        last;
+                    }
+                }
+            }
+
+            # Only push the event onto the response if a selected target group matches the requested target_groups
+            if ($has_selected_target_group) {
                 push @{$response}, { %{$event}, target_groups => $target_groups };
             }
         }
