@@ -69,10 +69,9 @@ sub get {
         for my $event ( $events->@* ) {
 
             # Get the preloaded target group fees for the current event
-            my $target_groups          = $fees_by_event_id{ $event->{id} } // [];
-            my $selected_target_groups = [ grep { $_->{selected} } $target_groups->@* ];
+            my $target_groups = $fees_by_event_id{ $event->{id} } // [];
             if ( @{$target_groups} ) {
-                push @{$response}, { %{$event}, target_groups => $selected_target_groups };
+                push @{$response}, { %{$event}, target_groups => $target_groups };
             }
         }
 
