@@ -16,6 +16,7 @@ import {
   faCreditCard,
   faMapMarker,
   faArrowRight,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { map } from "lit/directives/map.js";
 import { __ } from "../lib/translate";
@@ -177,6 +178,39 @@ export default class LMSCardDetailsModal extends LitElement {
     }
   }
 
+  private renderTargetGroupInfo(
+    targetGroupFees: TargetGroupFee[],
+    noFees: boolean
+  ) {
+    const quantity = targetGroupFees?.length ?? 0;
+    return map(targetGroupFees, (targetGroupFee, index) => {
+      const hasTargetGroupId = {}.hasOwnProperty.call(
+        targetGroupFee,
+        "target_group_id"
+      );
+      if (hasTargetGroupId) return nothing;
+
+      const { name, min_age, max_age, fee } = targetGroupFee as unknown as Omit<
+        TargetGroupFee,
+        "id" | "target_group_id" | "selected"
+      > &
+        TargetGroup;
+      return noFees
+        ? html`<span
+            >${name}${index - 1 < quantity && !(quantity === 1)
+              ? "&#44;&nbsp;"
+              : ""}</span
+          >`
+        : html`
+            <tr>
+              <td>${name}</td>
+              <td>${min_age} - ${max_age}</td>
+              <td>${fee}</td>
+            </tr>
+          `;
+    });
+  }
+
   override render() {
     const {
       name,
@@ -188,6 +222,8 @@ export default class LMSCardDetailsModal extends LitElement {
       end_time,
       target_groups,
     } = this.event;
+    const noFees =
+      target_groups?.every((target_group) => target_group.fee === 0) ?? true;
     return html`
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
@@ -255,7 +291,23 @@ export default class LMSCardDetailsModal extends LitElement {
                       <span>${litFontawesome(faCreditCard)}</span>
                       <strong>${__("Fees")}</strong>
                     </p>
-                    <table class="table table-sm table-borderless">
+                    <div ?hidden=${!noFees}>
+                      <p>${__("No fees")}</p>
+                      <p class="wrapper">
+                        <span>${litFontawesome(faUsers)}</span>
+                        <strong>${__("Target Groups")}</strong>
+                      </p>
+                      <p>
+                        ${this.renderTargetGroupInfo(
+                          target_groups as TargetGroupFee[],
+                          noFees
+                        )}
+                      </p>
+                    </div>
+                    <table
+                      class="table table-sm table-borderless"
+                      ?hidden=${noFees}
+                    >
                       <thead>
                         <tr>
                           <th scope="col">${__("Target Group")}</th>
@@ -264,29 +316,10 @@ export default class LMSCardDetailsModal extends LitElement {
                         </tr>
                       </thead>
                       <tbody>
-                        ${map(target_groups, (target_group) => {
-                          if (
-                            {}.hasOwnProperty.call(
-                              target_group,
-                              "target_group_id"
-                            )
-                          ) {
-                            return nothing;
-                          }
-                          const { name, fee, min_age, max_age } =
-                            target_group as unknown as Omit<
-                              TargetGroupFee,
-                              "id" | "target_group_id" | "selected"
-                            > &
-                              TargetGroup;
-                          return html`
-                            <tr>
-                              <td>${name}</td>
-                              <td>${min_age} - ${max_age}</td>
-                              <td>${fee}</td>
-                            </tr>
-                          `;
-                        })}
+                        ${this.renderTargetGroupInfo(
+                          target_groups as TargetGroupFee[],
+                          noFees
+                        )}
                       </tbody>
                     </table>
                   </div>

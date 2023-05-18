@@ -1449,6 +1449,11 @@ ${value}</textarea
       icon: [512, 512, ["edit"], "f044", "M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"]
     };
     var faEdit = faPenToSquare;
+    var faUsers = {
+      prefix: 'fas',
+      iconName: 'users',
+      icon: [640, 512, [], "f0c0", "M144 0a80 80 0 1 1 0 160A80 80 0 1 1 144 0zM512 0a80 80 0 1 1 0 160A80 80 0 1 1 512 0zM0 298.7C0 239.8 47.8 192 106.7 192h42.7c15.9 0 31 3.5 44.6 9.7c-1.3 7.2-1.9 14.7-1.9 22.3c0 38.2 16.8 72.5 43.3 96c-.2 0-.4 0-.7 0H21.3C9.6 320 0 310.4 0 298.7zM405.3 320c-.2 0-.4 0-.7 0c26.6-23.5 43.3-57.8 43.3-96c0-7.6-.7-15-1.9-22.3c13.6-6.3 28.7-9.7 44.6-9.7h42.7C592.2 192 640 239.8 640 298.7c0 11.8-9.6 21.3-21.3 21.3H405.3zM224 224a96 96 0 1 1 192 0 96 96 0 1 1 -192 0zM128 485.3C128 411.7 187.7 352 261.3 352H378.7C452.3 352 512 411.7 512 485.3c0 14.7-11.9 26.7-26.7 26.7H154.7c-14.7 0-26.7-11.9-26.7-26.7z"]
+    };
     var faBullseye = {
       prefix: 'fas',
       iconName: 'bullseye',
@@ -2648,8 +2653,33 @@ ${value}</textarea
                 this.closeButton.focus();
             }
         }
+        renderTargetGroupInfo(targetGroupFees, noFees) {
+            var _a;
+            const quantity = (_a = targetGroupFees === null || targetGroupFees === void 0 ? void 0 : targetGroupFees.length) !== null && _a !== void 0 ? _a : 0;
+            return o$2(targetGroupFees, (targetGroupFee, index) => {
+                const hasTargetGroupId = {}.hasOwnProperty.call(targetGroupFee, "target_group_id");
+                if (hasTargetGroupId)
+                    return A;
+                const { name, min_age, max_age, fee } = targetGroupFee;
+                return noFees
+                    ? x `<span
+            >${name}${index - 1 < quantity && !(quantity === 1)
+                    ? "&#44;&nbsp;"
+                    : ""}</span
+          >`
+                    : x `
+            <tr>
+              <td>${name}</td>
+              <td>${min_age} - ${max_age}</td>
+              <td>${fee}</td>
+            </tr>
+          `;
+            });
+        }
         render() {
+            var _a;
             const { name, description, location, image, registration_link, start_time, end_time, target_groups, } = this.event;
+            const noFees = (_a = target_groups === null || target_groups === void 0 ? void 0 : target_groups.every((target_group) => target_group.fee === 0)) !== null && _a !== void 0 ? _a : true;
             return x `
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
@@ -2717,7 +2747,20 @@ ${value}</textarea
                       <span>${litFontawesome_2(faCreditCard)}</span>
                       <strong>${__("Fees")}</strong>
                     </p>
-                    <table class="table table-sm table-borderless">
+                    <div ?hidden=${!noFees}>
+                      <p>${__("No fees")}</p>
+                      <p class="wrapper">
+                        <span>${litFontawesome_2(faUsers)}</span>
+                        <strong>${__("Target Groups")}</strong>
+                      </p>
+                      <p>
+                        ${this.renderTargetGroupInfo(target_groups, noFees)}
+                      </p>
+                    </div>
+                    <table
+                      class="table table-sm table-borderless"
+                      ?hidden=${noFees}
+                    >
                       <thead>
                         <tr>
                           <th scope="col">${__("Target Group")}</th>
@@ -2726,19 +2769,7 @@ ${value}</textarea
                         </tr>
                       </thead>
                       <tbody>
-                        ${o$2(target_groups, (target_group) => {
-            if ({}.hasOwnProperty.call(target_group, "target_group_id")) {
-                return A;
-            }
-            const { name, fee, min_age, max_age } = target_group;
-            return x `
-                            <tr>
-                              <td>${name}</td>
-                              <td>${min_age} - ${max_age}</td>
-                              <td>${fee}</td>
-                            </tr>
-                          `;
-        })}
+                        ${this.renderTargetGroupInfo(target_groups, noFees)}
                       </tbody>
                     </table>
                   </div>
