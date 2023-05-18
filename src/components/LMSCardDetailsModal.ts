@@ -198,7 +198,7 @@ export default class LMSCardDetailsModal extends LitElement {
       return noFees
         ? html`<span
             >${name}${index - 1 < quantity && !(quantity === 1)
-              ? "&#44;&nbsp;"
+              ? ", "
               : ""}</span
           >`
         : html`

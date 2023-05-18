@@ -2671,7 +2671,7 @@ ${value}</textarea
                 return noFees
                     ? x `<span
             >${name}${index - 1 < quantity && !(quantity === 1)
-                    ? "&#44;&nbsp;"
+                    ? ", "
                     : ""}</span
           >`
                     : x `
