@@ -2671,7 +2671,6 @@ ${value}</textarea
                 const { name, min_age, max_age, fee, selected } = targetGroupFee;
                 if (!selected)
                     return A;
-                console.log(", or not", index, quantity);
                 return noFees
                     ? x `<span>${name}${index + 1 < quantity ? ", " : ""}</span>`
                     : x `
