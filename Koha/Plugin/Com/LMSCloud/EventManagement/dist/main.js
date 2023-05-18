@@ -2497,8 +2497,8 @@ ${value}</textarea
     let LMSCard = class LMSCard extends s {
         constructor() {
             super(...arguments);
-            this.title = "Card title";
-            this.text = "Some quick example text to build on the card title and make up the bulk of the card's content.";
+            this.title = "";
+            this.text = "";
             this.image = {};
             this.links = [];
             this.listItems = [];
@@ -2513,7 +2513,14 @@ ${value}</textarea
           ?hidden=${!this.image.src}
         />
         <div class="card-body">
-          <h5 class="card-title" ?hidden=${!this.title}>${this.title}</h5>
+          <h5
+            class="card-title ${o$1({
+            "mb-0": !this.text,
+        })}"
+            ?hidden=${!this.title}
+          >
+            ${this.title}
+          </h5>
           <p class="card-text" ?hidden=${!this.text}>${this.text}</p>
         </div>
         <ul
@@ -6315,7 +6322,6 @@ ${value}</textarea
                 this.handleShowDetails({ lmsEvent: event });
             }}
                         .title=${event.name}
-                        .text=${event.description}
                         .listItems=${[
                 x `<span class="text-muted font-weight-light">
                             <small>

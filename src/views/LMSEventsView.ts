@@ -260,7 +260,6 @@ export default class LMSEventsView extends LitElement {
                           this.handleShowDetails({ lmsEvent: event });
                         }}
                         .title=${event.name}
-                        .text=${event.description}
                         .listItems=${[
                           html`<span class="text-muted font-weight-light">
                             <small>
