@@ -91,7 +91,9 @@ export default class StaffEventTypesView extends LitElement {
       `/api/v1/contrib/eventmanagement/event_types?${this.queryBuilder.query.toString()}`
     );
     this.event_types = await response.json();
-    this.hasNoResults = this.event_types.length === 0;
+    const noItems = this.event_types.length === 0;
+    this.isEmpty = noItems;
+    this.hasNoResults = noItems;
     this.queryBuilder.updateUrl();
     this.requestUpdate();
   }
@@ -138,6 +140,12 @@ export default class StaffEventTypesView extends LitElement {
     );
   }
 
+  private hasRequiredDataToAdd() {
+    return [this.target_groups, this.locations].every(
+      (data) => data.length > 0
+    );
+  }
+
   override render() {
     if (!this.hasLoaded) {
       return html` <div class="container-fluid mx-0">
@@ -146,30 +154,39 @@ export default class StaffEventTypesView extends LitElement {
     }
 
     if (this.hasLoaded && this.isEmpty) {
-      return html` <h1 class="text-center">
-        ${__("You have to create a")}&nbsp;
-        <lms-anchor
-          .href=${{
-            ...this.href,
-            params: {
-              ...this.href.params,
-              op: "target-groups",
-            },
-          }}
-          >${__("target group")}</lms-anchor
-        >&nbsp;${__("and a")}&nbsp;
-        <lms-anchor
-          .href=${{
-            ...this.href,
-            params: {
-              ...this.href.params,
-              op: "locations",
-            },
-          }}
-          >${__("location")}</lms-anchor
-        >
-        &nbsp;${__("first")}.
-      </h1>`;
+      return this.hasRequiredDataToAdd()
+        ? html` <h1 class="text-center">
+              ${__(
+                "You can add a new event type by clicking the + button below"
+              )}.
+            </h1>
+            <lms-event-types-modal
+              @created=${this.fetchUpdate}
+            ></lms-event-types-modal>`
+        : html` <h1 class="text-center">
+            ${__("You have to create a")}&nbsp;
+            <lms-anchor
+              .href=${{
+                ...this.href,
+                params: {
+                  ...this.href.params,
+                  op: "target-groups",
+                },
+              }}
+              >${__("target group")}</lms-anchor
+            >&nbsp;${__("and a")}&nbsp;
+            <lms-anchor
+              .href=${{
+                ...this.href,
+                params: {
+                  ...this.href.params,
+                  op: "locations",
+                },
+              }}
+              >${__("location")}</lms-anchor
+            >
+            &nbsp;${__("first")}.
+          </h1>`;
     }
 
     return html`

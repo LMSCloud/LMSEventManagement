@@ -73,7 +73,9 @@ export default class StaffLocationsView extends LitElement {
       `/api/v1/contrib/eventmanagement/locations?${this.queryBuilder.query.toString()}`
     );
     this.locations = await response.json();
-    this.hasNoResults = this.locations.length === 0;
+    const noItems = this.locations.length === 0;
+    this.isEmpty = noItems;
+    this.hasNoResults = noItems;
     this.queryBuilder.updateUrl();
     this.requestUpdate();
   }
@@ -122,7 +124,8 @@ export default class StaffLocationsView extends LitElement {
     }
 
     if (this.hasLoaded && this.isEmpty) {
-      return html` <h1 class="text-center">${__("No data to display")}.</h1>`;
+      return html` <h1 class="text-center">${__("No data to display")}.</h1>
+        <lms-locations-modal @created=${this.fetchUpdate}></lms-locations-modal>`;
     }
 
     return html`
