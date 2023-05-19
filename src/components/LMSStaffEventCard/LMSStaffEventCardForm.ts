@@ -161,7 +161,7 @@ export default class LMSStaffEventCardForm extends LitElement {
   /**
    * Processes the datetime-local elements in the form.
    * We need to assure they aren't rejected by the api validation.
-   * We remove the idiosynchracies from the ISO8601 standard
+   * We remove the idiosyncracies from the ISO8601 standard
    * and convert straight into sql writable strings.
    * @param target - The HTMLFormElement containing the datetime-local elements.
    * @returns The processed datetime-local elements.
