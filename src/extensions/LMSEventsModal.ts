@@ -1,6 +1,11 @@
 import { customElement, property, state } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
-import { CreateOpts, EventType, LMSLocation, TargetGroup } from "../sharedDeclarations";
+import {
+  CreateOpts,
+  EventType,
+  LMSLocation,
+  TargetGroup,
+} from "../sharedDeclarations";
 import { __ } from "../lib/translate";
 
 @customElement("lms-events-modal")
@@ -9,7 +14,8 @@ export default class LMSEventsModal extends LMSModal {
     method: "POST",
     endpoint: "/api/v1/contrib/eventmanagement/events",
   };
-  @state() private selectedEventTypeId: number | undefined = undefined;
+
+  @state() selectedEventTypeId: number | undefined = undefined;
 
   override async connectedCallback() {
     super.connectedCallback();
@@ -160,6 +166,40 @@ export default class LMSEventsModal extends LMSModal {
     ];
   }
 
+  private async fetchEventType(id: number) {
+    return fetch(`/api/v1/contrib/eventmanagement/event_types/${id}`)
+      .then((response) => response.json())
+      .then((event_type) => event_type as EventType);
+  }
+
+  private convertFieldValuesToRequestedType(eventType: EventType) {
+    const eventTypeFields = Object.entries(eventType);
+    eventTypeFields.forEach(([property, value]) => {
+      const field = this.fields.find((field) => field.name === property);
+      if (field) {
+        switch (typeof value) {
+          case "number":
+            field.value = value.toString();
+            break;
+          case "boolean":
+            field.value = value ? 1 : 0;
+            break;
+          case "object":
+            if (value instanceof Array) {
+              field.value = value.map((item) => ({
+                id: item.target_group_id.toString(),
+                selected: item.selected ? 1 : 0,
+                fee: item.fee.toString(),
+              }));
+            }
+            break;
+          default:
+            field.value = value;
+        }
+      }
+    });
+  }
+
   override willUpdate() {
     const { fields } = this;
     const eventTypeField = fields.find((field) => field.name === "event_type");
@@ -169,57 +209,21 @@ export default class LMSEventsModal extends LMSModal {
         /** We destructure the default event_type out of the dbData array
          *  to set the selectedEventTypeId state variable. */
         const [event_type] = dbData;
-        let { id } = event_type;
+        if (!event_type) return;
 
+        let { id } = event_type;
         /** If the eventTypeField value has changed due to a select element
          *  change event, we use it instead of the default. */
         id = (eventTypeField?.value as string) ?? id;
 
-        const result = async () => {
-          const response = await fetch(
-            `/api/v1/contrib/eventmanagement/event_types/${id}`
-          );
+        const eventType = this.fetchEventType(parseInt(id, 10));
 
-          if (response.ok) {
-            return response.json() as unknown as EventType;
-          }
-
-          const error = await response.json();
-          return error as Error;
-        };
-
-        result()
+        eventType
           .then((event_type) => {
-            if (event_type instanceof Error) {
-              return;
-            }
-
-            if (!this.selectedEventTypeId || this.selectedEventTypeId != id) {
-              Object.entries(event_type).forEach(([property, value]) => {
-                const field = fields.find((field) => field.name === property);
-                if (field) {
-                  switch (typeof value) {
-                    case "number":
-                      field.value = value.toString();
-                      break;
-                    case "boolean":
-                      field.value = (value ? 1 : 0).toString();
-                      break;
-                    case "object":
-                      if (value instanceof Array) {
-                        field.value = value.map((item) => ({
-                          id: item.target_group_id.toString(),
-                          selected: (item.selected ? 1 : 0).toString(),
-                          fee: item.fee.toString(),
-                        }));
-                      }
-                      break;
-                    default:
-                      field.value = value;
-                  }
-                }
-              });
-
+            const hasValidNewId =
+              !this.selectedEventTypeId || this.selectedEventTypeId != id;
+            if (hasValidNewId) {
+              this.convertFieldValuesToRequestedType(event_type);
               this.selectedEventTypeId =
                 typeof id === "string" ? parseInt(id, 10) : id;
             }
