@@ -96,13 +96,19 @@ export type SelectOption = {
   name: string | TranslatedString;
 };
 
+export type BaseFieldValue =
+  | string
+  | number
+  | boolean
+  | Array<Record<string, string | number | boolean>>;
+
 export type BaseField = {
   name: string;
   desc?: string | TranslatedString;
-  logic?: () => Promise<SelectOption[]>;
+  logic?: () => Promise<Array<SelectOption>>;
 } & Partial<{
   required: boolean;
-  value: string | { [key: string]: string }[];
+  value: BaseFieldValue;
   dbData: SelectOption[];
   attributes: [string, string | number][];
 }>;
