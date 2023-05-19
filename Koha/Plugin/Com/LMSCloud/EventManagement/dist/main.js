@@ -123,8 +123,20 @@
             this.field = {};
             this.value = "";
         }
+        handleChange(e) {
+            const input = e.target;
+            this.field.value = input.checked ? 1 : 0;
+        }
+        getCheckedState() {
+            if (typeof this.value === "boolean") {
+                return this.value;
+            }
+            if (typeof this.value === "string") {
+                return ["true", "1"].includes(this.value);
+            }
+            return false;
+        }
         render() {
-            var _a;
             const { name, value, desc, required } = this.field;
             return x `
       <div class="form-check">
@@ -132,15 +144,13 @@
           type="checkbox"
           name=${name}
           id=${name}
-          value=${(_a = value) !== null && _a !== void 0 ? _a : "1"}
+          value=${value ? 1 : 0}
           class="form-check-input"
-          @input=${(e) => {
-            this.field.value = (e.target.checked ? 1 : 0).toString();
-        }}
+          @change=${this.handleChange}
           ?required=${required}
-          ?checked=${[true, "true", "1"].includes(this.value)}
+          ?checked=${this.getCheckedState}
         />
-        <label for="${name}">&nbsp;${desc}</label>
+        <label for=${name}>&nbsp;${desc}</label>
       </div>
     `;
         }
@@ -169,228 +179,6 @@
      * SPDX-License-Identifier: BSD-3-Clause
      */
     function*o$2(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
-
-    let LMSMatrix = class LMSMatrix extends s {
-        constructor() {
-            super(...arguments);
-            this.field = {};
-            this.value = [];
-        }
-        render() {
-            const { field } = this;
-            return x ` <label for=${field.name}>${field.desc}</label>
-      <table class="table table-bordered" id=${field.name}>
-        <thead>
-          <tr>
-            ${o$2(field.headers, ([name]) => x `<th scope="col">${name}</th>`)}
-          </tr>
-        </thead>
-        <tbody>
-          ${o$2(field.dbData, (row) => x `<tr>
-              <td class="align-middle">${row.name}</td>
-              ${o$2(field.headers, (header) => this.getMatrixInputMarkup({ field, row, header }))}
-            </tr>`)}
-        </tbody>
-      </table>`;
-        }
-        handleInput({ e, id, header }) {
-            if (!(e.target instanceof HTMLInputElement))
-                return;
-            const { field } = this;
-            const { type } = e.target;
-            const [name] = header;
-            const updateOrCreateItem = (value) => {
-                /** If there's no Array present in field.value
-                 *  we create one and add the item to it. */
-                if (!((field === null || field === void 0 ? void 0 : field.value) instanceof Array)) {
-                    field.value = [{ id: id.toString(), [name]: value }];
-                    return;
-                }
-                /** Now it must be an array because the guard clause
-                 *  didn't return in the previous step. We check if
-                 *  the item exists and update it if it does. */
-                const item = field.value.find((item) => item.id == id);
-                if (item) {
-                    item[name] = value;
-                    return;
-                }
-                /** If it is an Array but we didn't find an item  we
-                 *  have to add a new one. */
-                field.value.push({ id: id.toString(), [name]: value });
-            };
-            switch (type) {
-                case "number": {
-                    const { value } = e.target;
-                    updateOrCreateItem(value.toString());
-                    break;
-                }
-                case "checkbox": {
-                    const { checked } = e.target;
-                    updateOrCreateItem((checked ? 1 : 0).toString());
-                    break;
-                }
-            }
-        }
-        getMatrixInputMarkup({ field, row, header }) {
-            var _a, _b, _c, _d, _e;
-            const [name, type] = header;
-            const inputTypes = new Map([
-                [
-                    "number",
-                    x `<td class="align-middle">
-          <input
-            type="number"
-            name=${row.name}
-            id=${row.id}
-            .value=${field.value instanceof Array
-                    ? (_b = (_a = field.value.find((item) => item.id == row.id)) === null || _a === void 0 ? void 0 : _a[name]) !== null && _b !== void 0 ? _b : ""
-                    : ""}
-            class="form-control"
-            step=${l((_d = (_c = field.attributes) === null || _c === void 0 ? void 0 : _c.find(([attribute]) => attribute === "step")) === null || _d === void 0 ? void 0 : _d.slice(-1)[0])}
-            @input=${(e) => this.handleInput({ e, id: row.id, header })}
-            ?required=${field.required}
-          />
-        </td>`,
-                ],
-                [
-                    "checkbox",
-                    x ` <td class="align-middle">
-          <input
-            type="checkbox"
-            name=${row.name}
-            id=${row.id}
-            class="form-control"
-            @input=${(e) => this.handleInput({ e, id: row.id, header })}
-            ?required=${field.required}
-            .checked=${field.value instanceof Array
-                    ? ((_e = field.value.find((item) => item.id == row.id)) === null || _e === void 0 ? void 0 : _e[name]) === "1"
-                        ? true
-                        : false
-                    : false}
-          />
-        </td>`,
-                ],
-            ]);
-            return inputTypes.has(type)
-                ? inputTypes.get(type)
-                : inputTypes.get("default");
-        }
-    };
-    // @state() private hasTransformedField = false;
-    LMSMatrix.styles = [
-        bootstrapStyles,
-        i$5 `
-      input[type="checkbox"].form-control {
-        font-size: 0.375rem;
-      }
-    `,
-    ];
-    __decorate([
-        e$2({ type: Object })
-    ], LMSMatrix.prototype, "field", void 0);
-    __decorate([
-        e$2({ type: Array })
-    ], LMSMatrix.prototype, "value", void 0);
-    LMSMatrix = __decorate([
-        e$3("lms-matrix")
-    ], LMSMatrix);
-    var LMSMatrix$1 = LMSMatrix;
-
-    let LMSPrimitivesInput = class LMSPrimitivesInput extends s {
-        constructor() {
-            super(...arguments);
-            this.field = {};
-            this.value = "";
-        }
-        render() {
-            var _a;
-            const { name, value, desc, type, required } = this.field;
-            return x ` <div class="form-group">
-      <label for=${name}>${desc}</label>
-      <input
-        type=${l(type)}
-        name=${name}
-        id=${name}
-        value=${l(typeof this.value === "string" ? this.value : (_a = this.value) === null || _a === void 0 ? void 0 : _a.toString())}
-        class="form-control"
-        @input=${(e) => {
-            var _a;
-            this.field.value = (_a = e.target.value) !== null && _a !== void 0 ? _a : value;
-        }}
-        ?required=${required}
-      />
-    </div>`;
-        }
-    };
-    LMSPrimitivesInput.styles = [bootstrapStyles];
-    __decorate([
-        e$2({ type: Object })
-    ], LMSPrimitivesInput.prototype, "field", void 0);
-    __decorate([
-        e$2({ type: Object })
-    ], LMSPrimitivesInput.prototype, "value", void 0);
-    LMSPrimitivesInput = __decorate([
-        e$3("lms-primitives-input")
-    ], LMSPrimitivesInput);
-    var LMSPrimitivesInput$1 = LMSPrimitivesInput;
-
-    let LMSSelect = class LMSSelect extends s {
-        constructor() {
-            super(...arguments);
-            this.defaultOption = {};
-            this.field = {};
-        }
-        firstUpdated() {
-            const { dbData } = this.field;
-            if (dbData === null || dbData === void 0 ? void 0 : dbData.length) {
-                const [defaultOption] = dbData;
-                const { id } = defaultOption;
-                this.field.value = id.toString();
-                this.defaultOption = defaultOption;
-            }
-        }
-        render() {
-            const { name, desc, value, required, dbData } = this.field;
-            return x `
-      <div class="form-group">
-        <label for=${name}>${desc}</label>
-        <select
-          name=${name}
-          id=${name}
-          class="form-control"
-          @change=${(e) => {
-            var _a;
-            this.field.value = (_a = e.target.value) !== null && _a !== void 0 ? _a : value;
-            this.dispatchEvent(new CustomEvent("change", {
-                detail: {
-                    name,
-                    value: this.field.value,
-                },
-                composed: true,
-                bubbles: true,
-            }));
-        }}
-          ?required=${required}
-        >
-          ${o$2(dbData, ({ id, name }) => x `<option
-                value=${id}
-                ?selected=${id === this.defaultOption.id}
-              >
-                ${name}
-              </option>`)}
-        </select>
-      </div>
-    `;
-        }
-    };
-    LMSSelect.styles = [bootstrapStyles];
-    __decorate([
-        e$2({ type: Object })
-    ], LMSSelect.prototype, "field", void 0);
-    LMSSelect = __decorate([
-        e$3("lms-select")
-    ], LMSSelect);
-    var LMSSelect$1 = LMSSelect;
 
     /*! gettext.js - Guillaume Potier - MIT Licensed */
     var i18n = function (options) {
@@ -808,81 +596,144 @@
     const attr__ = e(TranslateAttributeDirective);
     const __ = e(TranslateDirective);
 
-    const skeletonStyles = i$5 `
-  .skeleton {
-    opacity: 0.7;
-    animation: skeleton-loading 1s linear infinite alternate;
-  }
-
-  .skeleton-text {
-    color: transparent;
-    width: 100%;
-    height: 1em;
-    margin-bottom: 0.25rem;
-    border-radius: 5px;
-  }
-
-  .skeleton-text:last-child {
-    margin-bottom: 0;
-    width: 80%;
-  }
-
-  .skeleton-table {
-    display: table;
-    width: 100%;
-    height: 50vh;
-    height: 50dvh;
-    border-collapse: collapse;
-    border-spacing: 0;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-  }
-
-  .skeleton-card {
-    flex: 0 0 auto;
-    margin: 1rem;
-    width: calc(20% - 2rem);
-    height: 20rem;
-    border: 1px solid #dee2e6;
-    border-radius: 0.25rem;
-  }
-
-  @keyframes skeleton-loading {
-    0% {
-      background-color: hsl(200, 20%, 70%);
-    }
-
-    100% {
-      background-color: hsl(200, 20%, 95%);
-    }
-  }
-`;
-
-    let LMSStaffEventCardAttendees = class LMSStaffEventCardAttendees extends s {
+    let LMSMatrix = class LMSMatrix extends s {
+        constructor() {
+            super(...arguments);
+            this.field = {};
+            this.value = [];
+        }
         render() {
-            return x ` <h1 class="text-center">${__("Not implemented")}!</h1> `;
+            const { field } = this;
+            return x ` <label for=${field.name}>${field.desc}</label>
+      <table class="table table-bordered" id=${field.name}>
+        <thead>
+          <tr>
+            ${o$2(field.headers, ([name]) => x `<th scope="col">${__(name)}</th>`)}
+          </tr>
+        </thead>
+        <tbody>
+          ${o$2(field.dbData, (row) => x `<tr>
+              <td class="align-middle">${row.name}</td>
+              ${o$2(field.headers, (header) => this.getMatrixInputMarkup({ field, row, header }))}
+            </tr>`)}
+        </tbody>
+      </table>`;
+        }
+        handleInput({ e, id, header }) {
+            if (!(e.target instanceof HTMLInputElement))
+                return;
+            const { field } = this;
+            const { type } = e.target;
+            const [name] = header;
+            const updateOrCreateItem = (value) => {
+                /** If there's no Array present in field.value
+                 *  we create one and add the item to it. */
+                if (!((field === null || field === void 0 ? void 0 : field.value) instanceof Array)) {
+                    field.value = [{ id: id.toString(), [name]: value }];
+                    return;
+                }
+                /** Now it must be an array because the guard clause
+                 *  didn't return in the previous step. We check if
+                 *  the item exists and update it if it does. */
+                const item = field.value.find((item) => item.id == id);
+                if (item) {
+                    item[name] = value;
+                    return;
+                }
+                /** If it is an Array but we didn't find an item  we
+                 *  have to add a new one. */
+                field.value.push({ id: id.toString(), [name]: value });
+            };
+            switch (type) {
+                case "number": {
+                    const { value } = e.target;
+                    updateOrCreateItem(value.toString());
+                    break;
+                }
+                case "checkbox": {
+                    const { checked } = e.target;
+                    updateOrCreateItem(checked ? 1 : 0);
+                    break;
+                }
+            }
+        }
+        getValue(name, value, row) {
+            var _a, _b;
+            if (value instanceof Array) {
+                return (_b = (_a = value.find((item) => item.id == row.id)) === null || _a === void 0 ? void 0 : _a[name]) !== null && _b !== void 0 ? _b : "0";
+            }
+            if (typeof value === "string") {
+                return value;
+            }
+            if (typeof value === "number") {
+                return value.toString();
+            }
+            return "0";
+        }
+        getCheckedState(name, value, row) {
+            var _a, _b;
+            if (value instanceof Array) {
+                return (_b = ((_a = value.find((item) => item.id == row.id)) === null || _a === void 0 ? void 0 : _a[name]) === 1) !== null && _b !== void 0 ? _b : false;
+            }
+            if (typeof value === "boolean") {
+                return value;
+            }
+            if (typeof value === "string") {
+                return ["true", "1"].includes(value);
+            }
+            return false;
+        }
+        getMatrixInputMarkup({ field, row, header }) {
+            var _a, _b;
+            const [name, type] = header;
+            const inputTypes = {
+                number: x `<td class="align-middle">
+        <input
+          type="number"
+          name=${row.name}
+          id=${row.id}
+          value=${this.getValue(name, field.value, row)}
+          class="form-control"
+          step=${l((_b = (_a = field.attributes) === null || _a === void 0 ? void 0 : _a.find(([attribute]) => attribute === "step")) === null || _b === void 0 ? void 0 : _b.slice(-1)[0])}
+          @input=${(e) => this.handleInput({ e, id: row.id, header })}
+          ?required=${field.required}
+        />
+      </td>`,
+                checkbox: x ` <td class="align-middle">
+        <input
+          type="checkbox"
+          name=${row.name}
+          id=${row.id}
+          class="form-control"
+          @input=${(e) => this.handleInput({ e, id: row.id, header })}
+          ?required=${field.required}
+          ?checked=${this.getCheckedState(name, field.value, row)}
+        />
+      </td>`,
+            };
+            return {}.hasOwnProperty.call(inputTypes, type)
+                ? inputTypes[type]
+                : inputTypes["default"];
         }
     };
-    LMSStaffEventCardAttendees.styles = [
+    LMSMatrix.styles = [
         bootstrapStyles,
-        skeletonStyles,
         i$5 `
-      svg {
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        color: #ffffff;
-      }
-
-      button {
-        white-space: nowrap;
+      input[type="checkbox"].form-control {
+        font-size: 0.375rem;
       }
     `,
     ];
-    LMSStaffEventCardAttendees = __decorate([
-        e$3("lms-staff-event-card-attendees")
-    ], LMSStaffEventCardAttendees);
-    var LMSStaffEventCardAttendees$1 = LMSStaffEventCardAttendees;
+    __decorate([
+        e$2({ type: Object })
+    ], LMSMatrix.prototype, "field", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSMatrix.prototype, "value", void 0);
+    LMSMatrix = __decorate([
+        e$3("lms-matrix")
+    ], LMSMatrix);
+    var LMSMatrix$1 = LMSMatrix;
 
     /**
      * Represents a TemplateResultConverter that can extract values and render strings from a TemplateResult.
@@ -967,6 +818,17 @@
             return normalizedDateTime;
         }
         return string;
+    }
+    /**
+     * Converts a datetime string to ISO8601 format.
+     * @param string - The datetime string to convert.
+     * @returns The converted datetime string.
+     * @see https://en.wikipedia.org/wiki/ISO_8601
+     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+     */
+    function convertToISO8601(string) {
+        const datetime = new Date(string);
+        return datetime.toISOString();
     }
     /**
      * Represents an InputConverter that handles conversion of input fields based on their name.
@@ -1273,6 +1135,183 @@ ${value}</textarea
             return x `<strong>${__("Error")}!</strong>`;
         }
     }
+
+    let LMSPrimitivesInput = class LMSPrimitivesInput extends s {
+        constructor() {
+            super(...arguments);
+            this.field = {};
+            this.value = "";
+        }
+        handleInput(e) {
+            const { type, value } = e.target;
+            if (type === "datetime-local") {
+                this.field.value = convertToISO8601(value);
+                return;
+            }
+            this.field.value = value;
+        }
+        render() {
+            var _a;
+            const { name, desc, type, required } = this.field;
+            return x ` <div class="form-group">
+      <label for=${name}>${desc}</label>
+      <input
+        type=${l(type)}
+        name=${name}
+        id=${name}
+        value=${l(typeof this.value === "string" ? this.value : (_a = this.value) === null || _a === void 0 ? void 0 : _a.toString())}
+        class="form-control"
+        @input=${this.handleInput}
+        ?required=${required}
+      />
+    </div>`;
+        }
+    };
+    LMSPrimitivesInput.styles = [bootstrapStyles];
+    __decorate([
+        e$2({ type: Object })
+    ], LMSPrimitivesInput.prototype, "field", void 0);
+    __decorate([
+        e$2({ type: Object })
+    ], LMSPrimitivesInput.prototype, "value", void 0);
+    LMSPrimitivesInput = __decorate([
+        e$3("lms-primitives-input")
+    ], LMSPrimitivesInput);
+    var LMSPrimitivesInput$1 = LMSPrimitivesInput;
+
+    let LMSSelect = class LMSSelect extends s {
+        constructor() {
+            super(...arguments);
+            this.field = {};
+            this.defaultOption = {};
+        }
+        firstUpdated() {
+            const { dbData } = this.field;
+            if (dbData === null || dbData === void 0 ? void 0 : dbData.length) {
+                const [defaultOption] = dbData;
+                const { id } = defaultOption;
+                this.field.value = id.toString();
+                this.defaultOption = defaultOption;
+            }
+        }
+        render() {
+            const { name, desc, value, required, dbData } = this.field;
+            return x `
+      <div class="form-group">
+        <label for=${name}>${desc}</label>
+        <select
+          name=${name}
+          id=${name}
+          class="form-control"
+          @change=${(e) => {
+            var _a;
+            this.field.value = (_a = e.target.value) !== null && _a !== void 0 ? _a : value;
+            this.dispatchEvent(new CustomEvent("change", {
+                detail: {
+                    name,
+                    value: this.field.value,
+                },
+                composed: true,
+                bubbles: true,
+            }));
+        }}
+          ?required=${required}
+        >
+          ${o$2(dbData, ({ id, name }) => x `<option
+                value=${id}
+                ?selected=${id === this.defaultOption.id}
+              >
+                ${name}
+              </option>`)}
+        </select>
+      </div>
+    `;
+        }
+    };
+    LMSSelect.styles = [bootstrapStyles];
+    __decorate([
+        e$2({ type: Object })
+    ], LMSSelect.prototype, "field", void 0);
+    LMSSelect = __decorate([
+        e$3("lms-select")
+    ], LMSSelect);
+    var LMSSelect$1 = LMSSelect;
+
+    const skeletonStyles = i$5 `
+  .skeleton {
+    opacity: 0.7;
+    animation: skeleton-loading 1s linear infinite alternate;
+  }
+
+  .skeleton-text {
+    color: transparent;
+    width: 100%;
+    height: 1em;
+    margin-bottom: 0.25rem;
+    border-radius: 5px;
+  }
+
+  .skeleton-text:last-child {
+    margin-bottom: 0;
+    width: 80%;
+  }
+
+  .skeleton-table {
+    display: table;
+    width: 100%;
+    height: 50vh;
+    height: 50dvh;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+  }
+
+  .skeleton-card {
+    flex: 0 0 auto;
+    margin: 1rem;
+    width: calc(20% - 2rem);
+    height: 20rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+  }
+
+  @keyframes skeleton-loading {
+    0% {
+      background-color: hsl(200, 20%, 70%);
+    }
+
+    100% {
+      background-color: hsl(200, 20%, 95%);
+    }
+  }
+`;
+
+    let LMSStaffEventCardAttendees = class LMSStaffEventCardAttendees extends s {
+        render() {
+            return x ` <h1 class="text-center">${__("Not implemented")}!</h1> `;
+        }
+    };
+    LMSStaffEventCardAttendees.styles = [
+        bootstrapStyles,
+        skeletonStyles,
+        i$5 `
+      svg {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        color: #ffffff;
+      }
+
+      button {
+        white-space: nowrap;
+      }
+    `,
+    ];
+    LMSStaffEventCardAttendees = __decorate([
+        e$3("lms-staff-event-card-attendees")
+    ], LMSStaffEventCardAttendees);
+    var LMSStaffEventCardAttendees$1 = LMSStaffEventCardAttendees;
 
     let LMSStaffEventCardPreview = class LMSStaffEventCardPreview extends s {
         constructor() {
@@ -1619,7 +1658,7 @@ ${value}</textarea
         /**
          * Processes the datetime-local elements in the form.
          * We need to assure they aren't rejected by the api validation.
-         * We remove the idiosynchracies from the ISO8601 standard
+         * We remove the idiosyncracies from the ISO8601 standard
          * and convert straight into sql writable strings.
          * @param target - The HTMLFormElement containing the datetime-local elements.
          * @returns The processed datetime-local elements.
@@ -4187,40 +4226,28 @@ ${value}</textarea
             if (!type || !desc)
                 return A;
             const { value } = field;
-            const fieldTypes = new Map([
-                [
-                    "select",
-                    x `<lms-select
-          @change=${this.mediateChange}
-          .field=${field}
-        ></lms-select>`,
-                ],
-                [
-                    "checkbox",
-                    x `<lms-checkbox-input
-          .field=${field}
-          .value=${value}
-        ></lms-checkbox-input>`,
-                ],
-                ["info", x `<p>${desc}</p>`],
-                [
-                    "matrix",
-                    x `<lms-matrix
-          .field=${field}
-          .value=${value}
-        ></lms-matrix>`,
-                ],
-                [
-                    "default",
-                    x `<lms-primitives-input
-          .field=${field}
-          .value=${value}
-        ></lms-primitives-input>`,
-                ],
-            ]);
-            return fieldTypes.has(type)
-                ? fieldTypes.get(type)
-                : fieldTypes.get("default");
+            const fieldTypes = {
+                select: x `<lms-select
+        @change=${this.mediateChange}
+        .field=${field}
+      ></lms-select>`,
+                checkbox: x `<lms-checkbox-input
+        .field=${field}
+        .value=${value}
+      ></lms-checkbox-input>`,
+                info: x `<p>${desc}</p>`,
+                matrix: x `<lms-matrix
+        .field=${field}
+        .value=${value}
+      ></lms-matrix>`,
+                default: x `<lms-primitives-input
+        .field=${field}
+        .value=${value}
+      ></lms-primitives-input>`,
+            };
+            return {}.hasOwnProperty.call(fieldTypes, type)
+                ? fieldTypes[type]
+                : fieldTypes["default"];
         }
     };
     LMSModal.styles = [
@@ -4960,6 +4987,38 @@ ${value}</textarea
                 },
             ];
         }
+        async fetchEventType(id) {
+            return fetch(`/api/v1/contrib/eventmanagement/event_types/${id}`)
+                .then((response) => response.json())
+                .then((event_type) => event_type);
+        }
+        convertFieldValuesToRequestedType(eventType) {
+            const eventTypeFields = Object.entries(eventType);
+            eventTypeFields.forEach(([property, value]) => {
+                const field = this.fields.find((field) => field.name === property);
+                if (field) {
+                    switch (typeof value) {
+                        case "number":
+                            field.value = value.toString();
+                            break;
+                        case "boolean":
+                            field.value = value ? 1 : 0;
+                            break;
+                        case "object":
+                            if (value instanceof Array) {
+                                field.value = value.map((item) => ({
+                                    id: item.target_group_id.toString(),
+                                    selected: item.selected ? 1 : 0,
+                                    fee: item.fee.toString(),
+                                }));
+                            }
+                            break;
+                        default:
+                            field.value = value;
+                    }
+                }
+            });
+        }
         willUpdate() {
             var _a;
             const { fields } = this;
@@ -4970,48 +5029,18 @@ ${value}</textarea
                     /** We destructure the default event_type out of the dbData array
                      *  to set the selectedEventTypeId state variable. */
                     const [event_type] = dbData;
+                    if (!event_type)
+                        return;
                     let { id } = event_type;
                     /** If the eventTypeField value has changed due to a select element
                      *  change event, we use it instead of the default. */
                     id = (_a = eventTypeField === null || eventTypeField === void 0 ? void 0 : eventTypeField.value) !== null && _a !== void 0 ? _a : id;
-                    const result = async () => {
-                        const response = await fetch(`/api/v1/contrib/eventmanagement/event_types/${id}`);
-                        if (response.ok) {
-                            return response.json();
-                        }
-                        const error = await response.json();
-                        return error;
-                    };
-                    result()
+                    const eventType = this.fetchEventType(parseInt(id, 10));
+                    eventType
                         .then((event_type) => {
-                        if (event_type instanceof Error) {
-                            return;
-                        }
-                        if (!this.selectedEventTypeId || this.selectedEventTypeId != id) {
-                            Object.entries(event_type).forEach(([property, value]) => {
-                                const field = fields.find((field) => field.name === property);
-                                if (field) {
-                                    switch (typeof value) {
-                                        case "number":
-                                            field.value = value.toString();
-                                            break;
-                                        case "boolean":
-                                            field.value = (value ? 1 : 0).toString();
-                                            break;
-                                        case "object":
-                                            if (value instanceof Array) {
-                                                field.value = value.map((item) => ({
-                                                    id: item.target_group_id.toString(),
-                                                    selected: (item.selected ? 1 : 0).toString(),
-                                                    fee: item.fee.toString(),
-                                                }));
-                                            }
-                                            break;
-                                        default:
-                                            field.value = value;
-                                    }
-                                }
-                            });
+                        const hasValidNewId = !this.selectedEventTypeId || this.selectedEventTypeId != id;
+                        if (hasValidNewId) {
+                            this.convertFieldValuesToRequestedType(event_type);
                             this.selectedEventTypeId =
                                 typeof id === "string" ? parseInt(id, 10) : id;
                         }
@@ -5533,10 +5562,9 @@ ${value}</textarea
         background: #ffffff;
         bottom: 4em;
         box-shadow: var(--shadow-hv);
-        height: fit-content;
+        height: fit-content !important;
         left: 1em;
         max-height: 30vh;
-        max-height: 30dvh;
         overflow-y: scroll;
         padding: 1em;
         position: absolute;
@@ -6508,10 +6536,15 @@ ${value}</textarea
                 this.locations,
             ].every((data) => data.length > 0);
         }
+        hasRequiredDataToAdd() {
+            return [this.event_types, this.target_groups, this.locations].every((data) => data.length > 0);
+        }
         async fetchUpdate() {
             const response = await fetch(`/api/v1/contrib/eventmanagement/events?${this.queryBuilder.query.toString()}`);
             this.events = await response.json();
-            this.hasNoResults = this.events.length === 0;
+            const noItems = this.events.length === 0;
+            this.isEmpty = noItems;
+            this.hasNoResults = noItems;
             this.queryBuilder.updateUrl();
             this.requestUpdate();
         }
@@ -6571,41 +6604,48 @@ ${value}</textarea
       </div>`;
             }
             if (this.hasLoaded && this.isEmpty) {
-                return x ` <h1 class="text-center">
-        ${__("You have to create a")}&nbsp;
-        <lms-anchor
-          .href=${{
-                ...this.href,
-                params: {
-                    ...this.href.params,
-                    op: "target-groups",
-                },
-            }}
-          >${__("target group")}</lms-anchor
-        >, ${__("a")}&nbsp;
-        <lms-anchor
-          .href=${{
-                ...this.href,
-                params: {
-                    ...this.href.params,
-                    op: "locations",
-                },
-            }}
-          >${__("location")}</lms-anchor
-        >
-        &nbsp;${__("and an")}&nbsp;
-        <lms-anchor
-          .href=${{
-                ...this.href,
-                params: {
-                    ...this.href.params,
-                    op: "event-types",
-                },
-            }}
-          >${__("event type")}</lms-anchor
-        >
-        &nbsp;${__("first")}.
-      </h1>`;
+                return this.hasRequiredDataToAdd()
+                    ? x ` <h1 class="text-center">
+              ${__("You can add a new event by clicking on the + button below")}.
+            </h1>
+            <lms-events-modal @created=${this.fetchUpdate}></lms-events-modal>`
+                    : x `
+            <h1 class="text-center">
+              ${__("You have to create a")}&nbsp;
+              <lms-anchor
+                .href=${{
+                    ...this.href,
+                    params: {
+                        ...this.href.params,
+                        op: "target-groups",
+                    },
+                }}
+                >${__("target group")}</lms-anchor
+              >, ${__("a")}&nbsp;
+              <lms-anchor
+                .href=${{
+                    ...this.href,
+                    params: {
+                        ...this.href.params,
+                        op: "locations",
+                    },
+                }}
+                >${__("location")}</lms-anchor
+              >
+              &nbsp;${__("and an")}&nbsp;
+              <lms-anchor
+                .href=${{
+                    ...this.href,
+                    params: {
+                        ...this.href.params,
+                        op: "event-types",
+                    },
+                }}
+                >${__("event type")}</lms-anchor
+              >
+              &nbsp;${__("first")}.
+            </h1>
+          `;
             }
             return x `
       <lms-staff-event-card-deck
@@ -6695,7 +6735,9 @@ ${value}</textarea
         async fetchUpdate() {
             const response = await fetch(`/api/v1/contrib/eventmanagement/event_types?${this.queryBuilder.query.toString()}`);
             this.event_types = await response.json();
-            this.hasNoResults = this.event_types.length === 0;
+            const noItems = this.event_types.length === 0;
+            this.isEmpty = noItems;
+            this.hasNoResults = noItems;
             this.queryBuilder.updateUrl();
             this.requestUpdate();
         }
@@ -6729,6 +6771,9 @@ ${value}</textarea
         hasData() {
             return [this.target_groups, this.locations, this.event_types].every((data) => data.length > 0);
         }
+        hasRequiredDataToAdd() {
+            return [this.target_groups, this.locations].every((data) => data.length > 0);
+        }
         render() {
             if (!this.hasLoaded) {
                 return x ` <div class="container-fluid mx-0">
@@ -6736,30 +6781,37 @@ ${value}</textarea
       </div>`;
             }
             if (this.hasLoaded && this.isEmpty) {
-                return x ` <h1 class="text-center">
-        ${__("You have to create a")}&nbsp;
-        <lms-anchor
-          .href=${{
-                ...this.href,
-                params: {
-                    ...this.href.params,
-                    op: "target-groups",
-                },
-            }}
-          >${__("target group")}</lms-anchor
-        >&nbsp;${__("and a")}&nbsp;
-        <lms-anchor
-          .href=${{
-                ...this.href,
-                params: {
-                    ...this.href.params,
-                    op: "locations",
-                },
-            }}
-          >${__("location")}</lms-anchor
-        >
-        &nbsp;${__("first")}.
-      </h1>`;
+                return this.hasRequiredDataToAdd()
+                    ? x ` <h1 class="text-center">
+              ${__("You can add a new event type by clicking the + button below")}.
+            </h1>
+            <lms-event-types-modal
+              @created=${this.fetchUpdate}
+            ></lms-event-types-modal>`
+                    : x ` <h1 class="text-center">
+            ${__("You have to create a")}&nbsp;
+            <lms-anchor
+              .href=${{
+                    ...this.href,
+                    params: {
+                        ...this.href.params,
+                        op: "target-groups",
+                    },
+                }}
+              >${__("target group")}</lms-anchor
+            >&nbsp;${__("and a")}&nbsp;
+            <lms-anchor
+              .href=${{
+                    ...this.href,
+                    params: {
+                        ...this.href.params,
+                        op: "locations",
+                    },
+                }}
+              >${__("location")}</lms-anchor
+            >
+            &nbsp;${__("first")}.
+          </h1>`;
             }
             return x `
       <lms-event-types-table
@@ -6838,7 +6890,9 @@ ${value}</textarea
         async fetchUpdate() {
             const response = await fetch(`/api/v1/contrib/eventmanagement/locations?${this.queryBuilder.query.toString()}`);
             this.locations = await response.json();
-            this.hasNoResults = this.locations.length === 0;
+            const noItems = this.locations.length === 0;
+            this.isEmpty = noItems;
+            this.hasNoResults = noItems;
             this.queryBuilder.updateUrl();
             this.requestUpdate();
         }
@@ -6876,7 +6930,8 @@ ${value}</textarea
       </div>`;
             }
             if (this.hasLoaded && this.isEmpty) {
-                return x ` <h1 class="text-center">${__("No data to display")}.</h1>`;
+                return x ` <h1 class="text-center">${__("No data to display")}.</h1>
+        <lms-locations-modal @created=${this.fetchUpdate}></lms-locations-modal>`;
             }
             return x `
       <lms-locations-table
@@ -6959,7 +7014,9 @@ ${value}</textarea
         async fetchUpdate() {
             const response = await fetch(`/api/v1/contrib/eventmanagement/target_groups?${this.queryBuilder.query.toString()}`);
             this.target_groups = await response.json();
-            this.hasNoResults = this.target_groups.length === 0;
+            const noItems = this.target_groups.length === 0;
+            this.isEmpty = noItems;
+            this.hasNoResults = noItems;
             this.queryBuilder.updateUrl();
             this.requestUpdate();
         }
@@ -6997,7 +7054,8 @@ ${value}</textarea
       </div>`;
             }
             if (this.hasLoaded && this.isEmpty) {
-                return x ` <h1 class="text-center">${__("No data to display")}.</h1>`;
+                return x ` <h1 class="text-center">${__("No data to display")}.</h1>
+        <lms-target-groups-modal @created=${this.fetchUpdate}></lms-target-groups-modal>`;
             }
             return x `
       <lms-target-groups-table
