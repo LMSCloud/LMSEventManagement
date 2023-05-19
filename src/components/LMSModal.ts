@@ -33,20 +33,27 @@ export type Alert = {
 @customElement("lms-modal")
 export default class LMSModal extends LitElement {
   @property({ type: Array }) fields: ModalField[] = [];
+
   @property({ type: Object }) createOpts: CreateOpts = {
     endpoint: "",
   };
+
   @property({ type: Boolean }) editable = false;
+
   @state() protected isOpen = false;
+
   @state() protected alert: Alert = { active: false, message: undefined };
+
   @state() protected modalTitle:
     | string
     | DirectiveResult<typeof TranslateDirective> = "";
 
   @query(".btn-modal-wrapper") btnModalWrapper!: HTMLElement;
+
   /** TODO: Maybe we can find a cleaner way to do the intersection observations than in the base modal component */
   private footer: HTMLElement | undefined | null =
     document.getElementById("i18nMenu")?.parentElement;
+
   private intersectionObserverHandler: IntersectionObserverHandler | null =
     null;
 
@@ -333,40 +340,28 @@ export default class LMSModal extends LitElement {
     if (!type || !desc) return nothing;
 
     const { value } = field;
-    const fieldTypes = new Map<string, TemplateResult>([
-      [
-        "select",
-        html`<lms-select
-          @change=${this.mediateChange}
-          .field=${field}
-        ></lms-select>`,
-      ],
-      [
-        "checkbox",
-        html`<lms-checkbox-input
-          .field=${field}
-          .value=${value as string}
-        ></lms-checkbox-input>`,
-      ],
-      ["info", html`<p>${desc}</p>`],
-      [
-        "matrix",
-        html`<lms-matrix
-          .field=${field}
-          .value=${value as MatrixGroup[]}
-        ></lms-matrix>`,
-      ],
-      [
-        "default",
-        html`<lms-primitives-input
-          .field=${field}
-          .value=${value as string | number}
-        ></lms-primitives-input>`,
-      ],
-    ]);
+    const fieldTypes: Record<string, TemplateResult> = {
+      select: html`<lms-select
+        @change=${this.mediateChange}
+        .field=${field}
+      ></lms-select>`,
+      checkbox: html`<lms-checkbox-input
+        .field=${field}
+        .value=${value as boolean}
+      ></lms-checkbox-input>`,
+      info: html`<p>${desc}</p>`,
+      matrix: html`<lms-matrix
+        .field=${field}
+        .value=${value as MatrixGroup[]}
+      ></lms-matrix>`,
+      default: html`<lms-primitives-input
+        .field=${field}
+        .value=${value as string | number}
+      ></lms-primitives-input>`,
+    };
 
-    return fieldTypes.has(type)
-      ? fieldTypes.get(type)
-      : fieldTypes.get("default");
+    return {}.hasOwnProperty.call(fieldTypes, type)
+      ? fieldTypes[type]
+      : fieldTypes["default"];
   }
 }
