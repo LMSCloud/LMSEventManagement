@@ -159,6 +159,18 @@ export function normalizeForInput(string: string, format: string): string {
 }
 
 /**
+ * Converts a datetime string to ISO8601 format.
+ * @param string - The datetime string to convert.
+ * @returns The converted datetime string.
+ * @see https://en.wikipedia.org/wiki/ISO_8601
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+ */
+export function convertToISO8601(string: string): string {
+  const datetime = new Date(string);
+  return datetime.toISOString();
+}
+
+/**
  * Represents an InputConverter that handles conversion of input fields based on their name.
  */
 export class InputConverter {
