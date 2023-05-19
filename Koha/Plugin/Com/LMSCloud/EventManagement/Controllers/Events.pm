@@ -211,12 +211,27 @@ sub add {
             }
         );
 
+        my $has_selected_target_group = 0;
+        my $target_groups             = $body->{'target_groups'} // [];
+        for my $target_group ( @{$target_groups} ) {
+            if ( $target_group->{'selected'} ) {
+                $has_selected_target_group = 1;
+                last;
+            }
+        }
+
+        if ( !$has_selected_target_group ) {
+            push @{$errors}, __('At least one target group must be selected.');
+            $is_valid = 0;
+        }
+
         if ( !$is_valid ) {
             return $c->render( status => 400, openapi => { error => $errors } );
         }
 
-        my $target_groups = delete $body->{'target_groups'};
-        my $event         = Koha::LMSCloud::EventManagement::Event->new_from_api($body)->store;
+        $target_groups = delete $body->{'target_groups'};
+
+        my $event = Koha::LMSCloud::EventManagement::Event->new_from_api($body)->store;
 
         if ($target_groups) {
             for my $target_group ( @{$target_groups} ) {
@@ -224,7 +239,7 @@ sub add {
                     {   event_id        => $event->id,
                         target_group_id => $target_group->{'id'},
                         selected        => $target_group->{'selected'},
-                        fee             => $target_group->{'fee'}
+                        fee             => $target_group->{'fee'} // 0
                     }
                 )->store;
             }

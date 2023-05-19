@@ -122,11 +122,25 @@ sub update {
             }
         );
 
+        my $has_selected_target_group = 0;
+        my $target_groups             = $body->{'target_groups'} // [];
+        for my $target_group ( @{$target_groups} ) {
+            if ( $target_group->{'selected'} ) {
+                $has_selected_target_group = 1;
+                last;
+            }
+        }
+
+        if ( !$has_selected_target_group ) {
+            push @{$errors}, __('At least one target group must be selected.');
+            $is_valid = 0;
+        }
+
         if ( !$is_valid ) {
             return $c->render( status => 400, openapi => { error => $errors } );
         }
 
-        my $target_groups = delete $body->{'target_groups'};
+        $target_groups = delete $body->{'target_groups'};
 
         $event_type->set_from_api($body);
         $event_type->store;
@@ -139,7 +153,7 @@ sub update {
                     {   event_type_id   => $id,
                         target_group_id => $target_group->{'id'},
                         selected        => $target_group->{'selected'},
-                        fee             => $target_group->{'fee'}
+                        fee             => $target_group->{'fee'} // 0
                     }
                 )->store;
             }
