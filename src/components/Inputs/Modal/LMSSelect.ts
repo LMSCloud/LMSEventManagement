@@ -6,9 +6,9 @@ import { ModalField, SelectOption } from "../../../sharedDeclarations";
 
 @customElement("lms-select")
 export default class LMSSelect extends LitElement {
-  private defaultOption = {} as SelectOption;
-
   @property({ type: Object }) field: ModalField = {} as ModalField;
+
+  private defaultOption = {} as SelectOption;
 
   static override styles = [bootstrapStyles];
 

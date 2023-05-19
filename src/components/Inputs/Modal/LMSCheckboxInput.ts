@@ -6,9 +6,27 @@ import { ModalField } from "../../../sharedDeclarations";
 @customElement("lms-checkbox-input")
 export default class LMSCheckboxInput extends LitElement {
   @property({ type: Object }) field: ModalField = {} as ModalField;
+
   @property({ type: Object }) value = "";
 
   static override styles = [bootstrapStyles];
+
+  private handleChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    this.field.value = input.checked ? 1 : 0;
+  }
+
+  private getCheckedState() {
+    if (typeof this.value === "boolean") {
+      return this.value;
+    }
+
+    if (typeof this.value === "string") {
+      return ["true", "1"].includes(this.value);
+    }
+
+    return false;
+  }
 
   override render() {
     const { name, value, desc, required } = this.field;
@@ -18,17 +36,13 @@ export default class LMSCheckboxInput extends LitElement {
           type="checkbox"
           name=${name}
           id=${name}
-          value=${(value as string) ?? "1"}
+          value=${value ? 1 : 0}
           class="form-check-input"
-          @input=${(e: Event) => {
-            this.field.value = (
-              (e.target as HTMLInputElement).checked ? 1 : 0
-            ).toString();
-          }}
+          @change=${this.handleChange}
           ?required=${required}
-          ?checked=${[true, "true", "1"].includes(this.value as string)}
+          ?checked=${this.getCheckedState}
         />
-        <label for="${name}">&nbsp;${desc}</label>
+        <label for=${name}>&nbsp;${desc}</label>
       </div>
     `;
   }

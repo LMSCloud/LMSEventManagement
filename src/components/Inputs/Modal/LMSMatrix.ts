@@ -2,17 +2,24 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { LitElement, html, TemplateResult, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
-import { MatrixGroup, ModalField } from "../../../sharedDeclarations";
+import {
+  BaseFieldValue,
+  MatrixGroup,
+  ModalField,
+} from "../../../sharedDeclarations";
 import { map } from "lit/directives/map.js";
 import { DirectiveResult } from "lit/directive";
 import { TranslateDirective } from "../../../lib/translate";
+import { __ } from "../../../lib/translate";
+
+type Row = {
+  id: string | number;
+  name: string | DirectiveResult<typeof TranslateDirective>;
+};
 
 type MatrixMarkupGenArgs = {
   field: ModalField;
-  row: {
-    id: string | number;
-    name: string | DirectiveResult<typeof TranslateDirective>;
-  };
+  row: Row;
   header: string[];
 };
 
@@ -25,8 +32,8 @@ type InputHandlerArgs = {
 @customElement("lms-matrix")
 export default class LMSMatrix extends LitElement {
   @property({ type: Object }) field: ModalField = {} as ModalField;
+
   @property({ type: Array }) value: MatrixGroup[] = [];
-  // @state() private hasTransformedField = false;
 
   static override styles = [
     bootstrapStyles,
@@ -45,7 +52,7 @@ export default class LMSMatrix extends LitElement {
           <tr>
             ${map(
               field.headers,
-              ([name]) => html`<th scope="col">${name}</th>`
+              ([name]) => html`<th scope="col">${__(name)}</th>`
             )}
           </tr>
         </thead>
@@ -63,14 +70,14 @@ export default class LMSMatrix extends LitElement {
       </table>`;
   }
 
-  handleInput({ e, id, header }: InputHandlerArgs) {
+  private handleInput({ e, id, header }: InputHandlerArgs) {
     if (!(e.target instanceof HTMLInputElement)) return;
 
     const { field } = this;
     const { type } = e.target;
     const [name] = header;
 
-    const updateOrCreateItem = (value: string) => {
+    const updateOrCreateItem = (value: string | number) => {
       /** If there's no Array present in field.value
        *  we create one and add the item to it. */
       if (!(field?.value instanceof Array)) {
@@ -100,7 +107,7 @@ export default class LMSMatrix extends LitElement {
       }
       case "checkbox": {
         const { checked } = e.target;
-        updateOrCreateItem((checked ? 1 : 0).toString());
+        updateOrCreateItem(checked ? 1 : 0);
         break;
       }
       default:
@@ -108,52 +115,76 @@ export default class LMSMatrix extends LitElement {
     }
   }
 
+  private getValue(name: string, value: BaseFieldValue | undefined, row: Row) {
+    if (value instanceof Array) {
+      return value.find((item) => item.id == row.id)?.[name] ?? "0";
+    }
+
+    if (typeof value === "string") {
+      return value;
+    }
+
+    if (typeof value === "number") {
+      return value.toString();
+    }
+
+    return "0";
+  }
+
+  private getCheckedState(
+    name: string,
+    value: BaseFieldValue | undefined,
+    row: Row
+  ) {
+    if (value instanceof Array) {
+      return value.find((item) => item.id == row.id)?.[name] === 1 ?? false;
+    }
+
+    if (typeof value === "boolean") {
+      return value;
+    }
+
+    if (typeof value === "string") {
+      return ["true", "1"].includes(value);
+    }
+
+    return false;
+  }
+
   private getMatrixInputMarkup({ field, row, header }: MatrixMarkupGenArgs) {
     const [name, type] = header;
-    const inputTypes = new Map<string, TemplateResult>([
-      [
-        "number",
-        html`<td class="align-middle">
-          <input
-            type="number"
-            name=${row.name}
-            id=${row.id}
-            .value=${field.value instanceof Array
-              ? field.value.find((item) => item.id == row.id)?.[name] ?? ""
-              : ""}
-            class="form-control"
-            step=${ifDefined(
-              field.attributes
-                ?.find(([attribute]) => attribute === "step")
-                ?.slice(-1)[0] as number
-            )}
-            @input=${(e: Event) => this.handleInput({ e, id: row.id, header })}
-            ?required=${field.required}
-          />
-        </td>`,
-      ],
-      [
-        "checkbox",
-        html` <td class="align-middle">
-          <input
-            type="checkbox"
-            name=${row.name}
-            id=${row.id}
-            class="form-control"
-            @input=${(e: Event) => this.handleInput({ e, id: row.id, header })}
-            ?required=${field.required}
-            .checked=${field.value instanceof Array
-              ? field.value.find((item) => item.id == row.id)?.[name] === "1"
-                ? true
-                : false
-              : false}
-          />
-        </td>`,
-      ],
-    ]);
+    const inputTypes: Record<string, TemplateResult> = {
+      number: html`<td class="align-middle">
+        <input
+          type="number"
+          name=${row.name}
+          id=${row.id}
+          value=${this.getValue(name, field.value, row)}
+          class="form-control"
+          step=${ifDefined(
+            field.attributes
+              ?.find(([attribute]) => attribute === "step")
+              ?.slice(-1)[0] as number
+          )}
+          @input=${(e: Event) => this.handleInput({ e, id: row.id, header })}
+          ?required=${field.required}
+        />
+      </td>`,
+      checkbox: html` <td class="align-middle">
+        <input
+          type="checkbox"
+          name=${row.name}
+          id=${row.id}
+          class="form-control"
+          @input=${(e: Event) => this.handleInput({ e, id: row.id, header })}
+          ?required=${field.required}
+          ?checked=${this.getCheckedState(name, field.value, row)}
+        />
+      </td>`,
+    };
 
-    return inputTypes.has(type)
-      ? inputTypes.get(type)
-      : inputTypes.get("default");
+    return {}.hasOwnProperty.call(inputTypes, type)
+      ? inputTypes[type]
+      : inputTypes["default"];
   }
 }
