@@ -153,10 +153,9 @@ export default class LMSTable extends LitElement {
         background: #ffffff;
         bottom: 4em;
         box-shadow: var(--shadow-hv);
-        height: fit-content;
+        height: fit-content !important;
         left: 1em;
         max-height: 30vh;
-        max-height: 30dvh;
         overflow-y: scroll;
         padding: 1em;
         position: absolute;
