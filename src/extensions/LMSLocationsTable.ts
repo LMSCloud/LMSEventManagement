@@ -90,15 +90,7 @@ export default class LMSLocationsTable extends LMSTable {
 
   constructor() {
     super();
-    this.order = [
-      "id",
-      "name",
-      "street",
-      "number",
-      "city",
-      "zip",
-      "country",
-    ];
+    this.order = ["id", "name", "street", "number", "city", "zip", "country"];
     this.isEditable = true;
     this.isDeletable = true;
   }
@@ -109,9 +101,11 @@ export default class LMSLocationsTable extends LMSTable {
   }
 
   private hydrate() {
-    this.data = this.locations.map((location: LMSLocation) => {
-      return Object.fromEntries(this.getColumnData(location));
-    });
+    this.data = this.locations.map(
+      (location: { [key in keyof LMSLocation]: LMSLocation[key] }) => {
+        return Object.fromEntries(this.getColumnData(location));
+      }
+    );
   }
 
   override updated(changedProperties: Map<string, never>) {

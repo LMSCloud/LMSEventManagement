@@ -2,7 +2,7 @@ type Endpoint = {
   url: string;
   cache?: boolean;
   ignoreCache?: boolean;
-  requestInfo?: Record<string, any>;
+  requestInfo?: { [key in keyof RequestInit]?: RequestInit[key] };
   queryParams?: Record<string, string>;
 };
 

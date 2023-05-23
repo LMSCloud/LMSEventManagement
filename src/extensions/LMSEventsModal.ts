@@ -2,9 +2,9 @@ import { customElement, property, state } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import {
   CreateOpts,
-  EventType,
+  LMSEventType,
   LMSLocation,
-  TargetGroup,
+  LMSTargetGroup,
 } from "../sharedDeclarations";
 import { __ } from "../lib/translate";
 
@@ -40,11 +40,12 @@ export default class LMSEventsModal extends LMSModal {
             "/api/v1/contrib/eventmanagement/event_types"
           );
           const result = await response.json();
-          return result.map((event_type: EventType) => ({
+          return result.map((event_type: LMSEventType) => ({
             id: event_type.id,
             name: event_type.name,
           }));
         },
+        required: true,
       },
       {
         name: "target_groups",
@@ -60,7 +61,7 @@ export default class LMSEventsModal extends LMSModal {
             "/api/v1/contrib/eventmanagement/target_groups"
           );
           const result = await response.json();
-          return result.map((target_group: TargetGroup) => ({
+          return result.map((target_group: LMSTargetGroup) => ({
             id: target_group.id,
             name: target_group.name,
           }));
@@ -169,10 +170,10 @@ export default class LMSEventsModal extends LMSModal {
   private async fetchEventType(id: number) {
     return fetch(`/api/v1/contrib/eventmanagement/event_types/${id}`)
       .then((response) => response.json())
-      .then((event_type) => event_type as EventType);
+      .then((event_type) => event_type as LMSEventType);
   }
 
-  private convertFieldValuesToRequestedType(eventType: EventType) {
+  private convertFieldValuesToRequestedType(eventType: LMSEventType) {
     const eventTypeFields = Object.entries(eventType);
     eventTypeFields.forEach(([property, value]) => {
       const field = this.fields.find((field) => field.name === property);

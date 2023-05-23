@@ -96,7 +96,8 @@ sub list {
             my $has_selected_target_group = 0;
             if ( defined $params->{target_group} && @{ $params->{target_group} } ) {
                 for my $target_group ( @{$target_groups} ) {
-                    if ( $target_group->{selected} && ( grep { $_ == $target_group->{target_group_id} } @{ $params->{target_group} } ) ) {
+                    my $has_target_group_id = grep { $_ == $target_group->{target_group_id} } @{ $params->{target_group} };
+                    if ( $target_group->{selected} && $has_target_group_id ) {
                         $has_selected_target_group = 1;
                         last;
                     }

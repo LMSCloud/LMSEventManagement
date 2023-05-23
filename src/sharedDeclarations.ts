@@ -2,99 +2,18 @@ import { TemplateResult } from "lit";
 import { DirectiveResult } from "lit/directive";
 import { TranslateDirective } from "./lib/translate";
 
-export type InputType =
-  | "button"
-  | "checkbox"
-  | "color"
-  | "date"
-  | "datetime-local"
-  | "email"
-  | "file"
-  | "hidden"
-  | "image"
-  | "month"
-  | "number"
-  | "password"
-  | "radio"
-  | "range"
-  | "reset"
-  | "search"
-  | "submit"
-  | "tel"
-  | "text"
-  | "time"
-  | "url"
-  | "week";
-
-export type SpecialFieldType = "select" | "info" | "checkbox";
-
-export enum Status {
-  Pending = "Pending",
-  Confirmed = "Confirmed",
-  Canceled = "Canceled",
-  SoldOut = "Sold Out",
-}
-
-export type HandlerCallbackFunction = ({
-  e,
-  value,
-  fields,
-}: {
-  e?: Event;
-  value?: string | number;
-  fields: ModalField[];
-}) => Promise<void>;
-
-type ColumnValue = string | number | TemplateResult;
-
-export type Column = {
-  [key: string]: ColumnValue;
-};
-
-export type TaggedColumn = Column & {
-  uuid: string;
-};
-
-export type LMSLocation = {
-  id: number;
-  street: string;
-  number: string;
-  city: string;
-  zip: string;
-  country: string;
+/* Utility types */
+export type BaseField = {
+  desc?: string | TranslatedString;
   name: string;
-};
-
-export type LMSEvent = {
-  id: number;
-  name: string;
-  event_type: string;
-  target_groups: TargetGroupState[];
-  min_age: string;
-  max_age: string;
-  max_participants: number;
-  start_time: string;
-  end_time: string;
-  registration_start: string;
-  registration_end: string;
-  location: string;
-  image: string;
-  description: string;
-  status: Status;
-  registration_link: string;
-};
-
-export type Input = {
-  name: string;
-  value: string;
-};
-
-type TranslatedString = DirectiveResult<typeof TranslateDirective>;
-
-export type SelectOption = {
-  id: string | number;
-  name: string | TranslatedString;
-};
+  required: boolean;
+} & Partial<{
+  logic?: () => Promise<Array<SelectOption>>;
+  required: boolean;
+  value: BaseFieldValue;
+  dbData: Array<SelectOption>;
+  attributes: Array<[string, string | number]>;
+}>;
 
 export type BaseFieldValue =
   | string
@@ -102,95 +21,21 @@ export type BaseFieldValue =
   | boolean
   | Array<Record<string, string | number | boolean>>;
 
-export type BaseField = {
-  name: string;
-  desc?: string | TranslatedString;
-  logic?: () => Promise<Array<SelectOption>>;
-} & Partial<{
-  required: boolean;
-  value: BaseFieldValue;
-  dbData: SelectOption[];
-  attributes: [string, string | number][];
-}>;
+export type Column = Record<string, ColumnValue>;
 
-export type Field = BaseField & {
-  type: InputType;
-};
-
-export type SpecialField = BaseField & {
-  type: SpecialFieldType;
-};
-
-type FieldType = {
-  headers?: string[][];
-  matrixInputType?: InputType;
-};
-
-export type ModalField = BaseField & {
-  type?: InputType | SpecialFieldType | "matrix";
-  handler?: HandlerCallbackFunction;
-} & FieldType;
+type ColumnValue = string | number | TemplateResult;
 
 export type CreateOpts = Omit<RequestInit, "endpoint"> & {
   endpoint: string;
 };
 
-export type TargetGroup = {
-  id: number;
-  name: string;
-  min_age: number;
-  max_age: number;
-};
-
-export type TargetGroupState = {
-  target_group_id: number;
-  selected: boolean;
-  fee: number;
-};
-
-export type TargetGroupFee = TargetGroupState & {
-  id: number;
-};
-
-export type EventType = {
-  id: number;
-  name: string;
-  target_groups: TargetGroupFee[];
-  min_age: number;
-  max_age: number;
-  max_participants: number;
-  location: number;
-  image: string;
-  description: string;
-  open_registration: boolean;
-};
-
-type StringRecord = Record<string, string>;
-
-export type URIComponents = {
-  path?: string;
-  query?: boolean;
-  params?: StringRecord;
-  fragment?: string;
-};
-
-export type MatrixGroup = {
-  [key in InputType]?: string;
-};
-
-export type TaggedData = [
-  "target_groups" | "location" | "event_type",
-  unknown[]
-];
-
 export type Facets = {
-  eventTypeIds: string[];
-  targetGroupIds: number[];
-  locationIds: string[];
   description: string;
   end_time: Date;
+  eventTypeIds: Array<number | null>;
   id: number;
   image: string;
+  locationIds: Array<number | null>;
   max_age: number;
   max_participants: number;
   min_age: number;
@@ -201,6 +46,189 @@ export type Facets = {
   registration_start: Date;
   start_time: Date;
   status: "pending" | "confirmed" | "canceled" | "sold_out";
+  targetGroupIds: Array<number | null>;
 };
 
-export type SortableColumns = string[] & { 0: "id" };
+export type Field = BaseField & {
+  type: InputType;
+};
+
+type FieldType = {
+  headers?: Array<Array<string>>;
+  matrixInputType?: InputType;
+};
+
+export type HandlerCallbackFunction = ({
+  e,
+  value,
+  fields,
+}: {
+  e?: Event;
+  value?: string | number;
+  fields: Array<ModalField>;
+}) => Promise<void>;
+
+export type Input = {
+  name: string;
+  value: string;
+};
+
+export type InputType =
+  | "button"
+  | "checkbox"
+  | "color"
+  | "date"
+  | "datetime-local"
+  | "email"
+  | "file"
+  | "hidden"
+  | "image"
+  | "info"
+  | "month"
+  | "number"
+  | "password"
+  | "radio"
+  | "range"
+  | "reset"
+  | "search"
+  | "select"
+  | "submit"
+  | "tel"
+  | "text"
+  | "time"
+  | "url"
+  | "week";
+
+export type MatrixGroup = {
+  [key in InputType]?: string;
+};
+
+export type ModalField = BaseField & {
+  type?: InputType | SpecialFieldType | "matrix";
+  handler?: HandlerCallbackFunction;
+} & FieldType;
+
+export type SelectOption = {
+  id: string | number;
+  name: string | TranslatedString;
+};
+
+export type SortableColumns = Array<string> & { 0: "id" };
+
+export type SpecialField = BaseField & {
+  type: SpecialFieldType;
+};
+
+export type SpecialFieldType = "checkbox" | "info" | "select";
+
+type StringRecord = Record<string, string>;
+
+export type TaggedColumn = Column & {
+  uuid: string;
+};
+
+export type TaggedData = [
+  "target_groups" | "location" | "event_type",
+  Array<unknown>
+];
+
+type TranslatedString = DirectiveResult<typeof TranslateDirective>;
+
+export type URIComponents = {
+  path?: string;
+  query?: boolean;
+  params?: StringRecord;
+  fragment?: string;
+};
+
+/* Data: These interfaces represent the schema of the underlying database */
+export interface LMSTargetGroup {
+  id: number;
+  name: string | null;
+  min_age: number | null;
+  max_age: number | null;
+}
+
+export interface LMSLocation {
+  id: number;
+  name: string | null;
+  street: string | null;
+  number: string | null;
+  city: string | null;
+  zip: string | null;
+  country: string | null;
+}
+
+export interface LMSEventType {
+  id: number;
+  name: string | null;
+  min_age: number | null;
+  max_age: number | null;
+  max_participants: number | null;
+  location: number | null;
+  image: string | null;
+  description: string | null;
+  open_registration: number | null;
+}
+
+export interface LMSEventTypeTargetGroupFee extends LMSEvent {
+  target_groups: Array<
+    Omit<LMSEventTypeTargetGroupFee, "id"> & { target_group_id: number }
+  >;
+}
+
+export interface LMSEvent {
+  id: number;
+  name: string | null;
+  event_type: number | null;
+  min_age: number | null;
+  max_age: number | null;
+  max_participants: number | null;
+  start_time: Date | null;
+  end_time: Date | null;
+  registration_start: Date | null;
+  registration_end: Date | null;
+  location: number | null;
+  image: string | null;
+  description: string | null;
+  status: "pending" | "confirmed" | "canceled" | "sold_out" | null;
+  registration_link: string | null;
+  open_registration: boolean | null;
+}
+
+export interface LMSEventTargetGroupState extends LMSEvent {
+  target_groups: Array<Omit<LMSEventTargetGroupFee, "id" | "event_id">>;
+}
+
+export interface LMSEventTargetGroupFee extends LMSEvent {
+  target_groups: Array<
+    Omit<LMSEventTargetGroupFee, "id" | "target_group_id"> & { id: number }
+  >;
+}
+
+export interface LMSEventComprehensive
+  extends Omit<LMSEvent, "location" | "event_type"> {
+  target_groups: Array<Omit<LMSEventTargetGroupFee, "id"> & { id: number }>;
+  location: LMSLocation;
+  event_type: LMSEventType;
+}
+
+export interface LMSEventTargetGroupFee {
+  id: number;
+  event_id: number | null;
+  target_group_id: number | null;
+  selected: boolean | null;
+  fee: number | null;
+}
+
+export type LMSEventTargetGroupFeeReduced = Pick<
+  LMSEventTargetGroupFee,
+  "id" | "selected" | "fee"
+>;
+export interface LMSEventTypeTargetGroupFee {
+  id: number;
+  event_type_id: number | null;
+  target_group_id: number | null;
+  selected: boolean | null;
+  fee: number | null;
+}

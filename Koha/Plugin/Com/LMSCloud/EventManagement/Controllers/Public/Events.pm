@@ -6,6 +6,8 @@ use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
 use Try::Tiny;
+use DateTime;
+use DateTime::Format::Strptime;
 
 use Koha::Plugin::Com::LMSCloud::EventManagement;
 use Koha::LMSCloud::EventManagement::Events;
@@ -74,7 +76,8 @@ sub get {
             my $has_selected_target_group = 0;
             if ( defined $params->{target_group} && @{ $params->{target_group} } ) {
                 for my $target_group ( @{$target_groups} ) {
-                    if ( $target_group->{selected} && ( grep { $_ == $target_group->{target_group_id} } @{ $params->{target_group} } ) ) {
+                    my $has_target_group_id = grep { $_ == $target_group->{target_group_id} } @{ $params->{target_group} };
+                    if ( $target_group->{selected} && $has_target_group_id ) {
                         $has_selected_target_group = 1;
                         last;
                     }
@@ -89,8 +92,12 @@ sub get {
                 }
             }
 
+            # We check whether the events start_time is in the future
+            my $strp        = DateTime::Format::Strptime->new( pattern => '%Y-%m-%dT%H:%M:%S' );
+            my $is_upcoming = $strp->parse_datetime( $event->{start_time} ) > DateTime->now( time_zone => 'UTC' );
+
             # Only push the event onto the response if a selected target group matches the requested target_groups
-            if ($has_selected_target_group) {
+            if ( $has_selected_target_group && $is_upcoming ) {
                 push @{$response}, { %{$event}, target_groups => $target_groups };
             }
         }

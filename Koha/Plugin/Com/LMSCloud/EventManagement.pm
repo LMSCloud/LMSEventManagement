@@ -33,6 +33,7 @@ use URI::Escape qw(uri_unescape);
 use Try::Tiny;
 use Carp;
 use MIME::Base64;
+use File::Basename;
 
 use Readonly;
 Readonly my $TINYINT_UPPER_BOUNDARY => 255;
@@ -314,103 +315,45 @@ sub install() {
     my ( $self, $args ) = @_;
 
     try {
-        my $dbh                 = C4::Context->dbh;
-        my $target_groups_table = $self->get_qualified_table_name('target_groups');
-        my $locations_table     = $self->get_qualified_table_name('locations');
-        my $event_types_table   = $self->get_qualified_table_name('event_types');
-        my $events_table        = $self->get_qualified_table_name('events');
+        my $dbh = C4::Context->dbh;
 
-        # Spelling those tables out exceeds the character
-        # limit for table names in MySQL.
-        my $event_target_group_fees_table      = $self->get_qualified_table_name('e_tg_fees');
-        my $event_type_target_group_fees_table = $self->get_qualified_table_name('et_tg_fees');
+        my $table_names = {
+            target_groups_table                => $self->get_qualified_table_name('target_groups'),
+            locations_table                    => $self->get_qualified_table_name('locations'),
+            event_types_table                  => $self->get_qualified_table_name('event_types'),
+            events_table                       => $self->get_qualified_table_name('events'),
+            event_target_group_fees_table      => $self->get_qualified_table_name('e_tg_fees'),
+            event_type_target_group_fees_table => $self->get_qualified_table_name('et_tg_fees'),
+        };
 
-        my @statements = (
-            <<~"STATEMENT",
-            CREATE TABLE IF NOT EXISTS $target_groups_table (
-                `id` INT(11) NOT NULL AUTO_INCREMENT,
-                `name` VARCHAR(255) DEFAULT '' COMMENT 'group from target_group table or any string',
-                `min_age` TINYINT(3) unsigned DEFAULT '0' COMMENT 'lower age boundary of group',
-                `max_age` TINYINT(3) unsigned DEFAULT '255' COMMENT 'upper age boundary for group',
-                PRIMARY KEY (`id`)
-            ) ENGINE=InnoDB;
-        STATEMENT
-            <<~"STATEMENT",
-            CREATE TABLE IF NOT EXISTS $locations_table (
-                `id` INT(11) NOT NULL AUTO_INCREMENT,
-                `name` VARCHAR(255) DEFAULT '' COMMENT 'alphanumeric identifier, e.g. name of the place',
-                `street` VARCHAR(255) DEFAULT '' COMMENT 'street address',
-                `number` VARCHAR(255) DEFAULT '' COMMENT 'streetnumber',
-                `city` VARCHAR(255) DEFAULT '' COMMENT 'city',
-                `zip` VARCHAR(255) DEFAULT '' COMMENT 'zip code',
-                `country` VARCHAR(255) DEFAULT 'GERMANY' COMMENT 'country',
-                PRIMARY KEY (`id`)
-            ) ENGINE=InnoDB;
-        STATEMENT
-            <<~"STATEMENT",
-            CREATE TABLE IF NOT EXISTS $event_types_table (
-                `id` INT(11) NOT NULL AUTO_INCREMENT,
-                `name` VARCHAR(255) DEFAULT '' COMMENT 'alphanumeric identifier, e.g. name of the template',
-                `min_age` TINYINT unsigned DEFAULT NULL COMMENT 'minimum age requirement',
-                `max_age` TINYINT unsigned DEFAULT NULL COMMENT 'maximum age requirement',
-                `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'maximum allowed number of participants',
-                `location` INT(11) DEFAULT NULL COMMENT 'id of a location from the locations table',
-                `image` TEXT(65535) DEFAULT NULL COMMENT 'image from kohas image management',
-                `description` TEXT COMMENT 'what is happening',
-                `open_registration` TINYINT(1) DEFAULT '0' COMMENT 'is the registration to non-patrons via email',
-                PRIMARY KEY (`id`)
-            ) ENGINE = INNODB;
-        STATEMENT
-            <<~"STATEMENT",
-            CREATE TABLE IF NOT EXISTS $events_table (
-                `id` INT(11) NOT NULL AUTO_INCREMENT,
-                `name` VARCHAR(255) DEFAULT '' COMMENT 'alphanumeric identifier, e.g. name of the event',
-                `event_type` INT(11) DEFAULT NULL COMMENT 'the event type id from the event types table',
-                `min_age` TINYINT unsigned DEFAULT NULL COMMENT 'minimum age requirement',
-                `max_age` TINYINT unsigned DEFAULT NULL COMMENT 'maximum age requirement',
-                `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'max number of participants',
-                `start_time` DATETIME DEFAULT NULL COMMENT 'start time of the event',
-                `end_time` DATETIME DEFAULT NULL COMMENT 'end time of the event',
-                `registration_start` DATETIME DEFAULT NULL COMMENT 'start time of the registration',
-                `registration_end` DATETIME DEFAULT NULL COMMENT 'end time of the registration',
-                `location` INT(11) DEFAULT NULL COMMENT 'the location id from the locations table',
-                `image` TEXT(65535) DEFAULT NULL COMMENT 'image from kohas image management',
-                `description` TEXT(65535) DEFAULT NULL COMMENT 'description',
-                `status` ENUM('pending','confirmed','canceled', 'sold_out') DEFAULT 'pending' COMMENT 'status of the event',
-                `registration_link` TEXT(65535) COMMENT 'link to the registration form',
-                `open_registration` TINYINT(1) DEFAULT '0' COMMENT 'is the registration to non-patrons via email',
-                PRIMARY KEY (`id`),
-                FOREIGN KEY (`event_type`) REFERENCES $event_types_table(`id`),
-                FOREIGN KEY (`location`) REFERENCES $locations_table(`id`)
-            ) ENGINE = INNODB;
-        STATEMENT
-            <<~"STATEMENT",
-            CREATE TABLE IF NOT EXISTS $event_target_group_fees_table (
-                `id` INT(11) NOT NULL AUTO_INCREMENT,
-                `event_id` INT(11) DEFAULT NULL COMMENT 'the event id from the events table',
-                `target_group_id` INT(11) DEFAULT NULL COMMENT 'the target group id from the target groups table',
-                `selected` TINYINT(1) DEFAULT '0' COMMENT 'is the target group selected for the event',
-                `fee` FLOAT unsigned DEFAULT NULL COMMENT 'fee for the event',
-                PRIMARY KEY (`id`),
-                FOREIGN KEY (`event_id`) REFERENCES $events_table(`id`),
-                FOREIGN KEY (`target_group_id`) REFERENCES $target_groups_table(`id`)
-            ) ENGINE = INNODB;
-        STATEMENT
-            <<~"STATEMENT",
-            CREATE TABLE IF NOT EXISTS $event_type_target_group_fees_table (
-                `id` INT(11) NOT NULL AUTO_INCREMENT,
-                `event_type_id` INT(11) DEFAULT NULL COMMENT 'the event type id from the event types table',
-                `target_group_id` INT(11) DEFAULT NULL COMMENT 'the target group id from the target groups table',
-                `selected` TINYINT(1) DEFAULT '0' COMMENT 'is the target group selected for the event',
-                `fee` FLOAT unsigned DEFAULT NULL COMMENT 'fee for the event',
-                PRIMARY KEY (`id`),
-                FOREIGN KEY (`event_type_id`) REFERENCES $event_types_table(`id`),
-                FOREIGN KEY (`target_group_id`) REFERENCES $target_groups_table(`id`)
-            ) ENGINE = INNODB;
-        STATEMENT
-        );
+        # Read in the schema.sql file
+        local $INPUT_RECORD_SEPARATOR = undef;    # Enable slurp mode
 
-        for my $statement (@statements) {
+        # We have to go the manual route because $self->bundle_path is undef at this point
+        my $file       = __FILE__;
+        my $bundle_dir = $file;
+        $bundle_dir =~ s/[.]pm$//smx;
+
+        my $bundle_path = $bundle_dir;
+        open my $fh, '<', $bundle_path . '/sql/schema.sql' or croak "Can't open schema.sql: $OS_ERROR";
+        my $sql = <$fh>;
+        close $fh or croak "Can't close schema.sql: $OS_ERROR";
+
+        # Replace placeholder tokens with table names
+        for my $table ( keys %{$table_names} ) {
+            my $ws         = '\s*';                     # Whitespace character class
+            my $ob         = '\{';                      # Opening brace character class
+            my $cb         = '\}';                      # Closing brace character class
+            my $table_name = '\s*' . $table . '\s*';    # Table name wrapped with optional whitespace
+
+            my $pattern = $ob . $ws . $ob . $table_name . $cb . $ws . $cb;
+
+            $sql =~ s/$pattern/$table_names->{$table}/smxg;
+        }
+
+        # Split statements and execute each one
+        my $statements = [ split /;\s*\n/smx, $sql ];
+        for my $statement ( @{$statements} ) {
             $dbh->do($statement);
         }
 
@@ -424,7 +367,6 @@ sub install() {
 
         return 0;
     };
-
 }
 
 sub upgrade {

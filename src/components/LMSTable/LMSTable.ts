@@ -16,6 +16,7 @@ import {
 } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
+import { searchSyntax } from "../../docs/searchSyntax";
 import { QueryBuilder } from "../../lib/QueryBuilder";
 import { InputConverter } from "../../lib/converters";
 import { __, attr__ } from "../../lib/translate";
@@ -23,7 +24,6 @@ import { throttle } from "../../lib/utilities";
 import { Column, SortableColumns, TaggedData } from "../../sharedDeclarations";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
-import { searchSyntax } from "../../docs/searchSyntax";
 import LMSPagination from "../LMSPagination";
 import LMSSearch from "../LMSSearch";
 import LMSToast from "../LMSToast";
@@ -243,7 +243,7 @@ export default class LMSTable extends LitElement {
   }
 
   protected *getColumnData(
-    query: Record<string, string | number | boolean | any[]>,
+    query: Record<string, string | number | boolean | null | unknown[]>,
     data?: TaggedData[]
   ) {
     for (const [name, value] of Object.entries(query)) {

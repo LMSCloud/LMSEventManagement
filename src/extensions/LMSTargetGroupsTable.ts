@@ -1,10 +1,10 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable/LMSTable";
-import { Input, TargetGroup } from "../sharedDeclarations";
+import { Input, LMSTargetGroup } from "../sharedDeclarations";
 
 @customElement("lms-target-groups-table")
 export default class LMSEventTypesTable extends LMSTable {
-  @property({ type: Array }) target_groups: TargetGroup[] = [];
+  @property({ type: Array }) target_groups: LMSTargetGroup[] = [];
 
   override async handleSave(e: Event) {
     const target = e.target as HTMLElement;
@@ -101,9 +101,13 @@ export default class LMSEventTypesTable extends LMSTable {
   }
 
   private hydrate() {
-    this.data = this.target_groups.map((target_group: TargetGroup) => {
-      return Object.fromEntries(this.getColumnData(target_group));
-    });
+    this.data = this.target_groups.map(
+      (target_group: {
+        [key in keyof LMSTargetGroup]: LMSTargetGroup[key];
+      }) => {
+        return Object.fromEntries(this.getColumnData(target_group));
+      }
+    );
   }
 
   override updated(changedProperties: Map<string, never>) {

@@ -1,15 +1,15 @@
-import { TemplateResult, html } from "lit";
+import { TemplateResult, html, nothing } from "lit";
 import {
   TaggedData,
-  EventType,
   InputType,
   LMSLocation,
-  TargetGroup,
-  TargetGroupFee,
+  LMSEventTargetGroupFee,
+  LMSTargetGroup,
+  LMSEventType,
 } from "../sharedDeclarations";
 import { __ } from "../lib/translate";
 
-type InputTypeValue = string | number | boolean | TargetGroupFee[];
+type InputTypeValue = string | number | boolean | null | unknown[];
 
 type TemplateQuery = {
   name: string;
@@ -19,7 +19,7 @@ type TemplateQuery = {
 
 type TemplateFunction = (
   value: InputTypeValue,
-  data?: EventType[] | LMSLocation[] | TargetGroup[]
+  data?: LMSEventType[] | LMSLocation[] | LMSTargetGroup[]
 ) => TemplateResult;
 
 /**
@@ -58,7 +58,7 @@ export class TemplateResultConverter {
     const renderValue = this.getRenderValues()[index];
     return typeof renderValue === "string"
       ? renderValue
-      : (renderValue as any).toString();
+      : (renderValue as string | number | boolean).toString();
   }
 
   /**
@@ -128,7 +128,11 @@ export function convertToFormat(
  * @param {string} locale - The locale used for formatting the date and time.
  * @returns {string[]} An array containing the date and time components.
  */
-export function splitDateTime(string: string, locale: string): string[] {
+export function splitDateTime(
+  string: string | Date | null,
+  locale: string
+): string[] {
+  if (!string) return [`${__("Error: Invalid date")}`, ""];
   const datetime = new Date(string);
   const date = datetime.toLocaleDateString(locale, {
     year: "numeric",
@@ -171,6 +175,44 @@ export function convertToISO8601(string: string): string {
 }
 
 /**
+ * Returns a TemplateResult for a datetime string formatted by the specified locale.
+ * @param datetime
+ * @param locale
+ * @returns TemplateResult
+ */
+export function formatDatetimeByLocale(
+  datetime: string | Date | null,
+  locale: string
+) {
+  if (!datetime) return html`<span>${__("There's been an error")}..</span>`;
+  if (datetime) {
+    return new Intl.DateTimeFormat(locale, {
+      dateStyle: "full",
+      timeStyle: "short",
+    }).format(new Date(datetime));
+  }
+  return nothing;
+}
+
+/**
+ * Returns a TemplateResult for a LMSLocation object.
+ * @param address
+ * @returns TemplateResult
+ */
+export function formatAddress(address: number | LMSLocation | null) {
+  if (!address || typeof address === "number")
+    return html`<span>${__("There's been an error")}..</span>`;
+  if (address) {
+    const { name, street, number, city, zip, country } = address;
+    return html` <strong>${name}</strong><br />
+      ${street} ${number}<br />
+      ${zip} ${city}<br />
+      ${country}`;
+  }
+  return nothing;
+}
+
+/**
  * Represents an InputConverter that handles conversion of input fields based on their name.
  */
 export class InputConverter {
@@ -193,8 +235,8 @@ export class InputConverter {
         name="event_type"
         disabled
       >
-        ${(data as EventType[])?.map(
-          ({ id, name }: EventType) =>
+        ${(data as LMSEventType[])?.map(
+          ({ id, name }: LMSEventType) =>
             html`<option
               value=${id}
               ?selected=${id === parseInt(value as string, 10)}
@@ -225,12 +267,12 @@ export class InputConverter {
               </tr>
             </thead>
             <tbody>
-              ${(data as unknown as TargetGroup[]).map(
-                ({ id, name }: TargetGroup) => {
+              ${(data as unknown as LMSTargetGroup[]).map(
+                ({ id, name }: LMSTargetGroup) => {
                   const targetGroupFee = (
-                    value as unknown as TargetGroupFee[]
+                    value as unknown as LMSEventTargetGroupFee[]
                   ).find(
-                    (targetGroupFee: TargetGroupFee) =>
+                    (targetGroupFee: LMSEventTargetGroupFee) =>
                       targetGroupFee.target_group_id === id
                   );
                   const selected = targetGroupFee?.selected ?? false;
@@ -475,7 +517,7 @@ ${value}</textarea
   private findDataByName(
     name: string,
     data?: TaggedData[]
-  ): TargetGroup[] | LMSLocation[] | EventType[] | undefined {
+  ): LMSTargetGroup[] | LMSLocation[] | LMSEventType[] | undefined {
     if (!data) return undefined;
 
     const [, foundData] =

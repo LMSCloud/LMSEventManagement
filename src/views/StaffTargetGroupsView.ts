@@ -73,9 +73,7 @@ export default class StaffEventTypesView extends LitElement {
       `/api/v1/contrib/eventmanagement/target_groups?${this.queryBuilder.query.toString()}`
     );
     this.target_groups = await response.json();
-    const noItems = this.target_groups.length === 0;
-    this.isEmpty = noItems;
-    this.hasNoResults = noItems;
+    this.hasNoResults = this.target_groups.length === 0;
     this.queryBuilder.updateUrl();
     this.requestUpdate();
   }
@@ -125,7 +123,9 @@ export default class StaffEventTypesView extends LitElement {
 
     if (this.hasLoaded && this.isEmpty) {
       return html` <h1 class="text-center">${__("No data to display")}.</h1>
-        <lms-target-groups-modal @created=${this.fetchUpdate}></lms-target-groups-modal>`;
+        <lms-target-groups-modal
+          @created=${this.fetchUpdate}
+        ></lms-target-groups-modal>`;
     }
 
     return html`

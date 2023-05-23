@@ -1,10 +1,10 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html, css, TemplateResult } from "lit";
+import { LitElement, TemplateResult, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import LMSCard from "../LMSCard";
-import { Column } from "../../sharedDeclarations";
 import { TemplateResultConverter } from "../../lib/converters";
+import { Column } from "../../sharedDeclarations";
 import { skeletonStyles } from "../../styles/skeleton";
+import LMSCard from "../LMSCard";
 
 declare global {
   interface HTMLElementTagNameMap {

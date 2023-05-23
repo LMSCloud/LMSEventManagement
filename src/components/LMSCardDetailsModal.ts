@@ -1,47 +1,39 @@
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html, css /* nothing */, nothing } from "lit";
-import { customElement, property, query, state } from "lit/decorators.js";
-import { classMap } from "lit/directives/class-map.js";
 import {
-  EventType,
-  LMSEvent,
-  LMSLocation,
-  TargetGroup,
-  TargetGroupFee,
-} from "../sharedDeclarations";
-import { litFontawesome } from "@weavedev/lit-fontawesome";
-import {
-  faCalendar,
-  faInfoCircle,
-  faCreditCard,
-  faMapMarker,
   faArrowRight,
+  faCalendar,
+  faCreditCard,
+  faInfoCircle,
+  faMapMarker,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
-import { map } from "lit/directives/map.js";
+import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { LitElement, css, html, nothing } from "lit";
+import { customElement, property, query, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { formatAddress, formatDatetimeByLocale } from "../lib/converters";
 import { __ } from "../lib/translate";
-import { skeletonStyles } from "../styles/skeleton";
-
-type LMSEventFull = Omit<
+import {
   LMSEvent,
-  "event_type" | "location" | "target_groups"
-> & {
-  event_type: EventType;
-  location: LMSLocation;
-  target_groups: TargetGroupFee[];
-};
+  LMSEventComprehensive,
+  LMSEventTargetGroupFee,
+  LMSEventType,
+  LMSLocation,
+} from "../sharedDeclarations";
+import { skeletonStyles } from "../styles/skeleton";
 
 @customElement("lms-card-details-modal")
 export default class LMSCardDetailsModal extends LitElement {
-  @property({ type: Object }) event: LMSEvent | LMSEventFull = {} as LMSEvent;
+  @property({ type: Object }) event: LMSEvent | LMSEventComprehensive =
+    {} as LMSEvent;
 
   @property({ type: Boolean }) isOpen = false;
 
-  @state() event_types: EventType[] = [];
+  @state() event_types: LMSEventType[] = [];
 
   @state() locations: LMSLocation[] = [];
 
-  @state() target_groups: TargetGroupFee[] = [];
+  @state() target_groups: LMSEventTargetGroupFee[] = [];
 
   @state() locale = "en";
 
@@ -91,7 +83,7 @@ export default class LMSCardDetailsModal extends LitElement {
       return response.json();
     };
     event_types().then(
-      (event_types: EventType[]) => (this.event_types = event_types)
+      (event_types: LMSEventType[]) => (this.event_types = event_types)
     );
 
     const locations = async () => {
@@ -111,13 +103,14 @@ export default class LMSCardDetailsModal extends LitElement {
       return response.json();
     };
     target_groups().then(
-      (target_groups: TargetGroupFee[]) => (this.target_groups = target_groups)
+      (target_groups: LMSEventTargetGroupFee[]) =>
+        (this.target_groups = target_groups)
     );
 
     this.locale = document.documentElement.lang;
   }
 
-  handleSimulatedBackdropClick(event: MouseEvent) {
+  private handleSimulatedBackdropClick(event: MouseEvent) {
     if (event.target === event.currentTarget) {
       this.toggleModal();
     }
@@ -144,40 +137,59 @@ export default class LMSCardDetailsModal extends LitElement {
 
   override willUpdate() {
     const { event } = this;
-    const { event_type, location, target_groups } = event;
+    const { event_type, location } = event;
+
+    let target_groups: LMSEventTargetGroupFee[] | null = null;
+    if ({}.hasOwnProperty.call(event, "target_groups")) {
+      const comprehensiveEvent = event as LMSEventComprehensive;
+      target_groups = comprehensiveEvent.target_groups;
+    }
+
     // Resolve event_type and location ids to their state representations
-    if (event_type && typeof event_type === "string") {
-      const et = this.event_types.find(
-        (type) => type.id === parseInt(event_type, 10)
+    if (event_type) {
+      const fullEventType = this.event_types.find(
+        (_event_type) => _event_type.id === event_type
       );
-      this.event.event_type = et ?? ({} as EventType);
+      this.event.event_type = fullEventType ?? ({} as LMSEventType);
     }
 
-    if (location && typeof location === "string") {
-      const loc = this.locations.find(
-        (loc) => loc.id === parseInt(location, 10)
+    if (location) {
+      const fullLocation = this.locations.find(
+        (_location) => _location.id === location
       );
-      this.event.location = loc ?? ({} as LMSLocation);
+      this.event.location = fullLocation ?? ({} as LMSLocation);
     }
 
-    if (
+    const isTruthyAndIsComprehensiveEvent =
       target_groups &&
-      target_groups.every((tg) =>
-        ({}.hasOwnProperty.call(tg, "target_group_id"))
-      )
-    ) {
+      (target_groups as LMSEventTargetGroupFee[]).every(
+        (targetGroup: LMSEventTargetGroupFee) =>
+          ({}.hasOwnProperty.call(targetGroup, "target_group_id"))
+      );
+    if (isTruthyAndIsComprehensiveEvent) {
+      const eventComprehensive = this.event as LMSEventComprehensive;
       const selectedTargetGroups = this.target_groups.filter((target_group) =>
-        target_groups.some((tg) => tg.target_group_id === target_group.id)
+        target_groups?.some(
+          (targetGroup: LMSEventTargetGroupFee) =>
+            targetGroup.target_group_id === target_group.id
+        )
       );
 
-      this.event.target_groups = selectedTargetGroups.map((tg) => ({
-        ...tg,
-        selected:
-          target_groups.find((etg) => etg.target_group_id === tg.id)
-            ?.selected ?? false,
-        fee:
-          target_groups.find((etg) => etg.target_group_id === tg.id)?.fee ?? 0,
-      }));
+      eventComprehensive.target_groups = selectedTargetGroups.map(
+        (selectedTargetGroup) => ({
+          ...selectedTargetGroup,
+          selected:
+            target_groups?.find(
+              (eventTargetGroup) =>
+                eventTargetGroup.target_group_id === selectedTargetGroup.id
+            )?.selected ?? false,
+          fee:
+            target_groups?.find(
+              (eventTargetGroup) =>
+                eventTargetGroup.target_group_id === selectedTargetGroup.id
+            )?.fee ?? 0,
+        })
+      ) as LMSEventTargetGroupFee[];
     }
   }
 
@@ -187,38 +199,42 @@ export default class LMSCardDetailsModal extends LitElement {
     }
   }
 
+  private getSelectedQuantity(
+    targetGroupFees: LMSEventTargetGroupFee[] | null
+  ) {
+    if (!targetGroupFees) return 0;
+    return targetGroupFees?.filter((targetGroupFee) => targetGroupFee.selected)
+      .length;
+  }
+
   private renderTargetGroupInfo(
-    targetGroupFees: TargetGroupFee[],
+    targetGroupFees: LMSEventTargetGroupFee[],
     noFees: boolean
   ) {
-    const quantity =
-      targetGroupFees?.filter((targetGroupFee) => targetGroupFee.selected)
-        .length ?? 0;
-    return map(targetGroupFees, (targetGroupFee, index) => {
-      const hasTargetGroupId = {}.hasOwnProperty.call(
-        targetGroupFee,
-        "target_group_id"
-      );
-      if (hasTargetGroupId) return nothing;
+    const quantity = this.getSelectedQuantity(targetGroupFees);
+    return targetGroupFees
+      ? targetGroupFees.map((targetGroupFee, index) => {
+          const hasTargetGroupId = {}.hasOwnProperty.call(
+            targetGroupFee,
+            "target_group_id"
+          );
+          if (hasTargetGroupId) return nothing;
 
-      const { name, min_age, max_age, fee, selected } =
-        targetGroupFee as unknown as Omit<
-          TargetGroupFee,
-          "id" | "target_group_id"
-        > &
-          TargetGroup;
+          const { name, min_age, max_age, fee, selected } =
+            targetGroupFee as LMSEventTargetGroupFee;
 
-      if (!selected) return nothing;
-      return noFees
-        ? html`<span>${name}${index + 1 < quantity ? ", " : ""}</span>`
-        : html`
-            <tr>
-              <td>${name}</td>
-              <td>${min_age} - ${max_age}</td>
-              <td>${fee}</td>
-            </tr>
-          `;
-    });
+          if (!selected) return nothing;
+          return noFees
+            ? html`<span>${name}${index + 1 < quantity ? ", " : ""}</span>`
+            : html`
+                <tr>
+                  <td>${name}</td>
+                  <td>${min_age} - ${max_age}</td>
+                  <td>${fee}</td>
+                </tr>
+              `;
+        })
+      : nothing;
   }
 
   override render() {
@@ -230,10 +246,20 @@ export default class LMSCardDetailsModal extends LitElement {
       registration_link,
       start_time,
       end_time,
-      target_groups,
     } = this.event;
-    const noFees =
-      target_groups?.every((target_group) => target_group.fee === 0) ?? true;
+
+    let target_groups = null;
+    if ({}.hasOwnProperty.call(this.event, "target_groups")) {
+      const eventComprehensive = this.event as LMSEventComprehensive;
+      target_groups = eventComprehensive.target_groups;
+    }
+
+    let noFees = true;
+    if (target_groups) {
+      noFees =
+        target_groups?.every((target_group) => target_group.fee === 0) ?? true;
+    }
+
     return html`
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
@@ -275,9 +301,9 @@ export default class LMSCardDetailsModal extends LitElement {
                       <strong>${__("Date and Time")}</strong>
                     </p>
                     <p class="wrapper">
-                      ${this.formatDatetimeByLocale(start_time)}
+                      ${formatDatetimeByLocale(start_time, this.locale)}
                       <span>${litFontawesome(faArrowRight)}</span>
-                      ${this.formatDatetimeByLocale(end_time)}
+                      ${formatDatetimeByLocale(end_time, this.locale)}
                     </p>
                   </div>
 
@@ -309,7 +335,7 @@ export default class LMSCardDetailsModal extends LitElement {
                       </p>
                       <p>
                         ${this.renderTargetGroupInfo(
-                          target_groups as TargetGroupFee[],
+                          target_groups as LMSEventTargetGroupFee[],
                           noFees
                         )}
                       </p>
@@ -327,7 +353,7 @@ export default class LMSCardDetailsModal extends LitElement {
                       </thead>
                       <tbody>
                         ${this.renderTargetGroupInfo(
-                          target_groups as TargetGroupFee[],
+                          target_groups as LMSEventTargetGroupFee[],
                           noFees
                         )}
                       </tbody>
@@ -342,7 +368,7 @@ export default class LMSCardDetailsModal extends LitElement {
                     <p>
                       ${typeof location === "string"
                         ? nothing
-                        : this.formatAddressByLocale(location)}
+                        : formatAddress(location)}
                     </p>
                   </div>
                 </div>
@@ -370,26 +396,5 @@ export default class LMSCardDetailsModal extends LitElement {
         </div>
       </div>
     `;
-  }
-
-  formatDatetimeByLocale(datetime: string) {
-    if (datetime) {
-      return new Intl.DateTimeFormat(this.locale, {
-        dateStyle: "full",
-        timeStyle: "short",
-      }).format(new Date(datetime));
-    }
-    return nothing;
-  }
-
-  formatAddressByLocale(address: LMSLocation) {
-    if (address) {
-      const { name, street, number, city, zip, country } = address;
-      return html` <strong>${name}</strong><br />
-        ${street} ${number}<br />
-        ${zip} ${city}<br />
-        ${country}`;
-    }
-    return nothing;
   }
 }
