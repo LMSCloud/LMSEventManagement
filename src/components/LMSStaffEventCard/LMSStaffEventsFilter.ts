@@ -1,16 +1,16 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html } from "lit";
 import { customElement, property, queryAll } from "lit/decorators.js";
-import LMSDropdown from "../LMSDropdown";
-import {
-  EventType,
-  LMSLocation,
-  SortableColumns,
-  TargetGroup,
-} from "../../sharedDeclarations";
 import { map } from "lit/directives/map.js";
 import { __ } from "../../lib/translate";
+import {
+  LMSEventType,
+  LMSLocation,
+  LMSTargetGroup,
+  SortableColumns,
+} from "../../sharedDeclarations";
 import { utilityStyles } from "../../styles/utilities";
+import LMSDropdown from "../LMSDropdown";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -22,9 +22,9 @@ declare global {
 export default class LMSStaffEventsFilter extends LitElement {
   @property({ type: Array }) sortableColumns: SortableColumns = ["id"];
 
-  @property({ type: Array }) event_types: EventType[] = [];
+  @property({ type: Array }) event_types: LMSEventType[] = [];
 
-  @property({ type: Array }) target_groups: TargetGroup[] = [];
+  @property({ type: Array }) target_groups: LMSTargetGroup[] = [];
 
   @property({ type: Array }) locations: LMSLocation[] = [];
 

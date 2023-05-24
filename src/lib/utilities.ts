@@ -30,8 +30,8 @@ export function isDeepEqual<T>(obj1: T, obj2: T): boolean {
     return false;
   }
 
-  const keys1 = Object.keys(obj1 as object);
-  const keys2 = Object.keys(obj2 as object);
+  const keys1 = Object.keys(obj1) as Array<keyof T>;
+  const keys2 = Object.keys(obj2) as Array<keyof T>;
 
   if (keys1.length !== keys2.length) {
     return false;
@@ -41,21 +41,18 @@ export function isDeepEqual<T>(obj1: T, obj2: T): boolean {
     if (!keys2.includes(key)) {
       return false;
     }
-    if (
-      typeof (obj1 as any)[key] === "function" ||
-      typeof (obj2 as any)[key] === "function"
-    ) {
-      if ((obj1 as any)[key].toString() !== (obj2 as any)[key].toString()) {
+    const value1 = (obj1 as unknown as Record<keyof T, unknown>)[key];
+    const value2 = (obj2 as unknown as Record<keyof T, unknown>)[key];
+
+    if (typeof value1 === "function" || typeof value2 === "function") {
+      if (String(value1) !== String(value2)) {
         return false;
       }
-    } else if (
-      typeof (obj1 as any)[key] === "object" &&
-      typeof (obj2 as any)[key] === "object"
-    ) {
-      if (!isDeepEqual((obj1 as any)[key], (obj2 as any)[key])) {
+    } else if (typeof value1 === "object" && typeof value2 === "object") {
+      if (!isDeepEqual(value1, value2)) {
         return false;
       }
-    } else if ((obj1 as any)[key] !== (obj2 as any)[key]) {
+    } else if (value1 !== value2) {
       return false;
     }
   }

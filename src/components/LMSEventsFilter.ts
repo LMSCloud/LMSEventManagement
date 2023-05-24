@@ -1,22 +1,22 @@
-import { LitElement, css, html } from "lit";
-import {
-  EventType,
-  LMSEvent,
-  LMSLocation,
-  TargetGroup,
-  Facets,
-} from "../sharedDeclarations";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
+import { LitElement, css, html } from "lit";
 import { customElement, property, queryAll, state } from "lit/decorators.js";
-import { map } from "lit/directives/map.js";
 import { classMap } from "lit/directives/class-map.js";
+import { map } from "lit/directives/map.js";
+import { requestHandler } from "../lib/RequestHandler";
 import { __, attr__ } from "../lib/translate";
+import { deepCopy, throttle } from "../lib/utilities";
+import {
+  Facets,
+  LMSEvent,
+  LMSEventType,
+  LMSLocation,
+  LMSTargetGroup,
+} from "../sharedDeclarations";
 import { skeletonStyles } from "../styles/skeleton";
 import { utilityStyles } from "../styles/utilities";
-import LMSSearch from "./LMSSearch";
 import LMSDropdown from "./LMSDropdown";
-import { requestHandler } from "../lib/RequestHandler";
-import { deepCopy, throttle } from "../lib/utilities";
+import LMSSearch from "./LMSSearch";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -28,17 +28,28 @@ declare global {
 @customElement("lms-events-filter")
 export default class LMSEventsFilter extends LitElement {
   private shouldFold = window.innerWidth <= 992;
+
   @property({ type: Array }) events: LMSEvent[] = [];
+
   @property({ type: String }) facetsStrategy: "preserve" | "update" =
     "preserve";
+
   @property({ type: Boolean }) isHidden = this.shouldFold;
+
   @state() facets: Partial<Facets> = {};
-  @state() event_types: EventType[] = [];
-  @state() target_groups: TargetGroup[] = [];
+
+  @state() event_types: LMSEventType[] = [];
+
+  @state() target_groups: LMSTargetGroup[] = [];
+
   @state() locations: LMSLocation[] = [];
+
   @state() activeFilters: Map<string, string | boolean> = new Map();
+
   @queryAll("input") inputs!: NodeListOf<HTMLInputElement>;
+
   @queryAll("lms-dropdown") lmsDropdowns!: NodeListOf<LMSDropdown>;
+
   private inputHandlers: {
     [type: string]: (input: HTMLInputElement) => string | boolean;
   } = {
@@ -59,6 +70,7 @@ export default class LMSEventsFilter extends LitElement {
     number: (input: HTMLInputElement) => input.value,
     default: (input: HTMLInputElement) => input.value,
   };
+
   private resetHandlers: {
     [type: string]: (input: HTMLInputElement) => void;
   } = {
@@ -86,15 +98,19 @@ export default class LMSEventsFilter extends LitElement {
       input.value = "";
     },
   };
+
   private _eventsDeepCopy: LMSEvent[] = [];
+
   private get eventsDeepCopy(): LMSEvent[] {
     return this._eventsDeepCopy;
   }
+
   private set eventsDeepCopy(value: LMSEvent[]) {
     if (this._eventsDeepCopy.length === 0) {
       this._eventsDeepCopy = value;
     }
   }
+
   private facetsStrategyManager() {
     switch (this.facetsStrategy) {
       case "preserve":
@@ -142,13 +158,14 @@ export default class LMSEventsFilter extends LitElement {
     requestHandler
       .request("getEventTypesPublic")
       .then((response) => response.json())
-      .then((event_types: EventType[]) => (this.event_types = event_types));
+      .then((event_types: LMSEventType[]) => (this.event_types = event_types));
 
     requestHandler
       .request("getTargetGroupsPublic")
       .then((response) => response.json())
       .then(
-        (target_groups: TargetGroup[]) => (this.target_groups = target_groups)
+        (target_groups: LMSTargetGroup[]) =>
+          (this.target_groups = target_groups)
       );
 
     requestHandler
@@ -170,8 +187,8 @@ export default class LMSEventsFilter extends LitElement {
       eventTypeIds: [...new Set(events.map((event) => event.event_type))],
       targetGroupIds: [
         ...new Set(
-          events.flatMap((event) =>
-            event.target_groups.map((target_group) =>
+          events.flatMap((event: any) =>
+            event.target_groups.map((target_group: any) =>
               target_group.selected ? target_group.target_group_id : NaN
             )
           )
@@ -179,7 +196,7 @@ export default class LMSEventsFilter extends LitElement {
       ].filter(Number.isInteger),
       locationIds: [...new Set(events.map((event) => event.location))],
       ...events
-        .map((event) => {
+        .map((event: any) => {
           const { event_type, location, target_groups, ...rest } = event; // eslint-disable-line @typescript-eslint/no-unused-vars
           return rest;
         })
@@ -411,7 +428,7 @@ export default class LMSEventsFilter extends LitElement {
                           for="event_type_${eventTypeId}"
                           >${this.event_types.find(
                             (event_type) =>
-                              event_type.id === parseInt(eventTypeId, 10)
+                              event_type.id === eventTypeId
                           )?.name}</label
                         >
                       </div>
@@ -448,7 +465,7 @@ export default class LMSEventsFilter extends LitElement {
                   )}
                 </lms-dropdown>
 
-                <lms-dropdown
+                <!-- <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
                   .label=${__("Age")}
@@ -478,7 +495,7 @@ export default class LMSEventsFilter extends LitElement {
                       @input=${this.emitChange}
                     />
                   </div>
-                </lms-dropdown>
+                </lms-dropdown> -->
 
                 <!-- <lms-dropdown
                   .isHidden=${this.isHidden}
@@ -537,7 +554,7 @@ export default class LMSEventsFilter extends LitElement {
                           for="location_${locationId}"
                           >${this.locations.find(
                             (location) =>
-                              location.id === parseInt(locationId, 10)
+                              location.id === locationId
                           )?.name}</label
                         >
                       </div>`

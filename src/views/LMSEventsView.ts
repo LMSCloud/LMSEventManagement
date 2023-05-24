@@ -265,8 +265,7 @@ export default class LMSEventsView extends LitElement {
                             <small>
                               ${litFontawesome(faMapMarkerAlt)}
                               ${this.locations.find(
-                                (location) =>
-                                  location.id === parseInt(event.location, 10)
+                                (location) => location.id === event.location
                               )?.name || __("Location not found")}
                             </small>
                           </span>`,

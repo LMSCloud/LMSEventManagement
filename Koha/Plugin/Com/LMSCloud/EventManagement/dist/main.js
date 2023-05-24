@@ -555,7 +555,8 @@
         async updateTranslation(text) {
             if (translationsLoaded && this._element && this._name) {
                 const translatedText = i18nInstance.gettext(text);
-                this._element[this._name] = translatedText;
+                const element = this._element;
+                element.setAttribute(this._name, translatedText);
             }
         }
         async ____(part, text) {
@@ -793,6 +794,8 @@
      * @returns {string[]} An array containing the date and time components.
      */
     function splitDateTime(string, locale) {
+        if (!string)
+            return [`${__("Error: Invalid date")}`, ""];
         const datetime = new Date(string);
         const date = datetime.toLocaleDateString(locale, {
             year: "numeric",
@@ -829,6 +832,40 @@
     function convertToISO8601(string) {
         const datetime = new Date(string);
         return datetime.toISOString();
+    }
+    /**
+     * Returns a TemplateResult for a datetime string formatted by the specified locale.
+     * @param datetime
+     * @param locale
+     * @returns TemplateResult
+     */
+    function formatDatetimeByLocale(datetime, locale) {
+        if (!datetime)
+            return x `<span>${__("There's been an error")}..</span>`;
+        if (datetime) {
+            return new Intl.DateTimeFormat(locale, {
+                dateStyle: "full",
+                timeStyle: "short",
+            }).format(new Date(datetime));
+        }
+        return A;
+    }
+    /**
+     * Returns a TemplateResult for a LMSLocation object.
+     * @param address
+     * @returns TemplateResult
+     */
+    function formatAddress(address) {
+        if (!address || typeof address === "number")
+            return x `<span>${__("There's been an error")}..</span>`;
+        if (address) {
+            const { name, street, number, city, zip, country } = address;
+            return x ` <strong>${name}</strong><br />
+      ${street} ${number}<br />
+      ${zip} ${city}<br />
+      ${country}`;
+        }
+        return A;
     }
     /**
      * Represents an InputConverter that handles conversion of input fields based on their name.
@@ -1361,110 +1398,6 @@ ${value}</textarea
     ], LMSStaffEventCardPreview);
     var LMSStaffEventCardPreview$1 = LMSStaffEventCardPreview;
 
-    /**
-     * @license
-     * Copyright 2018 Google LLC
-     * SPDX-License-Identifier: BSD-3-Clause
-     */const o$1=e(class extends i$1{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.it){this.it=new Set,void 0!==i.strings&&(this.nt=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.nt)||void 0===r?void 0:r.has(t))&&this.it.add(t);return this.render(s)}const e=i.element.classList;this.it.forEach((t=>{t in s||(e.remove(t),this.it.delete(t));}));for(const t in s){const i=!!s[t];i===this.it.has(t)||(null===(o=this.nt)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.it.add(t)):(e.remove(t),this.it.delete(t)));}return T}});
-
-    function getAugmentedNamespace(n) {
-      if (n.__esModule) return n;
-      var f = n.default;
-    	if (typeof f == "function") {
-    		var a = function a () {
-    			if (this instanceof a) {
-    				var args = [null];
-    				args.push.apply(args, arguments);
-    				var Ctor = Function.bind.apply(f, args);
-    				return new Ctor();
-    			}
-    			return f.apply(this, arguments);
-    		};
-    		a.prototype = f.prototype;
-      } else a = {};
-      Object.defineProperty(a, '__esModule', {value: true});
-    	Object.keys(n).forEach(function (k) {
-    		var d = Object.getOwnPropertyDescriptor(n, k);
-    		Object.defineProperty(a, k, d.get ? d : {
-    			enumerable: true,
-    			get: function () {
-    				return n[k];
-    			}
-    		});
-    	});
-    	return a;
-    }
-
-    var litFontawesome$1 = {};
-
-    var require$$0 = /*@__PURE__*/getAugmentedNamespace(litHtml);
-
-    Object.defineProperty(litFontawesome$1, "__esModule", { value: true });
-    litFontawesome$1.urlFontawesome = litFontawesome_2 = litFontawesome$1.litFontawesome = void 0;
-    const lit_html_1 = require$$0;
-    function litFontawesome(definition, { className, color } = {}) {
-        return lit_html_1.svg `
-        <svg
-            aria-hidden="true"
-            focusable="false"
-            data-prefix="${definition.prefix}"
-            data-icon="${definition.iconName}"
-            role="img"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 ${definition.icon[0]} ${definition.icon[1]}"
-            class="${className || ''} ${definition.prefix}_${definition.iconName} fa-${definition.iconName}"
-            fill="${color || 'currentColor'}"
-        >
-            ${(Array.isArray(definition.icon[4]) ? definition.icon[4] : [definition.icon[4]]).map((icon) => lit_html_1.svg `<path d="${icon}"></path>`)}
-        </svg>
-    `;
-    }
-    var litFontawesome_2 = litFontawesome$1.litFontawesome = litFontawesome;
-    function uncachedUrlFontawesome(definition, options) {
-        const mount = window.document.createElement('div');
-        lit_html_1.render(litFontawesome(definition, options), mount);
-        return `data:image/svg+xml;base64,${btoa(mount.innerHTML.replace(/ {4}|<!---->|\n/g, ''))}`;
-    }
-    const cachedURL = new Map();
-    function urlFontawesome(definition, options = {}) {
-        let dataUrl;
-        const foundDefinition = cachedURL.get(definition);
-        let foundClassName;
-        if (foundDefinition !== undefined) {
-            foundClassName = foundDefinition.get(options.className);
-            if (foundClassName !== undefined) {
-                const foundColor = foundClassName.get(options.color);
-                if (foundColor !== undefined) {
-                    dataUrl = foundColor;
-                }
-            }
-        }
-        if (dataUrl === undefined) {
-            dataUrl = uncachedUrlFontawesome(definition, options);
-            if (foundDefinition === undefined) {
-                cachedURL.set(definition, new Map([[options.className, new Map([[options.color, dataUrl]])]]));
-            }
-            else if (foundClassName === undefined) {
-                foundDefinition.set(options.className, new Map([[options.color, dataUrl]]));
-            }
-            else {
-                foundClassName.set(options.color, dataUrl);
-            }
-        }
-        return dataUrl;
-    }
-    litFontawesome$1.urlFontawesome = urlFontawesome;
-
-    const utilityStyles = i$5 `
-  .pointer-events-none {
-    pointer-events: none;
-  }
-
-  .w-inherit {
-    width: inherit;
-  }
-`;
-
     var faDownLeftAndUpRightToCenter = {
       prefix: 'fas',
       iconName: 'down-left-and-up-right-to-center',
@@ -1575,6 +1508,110 @@ ${value}</textarea
       iconName: 'calendar',
       icon: [448, 512, [128197, 128198], "f133", "M96 32V64H48C21.5 64 0 85.5 0 112v48H448V112c0-26.5-21.5-48-48-48H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32V64H160V32c0-17.7-14.3-32-32-32S96 14.3 96 32zM448 192H0V464c0 26.5 21.5 48 48 48H400c26.5 0 48-21.5 48-48V192z"]
     };
+
+    function getAugmentedNamespace(n) {
+      if (n.__esModule) return n;
+      var f = n.default;
+    	if (typeof f == "function") {
+    		var a = function a () {
+    			if (this instanceof a) {
+    				var args = [null];
+    				args.push.apply(args, arguments);
+    				var Ctor = Function.bind.apply(f, args);
+    				return new Ctor();
+    			}
+    			return f.apply(this, arguments);
+    		};
+    		a.prototype = f.prototype;
+      } else a = {};
+      Object.defineProperty(a, '__esModule', {value: true});
+    	Object.keys(n).forEach(function (k) {
+    		var d = Object.getOwnPropertyDescriptor(n, k);
+    		Object.defineProperty(a, k, d.get ? d : {
+    			enumerable: true,
+    			get: function () {
+    				return n[k];
+    			}
+    		});
+    	});
+    	return a;
+    }
+
+    var litFontawesome$1 = {};
+
+    var require$$0 = /*@__PURE__*/getAugmentedNamespace(litHtml);
+
+    Object.defineProperty(litFontawesome$1, "__esModule", { value: true });
+    litFontawesome$1.urlFontawesome = litFontawesome_2 = litFontawesome$1.litFontawesome = void 0;
+    const lit_html_1 = require$$0;
+    function litFontawesome(definition, { className, color } = {}) {
+        return lit_html_1.svg `
+        <svg
+            aria-hidden="true"
+            focusable="false"
+            data-prefix="${definition.prefix}"
+            data-icon="${definition.iconName}"
+            role="img"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 ${definition.icon[0]} ${definition.icon[1]}"
+            class="${className || ''} ${definition.prefix}_${definition.iconName} fa-${definition.iconName}"
+            fill="${color || 'currentColor'}"
+        >
+            ${(Array.isArray(definition.icon[4]) ? definition.icon[4] : [definition.icon[4]]).map((icon) => lit_html_1.svg `<path d="${icon}"></path>`)}
+        </svg>
+    `;
+    }
+    var litFontawesome_2 = litFontawesome$1.litFontawesome = litFontawesome;
+    function uncachedUrlFontawesome(definition, options) {
+        const mount = window.document.createElement('div');
+        lit_html_1.render(litFontawesome(definition, options), mount);
+        return `data:image/svg+xml;base64,${btoa(mount.innerHTML.replace(/ {4}|<!---->|\n/g, ''))}`;
+    }
+    const cachedURL = new Map();
+    function urlFontawesome(definition, options = {}) {
+        let dataUrl;
+        const foundDefinition = cachedURL.get(definition);
+        let foundClassName;
+        if (foundDefinition !== undefined) {
+            foundClassName = foundDefinition.get(options.className);
+            if (foundClassName !== undefined) {
+                const foundColor = foundClassName.get(options.color);
+                if (foundColor !== undefined) {
+                    dataUrl = foundColor;
+                }
+            }
+        }
+        if (dataUrl === undefined) {
+            dataUrl = uncachedUrlFontawesome(definition, options);
+            if (foundDefinition === undefined) {
+                cachedURL.set(definition, new Map([[options.className, new Map([[options.color, dataUrl]])]]));
+            }
+            else if (foundClassName === undefined) {
+                foundDefinition.set(options.className, new Map([[options.color, dataUrl]]));
+            }
+            else {
+                foundClassName.set(options.color, dataUrl);
+            }
+        }
+        return dataUrl;
+    }
+    litFontawesome$1.urlFontawesome = urlFontawesome;
+
+    /**
+     * @license
+     * Copyright 2018 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */const o$1=e(class extends i$1{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.it){this.it=new Set,void 0!==i.strings&&(this.nt=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.nt)||void 0===r?void 0:r.has(t))&&this.it.add(t);return this.render(s)}const e=i.element.classList;this.it.forEach((t=>{t in s||(e.remove(t),this.it.delete(t));}));for(const t in s){const i=!!s[t];i===this.it.has(t)||(null===(o=this.nt)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.it.add(t)):(e.remove(t),this.it.delete(t)));}return T}});
+
+    const utilityStyles = i$5 `
+  .pointer-events-none {
+    pointer-events: none;
+  }
+
+  .w-inherit {
+    width: inherit;
+  }
+`;
 
     /**
      * Custom element representing an event card form for staff members.
@@ -2704,25 +2741,32 @@ ${value}</textarea
         }
         willUpdate() {
             const { event } = this;
-            const { event_type, location, target_groups } = event;
+            const { event_type, location } = event;
+            let target_groups = null;
+            if ({}.hasOwnProperty.call(event, "target_groups")) {
+                const comprehensiveEvent = event;
+                target_groups = comprehensiveEvent.target_groups;
+            }
             // Resolve event_type and location ids to their state representations
-            if (event_type && typeof event_type === "string") {
-                const et = this.event_types.find((type) => type.id === parseInt(event_type, 10));
-                this.event.event_type = et !== null && et !== void 0 ? et : {};
+            if (event_type) {
+                const fullEventType = this.event_types.find((_event_type) => _event_type.id === event_type);
+                this.event.event_type = fullEventType !== null && fullEventType !== void 0 ? fullEventType : {};
             }
-            if (location && typeof location === "string") {
-                const loc = this.locations.find((loc) => loc.id === parseInt(location, 10));
-                this.event.location = loc !== null && loc !== void 0 ? loc : {};
+            if (location) {
+                const fullLocation = this.locations.find((_location) => _location.id === location);
+                this.event.location = fullLocation !== null && fullLocation !== void 0 ? fullLocation : {};
             }
-            if (target_groups &&
-                target_groups.every((tg) => ({}.hasOwnProperty.call(tg, "target_group_id")))) {
-                const selectedTargetGroups = this.target_groups.filter((target_group) => target_groups.some((tg) => tg.target_group_id === target_group.id));
-                this.event.target_groups = selectedTargetGroups.map((tg) => {
+            const isTruthyAndIsComprehensiveEvent = target_groups &&
+                target_groups.every((targetGroup) => ({}.hasOwnProperty.call(targetGroup, "target_group_id")));
+            if (isTruthyAndIsComprehensiveEvent) {
+                const eventComprehensive = this.event;
+                const selectedTargetGroups = this.target_groups.filter((target_group) => target_groups === null || target_groups === void 0 ? void 0 : target_groups.some((targetGroup) => targetGroup.target_group_id === target_group.id));
+                eventComprehensive.target_groups = selectedTargetGroups.map((selectedTargetGroup) => {
                     var _a, _b, _c, _d;
                     return ({
-                        ...tg,
-                        selected: (_b = (_a = target_groups.find((etg) => etg.target_group_id === tg.id)) === null || _a === void 0 ? void 0 : _a.selected) !== null && _b !== void 0 ? _b : false,
-                        fee: (_d = (_c = target_groups.find((etg) => etg.target_group_id === tg.id)) === null || _c === void 0 ? void 0 : _c.fee) !== null && _d !== void 0 ? _d : 0,
+                        ...selectedTargetGroup,
+                        selected: (_b = (_a = target_groups === null || target_groups === void 0 ? void 0 : target_groups.find((eventTargetGroup) => eventTargetGroup.target_group_id === selectedTargetGroup.id)) === null || _a === void 0 ? void 0 : _a.selected) !== null && _b !== void 0 ? _b : false,
+                        fee: (_d = (_c = target_groups === null || target_groups === void 0 ? void 0 : target_groups.find((eventTargetGroup) => eventTargetGroup.target_group_id === selectedTargetGroup.id)) === null || _c === void 0 ? void 0 : _c.fee) !== null && _d !== void 0 ? _d : 0,
                     });
                 });
             }
@@ -2732,31 +2776,46 @@ ${value}</textarea
                 this.closeButton.focus();
             }
         }
+        getSelectedQuantity(targetGroupFees) {
+            if (!targetGroupFees)
+                return 0;
+            return targetGroupFees === null || targetGroupFees === void 0 ? void 0 : targetGroupFees.filter((targetGroupFee) => targetGroupFee.selected).length;
+        }
         renderTargetGroupInfo(targetGroupFees, noFees) {
-            var _a;
-            const quantity = (_a = targetGroupFees === null || targetGroupFees === void 0 ? void 0 : targetGroupFees.filter((targetGroupFee) => targetGroupFee.selected).length) !== null && _a !== void 0 ? _a : 0;
-            return o$2(targetGroupFees, (targetGroupFee, index) => {
-                const hasTargetGroupId = {}.hasOwnProperty.call(targetGroupFee, "target_group_id");
-                if (hasTargetGroupId)
-                    return A;
-                const { name, min_age, max_age, fee, selected } = targetGroupFee;
-                if (!selected)
-                    return A;
-                return noFees
-                    ? x `<span>${name}${index + 1 < quantity ? ", " : ""}</span>`
-                    : x `
-            <tr>
-              <td>${name}</td>
-              <td>${min_age} - ${max_age}</td>
-              <td>${fee}</td>
-            </tr>
-          `;
-            });
+            const quantity = this.getSelectedQuantity(targetGroupFees);
+            return targetGroupFees
+                ? targetGroupFees.map((targetGroupFee, index) => {
+                    const hasTargetGroupId = {}.hasOwnProperty.call(targetGroupFee, "target_group_id");
+                    if (hasTargetGroupId)
+                        return A;
+                    const { name, min_age, max_age, fee, selected } = targetGroupFee;
+                    if (!selected)
+                        return A;
+                    return noFees
+                        ? x `<span>${name}${index + 1 < quantity ? ", " : ""}</span>`
+                        : x `
+                <tr>
+                  <td>${name}</td>
+                  <td>${min_age} - ${max_age}</td>
+                  <td>${fee}</td>
+                </tr>
+              `;
+                })
+                : A;
         }
         render() {
             var _a;
-            const { name, description, location, image, registration_link, start_time, end_time, target_groups, } = this.event;
-            const noFees = (_a = target_groups === null || target_groups === void 0 ? void 0 : target_groups.every((target_group) => target_group.fee === 0)) !== null && _a !== void 0 ? _a : true;
+            const { name, description, location, image, registration_link, start_time, end_time, } = this.event;
+            let target_groups = null;
+            if ({}.hasOwnProperty.call(this.event, "target_groups")) {
+                const eventComprehensive = this.event;
+                target_groups = eventComprehensive.target_groups;
+            }
+            let noFees = true;
+            if (target_groups) {
+                noFees =
+                    (_a = target_groups === null || target_groups === void 0 ? void 0 : target_groups.every((target_group) => target_group.fee === 0)) !== null && _a !== void 0 ? _a : true;
+            }
             return x `
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
@@ -2798,9 +2857,9 @@ ${value}</textarea
                       <strong>${__("Date and Time")}</strong>
                     </p>
                     <p class="wrapper">
-                      ${this.formatDatetimeByLocale(start_time)}
+                      ${formatDatetimeByLocale(start_time, this.locale)}
                       <span>${litFontawesome_2(faArrowRight)}</span>
-                      ${this.formatDatetimeByLocale(end_time)}
+                      ${formatDatetimeByLocale(end_time, this.locale)}
                     </p>
                   </div>
 
@@ -2859,7 +2918,7 @@ ${value}</textarea
                     <p>
                       ${typeof location === "string"
             ? A
-            : this.formatAddressByLocale(location)}
+            : formatAddress(location)}
                     </p>
                   </div>
                 </div>
@@ -2887,25 +2946,6 @@ ${value}</textarea
         </div>
       </div>
     `;
-        }
-        formatDatetimeByLocale(datetime) {
-            if (datetime) {
-                return new Intl.DateTimeFormat(this.locale, {
-                    dateStyle: "full",
-                    timeStyle: "short",
-                }).format(new Date(datetime));
-            }
-            return A;
-        }
-        formatAddressByLocale(address) {
-            if (address) {
-                const { name, street, number, city, zip, country } = address;
-                return x ` <strong>${name}</strong><br />
-        ${street} ${number}<br />
-        ${zip} ${city}<br />
-        ${country}`;
-            }
-            return A;
         }
     };
     LMSCardDetailsModal.styles = [
@@ -3136,19 +3176,19 @@ ${value}</textarea
             if (!keys2.includes(key)) {
                 return false;
             }
-            if (typeof obj1[key] === "function" ||
-                typeof obj2[key] === "function") {
-                if (obj1[key].toString() !== obj2[key].toString()) {
+            const value1 = obj1[key];
+            const value2 = obj2[key];
+            if (typeof value1 === "function" || typeof value2 === "function") {
+                if (String(value1) !== String(value2)) {
                     return false;
                 }
             }
-            else if (typeof obj1[key] === "object" &&
-                typeof obj2[key] === "object") {
-                if (!isDeepEqual(obj1[key], obj2[key])) {
+            else if (typeof value1 === "object" && typeof value2 === "object") {
+                if (!isDeepEqual(value1, value2)) {
                     return false;
                 }
             }
-            else if (obj1[key] !== obj2[key]) {
+            else if (value1 !== value2) {
                 return false;
             }
         }
@@ -3498,7 +3538,7 @@ ${value}</textarea
                         <label
                           class="form-check-label"
                           for="event_type_${eventTypeId}"
-                          >${(_a = this.event_types.find((event_type) => event_type.id === parseInt(eventTypeId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
+                          >${(_a = this.event_types.find((event_type) => event_type.id === eventTypeId)) === null || _a === void 0 ? void 0 : _a.name}</label
                         >
                       </div>
                     `;
@@ -3532,7 +3572,7 @@ ${value}</textarea
         })}
                 </lms-dropdown>
 
-                <lms-dropdown
+                <!-- <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
                   .label=${__("Age")}
@@ -3562,7 +3602,7 @@ ${value}</textarea
                       @input=${this.emitChange}
                     />
                   </div>
-                </lms-dropdown>
+                </lms-dropdown> -->
 
                 <!-- <lms-dropdown
                   .isHidden=${this.isHidden}
@@ -3618,7 +3658,7 @@ ${value}</textarea
                         <label
                           class="form-check-label"
                           for="location_${locationId}"
-                          >${(_a = this.locations.find((location) => location.id === parseInt(locationId, 10))) === null || _a === void 0 ? void 0 : _a.name}</label
+                          >${(_a = this.locations.find((location) => location.id === locationId)) === null || _a === void 0 ? void 0 : _a.name}</label
                         >
                       </div>`;
         })}
@@ -4903,6 +4943,7 @@ ${value}</textarea
                             name: event_type.name,
                         }));
                     },
+                    required: true,
                 },
                 {
                     name: "target_groups",
@@ -5776,12 +5817,10 @@ ${value}</textarea
             this.hydrate();
         }
         hydrate() {
-            this.data = this.event_types.map((event_type) => {
-                return Object.fromEntries(this.getColumnData(event_type, [
-                    ["target_groups", this.target_groups],
-                    ["location", this.locations],
-                ]));
-            });
+            this.data = this.event_types.map((event_type) => Object.fromEntries(this.getColumnData(event_type, [
+                ["target_groups", this.target_groups],
+                ["location", this.locations],
+            ])));
         }
         updated(changedProperties) {
             super.updated(changedProperties);
@@ -6411,7 +6450,7 @@ ${value}</textarea
                 x `<span class="text-muted font-weight-light">
                             <small>
                               ${litFontawesome_2(faMapMarkerAlt)}
-                              ${((_a = this.locations.find((location) => location.id === parseInt(event.location, 10))) === null || _a === void 0 ? void 0 : _a.name) || __("Location not found")}
+                              ${((_a = this.locations.find((location) => location.id === event.location)) === null || _a === void 0 ? void 0 : _a.name) || __("Location not found")}
                             </small>
                           </span>`,
                 x `<span class="text-muted font-weight-light">
@@ -6587,9 +6626,7 @@ ${value}</textarea
         async fetchUpdate() {
             const response = await fetch(`/api/v1/contrib/eventmanagement/events?${this.queryBuilder.query.toString()}`);
             this.events = await response.json();
-            const noItems = this.events.length === 0;
-            this.isEmpty = noItems;
-            this.hasNoResults = noItems;
+            this.hasNoResults = this.events.length === 0;
             this.queryBuilder.updateUrl();
             this.requestUpdate();
         }
@@ -6780,9 +6817,7 @@ ${value}</textarea
         async fetchUpdate() {
             const response = await fetch(`/api/v1/contrib/eventmanagement/event_types?${this.queryBuilder.query.toString()}`);
             this.event_types = await response.json();
-            const noItems = this.event_types.length === 0;
-            this.isEmpty = noItems;
-            this.hasNoResults = noItems;
+            this.hasNoResults = this.event_types.length === 0;
             this.queryBuilder.updateUrl();
             this.requestUpdate();
         }
@@ -6935,9 +6970,7 @@ ${value}</textarea
         async fetchUpdate() {
             const response = await fetch(`/api/v1/contrib/eventmanagement/locations?${this.queryBuilder.query.toString()}`);
             this.locations = await response.json();
-            const noItems = this.locations.length === 0;
-            this.isEmpty = noItems;
-            this.hasNoResults = noItems;
+            this.hasNoResults = this.locations.length === 0;
             this.queryBuilder.updateUrl();
             this.requestUpdate();
         }
@@ -6976,7 +7009,9 @@ ${value}</textarea
             }
             if (this.hasLoaded && this.isEmpty) {
                 return x ` <h1 class="text-center">${__("No data to display")}.</h1>
-        <lms-locations-modal @created=${this.fetchUpdate}></lms-locations-modal>`;
+        <lms-locations-modal
+          @created=${this.fetchUpdate}
+        ></lms-locations-modal>`;
             }
             return x `
       <lms-locations-table
@@ -7059,9 +7094,7 @@ ${value}</textarea
         async fetchUpdate() {
             const response = await fetch(`/api/v1/contrib/eventmanagement/target_groups?${this.queryBuilder.query.toString()}`);
             this.target_groups = await response.json();
-            const noItems = this.target_groups.length === 0;
-            this.isEmpty = noItems;
-            this.hasNoResults = noItems;
+            this.hasNoResults = this.target_groups.length === 0;
             this.queryBuilder.updateUrl();
             this.requestUpdate();
         }
@@ -7100,7 +7133,9 @@ ${value}</textarea
             }
             if (this.hasLoaded && this.isEmpty) {
                 return x ` <h1 class="text-center">${__("No data to display")}.</h1>
-        <lms-target-groups-modal @created=${this.fetchUpdate}></lms-target-groups-modal>`;
+        <lms-target-groups-modal
+          @created=${this.fetchUpdate}
+        ></lms-target-groups-modal>`;
             }
             return x `
       <lms-target-groups-table

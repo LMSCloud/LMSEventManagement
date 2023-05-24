@@ -1,6 +1,10 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable/LMSTable";
-import { EventType, TargetGroup, LMSLocation } from "../sharedDeclarations";
+import {
+  LMSEventType,
+  LMSLocation,
+  LMSTargetGroup,
+} from "../sharedDeclarations";
 import LMSAnchor from "../components/LMSAnchor";
 
 declare global {
@@ -11,9 +15,11 @@ declare global {
 
 @customElement("lms-event-types-table")
 export default class LMSEventTypesTable extends LMSTable {
-  @property({ type: Array }) target_groups: TargetGroup[] = [];
+  @property({ type: Array }) target_groups: LMSTargetGroup[] = [];
+
   @property({ type: Array }) locations: LMSLocation[] = [];
-  @property({ type: Array }) event_types: EventType[] = [];
+
+  @property({ type: Array }) event_types: LMSEventType[] = [];
 
   private handleInput(
     input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
@@ -160,14 +166,15 @@ export default class LMSEventTypesTable extends LMSTable {
   }
 
   private hydrate() {
-    this.data = this.event_types.map((event_type: EventType) => {
-      return Object.fromEntries(
-        this.getColumnData(event_type, [
-          ["target_groups", this.target_groups],
-          ["location", this.locations],
-        ])
-      );
-    });
+    this.data = this.event_types.map(
+      (event_type: { [key in keyof LMSEventType]: LMSEventType[key] }) =>
+        Object.fromEntries(
+          this.getColumnData(event_type, [
+            ["target_groups", this.target_groups],
+            ["location", this.locations],
+          ])
+        )
+    );
   }
 
   override updated(changedProperties: Map<string, never>) {

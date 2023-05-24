@@ -2,8 +2,8 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
-import { InputType, ModalField } from "../../../sharedDeclarations";
 import { convertToISO8601 } from "../../../lib/converters";
+import { InputType, ModalField } from "../../../sharedDeclarations";
 
 @customElement("lms-primitives-input")
 export default class LMSPrimitivesInput extends LitElement {

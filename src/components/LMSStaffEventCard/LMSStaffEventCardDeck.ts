@@ -3,17 +3,18 @@ import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
+import { searchSyntax } from "../../docs/searchSyntax";
 import { InputConverter, TemplateResultConverter } from "../../lib/converters";
 import { __ } from "../../lib/translate";
 import {
   Column,
-  EventType,
   LMSEvent,
+  LMSEventType,
   LMSLocation,
+  LMSTargetGroup,
   SortableColumns,
   TaggedColumn,
   TaggedData,
-  TargetGroup,
 } from "../../sharedDeclarations";
 import { skeletonStyles } from "../../styles/skeleton";
 import LMSAnchor from "../LMSAnchor";
@@ -22,7 +23,6 @@ import LMSStaffEventCardAttendees from "./LMSStaffEventCardAttendees";
 import LMSStaffEventCardForm from "./LMSStaffEventCardForm";
 import LMSStaffEventCardPreview from "./LMSStaffEventCardPreview";
 import LMSStaffEventsFilter from "./LMSStaffEventsFilter";
-import { searchSyntax } from "../../docs/searchSyntax";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -39,9 +39,9 @@ declare global {
 export default class LMSStaffEventCardDeck extends LitElement {
   @property({ type: Array }) events: LMSEvent[] = [];
 
-  @property({ type: Array }) event_types: EventType[] = [];
+  @property({ type: Array }) event_types: LMSEventType[] = [];
 
-  @property({ type: Array }) target_groups: TargetGroup[] = [];
+  @property({ type: Array }) target_groups: LMSTargetGroup[] = [];
 
   @property({ type: Array }) locations: LMSLocation[] = [];
 
@@ -127,10 +127,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
     this.hydrate();
   }
 
-  protected *getColumnData(
-    query: Record<string, string | number | boolean | any[]>,
-    data?: TaggedData[]
-  ) {
+  protected *getColumnData(query: LMSEvent, data?: TaggedData[]) {
     for (const [name, value] of Object.entries(query)) {
       yield [name, this.inputConverter.getInputTemplate({ name, value, data })];
     }

@@ -91,9 +91,7 @@ export default class StaffEventTypesView extends LitElement {
       `/api/v1/contrib/eventmanagement/event_types?${this.queryBuilder.query.toString()}`
     );
     this.event_types = await response.json();
-    const noItems = this.event_types.length === 0;
-    this.isEmpty = noItems;
-    this.hasNoResults = noItems;
+    this.hasNoResults = this.event_types.length === 0;
     this.queryBuilder.updateUrl();
     this.requestUpdate();
   }

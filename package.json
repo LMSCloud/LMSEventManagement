@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/lms-tobias/lms-koha-plugin-event-management#readme",
   "devDependencies": {
+    "@rmp135/sql-ts": "^1.16.0",
     "@rollup/plugin-terser": "^0.4.1",
     "@rollup/plugin-typescript": "^11.1.0",
     "@types/showdown": "^2.0.1",
@@ -48,6 +49,7 @@
     "htmlparser2": "^9.0.0",
     "knip": "^2.12.2",
     "mocha": "^10.2.0",
+    "mysql": "^2.18.1",
     "node-datetime": "^2.1.2",
     "node-fetch": "^3.3.1",
     "po2json": "1.0.0-beta-3",

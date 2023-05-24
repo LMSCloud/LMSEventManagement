@@ -1,20 +1,23 @@
-import { __, attr__ } from "../../lib/translate";
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { classMap } from "lit/directives/class-map.js";
-import { Column /* Input */, TargetGroupState } from "../../sharedDeclarations";
-import { customElement, property, queryAll } from "lit/decorators.js";
-import { LitElement, html, css } from "lit";
-import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { skeletonStyles } from "../../styles/skeleton";
-import { TemplateResultConverter } from "../../lib/converters";
-import { utilityStyles } from "../../styles/utilities";
 import {
+  faCompressAlt,
   faEdit,
   faSave,
-  faTrash,
-  faCompressAlt,
   faTimes,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { LitElement, css, html } from "lit";
+import { customElement, property, queryAll } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { TemplateResultConverter } from "../../lib/converters";
+import { __, attr__ } from "../../lib/translate";
+import {
+  Column,
+  LMSEventTargetGroupFeeReduced,
+} from "../../sharedDeclarations";
+import { skeletonStyles } from "../../styles/skeleton";
+import { utilityStyles } from "../../styles/utilities";
 
 /**
  * Custom element representing an event card form for staff members.
@@ -126,9 +129,7 @@ export default class LMSStaffEventCardForm extends LitElement {
     return targetGroupElements.reduce(
       (
         target_groups: {
-          [key: number]: Omit<TargetGroupState, "target_group_id"> & {
-            id: number;
-          };
+          [key: number]: LMSEventTargetGroupFeeReduced;
         },
         element
       ) => {

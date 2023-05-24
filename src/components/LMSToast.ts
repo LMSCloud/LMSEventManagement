@@ -7,7 +7,9 @@ import { skeletonStyles } from "../styles/skeleton";
 @customElement("lms-toast")
 export default class LMSToast extends LitElement {
   @property({ type: String }) heading = "";
+
   @property({ type: String }) message = "";
+  
   @property({ state: true }) _elapsedTime = 0;
 
   static override styles = [

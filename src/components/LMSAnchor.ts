@@ -1,5 +1,5 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html, nothing, PropertyValues, css } from "lit";
+import { LitElement, PropertyValues, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { URIComponents } from "../sharedDeclarations";
 

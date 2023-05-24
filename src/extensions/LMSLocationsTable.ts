@@ -106,9 +106,11 @@ export default class LMSLocationsTable extends LMSTable {
   }
 
   private hydrate() {
-    this.data = this.locations.map((location: LMSLocation) => {
-      return Object.fromEntries(this.getColumnData(location));
-    });
+    this.data = this.locations.map(
+      (location: { [key in keyof LMSLocation]: LMSLocation[key] }) => {
+        return Object.fromEntries(this.getColumnData(location));
+      }
+    );
   }
 
   override updated(changedProperties: Map<string, never>) {

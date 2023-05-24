@@ -1,16 +1,15 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html, TemplateResult, css } from "lit";
+import { LitElement, TemplateResult, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { DirectiveResult } from "lit/directive";
 import { ifDefined } from "lit/directives/if-defined.js";
+import { map } from "lit/directives/map.js";
+import { TranslateDirective, __ } from "../../../lib/translate";
 import {
   BaseFieldValue,
   MatrixGroup,
   ModalField,
 } from "../../../sharedDeclarations";
-import { map } from "lit/directives/map.js";
-import { DirectiveResult } from "lit/directive";
-import { TranslateDirective } from "../../../lib/translate";
-import { __ } from "../../../lib/translate";
 
 type Row = {
   id: string | number;

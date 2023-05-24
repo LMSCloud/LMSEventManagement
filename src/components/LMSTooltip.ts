@@ -4,13 +4,17 @@ import { customElement, property, query } from "lit/decorators.js";
 @customElement("lms-tooltip")
 export default class LMSTooltip extends LitElement {
   @property({ type: String, attribute: "data-text" }) text = "";
+
   @property({ type: Object }) target: HTMLElement | null = null;
+
   @property({ type: String, attribute: "data-placement" }) placement:
     | "top"
     | "bottom"
     | "left"
     | "right" = "bottom";
+
   @property({ type: Number, attribute: "data-timeout" }) timeout = 3000;
+
   @query("span.tooltip") tooltip!: HTMLElement;
 
   private showTooltipBound = this.showTooltip.bind(this);

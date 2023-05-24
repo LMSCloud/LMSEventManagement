@@ -151,7 +151,8 @@ export class TranslateAttributeDirective extends Directive {
   private async updateTranslation(text: string) {
     if (translationsLoaded && this._element && this._name) {
       const translatedText = i18nInstance.gettext(text);
-      (this._element as any)[this._name] = translatedText;
+      const element = this._element as HTMLElement;
+      element.setAttribute(this._name, translatedText);
     }
   }
 

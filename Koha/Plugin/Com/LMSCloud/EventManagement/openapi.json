@@ -148,7 +148,7 @@
                   "type": ["string", "null"]
                 },
                 "event_type": {
-                  "type": ["string", "null"]
+                  "type": ["integer", "null"]
                 },
                 "branch": {
                   "type": ["string", "null"]
@@ -172,7 +172,7 @@
                   "type": ["integer", "null"]
                 },
                 "location": {
-                  "type": ["string", "null"]
+                  "type": ["integer", "null"]
                 },
                 "description": {
                   "type": ["string", "null"]
@@ -777,7 +777,7 @@
                   "type": ["string", "null"]
                 },
                 "event_type": {
-                  "type": ["string", "null"]
+                  "type": ["integer", "null"]
                 },
                 "target_groups": {
                   "type": "array",
@@ -806,19 +806,23 @@
                   "type": ["integer", "null"]
                 },
                 "start_time": {
-                  "type": ["string", "null"]
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "end_time": {
-                  "type": ["string", "null"]
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "registration_start": {
-                  "type": ["string", "null"]
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "registration_end": {
-                  "type": ["string", "null"]
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "location": {
-                  "type": ["string", "null"]
+                  "type": ["integer", "null"]
                 },
                 "image": {
                   "type": ["string", "null"]
@@ -928,7 +932,7 @@
                 "type": ["string", "null"]
               },
               "event_type": {
-                "type": ["string", "null"]
+                "type": ["integer", "null"]
               },
               "target_groups": {
                 "type": "array",
@@ -957,19 +961,23 @@
                 "type": ["integer", "null"]
               },
               "start_time": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "end_time": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "registration_start": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "registration_end": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "location": {
-                "type": ["string", "null"]
+                "type": ["integer", "null"]
               },
               "image": {
                 "type": ["string", "null"]
@@ -1008,7 +1016,7 @@
                 "type": ["string", "null"]
               },
               "event_type": {
-                "type": ["string", "null"]
+                "type": ["integer", "null"]
               },
               "branch": {
                 "type": ["string", "null"]
@@ -1032,7 +1040,7 @@
                 "type": ["integer", "null"]
               },
               "location": {
-                "type": ["string", "null"]
+                "type": ["integer", "null"]
               },
               "description": {
                 "type": ["string", "null"]
@@ -1163,7 +1171,7 @@
                 "type": ["string", "null"]
               },
               "event_type": {
-                "type": ["string", "null"]
+                "type": ["integer", "null"]
               },
               "target_groups": {
                 "type": "array",
@@ -1192,19 +1200,23 @@
                 "type": ["integer", "null"]
               },
               "start_time": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "end_time": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "registration_start": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "registration_end": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "location": {
-                "type": ["string", "null"]
+                "type": ["integer", "null"]
               },
               "image": {
                 "type": ["string", "null"]
@@ -1320,7 +1332,7 @@
                 "type": ["string", "null"]
               },
               "event_type": {
-                "type": ["string", "null"]
+                "type": ["integer", "null"]
               },
               "target_groups": {
                 "type": "array",
@@ -1349,19 +1361,23 @@
                 "type": ["integer", "null"]
               },
               "start_time": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "end_time": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "registration_start": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "registration_end": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "location": {
-                "type": ["string", "null"]
+                "type": ["integer", "null"]
               },
               "image": {
                 "type": ["string", "null"]
@@ -1400,7 +1416,7 @@
                 "type": ["string", "null"]
               },
               "event_type": {
-                "type": ["string", "null"]
+                "type": ["integer", "null"]
               },
               "target_group": {
                 "type": ["string", "null"]
@@ -1415,22 +1431,26 @@
                 "type": ["integer", "null"]
               },
               "start_time": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "end_time": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "registration_start": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "registration_end": {
-                "type": ["string", "null"]
+                "type": ["string", "null"],
+                "format": "date-time"
               },
               "fee": {
                 "type": ["number", "null"]
               },
               "location": {
-                "type": ["string", "null"]
+                "type": ["integer", "null"]
               },
               "image": {
                 "type": ["string", "null"]

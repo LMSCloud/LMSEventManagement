@@ -1,10 +1,10 @@
-import { LitElement, html, css } from "lit";
+import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { LitElement, css, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import { TranslateDirective, __, attr__ } from "../lib/translate";
 import { DirectiveResult } from "lit/directive.js";
+import { TranslateDirective, __, attr__ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 
 type MenuEntry = {
@@ -17,16 +17,21 @@ type MenuEntry = {
 @customElement("lms-floating-menu")
 export default class LMSFloatingMenu extends LitElement {
   @property({ type: String }) brand = "Navigation";
+
   @property({
     type: Array,
     converter: (value) => (value ? JSON.parse(value) : []),
   })
   items: MenuEntry[] = [];
+
   @property({ type: String, attribute: false }) _currentUrl =
     window.location.href;
+
   @property({ type: String, attribute: false }) _currentSearchParams =
     new URLSearchParams(window.location.search);
+
   @query("#navbarNav") navbarNav!: HTMLElement;
+
   private isOpen = false;
 
   static override styles = [
