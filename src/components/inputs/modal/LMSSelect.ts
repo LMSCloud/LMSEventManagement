@@ -1,5 +1,5 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html } from "lit";
+import { LitElement, PropertyValueMap, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { ModalField, SelectOption } from "../../../sharedDeclarations";
@@ -12,7 +12,14 @@ export default class LMSSelect extends LitElement {
 
   static override styles = [bootstrapStyles];
 
-  override firstUpdated() {
+  protected override updated(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
+    super.updated(_changedProperties);
+    if (_changedProperties.has("field")) {
+      this.setDefaultOption();
+    }
+  }
+
+  private setDefaultOption() {
     const { dbData } = this.field;
     if (dbData?.length) {
       const [defaultOption] = dbData;

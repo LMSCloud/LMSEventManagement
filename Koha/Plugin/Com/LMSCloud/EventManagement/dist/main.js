@@ -117,6 +117,12 @@
      * SPDX-License-Identifier: BSD-3-Clause
      */var n$1;null!=(null===(n$1=window.HTMLSlotElement)||void 0===n$1?void 0:n$1.prototype.assignedElements)?(o,n)=>o.assignedElements(n):(o,n)=>o.assignedNodes(n).filter((o=>o.nodeType===Node.ELEMENT_NODE));
 
+    /**
+     * @license
+     * Copyright 2018 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */const l=l=>null!=l?l:A;
+
     let LMSCheckboxInput = class LMSCheckboxInput extends s {
         constructor() {
             super(...arguments);
@@ -137,7 +143,7 @@
             return false;
         }
         render() {
-            const { name, value, desc, required } = this.field;
+            const { name, desc, placeholder, value, required } = this.field;
             return x `
       <div class="form-check">
         <input
@@ -146,6 +152,7 @@
           id=${name}
           value=${value ? 1 : 0}
           class="form-check-input"
+          placeholder=${l(placeholder)}
           @change=${this.handleChange}
           ?required=${required}
           ?checked=${this.getCheckedState}
@@ -166,12 +173,6 @@
         e$3("lms-checkbox-input")
     ], LMSCheckboxInput);
     var LMSCheckboxInput$1 = LMSCheckboxInput;
-
-    /**
-     * @license
-     * Copyright 2018 Google LLC
-     * SPDX-License-Identifier: BSD-3-Clause
-     */const l=l=>null!=l?l:A;
 
     /**
      * @license
@@ -1189,7 +1190,7 @@ ${value}</textarea
         }
         render() {
             var _a;
-            const { name, desc, type, required } = this.field;
+            const { name, desc, placeholder, type, required } = this.field;
             return x ` <div class="form-group">
       <label for=${name}>${desc}</label>
       <input
@@ -1198,6 +1199,7 @@ ${value}</textarea
         id=${name}
         value=${l(typeof this.value === "string" ? this.value : (_a = this.value) === null || _a === void 0 ? void 0 : _a.toString())}
         class="form-control"
+        placeholder=${l(placeholder)}
         @input=${this.handleInput}
         ?required=${required}
       />
@@ -1222,7 +1224,13 @@ ${value}</textarea
             this.field = {};
             this.defaultOption = {};
         }
-        firstUpdated() {
+        updated(_changedProperties) {
+            super.updated(_changedProperties);
+            if (_changedProperties.has("field")) {
+                this.setDefaultOption();
+            }
+        }
+        setDefaultOption() {
             const { dbData } = this.field;
             if (dbData === null || dbData === void 0 ? void 0 : dbData.length) {
                 const [defaultOption] = dbData;
@@ -4245,7 +4253,20 @@ ${value}</textarea
                     return;
                 }
                 if (result.errors) {
-                    console.trace(result.errors);
+                    this.alert = {
+                        active: true,
+                        message: x `<span>Sorry!</span>
+            <ol>
+              ${o$2(result.errors, (error) => x `<li>
+                    ${error.message}
+                    ${litFontawesome_2(faArrowRight, {
+                        className: "color-unset",
+                    })}
+                    ${error.path}
+                  </li>`)}
+            </ol>`,
+                    };
+                    return;
                 }
             }
         }
@@ -4475,6 +4496,9 @@ ${value}</textarea
       }
       button.btn-modal > svg {
         color: var(--background-color);
+      }
+      .color-unset {
+        color: unset;
       }
     `,
     ];
@@ -5028,6 +5052,7 @@ ${value}</textarea
                     name: "name",
                     type: "text",
                     desc: __("Name"),
+                    placeholder: attr__("Name of the event, e.g. 'Concert' or 'Workshop'."),
                     required: true,
                 },
                 {
@@ -5067,42 +5092,49 @@ ${value}</textarea
                     name: "min_age",
                     type: "number",
                     desc: __("Min Age"),
+                    placeholder: attr__("Minimum age of the target groups, e.g. '18'."),
                     required: true,
                 },
                 {
                     name: "max_age",
                     type: "number",
                     desc: __("Max Age"),
+                    placeholder: attr__("Maximum age of the target groups, e.g. '99'."),
                     required: true,
                 },
                 {
                     name: "max_participants",
                     type: "number",
                     desc: __("Max Participants"),
+                    placeholder: attr__("Maximum number of participants, e.g. '100'."),
                     required: true,
                 },
                 {
                     name: "start_time",
                     type: "datetime-local",
                     desc: __("Start Time"),
+                    placeholder: attr__("Start time of the event, e.g. '2023-01-01 10:00'."),
                     required: true,
                 },
                 {
                     name: "end_time",
                     type: "datetime-local",
                     desc: __("End Time"),
+                    placeholder: attr__("End time of the event, e.g. '2023-01-01 12:00'."),
                     required: true,
                 },
                 {
                     name: "registration_start",
                     type: "datetime-local",
                     desc: __("Registration Start"),
+                    placeholder: attr__("Registration start time, e.g. '2023-01-01 08:00'."),
                     required: true,
                 },
                 {
                     name: "registration_end",
                     type: "datetime-local",
                     desc: __("Registration End"),
+                    placeholder: attr__("Registration end time, e.g. '2023-01-01 09:00'."),
                     required: true,
                 },
                 {
@@ -5123,12 +5155,14 @@ ${value}</textarea
                     name: "image",
                     type: "text",
                     desc: __("Image"),
+                    placeholder: attr__("Image URL, e.g. 'https://example.com/image.png'."),
                     required: false,
                 },
                 {
                     name: "description",
                     type: "text",
                     desc: __("Description"),
+                    placeholder: attr__("Description of the event, e.g. 'This is a concert.'."),
                     required: false,
                 },
                 {
@@ -5149,6 +5183,7 @@ ${value}</textarea
                     name: "registration_link",
                     type: "text",
                     desc: __("Registration Link"),
+                    placeholder: attr__("Registration link, e.g. 'https://example.com'."),
                     required: false,
                 },
                 {
@@ -5198,14 +5233,14 @@ ${value}</textarea
             if (eventTypeField) {
                 const { dbData } = eventTypeField;
                 if (dbData) {
-                    /** We destructure the default event_type out of the dbData array
-                     *  to set the selectedEventTypeId state variable. */
+                    /* We destructure the default event_type out of the dbData array
+                     * to set the selectedEventTypeId state variable. */
                     const [event_type] = dbData;
                     if (!event_type)
                         return;
                     let { id } = event_type;
-                    /** If the eventTypeField value has changed due to a select element
-                     *  change event, we use it instead of the default. */
+                    /* If the eventTypeField value has changed due to a select element
+                     * change event, we use it instead of the default. */
                     id = (_a = eventTypeField === null || eventTypeField === void 0 ? void 0 : eventTypeField.value) !== null && _a !== void 0 ? _a : id;
                     const eventType = this.fetchEventType(parseInt(id, 10));
                     eventType
@@ -5254,6 +5289,7 @@ ${value}</textarea
                     name: "name",
                     type: "text",
                     desc: __("Name"),
+                    placeholder: attr__("Name of the event type, e.g. 'Workshop' or 'Lecture'."),
                     required: true,
                     value: "",
                 },
@@ -5281,22 +5317,25 @@ ${value}</textarea
                     name: "min_age",
                     type: "number",
                     desc: __("Min Age"),
+                    placeholder: attr__("Minimum age of the target groups, e.g. '18'."),
                     required: true,
-                    value: "0",
+                    value: "",
                 },
                 {
                     name: "max_age",
                     type: "number",
                     desc: __("Max Age"),
+                    placeholder: attr__("Maximum age of the target groups, e.g. '99'."),
                     required: true,
-                    value: "0",
+                    value: "",
                 },
                 {
                     name: "max_participants",
                     type: "number",
                     desc: __("Max Participants"),
+                    placeholder: attr__("Maximum number of participants, e.g. '20'."),
                     required: true,
-                    value: "0",
+                    value: "",
                 },
                 {
                     name: "location",
@@ -5317,13 +5356,15 @@ ${value}</textarea
                     name: "image",
                     type: "text",
                     desc: __("Image"),
+                    placeholder: attr__("Image URL"),
                     required: false,
-                    value: "0",
+                    value: "",
                 },
                 {
                     name: "description",
                     type: "text",
                     desc: __("Description"),
+                    placeholder: attr__("Description of the event type, e.g. 'This is a workshop.'"),
                     required: false,
                     value: "",
                 },
@@ -5972,6 +6013,7 @@ ${value}</textarea
                     name: "name",
                     type: "text",
                     desc: __("Name"),
+                    placeholder: attr__("Name of the location, e.g. 'World Trade Center' or 'Room 101'."),
                     required: true,
                     value: "",
                 },
@@ -5979,13 +6021,15 @@ ${value}</textarea
                     name: "street",
                     type: "text",
                     desc: __("Street"),
-                    required: true,
+                    placeholder: attr__("Street name and number, e.g. 'Main Street'."),
+                    required: false,
                     value: "",
                 },
                 {
                     name: "number",
                     type: "text",
                     desc: __("Number"),
+                    placeholder: attr__("Street number, e.g. '42'."),
                     required: false,
                     value: "",
                 },
@@ -5993,6 +6037,7 @@ ${value}</textarea
                     name: "city",
                     type: "text",
                     desc: __("City"),
+                    placeholder: attr__("City, e.g. 'New York'."),
                     required: false,
                     value: "",
                 },
@@ -6000,13 +6045,15 @@ ${value}</textarea
                     name: "zip",
                     type: "text",
                     desc: __("Zip"),
+                    placeholder: attr__("Zip code, e.g. '10007'."),
                     required: false,
-                    value: "0",
+                    value: "",
                 },
                 {
                     name: "country",
                     type: "text",
                     desc: __("Country"),
+                    placeholder: attr__("Country, e.g. 'USA'."),
                     required: false,
                     value: "",
                 },
@@ -6135,6 +6182,7 @@ ${value}</textarea
                     name: "name",
                     type: "text",
                     desc: __("Name"),
+                    placeholder: attr__("Name of the target group, e.g. 'Children' or 'Adults'."),
                     required: true,
                     value: "",
                 },
@@ -6142,15 +6190,17 @@ ${value}</textarea
                     name: "min_age",
                     type: "number",
                     desc: __("Min Age"),
+                    placeholder: attr__("Minimum age of the target group, e.g. '18'."),
                     required: true,
-                    value: "0",
+                    value: "",
                 },
                 {
                     name: "max_age",
                     type: "number",
                     desc: __("Max Age"),
+                    placeholder: attr__("Maximum age of the target group, e.g. '99'."),
                     required: false,
-                    value: "0",
+                    value: "",
                 },
             ];
         }
