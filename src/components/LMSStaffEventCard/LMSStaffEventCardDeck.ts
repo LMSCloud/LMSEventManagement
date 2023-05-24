@@ -226,7 +226,8 @@ export default class LMSStaffEventCardDeck extends LitElement {
             ._page=${this._page}
             ._per_page=${this._per_page}
           ></lms-pagination>
-          <div
+        </lms-staff-events-filter>
+        <div
           class="alert alert-info text-center ${classMap({
             "d-none": !this.hasNoResults,
           })}"
@@ -242,7 +243,6 @@ export default class LMSStaffEventCardDeck extends LitElement {
             ${searchSyntax}
           </div>
         </div>
-        </lms-staff-events-filter>
         <div class="card-deck card-deck-responsive">
           ${map(this.data, (datum) => {
             const { name, uuid } = datum;

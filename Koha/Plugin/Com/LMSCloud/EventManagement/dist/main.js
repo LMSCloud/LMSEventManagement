@@ -2229,7 +2229,8 @@ ${value}</textarea
             ._page=${this._page}
             ._per_page=${this._per_page}
           ></lms-pagination>
-          <div
+        </lms-staff-events-filter>
+        <div
           class="alert alert-info text-center ${o$1({
             "d-none": !this.hasNoResults,
         })}"
@@ -2245,7 +2246,6 @@ ${value}</textarea
             ${searchSyntax}
           </div>
         </div>
-        </lms-staff-events-filter>
         <div class="card-deck card-deck-responsive">
           ${o$2(this.data, (datum) => {
             const { name, uuid } = datum;
