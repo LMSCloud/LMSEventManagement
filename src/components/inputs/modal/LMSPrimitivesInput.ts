@@ -23,7 +23,7 @@ export default class LMSPrimitivesInput extends LitElement {
   }
 
   override render() {
-    const { name, desc, type, required } = this.field;
+    const { name, desc, placeholder, type, required } = this.field;
     return html` <div class="form-group">
       <label for=${name}>${desc}</label>
       <input
@@ -34,6 +34,7 @@ export default class LMSPrimitivesInput extends LitElement {
           typeof this.value === "string" ? this.value : this.value?.toString()
         )}
         class="form-control"
+        placeholder=${ifDefined(placeholder)}
         @input=${this.handleInput}
         ?required=${required}
       />

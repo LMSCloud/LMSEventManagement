@@ -1,7 +1,7 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
+import { __, attr__ } from "../lib/translate";
 import { CreateOpts } from "../sharedDeclarations";
-import { __ } from "../lib/translate";
 
 @customElement("lms-locations-modal")
 export default class LMSLocationsModal extends LMSModal {
@@ -22,6 +22,7 @@ export default class LMSLocationsModal extends LMSModal {
         name: "name",
         type: "text",
         desc: __("Name"),
+        placeholder: attr__("Name of the location, e.g. 'World Trade Center' or 'Room 101'."),
         required: true,
         value: "",
       },
@@ -29,13 +30,15 @@ export default class LMSLocationsModal extends LMSModal {
         name: "street",
         type: "text",
         desc: __("Street"),
-        required: true,
+        placeholder: attr__("Street name and number, e.g. 'Main Street'."),
+        required: false,
         value: "",
       },
       {
         name: "number",
         type: "text",
         desc: __("Number"),
+        placeholder: attr__("Street number, e.g. '42'."),
         required: false,
         value: "",
       },
@@ -43,6 +46,7 @@ export default class LMSLocationsModal extends LMSModal {
         name: "city",
         type: "text",
         desc: __("City"),
+        placeholder: attr__("City, e.g. 'New York'."),
         required: false,
         value: "",
       },
@@ -50,13 +54,15 @@ export default class LMSLocationsModal extends LMSModal {
         name: "zip",
         type: "text",
         desc: __("Zip"),
+        placeholder: attr__("Zip code, e.g. '10007'."),
         required: false,
-        value: "0",
+        value: "",
       },
       {
         name: "country",
         type: "text",
         desc: __("Country"),
+        placeholder: attr__("Country, e.g. 'USA'."),
         required: false,
         value: "",
       },

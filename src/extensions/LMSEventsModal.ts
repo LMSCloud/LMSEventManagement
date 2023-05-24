@@ -1,12 +1,12 @@
 import { customElement, property, state } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
+import { __, attr__ } from "../lib/translate";
 import {
   CreateOpts,
   LMSEventType,
   LMSLocation,
   LMSTargetGroup,
 } from "../sharedDeclarations";
-import { __ } from "../lib/translate";
 
 @customElement("lms-events-modal")
 export default class LMSEventsModal extends LMSModal {
@@ -29,6 +29,7 @@ export default class LMSEventsModal extends LMSModal {
         name: "name",
         type: "text",
         desc: __("Name"),
+        placeholder: attr__("Name of the event, e.g. 'Concert' or 'Workshop'."),
         required: true,
       },
       {
@@ -72,42 +73,49 @@ export default class LMSEventsModal extends LMSModal {
         name: "min_age",
         type: "number",
         desc: __("Min Age"),
+        placeholder: attr__("Minimum age of the target groups, e.g. '18'."),
         required: true,
       },
       {
         name: "max_age",
         type: "number",
         desc: __("Max Age"),
+        placeholder: attr__("Maximum age of the target groups, e.g. '99'."),
         required: true,
       },
       {
         name: "max_participants",
         type: "number",
         desc: __("Max Participants"),
+        placeholder: attr__("Maximum number of participants, e.g. '100'."),
         required: true,
       },
       {
         name: "start_time",
         type: "datetime-local",
         desc: __("Start Time"),
+        placeholder: attr__("Start time of the event, e.g. '2023-01-01 10:00'."),
         required: true,
       },
       {
         name: "end_time",
         type: "datetime-local",
         desc: __("End Time"),
+        placeholder: attr__("End time of the event, e.g. '2023-01-01 12:00'."),
         required: true,
       },
       {
         name: "registration_start",
         type: "datetime-local",
         desc: __("Registration Start"),
+        placeholder: attr__("Registration start time, e.g. '2023-01-01 08:00'."),
         required: true,
       },
       {
         name: "registration_end",
         type: "datetime-local",
         desc: __("Registration End"),
+        placeholder: attr__("Registration end time, e.g. '2023-01-01 09:00'."),
         required: true,
       },
       {
@@ -130,12 +138,14 @@ export default class LMSEventsModal extends LMSModal {
         name: "image",
         type: "text",
         desc: __("Image"),
+        placeholder: attr__("Image URL, e.g. 'https://example.com/image.png'."),
         required: false,
       },
       {
         name: "description",
         type: "text",
         desc: __("Description"),
+        placeholder: attr__("Description of the event, e.g. 'This is a concert.'."),
         required: false,
       },
       {
@@ -156,6 +166,7 @@ export default class LMSEventsModal extends LMSModal {
         name: "registration_link",
         type: "text",
         desc: __("Registration Link"),
+        placeholder: attr__("Registration link, e.g. 'https://example.com'."),
         required: false,
       },
       {
@@ -207,14 +218,14 @@ export default class LMSEventsModal extends LMSModal {
     if (eventTypeField) {
       const { dbData } = eventTypeField;
       if (dbData) {
-        /** We destructure the default event_type out of the dbData array
-         *  to set the selectedEventTypeId state variable. */
+        /* We destructure the default event_type out of the dbData array
+         * to set the selectedEventTypeId state variable. */
         const [event_type] = dbData;
         if (!event_type) return;
 
         let { id } = event_type;
-        /** If the eventTypeField value has changed due to a select element
-         *  change event, we use it instead of the default. */
+        /* If the eventTypeField value has changed due to a select element
+         * change event, we use it instead of the default. */
         id = (eventTypeField?.value as string) ?? id;
 
         const eventType = this.fetchEventType(parseInt(id, 10));

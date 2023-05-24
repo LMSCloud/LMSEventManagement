@@ -4,15 +4,16 @@ import { TranslateDirective } from "./lib/translate";
 
 /* Utility types */
 export type BaseField = {
-  desc?: string | TranslatedString;
   name: string;
+  desc?: string | TranslatedString;
+  placeholder?: TranslatedString;
   required: boolean;
 } & Partial<{
   logic?: () => Promise<Array<SelectOption>>;
-  required: boolean;
-  value: BaseFieldValue;
   dbData: Array<SelectOption>;
+  value: BaseFieldValue;
   attributes: Array<[string, string | number]>;
+  required: boolean;
 }>;
 
 export type BaseFieldValue =
@@ -98,6 +99,8 @@ export type InputType =
   | "time"
   | "url"
   | "week";
+
+export type KohaAPIError = Record<"message" | "path", string>;
 
 export type MatrixGroup = {
   [key in InputType]?: string;

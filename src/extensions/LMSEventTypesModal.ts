@@ -1,7 +1,7 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { CreateOpts, LMSLocation, LMSTargetGroup } from "../sharedDeclarations";
-import { __ } from "../lib/translate";
+import { attr__, __ } from "../lib/translate";
 
 @customElement("lms-event-types-modal")
 export default class LMSEventTypesModal extends LMSModal {
@@ -22,6 +22,7 @@ export default class LMSEventTypesModal extends LMSModal {
         name: "name",
         type: "text",
         desc: __("Name"),
+        placeholder: attr__("Name of the event type, e.g. 'Workshop' or 'Lecture'."),
         required: true,
         value: "",
       },
@@ -51,22 +52,25 @@ export default class LMSEventTypesModal extends LMSModal {
         name: "min_age",
         type: "number",
         desc: __("Min Age"),
+        placeholder: attr__("Minimum age of the target groups, e.g. '18'."),
         required: true,
-        value: "0",
+        value: "",
       },
       {
         name: "max_age",
         type: "number",
         desc: __("Max Age"),
+        placeholder: attr__("Maximum age of the target groups, e.g. '99'."),
         required: true,
-        value: "0",
+        value: "",
       },
       {
         name: "max_participants",
         type: "number",
         desc: __("Max Participants"),
+        placeholder: attr__("Maximum number of participants, e.g. '20'."),
         required: true,
-        value: "0",
+        value: "",
       },
       {
         name: "location",
@@ -89,13 +93,15 @@ export default class LMSEventTypesModal extends LMSModal {
         name: "image",
         type: "text",
         desc: __("Image"),
+        placeholder: attr__("Image URL"),
         required: false,
-        value: "0",
+        value: "",
       },
       {
         name: "description",
         type: "text",
         desc: __("Description"),
+        placeholder: attr__("Description of the event type, e.g. 'This is a workshop.'"),
         required: false,
         value: "",
       },

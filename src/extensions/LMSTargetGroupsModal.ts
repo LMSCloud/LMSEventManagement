@@ -1,7 +1,7 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { CreateOpts } from "../sharedDeclarations";
-import { __ } from "../lib/translate";
+import { __, attr__ } from "../lib/translate";
 
 @customElement("lms-target-groups-modal")
 export default class LMSTargetGroupsModal extends LMSModal {
@@ -22,6 +22,7 @@ export default class LMSTargetGroupsModal extends LMSModal {
         name: "name",
         type: "text",
         desc: __("Name"),
+        placeholder: attr__("Name of the target group, e.g. 'Children' or 'Adults'."),
         required: true,
         value: "",
       },
@@ -29,15 +30,17 @@ export default class LMSTargetGroupsModal extends LMSModal {
         name: "min_age",
         type: "number",
         desc: __("Min Age"),
+        placeholder: attr__("Minimum age of the target group, e.g. '18'."),
         required: true,
-        value: "0",
+        value: "",
       },
       {
         name: "max_age",
         type: "number",
         desc: __("Max Age"),
+        placeholder: attr__("Maximum age of the target group, e.g. '99'."),
         required: false,
-        value: "0",
+        value: "",
       },
     ];
   }
