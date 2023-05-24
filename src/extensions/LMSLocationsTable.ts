@@ -45,6 +45,11 @@ export default class LMSLocationsTable extends LMSTable {
       inputs.forEach((input) => {
         input.disabled = true;
       });
+      this.toggleEdit(
+        new CustomEvent("click", {
+          detail: target.closest("td")?.querySelector(".btn-edit"),
+        })
+      );
       this.dispatchEvent(new CustomEvent("updated", { detail: id }));
       return;
     }
@@ -90,15 +95,7 @@ export default class LMSLocationsTable extends LMSTable {
 
   constructor() {
     super();
-    this.order = [
-      "id",
-      "name",
-      "street",
-      "number",
-      "city",
-      "zip",
-      "country",
-    ];
+    this.order = ["id", "name", "street", "number", "city", "zip", "country"];
     this.isEditable = true;
     this.isDeletable = true;
   }

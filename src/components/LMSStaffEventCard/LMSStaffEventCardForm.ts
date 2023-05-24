@@ -73,9 +73,14 @@ export default class LMSStaffEventCardForm extends LitElement {
    * Toggles the edit mode of the form.
    * @param e - The click event.
    */
-  private toggleEdit(e: Event) {
+  private toggleEdit(e: Event | CustomEvent) {
     e.preventDefault();
-    const button = e.target as HTMLButtonElement;
+    let button: HTMLButtonElement;
+    if (e instanceof CustomEvent) {
+      button = e.detail;
+    } else {
+      button = e.target as HTMLButtonElement;
+    }
     if (!button) return;
 
     if (button.classList.contains("active")) {
@@ -259,6 +264,9 @@ export default class LMSStaffEventCardForm extends LitElement {
         input.setAttribute("disabled", "");
       });
       this.collapseAll();
+      this.toggleEdit(
+        new CustomEvent("click", { detail: target.querySelector(".btn-edit") })
+      );
       this.dispatchEvent(
         new CustomEvent("updated", {
           detail: id,
@@ -371,7 +379,7 @@ export default class LMSStaffEventCardForm extends LitElement {
           <button
             @click=${this.toggleEdit}
             type="button"
-            class="btn btn-outline-secondary"
+            class="btn btn-outline-secondary btn-edit"
           >
             <span class="start-edit pointer-events-none"
               >${litFontawesome(faEdit)}&nbsp;${__("Edit")}</span

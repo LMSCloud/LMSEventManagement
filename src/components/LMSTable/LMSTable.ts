@@ -207,8 +207,21 @@ export default class LMSTable extends LitElement {
     });
   }
 
-  protected toggleEdit(e: Event) {
-    const button = e.target as HTMLButtonElement;
+  /**
+   * Toggles the edit mode for a table row.
+   * For the close on Save feature to work, the button needs to be
+   * passed as a CustomEvent detail.
+   * Example: new CustomEvent("click", { detail: <BUTTON_REFERENCE> })
+   * @param e
+   * @returns
+   */
+  protected toggleEdit(e: Event | CustomEvent) {
+    let button: HTMLButtonElement;
+    if (e instanceof CustomEvent) {
+      button = e.detail;
+    } else {
+      button = e.target as HTMLButtonElement;
+    }
     if (!button) return;
 
     this.inputs?.forEach((input) => {

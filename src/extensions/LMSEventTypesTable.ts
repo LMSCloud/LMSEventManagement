@@ -87,6 +87,11 @@ export default class LMSEventTypesTable extends LMSTable {
       inputs.forEach((input) => {
         input.disabled = true;
       });
+      this.toggleEdit(
+        new CustomEvent("click", {
+          detail: target.closest("td")?.querySelector(".btn-edit"),
+        })
+      );
       this.dispatchEvent(new CustomEvent("updated", { detail: id }));
       return;
     }

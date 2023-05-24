@@ -1595,7 +1595,13 @@ ${value}</textarea
         toggleEdit(e) {
             var _a, _b, _c, _d;
             e.preventDefault();
-            const button = e.target;
+            let button;
+            if (e instanceof CustomEvent) {
+                button = e.detail;
+            }
+            else {
+                button = e.target;
+            }
             if (!button)
                 return;
             if (button.classList.contains("active")) {
@@ -1735,6 +1741,7 @@ ${value}</textarea
                     input.setAttribute("disabled", "");
                 });
                 this.collapseAll();
+                this.toggleEdit(new CustomEvent("click", { detail: target.querySelector(".btn-edit") }));
                 this.dispatchEvent(new CustomEvent("updated", {
                     detail: id,
                     bubbles: true,
@@ -1827,7 +1834,7 @@ ${value}</textarea
           <button
             @click=${this.toggleEdit}
             type="button"
-            class="btn btn-outline-secondary"
+            class="btn btn-outline-secondary btn-edit"
           >
             <span class="start-edit pointer-events-none"
               >${litFontawesome_2(faEdit)}&nbsp;${__("Edit")}</span
@@ -5234,9 +5241,23 @@ ${value}</textarea
                 }
             });
         }
+        /**
+         * Toggles the edit mode for a table row.
+         * For the close on Save feature to work, the button needs to be
+         * passed as a CustomEvent detail.
+         * Example: new CustomEvent("click", { detail: <BUTTON_REFERENCE> })
+         * @param e
+         * @returns
+         */
         toggleEdit(e) {
             var _a, _b;
-            const button = e.target;
+            let button;
+            if (e instanceof CustomEvent) {
+                button = e.detail;
+            }
+            else {
+                button = e.target;
+            }
             if (!button)
                 return;
             (_a = this.inputs) === null || _a === void 0 ? void 0 : _a.forEach((input) => {
@@ -5626,7 +5647,7 @@ ${value}</textarea
             return value;
         }
         async handleSave(e) {
-            var _a, _b;
+            var _a, _b, _c;
             const target = e.target;
             let parent = target.parentElement;
             while (parent && parent.tagName !== "TR") {
@@ -5671,6 +5692,9 @@ ${value}</textarea
                 inputs.forEach((input) => {
                     input.disabled = true;
                 });
+                this.toggleEdit(new CustomEvent("click", {
+                    detail: (_c = target.closest("td")) === null || _c === void 0 ? void 0 : _c.querySelector(".btn-edit"),
+                }));
                 this.dispatchEvent(new CustomEvent("updated", { detail: id }));
                 return;
             }
@@ -5827,7 +5851,7 @@ ${value}</textarea
 
     let LMSLocationsTable = class LMSLocationsTable extends LMSTable$1 {
         async handleSave(e) {
-            var _a, _b;
+            var _a, _b, _c;
             const target = e.target;
             let parent = target.parentElement;
             while (parent && parent.tagName !== "TR") {
@@ -5854,6 +5878,9 @@ ${value}</textarea
                 inputs.forEach((input) => {
                     input.disabled = true;
                 });
+                this.toggleEdit(new CustomEvent("click", {
+                    detail: (_c = target.closest("td")) === null || _c === void 0 ? void 0 : _c.querySelector(".btn-edit"),
+                }));
                 this.dispatchEvent(new CustomEvent("updated", { detail: id }));
                 return;
             }
@@ -5889,15 +5916,7 @@ ${value}</textarea
         constructor() {
             super();
             this.locations = [];
-            this.order = [
-                "id",
-                "name",
-                "street",
-                "number",
-                "city",
-                "zip",
-                "country",
-            ];
+            this.order = ["id", "name", "street", "number", "city", "zip", "country"];
             this.isEditable = true;
             this.isDeletable = true;
         }
@@ -5974,7 +5993,7 @@ ${value}</textarea
 
     let LMSEventTypesTable = class LMSEventTypesTable extends LMSTable$1 {
         async handleSave(e) {
-            var _a, _b;
+            var _a, _b, _c;
             const target = e.target;
             let parent = target.parentElement;
             while (parent && parent.tagName !== "TR") {
@@ -6001,6 +6020,9 @@ ${value}</textarea
                 inputs.forEach((input) => {
                     input.disabled = true;
                 });
+                this.toggleEdit(new CustomEvent("click", {
+                    detail: (_c = target.closest("td")) === null || _c === void 0 ? void 0 : _c.querySelector(".btn-edit"),
+                }));
                 this.dispatchEvent(new CustomEvent("updated", { detail: id }));
                 return;
             }
