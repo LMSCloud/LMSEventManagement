@@ -1,20 +1,29 @@
-import { LitElement, html, css, nothing, TemplateResult } from "lit";
-import { map } from "lit/directives/map.js";
+import {
+  faArrowRight,
+  faClose,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
+import { LitElement, TemplateResult, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
-import { CreateOpts, MatrixGroup, ModalField } from "../sharedDeclarations";
-import LMSSelect from "./inputs/modal/LMSSelect";
-import LMSCheckboxInput from "./inputs/modal/LMSCheckboxInput";
-import LMSPrimitivesInput from "./inputs/modal/LMSPrimitivesInput";
-import LMSMatrix from "./inputs/modal/LMSMatrix";
-import { classMap } from "lit/directives/class-map.js";
-import { styleMap } from "lit/directives/style-map.js";
-import { TranslateDirective, __, attr__, locale } from "../lib/translate";
-import { skeletonStyles } from "../styles/skeleton";
 import { DirectiveResult } from "lit/directive";
+import { classMap } from "lit/directives/class-map.js";
+import { map } from "lit/directives/map.js";
+import { styleMap } from "lit/directives/style-map.js";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
+import { TranslateDirective, __, attr__, locale } from "../lib/translate";
+import {
+  CreateOpts,
+  KohaAPIError,
+  MatrixGroup,
+  ModalField,
+} from "../sharedDeclarations";
+import { skeletonStyles } from "../styles/skeleton";
+import LMSCheckboxInput from "./inputs/modal/LMSCheckboxInput";
+import LMSMatrix from "./inputs/modal/LMSMatrix";
+import LMSPrimitivesInput from "./inputs/modal/LMSPrimitivesInput";
+import LMSSelect from "./inputs/modal/LMSSelect";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -112,6 +121,9 @@ export default class LMSModal extends LitElement {
       button.btn-modal > svg {
         color: var(--background-color);
       }
+      .color-unset {
+        color: unset;
+      }
     `,
   ];
 
@@ -177,7 +189,24 @@ export default class LMSModal extends LitElement {
       }
 
       if (result.errors) {
-        console.trace(result.errors);
+        this.alert = {
+          active: true,
+          message: html`<span>Sorry!</span>
+            <ol>
+              ${map(
+                result.errors,
+                (error: KohaAPIError) =>
+                  html`<li>
+                    ${error.message}
+                    ${litFontawesome(faArrowRight, {
+                      className: "color-unset",
+                    })}
+                    ${error.path}
+                  </li>`
+              )}
+            </ol>`,
+        };
+        return;
       }
     }
   }
