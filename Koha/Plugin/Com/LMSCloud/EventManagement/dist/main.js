@@ -2308,6 +2308,7 @@ ${value}</textarea
     LMSStaffEventCardDeck.styles = [
         bootstrapStyles,
         skeletonStyles,
+        utilityStyles,
         i$5 `
       .card-deck {
         display: grid;

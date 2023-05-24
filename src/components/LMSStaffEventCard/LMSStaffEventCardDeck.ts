@@ -17,6 +17,7 @@ import {
   TaggedData,
 } from "../../sharedDeclarations";
 import { skeletonStyles } from "../../styles/skeleton";
+import { utilityStyles } from "../../styles/utilities";
 import LMSAnchor from "../LMSAnchor";
 import LMSSearch from "../LMSSearch";
 import LMSStaffEventCardAttendees from "./LMSStaffEventCardAttendees";
@@ -64,6 +65,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
   static override styles = [
     bootstrapStyles,
     skeletonStyles,
+    utilityStyles,
     css`
       .card-deck {
         display: grid;
