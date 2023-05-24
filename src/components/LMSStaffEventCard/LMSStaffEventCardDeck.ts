@@ -233,8 +233,9 @@ export default class LMSStaffEventCardDeck extends LitElement {
         </div>
         <div class="card-deck">
           ${map(this.data, (datum) => {
-            const { name, uuid } = datum;
+            const { name, image, uuid } = datum;
             const [title] = new TemplateResultConverter(name).getRenderValues();
+            const [src] = new TemplateResultConverter(image).getRenderValues();
             const [state] = this.cardStates.get(uuid) || "data";
             return html`
               <div class="card mt-5">
@@ -267,9 +268,14 @@ export default class LMSStaffEventCardDeck extends LitElement {
                   </ul>
                 </div>
                 <div class="card-body">
-                  <h3 class="card-title">
-                    ${html`<span class="badge badge-primary">${title}</span>`}
-                  </h3>
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-3"
+                  >
+                    <h3 class="card-title">
+                      <span class="badge badge-primary">${title}</span>
+                    </h3>
+                    <img src=${src} class="rounded w-25" />
+                  </div>
                   <lms-staff-event-card-form
                     .datum=${datum}
                     ?hidden=${!(state === "data")}
