@@ -1305,9 +1305,7 @@ ${value}</textarea
   }
 
   .skeleton-card {
-    flex: 0 0 auto;
     margin: 1rem;
-    width: calc(20% - 2rem);
     height: 20rem;
     border: 1px solid #dee2e6;
     border-radius: 0.25rem;
@@ -2106,6 +2104,75 @@ ${value}</textarea
 
     const searchSyntax = x `<h4>${__("Advanced Search Syntax")}</h4><h5>${__("Field Equality Matches")}</h5><p>${__("Syntax: ")}<code>fieldname:value</code></p><p>${__("This will match results where the given field name matches the specified value.")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>age:25</code>${__(" will return results where the age field equals 25.")}</p><h5>${__("Complex Matching Clauses")}</h5><p>${__("Syntax: ")}<code>fieldname:operator value</code></p><p>${__("This allows the use of various matching clauses including ")}<code>&#x3E;</code>${__(", ")}<code>&#x3C;</code>${__(", ")}<code>&#x3E;=</code>${__(", ")}<code>&#x3C;=</code>${__(", ")}<code>-like</code>${__(", and ")}<code>-not_like</code>${__(".")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>age:&#x3E;25</code>${__(" will return results where the age field is greater than 25.")}</p><h5>${__("Multi-field Filtering")}</h5><p>${__("Syntax: ")}<code>field1:value1 AND field2:value2</code></p><p>${__("This will filter the response to only those results where both field1 contains value1 AND field2 contains value2.")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>name:John AND age:25</code>${__(" will return results where the name field is John AND the age field equals 25.")}</p><h5>${__("OR Queries")}</h5><p>${__("Syntax: ")}<code>fieldname:value1 OR value2</code></p><p>${__("This will return results where the fieldname is either value1 OR value2.")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>surname:Acevedo OR Bernardo</code>${__(" will return any result whose surname is \"Acevedo\" OR \"Bernardo\".")}</p><h5>${__("Exact Matches")}</h5><p>${__("If you quote the search term in double quotes, it will find only exact matches.")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>name:&#x22;John Doe&#x22;</code>${__(" will return results where the name field is exactly \"John Doe\".")}</p><h5>${__("Wildcard Matches")}</h5><p>${__("If a value is not quoted, it will perform a search with wildcard matches, meaning it will return results where the field contains the specified value.")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>name:John</code>${__(" will return results where the name field contains \"John\" (such as \"John Doe\", \"Johnny\", etc.).")}</p><h5>${__("Nested Data Query")}</h5><p>${__("If you are requesting related data be embedded into the response one can query on the related data using dot notation in the field names.")}</p><p><strong>${__("Example:")}</strong>&nbsp;<code>extended_attributes.code:internet AND extended_attributes.attribute:1</code>${__(" will return results where the code field of extended")}<em>${__("attributes is \"internet\" AND the attribute field of extended")}</em>${__("attributes is 1.")}</p><h5>${__("Bare Search")}</h5><p>${__("A bare search without keywords will search all fields with forward and backward truncation meaning *SEARCH_TERM*. This can be used for broad queries where the specific field isn't known.")}</p><p><strong>${__("Example:")}</strong>${__(" John will return any result that contains \"John\" in any of the fields.")}</p>`;
 
+    const cardDeckStylesStaff = i$5 `
+  .card-deck {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+  }
+
+  @media (min-width: 992px) {
+    .card-deck {
+      grid-gap: 1rem;
+    }
+
+    .card-deck {
+      grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .card-deck {
+      grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+    }
+  }
+
+  @media (min-width: 1600px) {
+    .card-deck {
+      grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+    }
+  }
+
+  @media (min-width: 1920px) {
+    .card-deck {
+      grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
+    }
+  }
+`;
+    const cardDeckStylesOpac = i$5 `
+  .card-deck {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+  }
+
+  @media (min-width: 768px) {
+    .card-deck {
+      grid-gap: 1rem;
+    }
+
+    .card-deck {
+      grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
+    }
+  }
+
+  @media (min-width: 992px) {
+    .card-deck {
+      grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .card-deck {
+      grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+    }
+  }
+
+  @media (min-width: 1600px) {
+    .card-deck {
+      grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
+    }
+  }
+`;
+
     let LMSStaffEventCardDeck = class LMSStaffEventCardDeck extends s {
         constructor() {
             super();
@@ -2246,7 +2313,7 @@ ${value}</textarea
             ${searchSyntax}
           </div>
         </div>
-        <div class="card-deck card-deck-responsive">
+        <div class="card-deck">
           ${o$2(this.data, (datum) => {
             const { name, uuid } = datum;
             const [title] = new TemplateResultConverter(name).getRenderValues();
@@ -2309,37 +2376,22 @@ ${value}</textarea
         bootstrapStyles,
         skeletonStyles,
         utilityStyles,
+        cardDeckStylesStaff,
         i$5 `
-      .card-deck {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-      }
-
-      @media (min-width: 992px) {
-        .card-deck {
-          grid-gap: 1rem;
-        }
-
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
+      @media (max-width: 360px) {
+        lms-pagination {
+          font-size: 1rem;
         }
       }
 
-      @media (min-width: 1200px) {
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+      @media (max-width: 576px) {
+        lms-search {
+          width: 100%;
+          margin: 1rem 0;
         }
-      }
 
-      @media (min-width: 1600px) {
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
-        }
-      }
-
-      @media (min-width: 1920px) {
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
+        lms-pagination {
+          width: 100%;
         }
       }
     `,
@@ -2373,15 +2425,119 @@ ${value}</textarea
     ], LMSStaffEventCardDeck);
     var LMSStaffEventCardsDeck = LMSStaffEventCardDeck;
 
+    function deepCopy(obj) {
+        if (obj === null || typeof obj !== "object")
+            return obj;
+        if (obj instanceof Date)
+            return new Date(obj.getTime());
+        if (Array.isArray(obj))
+            return obj.map((item) => deepCopy(item));
+        const newObj = Object.create(Object.getPrototypeOf(obj));
+        for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                newObj[key] = deepCopy(obj[key]);
+            }
+        }
+        return newObj;
+    }
+    function isDeepEqual(obj1, obj2) {
+        if (obj1 === obj2) {
+            return true;
+        }
+        if (typeof obj1 !== "object" ||
+            obj1 === null ||
+            typeof obj2 !== "object" ||
+            obj2 === null) {
+            return false;
+        }
+        const keys1 = Object.keys(obj1);
+        const keys2 = Object.keys(obj2);
+        if (keys1.length !== keys2.length) {
+            return false;
+        }
+        for (const key of keys1) {
+            if (!keys2.includes(key)) {
+                return false;
+            }
+            const value1 = obj1[key];
+            const value2 = obj2[key];
+            if (typeof value1 === "function" || typeof value2 === "function") {
+                if (String(value1) !== String(value2)) {
+                    return false;
+                }
+            }
+            else if (typeof value1 === "object" && typeof value2 === "object") {
+                if (!isDeepEqual(value1, value2)) {
+                    return false;
+                }
+            }
+            else if (value1 !== value2) {
+                return false;
+            }
+        }
+        return true;
+    }
+    function throttle(callback, delay) {
+        let previousCall = new Date().getTime();
+        return function () {
+            const time = new Date().getTime();
+            if (time - previousCall >= delay) {
+                previousCall = time;
+                callback();
+            }
+        };
+    }
+    function debounce(func, wait, immediate) {
+        let timeout = null;
+        return function (...args) {
+            const later = function () {
+                timeout = null;
+                if (!immediate)
+                    func.apply(this, args);
+            };
+            const callNow = immediate && !timeout;
+            if (timeout !== null) {
+                clearTimeout(timeout);
+            }
+            timeout = setTimeout(later, wait);
+            if (callNow) {
+                func.apply(this, args);
+            }
+        };
+    }
+
     let LMSStaffEventsFilter = class LMSStaffEventsFilter extends s {
         constructor() {
-            super(...arguments);
+            super();
             this.sortableColumns = ["id"];
             this.event_types = [];
             this.target_groups = [];
             this.locations = [];
+            this.throttledHandleResize = throttle(this.handleResize.bind(this), 250);
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            window.addEventListener("resize", this.throttledHandleResize);
+        }
+        disconnectedCallback() {
+            super.disconnectedCallback();
+            window.removeEventListener("resize", this.throttledHandleResize);
+        }
+        handleResize() {
+            const width = window.innerWidth;
+            this.lmsDropdowns.forEach((lmsDropdown) => {
+                const shouldFold = width < 576;
+                lmsDropdown.shouldFold = shouldFold;
+                if (shouldFold) {
+                    lmsDropdown.classList.add("w-100");
+                    return;
+                }
+                lmsDropdown.classList.remove("w-100");
+            });
         }
         handleSort(e) {
+            console.log("sort");
+            e.stopPropagation();
             const target = e.target;
             this.dispatchEvent(new CustomEvent("sort", {
                 detail: { _order_by: target.value },
@@ -2390,6 +2546,7 @@ ${value}</textarea
             }));
         }
         handleChange() {
+            console.log("change");
             this.dispatchEvent(new CustomEvent("filter", {
                 detail: {
                     filters: this.checkboxes,
@@ -2412,21 +2569,21 @@ ${value}</textarea
         class="navbar navbar-light bg-white border rounded sticky-top"
         @toggle=${this.handleDropdownToggle}
       >
-        <lms-dropdown .label=${__("Sort by")} @change=${this.handleSort}>
-          ${o$2(this.sortableColumns, (column) => x `
-              <div class="dropdown-item">
-                <input
-                  type="radio"
-                  name="_order_by"
-                  id="_order_by_${column}"
-                  value=${column}
-                  ?checked=${column === "id"}
-                />
-                <label for="_order_by_${column}"> ${__(column)} </label>
-              </div>
-            `)}
-        </lms-dropdown>
-        <div @change=${this.handleChange}>
+        <div @change=${this.handleChange} class="dropdown-wrapper">
+          <lms-dropdown .label=${__("Sort by")} @change=${this.handleSort}>
+            ${o$2(this.sortableColumns, (column) => x `
+                <div class="dropdown-item">
+                  <input
+                    type="radio"
+                    name="_order_by"
+                    id="_order_by_${column}"
+                    value=${column}
+                    ?checked=${column === "id"}
+                  />
+                  <label for="_order_by_${column}"> ${__(column)} </label>
+                </div>
+              `)}
+          </lms-dropdown>
           <lms-dropdown .label=${__("Event type")}>
             ${o$2(this.event_types, (event_type) => x `
                 <div class="dropdown-item">
@@ -2478,7 +2635,22 @@ ${value}</textarea
     `;
         }
     };
-    LMSStaffEventsFilter.styles = [bootstrapStyles, utilityStyles];
+    LMSStaffEventsFilter.styles = [
+        bootstrapStyles,
+        utilityStyles,
+        i$5 `
+      nav > * {
+        margin: 0.5rem 0;
+      }
+
+      @media (max-width: 576px) {
+        .dropdown-wrapper {
+          width: 100%;
+
+        }
+      }
+    `,
+    ];
     __decorate([
         e$2({ type: Array })
     ], LMSStaffEventsFilter.prototype, "sortableColumns", void 0);
@@ -2513,7 +2685,14 @@ ${value}</textarea
     `;
         }
     };
-    LMSTableControls.styles = [bootstrapStyles];
+    LMSTableControls.styles = [
+        bootstrapStyles,
+        i$5 `
+      nav > * {
+        margin: 0.5rem 0;
+      }
+    `,
+    ];
     LMSTableControls = __decorate([
         e$3("lms-table-controls")
     ], LMSTableControls);
@@ -3142,87 +3321,6 @@ ${value}</textarea
         },
     };
     const requestHandler = new RequestHandler(endpoints);
-
-    function deepCopy(obj) {
-        if (obj === null || typeof obj !== "object")
-            return obj;
-        if (obj instanceof Date)
-            return new Date(obj.getTime());
-        if (Array.isArray(obj))
-            return obj.map((item) => deepCopy(item));
-        const newObj = Object.create(Object.getPrototypeOf(obj));
-        for (const key in obj) {
-            if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                newObj[key] = deepCopy(obj[key]);
-            }
-        }
-        return newObj;
-    }
-    function isDeepEqual(obj1, obj2) {
-        if (obj1 === obj2) {
-            return true;
-        }
-        if (typeof obj1 !== "object" ||
-            obj1 === null ||
-            typeof obj2 !== "object" ||
-            obj2 === null) {
-            return false;
-        }
-        const keys1 = Object.keys(obj1);
-        const keys2 = Object.keys(obj2);
-        if (keys1.length !== keys2.length) {
-            return false;
-        }
-        for (const key of keys1) {
-            if (!keys2.includes(key)) {
-                return false;
-            }
-            const value1 = obj1[key];
-            const value2 = obj2[key];
-            if (typeof value1 === "function" || typeof value2 === "function") {
-                if (String(value1) !== String(value2)) {
-                    return false;
-                }
-            }
-            else if (typeof value1 === "object" && typeof value2 === "object") {
-                if (!isDeepEqual(value1, value2)) {
-                    return false;
-                }
-            }
-            else if (value1 !== value2) {
-                return false;
-            }
-        }
-        return true;
-    }
-    function throttle(callback, delay) {
-        let previousCall = new Date().getTime();
-        return function () {
-            const time = new Date().getTime();
-            if (time - previousCall >= delay) {
-                previousCall = time;
-                callback();
-            }
-        };
-    }
-    function debounce(func, wait, immediate) {
-        let timeout = null;
-        return function (...args) {
-            const later = function () {
-                timeout = null;
-                if (!immediate)
-                    func.apply(this, args);
-            };
-            const callNow = immediate && !timeout;
-            if (timeout !== null) {
-                clearTimeout(timeout);
-            }
-            timeout = setTimeout(later, wait);
-            if (callNow) {
-                func.apply(this, args);
-            }
-        };
-    }
 
     let LMSEventsFilter = class LMSEventsFilter extends s {
         get eventsDeepCopy() {
@@ -5655,6 +5753,17 @@ ${value}</textarea
         padding: 1em;
         position: absolute;
       }
+
+      @media (max-width: 576px) {
+        lms-search {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
+
+        lms-pagination {
+          width: 100%;
+        }
+      }
     `,
     ];
     __decorate([
@@ -6417,7 +6526,7 @@ ${value}</textarea
               .events=${this.events}
             >
               ${!this.hasLoaded
-            ? x `<div class="d-flex justify-content-around flex-wrap">
+            ? x `<div class="card-deck">
                     ${o$2([...Array(10)], () => x `<div class="skeleton skeleton-card"></div>`)}
                   </div>`
             : A}
@@ -6495,40 +6604,7 @@ ${value}</textarea
     LMSEventsView.styles = [
         bootstrapStyles,
         skeletonStyles,
-        i$5 `
-      .card-deck {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-      }
-
-      @media (min-width: 768px) {
-        .card-deck {
-          grid-gap: 1rem;
-        }
-
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
-        }
-      }
-
-      @media (min-width: 992px) {
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
-        }
-      }
-
-      @media (min-width: 1200px) {
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
-        }
-      }
-
-      @media (min-width: 1600px) {
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
-        }
-      }
-    `,
+        cardDeckStylesOpac,
     ];
     __decorate([
         e$2({ type: String })
@@ -6682,8 +6758,10 @@ ${value}</textarea
         }
         render() {
             if (!this.hasLoaded) {
-                return x ` <div class="d-flex justify-content-around flex-wrap">
-        ${o$2([...Array(10)], () => x `<div class="skeleton skeleton-card"></div>`)}
+                return x ` <div class="container-fluid mx-0">
+        <div class="card-deck">
+          ${o$2([...Array(10)], () => x `<div class="skeleton skeleton-card"></div>`)}
+        </div>
       </div>`;
             }
             if (this.hasLoaded && this.isEmpty) {
@@ -6752,7 +6830,11 @@ ${value}</textarea
     `;
         }
     };
-    StaffEventsView.styles = [bootstrapStyles, skeletonStyles];
+    StaffEventsView.styles = [
+        bootstrapStyles,
+        skeletonStyles,
+        cardDeckStylesStaff,
+    ];
     __decorate([
         t$1()
     ], StaffEventsView.prototype, "hasLoaded", void 0);

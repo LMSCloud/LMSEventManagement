@@ -160,6 +160,17 @@ export default class LMSTable extends LitElement {
         padding: 1em;
         position: absolute;
       }
+
+      @media (max-width: 576px) {
+        lms-search {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
+
+        lms-pagination {
+          width: 100%;
+        }
+      }
     `,
   ];
 

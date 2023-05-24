@@ -1,5 +1,5 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html } from "lit";
+import { LitElement, css, html } from "lit";
 import { customElement, property, queryAll } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { __ } from "../../lib/translate";
@@ -11,6 +11,7 @@ import {
 } from "../../sharedDeclarations";
 import { utilityStyles } from "../../styles/utilities";
 import LMSDropdown from "../LMSDropdown";
+import { throttle } from "../../lib/utilities";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -32,9 +33,57 @@ export default class LMSStaffEventsFilter extends LitElement {
 
   @queryAll("input[type=checkbox]") checkboxes!: NodeListOf<HTMLInputElement>;
 
-  static override styles = [bootstrapStyles, utilityStyles];
+  private throttledHandleResize: () => void;
+
+  static override styles = [
+    bootstrapStyles,
+    utilityStyles,
+    css`
+      nav > * {
+        margin: 0.5rem 0;
+      }
+
+      @media (max-width: 576px) {
+        .dropdown-wrapper {
+          width: 100%;
+
+        }
+      }
+    `,
+  ];
+
+  constructor() {
+    super();
+    this.throttledHandleResize = throttle(this.handleResize.bind(this), 250);
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    window.addEventListener("resize", this.throttledHandleResize);
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    window.removeEventListener("resize", this.throttledHandleResize);
+  }
+
+  private handleResize() {
+    const width = window.innerWidth;
+    this.lmsDropdowns.forEach((lmsDropdown) => {
+      const shouldFold = width < 576;
+      lmsDropdown.shouldFold = shouldFold;
+      if (shouldFold) {
+        lmsDropdown.classList.add("w-100");
+        return;
+      }
+
+      lmsDropdown.classList.remove("w-100");
+    });
+  }
 
   private handleSort(e: Event) {
+    console.log("sort");
+    e.stopPropagation();
     const target = e.target as HTMLInputElement;
     this.dispatchEvent(
       new CustomEvent("sort", {
@@ -46,6 +95,7 @@ export default class LMSStaffEventsFilter extends LitElement {
   }
 
   private handleChange() {
+    console.log("change");
     this.dispatchEvent(
       new CustomEvent("filter", {
         detail: {
@@ -72,24 +122,24 @@ export default class LMSStaffEventsFilter extends LitElement {
         class="navbar navbar-light bg-white border rounded sticky-top"
         @toggle=${this.handleDropdownToggle}
       >
-        <lms-dropdown .label=${__("Sort by")} @change=${this.handleSort}>
-          ${map(
-            this.sortableColumns,
-            (column) => html`
-              <div class="dropdown-item">
-                <input
-                  type="radio"
-                  name="_order_by"
-                  id="_order_by_${column}"
-                  value=${column}
-                  ?checked=${column === "id"}
-                />
-                <label for="_order_by_${column}"> ${__(column)} </label>
-              </div>
-            `
-          )}
-        </lms-dropdown>
-        <div @change=${this.handleChange}>
+        <div @change=${this.handleChange} class="dropdown-wrapper">
+          <lms-dropdown .label=${__("Sort by")} @change=${this.handleSort}>
+            ${map(
+              this.sortableColumns,
+              (column) => html`
+                <div class="dropdown-item">
+                  <input
+                    type="radio"
+                    name="_order_by"
+                    id="_order_by_${column}"
+                    value=${column}
+                    ?checked=${column === "id"}
+                  />
+                  <label for="_order_by_${column}"> ${__(column)} </label>
+                </div>
+              `
+            )}
+          </lms-dropdown>
           <lms-dropdown .label=${__("Event type")}>
             ${map(
               this.event_types,

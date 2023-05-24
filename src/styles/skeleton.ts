@@ -31,9 +31,7 @@ export const skeletonStyles = css`
   }
 
   .skeleton-card {
-    flex: 0 0 auto;
     margin: 1rem;
-    width: calc(20% - 2rem);
     height: 20rem;
     border: 1px solid #dee2e6;
     border-radius: 0.25rem;

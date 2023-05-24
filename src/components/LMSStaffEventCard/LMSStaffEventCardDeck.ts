@@ -16,6 +16,7 @@ import {
   TaggedColumn,
   TaggedData,
 } from "../../sharedDeclarations";
+import { cardDeckStylesStaff } from "../../styles/cardDeck";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
 import LMSAnchor from "../LMSAnchor";
@@ -66,37 +67,22 @@ export default class LMSStaffEventCardDeck extends LitElement {
     bootstrapStyles,
     skeletonStyles,
     utilityStyles,
+    cardDeckStylesStaff,
     css`
-      .card-deck {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-      }
-
-      @media (min-width: 992px) {
-        .card-deck {
-          grid-gap: 1rem;
-        }
-
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
+      @media (max-width: 360px) {
+        lms-pagination {
+          font-size: 1rem;
         }
       }
 
-      @media (min-width: 1200px) {
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+      @media (max-width: 576px) {
+        lms-search {
+          width: 100%;
+          margin: 1rem 0;
         }
-      }
 
-      @media (min-width: 1600px) {
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
-        }
-      }
-
-      @media (min-width: 1920px) {
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
+        lms-pagination {
+          width: 100%;
         }
       }
     `,
@@ -245,7 +231,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
             ${searchSyntax}
           </div>
         </div>
-        <div class="card-deck card-deck-responsive">
+        <div class="card-deck">
           ${map(this.data, (datum) => {
             const { name, uuid } = datum;
             const [title] = new TemplateResultConverter(name).getRenderValues();

@@ -8,6 +8,7 @@ import { skeletonStyles } from "../styles/skeleton";
 import LMSEventsModal from "../extensions/LMSEventsModal";
 import LMSStaffEventCardsDeck from "../components/LMSStaffEventCard/LMSStaffEventCardDeck";
 import { QueryBuilder } from "../lib/QueryBuilder";
+import { cardDeckStylesStaff } from "../styles/cardDeck";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -51,7 +52,11 @@ export default class StaffEventsView extends LitElement {
     },
   };
 
-  static override styles = [bootstrapStyles, skeletonStyles];
+  static override styles = [
+    bootstrapStyles,
+    skeletonStyles,
+    cardDeckStylesStaff,
+  ];
 
   constructor() {
     super();
@@ -186,11 +191,13 @@ export default class StaffEventsView extends LitElement {
 
   override render() {
     if (!this.hasLoaded) {
-      return html` <div class="d-flex justify-content-around flex-wrap">
-        ${map(
-          [...Array(10)],
-          () => html`<div class="skeleton skeleton-card"></div>`
-        )}
+      return html` <div class="container-fluid mx-0">
+        <div class="card-deck">
+          ${map(
+            [...Array(10)],
+            () => html`<div class="skeleton skeleton-card"></div>`
+          )}
+        </div>
       </div>`;
     }
 

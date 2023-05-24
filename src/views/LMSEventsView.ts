@@ -4,7 +4,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { LitElement, css, html, nothing } from "lit";
+import { LitElement, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import LMSCard from "../components/LMSCard";
@@ -15,6 +15,7 @@ import { requestHandler } from "../lib/RequestHandler";
 import { splitDateTime } from "../lib/converters";
 import { __, locale } from "../lib/translate";
 import { LMSEvent, LMSLocation } from "../sharedDeclarations";
+import { cardDeckStylesOpac } from "../styles/cardDeck";
 import { skeletonStyles } from "../styles/skeleton";
 
 declare global {
@@ -48,40 +49,7 @@ export default class LMSEventsView extends LitElement {
   static override styles = [
     bootstrapStyles,
     skeletonStyles,
-    css`
-      .card-deck {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-      }
-
-      @media (min-width: 768px) {
-        .card-deck {
-          grid-gap: 1rem;
-        }
-
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
-        }
-      }
-
-      @media (min-width: 992px) {
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
-        }
-      }
-
-      @media (min-width: 1200px) {
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
-        }
-      }
-
-      @media (min-width: 1600px) {
-        .card-deck {
-          grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
-        }
-      }
-    `,
+    cardDeckStylesOpac,
   ];
 
   constructor() {
@@ -222,7 +190,7 @@ export default class LMSEventsView extends LitElement {
               .events=${this.events}
             >
               ${!this.hasLoaded
-                ? html`<div class="d-flex justify-content-around flex-wrap">
+                ? html`<div class="card-deck">
                     ${map(
                       [...Array(10)],
                       () => html`<div class="skeleton skeleton-card"></div>`
