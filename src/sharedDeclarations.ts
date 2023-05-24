@@ -135,6 +135,11 @@ export type TaggedData = [
   Array<unknown>
 ];
 
+export type Toast = {
+  heading: string | TemplateResult;
+  message: string | TemplateResult;
+};
+
 type TranslatedString = DirectiveResult<typeof TranslateDirective>;
 
 export type URIComponents = {

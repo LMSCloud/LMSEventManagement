@@ -1626,7 +1626,7 @@ ${value}</textarea
         constructor() {
             super(...arguments);
             this.datum = {};
-            this._toast = {
+            this.toast = {
                 heading: "",
                 message: "",
             };
@@ -1748,6 +1748,34 @@ ${value}</textarea
                 return;
             return openRegistrationElement.checked ? 1 : 0;
         }
+        renderToast(status, result) {
+            if (result.error) {
+                this.toast = {
+                    heading: status,
+                    message: Array.isArray(result.error)
+                        ? x `<span>Sorry!</span>
+              <ol>
+                ${result.error.map((message) => x `<li>${message}</li>`)}
+              </ol>`
+                        : x `<span>Sorry! ${result.error}</span>`,
+                };
+            }
+            if (result.errors) {
+                this.toast = {
+                    heading: status,
+                    message: x `<span>Sorry!</span>
+          <ol>
+            ${result.errors.map((error) => x `<li>${error.message} ${__("Path")}: ${error.path}</li>`)}
+          </ol>`,
+                };
+            }
+            const lmsToast = document.createElement("lms-toast", {
+                is: "lms-toast",
+            });
+            lmsToast.heading = this.toast.heading;
+            lmsToast.message = this.toast.message;
+            this.renderRoot.appendChild(lmsToast);
+        }
         /**
          * Handles the form submission for saving changes.
          * @param e - The submit event.
@@ -1794,7 +1822,7 @@ ${value}</textarea
             }
             if (!response.ok) {
                 const error = await response.json();
-                console.log(error);
+                this.renderToast(response.statusText, error);
             }
         }
         /**
@@ -2097,8 +2125,8 @@ ${value}</textarea
         e$2({ type: Array })
     ], LMSStaffEventCardForm.prototype, "datum", void 0);
     __decorate([
-        e$2({ state: true })
-    ], LMSStaffEventCardForm.prototype, "_toast", void 0);
+        t$1()
+    ], LMSStaffEventCardForm.prototype, "toast", void 0);
     __decorate([
         e$1(".collapse")
     ], LMSStaffEventCardForm.prototype, "collapsibles", void 0);
@@ -4859,6 +4887,98 @@ ${value}</textarea
     ], LMSSearch);
     var LMSSearch$1 = LMSSearch;
 
+    let LMSToast = class LMSToast extends s {
+        constructor() {
+            super(...arguments);
+            this.heading = "";
+            this.message = "";
+            this._elapsedTime = 0;
+        }
+        render() {
+            return x `
+      <div aria-live="polite" aria-atomic="true">
+        <div class="toast">
+          <div class="toast-header">
+            <strong class="mr-auto">${this.heading}</strong>
+            <small>${this._elapsedTime} ${__("sec ago")}</small>
+            <button
+              type="button"
+              class="ml-2 mb-1 close"
+              data-dismiss="toast"
+              aria-label=${attr__("Close")}
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="toast-body">${this.message}</div>
+        </div>
+      </div>
+    `;
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            setInterval(() => {
+                this._elapsedTime++;
+            }, 1000);
+            this.renderRoot.addEventListener("click", (e) => {
+                if (!e.target) {
+                    return;
+                }
+                const element = e.target;
+                if (element.tagName === "SPAN") {
+                    this.remove();
+                }
+            });
+            setTimeout(() => {
+                this.remove();
+            }, 10000);
+        }
+        disconnectedCallback() {
+            super.disconnectedCallback();
+            this.renderRoot.removeEventListener("click", (e) => {
+                if (!e.target) {
+                    return;
+                }
+                const element = e.target;
+                if (element.tagName === "SPAN") {
+                    this.remove();
+                }
+            });
+        }
+    };
+    LMSToast.styles = [
+        bootstrapStyles,
+        skeletonStyles,
+        i$5 `
+      div:first {
+        bottom: 1em;
+        position: fixed;
+        min-height: 200px;
+      }
+      .toast {
+        position: fixed;
+        bottom: 1em;
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 300px;
+        opacity: 1;
+      }
+    `,
+    ];
+    __decorate([
+        e$2({ type: String })
+    ], LMSToast.prototype, "heading", void 0);
+    __decorate([
+        e$2({ type: String })
+    ], LMSToast.prototype, "message", void 0);
+    __decorate([
+        e$2({ state: true })
+    ], LMSToast.prototype, "_elapsedTime", void 0);
+    LMSToast = __decorate([
+        e$3("lms-toast")
+    ], LMSToast);
+    var LMSToast$1 = LMSToast;
+
     let LMSTooltip = class LMSTooltip extends s {
         constructor() {
             super(...arguments);
@@ -5498,15 +5618,21 @@ ${value}</textarea
             if (result.error) {
                 this.toast = {
                     heading: status,
-                    message: result.error,
+                    message: Array.isArray(result.error)
+                        ? x `<span>Sorry!</span>
+              <ol>
+                ${result.error.map((message) => x `<li>${message}</li>`)}
+              </ol>`
+                        : x `<span>Sorry! ${result.error}</span>`,
                 };
             }
             if (result.errors) {
                 this.toast = {
                     heading: status,
-                    message: Object.values(result.errors)
-                        .map(({ message, path }) => `Sorry! ${message} → ${path}`)
-                        .join("\n"),
+                    message: x `<span>Sorry!</span>
+          <ol>
+            ${result.errors.map((error) => x `<li>${error.message} ${__("Path")}: ${error.path}</li>`)}
+          </ol>`,
                 };
             }
             const lmsToast = document.createElement("lms-toast", {
@@ -7324,6 +7450,7 @@ ${value}</textarea
         LMSModal: LMSModal$1,
         LMSPagination: LMSPagination$1,
         LMSSearch: LMSSearch$1,
+        LMSToast: LMSToast$1,
         LMSTooltip: LMSTooltip$1,
         LMSEventMangementMenu: LMSEventMangementMenu$1,
         LMSEventsModal: LMSEventsModal$1,

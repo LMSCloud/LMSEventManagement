@@ -28,6 +28,7 @@ import LMSImageBrowser from "./components/LMSImageBrowser";
 import LMSModal from "./components/LMSModal";
 import LMSPagination from "./components/LMSPagination";
 import LMSSearch from "./components/LMSSearch";
+import LMSToast from "./components/LMSToast";
 import LMSTooltip from "./components/LMSTooltip";
 
 /** extensions */
@@ -69,6 +70,7 @@ export default {
   LMSModal,
   LMSPagination,
   LMSSearch,
+  LMSToast,
   LMSTooltip,
   LMSEventMangementMenu,
   LMSEventsModal,

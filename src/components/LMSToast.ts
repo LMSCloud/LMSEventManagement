@@ -1,14 +1,14 @@
-import { css, html, LitElement } from "lit";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
+import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { __, attr__ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 
 @customElement("lms-toast")
 export default class LMSToast extends LitElement {
-  @property({ type: String }) heading = "";
+  @property({ type: String }) heading: string | TemplateResult = "";
 
-  @property({ type: String }) message = "";
+  @property({ type: String }) message: string | TemplateResult = "";
   
   @property({ state: true }) _elapsedTime = 0;
 
@@ -18,13 +18,15 @@ export default class LMSToast extends LitElement {
     css`
       div:first {
         bottom: 1em;
-        position: absolute;
+        position: fixed;
         min-height: 200px;
       }
       .toast {
-        position: absolute;
+        position: fixed;
         bottom: 1em;
         left: 50%;
+        transform: translateX(-50%);
+        min-width: 300px;
         opacity: 1;
       }
     `,

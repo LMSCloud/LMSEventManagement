@@ -8,16 +8,19 @@ import {
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { LitElement, css, html } from "lit";
-import { customElement, property, queryAll } from "lit/decorators.js";
+import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { TemplateResultConverter } from "../../lib/converters";
 import { __, attr__ } from "../../lib/translate";
 import {
   Column,
+  KohaAPIError,
   LMSEventTargetGroupFeeReduced,
+  Toast,
 } from "../../sharedDeclarations";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
+import LMSToast from "../LMSToast";
 
 /**
  * Custom element representing an event card form for staff members.
@@ -25,11 +28,14 @@ import { utilityStyles } from "../../styles/utilities";
 @customElement("lms-staff-event-card-form")
 export default class LMSStaffEventCardForm extends LitElement {
   @property({ type: Array }) datum: Column = {} as Column;
-  @property({ state: true }) _toast = {
+
+  @state() toast: Toast = {
     heading: "",
     message: "",
   };
+
   @queryAll(".collapse") collapsibles!: NodeListOf<HTMLElement>;
+
   @queryAll("input, select, textarea") inputs!: NodeListOf<HTMLInputElement>;
 
   /**
@@ -217,6 +223,45 @@ export default class LMSStaffEventCardForm extends LitElement {
     return openRegistrationElement.checked ? 1 : 0;
   }
 
+  protected renderToast(
+    status: string,
+    result: { error: string | string[]; errors: KohaAPIError[] }
+  ) {
+    if (result.error) {
+      this.toast = {
+        heading: status,
+        message: Array.isArray(result.error)
+          ? html`<span>Sorry!</span>
+              <ol>
+                ${result.error.map(
+                  (message: string) => html`<li>${message}</li>`
+                )}
+              </ol>`
+          : html`<span>Sorry! ${result.error}</span>`,
+      };
+    }
+
+    if (result.errors) {
+      this.toast = {
+        heading: status,
+        message: html`<span>Sorry!</span>
+          <ol>
+            ${result.errors.map(
+              (error: KohaAPIError) =>
+                html`<li>${error.message} ${__("Path")}: ${error.path}</li>`
+            )}
+          </ol>`,
+      };
+    }
+
+    const lmsToast = document.createElement("lms-toast", {
+      is: "lms-toast",
+    }) as LMSToast;
+    lmsToast.heading = this.toast.heading;
+    lmsToast.message = this.toast.message;
+    this.renderRoot.appendChild(lmsToast);
+  }
+
   /**
    * Handles the form submission for saving changes.
    * @param e - The submit event.
@@ -280,7 +325,7 @@ export default class LMSStaffEventCardForm extends LitElement {
 
     if (!response.ok) {
       const error = await response.json();
-      console.log(error);
+      this.renderToast(response.statusText, error);
     }
   }
 

@@ -21,7 +21,13 @@ import { QueryBuilder } from "../../lib/QueryBuilder";
 import { InputConverter } from "../../lib/converters";
 import { __, attr__ } from "../../lib/translate";
 import { throttle } from "../../lib/utilities";
-import { Column, SortableColumns, TaggedData } from "../../sharedDeclarations";
+import {
+  Column,
+  KohaAPIError,
+  SortableColumns,
+  TaggedData,
+  Toast,
+} from "../../sharedDeclarations";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
 import LMSPagination from "../LMSPagination";
@@ -67,8 +73,7 @@ export default class LMSTable extends LitElement {
 
   @property({ type: Number }) _per_page = 20;
 
-  @state()
-  private toast = {
+  @state() toast: Toast = {
     heading: "",
     message: "",
   };
@@ -277,21 +282,32 @@ export default class LMSTable extends LitElement {
 
   protected renderToast(
     status: string,
-    result: { error: string; errors: ErrorEvent }
+    result: { error: string | string[]; errors: KohaAPIError[] }
   ) {
     if (result.error) {
       this.toast = {
         heading: status,
-        message: result.error,
+        message: Array.isArray(result.error)
+          ? html`<span>Sorry!</span>
+              <ol>
+                ${result.error.map(
+                  (message: string) => html`<li>${message}</li>`
+                )}
+              </ol>`
+          : html`<span>Sorry! ${result.error}</span>`,
       };
     }
 
     if (result.errors) {
       this.toast = {
         heading: status,
-        message: Object.values(result.errors)
-          .map(({ message, path }) => `Sorry! ${message} → ${path}`)
-          .join("\n"),
+        message: html`<span>Sorry!</span>
+          <ol>
+            ${result.errors.map(
+              (error: KohaAPIError) =>
+                html`<li>${error.message} ${__("Path")}: ${error.path}</li>`
+            )}
+          </ol>`,
       };
     }
 
