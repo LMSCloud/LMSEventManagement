@@ -1,26 +1,28 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html, css } from "lit";
+import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import LMSStaffEventCardForm from "./LMSStaffEventCardForm";
-import {
-  TaggedColumn,
-  TargetGroup,
-  EventType,
-  LMSLocation,
-  LMSEvent,
-  TaggedData,
-  SortableColumns,
-  Column,
-} from "../../sharedDeclarations";
-import LMSStaffEventCardAttendees from "./LMSStaffEventCardAttendees";
-import LMSStaffEventCardPreview from "./LMSStaffEventCardPreview";
-import LMSAnchor from "../LMSAnchor";
-import { InputConverter, TemplateResultConverter } from "../../lib/converters";
+import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
+import { InputConverter, TemplateResultConverter } from "../../lib/converters";
 import { __ } from "../../lib/translate";
+import {
+  Column,
+  EventType,
+  LMSEvent,
+  LMSLocation,
+  SortableColumns,
+  TaggedColumn,
+  TaggedData,
+  TargetGroup,
+} from "../../sharedDeclarations";
 import { skeletonStyles } from "../../styles/skeleton";
+import LMSAnchor from "../LMSAnchor";
 import LMSSearch from "../LMSSearch";
+import LMSStaffEventCardAttendees from "./LMSStaffEventCardAttendees";
+import LMSStaffEventCardForm from "./LMSStaffEventCardForm";
+import LMSStaffEventCardPreview from "./LMSStaffEventCardPreview";
 import LMSStaffEventsFilter from "./LMSStaffEventsFilter";
+import { searchSyntax } from "../../docs/searchSyntax";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -201,6 +203,14 @@ export default class LMSStaffEventCardDeck extends LitElement {
     );
   }
 
+  private toggleDoc(e: MouseEvent) {
+    const target = e.target as HTMLElement;
+    const doc = target.nextElementSibling;
+    if (!doc) return;
+
+    doc.classList.toggle("d-none");
+  }
+
   override render() {
     return html`
       <div class="container-fluid mx-0">
@@ -219,6 +229,22 @@ export default class LMSStaffEventCardDeck extends LitElement {
             ._page=${this._page}
             ._per_page=${this._per_page}
           ></lms-pagination>
+          <div
+          class="alert alert-info text-center ${classMap({
+            "d-none": !this.hasNoResults,
+          })}"
+          role="alert"
+        >
+          <h4 class="alert-heading">${__("No matches found")}.</h4>
+          <p>${__("Try refining your search.")}</p>
+          <button class="btn btn-outline-info" @click=${this.toggleDoc}>
+            ${__("Help")}
+          </button>
+          <div class="text-left d-none">
+            <hr />
+            ${searchSyntax}
+          </div>
+        </div>
         </lms-staff-events-filter>
         <div class="card-deck card-deck-responsive">
           ${map(this.data, (datum) => {
