@@ -6,6 +6,7 @@ package-lock.json
 pnpm-lock.yaml
 *.kpz
 p-kpz
+kpt
 TO-DO.md
 
 .DS_Store
