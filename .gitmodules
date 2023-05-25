@@ -1,3 +1,6 @@
 [submodule "package-kpz"]
 	path = package-kpz
 	url = https://github.com/LMSCloudPaulD/package-kpz
+[submodule "ktd-plugin-tools"]
+	path = ktd-plugin-tools
+	url = https://github.com/LMSCloudPaulD/ktd-plugin-tools.git

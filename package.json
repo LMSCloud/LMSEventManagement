@@ -4,8 +4,8 @@
   "description": "Managing events just got easier!",
   "main": "gulpfile.js",
   "scripts": {
-    "package-kpz:test": "test -x ./node_modules/package-kpz/target/release/package-kpz",
     "package-kpz:build": "cd package-kpz && cargo build --release && cd ../ && ln -s ./package-kpz/target/release/package-kpz ./p-kpz",
+    "ktd-plugin-tools:build": "cd ktd-plugin-tools && go build && cd ../ && ln -s ./ktd-plugin-tools/ktd-plugin-tools ./kpt",
     "lint": "eslint \"src/**/*.{js,ts}\"",
     "build": "npx rollup -c && ./p-kpz -r \"lms-event-management\" -p \"Koha/Plugin/Com/LMSCloud/EventManagement.pm\"",
     "test": "mocha \"test/**/*.test.mjs\"",
