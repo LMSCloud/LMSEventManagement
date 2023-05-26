@@ -68,3 +68,19 @@ CREATE TABLE IF NOT EXISTS { { event_type_target_group_fees_table } } (
     FOREIGN KEY (`event_type_id`) REFERENCES { { event_types_table } }(`id`),
     FOREIGN KEY (`target_group_id`) REFERENCES { { target_groups_table } }(`id`)
 ) ENGINE = INNODB;
+INSERT INTO plugin_data (plugin_class, plugin_key, plugin_value)
+VALUES (
+        'Koha::Plugin::Com::LMSCloud::EventManagement',
+        'opac_filters_age_enabled',
+        false
+    ),
+    (
+        'Koha::Plugin::Com::LMSCloud::EventManagement',
+        'opac_filters_age_and_registration_enabled',
+        false
+    ),
+    (
+        'Koha::Plugin::Com::LMSCloud::EventManagement',
+        'opac_filters_fee_enabled',
+        false
+    );
