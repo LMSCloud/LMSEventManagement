@@ -366,9 +366,7 @@ export default class LMSCardDetailsModal extends LitElement {
                       <strong>${__("Location")}</strong>
                     </p>
                     <p>
-                      ${typeof location === "string"
-                        ? nothing
-                        : formatAddress(location)}
+                      ${formatAddress(location)}
                     </p>
                   </div>
                 </div>
