@@ -82,7 +82,6 @@ export default class LMSStaffEventsFilter extends LitElement {
   }
 
   private handleSort(e: Event) {
-    console.log("sort");
     e.stopPropagation();
     const target = e.target as HTMLInputElement;
     this.dispatchEvent(
@@ -95,7 +94,6 @@ export default class LMSStaffEventsFilter extends LitElement {
   }
 
   private handleChange() {
-    console.log("change");
     this.dispatchEvent(
       new CustomEvent("filter", {
         detail: {
