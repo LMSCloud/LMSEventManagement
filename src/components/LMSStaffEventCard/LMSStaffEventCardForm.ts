@@ -359,7 +359,7 @@ export default class LMSStaffEventCardForm extends LitElement {
 
     if (response.status >= 400) {
       const error = await response.json();
-      console.log(error);
+      this.renderToast(response.statusText, error);
     }
   }
 
