@@ -137,7 +137,7 @@ export default class LMSEventsView extends LitElement {
   }
 
   private handleShowDetails({ lmsEvent }: { lmsEvent: LMSEvent }) {
-    this.modalData = lmsEvent;
+    this.modalData = { ...lmsEvent };
     this.hasOpenModal = true;
   }
 
