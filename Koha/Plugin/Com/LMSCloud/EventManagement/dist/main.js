@@ -1097,6 +1097,15 @@ ${value}</textarea
         value=${value}
         disabled
       />`,
+                value: (value) => {
+                    return x `<input
+          class="form-control"
+          type="text"
+          name="value"
+          value=${value}
+          disabled
+        />`;
+                },
             };
         }
         /**
@@ -1475,6 +1484,12 @@ ${value}</textarea
       icon: [512, 512, ["info-circle"], "f05a", "M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"]
     };
     var faInfoCircle = faCircleInfo;
+    var faGear = {
+      prefix: 'fas',
+      iconName: 'gear',
+      icon: [512, 512, [9881, "cog"], "f013", "M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"]
+    };
+    var faCog = faGear;
     var faCreditCard = {
       prefix: 'fas',
       iconName: 'credit-card',
@@ -3385,6 +3400,7 @@ ${value}</textarea
             this.events = [];
             this.facetsStrategy = "preserve";
             this.isHidden = this.shouldFold;
+            this.settings = [];
             this.facets = {};
             this.event_types = [];
             this.target_groups = [];
@@ -3442,6 +3458,21 @@ ${value}</textarea
         connectedCallback() {
             super.connectedCallback();
             window.addEventListener("resize", this.throttledHandleResize);
+            fetch("/api/v1/contrib/eventmanagement/settings")
+                .then((response) => response.json())
+                .then((settings) => {
+                this.settings = settings.map((setting) => {
+                    try {
+                        return {
+                            ...setting,
+                            plugin_value: JSON.parse(setting.plugin_value.toString()),
+                        };
+                    }
+                    catch {
+                        return setting;
+                    }
+                });
+            });
             requestHandler
                 .request("getEventTypesPublic")
                 .then((response) => response.json())
@@ -3558,6 +3589,12 @@ ${value}</textarea
                     lmsDropdown.isOpen = false;
                 }
             });
+        }
+        getSettingsValueForToggle(plugin_key) {
+            var _a;
+            return Boolean(Number(this.settings instanceof Array
+                ? (_a = this.settings.find((setting) => setting.plugin_key === plugin_key)) === null || _a === void 0 ? void 0 : _a.plugin_value
+                : undefined));
         }
         render() {
             return x `
@@ -3709,11 +3746,14 @@ ${value}</textarea
         })}
                 </lms-dropdown>
 
-                <!-- <lms-dropdown
+                <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
                   .label=${__("Age")}
                   @toggle=${this.handleDropdownToggle}
+                  class=${o$1({
+            "d-none": !this.getSettingsValueForToggle("opac_filters_age_enabled"),
+        })}
                 >
                   <div class="dropdown-item">
                     <label for="min_age">${__("Min Age")}</label>
@@ -3739,13 +3779,16 @@ ${value}</textarea
                       @input=${this.emitChange}
                     />
                   </div>
-                </lms-dropdown> -->
+                </lms-dropdown>
 
-                <!-- <lms-dropdown
+                <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
                   .label=${__("Registration & Dates")}
                   @toggle=${this.handleDropdownToggle}
+                  class=${o$1({
+            "d-none": !this.getSettingsValueForToggle("opac_filters_registration_and_dates_enabled"),
+        })}
                 >
                   <div class="dropdown-item">
                     <input
@@ -3774,7 +3817,7 @@ ${value}</textarea
                       id="end_time"
                       name="end_time"
                     /></div
-                ></lms-dropdown> -->
+                ></lms-dropdown>
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
@@ -3801,11 +3844,14 @@ ${value}</textarea
         })}
                 </lms-dropdown>
 
-                <!-- <lms-dropdown
+                <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
                   .label=${__("Fee")}
                   @toggle=${this.handleDropdownToggle}
+                  class=${o$1({
+            "d-none": !this.getSettingsValueForToggle("opac_filters_fee_enabled"),
+        })}
                 >
                   <div class="dropdown-item">
                     <label for="fee">${__("Fee")}</label>
@@ -3817,7 +3863,7 @@ ${value}</textarea
                       @input=${this.emitChange}
                     />
                   </div>
-                </lms-dropdown> -->
+                </lms-dropdown>
               </div>
             </div>
           </div>
@@ -3852,6 +3898,9 @@ ${value}</textarea
     __decorate([
         e$2({ type: Boolean })
     ], LMSEventsFilter.prototype, "isHidden", void 0);
+    __decorate([
+        e$2({ type: Array })
+    ], LMSEventsFilter.prototype, "settings", void 0);
     __decorate([
         t$1()
     ], LMSEventsFilter.prototype, "facets", void 0);
@@ -5104,12 +5153,12 @@ ${value}</textarea
         }
         hydrate() {
             this.items = [
-                // {
-                //   name: __("Settings"),
-                //   icon: faCog,
-                //   url: `${this.baseurl}?class=${this.pluginclass}&method=configure`,
-                //   method: "configure",
-                // },
+                {
+                    name: __("Settings"),
+                    icon: faCog,
+                    url: `${this.baseurl}?class=${this.pluginclass}&method=configure`,
+                    method: "configure",
+                },
                 {
                     name: __("Target Groups"),
                     icon: faBullseye,
@@ -5527,8 +5576,9 @@ ${value}</textarea
             this.emptyTableMessage = x `${__("No data to display")}.`;
             this.sortableColumns = ["id"];
             this.unsortableColumns = [];
-            this.notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
+            this.hasControls = true;
             this.inputConverter = new InputConverter();
+            this.notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
             this.throttledHandleResize = throttle(this.handleResize.bind(this), 250);
         }
         connectedCallback() {
@@ -5749,7 +5799,7 @@ ${value}</textarea
             }
             return x `
       <div class="container-fluid mx-0">
-        <lms-table-controls>
+        <lms-table-controls ?hidden=${!this.hasControls}>
           <lms-search
             @search=${this.handleSearch}
             .sortableColumns=${this.sortableColumns}
@@ -6290,6 +6340,87 @@ ${value}</textarea
         e$3("lms-locations-table")
     ], LMSLocationsTable);
     var LMSLocationsTable$1 = LMSLocationsTable;
+
+    let LMSSettingsTable = class LMSSettingsTable extends LMSTable$1 {
+        async handleSave(e) {
+            var _a, _b, _c;
+            const target = e.target;
+            let parent = target.parentElement;
+            while (parent && parent.tagName !== "TR") {
+                parent = parent.parentElement;
+            }
+            let key, inputs = undefined;
+            if (parent) {
+                key = (_b = (_a = parent.firstElementChild) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();
+                inputs = parent.querySelectorAll("input");
+            }
+            if (!key || !inputs) {
+                return;
+            }
+            const response = await fetch(`/api/v1/contrib/eventmanagement/settings/${key}`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    ...Array.from(inputs).reduce((acc, input) => {
+                        acc[input.name] = input.value;
+                        return acc;
+                    }, {}),
+                }),
+            });
+            if (response.status >= 200 && response.status <= 299) {
+                inputs.forEach((input) => {
+                    input.disabled = true;
+                });
+                this.toggleEdit(new CustomEvent("click", {
+                    detail: (_c = target.closest("td")) === null || _c === void 0 ? void 0 : _c.querySelector(".btn-edit"),
+                }));
+                this.dispatchEvent(new CustomEvent("updated", { detail: key }));
+                return;
+            }
+            if (response.status >= 400) {
+                const error = await response.json();
+                this.renderToast(response.statusText, error);
+            }
+        }
+        constructor() {
+            super();
+            this.settings = [];
+            this.order = ["setting", "value"];
+            this.isEditable = true;
+            this.isDeletable = false;
+            this.hasControls = false;
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            this.hydrate();
+        }
+        hydrate() {
+            this.data = this.settings
+                .filter(({ plugin_key }) => !["__ENABLED__", "__INSTALLED__", "__INSTALLED_VERSION__"].includes(plugin_key))
+                .map((setting) => {
+                const { plugin_key, plugin_value } = setting;
+                const settingData = {
+                    setting: plugin_key,
+                    value: plugin_value,
+                };
+                return {
+                    ...Object.fromEntries(this.getColumnData(settingData)),
+                };
+            });
+        }
+        updated(changedProperties) {
+            super.updated(changedProperties);
+            if (changedProperties.has("settings")) {
+                this.hydrate();
+            }
+        }
+    };
+    __decorate([
+        e$2({ type: Array })
+    ], LMSSettingsTable.prototype, "settings", void 0);
+    LMSSettingsTable = __decorate([
+        e$3("lms-settings-table")
+    ], LMSSettingsTable);
+    var LMSSettingsTable$1 = LMSSettingsTable;
 
     let LMSTargetGroupsModal = class LMSTargetGroupsModal extends LMSModal$1 {
         constructor() {
@@ -7306,11 +7437,52 @@ ${value}</textarea
     var StaffLocationsView$1 = StaffLocationsView;
 
     let StaffSettingsView = class StaffSettingsView extends s {
+        constructor() {
+            super(...arguments);
+            this.hasLoaded = false;
+            this.isEmpty = false;
+            this.settings = [];
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            const settings = fetch(`/api/v1/contrib/eventmanagement/settings`);
+            settings
+                .then((response) => response.json())
+                .then((settings) => {
+                this.settings = settings.map((setting) => {
+                    try {
+                        return {
+                            ...setting,
+                            plugin_value: JSON.parse(setting.plugin_value.toString()),
+                        };
+                    }
+                    catch {
+                        return setting;
+                    }
+                });
+                this.hasLoaded = true;
+            });
+        }
         render() {
-            return x `<h1 class="text-center">${__("Not implemented")}!</h1>`;
+            if (!this.hasLoaded) {
+                return x ` <div class="container-fluid mx-0">
+        <div class="skeleton skeleton-table"></div>
+      </div>`;
+            }
+            if (this.hasLoaded && this.isEmpty) {
+                return x `<h1 class="text-center">${__("No settings found")}!</h1>`;
+            }
+            return this.settings
+                ? x `<lms-settings-table
+          .settings=${this.settings}
+        ></lms-settings-table>`
+                : A;
         }
     };
     StaffSettingsView.styles = [bootstrapStyles, skeletonStyles];
+    __decorate([
+        e$2({ type: Boolean })
+    ], StaffSettingsView.prototype, "hasLoaded", void 0);
     StaffSettingsView = __decorate([
         e$3("lms-staff-settings-view")
     ], StaffSettingsView);
@@ -7460,6 +7632,7 @@ ${value}</textarea
         LMSEventTypesTable: LMSEventTypesTable$2,
         LMSLocationsModal: LMSLocationsModal$1,
         LMSLocationsTable: LMSLocationsTable$1,
+        LMSSettingsTable: LMSSettingsTable$1,
         LMSTargetGroupsModal: LMSTargetGroupsModal$1,
         LMSTargetGroupsTable,
         LMSEventsView: LMSEventsView$1,

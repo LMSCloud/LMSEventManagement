@@ -1,6 +1,6 @@
 import LMSFloatingMenu from "../components/LMSFloatingMenu";
 import {
-  // faCog,
+  faCog,
   faTag,
   faList,
   faBullseye,
@@ -23,12 +23,12 @@ export default class LMSEventMangementMenu extends LMSFloatingMenu {
 
   private hydrate() {
     this.items = [
-      // {
-      //   name: __("Settings"),
-      //   icon: faCog,
-      //   url: `${this.baseurl}?class=${this.pluginclass}&method=configure`,
-      //   method: "configure",
-      // },
+      {
+        name: __("Settings"),
+        icon: faCog,
+        url: `${this.baseurl}?class=${this.pluginclass}&method=configure`,
+        method: "configure",
+      },
       {
         name: __("Target Groups"),
         icon: faBullseye,

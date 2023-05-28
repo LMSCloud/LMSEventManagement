@@ -92,10 +92,12 @@ export default class LMSTable extends LitElement {
 
   protected unsortableColumns: string[] = [];
 
+  protected hasControls = true;
+
+  protected inputConverter = new InputConverter();
+
   private notImplementedInBaseMessage =
     "Implement this method in your extended LMSTable component.";
-
-  private inputConverter = new InputConverter();
 
   private throttledHandleResize: () => void;
 
@@ -272,7 +274,15 @@ export default class LMSTable extends LitElement {
   }
 
   protected *getColumnData(
-    query: Record<string, string | number | boolean | null | unknown[]>,
+    query: Record<
+      string,
+      | string
+      | number
+      | boolean
+      | Array<unknown>
+      | Record<string, unknown>
+      | null
+    >,
     data?: TaggedData[]
   ) {
     for (const [name, value] of Object.entries(query)) {
@@ -456,7 +466,7 @@ export default class LMSTable extends LitElement {
 
     return html`
       <div class="container-fluid mx-0">
-        <lms-table-controls>
+        <lms-table-controls ?hidden=${!this.hasControls}>
           <lms-search
             @search=${this.handleSearch}
             .sortableColumns=${this.sortableColumns}

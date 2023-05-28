@@ -964,10 +964,7 @@
           "schema": {
             "type": "object",
             "properties": {
-              "plugin_key": {
-                "type": "string"
-              },
-              "plugin_value": {
+              "value": {
                 "type": ["string", "number", "boolean", "array", "object"]
               }
             }
@@ -978,7 +975,7 @@
       "produces": ["application/json"],
       "responses": {
         "200": {
-          "description": "A setting",
+          "description": "A setting's value",
           "schema": {
             "type": ["string", "number", "boolean", "array", "object"]
           }

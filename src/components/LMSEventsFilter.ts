@@ -11,6 +11,7 @@ import {
   LMSEvent,
   LMSEventType,
   LMSLocation,
+  LMSSettingResponse,
   LMSTargetGroup,
 } from "../sharedDeclarations";
 import { skeletonStyles } from "../styles/skeleton";
@@ -35,6 +36,8 @@ export default class LMSEventsFilter extends LitElement {
     "preserve";
 
   @property({ type: Boolean }) isHidden = this.shouldFold;
+
+  @property({ type: Array }) settings: LMSSettingResponse[] = [];
 
   @state() facets: Partial<Facets> = {};
 
@@ -154,6 +157,21 @@ export default class LMSEventsFilter extends LitElement {
     super.connectedCallback();
 
     window.addEventListener("resize", this.throttledHandleResize);
+
+    fetch("/api/v1/contrib/eventmanagement/settings")
+      .then((response) => response.json())
+      .then((settings) => {
+        this.settings = settings.map((setting: LMSSettingResponse) => {
+          try {
+            return {
+              ...setting,
+              plugin_value: JSON.parse(setting.plugin_value.toString()),
+            };
+          } catch {
+            return setting;
+          }
+        });
+      });
 
     requestHandler
       .request("getEventTypesPublic")
@@ -307,6 +325,17 @@ export default class LMSEventsFilter extends LitElement {
     });
   }
 
+  private getSettingsValueForToggle(plugin_key: string) {
+    return Boolean(
+      Number(
+        this.settings instanceof Array
+          ? this.settings.find((setting) => setting.plugin_key === plugin_key)
+              ?.plugin_value
+          : undefined
+      )
+    );
+  }
+
   override render() {
     return html`
       <div class="card" @change=${this.handleChange}>
@@ -427,8 +456,7 @@ export default class LMSEventsFilter extends LitElement {
                           class="form-check-label"
                           for="event_type_${eventTypeId}"
                           >${this.event_types.find(
-                            (event_type) =>
-                              event_type.id === eventTypeId
+                            (event_type) => event_type.id === eventTypeId
                           )?.name}</label
                         >
                       </div>
@@ -465,11 +493,16 @@ export default class LMSEventsFilter extends LitElement {
                   )}
                 </lms-dropdown>
 
-                <!-- <lms-dropdown
+                <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
                   .label=${__("Age")}
                   @toggle=${this.handleDropdownToggle}
+                  class=${classMap({
+                    "d-none": !this.getSettingsValueForToggle(
+                      "opac_filters_age_enabled"
+                    ),
+                  })}
                 >
                   <div class="dropdown-item">
                     <label for="min_age">${__("Min Age")}</label>
@@ -495,13 +528,18 @@ export default class LMSEventsFilter extends LitElement {
                       @input=${this.emitChange}
                     />
                   </div>
-                </lms-dropdown> -->
+                </lms-dropdown>
 
-                <!-- <lms-dropdown
+                <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
                   .label=${__("Registration & Dates")}
                   @toggle=${this.handleDropdownToggle}
+                  class=${classMap({
+                    "d-none": !this.getSettingsValueForToggle(
+                      "opac_filters_registration_and_dates_enabled"
+                    ),
+                  })}
                 >
                   <div class="dropdown-item">
                     <input
@@ -530,7 +568,7 @@ export default class LMSEventsFilter extends LitElement {
                       id="end_time"
                       name="end_time"
                     /></div
-                ></lms-dropdown> -->
+                ></lms-dropdown>
 
                 <lms-dropdown
                   .isHidden=${this.isHidden}
@@ -553,19 +591,23 @@ export default class LMSEventsFilter extends LitElement {
                           class="form-check-label"
                           for="location_${locationId}"
                           >${this.locations.find(
-                            (location) =>
-                              location.id === locationId
+                            (location) => location.id === locationId
                           )?.name}</label
                         >
                       </div>`
                   )}
                 </lms-dropdown>
 
-                <!-- <lms-dropdown
+                <lms-dropdown
                   .isHidden=${this.isHidden}
                   .shouldFold=${this.shouldFold}
                   .label=${__("Fee")}
                   @toggle=${this.handleDropdownToggle}
+                  class=${classMap({
+                    "d-none": !this.getSettingsValueForToggle(
+                      "opac_filters_fee_enabled"
+                    ),
+                  })}
                 >
                   <div class="dropdown-item">
                     <label for="fee">${__("Fee")}</label>
@@ -577,7 +619,7 @@ export default class LMSEventsFilter extends LitElement {
                       @input=${this.emitChange}
                     />
                   </div>
-                </lms-dropdown> -->
+                </lms-dropdown>
               </div>
             </div>
           </div>

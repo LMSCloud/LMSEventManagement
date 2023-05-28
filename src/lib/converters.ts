@@ -9,7 +9,13 @@ import {
 } from "../sharedDeclarations";
 import { __ } from "../lib/translate";
 
-type InputTypeValue = string | number | boolean | null | unknown[];
+type InputTypeValue =
+  | string
+  | number
+  | boolean
+  | Array<unknown>
+  | Record<string, unknown>
+  | null;
 
 type TemplateQuery = {
   name: string;
@@ -454,6 +460,15 @@ ${value}</textarea
         value=${value}
         disabled
       />`,
+      value: (value) => {
+        return html`<input
+          class="form-control"
+          type="text"
+          name="value"
+          value=${value}
+          disabled
+        />`;
+      },
     };
   }
 

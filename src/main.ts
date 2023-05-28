@@ -38,6 +38,7 @@ import LMSEventTypesModal from "./extensions/LMSEventTypesModal";
 import LMSEventTypesTable from "./extensions/LMSEventTypesTable";
 import LMSLocationsModal from "./extensions/LMSLocationsModal";
 import LMSLocationsTable from "./extensions/LMSLocationsTable";
+import LMSSettingsTable from "./extensions/LMSSettingsTable";
 import LMSTargetGroupsModal from "./extensions/LMSTargetGroupsModal";
 import LMSTargetGroupsTable from "./extensions/LMSTargetGroupsTable";
 
@@ -78,6 +79,7 @@ export default {
   LMSEventTypesTable,
   LMSLocationsModal,
   LMSLocationsTable,
+  LMSSettingsTable,
   LMSTargetGroupsModal,
   LMSTargetGroupsTable,
   LMSEventsView,

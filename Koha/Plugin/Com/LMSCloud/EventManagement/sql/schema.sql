@@ -76,7 +76,7 @@ VALUES (
     ),
     (
         'Koha::Plugin::Com::LMSCloud::EventManagement',
-        'opac_filters_age_and_registration_enabled',
+        'opac_filters_registration_and_dates_enabled',
         false
     ),
     (

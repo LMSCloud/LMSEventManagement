@@ -28,7 +28,7 @@ textdomain 'com.lmscloud.eventmanagement';
 bind_textdomain_filter 'com.lmscloud.eventmanagement', \&Encode::decode_utf8;
 bindtextdomain 'com.lmscloud.eventmanagement' => $self->bundle_path . '/locales/';
 
-my $json = JSON::MaybeXS->new->utf8;
+my $json = JSON::MaybeXS->new->utf8->allow_nonref;
 
 sub get {
     my $c          = shift->openapi->valid_input or return;
@@ -62,9 +62,9 @@ sub update {
 
         my $json_value = $json->encode( $setting->{'value'} );
 
-        $self->store_data( { 'key' => $json_value } );
+        $self->store_data( { $plugin_key => $json_value } );
 
-        $setting = _get_setting( $setting->{'key'} );
+        $setting = _get_setting($plugin_key);
 
         return $c->render( status => 200, openapi => $setting );
     }

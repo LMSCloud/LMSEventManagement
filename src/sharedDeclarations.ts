@@ -150,6 +150,29 @@ export type URIComponents = {
 };
 
 /* Data: These interfaces represent the schema of the underlying database */
+export type LMSSettingResponse = {
+  plugin_key:
+    | "__ENABLED__"
+    | "__INSTALLED__"
+    | "__INSTALLED_VERSION__"
+    | "opac_filters_age_enabled"
+    | "opac_filters_registration_and_dates_enabled"
+    | "opac_filters_fee_enabled";
+  plugin_value:
+    | string
+    | number
+    | boolean
+    | Array<unknown>
+    | Record<string, unknown>;
+};
+
+export type LMSSettingObj = Record<
+  | "opac_filters_age_enabled"
+  | "opac_filters_registration_and_dates_enabled"
+  | "opac_filters_fee_enabled",
+  string | number | boolean | Array<unknown> | Record<string, unknown>
+>;
+
 export interface LMSTargetGroup {
   id: number;
   name: string | null;
