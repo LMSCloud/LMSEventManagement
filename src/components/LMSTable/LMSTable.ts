@@ -34,6 +34,7 @@ import LMSPagination from "../LMSPagination";
 import LMSSearch from "../LMSSearch";
 import LMSToast from "../LMSToast";
 import LMSTableControls from "./LMSTableControls";
+import { IntersectionObserverHandler } from "../../lib/IntersectionObserverHandler";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -84,6 +85,8 @@ export default class LMSTable extends LitElement {
 
   @queryAll(".btn-edit") editButtons!: NodeListOf<HTMLButtonElement>;
 
+  @queryAll(".collapse") collapsibles!: NodeListOf<HTMLElement>;
+
   @query("table") table!: HTMLTableElement;
 
   protected emptyTableMessage = html`${__("No data to display")}.`;
@@ -100,6 +103,12 @@ export default class LMSTable extends LitElement {
     "Implement this method in your extended LMSTable component.";
 
   private throttledHandleResize: () => void;
+
+  private intersectionObserverHandler: IntersectionObserverHandler | null =
+    null;
+
+  private footer: HTMLElement | undefined | null =
+    document.getElementById("i18nMenu")?.parentElement;
 
   static override styles = [
     bootstrapStyles,
@@ -158,7 +167,7 @@ export default class LMSTable extends LitElement {
 
       .pip {
         background: #ffffff;
-        bottom: 4em;
+        bottom: 1em;
         box-shadow: var(--shadow-hv);
         height: fit-content !important;
         left: 1em;
@@ -389,6 +398,41 @@ export default class LMSTable extends LitElement {
       }
     });
     this.handleResize();
+
+    if (this.footer && this.collapsibles.length) {
+      const footer = this.footer;
+      const [someCollapsible] = this.collapsibles;
+      const bottom = this.getBottomFromTestElement(someCollapsible);
+      this.collapsibles.forEach((collapsible) => {
+        const pip = collapsible.parentElement;
+        if (!pip) return;
+        this.intersectionObserverHandler = new IntersectionObserverHandler({
+          intersecting: {
+            ref: pip,
+            do: () => {
+              pip.style.bottom = `${
+                bottom + (footer ? footer.offsetHeight : 0)
+              }px`;
+            },
+          },
+          intersected: {
+            ref: footer,
+          },
+        });
+
+        this.intersectionObserverHandler.init();
+      });
+    }
+  }
+
+  private getBottomFromTestElement(element: HTMLElement) {
+    const tester = document.createElement("div");
+    tester.style.position = "fixed";
+    tester.style.bottom = "1em";
+    element.parentElement?.appendChild(tester);
+    const bottom = getComputedStyle(tester).bottom;
+    tester.remove();
+    return parseInt(bottom, 10);
   }
 
   private handleResize() {

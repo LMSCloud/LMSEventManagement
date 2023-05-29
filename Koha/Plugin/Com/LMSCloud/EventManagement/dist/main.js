@@ -5569,6 +5569,7 @@ ${value}</textarea
 
     let LMSTable = class LMSTable extends s {
         constructor() {
+            var _a;
             super();
             this.data = [];
             this.order = [];
@@ -5589,6 +5590,8 @@ ${value}</textarea
             this.hasControls = true;
             this.inputConverter = new InputConverter();
             this.notImplementedInBaseMessage = "Implement this method in your extended LMSTable component.";
+            this.intersectionObserverHandler = null;
+            this.footer = (_a = document.getElementById("i18nMenu")) === null || _a === void 0 ? void 0 : _a.parentElement;
             this.throttledHandleResize = throttle(this.handleResize.bind(this), 250);
         }
         connectedCallback() {
@@ -5751,6 +5754,38 @@ ${value}</textarea
                 }
             });
             this.handleResize();
+            if (this.footer && this.collapsibles.length) {
+                const footer = this.footer;
+                const [someCollapsible] = this.collapsibles;
+                const bottom = this.getBottomFromTestElement(someCollapsible);
+                this.collapsibles.forEach((collapsible) => {
+                    const pip = collapsible.parentElement;
+                    if (!pip)
+                        return;
+                    this.intersectionObserverHandler = new IntersectionObserverHandler({
+                        intersecting: {
+                            ref: pip,
+                            do: () => {
+                                pip.style.bottom = `${bottom + (footer ? footer.offsetHeight : 0)}px`;
+                            },
+                        },
+                        intersected: {
+                            ref: footer,
+                        },
+                    });
+                    this.intersectionObserverHandler.init();
+                });
+            }
+        }
+        getBottomFromTestElement(element) {
+            var _a;
+            const tester = document.createElement("div");
+            tester.style.position = "fixed";
+            tester.style.bottom = "1em";
+            (_a = element.parentElement) === null || _a === void 0 ? void 0 : _a.appendChild(tester);
+            const bottom = getComputedStyle(tester).bottom;
+            tester.remove();
+            return parseInt(bottom, 10);
         }
         handleResize() {
             this.table.classList.remove("table-responsive");
@@ -5973,7 +6008,7 @@ ${value}</textarea
 
       .pip {
         background: #ffffff;
-        bottom: 4em;
+        bottom: 1em;
         box-shadow: var(--shadow-hv);
         height: fit-content !important;
         left: 1em;
@@ -6034,6 +6069,9 @@ ${value}</textarea
     __decorate([
         e$1(".btn-edit")
     ], LMSTable.prototype, "editButtons", void 0);
+    __decorate([
+        e$1(".collapse")
+    ], LMSTable.prototype, "collapsibles", void 0);
     __decorate([
         i$2("table")
     ], LMSTable.prototype, "table", void 0);
