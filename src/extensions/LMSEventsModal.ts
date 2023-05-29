@@ -6,7 +6,9 @@ import {
   LMSEventType,
   LMSLocation,
   LMSTargetGroup,
+  ModalField,
 } from "../sharedDeclarations";
+import { PropertyValueMap } from "lit";
 
 @customElement("lms-events-modal")
 export default class LMSEventsModal extends LMSModal {
@@ -94,7 +96,9 @@ export default class LMSEventsModal extends LMSModal {
         name: "start_time",
         type: "datetime-local",
         desc: __("Start Time"),
-        placeholder: attr__("Start time of the event, e.g. '2023-01-01 10:00'."),
+        placeholder: attr__(
+          "Start time of the event, e.g. '2023-01-01 10:00'."
+        ),
         required: true,
       },
       {
@@ -108,7 +112,9 @@ export default class LMSEventsModal extends LMSModal {
         name: "registration_start",
         type: "datetime-local",
         desc: __("Registration Start"),
-        placeholder: attr__("Registration start time, e.g. '2023-01-01 08:00'."),
+        placeholder: attr__(
+          "Registration start time, e.g. '2023-01-01 08:00'."
+        ),
         required: true,
       },
       {
@@ -145,7 +151,9 @@ export default class LMSEventsModal extends LMSModal {
         name: "description",
         type: "text",
         desc: __("Description"),
-        placeholder: attr__("Description of the event, e.g. 'This is a concert.'."),
+        placeholder: attr__(
+          "Description of the event, e.g. 'This is a concert.'."
+        ),
         required: false,
       },
       {
@@ -174,6 +182,7 @@ export default class LMSEventsModal extends LMSModal {
         type: "checkbox",
         desc: __("Open Registration"),
         required: false,
+        value: 1,
       },
     ];
   }
@@ -212,38 +221,52 @@ export default class LMSEventsModal extends LMSModal {
     });
   }
 
-  override willUpdate() {
-    const { fields } = this;
-    const eventTypeField = fields.find((field) => field.name === "event_type");
-    if (eventTypeField) {
-      const { dbData } = eventTypeField;
-      if (dbData) {
-        /* We destructure the default event_type out of the dbData array
-         * to set the selectedEventTypeId state variable. */
-        const [event_type] = dbData;
-        if (!event_type) return;
+  override willUpdate(changedProperties: PropertyValueMap<never>) {
+    super.willUpdate(changedProperties);
 
-        let { id } = event_type;
-        /* If the eventTypeField value has changed due to a select element
-         * change event, we use it instead of the default. */
-        id = (eventTypeField?.value as string) ?? id;
+    const eventTypeField = this.findEventTypeField();
 
-        const eventType = this.fetchEventType(parseInt(id, 10));
+    if (!eventTypeField) return;
 
-        eventType
-          .then((event_type) => {
-            const hasValidNewId =
-              !this.selectedEventTypeId || this.selectedEventTypeId != id;
-            if (hasValidNewId) {
-              this.convertFieldValuesToRequestedType(event_type);
-              this.selectedEventTypeId =
-                typeof id === "string" ? parseInt(id, 10) : id;
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }
+    const dbDataExists = eventTypeField.dbData && eventTypeField.dbData[0];
+
+    if (!dbDataExists) return;
+
+    const id = this.determineId(eventTypeField);
+
+    if (!changedProperties.has("selectedEventTypeId")) {
+      this.fetchAndUpdateEventType(id);
     }
+  }
+
+  private findEventTypeField() {
+    const { fields } = this;
+    return fields.find((field) => field.name === "event_type");
+  }
+
+  private determineId(eventTypeField: ModalField) {
+    const { dbData } = eventTypeField;
+    if (!dbData) return;
+
+    const [{ id: defaultId }] = dbData;
+    const selectedId = eventTypeField.value ?? defaultId;
+    return parseInt(selectedId.toString(), 10);
+  }
+
+  private fetchAndUpdateEventType(id: number | undefined) {
+    if (!id) return;
+
+    this.fetchEventType(id)
+      .then((event_type) => {
+        const isNewId =
+          !this.selectedEventTypeId || this.selectedEventTypeId !== id;
+        if (isNewId) {
+          this.convertFieldValuesToRequestedType(event_type);
+          this.selectedEventTypeId = id;
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 }

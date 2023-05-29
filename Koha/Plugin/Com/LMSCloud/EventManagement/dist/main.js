@@ -5362,6 +5362,7 @@ ${value}</textarea
                     type: "checkbox",
                     desc: __("Open Registration"),
                     required: false,
+                    value: 1,
                 },
             ];
         }
@@ -5397,37 +5398,46 @@ ${value}</textarea
                 }
             });
         }
-        willUpdate() {
-            var _a;
-            const { fields } = this;
-            const eventTypeField = fields.find((field) => field.name === "event_type");
-            if (eventTypeField) {
-                const { dbData } = eventTypeField;
-                if (dbData) {
-                    /* We destructure the default event_type out of the dbData array
-                     * to set the selectedEventTypeId state variable. */
-                    const [event_type] = dbData;
-                    if (!event_type)
-                        return;
-                    let { id } = event_type;
-                    /* If the eventTypeField value has changed due to a select element
-                     * change event, we use it instead of the default. */
-                    id = (_a = eventTypeField === null || eventTypeField === void 0 ? void 0 : eventTypeField.value) !== null && _a !== void 0 ? _a : id;
-                    const eventType = this.fetchEventType(parseInt(id, 10));
-                    eventType
-                        .then((event_type) => {
-                        const hasValidNewId = !this.selectedEventTypeId || this.selectedEventTypeId != id;
-                        if (hasValidNewId) {
-                            this.convertFieldValuesToRequestedType(event_type);
-                            this.selectedEventTypeId =
-                                typeof id === "string" ? parseInt(id, 10) : id;
-                        }
-                    })
-                        .catch((error) => {
-                        console.error(error);
-                    });
-                }
+        willUpdate(changedProperties) {
+            super.willUpdate(changedProperties);
+            const eventTypeField = this.findEventTypeField();
+            if (!eventTypeField)
+                return;
+            const dbDataExists = eventTypeField.dbData && eventTypeField.dbData[0];
+            if (!dbDataExists)
+                return;
+            const id = this.determineId(eventTypeField);
+            if (!changedProperties.has("selectedEventTypeId")) {
+                this.fetchAndUpdateEventType(id);
             }
+        }
+        findEventTypeField() {
+            const { fields } = this;
+            return fields.find((field) => field.name === "event_type");
+        }
+        determineId(eventTypeField) {
+            var _a;
+            const { dbData } = eventTypeField;
+            if (!dbData)
+                return;
+            const [{ id: defaultId }] = dbData;
+            const selectedId = (_a = eventTypeField.value) !== null && _a !== void 0 ? _a : defaultId;
+            return parseInt(selectedId.toString(), 10);
+        }
+        fetchAndUpdateEventType(id) {
+            if (!id)
+                return;
+            this.fetchEventType(id)
+                .then((event_type) => {
+                const isNewId = !this.selectedEventTypeId || this.selectedEventTypeId !== id;
+                if (isNewId) {
+                    this.convertFieldValuesToRequestedType(event_type);
+                    this.selectedEventTypeId = id;
+                }
+            })
+                .catch((error) => {
+                console.error(error);
+            });
         }
     };
     __decorate([
@@ -5544,7 +5554,7 @@ ${value}</textarea
                     type: "checkbox",
                     desc: __("Open Registration"),
                     required: false,
-                    value: "0",
+                    value: 1,
                 },
             ];
         }

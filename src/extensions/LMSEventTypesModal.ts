@@ -110,7 +110,7 @@ export default class LMSEventTypesModal extends LMSModal {
         type: "checkbox",
         desc: __("Open Registration"),
         required: false,
-        value: "0",
+        value: 1,
       },
     ];
   }
