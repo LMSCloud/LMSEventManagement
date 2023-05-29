@@ -4940,10 +4940,14 @@ ${value}</textarea
 
     let LMSToast = class LMSToast extends s {
         constructor() {
+            var _a;
             super(...arguments);
             this.heading = "";
             this.message = "";
             this._elapsedTime = 0;
+            this.toast = undefined;
+            this.footer = (_a = document.getElementById("i18nMenu")) === null || _a === void 0 ? void 0 : _a.parentElement;
+            this.intersectionObserverHandler = null;
         }
         render() {
             return x `
@@ -4996,6 +5000,24 @@ ${value}</textarea
                 }
             });
         }
+        firstUpdated() {
+            if (this.footer && this.toast) {
+                const toast = this.toast;
+                this.intersectionObserverHandler = new IntersectionObserverHandler({
+                    intersecting: {
+                        ref: this.toast,
+                        do: () => {
+                            const bottom = parseFloat(getComputedStyle(toast).bottom);
+                            toast.style.bottom = `${bottom + (this.footer ? this.footer.offsetHeight : 0)}px`;
+                        },
+                    },
+                    intersected: {
+                        ref: this.footer,
+                    },
+                });
+                this.intersectionObserverHandler.init();
+            }
+        }
     };
     LMSToast.styles = [
         bootstrapStyles,
@@ -5025,6 +5047,9 @@ ${value}</textarea
     __decorate([
         e$2({ state: true })
     ], LMSToast.prototype, "_elapsedTime", void 0);
+    __decorate([
+        i$2(".toast")
+    ], LMSToast.prototype, "toast", void 0);
     LMSToast = __decorate([
         e$3("lms-toast")
     ], LMSToast);

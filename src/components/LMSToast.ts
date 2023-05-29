@@ -1,16 +1,25 @@
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { css, html, LitElement, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import { __, attr__ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
+import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
 
 @customElement("lms-toast")
 export default class LMSToast extends LitElement {
   @property({ type: String }) heading: string | TemplateResult = "";
 
   @property({ type: String }) message: string | TemplateResult = "";
-  
+
   @property({ state: true }) _elapsedTime = 0;
+
+  @query(".toast") toast: HTMLElement | undefined | null = undefined;
+
+  private footer: HTMLElement | undefined | null =
+    document.getElementById("i18nMenu")?.parentElement;
+
+  private intersectionObserverHandler: IntersectionObserverHandler | null =
+    null;
 
   static override styles = [
     bootstrapStyles,
@@ -89,5 +98,27 @@ export default class LMSToast extends LitElement {
         this.remove();
       }
     });
+  }
+
+  override firstUpdated() {
+    if (this.footer && this.toast) {
+      const toast = this.toast;
+      this.intersectionObserverHandler = new IntersectionObserverHandler({
+        intersecting: {
+          ref: this.toast,
+          do: () => {
+            const bottom = parseFloat(getComputedStyle(toast).bottom);
+            toast.style.bottom = `${
+              bottom + (this.footer ? this.footer.offsetHeight : 0)
+            }px`;
+          },
+        },
+        intersected: {
+          ref: this.footer,
+        },
+      });
+
+      this.intersectionObserverHandler.init();
+    }
   }
 }
