@@ -25,3 +25,5 @@ __("description");
 __("open_registration");
 __("status");
 __("registration_link");
+__("setting");
+__("value");
