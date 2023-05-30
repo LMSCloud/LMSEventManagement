@@ -3240,6 +3240,12 @@ ${value}</textarea
     ], LMSCardDetailsModal);
     var LMSCardDetailsModal$1 = LMSCardDetailsModal;
 
+    /**
+     * The LMSDropdown class creates a dropdown component for the LMS that houses inputs and labels.
+     * This dropdown is designed to wrap inputs and their labels, providing a compact UI.
+     * A toggle event is dispatched when the dropdown is toggled, allowing parent components to
+     * manage multiple dropdown instances.
+     */
     let LMSDropdown = class LMSDropdown extends s {
         constructor() {
             super(...arguments);
@@ -3247,10 +3253,93 @@ ${value}</textarea
             this.shouldFold = false;
             this.isOpen = false;
             this.label = "";
+            /** Flags used to handle dropdown open/close state based on focus and click events. */
+            this.isClickInside = false;
+            this.isFocused = false;
+            // Event handler methods are bound to the instance context to allow correct "this" reference when called.
+            this.boundHandleFocusOut = () => this.handleFocusOut();
+            this.boundHandleMouseDown = (event) => this.handleMouseDown(event);
+            this.boundHandleKeyDown = (event) => this.handleKeyDown(event);
         }
+        /**
+         * Dispatches a toggle event and toggles the isOpen property.
+         * The dispatched 'toggle' event can be used by parent components to manage multiple dropdowns.
+         */
         handleDropdownToggle() {
             this.dispatchEvent(new CustomEvent("toggle", { bubbles: true, composed: true }));
             this.isOpen = !this.isOpen;
+        }
+        /**
+         * Handles the mouse down event by checking if the event originated from within the dropdown,
+         * setting isClickInside to true if it did, thus keeping the dropdown open.
+         */
+        handleMouseDown(event) {
+            const composedPath = event.composedPath();
+            const isInsideDropdown = composedPath.includes(this) || composedPath.includes(this.dropdownMenu);
+            this.isClickInside = isInsideDropdown;
+        }
+        /**
+         * If a focus-out event occurs outside of the dropdown (i.e., the user clicked or focused outside of the dropdown),
+         * then the dropdown should close.
+         */
+        handleFocusOut() {
+            this.focusOutTimeoutId = window.setTimeout(() => {
+                if (!this.isFocused && !this.isClickInside) {
+                    this.isOpen = false;
+                }
+                this.isClickInside = false;
+            });
+        }
+        /**
+         * Closes the dropdown and resets focus when escape key is pressed.
+         * This improves accessibility by allowing users to exit the dropdown using their keyboard.
+         */
+        handleKeyDown(event) {
+            if (event.key === "Escape") {
+                this.isOpen = false;
+                this.isFocused = false;
+            }
+        }
+        /**
+         * Sets focus flag on focus in event.
+         * This allows us to determine whether the user is currently focusing on the dropdown.
+         */
+        handleFocusIn() {
+            this.isFocused = true;
+        }
+        /**
+         * Resets focus flag on focus out event.
+         * This allows us to determine when the user has moved their focus away from the dropdown.
+         */
+        handleFocusOutInternal() {
+            this.isFocused = false;
+        }
+        /**
+         * Sets up event listeners for handling focus and mouse events to control the open/close state of the dropdown.
+         * Ensures proper handling of these events for maintaining the dropdown state.
+         */
+        connectedCallback() {
+            super.connectedCallback();
+            document.addEventListener("mousedown", this.boundHandleMouseDown);
+            this.addEventListener("blur", this.boundHandleFocusOut, true);
+            this.addEventListener("keydown", this.boundHandleKeyDown);
+            this.addEventListener("focusin", this.handleFocusIn);
+            this.addEventListener("focusout", this.handleFocusOutInternal);
+        }
+        /**
+         * Removes event listeners when the component is disconnected.
+         * This prevents potential memory leaks and unwanted behavior by ensuring the cleanup of event listeners.
+         */
+        disconnectedCallback() {
+            super.disconnectedCallback();
+            document.removeEventListener("mousedown", this.boundHandleMouseDown);
+            this.removeEventListener("blur", this.boundHandleFocusOut, true);
+            this.removeEventListener("keydown", this.boundHandleKeyDown);
+            this.removeEventListener("focusin", this.handleFocusIn);
+            this.removeEventListener("focusout", this.handleFocusOutInternal);
+            if (this.focusOutTimeoutId !== undefined) {
+                window.clearTimeout(this.focusOutTimeoutId);
+            }
         }
         render() {
             return x `
@@ -3272,7 +3361,10 @@ ${value}</textarea
         >
           ${this.label}
         </button>
-        <div class="dropdown-menu p-2 ${o$1({ show: this.isOpen })}">
+        <div
+          class="dropdown-menu p-2 ${o$1({ show: this.isOpen })}"
+          tabindex="0"
+        >
           <slot></slot>
         </div>
       </div>
@@ -3293,8 +3385,8 @@ ${value}</textarea
         e$2({ type: String })
     ], LMSDropdown.prototype, "label", void 0);
     __decorate([
-        e$1("input")
-    ], LMSDropdown.prototype, "inputs", void 0);
+        i$2(".dropdown-menu")
+    ], LMSDropdown.prototype, "dropdownMenu", void 0);
     LMSDropdown = __decorate([
         e$3("lms-dropdown")
     ], LMSDropdown);
