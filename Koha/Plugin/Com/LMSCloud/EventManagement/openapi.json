@@ -630,7 +630,7 @@
   "/settings": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Settings#list",
-      "operationId": "listSettings",
+      "operationId": "listEventManagementSettings",
       "tags": ["settings"],
       "description": "List settings",
       "produces": ["application/json"],
@@ -728,7 +728,7 @@
     },
     "post": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Settings#add",
-      "operationId": "addSettings",
+      "operationId": "addEventManagementSettings",
       "tags": ["settings"],
       "parameters": [
         {
@@ -850,7 +850,7 @@
   "/settings/{key}": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Setting#get",
-      "operationId": "getSetting",
+      "operationId": "getEventManagementSetting",
       "tags": ["settings"],
       "parameters": [
         {
@@ -946,7 +946,7 @@
     },
     "put": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Setting#update",
-      "operationId": "updateSetting",
+      "operationId": "updateEventManagementSetting",
       "tags": ["settings"],
       "parameters": [
         {
