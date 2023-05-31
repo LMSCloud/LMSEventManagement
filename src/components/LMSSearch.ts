@@ -2,14 +2,30 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { LitElement, css, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
 import { debounce } from "../lib/utilities";
 import { attr__ } from "../lib/translate";
 import { SortableColumns } from "../sharedDeclarations";
+import { customElement, property, query } from "lit/decorators.js";
+
+interface QueryEntry {
+  operator: string;
+  value: string | number | Array<string>;
+}
+
+type ParsedQuery = Record<string, QueryEntry>;
 
 @customElement("lms-search")
 export default class LMSSearch extends LitElement {
   @property({ type: Array }) sortableColumns: SortableColumns = ["id"];
+
+  @query("input") input!: HTMLInputElement;
+
+  private isMacOS: boolean = /(Mac|iPhone|iPod|iPad)/i.test(
+    navigator.userAgent
+  );
+
+  private boundHandleShortcut = (e: KeyboardEvent) =>
+    this.handleShortcut.bind(this)(e);
 
   static override styles = [
     bootstrapStyles,
@@ -19,11 +35,22 @@ export default class LMSSearch extends LitElement {
         height: 1rem;
         width: 1rem;
       }
+
+      .badge {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.25rem;
+        background-color: #007bff;
+        color: #ffffff;
+        border-radius: 5px;
+        padding: 0.25rem;
+        box-shadow: var(--shadow-sm);
+      }
     `,
   ];
 
-  private parseQuery(query: string): Record<string, any> {
-    const entries: Record<string, any> = {};
+  private parseQuery(query: string): ParsedQuery {
+    const entries: ParsedQuery = {};
     const parts = query.split(" AND ");
 
     const operators = {
@@ -45,7 +72,7 @@ export default class LMSSearch extends LitElement {
       // Handle OR queries
       if (rawValue.includes(" OR ")) {
         operator = "||";
-        value = rawValue.split("OR").map((s) => s.trim());
+        value = rawValue.split(" OR ").map((s) => s.trim());
       }
 
       // Handle numeric and quoted values
@@ -73,7 +100,7 @@ export default class LMSSearch extends LitElement {
     return entries;
   }
 
-  private buildQuery(query: Record<string, any>): any[] {
+  private buildQuery(query: ParsedQuery): Record<string, any> {
     let builtQuery: any[] = [];
     for (const [key, { operator, value }] of Object.entries(query)) {
       switch (operator) {
@@ -98,7 +125,7 @@ export default class LMSSearch extends LitElement {
     return builtQuery;
   }
 
-  private getQuery(query: string) {
+  private getQuery(query: string): string {
     let q = undefined;
     if (query) {
       if (query.includes(":")) {
@@ -150,7 +177,33 @@ export default class LMSSearch extends LitElement {
     this.debouncedSearch(inputElement.value);
   }
 
+  private handleShortcut(e: KeyboardEvent) {
+    const isCmdOrCtrlPressed = e.metaKey || e.ctrlKey;
+    if (isCmdOrCtrlPressed && e.key.toLowerCase() === "e") {
+      e.preventDefault();
+      if (this.input) {
+        this.input.focus();
+      }
+    } else if (e.key === "Escape") {
+      if (this.input) {
+        this.input.blur();
+      }
+    }
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    document.addEventListener("keydown", this.boundHandleShortcut);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener("keydown", this.boundHandleShortcut);
+  }
+
   override render() {
+    const shortcutText = this.isMacOS ? "⌘" : "Ctrl";
+
     return html`
       <div class="input-group flex-nowrap">
         <div class="input-group-prepend">
@@ -166,6 +219,9 @@ export default class LMSSearch extends LitElement {
           aria-describedby="addon-wrapping"
           @input=${this.handleInput}
         />
+        <div class="input-group-append">
+          <div class="badge">${shortcutText} + E</div>
+        </div>
       </div>
     `;
   }
