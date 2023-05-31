@@ -39,6 +39,9 @@ export default class LMSCardDetailsModal extends LitElement {
 
   @query(".close") closeButton: HTMLButtonElement | undefined;
 
+  private boundHandleKeyDown = (e: KeyboardEvent) =>
+    this.handleKeyDown.bind(this)(e);
+
   static override styles = [
     bootstrapStyles,
     skeletonStyles,
@@ -108,6 +111,13 @@ export default class LMSCardDetailsModal extends LitElement {
     );
 
     this.locale = document.documentElement.lang;
+
+    document.addEventListener("keydown", this.boundHandleKeyDown);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener("keydown", this.boundHandleKeyDown);
   }
 
   private handleSimulatedBackdropClick(event: MouseEvent) {
@@ -132,6 +142,12 @@ export default class LMSCardDetailsModal extends LitElement {
           composed: true,
         })
       );
+    }
+  }
+
+  private handleKeyDown(e: KeyboardEvent) {
+    if (e.key === "Escape" && this.isOpen) {
+      this.toggleModal();
     }
   }
 
@@ -365,9 +381,7 @@ export default class LMSCardDetailsModal extends LitElement {
                       <span>${litFontawesome(faMapMarker)}</span>
                       <strong>${__("Location")}</strong>
                     </p>
-                    <p>
-                      ${formatAddress(location)}
-                    </p>
+                    <p>${formatAddress(location)}</p>
                   </div>
                 </div>
               </div>

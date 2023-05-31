@@ -2934,6 +2934,7 @@ ${value}</textarea
             this.locations = [];
             this.target_groups = [];
             this.locale = "en";
+            this.boundHandleKeyDown = (e) => this.handleKeyDown.bind(this)(e);
         }
         connectedCallback() {
             super.connectedCallback();
@@ -2953,6 +2954,11 @@ ${value}</textarea
             };
             target_groups().then((target_groups) => (this.target_groups = target_groups));
             this.locale = document.documentElement.lang;
+            document.addEventListener("keydown", this.boundHandleKeyDown);
+        }
+        disconnectedCallback() {
+            super.disconnectedCallback();
+            document.removeEventListener("keydown", this.boundHandleKeyDown);
         }
         handleSimulatedBackdropClick(event) {
             if (event.target === event.currentTarget) {
@@ -2972,6 +2978,11 @@ ${value}</textarea
                     bubbles: true,
                     composed: true,
                 }));
+            }
+        }
+        handleKeyDown(e) {
+            if (e.key === "Escape" && this.isOpen) {
+                this.toggleModal();
             }
         }
         willUpdate() {
@@ -3150,9 +3161,7 @@ ${value}</textarea
                       <span>${litFontawesome_2(faMapMarker)}</span>
                       <strong>${__("Location")}</strong>
                     </p>
-                    <p>
-                      ${formatAddress(location)}
-                    </p>
+                    <p>${formatAddress(location)}</p>
                   </div>
                 </div>
               </div>
@@ -4486,7 +4495,7 @@ ${value}</textarea
         updated(_changedProperties) {
             if (_changedProperties.has("isOpen")) {
                 if (this.isOpen) {
-                    this.closeBtn.focus();
+                    this.closeButton.focus();
                 }
             }
         }
@@ -4700,7 +4709,7 @@ ${value}</textarea
     ], LMSModal.prototype, "btnModalWrapper", void 0);
     __decorate([
         i$2(".close")
-    ], LMSModal.prototype, "closeBtn", void 0);
+    ], LMSModal.prototype, "closeButton", void 0);
     LMSModal = __decorate([
         e$3("lms-modal")
     ], LMSModal);

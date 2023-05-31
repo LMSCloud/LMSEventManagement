@@ -66,7 +66,7 @@ export default class LMSModal extends LitElement {
 
   @query(".btn-modal-wrapper") btnModalWrapper!: HTMLElement;
 
-  @query(".close") closeBtn!: HTMLElement;
+  @query(".close") closeButton!: HTMLElement;
 
   /** TODO: Maybe we can find a cleaner way to do the intersection observations than in the base modal component */
   private footer: HTMLElement | undefined | null =
@@ -297,7 +297,7 @@ export default class LMSModal extends LitElement {
   ): void {
     if (_changedProperties.has("isOpen")) {
       if (this.isOpen) {
-        this.closeBtn.focus();
+        this.closeButton.focus();
       }
     }
   }
