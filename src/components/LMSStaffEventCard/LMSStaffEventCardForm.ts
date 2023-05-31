@@ -75,6 +75,13 @@ export default class LMSStaffEventCardForm extends LitElement {
           flex-direction: column;
         }
       }
+
+      .section {
+        border: 1px solid transparent;
+        background-color: #f8f9fa;
+        margin-bottom: 1em;
+        border-radius: 1.5rem;
+      }
     `,
   ];
 
@@ -467,7 +474,7 @@ export default class LMSStaffEventCardForm extends LitElement {
         >
           <h4 class="pointer-events-none">${__("Basic Information")}</h4>
         </button>
-        <div id="basicInfo" class="collapse px-3">
+        <div id="basicInfo" class="collapse p-3 my-3 section">
           <div class="form-row">
             <div class="form-group col">
               <label for="name">${__("Name")}</label>
@@ -493,7 +500,7 @@ export default class LMSStaffEventCardForm extends LitElement {
         >
           <h4 class="pointer-events-none">${__("Age and Participants")}</h4>
         </button>
-        <div id="ageAndParticipants" class="collapse px-3">
+        <div id="ageAndParticipants" class="collapse p-3 my-3 section">
           <div class="form-row">
             <div class="form-group col">
               <label for="min_age">${__("Min Age")}</label>
@@ -521,7 +528,7 @@ export default class LMSStaffEventCardForm extends LitElement {
         >
           <h4 class="pointer-events-none">${__("Event Times")}</h4>
         </button>
-        <div id="eventTimes" class="collapse px-3">
+        <div id="eventTimes" class="collapse p-3 my-3 section">
           <div class="form-row">
             <div class="form-group col">
               <label for="start_time">${__("Start Time")}</label>
@@ -557,7 +564,7 @@ export default class LMSStaffEventCardForm extends LitElement {
         >
           <h4 class="pointer-events-none">${__("Additional Information")}</h4>
         </button>
-        <div id="additionalInfo" class="collapse px-3">
+        <div id="additionalInfo" class="collapse p-3 my-3 section">
           <div class="form-row">
             <div class="col">
               <div class="form-group">
