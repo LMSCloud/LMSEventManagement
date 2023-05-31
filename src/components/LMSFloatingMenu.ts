@@ -3,12 +3,12 @@ import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { LitElement, css, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { DirectiveResult } from "lit/directive.js";
-import { TranslateDirective, __, attr__ } from "../lib/translate";
-import { skeletonStyles } from "../styles/skeleton";
+import { classMap } from "lit/directives/class-map.js";
+import { __, attr__ } from "../lib/translate";
+import { TranslatedString } from "../sharedDeclarations";
 
 type MenuEntry = {
-  name: string | DirectiveResult<typeof TranslateDirective>;
+  name: string | TranslatedString;
   icon: IconDefinition;
   url: string;
   method: string;
@@ -18,25 +18,17 @@ type MenuEntry = {
 export default class LMSFloatingMenu extends LitElement {
   @property({ type: String }) brand = "Navigation";
 
-  @property({
-    type: Array,
-    converter: (value) => (value ? JSON.parse(value) : []),
-  })
-  items: MenuEntry[] = [];
+  @property({ type: Array }) items: MenuEntry[] = [];
 
-  @property({ type: String, attribute: false }) _currentUrl =
-    window.location.href;
+  @property({ type: URLSearchParams, attribute: false })
+  private currentSearchParams = new URLSearchParams(window.location.search);
 
-  @property({ type: String, attribute: false }) _currentSearchParams =
-    new URLSearchParams(window.location.search);
-
-  @query("#navbarNav") navbarNav!: HTMLElement;
+  @query("#navbarNav") private navbarNav!: HTMLElement;
 
   private isOpen = false;
 
   static override styles = [
     bootstrapStyles,
-    skeletonStyles,
     css`
       svg {
         width: 1rem;
@@ -53,56 +45,56 @@ export default class LMSFloatingMenu extends LitElement {
 
   private toggleNavbarCollapse() {
     this.navbarNav.classList.toggle("collapse");
-    if (this.navbarNav.classList.contains("show")) {
-      this.isOpen = true;
-      return;
-    }
+    this.isOpen = this.navbarNav.classList.contains("show");
+  }
 
-    this.isOpen = false;
+  private isUrlMatchingSearchParams(
+    url: string,
+    searchParams: URLSearchParams
+  ): boolean {
+    const [, itemSearchParams]: string[] | URLSearchParams[] = url.split("?");
+    const itemSearchParamsObj = new URLSearchParams(itemSearchParams ?? "");
+    return itemSearchParamsObj.toString() === searchParams.toString();
   }
 
   override render() {
-    return html` <nav
-      class="navbar navbar-expand-lg navbar-light mx-2 mt-3 mb-5 rounded"
-    >
-      <a class="navbar-brand" href="#"><strong>${this.brand}</strong></a>
-      <button
-        @click=${this.toggleNavbarCollapse}
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded=${this.isOpen}
-        aria-label=${attr__("Toggle navigation")}
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          ${this.items.map((item) => {
-            /** We split the searchParams from the URL and
-             *  compare them to the currentSearchParams of
-             *  the window.location. If they match, we add
-             *  the "active" class to the item. */
-            let [, itemSearchParams]: string[] | URLSearchParams[] =
-              item.url.split("?");
-            itemSearchParams = new URLSearchParams(itemSearchParams ?? "");
-            const matches =
-              itemSearchParams.toString() ===
-              this._currentSearchParams.toString();
+    return html`
+      <nav class="navbar navbar-expand-lg navbar-light mx-2 mt-3 mb-5 rounded">
+        <a class="navbar-brand" href="#"><strong>${this.brand}</strong></a>
+        <button
+          @click=${this.toggleNavbarCollapse}
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded=${this.isOpen ? "true" : "false"}
+          aria-label=${attr__("Toggle navigation")}
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            ${this.items.map((item) => {
+              const matches = this.isUrlMatchingSearchParams(
+                item.url,
+                this.currentSearchParams
+              );
 
-            return html` <li class="nav-item ${matches ? "active" : ""}">
-              <a class="nav-link" href="${item.url}"
-                >${litFontawesome(item.icon)}
-                ${item.name}${matches
-                  ? html` <span class="sr-only">(${__("current")})</span>`
-                  : ""}</a
-              >
-            </li>`;
-          })}
-        </ul>
-      </div>
-    </nav>`;
+              return html`
+                <li class=${classMap({ "nav-item": true, active: matches })}>
+                  <a class="nav-link" href=${item.url}>
+                    ${litFontawesome(item.icon)} ${item.name}
+                    ${matches
+                      ? html`<span class="sr-only">(${__("current")})</span>`
+                      : ""}
+                  </a>
+                </li>
+              `;
+            })}
+          </ul>
+        </div>
+      </nav>
+    `;
   }
 }

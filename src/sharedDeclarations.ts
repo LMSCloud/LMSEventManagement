@@ -140,7 +140,7 @@ export type Toast = {
   message: string | TemplateResult;
 };
 
-type TranslatedString = DirectiveResult<typeof TranslateDirective>;
+export type TranslatedString = DirectiveResult<typeof TranslateDirective>;
 
 export type URIComponents = {
   path?: string;

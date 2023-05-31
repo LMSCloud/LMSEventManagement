@@ -1,5 +1,6 @@
 :root {
   /* box shadows */
+  --shadow-xs: rgb(0 0 0 / 10%) 0 1px 2px;
   --shadow-sm: rgb(0 0 0 / 18%) 0 2px 4px;
   --shadow-md: rgb(0 0 0 / 15%) 0 3px 3px 0;
   --shadow-lg: rgb(0 0 0 / 15%) 0 2px 8px;

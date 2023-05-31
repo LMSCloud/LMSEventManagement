@@ -4024,63 +4024,57 @@ ${value}</textarea
             super(...arguments);
             this.brand = "Navigation";
             this.items = [];
-            this._currentUrl = window.location.href;
-            this._currentSearchParams = new URLSearchParams(window.location.search);
+            this.currentSearchParams = new URLSearchParams(window.location.search);
             this.isOpen = false;
         }
         toggleNavbarCollapse() {
             this.navbarNav.classList.toggle("collapse");
-            if (this.navbarNav.classList.contains("show")) {
-                this.isOpen = true;
-                return;
-            }
-            this.isOpen = false;
+            this.isOpen = this.navbarNav.classList.contains("show");
+        }
+        isUrlMatchingSearchParams(url, searchParams) {
+            const [, itemSearchParams] = url.split("?");
+            const itemSearchParamsObj = new URLSearchParams(itemSearchParams !== null && itemSearchParams !== void 0 ? itemSearchParams : "");
+            return itemSearchParamsObj.toString() === searchParams.toString();
         }
         render() {
-            return x ` <nav
-      class="navbar navbar-expand-lg navbar-light mx-2 mt-3 mb-5 rounded"
-    >
-      <a class="navbar-brand" href="#"><strong>${this.brand}</strong></a>
-      <button
-        @click=${this.toggleNavbarCollapse}
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded=${this.isOpen}
-        aria-label=${attr__("Toggle navigation")}
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          ${this.items.map((item) => {
-            /** We split the searchParams from the URL and
-             *  compare them to the currentSearchParams of
-             *  the window.location. If they match, we add
-             *  the "active" class to the item. */
-            let [, itemSearchParams] = item.url.split("?");
-            itemSearchParams = new URLSearchParams(itemSearchParams !== null && itemSearchParams !== void 0 ? itemSearchParams : "");
-            const matches = itemSearchParams.toString() ===
-                this._currentSearchParams.toString();
-            return x ` <li class="nav-item ${matches ? "active" : ""}">
-              <a class="nav-link" href="${item.url}"
-                >${litFontawesome_2(item.icon)}
-                ${item.name}${matches
-                ? x ` <span class="sr-only">(${__("current")})</span>`
-                : ""}</a
-              >
-            </li>`;
+            return x `
+      <nav class="navbar navbar-expand-lg navbar-light mx-2 mt-3 mb-5 rounded">
+        <a class="navbar-brand" href="#"><strong>${this.brand}</strong></a>
+        <button
+          @click=${this.toggleNavbarCollapse}
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded=${this.isOpen ? "true" : "false"}
+          aria-label=${attr__("Toggle navigation")}
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            ${this.items.map((item) => {
+            const matches = this.isUrlMatchingSearchParams(item.url, this.currentSearchParams);
+            return x `
+                <li class=${o$1({ "nav-item": true, active: matches })}>
+                  <a class="nav-link" href=${item.url}>
+                    ${litFontawesome_2(item.icon)} ${item.name}
+                    ${matches
+                ? x `<span class="sr-only">(${__("current")})</span>`
+                : ""}
+                  </a>
+                </li>
+              `;
         })}
-        </ul>
-      </div>
-    </nav>`;
+          </ul>
+        </div>
+      </nav>
+    `;
         }
     };
     LMSFloatingMenu.styles = [
         bootstrapStyles,
-        skeletonStyles,
         i$5 `
       svg {
         width: 1rem;
@@ -4098,17 +4092,11 @@ ${value}</textarea
         e$2({ type: String })
     ], LMSFloatingMenu.prototype, "brand", void 0);
     __decorate([
-        e$2({
-            type: Array,
-            converter: (value) => (value ? JSON.parse(value) : []),
-        })
+        e$2({ type: Array })
     ], LMSFloatingMenu.prototype, "items", void 0);
     __decorate([
-        e$2({ type: String, attribute: false })
-    ], LMSFloatingMenu.prototype, "_currentUrl", void 0);
-    __decorate([
-        e$2({ type: String, attribute: false })
-    ], LMSFloatingMenu.prototype, "_currentSearchParams", void 0);
+        e$2({ type: URLSearchParams, attribute: false })
+    ], LMSFloatingMenu.prototype, "currentSearchParams", void 0);
     __decorate([
         i$2("#navbarNav")
     ], LMSFloatingMenu.prototype, "navbarNav", void 0);
@@ -4879,6 +4867,8 @@ ${value}</textarea
         constructor() {
             super(...arguments);
             this.sortableColumns = ["id"];
+            this.isMacOS = /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent);
+            this.boundHandleShortcut = (e) => this.handleShortcut.bind(this)(e);
             this.debouncedSearch = debounce((query) => {
                 this.dispatchEvent(new CustomEvent("search", {
                     detail: {
@@ -4909,7 +4899,7 @@ ${value}</textarea
                 // Handle OR queries
                 if (rawValue.includes(" OR ")) {
                     operator = "||";
-                    value = rawValue.split("OR").map((s) => s.trim());
+                    value = rawValue.split(" OR ").map((s) => s.trim());
                 }
                 // Handle numeric and quoted values
                 else if (!isNaN(parseFloat(rawValue))) {
@@ -4992,7 +4982,30 @@ ${value}</textarea
             const inputElement = e.target;
             this.debouncedSearch(inputElement.value);
         }
+        handleShortcut(e) {
+            const isCmdOrCtrlPressed = e.metaKey || e.ctrlKey;
+            if (isCmdOrCtrlPressed && e.key.toLowerCase() === "e") {
+                e.preventDefault();
+                if (this.input) {
+                    this.input.focus();
+                }
+            }
+            else if (e.key === "Escape") {
+                if (this.input) {
+                    this.input.blur();
+                }
+            }
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            document.addEventListener("keydown", this.boundHandleShortcut);
+        }
+        disconnectedCallback() {
+            super.disconnectedCallback();
+            document.removeEventListener("keydown", this.boundHandleShortcut);
+        }
         render() {
+            const shortcutText = this.isMacOS ? "⌘" : "Ctrl";
             return x `
       <div class="input-group flex-nowrap">
         <div class="input-group-prepend">
@@ -5008,6 +5021,9 @@ ${value}</textarea
           aria-describedby="addon-wrapping"
           @input=${this.handleInput}
         />
+        <div class="input-group-append">
+          <div class="badge">${shortcutText} + E</div>
+        </div>
       </div>
     `;
         }
@@ -5020,11 +5036,25 @@ ${value}</textarea
         height: 1rem;
         width: 1rem;
       }
+
+      .badge {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.25rem;
+        background-color: #007bff;
+        color: #ffffff;
+        border-radius: 5px;
+        padding: 0.25rem;
+        box-shadow: var(--shadow-sm);
+      }
     `,
     ];
     __decorate([
         e$2({ type: Array })
     ], LMSSearch.prototype, "sortableColumns", void 0);
+    __decorate([
+        i$2("input")
+    ], LMSSearch.prototype, "input", void 0);
     LMSSearch = __decorate([
         e$3("lms-search")
     ], LMSSearch);
