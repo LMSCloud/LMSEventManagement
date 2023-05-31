@@ -8,6 +8,7 @@ import {
   LMSEventType,
 } from "../sharedDeclarations";
 import { __ } from "../lib/translate";
+import LMSPellEditor from "../components/LMSPellEditor";
 
 type InputTypeValue =
   | string
@@ -27,6 +28,12 @@ type TemplateFunction = (
   value: InputTypeValue,
   data?: LMSEventType[] | LMSLocation[] | LMSTargetGroup[]
 ) => TemplateResult;
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "lms-pell-editor": LMSPellEditor;
+  }
+}
 
 /**
  * Represents a TemplateResultConverter that can extract values and render strings from a TemplateResult.
@@ -355,13 +362,18 @@ export class InputConverter {
         value=${value}
         disabled
       />`,
-      description: (value) => html`<textarea
-        class="form-control"
-        name="description"
-        disabled
-      >
-${value}</textarea
-      >`,
+      description: (value) => {
+        return html`
+          <div @closed=${this.handleClosed}>
+            <textarea class="form-control" name="description" disabled>
+${value}
+              </textarea
+            >
+            <lms-pell-editor .value=${value}></lms-pell-editor>
+          </div>
+        `;
+      },
+
       open_registration: (value) => html`<input
         class="form-control"
         type="checkbox"
@@ -470,6 +482,21 @@ ${value}</textarea
         />`;
       },
     };
+  }
+
+  /**
+   * Handles the closed event of the LMSPellEditor.
+   * Sets the value of the textarea to the value of the LMSPellEditor.
+   * @param e
+   */
+  private handleClosed(e: CustomEvent) {
+    const target = e.target as LMSPellEditor;
+    const textarea = target.previousElementSibling as HTMLTextAreaElement;
+    const { value } = e.detail;
+
+    if (textarea) {
+      textarea.value = value;
+    }
   }
 
   /**

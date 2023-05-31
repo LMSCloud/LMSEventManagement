@@ -975,13 +975,17 @@
         value=${value}
         disabled
       />`,
-                description: (value) => x `<textarea
-        class="form-control"
-        name="description"
-        disabled
-      >
-${value}</textarea
-      >`,
+                description: (value) => {
+                    return x `
+          <div @closed=${this.handleClosed}>
+            <textarea class="form-control" name="description" disabled>
+${value}
+              </textarea
+            >
+            <lms-pell-editor .value=${value}></lms-pell-editor>
+          </div>
+        `;
+                },
                 open_registration: (value) => x `<input
         class="form-control"
         type="checkbox"
@@ -1090,6 +1094,19 @@ ${value}</textarea
         />`;
                 },
             };
+        }
+        /**
+         * Handles the closed event of the LMSPellEditor.
+         * Sets the value of the textarea to the value of the LMSPellEditor.
+         * @param e
+         */
+        handleClosed(e) {
+            const target = e.target;
+            const textarea = target.previousElementSibling;
+            const { value } = e.detail;
+            if (textarea) {
+                textarea.value = value;
+            }
         }
         /**
          * Toggles the collapse state of a target element.
@@ -1434,6 +1451,12 @@ ${value}</textarea
       iconName: 'image',
       icon: [512, 512, [], "f03e", "M0 96C0 60.7 28.7 32 64 32H448c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM323.8 202.5c-4.5-6.6-11.9-10.5-19.8-10.5s-15.4 3.9-19.8 10.5l-87 127.6L170.7 297c-4.6-5.7-11.5-9-18.7-9s-14.2 3.3-18.7 9l-64 80c-5.8 7.2-6.9 17.1-2.9 25.4s12.4 13.6 21.6 13.6h96 32H424c8.9 0 17.1-4.9 21.2-12.8s3.6-17.4-1.4-24.7l-120-176zM112 192a48 48 0 1 0 0-96 48 48 0 1 0 0 96z"]
     };
+    var faUpDownLeftRight = {
+      prefix: 'fas',
+      iconName: 'up-down-left-right',
+      icon: [512, 512, ["arrows-alt"], "f0b2", "M278.6 9.4c-12.5-12.5-32.8-12.5-45.3 0l-64 64c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8h32v96H128V192c0-12.9-7.8-24.6-19.8-29.6s-25.7-2.2-34.9 6.9l-64 64c-12.5 12.5-12.5 32.8 0 45.3l64 64c9.2 9.2 22.9 11.9 34.9 6.9s19.8-16.6 19.8-29.6V288h96v96H192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l64 64c12.5 12.5 32.8 12.5 45.3 0l64-64c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8H288V288h96v32c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l64-64c12.5-12.5 12.5-32.8 0-45.3l-64-64c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6v32H288V128h32c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-64-64z"]
+    };
+    var faArrowsAlt = faUpDownLeftRight;
     var faLocationPin = {
       prefix: 'fas',
       iconName: 'location-pin',
@@ -1512,6 +1535,12 @@ ${value}</textarea
       iconName: 'calendar',
       icon: [448, 512, [128197, 128198], "f133", "M96 32V64H48C21.5 64 0 85.5 0 112v48H448V112c0-26.5-21.5-48-48-48H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32V64H160V32c0-17.7-14.3-32-32-32S96 14.3 96 32zM448 192H0V464c0 26.5 21.5 48 48 48H400c26.5 0 48-21.5 48-48V192z"]
     };
+
+    var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+    function getDefaultExportFromCjs (x) {
+    	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+    }
 
     function getAugmentedNamespace(n) {
       if (n.__esModule) return n;
@@ -4879,6 +4908,188 @@ ${value}</textarea
     ], LMSPagination);
     var LMSPagination$1 = LMSPagination;
 
+    var pell_min = {exports: {}};
+
+    pell_min.exports;
+
+    (function (module, exports) {
+    	!function(t,e){e(exports);}(commonjsGlobal,function(t){var e=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var n=arguments[e];for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(t[r]=n[r]);}return t},c="defaultParagraphSeparator",l="formatBlock",a=function(t,e,n){return t.addEventListener(e,n)},s=function(t,e){return t.appendChild(e)},d=function(t){return document.createElement(t)},n=function(t){return document.queryCommandState(t)},f=function(t){var e=1<arguments.length&&void 0!==arguments[1]?arguments[1]:null;return document.execCommand(t,!1,e)},p={bold:{icon:"<b>B</b>",title:"Bold",state:function(){return n("bold")},result:function(){return f("bold")}},italic:{icon:"<i>I</i>",title:"Italic",state:function(){return n("italic")},result:function(){return f("italic")}},underline:{icon:"<u>U</u>",title:"Underline",state:function(){return n("underline")},result:function(){return f("underline")}},strikethrough:{icon:"<strike>S</strike>",title:"Strike-through",state:function(){return n("strikeThrough")},result:function(){return f("strikeThrough")}},heading1:{icon:"<b>H<sub>1</sub></b>",title:"Heading 1",result:function(){return f(l,"<h1>")}},heading2:{icon:"<b>H<sub>2</sub></b>",title:"Heading 2",result:function(){return f(l,"<h2>")}},paragraph:{icon:"&#182;",title:"Paragraph",result:function(){return f(l,"<p>")}},quote:{icon:"&#8220; &#8221;",title:"Quote",result:function(){return f(l,"<blockquote>")}},olist:{icon:"&#35;",title:"Ordered List",result:function(){return f("insertOrderedList")}},ulist:{icon:"&#8226;",title:"Unordered List",result:function(){return f("insertUnorderedList")}},code:{icon:"&lt;/&gt;",title:"Code",result:function(){return f(l,"<pre>")}},line:{icon:"&#8213;",title:"Horizontal Line",result:function(){return f("insertHorizontalRule")}},link:{icon:"&#128279;",title:"Link",result:function(){var t=window.prompt("Enter the link URL");t&&f("createLink",t);}},image:{icon:"&#128247;",title:"Image",result:function(){var t=window.prompt("Enter the image URL");t&&f("insertImage",t);}}},m={actionbar:"pell-actionbar",button:"pell-button",content:"pell-content",selected:"pell-button-selected"},r=function(n){var t=n.actions?n.actions.map(function(t){return "string"==typeof t?p[t]:p[t.name]?e({},p[t.name],t):t}):Object.keys(p).map(function(t){return p[t]}),r=e({},m,n.classes),i=n[c]||"div",o=d("div");o.className=r.actionbar,s(n.element,o);var u=n.element.content=d("div");return u.contentEditable=!0,u.className=r.content,u.oninput=function(t){var e=t.target.firstChild;e&&3===e.nodeType?f(l,"<"+i+">"):"<br>"===u.innerHTML&&(u.innerHTML=""),n.onChange(u.innerHTML);},u.onkeydown=function(t){var e;"Enter"===t.key&&"blockquote"===(e=l,document.queryCommandValue(e))&&setTimeout(function(){return f(l,"<"+i+">")},0);},s(n.element,u),t.forEach(function(t){var e=d("button");if(e.className=r.button,e.innerHTML=t.icon,e.title=t.title,e.setAttribute("type","button"),e.onclick=function(){return t.result()&&u.focus()},t.state){var n=function(){return e.classList[t.state()?"add":"remove"](r.selected)};a(u,"keyup",n),a(u,"mouseup",n),a(e,"click",n);}s(o,e);}),n.styleWithCSS&&f("styleWithCSS"),f(c,i),n.element},i={exec:f,init:r};t.exec=f,t.init=r,t.default=i,Object.defineProperty(t,"__esModule",{value:!0});}); 
+    } (pell_min, pell_min.exports));
+
+    var pell_minExports = pell_min.exports;
+    var pell = /*@__PURE__*/getDefaultExportFromCjs(pell_minExports);
+
+    let LMSPellEditor = class LMSPellEditor extends s {
+        constructor() {
+            super(...arguments);
+            this.value = "";
+            this.editedValue = "";
+        }
+        render() {
+            return x `
+      <button
+        class="btn btn-outline-secondary float-right mt-3"
+        @click=${this.openModal}
+      >
+        ${litFontawesome_2(faArrowsAlt)}&nbsp;${__("Edit")}
+      </button>
+      <dialog id="modal">
+        <div id="editor" class="m-auto"></div>
+        <div class="d-flex justify-content-end mt-3">
+          <button
+            class="btn btn-secondary mr-3"
+            @click=${this.closeModalWithoutSaving}
+          >
+            ${__("Close")}
+          </button>
+          <button class="btn btn-primary" @click=${this.closeModalWithSave}>
+            ${__("Save")}
+          </button>
+        </div>
+      </dialog>
+    `;
+        }
+        firstUpdated(changedProperties) {
+            super.firstUpdated(changedProperties);
+            // Initialize pell editor
+            this.initEditor();
+        }
+        openModal() {
+            this.modal.showModal();
+            this.editedValue = this.value; // Copy the value property
+        }
+        closeModalWithoutSaving() {
+            this.modal.close();
+        }
+        closeModalWithSave() {
+            this.modal.close();
+            // Update the value property and dispatch event
+            if (this.editedValue !== this.value) {
+                this.dispatchEvent(new CustomEvent("closed", {
+                    detail: {
+                        value: this.editedValue,
+                    },
+                    bubbles: true,
+                    composed: true,
+                }));
+            }
+        }
+        initEditor() {
+            if (this.editor) {
+                // Initialize pell editor
+                const editor = pell.init({
+                    element: this.editor,
+                    onChange: (html) => {
+                        this.editedValue = html; // Update the editedValue with the edited content
+                    },
+                    defaultParagraphSeparator: "div",
+                    styleWithCSS: false,
+                    actions: [
+                        "bold",
+                        "italic",
+                        "underline",
+                        "strikethrough",
+                        "heading1",
+                        "heading2",
+                        "paragraph",
+                        "quote",
+                        "olist",
+                        "ulist",
+                        "code",
+                        "line",
+                        "link",
+                        "image",
+                    ],
+                    classes: {
+                        actionbar: "pell-actionbar",
+                        button: "pell-button",
+                        content: "pell-content",
+                        selected: "pell-button-selected",
+                    },
+                });
+                editor.content.innerHTML = this.value; // Set the initial value
+                editor.content.focus(); // Focus the editor
+            }
+        }
+    };
+    LMSPellEditor.styles = [
+        bootstrapStyles,
+        skeletonStyles,
+        utilityStyles,
+        i$5 `
+      #modal::part(backdrop) {
+        background-color: rgb(0 0 0 / 50%);
+      }
+
+      #modal {
+        position: fixed;
+        padding: 1em;
+        border: 1px solid var(--separator-mid);
+        border-radius: 0.5rem;
+        margin: auto;
+        box-shadow: var(--shadow-hv);
+        width: 25vw;
+      }
+
+      #editor {
+        width: 100%;
+      }
+
+      .pell-actionbar {
+        display: flex;
+        justify-content: space-between;
+        background-color: #f5f5f5;
+        padding: 1em;
+        border: 1px solid #ddd;
+        border-radius: 0.25rem;
+        margin-bottom: 1em;
+      }
+
+      .pell-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #333;
+      }
+
+      .pell-button:hover {
+        color: #007bff;
+      }
+
+      .pell-content {
+        height: 200px;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 0.25rem;
+        padding: 1em;
+      }
+
+      .pell-button-selected {
+        color: #007bff;
+      }
+
+      svg {
+        display: inline-block;
+        width: 0.75em;
+        height: 0.75em;
+        color: #6c757d;
+      }
+    `,
+    ];
+    __decorate([
+        e$2({ type: String })
+    ], LMSPellEditor.prototype, "value", void 0);
+    __decorate([
+        i$2("#modal")
+    ], LMSPellEditor.prototype, "modal", void 0);
+    __decorate([
+        i$2("#editor")
+    ], LMSPellEditor.prototype, "editor", void 0);
+    LMSPellEditor = __decorate([
+        e$3("lms-pell-editor")
+    ], LMSPellEditor);
+    var LMSPellEditor$1 = LMSPellEditor;
+
     let LMSSearch = class LMSSearch extends s {
         constructor() {
             super(...arguments);
@@ -7834,6 +8045,7 @@ ${value}</textarea
         LMSImageBrowser: LMSImageBrowser$1,
         LMSModal: LMSModal$1,
         LMSPagination: LMSPagination$1,
+        LMSPellEditor: LMSPellEditor$1,
         LMSSearch: LMSSearch$1,
         LMSToast: LMSToast$1,
         LMSTooltip: LMSTooltip$1,

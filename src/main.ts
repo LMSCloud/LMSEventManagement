@@ -27,6 +27,7 @@ import LMSFloatingMenu from "./components/LMSFloatingMenu";
 import LMSImageBrowser from "./components/LMSImageBrowser";
 import LMSModal from "./components/LMSModal";
 import LMSPagination from "./components/LMSPagination";
+import LMSPellEditor from "./components/LMSPellEditor";
 import LMSSearch from "./components/LMSSearch";
 import LMSToast from "./components/LMSToast";
 import LMSTooltip from "./components/LMSTooltip";
@@ -70,6 +71,7 @@ export default {
   LMSImageBrowser,
   LMSModal,
   LMSPagination,
+  LMSPellEditor,
   LMSSearch,
   LMSToast,
   LMSTooltip,
