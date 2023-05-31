@@ -8,4 +8,8 @@ export const utilityStyles = css`
   .w-inherit {
     width: inherit;
   }
+
+  .h-inherit {
+    height: inherit;
+  }
 `;

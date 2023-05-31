@@ -2,7 +2,7 @@ import { faArrowsAlt } from "@fortawesome/free-solid-svg-icons";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { LitElement, PropertyValues, css, html } from "lit";
-import { customElement, property, query } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators.js";
 import pell from "pell";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
@@ -15,6 +15,8 @@ export default class LMSPellEditor extends LitElement {
   @query("#modal") modal!: HTMLDialogElement;
 
   @query("#editor") editor!: HTMLDivElement;
+
+  @state() hasVisibleToggle = false;
 
   private editedValue = "";
 
@@ -85,26 +87,29 @@ export default class LMSPellEditor extends LitElement {
 
   override render() {
     return html`
-      <button
-        class="btn btn-outline-secondary float-right mt-3"
-        @click=${this.openModal}
-      >
-        ${litFontawesome(faArrowsAlt)}&nbsp;${__("Edit")}
-      </button>
-      <dialog id="modal">
-        <div id="editor" class="m-auto"></div>
-        <div class="d-flex justify-content-end mt-3">
-          <button
-            class="btn btn-secondary mr-3"
-            @click=${this.closeModalWithoutSaving}
-          >
-            ${__("Close")}
-          </button>
-          <button class="btn btn-primary" @click=${this.closeModalWithSave}>
-            ${__("Save")}
-          </button>
-        </div>
-      </dialog>
+      <div class="position-relative">
+        <button
+          class="btn btn-light btn-toggle-editor btn-embedded"
+          @click=${this.openModal}
+          ?hidden=${!this.hasVisibleToggle}
+        >
+          ${litFontawesome(faArrowsAlt)}&nbsp;${__("Open editor")}
+        </button>
+        <dialog id="modal">
+          <div id="editor" class="m-auto"></div>
+          <div class="d-flex justify-content-end mt-3">
+            <button
+              class="btn btn-secondary mr-3"
+              @click=${this.closeModalWithoutSaving}
+            >
+              ${__("Close")}
+            </button>
+            <button class="btn btn-primary" @click=${this.closeModalWithSave}>
+              ${__("Save")}
+            </button>
+          </div>
+        </dialog>
+      </div>
     `;
   }
 
@@ -113,6 +118,14 @@ export default class LMSPellEditor extends LitElement {
 
     // Initialize pell editor
     this.initEditor();
+  }
+
+  public hideToggleButton() {
+    this.hasVisibleToggle = false;
+  }
+
+  public showToggleButton() {
+    this.hasVisibleToggle = true;
   }
 
   private openModal() {

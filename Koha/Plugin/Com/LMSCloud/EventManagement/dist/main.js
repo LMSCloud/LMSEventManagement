@@ -977,12 +977,23 @@
       />`,
                 description: (value) => {
                     return x `
-          <div @closed=${this.handleClosed}>
-            <textarea class="form-control" name="description" disabled>
-${value}
-              </textarea
+          <div @closed=${this.handleClosed} class="position-relative h-inherit">
+            <textarea
+              class="form-control"
+              name="description"
+              @click=${this.handleTextAreaFocusIn}
+              @blur=${this.handleTextAreaFocusOut}
+              @mouseenter=${this.handleTextAreaMouseEnter}
+              @mouseleave=${this.handleTextAreaMouseLeave}
+              disabled
             >
-            <lms-pell-editor .value=${value}></lms-pell-editor>
+${value}</textarea
+            >
+            <lms-pell-editor
+              .value=${value}
+              class="position-absolute m-3"
+              style="top: 0; right: 0;"
+            ></lms-pell-editor>
           </div>
         `;
                 },
@@ -1094,6 +1105,42 @@ ${value}
         />`;
                 },
             };
+        }
+        handleTextAreaMouseEnter(e) {
+            const target = e.target;
+            const editor = target.nextElementSibling;
+            const { disabled } = target;
+            const isActiveElement = document.activeElement === target;
+            if (disabled || isActiveElement)
+                return;
+            editor.showToggleButton();
+        }
+        handleTextAreaMouseLeave(e) {
+            const target = e.target;
+            const editor = target.nextElementSibling;
+            const { disabled } = target;
+            const isActiveElement = document.activeElement === target;
+            if (disabled || isActiveElement)
+                return;
+            editor.hideToggleButton();
+        }
+        /**
+         * Handles the focus in event of the textarea.
+         * @param e
+         */
+        handleTextAreaFocusIn(e) {
+            const target = e.target;
+            const editor = target.nextElementSibling;
+            editor.hideToggleButton();
+        }
+        /**
+         * Handles the focus out event of the textarea.
+         * @param e
+         */
+        handleTextAreaFocusOut(e) {
+            const target = e.target;
+            const editor = target.nextElementSibling;
+            editor.showToggleButton();
         }
         /**
          * Handles the closed event of the LMSPellEditor.
@@ -1644,6 +1691,10 @@ ${value}
   .w-inherit {
     width: inherit;
   }
+
+  .h-inherit {
+    height: inherit;
+  }
 `;
 
     /**
@@ -2165,7 +2216,7 @@ ${value}
         e$1(".collapse")
     ], LMSStaffEventCardForm.prototype, "collapsibles", void 0);
     __decorate([
-        e$1("input, select, textarea")
+        e$1("input, select, textarea, .btn-embedded")
     ], LMSStaffEventCardForm.prototype, "inputs", void 0);
     LMSStaffEventCardForm = __decorate([
         e$3("lms-staff-event-card-form")
@@ -4940,36 +4991,46 @@ ${value}
         constructor() {
             super(...arguments);
             this.value = "";
+            this.hasVisibleToggle = false;
             this.editedValue = "";
         }
         render() {
             return x `
-      <button
-        class="btn btn-outline-secondary float-right mt-3"
-        @click=${this.openModal}
-      >
-        ${litFontawesome_2(faArrowsAlt)}&nbsp;${__("Edit")}
-      </button>
-      <dialog id="modal">
-        <div id="editor" class="m-auto"></div>
-        <div class="d-flex justify-content-end mt-3">
-          <button
-            class="btn btn-secondary mr-3"
-            @click=${this.closeModalWithoutSaving}
-          >
-            ${__("Close")}
-          </button>
-          <button class="btn btn-primary" @click=${this.closeModalWithSave}>
-            ${__("Save")}
-          </button>
-        </div>
-      </dialog>
+      <div class="position-relative">
+        <button
+          class="btn btn-light btn-toggle-editor btn-embedded"
+          @click=${this.openModal}
+          ?hidden=${!this.hasVisibleToggle}
+        >
+          ${litFontawesome_2(faArrowsAlt)}&nbsp;${__("Open editor")}
+        </button>
+        <dialog id="modal">
+          <div id="editor" class="m-auto"></div>
+          <div class="d-flex justify-content-end mt-3">
+            <button
+              class="btn btn-secondary mr-3"
+              @click=${this.closeModalWithoutSaving}
+            >
+              ${__("Close")}
+            </button>
+            <button class="btn btn-primary" @click=${this.closeModalWithSave}>
+              ${__("Save")}
+            </button>
+          </div>
+        </dialog>
+      </div>
     `;
         }
         firstUpdated(changedProperties) {
             super.firstUpdated(changedProperties);
             // Initialize pell editor
             this.initEditor();
+        }
+        hideToggleButton() {
+            this.hasVisibleToggle = false;
+        }
+        showToggleButton() {
+            this.hasVisibleToggle = true;
         }
         openModal() {
             this.modal.showModal();
@@ -5102,6 +5163,12 @@ ${value}
     __decorate([
         i$2("#editor")
     ], LMSPellEditor.prototype, "editor", void 0);
+    __decorate([
+        i$2(".btn-toggle-editor")
+    ], LMSPellEditor.prototype, "toggleEditorButton", void 0);
+    __decorate([
+        t$1()
+    ], LMSPellEditor.prototype, "hasVisibleToggle", void 0);
     LMSPellEditor = __decorate([
         e$3("lms-pell-editor")
     ], LMSPellEditor);
@@ -6000,7 +6067,7 @@ ${value}
             (_b = button.querySelector(".abort-edit")) === null || _b === void 0 ? void 0 : _b.classList.toggle("d-none", !isActive);
         }
         toggleInputs(tableRow, isEnabled) {
-            const inputs = tableRow.querySelectorAll("input, select, textarea");
+            const inputs = tableRow.querySelectorAll("input, select, textarea, .btn-embedded");
             inputs.forEach((input) => {
                 isEnabled
                     ? input.removeAttribute("disabled")

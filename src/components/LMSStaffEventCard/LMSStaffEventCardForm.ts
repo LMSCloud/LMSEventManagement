@@ -36,7 +36,7 @@ export default class LMSStaffEventCardForm extends LitElement {
 
   @queryAll(".collapse") collapsibles!: NodeListOf<HTMLElement>;
 
-  @queryAll("input, select, textarea") inputs!: NodeListOf<HTMLInputElement>;
+  @queryAll("input, select, textarea, .btn-embedded") inputs!: NodeListOf<HTMLInputElement>;
 
   /**
    * The static styles for the element.

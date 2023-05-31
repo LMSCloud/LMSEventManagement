@@ -364,16 +364,26 @@ export class InputConverter {
       />`,
       description: (value) => {
         return html`
-          <div @closed=${this.handleClosed}>
-            <textarea class="form-control" name="description" disabled>
-${value}
-              </textarea
+          <div @closed=${this.handleClosed} class="position-relative h-inherit">
+            <textarea
+              class="form-control"
+              name="description"
+              @click=${this.handleTextAreaFocusIn}
+              @blur=${this.handleTextAreaFocusOut}
+              @mouseenter=${this.handleTextAreaMouseEnter}
+              @mouseleave=${this.handleTextAreaMouseLeave}
+              disabled
             >
-            <lms-pell-editor .value=${value}></lms-pell-editor>
+${value}</textarea
+            >
+            <lms-pell-editor
+              .value=${value}
+              class="position-absolute m-3"
+              style="top: 0; right: 0;"
+            ></lms-pell-editor>
           </div>
         `;
       },
-
       open_registration: (value) => html`<input
         class="form-control"
         type="checkbox"
@@ -482,6 +492,44 @@ ${value}
         />`;
       },
     };
+  }
+
+  private handleTextAreaMouseEnter(e: MouseEvent) {
+    const target = e.target as HTMLTextAreaElement;
+    const editor = target.nextElementSibling as LMSPellEditor;
+    const { disabled } = target;
+    const isActiveElement = document.activeElement === target;
+    if (disabled || isActiveElement) return;
+    editor.showToggleButton();
+  }
+
+  private handleTextAreaMouseLeave(e: MouseEvent) {
+    const target = e.target as HTMLTextAreaElement;
+    const editor = target.nextElementSibling as LMSPellEditor;
+    const { disabled } = target;
+    const isActiveElement = document.activeElement === target;
+    if (disabled || isActiveElement) return;
+    editor.hideToggleButton();
+  }
+
+  /**
+   * Handles the focus in event of the textarea.
+   * @param e
+   */
+  private handleTextAreaFocusIn(e: MouseEvent) {
+    const target = e.target as HTMLTextAreaElement;
+    const editor = target.nextElementSibling as LMSPellEditor;
+    editor.hideToggleButton();
+  }
+
+  /**
+   * Handles the focus out event of the textarea.
+   * @param e
+   */
+  private handleTextAreaFocusOut(e: MouseEvent) {
+    const target = e.target as HTMLTextAreaElement;
+    const editor = target.nextElementSibling as LMSPellEditor;
+    editor.showToggleButton();
   }
 
   /**
