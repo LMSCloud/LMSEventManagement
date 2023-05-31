@@ -5164,9 +5164,6 @@ ${value}</textarea
         i$2("#editor")
     ], LMSPellEditor.prototype, "editor", void 0);
     __decorate([
-        i$2(".btn-toggle-editor")
-    ], LMSPellEditor.prototype, "toggleEditorButton", void 0);
-    __decorate([
         t$1()
     ], LMSPellEditor.prototype, "hasVisibleToggle", void 0);
     LMSPellEditor = __decorate([

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-24 12:16+0200\n"
-"PO-Revision-Date: 2023-05-31 19:28+0200\n"
+"PO-Revision-Date: 2023-05-31 21:11+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -189,7 +189,7 @@ msgstr "Veranstaltungsort"
 
 #: src/components/LMSCardDetailsModal.ts:402 src/components/LMSModal.ts:350
 #: src/components/LMSModal.ts:370 src/components/LMSModal.ts:385
-#: src/components/LMSPellEditor.ts:101 src/components/LMSToast.ts:55
+#: src/components/LMSPellEditor.ts:105 src/components/LMSToast.ts:55
 msgid "Close"
 msgstr "Schließen"
 
@@ -300,17 +300,14 @@ msgstr "Vor"
 msgid "Loading"
 msgstr "Läd"
 
-#: src/components/LMSPellEditor.ts:92
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:438
-#: src/components/LMSTable/LMSTable.ts:583
-#: src/components/LMSTable/LMSTable.ts:587
-msgid "Edit"
-msgstr "Bearbeiten"
+#: src/components/LMSPellEditor.ts:96
+msgid "Open editor"
+msgstr "Im Editor öffnen"
 
-#: src/components/LMSPellEditor.ts:104
+#: src/components/LMSPellEditor.ts:108
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:446
-#: src/components/LMSTable/LMSTable.ts:600
-#: src/components/LMSTable/LMSTable.ts:603
+#: src/components/LMSTable/LMSTable.ts:602
+#: src/components/LMSTable/LMSTable.ts:605
 msgid "Save"
 msgstr "Speichern"
 
@@ -627,19 +624,19 @@ msgstr "Beschreibung der Veranstaltung, bspw. ‘Dies ist ein Konzert’."
 msgid "Status"
 msgstr "Status"
 
-#: src/extensions/LMSEventsModal.ts:165 src/lib/converters.ts:453
+#: src/extensions/LMSEventsModal.ts:165 src/lib/converters.ts:463
 msgid "Pending"
 msgstr "Ausstehend"
 
-#: src/extensions/LMSEventsModal.ts:166 src/lib/converters.ts:459
+#: src/extensions/LMSEventsModal.ts:166 src/lib/converters.ts:469
 msgid "Confirmed"
 msgstr "Bestätigt"
 
-#: src/extensions/LMSEventsModal.ts:167 src/lib/converters.ts:462
+#: src/extensions/LMSEventsModal.ts:167 src/lib/converters.ts:472
 msgid "Canceled"
 msgstr "Abgesagt"
 
-#: src/extensions/LMSEventsModal.ts:168 src/lib/converters.ts:465
+#: src/extensions/LMSEventsModal.ts:168 src/lib/converters.ts:475
 msgid "Sold Out"
 msgstr "Ausverkauft"
 
@@ -736,7 +733,7 @@ msgstr "Ausgewählt"
 msgid "fee"
 msgstr "Teilnahmegebühr"
 
-#: src/lib/converters.ts:584
+#: src/lib/converters.ts:632
 msgid "Error"
 msgstr "Fehler"
 
@@ -809,17 +806,17 @@ msgid "Not implemented"
 msgstr "Nicht implementiert"
 
 #: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:234
-#: src/components/LMSTable/LMSTable.ts:530
+#: src/components/LMSTable/LMSTable.ts:532
 msgid "No matches found"
 msgstr "Keine Treffer gefunden"
 
 #: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:235
-#: src/components/LMSTable/LMSTable.ts:531
+#: src/components/LMSTable/LMSTable.ts:533
 msgid "Try refining your search."
 msgstr "Versuchen Sie, Ihre Suche zu verfeinern."
 
 #: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:237
-#: src/components/LMSTable/LMSTable.ts:533
+#: src/components/LMSTable/LMSTable.ts:535
 msgid "Help"
 msgstr "Hilfe"
 
@@ -836,7 +833,7 @@ msgid "Preview"
 msgstr "Vorschau"
 
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:258
-#: src/components/LMSTable/LMSTable.ts:327
+#: src/components/LMSTable/LMSTable.ts:329
 msgid "Path"
 msgstr "Pfad"
 
@@ -844,14 +841,20 @@ msgstr "Pfad"
 msgid "Event controls"
 msgstr "Veranstaltungssteuerung"
 
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:438
+#: src/components/LMSTable/LMSTable.ts:585
+#: src/components/LMSTable/LMSTable.ts:589
+msgid "Edit"
+msgstr "Bearbeiten"
+
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:441
-#: src/components/LMSTable/LMSTable.ts:592
+#: src/components/LMSTable/LMSTable.ts:594
 msgid "Abort"
 msgstr "Abbrechen"
 
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:454
-#: src/components/LMSTable/LMSTable.ts:610
-#: src/components/LMSTable/LMSTable.ts:613
+#: src/components/LMSTable/LMSTable.ts:612
+#: src/components/LMSTable/LMSTable.ts:615
 msgid "Delete"
 msgstr "Löschen"
 
@@ -883,7 +886,7 @@ msgstr "Veranstaltungstyp"
 msgid "Target group"
 msgstr "Zielgruppe"
 
-#: src/components/LMSTable/LMSTable.ts:561
+#: src/components/LMSTable/LMSTable.ts:563
 msgid "actions"
 msgstr "Aktionen"
 
