@@ -11,7 +11,7 @@ import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { formatAddress, formatDatetimeByLocale } from "../lib/converters";
+import { formatAddress, splitDateTime } from "../lib/converters";
 import { __ } from "../lib/translate";
 import {
   LMSEvent,
@@ -276,6 +276,10 @@ export default class LMSCardDetailsModal extends LitElement {
         target_groups?.every((target_group) => target_group.fee === 0) ?? true;
     }
 
+    const [sDate, sTime] = splitDateTime(start_time, this.locale);
+    const [eDate, eTime] = splitDateTime(end_time, this.locale);
+    const isSameDay = sDate === eDate;
+
     return html`
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
@@ -316,10 +320,12 @@ export default class LMSCardDetailsModal extends LitElement {
                       <span>${litFontawesome(faCalendar)}</span>
                       <strong>${__("Date and Time")}</strong>
                     </p>
-                    <p class="wrapper">
-                      ${formatDatetimeByLocale(start_time, this.locale)}
-                      <span>${litFontawesome(faArrowRight)}</span>
-                      ${formatDatetimeByLocale(end_time, this.locale)}
+                    <p>
+                      ${sDate}, ${sTime}
+                      ${isSameDay
+                        ? html`- ${eTime}`
+                        : html` <span>${litFontawesome(faArrowRight)}</span>
+                            ${eDate}, ${eTime}`}
                     </p>
                   </div>
 

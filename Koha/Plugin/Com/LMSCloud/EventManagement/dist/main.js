@@ -835,23 +835,6 @@
         return datetime.toISOString();
     }
     /**
-     * Returns a TemplateResult for a datetime string formatted by the specified locale.
-     * @param datetime
-     * @param locale
-     * @returns TemplateResult
-     */
-    function formatDatetimeByLocale(datetime, locale) {
-        if (!datetime)
-            return x `<span>${__("There's been an error")}..</span>`;
-        if (datetime) {
-            return new Intl.DateTimeFormat(locale, {
-                dateStyle: "full",
-                timeStyle: "short",
-            }).format(new Date(datetime));
-        }
-        return A;
-    }
-    /**
      * Returns a TemplateResult for a LMSLocation object.
      * @param address
      * @returns TemplateResult
@@ -3062,6 +3045,9 @@ ${value}</textarea
                 noFees =
                     (_a = target_groups === null || target_groups === void 0 ? void 0 : target_groups.every((target_group) => target_group.fee === 0)) !== null && _a !== void 0 ? _a : true;
             }
+            const [sDate, sTime] = splitDateTime(start_time, this.locale);
+            const [eDate, eTime] = splitDateTime(end_time, this.locale);
+            const isSameDay = sDate === eDate;
             return x `
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
@@ -3102,10 +3088,12 @@ ${value}</textarea
                       <span>${litFontawesome_2(faCalendar)}</span>
                       <strong>${__("Date and Time")}</strong>
                     </p>
-                    <p class="wrapper">
-                      ${formatDatetimeByLocale(start_time, this.locale)}
-                      <span>${litFontawesome_2(faArrowRight)}</span>
-                      ${formatDatetimeByLocale(end_time, this.locale)}
+                    <p>
+                      ${sDate}, ${sTime}
+                      ${isSameDay
+            ? x `- ${eTime}`
+            : x ` <span>${litFontawesome_2(faArrowRight)}</span>
+                            ${eDate}, ${eTime}`}
                     </p>
                   </div>
 
