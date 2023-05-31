@@ -4363,6 +4363,7 @@ ${value}</textarea
             /** TODO: Maybe we can find a cleaner way to do the intersection observations than in the base modal component */
             this.footer = (_a = document.getElementById("i18nMenu")) === null || _a === void 0 ? void 0 : _a.parentElement;
             this.intersectionObserverHandler = null;
+            this.boundHandleKeyDown = (e) => this.handleKeyDown.bind(this)(e);
         }
         toggleModal() {
             this.isOpen = !this.isOpen;
@@ -4386,11 +4387,7 @@ ${value}</textarea
             const { endpoint, method } = this.createOpts;
             const response = await fetch(this.getEndpointUrl(endpoint, locale), {
                 method,
-                body: JSON.stringify({
-                    ...Object.assign({}, ...this.fields.map((field) => ({
-                        [field.name]: field.value,
-                    }))),
-                }),
+                body: JSON.stringify(this.fields.reduce((acc, field) => ({ ...acc, [field.name]: field.value }), {})),
             });
             if (response.ok) {
                 this.toggleModal();
@@ -4435,6 +4432,28 @@ ${value}</textarea
                 message: undefined,
             };
         }
+        handleKeyDown(e) {
+            const isEscapeKey = e.key.toLowerCase() === "escape";
+            const isCmdOrCtrlPressed = e.metaKey || e.ctrlKey;
+            const isShiftPressed = e.shiftKey;
+            if (isEscapeKey && this.isOpen) {
+                e.preventDefault();
+                this.toggleModal();
+            }
+            // Check for the suggested shortcut: Command/Ctrl + Shift + M
+            if (isCmdOrCtrlPressed && isShiftPressed && e.key.toLowerCase() === "m") {
+                e.preventDefault();
+                this.toggleModal();
+            }
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            document.addEventListener("keydown", this.boundHandleKeyDown);
+        }
+        disconnectedCallback() {
+            super.disconnectedCallback();
+            document.removeEventListener("keydown", this.boundHandleKeyDown);
+        }
         firstUpdated() {
             if (this.footer && this.btnModalWrapper) {
                 this.intersectionObserverHandler = new IntersectionObserverHandler({
@@ -4463,6 +4482,13 @@ ${value}</textarea
             Promise.all(dbDataPopulated).then((fields) => {
                 this.fields = fields;
             });
+        }
+        updated(_changedProperties) {
+            if (_changedProperties.has("isOpen")) {
+                if (this.isOpen) {
+                    this.closeBtn.focus();
+                }
+            }
         }
         render() {
             var _a;
@@ -4560,17 +4586,7 @@ ${value}</textarea
         }
         mediateChange(e) {
             const { name, value } = e.detail;
-            this.fields = [
-                ...this.fields.map((field) => {
-                    if (field.name === name) {
-                        return {
-                            ...field,
-                            value,
-                        };
-                    }
-                    return field;
-                }),
-            ];
+            this.fields = this.fields.map((field) => field.name === name ? { ...field, value } : field);
         }
         getFieldMarkup(field) {
             const { type, desc } = field;
@@ -4682,6 +4698,9 @@ ${value}</textarea
     __decorate([
         i$2(".btn-modal-wrapper")
     ], LMSModal.prototype, "btnModalWrapper", void 0);
+    __decorate([
+        i$2(".close")
+    ], LMSModal.prototype, "closeBtn", void 0);
     LMSModal = __decorate([
         e$3("lms-modal")
     ], LMSModal);

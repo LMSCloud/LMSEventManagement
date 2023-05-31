@@ -5,7 +5,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { LitElement, TemplateResult, css, html, nothing } from "lit";
+import {
+  LitElement,
+  PropertyValueMap,
+  TemplateResult,
+  css,
+  html,
+  nothing,
+} from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { DirectiveResult } from "lit/directive";
 import { classMap } from "lit/directives/class-map.js";
@@ -59,12 +66,17 @@ export default class LMSModal extends LitElement {
 
   @query(".btn-modal-wrapper") btnModalWrapper!: HTMLElement;
 
+  @query(".close") closeBtn!: HTMLElement;
+
   /** TODO: Maybe we can find a cleaner way to do the intersection observations than in the base modal component */
   private footer: HTMLElement | undefined | null =
     document.getElementById("i18nMenu")?.parentElement;
 
   private intersectionObserverHandler: IntersectionObserverHandler | null =
     null;
+
+  private boundHandleKeyDown = (e: KeyboardEvent) =>
+    this.handleKeyDown.bind(this)(e);
 
   static override styles = [
     bootstrapStyles,
@@ -152,14 +164,12 @@ export default class LMSModal extends LitElement {
     const { endpoint, method } = this.createOpts;
     const response = await fetch(this.getEndpointUrl(endpoint, locale), {
       method,
-      body: JSON.stringify({
-        ...Object.assign(
-          {},
-          ...this.fields.map((field: ModalField) => ({
-            [field.name]: field.value,
-          }))
-        ),
-      }),
+      body: JSON.stringify(
+        this.fields.reduce(
+          (acc, field) => ({ ...acc, [field.name]: field.value }),
+          {}
+        )
+      ),
     });
 
     if (response.ok) {
@@ -218,6 +228,33 @@ export default class LMSModal extends LitElement {
     };
   }
 
+  private handleKeyDown(e: KeyboardEvent) {
+    const isEscapeKey = e.key.toLowerCase() === "escape";
+    const isCmdOrCtrlPressed = e.metaKey || e.ctrlKey;
+    const isShiftPressed = e.shiftKey;
+
+    if (isEscapeKey && this.isOpen) {
+      e.preventDefault();
+      this.toggleModal();
+    }
+
+    // Check for the suggested shortcut: Command/Ctrl + Shift + M
+    if (isCmdOrCtrlPressed && isShiftPressed && e.key.toLowerCase() === "m") {
+      e.preventDefault();
+      this.toggleModal();
+    }
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    document.addEventListener("keydown", this.boundHandleKeyDown);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener("keydown", this.boundHandleKeyDown);
+  }
+
   override firstUpdated() {
     if (this.footer && this.btnModalWrapper) {
       this.intersectionObserverHandler = new IntersectionObserverHandler({
@@ -253,6 +290,16 @@ export default class LMSModal extends LitElement {
     Promise.all(dbDataPopulated).then((fields: ModalField[]) => {
       this.fields = fields;
     });
+  }
+
+  protected override updated(
+    _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+  ): void {
+    if (_changedProperties.has("isOpen")) {
+      if (this.isOpen) {
+        this.closeBtn.focus();
+      }
+    }
   }
 
   override render() {
@@ -351,17 +398,9 @@ export default class LMSModal extends LitElement {
 
   protected mediateChange(e: CustomEvent) {
     const { name, value } = e.detail;
-    this.fields = [
-      ...this.fields.map((field) => {
-        if (field.name === name) {
-          return {
-            ...field,
-            value,
-          };
-        }
-        return field;
-      }),
-    ];
+    this.fields = this.fields.map((field) =>
+      field.name === name ? { ...field, value } : field
+    );
   }
 
   private getFieldMarkup(field: ModalField) {
