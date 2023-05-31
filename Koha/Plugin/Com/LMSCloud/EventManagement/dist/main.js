@@ -2414,12 +2414,12 @@ ${value}
                 </div>
                 <div class="card-body">
                   <div
-                    class="d-flex justify-content-between align-items-center mb-3"
+                    class="card-title card-title-img"
+                    style="background-image: url(${src});"
                   >
-                    <h3 class="card-title">
-                      <span class="badge badge-primary">${title}</span>
+                    <h3>
+                      <span class="badge badge-light">${title}</span>
                     </h3>
-                    <img src=${src} class="rounded w-25" />
                   </div>
                   <lms-staff-event-card-form
                     .datum=${datum}
@@ -2462,6 +2462,16 @@ ${value}
         lms-pagination {
           width: 100%;
         }
+      }
+
+      .card-title-img {
+        background-size: cover;
+        background-position: center;
+        height: 5rem;
+        border-radius: 0.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     `,
     ];
