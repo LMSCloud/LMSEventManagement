@@ -108,7 +108,7 @@ export default class LMSPellEditor extends LitElement {
       }
 
       .input-slot {
-        height: inherit;
+        height: 100%;
       }
     `,
   ];
@@ -150,7 +150,7 @@ export default class LMSPellEditor extends LitElement {
           </button>
         </div>
       </dialog>
-      <slot @click=${this.openModal} .class="input-slot"></slot>
+      <slot @click=${this.openModal} class="input-slot"></slot>
     `;
   }
 
@@ -192,15 +192,15 @@ export default class LMSPellEditor extends LitElement {
     // Disconnect the ResizeObserver when the modal is closed
     this.resizeObserver?.disconnect();
 
-    // update slotted element value
+    // Update slotted element value
     if (this.editedValue !== this.value) {
       const slottedElements = this.inputSlot?.assignedElements();
       slottedElements?.forEach((element) => {
-        const isEditableElement =
-          element instanceof HTMLInputElement ||
-          element instanceof HTMLTextAreaElement;
-        if (isEditableElement) {
+        if (element instanceof HTMLInputElement) {
           element.value = this.editedValue;
+          element.blur();
+        } else if (element instanceof HTMLTextAreaElement) {
+          element.innerHTML = this.editedValue;
           element.blur();
         }
       });
@@ -256,7 +256,6 @@ export default class LMSPellEditor extends LitElement {
 
   private adjustContentHeight = debounce(
     () => {
-      console.log("test");
       const dialogHeight = this.modal.offsetHeight;
 
       // Calculate the total vertical space (height + margin + padding + border) occupied by the actionBar and buttons

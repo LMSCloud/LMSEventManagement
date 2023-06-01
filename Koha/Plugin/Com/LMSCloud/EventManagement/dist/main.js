@@ -976,8 +976,8 @@
         disabled
       />`,
                 description: (value) => {
-                    return x ` <lms-pell-editor .value=${value} class="h-inherit">
-          <textarea class="form-control" name="description" disabled>
+                    return x ` <lms-pell-editor .value=${value}>
+          <textarea class="form-control h-inherit" name="description" disabled>
 ${value}</textarea
           >
         </lms-pell-editor>`;
@@ -4941,7 +4941,6 @@ ${value}</textarea
                 height: 0,
             };
             this.adjustContentHeight = debounce(() => {
-                console.log("test");
                 const dialogHeight = this.modal.offsetHeight;
                 // Calculate the total vertical space (height + margin + padding + border) occupied by the actionBar and buttons
                 const actionBarSpace = this.calculateTotalVerticalSpace(this.actionBar);
@@ -4992,7 +4991,7 @@ ${value}</textarea
           </button>
         </div>
       </dialog>
-      <slot @click=${this.openModal} .class="input-slot"></slot>
+      <slot @click=${this.openModal} class="input-slot"></slot>
     `;
         }
         firstUpdated(changedProperties) {
@@ -5026,14 +5025,16 @@ ${value}</textarea
             this.modal.close();
             // Disconnect the ResizeObserver when the modal is closed
             (_a = this.resizeObserver) === null || _a === void 0 ? void 0 : _a.disconnect();
-            // update slotted element value
+            // Update slotted element value
             if (this.editedValue !== this.value) {
                 const slottedElements = (_b = this.inputSlot) === null || _b === void 0 ? void 0 : _b.assignedElements();
                 slottedElements === null || slottedElements === void 0 ? void 0 : slottedElements.forEach((element) => {
-                    const isEditableElement = element instanceof HTMLInputElement ||
-                        element instanceof HTMLTextAreaElement;
-                    if (isEditableElement) {
+                    if (element instanceof HTMLInputElement) {
                         element.value = this.editedValue;
+                        element.blur();
+                    }
+                    else if (element instanceof HTMLTextAreaElement) {
+                        element.innerHTML = this.editedValue;
                         element.blur();
                     }
                 });
@@ -5193,7 +5194,7 @@ ${value}</textarea
       }
 
       .input-slot {
-        height: inherit;
+        height: 100%;
       }
     `,
     ];

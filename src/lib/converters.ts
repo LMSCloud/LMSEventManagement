@@ -363,8 +363,8 @@ export class InputConverter {
         disabled
       />`,
       description: (value) => {
-        return html` <lms-pell-editor .value=${value} class="h-inherit">
-          <textarea class="form-control" name="description" disabled>
+        return html` <lms-pell-editor .value=${value}>
+          <textarea class="form-control h-inherit" name="description" disabled>
 ${value}</textarea
           >
         </lms-pell-editor>`;
