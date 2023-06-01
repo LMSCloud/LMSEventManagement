@@ -3578,7 +3578,7 @@ ${value}</textarea
         connectedCallback() {
             super.connectedCallback();
             window.addEventListener("resize", this.throttledHandleResize);
-            fetch("/api/v1/contrib/eventmanagement/settings")
+            fetch("/api/v1/contrib/eventmanagement/public/settings")
                 .then((response) => response.json())
                 .then((settings) => {
                 this.settings = settings.map((setting) => {

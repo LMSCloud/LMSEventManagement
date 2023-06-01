@@ -627,6 +627,106 @@
       }
     }
   },
+  "/public/settings": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Settings#list",
+      "operationId": "listEventManagementSettingsPublic",
+      "tags": ["settings"],
+      "description": "List public settings",
+      "produces": ["application/json"],
+      "responses": {
+        "200": {
+          "description": "List of public settings",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": ["string", "number", "boolean", "array", "object"]
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": ["string", "array"]
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/settings": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Settings#list",
@@ -723,6 +823,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
         }
       }
     },
@@ -844,6 +949,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
+        }
       }
     }
   },
@@ -941,6 +1051,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
         }
       }
     },
@@ -1051,6 +1166,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
         }
       }
     }
@@ -1340,6 +1460,9 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": { "plugins": ["configure", "tool"] }
       }
     },
     "post": {
@@ -1560,6 +1683,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "tool"
+        }
       }
     }
   },
@@ -1732,6 +1860,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": ["configure", "tool"]
         }
       }
     },
@@ -1967,6 +2100,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "tool"
+        }
       }
     },
     "delete": {
@@ -2069,6 +2207,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "tool"
         }
       }
     }
@@ -2246,6 +2389,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": ["configure", "tool"]
         }
       }
     },
@@ -2441,6 +2589,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
+        }
       }
     }
   },
@@ -2591,6 +2744,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": ["configure", "tool"]
         }
       }
     },
@@ -2793,6 +2951,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
+        }
       }
     },
     "delete": {
@@ -2895,6 +3058,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
         }
       }
     }
@@ -3027,6 +3195,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "tool"
         }
       }
     }
@@ -3182,6 +3355,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": ["configure", "tool"]
+        }
       }
     },
     "post": {
@@ -3330,6 +3508,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
+        }
       }
     }
   },
@@ -3457,6 +3640,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": ["configure", "tool"]
         }
       }
     },
@@ -3616,6 +3804,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
+        }
       }
     },
     "delete": {
@@ -3718,6 +3911,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
         }
       }
     }
@@ -3864,6 +4062,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": ["configure", "tool"]
+        }
       }
     },
     "post": {
@@ -3994,6 +4197,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
+        }
       }
     }
   },
@@ -4112,6 +4320,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": ["configure", "tool"]
         }
       }
     },
@@ -4250,6 +4463,11 @@
             }
           }
         }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
+        }
       }
     },
     "delete": {
@@ -4352,6 +4570,11 @@
               }
             }
           }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
         }
       }
     }
