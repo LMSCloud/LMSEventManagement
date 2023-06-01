@@ -185,7 +185,7 @@ msgstr ""
 
 #: src/components/LMSCardDetailsModal.ts:402 src/components/LMSModal.ts:350
 #: src/components/LMSModal.ts:370 src/components/LMSModal.ts:385
-#: src/components/LMSPellEditor.ts:105 src/components/LMSToast.ts:55
+#: src/components/LMSPellEditor.ts:146 src/components/LMSToast.ts:55
 msgid "Close"
 msgstr ""
 
@@ -296,11 +296,11 @@ msgstr ""
 msgid "Loading"
 msgstr ""
 
-#: src/components/LMSPellEditor.ts:96
-msgid "Open editor"
+#: src/components/LMSPellEditor.ts:140
+msgid "Reset size"
 msgstr ""
 
-#: src/components/LMSPellEditor.ts:108
+#: src/components/LMSPellEditor.ts:149
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:446
 #: src/components/LMSTable/LMSTable.ts:602
 #: src/components/LMSTable/LMSTable.ts:605
@@ -572,19 +572,19 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:165 src/lib/converters.ts:463
+#: src/extensions/LMSEventsModal.ts:165 src/lib/converters.ts:448
 msgid "Pending"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:166 src/lib/converters.ts:469
+#: src/extensions/LMSEventsModal.ts:166 src/lib/converters.ts:454
 msgid "Confirmed"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:167 src/lib/converters.ts:472
+#: src/extensions/LMSEventsModal.ts:167 src/lib/converters.ts:457
 msgid "Canceled"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:168 src/lib/converters.ts:475
+#: src/extensions/LMSEventsModal.ts:168 src/lib/converters.ts:460
 msgid "Sold Out"
 msgstr ""
 
@@ -681,7 +681,7 @@ msgstr ""
 msgid "fee"
 msgstr ""
 
-#: src/lib/converters.ts:632
+#: src/lib/converters.ts:564
 msgid "Error"
 msgstr ""
 
