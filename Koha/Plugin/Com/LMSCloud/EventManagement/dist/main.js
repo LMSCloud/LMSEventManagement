@@ -784,7 +784,11 @@
          * @returns An array of the extracted values.
          */
         getRenderValues(data = this._templateResult) {
-            const { values } = data;
+            var _a;
+            // Using optional chaining (?.) to check if data is null or undefined and
+            // if values exist in data; if not, default to an empty array (?? [])
+            const values = (_a = data === null || data === void 0 ? void 0 : data.values) !== null && _a !== void 0 ? _a : [];
+            // Now, we can map through the values array directly
             return [...values, ""].map((e) => typeof e === "object" ? this.getRenderValues(e) : e);
         }
     }

@@ -92,8 +92,12 @@ export class TemplateResultConverter {
    * @param data - The data object to extract values from. Defaults to the stored TemplateResult.
    * @returns An array of the extracted values.
    */
-  public getRenderValues(data = this._templateResult): unknown[] {
-    const { values } = data as TemplateResult;
+  public getRenderValues(data: unknown = this._templateResult): unknown[] {
+    // Using optional chaining (?.) to check if data is null or undefined and
+    // if values exist in data; if not, default to an empty array (?? [])
+    const values = (data as TemplateResult)?.values ?? [];
+
+    // Now, we can map through the values array directly
     return [...values, ""].map((e) =>
       typeof e === "object" ? this.getRenderValues(e) : e
     );
