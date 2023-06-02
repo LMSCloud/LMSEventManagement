@@ -21,6 +21,8 @@ import {
   LMSLocation,
 } from "../sharedDeclarations";
 import { skeletonStyles } from "../styles/skeleton";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import DOMPurify from "dompurify";
 
 @customElement("lms-card-details-modal")
 export default class LMSCardDetailsModal extends LitElement {
@@ -334,7 +336,7 @@ export default class LMSCardDetailsModal extends LitElement {
                       <span>${litFontawesome(faInfoCircle)}</span>
                       <strong>${__("Description")}</strong>
                     </p>
-                    <p>${description}</p>
+                    <p>${unsafeHTML(DOMPurify.sanitize(description ?? ""))}</p>
                   </div>
                 </div>
                 <div class="col">

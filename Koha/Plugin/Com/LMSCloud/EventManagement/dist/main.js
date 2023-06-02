@@ -31,20 +31,20 @@
      * Copyright 2019 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const t$3=window,e$6=t$3.ShadowRoot&&(void 0===t$3.ShadyCSS||t$3.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$5=new WeakMap;class o$7{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$6&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$5.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$5.set(s,t));}return t}toString(){return this.cssText}}const r$2=t=>new o$7("string"==typeof t?t:t+"",void 0,s$3),i$5=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$7(n,t,s$3)},S$1=(s,n)=>{e$6?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$3.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$6?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
+    const t$3=window,e$7=t$3.ShadowRoot&&(void 0===t$3.ShadyCSS||t$3.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$5=new WeakMap;class o$8{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$7&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$5.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$5.set(s,t));}return t}toString(){return this.cssText}}const r$2=t=>new o$8("string"==typeof t?t:t+"",void 0,s$3),i$5=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$8(n,t,s$3)},S$1=(s,n)=>{e$7?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$3.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$7?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var s$2;const e$5=window,r$1=e$5.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$6=e$5.reactiveElementPolyfillSupport,n$4={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$3={attribute:!0,type:String,converter:n$4,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$3){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$3}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$3){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$4).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$4;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$6||o$6({ReactiveElement:d$1}),(null!==(s$2=e$5.reactiveElementVersions)&&void 0!==s$2?s$2:e$5.reactiveElementVersions=[]).push("1.6.1");
+     */var s$2;const e$6=window,r$1=e$6.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$7=e$6.reactiveElementPolyfillSupport,n$4={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$3={attribute:!0,type:String,converter:n$4,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$3){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$3}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$3){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$4).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$4;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$7||o$7({ReactiveElement:d$1}),(null!==(s$2=e$6.reactiveElementVersions)&&void 0!==s$2?s$2:e$6.reactiveElementVersions=[]).push("1.6.1");
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    var t$2;const i$4=window,s$1=i$4.trustedTypes,e$4=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$5="$lit$",n$3=`lit$${(Math.random()+"").slice(9)}$`,l$2="?"+n$3,h=`<${l$2}>`,r=document,d=()=>r.createComment(""),u=t=>null===t||"object"!=typeof t&&"function"!=typeof t,c=Array.isArray,v=t=>c(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),a="[ \t\n\f\r]",f=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${a}(?:([^\\s"'>=/]+)(${a}*=${a}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,w=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),x=w(1),b=w(2),T=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),E=new WeakMap,C=r.createTreeWalker(r,129,null,!1),P=(t,i)=>{const s=t.length-1,l=[];let r,d=2===i?"<svg>":"",u=f;for(let i=0;i<s;i++){const s=t[i];let e,c,v=-1,a=0;for(;a<s.length&&(u.lastIndex=a,c=u.exec(s),null!==c);)a=u.lastIndex,u===f?"!--"===c[1]?u=_:void 0!==c[1]?u=m:void 0!==c[2]?(y.test(c[2])&&(r=RegExp("</"+c[2],"g")),u=p):void 0!==c[3]&&(u=p):u===p?">"===c[0]?(u=null!=r?r:f,v=-1):void 0===c[1]?v=-2:(v=u.lastIndex-c[2].length,e=c[1],u=void 0===c[3]?p:'"'===c[3]?$:g):u===$||u===g?u=p:u===_||u===m?u=f:(u=p,r=void 0);const w=u===p&&t[i+1].startsWith("/>")?" ":"";d+=u===f?s+h:v>=0?(l.push(e),s.slice(0,v)+o$5+s.slice(v)+n$3+w):s+n$3+(-2===v?(l.push(void 0),i):w);}const c=d+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$4?e$4.createHTML(c):c,l]};class V{constructor({strings:t,_$litType$:i},e){let h;this.parts=[];let r=0,u=0;const c=t.length-1,v=this.parts,[a,f]=P(t,i);if(this.el=V.createElement(a,e),C.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(h=C.nextNode())&&v.length<c;){if(1===h.nodeType){if(h.hasAttributes()){const t=[];for(const i of h.getAttributeNames())if(i.endsWith(o$5)||i.startsWith(n$3)){const s=f[u++];if(t.push(i),void 0!==s){const t=h.getAttribute(s.toLowerCase()+o$5).split(n$3),i=/([.?@])?(.*)/.exec(s);v.push({type:1,index:r,name:i[2],strings:t,ctor:"."===i[1]?k:"?"===i[1]?I:"@"===i[1]?L:R});}else v.push({type:6,index:r});}for(const i of t)h.removeAttribute(i);}if(y.test(h.tagName)){const t=h.textContent.split(n$3),i=t.length-1;if(i>0){h.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)h.append(t[s],d()),C.nextNode(),v.push({type:2,index:++r});h.append(t[i],d());}}}else if(8===h.nodeType)if(h.data===l$2)v.push({type:2,index:r});else {let t=-1;for(;-1!==(t=h.data.indexOf(n$3,t+1));)v.push({type:7,index:r}),t+=n$3.length-1;}r++;}}static createElement(t,i){const s=r.createElement("template");return s.innerHTML=t,s}}function N(t,i,s=t,e){var o,n,l,h;if(i===T)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const d=u(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==d&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===d?r=void 0:(r=new d(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=N(t,r._$AS(t,i.values),r,e)),i}class S{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:r).importNode(s,!0);C.currentNode=o;let n=C.nextNode(),l=0,h=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new M(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new z(n,this,t)),this._$AV.push(i),d=e[++h];}l!==(null==d?void 0:d.index)&&(n=C.nextNode(),l++);}return o}v(t){let i=0;for(const s of this._$AV)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class M{constructor(t,i,s,e){var o;this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cp=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cp}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===(null==t?void 0:t.nodeType)&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=N(this,t,i),u(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==T&&this._(t):void 0!==t._$litType$?this.g(t):void 0!==t.nodeType?this.$(t):v(t)?this.T(t):this._(t);}k(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}$(t){this._$AH!==t&&(this._$AR(),this._$AH=this.k(t));}_(t){this._$AH!==A&&u(this._$AH)?this._$AA.nextSibling.data=t:this.$(r.createTextNode(t)),this._$AH=t;}g(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=V.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.v(s);else {const t=new S(o,this),i=t.u(this.options);t.v(s),this.$(i),this._$AH=t;}}_$AC(t){let i=E.get(t.strings);return void 0===i&&E.set(t.strings,i=new V(t)),i}T(t){c(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new M(this.k(d()),this.k(d()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cp=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class R{constructor(t,i,s,e,o){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=N(this,t,i,0),n=!u(t)||t!==this._$AH&&t!==T,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=N(this,e[s+l],i,l),h===T&&(h=this._$AH[l]),n||(n=!u(h)||h!==this._$AH[l]),h===A?t=A:t!==A&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class k extends R{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}const H=s$1?s$1.emptyScript:"";class I extends R{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==A?this.element.setAttribute(this.name,H):this.element.removeAttribute(this.name);}}class L extends R{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=N(this,t,i,0))&&void 0!==s?s:A)===T)return;const e=this._$AH,o=t===A&&e!==A||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==A&&(e===A||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){N(this,t);}}const Z={O:o$5,P:n$3,A:l$2,C:1,M:P,L:S,D:v,R:N,I:M,V:R,H:I,N:L,U:k,F:z},j=i$4.litHtmlPolyfillSupport;null==j||j(V,M),(null!==(t$2=i$4.litHtmlVersions)&&void 0!==t$2?t$2:i$4.litHtmlVersions=[]).push("2.7.2");const B=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new M(i.insertBefore(d(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
+    var t$2;const i$4=window,s$1=i$4.trustedTypes,e$5=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$6="$lit$",n$3=`lit$${(Math.random()+"").slice(9)}$`,l$2="?"+n$3,h=`<${l$2}>`,r=document,d=()=>r.createComment(""),u=t=>null===t||"object"!=typeof t&&"function"!=typeof t,c=Array.isArray,v=t=>c(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),a="[ \t\n\f\r]",f=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${a}(?:([^\\s"'>=/]+)(${a}*=${a}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,w=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),x=w(1),b=w(2),T=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),E=new WeakMap,C=r.createTreeWalker(r,129,null,!1),P=(t,i)=>{const s=t.length-1,l=[];let r,d=2===i?"<svg>":"",u=f;for(let i=0;i<s;i++){const s=t[i];let e,c,v=-1,a=0;for(;a<s.length&&(u.lastIndex=a,c=u.exec(s),null!==c);)a=u.lastIndex,u===f?"!--"===c[1]?u=_:void 0!==c[1]?u=m:void 0!==c[2]?(y.test(c[2])&&(r=RegExp("</"+c[2],"g")),u=p):void 0!==c[3]&&(u=p):u===p?">"===c[0]?(u=null!=r?r:f,v=-1):void 0===c[1]?v=-2:(v=u.lastIndex-c[2].length,e=c[1],u=void 0===c[3]?p:'"'===c[3]?$:g):u===$||u===g?u=p:u===_||u===m?u=f:(u=p,r=void 0);const w=u===p&&t[i+1].startsWith("/>")?" ":"";d+=u===f?s+h:v>=0?(l.push(e),s.slice(0,v)+o$6+s.slice(v)+n$3+w):s+n$3+(-2===v?(l.push(void 0),i):w);}const c=d+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$5?e$5.createHTML(c):c,l]};class V{constructor({strings:t,_$litType$:i},e){let h;this.parts=[];let r=0,u=0;const c=t.length-1,v=this.parts,[a,f]=P(t,i);if(this.el=V.createElement(a,e),C.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(h=C.nextNode())&&v.length<c;){if(1===h.nodeType){if(h.hasAttributes()){const t=[];for(const i of h.getAttributeNames())if(i.endsWith(o$6)||i.startsWith(n$3)){const s=f[u++];if(t.push(i),void 0!==s){const t=h.getAttribute(s.toLowerCase()+o$6).split(n$3),i=/([.?@])?(.*)/.exec(s);v.push({type:1,index:r,name:i[2],strings:t,ctor:"."===i[1]?k:"?"===i[1]?I:"@"===i[1]?L:R});}else v.push({type:6,index:r});}for(const i of t)h.removeAttribute(i);}if(y.test(h.tagName)){const t=h.textContent.split(n$3),i=t.length-1;if(i>0){h.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)h.append(t[s],d()),C.nextNode(),v.push({type:2,index:++r});h.append(t[i],d());}}}else if(8===h.nodeType)if(h.data===l$2)v.push({type:2,index:r});else {let t=-1;for(;-1!==(t=h.data.indexOf(n$3,t+1));)v.push({type:7,index:r}),t+=n$3.length-1;}r++;}}static createElement(t,i){const s=r.createElement("template");return s.innerHTML=t,s}}function N(t,i,s=t,e){var o,n,l,h;if(i===T)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const d=u(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==d&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===d?r=void 0:(r=new d(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=N(t,r._$AS(t,i.values),r,e)),i}class S{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:r).importNode(s,!0);C.currentNode=o;let n=C.nextNode(),l=0,h=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new M(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new z(n,this,t)),this._$AV.push(i),d=e[++h];}l!==(null==d?void 0:d.index)&&(n=C.nextNode(),l++);}return o}v(t){let i=0;for(const s of this._$AV)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class M{constructor(t,i,s,e){var o;this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cp=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cp}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===(null==t?void 0:t.nodeType)&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=N(this,t,i),u(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==T&&this._(t):void 0!==t._$litType$?this.g(t):void 0!==t.nodeType?this.$(t):v(t)?this.T(t):this._(t);}k(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}$(t){this._$AH!==t&&(this._$AR(),this._$AH=this.k(t));}_(t){this._$AH!==A&&u(this._$AH)?this._$AA.nextSibling.data=t:this.$(r.createTextNode(t)),this._$AH=t;}g(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=V.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.v(s);else {const t=new S(o,this),i=t.u(this.options);t.v(s),this.$(i),this._$AH=t;}}_$AC(t){let i=E.get(t.strings);return void 0===i&&E.set(t.strings,i=new V(t)),i}T(t){c(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new M(this.k(d()),this.k(d()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cp=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class R{constructor(t,i,s,e,o){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=N(this,t,i,0),n=!u(t)||t!==this._$AH&&t!==T,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=N(this,e[s+l],i,l),h===T&&(h=this._$AH[l]),n||(n=!u(h)||h!==this._$AH[l]),h===A?t=A:t!==A&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class k extends R{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}const H=s$1?s$1.emptyScript:"";class I extends R{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==A?this.element.setAttribute(this.name,H):this.element.removeAttribute(this.name);}}class L extends R{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=N(this,t,i,0))&&void 0!==s?s:A)===T)return;const e=this._$AH,o=t===A&&e!==A||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==A&&(e===A||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){N(this,t);}}const Z={O:o$6,P:n$3,A:l$2,C:1,M:P,L:S,D:v,R:N,I:M,V:R,H:I,N:L,U:k,F:z},j=i$4.litHtmlPolyfillSupport;null==j||j(V,M),(null!==(t$2=i$4.litHtmlVersions)&&void 0!==t$2?t$2:i$4.litHtmlVersions=[]).push("2.7.2");const B=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new M(i.insertBefore(d(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
 
     var litHtml = /*#__PURE__*/Object.freeze({
         __proto__: null,
@@ -60,7 +60,7 @@
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var l$1,o$4;class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=B(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return T}}s.finalized=!0,s._$litElement$=!0,null===(l$1=globalThis.litElementHydrateSupport)||void 0===l$1||l$1.call(globalThis,{LitElement:s});const n$2=globalThis.litElementPolyfillSupport;null==n$2||n$2({LitElement:s});(null!==(o$4=globalThis.litElementVersions)&&void 0!==o$4?o$4:globalThis.litElementVersions=[]).push("3.3.1");
+     */var l$1,o$5;class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=B(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return T}}s.finalized=!0,s._$litElement$=!0,null===(l$1=globalThis.litElementHydrateSupport)||void 0===l$1||l$1.call(globalThis,{LitElement:s});const n$2=globalThis.litElementPolyfillSupport;null==n$2||n$2({LitElement:s});(null!==(o$5=globalThis.litElementVersions)&&void 0!==o$5?o$5:globalThis.litElementVersions=[]).push("3.3.1");
 
     const bootstrapStyles = i$5`
 /*!
@@ -77,39 +77,39 @@
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const e$3=e=>n=>"function"==typeof n?((e,n)=>(customElements.define(e,n),n))(e,n):((e,n)=>{const{kind:t,elements:s}=n;return {kind:t,elements:s,finisher(n){customElements.define(e,n);}}})(e,n);
+    const e$4=e=>n=>"function"==typeof n?((e,n)=>(customElements.define(e,n),n))(e,n):((e,n)=>{const{kind:t,elements:s}=n;return {kind:t,elements:s,finisher(n){customElements.define(e,n);}}})(e,n);
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const i$3=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}};function e$2(e){return (n,t)=>void 0!==t?((i,e,n)=>{e.constructor.createProperty(n,i);})(e,n,t):i$3(e,n)}
+    const i$3=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}};function e$3(e){return (n,t)=>void 0!==t?((i,e,n)=>{e.constructor.createProperty(n,i);})(e,n,t):i$3(e,n)}
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */function t$1(t){return e$2({...t,state:!0})}
+     */function t$1(t){return e$3({...t,state:!0})}
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const o$3=({finisher:e,descriptor:t})=>(o,n)=>{var r;if(void 0===n){const n=null!==(r=o.originalKey)&&void 0!==r?r:o.key,i=null!=t?{kind:"method",placement:"prototype",key:n,descriptor:t(o.key)}:{...o,key:n};return null!=e&&(i.finisher=function(t){e(t,n);}),i}{const r=o.constructor;void 0!==t&&Object.defineProperty(o,n,t(n)),null==e||e(r,n);}};
+    const o$4=({finisher:e,descriptor:t})=>(o,n)=>{var r;if(void 0===n){const n=null!==(r=o.originalKey)&&void 0!==r?r:o.key,i=null!=t?{kind:"method",placement:"prototype",key:n,descriptor:t(o.key)}:{...o,key:n};return null!=e&&(i.finisher=function(t){e(t,n);}),i}{const r=o.constructor;void 0!==t&&Object.defineProperty(o,n,t(n)),null==e||e(r,n);}};
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */function i$2(i,n){return o$3({descriptor:o=>{const t={get(){var o,n;return null!==(n=null===(o=this.renderRoot)||void 0===o?void 0:o.querySelector(i))&&void 0!==n?n:null},enumerable:!0,configurable:!0};if(n){const n="symbol"==typeof o?Symbol():"__"+o;t.get=function(){var o,t;return void 0===this[n]&&(this[n]=null!==(t=null===(o=this.renderRoot)||void 0===o?void 0:o.querySelector(i))&&void 0!==t?t:null),this[n]};}return t}})}
+     */function i$2(i,n){return o$4({descriptor:o=>{const t={get(){var o,n;return null!==(n=null===(o=this.renderRoot)||void 0===o?void 0:o.querySelector(i))&&void 0!==n?n:null},enumerable:!0,configurable:!0};if(n){const n="symbol"==typeof o?Symbol():"__"+o;t.get=function(){var o,t;return void 0===this[n]&&(this[n]=null!==(t=null===(o=this.renderRoot)||void 0===o?void 0:o.querySelector(i))&&void 0!==t?t:null),this[n]};}return t}})}
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */function e$1(e){return o$3({descriptor:r=>({get(){var r,o;return null!==(o=null===(r=this.renderRoot)||void 0===r?void 0:r.querySelectorAll(e))&&void 0!==o?o:[]},enumerable:!0,configurable:!0})})}
+     */function e$2(e){return o$4({descriptor:r=>({get(){var r,o;return null!==(o=null===(r=this.renderRoot)||void 0===r?void 0:r.querySelectorAll(e))&&void 0!==o?o:[]},enumerable:!0,configurable:!0})})}
 
     /**
      * @license
@@ -164,13 +164,13 @@
     };
     LMSCheckboxInput.styles = [bootstrapStyles];
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSCheckboxInput.prototype, "field", void 0);
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSCheckboxInput.prototype, "value", void 0);
     LMSCheckboxInput = __decorate([
-        e$3("lms-checkbox-input")
+        e$4("lms-checkbox-input")
     ], LMSCheckboxInput);
     var LMSCheckboxInput$1 = LMSCheckboxInput;
 
@@ -179,7 +179,7 @@
      * Copyright 2021 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    function*o$2(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
+    function*o$3(o,f){if(void 0!==o){let i=0;for(const t of o)yield f(t,i++);}}
 
     /*! gettext.js - Guillaume Potier - MIT Licensed */
     var i18n = function (options) {
@@ -432,7 +432,7 @@
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const t={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e=t=>(...e)=>({_$litDirective$:t,values:e});class i$1{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
+    const t={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e$1=t=>(...e)=>({_$litDirective$:t,values:e});class i$1{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
 
     let i18nInstance;
     let translationsLoaded = false;
@@ -595,8 +595,8 @@
             return _text;
         }
     }
-    const attr__ = e(TranslateAttributeDirective);
-    const __ = e(TranslateDirective);
+    const attr__ = e$1(TranslateAttributeDirective);
+    const __ = e$1(TranslateDirective);
 
     let LMSMatrix = class LMSMatrix extends s {
         constructor() {
@@ -610,13 +610,13 @@
       <table class="table table-bordered" id=${field.name}>
         <thead>
           <tr>
-            ${o$2(field.headers, ([name]) => x `<th scope="col">${__(name)}</th>`)}
+            ${o$3(field.headers, ([name]) => x `<th scope="col">${__(name)}</th>`)}
           </tr>
         </thead>
         <tbody>
-          ${o$2(field.dbData, (row) => x `<tr>
+          ${o$3(field.dbData, (row) => x `<tr>
               <td class="align-middle">${row.name}</td>
-              ${o$2(field.headers, (header) => this.getMatrixInputMarkup({ field, row, header }))}
+              ${o$3(field.headers, (header) => this.getMatrixInputMarkup({ field, row, header }))}
             </tr>`)}
         </tbody>
       </table>`;
@@ -727,13 +727,13 @@
     `,
     ];
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSMatrix.prototype, "field", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSMatrix.prototype, "value", void 0);
     LMSMatrix = __decorate([
-        e$3("lms-matrix")
+        e$4("lms-matrix")
     ], LMSMatrix);
     var LMSMatrix$1 = LMSMatrix;
 
@@ -1204,13 +1204,13 @@ ${value}</textarea
     };
     LMSPrimitivesInput.styles = [bootstrapStyles];
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSPrimitivesInput.prototype, "field", void 0);
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSPrimitivesInput.prototype, "value", void 0);
     LMSPrimitivesInput = __decorate([
-        e$3("lms-primitives-input")
+        e$4("lms-primitives-input")
     ], LMSPrimitivesInput);
     var LMSPrimitivesInput$1 = LMSPrimitivesInput;
 
@@ -1258,7 +1258,7 @@ ${value}</textarea
         }}
           ?required=${required}
         >
-          ${o$2(dbData, ({ id, name }) => x `<option
+          ${o$3(dbData, ({ id, name }) => x `<option
                 value=${id}
                 ?selected=${id === this.defaultOption.id}
               >
@@ -1271,10 +1271,10 @@ ${value}</textarea
     };
     LMSSelect.styles = [bootstrapStyles];
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSSelect.prototype, "field", void 0);
     LMSSelect = __decorate([
-        e$3("lms-select")
+        e$4("lms-select")
     ], LMSSelect);
     var LMSSelect$1 = LMSSelect;
 
@@ -1348,7 +1348,7 @@ ${value}</textarea
     `,
     ];
     LMSStaffEventCardAttendees = __decorate([
-        e$3("lms-staff-event-card-attendees")
+        e$4("lms-staff-event-card-attendees")
     ], LMSStaffEventCardAttendees);
     var LMSStaffEventCardAttendees$1 = LMSStaffEventCardAttendees;
 
@@ -1387,16 +1387,16 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSStaffEventCardPreview.prototype, "datum", void 0);
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSStaffEventCardPreview.prototype, "title", void 0);
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSStaffEventCardPreview.prototype, "text", void 0);
     LMSStaffEventCardPreview = __decorate([
-        e$3("lms-staff-event-card-preview")
+        e$4("lms-staff-event-card-preview")
     ], LMSStaffEventCardPreview);
     var LMSStaffEventCardPreview$1 = LMSStaffEventCardPreview;
 
@@ -1615,7 +1615,7 @@ ${value}</textarea
      * @license
      * Copyright 2018 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const o$1=e(class extends i$1{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.it){this.it=new Set,void 0!==i.strings&&(this.nt=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.nt)||void 0===r?void 0:r.has(t))&&this.it.add(t);return this.render(s)}const e=i.element.classList;this.it.forEach((t=>{t in s||(e.remove(t),this.it.delete(t));}));for(const t in s){const i=!!s[t];i===this.it.has(t)||(null===(o=this.nt)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.it.add(t)):(e.remove(t),this.it.delete(t)));}return T}});
+     */const o$2=e$1(class extends i$1{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.it){this.it=new Set,void 0!==i.strings&&(this.nt=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.nt)||void 0===r?void 0:r.has(t))&&this.it.add(t);return this.render(s)}const e=i.element.classList;this.it.forEach((t=>{t in s||(e.remove(t),this.it.delete(t));}));for(const t in s){const i=!!s[t];i===this.it.has(t)||(null===(o=this.nt)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.it.add(t)):(e.remove(t),this.it.delete(t)));}return T}});
 
     const utilityStyles = i$5 `
   .pointer-events-none {
@@ -1905,7 +1905,7 @@ ${value}</textarea
             return x `
       <form @submit=${this.handleSave}>
         <div
-          class="mb-3 ${o$1({
+          class="mb-3 ${o$2({
             "btn-group": !shouldFold,
             "w-100": !shouldFold,
             "btn-group-vertical": shouldFold,
@@ -2141,19 +2141,19 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSStaffEventCardForm.prototype, "datum", void 0);
     __decorate([
         t$1()
     ], LMSStaffEventCardForm.prototype, "toast", void 0);
     __decorate([
-        e$1(".collapse")
+        e$2(".collapse")
     ], LMSStaffEventCardForm.prototype, "collapsibles", void 0);
     __decorate([
-        e$1("input, select, textarea, .btn-embedded")
+        e$2("input, select, textarea, .btn-embedded")
     ], LMSStaffEventCardForm.prototype, "inputs", void 0);
     LMSStaffEventCardForm = __decorate([
-        e$3("lms-staff-event-card-form")
+        e$4("lms-staff-event-card-form")
     ], LMSStaffEventCardForm);
     var LMSStaffEventCardForm$1 = LMSStaffEventCardForm;
 
@@ -2353,7 +2353,7 @@ ${value}</textarea
           ></lms-pagination>
         </lms-staff-events-filter>
         <div
-          class="alert alert-info text-center ${o$1({
+          class="alert alert-info text-center ${o$2({
             "d-none": !this.hasNoResults,
         })}"
           role="alert"
@@ -2369,7 +2369,7 @@ ${value}</textarea
           </div>
         </div>
         <div class="card-deck">
-          ${o$2(this.data, (datum) => {
+          ${o$3(this.data, (datum) => {
             const { name, image, uuid } = datum;
             const [title] = new TemplateResultConverter(name).getRenderValues();
             const [src] = new TemplateResultConverter(image).getRenderValues();
@@ -2468,31 +2468,31 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "events", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "event_types", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "target_groups", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "locations", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSStaffEventCardDeck.prototype, "nextPage", void 0);
     __decorate([
-        e$2({ type: Boolean })
+        e$3({ type: Boolean })
     ], LMSStaffEventCardDeck.prototype, "hasNoResults", void 0);
     __decorate([
-        e$2({ type: Number })
+        e$3({ type: Number })
     ], LMSStaffEventCardDeck.prototype, "_page", void 0);
     __decorate([
-        e$2({ type: Number })
+        e$3({ type: Number })
     ], LMSStaffEventCardDeck.prototype, "_per_page", void 0);
     LMSStaffEventCardDeck = __decorate([
-        e$3("lms-staff-event-card-deck")
+        e$4("lms-staff-event-card-deck")
     ], LMSStaffEventCardDeck);
     var LMSStaffEventCardsDeck = LMSStaffEventCardDeck;
 
@@ -2640,7 +2640,7 @@ ${value}</textarea
       >
         <div @change=${this.handleChange} class="dropdown-wrapper">
           <lms-dropdown .label=${__("Sort by")} @change=${this.handleSort}>
-            ${o$2(this.sortableColumns, (column) => x `
+            ${o$3(this.sortableColumns, (column) => x `
                 <div class="dropdown-item">
                   <input
                     type="radio"
@@ -2654,7 +2654,7 @@ ${value}</textarea
               `)}
           </lms-dropdown>
           <lms-dropdown .label=${__("Event type")}>
-            ${o$2(this.event_types, (event_type) => x `
+            ${o$3(this.event_types, (event_type) => x `
                 <div class="dropdown-item">
                   <input
                     type="checkbox"
@@ -2669,7 +2669,7 @@ ${value}</textarea
               `)}
           </lms-dropdown>
           <lms-dropdown .label=${__("Target group")}>
-            ${o$2(this.target_groups, (target_group) => x `
+            ${o$3(this.target_groups, (target_group) => x `
                 <div class="dropdown-item">
                   <input
                     type="checkbox"
@@ -2684,7 +2684,7 @@ ${value}</textarea
               `)}
           </lms-dropdown>
           <lms-dropdown .label=${__("Location")}>
-            ${o$2(this.locations, (location) => x `
+            ${o$3(this.locations, (location) => x `
                 <div class="dropdown-item">
                   <input
                     type="checkbox"
@@ -2721,25 +2721,25 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSStaffEventsFilter.prototype, "sortableColumns", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSStaffEventsFilter.prototype, "event_types", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSStaffEventsFilter.prototype, "target_groups", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSStaffEventsFilter.prototype, "locations", void 0);
     __decorate([
-        e$1("lms-dropdown")
+        e$2("lms-dropdown")
     ], LMSStaffEventsFilter.prototype, "lmsDropdowns", void 0);
     __decorate([
-        e$1("input[type=checkbox]")
+        e$2("input[type=checkbox]")
     ], LMSStaffEventsFilter.prototype, "checkboxes", void 0);
     LMSStaffEventsFilter = __decorate([
-        e$3("lms-staff-events-filter")
+        e$4("lms-staff-events-filter")
     ], LMSStaffEventsFilter);
     var LMSStaffEventsFilter$1 = LMSStaffEventsFilter;
 
@@ -2763,7 +2763,7 @@ ${value}</textarea
     `,
     ];
     LMSTableControls = __decorate([
-        e$3("lms-table-controls")
+        e$4("lms-table-controls")
     ], LMSTableControls);
     var LMSTableControls$1 = LMSTableControls;
 
@@ -2841,13 +2841,13 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: Object, attribute: "data-href" })
+        e$3({ type: Object, attribute: "data-href" })
     ], LMSAnchor.prototype, "href", void 0);
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSAnchor.prototype, "target", void 0);
     LMSAnchor = __decorate([
-        e$3("lms-anchor")
+        e$4("lms-anchor")
     ], LMSAnchor);
     var LMSAnchor$1 = LMSAnchor;
 
@@ -2871,7 +2871,7 @@ ${value}</textarea
         />
         <div class="card-body">
           <h5
-            class="card-title ${o$1({
+            class="card-title ${o$2({
             "mb-0": !this.text,
         })}"
             ?hidden=${!this.title}
@@ -2920,24 +2920,1653 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSCard.prototype, "title", void 0);
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSCard.prototype, "text", void 0);
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSCard.prototype, "image", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSCard.prototype, "links", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSCard.prototype, "listItems", void 0);
     LMSCard = __decorate([
-        e$3("lms-card")
+        e$4("lms-card")
     ], LMSCard);
     var LMSCard$1 = LMSCard;
+
+    /**
+     * @license
+     * Copyright 2017 Google LLC
+     * SPDX-License-Identifier: BSD-3-Clause
+     */class e extends i$1{constructor(i){if(super(i),this.et=A,i.type!==t.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(r){if(r===A||null==r)return this.ft=void 0,this.et=r;if(r===T)return r;if("string"!=typeof r)throw Error(this.constructor.directiveName+"() called with a non-string value");if(r===this.et)return this.ft;this.et=r;const s=[r];return s.raw=s,this.ft={_$litType$:this.constructor.resultType,strings:s,values:[]}}}e.directiveName="unsafeHTML",e.resultType=1;const o$1=e$1(e);
+
+    /*! @license DOMPurify 3.0.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.0.3/LICENSE */
+
+    const {
+      entries,
+      setPrototypeOf,
+      isFrozen,
+      getPrototypeOf,
+      getOwnPropertyDescriptor
+    } = Object;
+    let {
+      freeze,
+      seal,
+      create
+    } = Object; // eslint-disable-line import/no-mutable-exports
+
+    let {
+      apply,
+      construct
+    } = typeof Reflect !== 'undefined' && Reflect;
+
+    if (!apply) {
+      apply = function apply(fun, thisValue, args) {
+        return fun.apply(thisValue, args);
+      };
+    }
+
+    if (!freeze) {
+      freeze = function freeze(x) {
+        return x;
+      };
+    }
+
+    if (!seal) {
+      seal = function seal(x) {
+        return x;
+      };
+    }
+
+    if (!construct) {
+      construct = function construct(Func, args) {
+        return new Func(...args);
+      };
+    }
+
+    const arrayForEach = unapply(Array.prototype.forEach);
+    const arrayPop = unapply(Array.prototype.pop);
+    const arrayPush = unapply(Array.prototype.push);
+    const stringToLowerCase = unapply(String.prototype.toLowerCase);
+    const stringToString = unapply(String.prototype.toString);
+    const stringMatch = unapply(String.prototype.match);
+    const stringReplace = unapply(String.prototype.replace);
+    const stringIndexOf = unapply(String.prototype.indexOf);
+    const stringTrim = unapply(String.prototype.trim);
+    const regExpTest = unapply(RegExp.prototype.test);
+    const typeErrorCreate = unconstruct(TypeError);
+    function unapply(func) {
+      return function (thisArg) {
+        for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          args[_key - 1] = arguments[_key];
+        }
+
+        return apply(func, thisArg, args);
+      };
+    }
+    function unconstruct(func) {
+      return function () {
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
+        }
+
+        return construct(func, args);
+      };
+    }
+    /* Add properties to a lookup table */
+
+    function addToSet(set, array, transformCaseFunc) {
+      var _transformCaseFunc;
+
+      transformCaseFunc = (_transformCaseFunc = transformCaseFunc) !== null && _transformCaseFunc !== void 0 ? _transformCaseFunc : stringToLowerCase;
+
+      if (setPrototypeOf) {
+        // Make 'in' and truthy checks like Boolean(set.constructor)
+        // independent of any properties defined on Object.prototype.
+        // Prevent prototype setters from intercepting set as a this value.
+        setPrototypeOf(set, null);
+      }
+
+      let l = array.length;
+
+      while (l--) {
+        let element = array[l];
+
+        if (typeof element === 'string') {
+          const lcElement = transformCaseFunc(element);
+
+          if (lcElement !== element) {
+            // Config presets (e.g. tags.js, attrs.js) are immutable.
+            if (!isFrozen(array)) {
+              array[l] = lcElement;
+            }
+
+            element = lcElement;
+          }
+        }
+
+        set[element] = true;
+      }
+
+      return set;
+    }
+    /* Shallow clone an object */
+
+    function clone(object) {
+      const newObject = create(null);
+
+      for (const [property, value] of entries(object)) {
+        newObject[property] = value;
+      }
+
+      return newObject;
+    }
+    /* This method automatically checks if the prop is function
+     * or getter and behaves accordingly. */
+
+    function lookupGetter(object, prop) {
+      while (object !== null) {
+        const desc = getOwnPropertyDescriptor(object, prop);
+
+        if (desc) {
+          if (desc.get) {
+            return unapply(desc.get);
+          }
+
+          if (typeof desc.value === 'function') {
+            return unapply(desc.value);
+          }
+        }
+
+        object = getPrototypeOf(object);
+      }
+
+      function fallbackValue(element) {
+        console.warn('fallback value for', element);
+        return null;
+      }
+
+      return fallbackValue;
+    }
+
+    const html$1 = freeze(['a', 'abbr', 'acronym', 'address', 'area', 'article', 'aside', 'audio', 'b', 'bdi', 'bdo', 'big', 'blink', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'center', 'cite', 'code', 'col', 'colgroup', 'content', 'data', 'datalist', 'dd', 'decorator', 'del', 'details', 'dfn', 'dialog', 'dir', 'div', 'dl', 'dt', 'element', 'em', 'fieldset', 'figcaption', 'figure', 'font', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'main', 'map', 'mark', 'marquee', 'menu', 'menuitem', 'meter', 'nav', 'nobr', 'ol', 'optgroup', 'option', 'output', 'p', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'section', 'select', 'shadow', 'small', 'source', 'spacer', 'span', 'strike', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'track', 'tt', 'u', 'ul', 'var', 'video', 'wbr']); // SVG
+
+    const svg$1 = freeze(['svg', 'a', 'altglyph', 'altglyphdef', 'altglyphitem', 'animatecolor', 'animatemotion', 'animatetransform', 'circle', 'clippath', 'defs', 'desc', 'ellipse', 'filter', 'font', 'g', 'glyph', 'glyphref', 'hkern', 'image', 'line', 'lineargradient', 'marker', 'mask', 'metadata', 'mpath', 'path', 'pattern', 'polygon', 'polyline', 'radialgradient', 'rect', 'stop', 'style', 'switch', 'symbol', 'text', 'textpath', 'title', 'tref', 'tspan', 'view', 'vkern']);
+    const svgFilters = freeze(['feBlend', 'feColorMatrix', 'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting', 'feDisplacementMap', 'feDistantLight', 'feDropShadow', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG', 'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology', 'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile', 'feTurbulence']); // List of SVG elements that are disallowed by default.
+    // We still need to know them so that we can do namespace
+    // checks properly in case one wants to add them to
+    // allow-list.
+
+    const svgDisallowed = freeze(['animate', 'color-profile', 'cursor', 'discard', 'font-face', 'font-face-format', 'font-face-name', 'font-face-src', 'font-face-uri', 'foreignobject', 'hatch', 'hatchpath', 'mesh', 'meshgradient', 'meshpatch', 'meshrow', 'missing-glyph', 'script', 'set', 'solidcolor', 'unknown', 'use']);
+    const mathMl$1 = freeze(['math', 'menclose', 'merror', 'mfenced', 'mfrac', 'mglyph', 'mi', 'mlabeledtr', 'mmultiscripts', 'mn', 'mo', 'mover', 'mpadded', 'mphantom', 'mroot', 'mrow', 'ms', 'mspace', 'msqrt', 'mstyle', 'msub', 'msup', 'msubsup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder', 'munderover', 'mprescripts']); // Similarly to SVG, we want to know all MathML elements,
+    // even those that we disallow by default.
+
+    const mathMlDisallowed = freeze(['maction', 'maligngroup', 'malignmark', 'mlongdiv', 'mscarries', 'mscarry', 'msgroup', 'mstack', 'msline', 'msrow', 'semantics', 'annotation', 'annotation-xml', 'mprescripts', 'none']);
+    const text = freeze(['#text']);
+
+    const html = freeze(['accept', 'action', 'align', 'alt', 'autocapitalize', 'autocomplete', 'autopictureinpicture', 'autoplay', 'background', 'bgcolor', 'border', 'capture', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'controls', 'controlslist', 'coords', 'crossorigin', 'datetime', 'decoding', 'default', 'dir', 'disabled', 'disablepictureinpicture', 'disableremoteplayback', 'download', 'draggable', 'enctype', 'enterkeyhint', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'inputmode', 'integrity', 'ismap', 'kind', 'label', 'lang', 'list', 'loading', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'minlength', 'multiple', 'muted', 'name', 'nonce', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'playsinline', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'translate', 'type', 'usemap', 'valign', 'value', 'width', 'xmlns', 'slot']);
+    const svg = freeze(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clippathunits', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'filterunits', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'primitiveunits', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'specularconstant', 'specularexponent', 'spreadmethod', 'startoffset', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'systemlanguage', 'tabindex', 'targetx', 'targety', 'transform', 'transform-origin', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'version', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
+    const mathMl = freeze(['accent', 'accentunder', 'align', 'bevelled', 'close', 'columnsalign', 'columnlines', 'columnspan', 'denomalign', 'depth', 'dir', 'display', 'displaystyle', 'encoding', 'fence', 'frame', 'height', 'href', 'id', 'largeop', 'length', 'linethickness', 'lspace', 'lquote', 'mathbackground', 'mathcolor', 'mathsize', 'mathvariant', 'maxsize', 'minsize', 'movablelimits', 'notation', 'numalign', 'open', 'rowalign', 'rowlines', 'rowspacing', 'rowspan', 'rspace', 'rquote', 'scriptlevel', 'scriptminsize', 'scriptsizemultiplier', 'selection', 'separator', 'separators', 'stretchy', 'subscriptshift', 'supscriptshift', 'symmetric', 'voffset', 'width', 'xmlns']);
+    const xml = freeze(['xlink:href', 'xml:id', 'xlink:title', 'xml:space', 'xmlns:xlink']);
+
+    const MUSTACHE_EXPR = seal(/\{\{[\w\W]*|[\w\W]*\}\}/gm); // Specify template detection regex for SAFE_FOR_TEMPLATES mode
+
+    const ERB_EXPR = seal(/<%[\w\W]*|[\w\W]*%>/gm);
+    const TMPLIT_EXPR = seal(/\${[\w\W]*}/gm);
+    const DATA_ATTR = seal(/^data-[\-\w.\u00B7-\uFFFF]/); // eslint-disable-line no-useless-escape
+
+    const ARIA_ATTR = seal(/^aria-[\-\w]+$/); // eslint-disable-line no-useless-escape
+
+    const IS_ALLOWED_URI = seal(/^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i // eslint-disable-line no-useless-escape
+    );
+    const IS_SCRIPT_OR_DATA = seal(/^(?:\w+script|data):/i);
+    const ATTR_WHITESPACE = seal(/[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g // eslint-disable-line no-control-regex
+    );
+    const DOCTYPE_NAME = seal(/^html$/i);
+
+    var EXPRESSIONS = /*#__PURE__*/Object.freeze({
+      __proto__: null,
+      MUSTACHE_EXPR: MUSTACHE_EXPR,
+      ERB_EXPR: ERB_EXPR,
+      TMPLIT_EXPR: TMPLIT_EXPR,
+      DATA_ATTR: DATA_ATTR,
+      ARIA_ATTR: ARIA_ATTR,
+      IS_ALLOWED_URI: IS_ALLOWED_URI,
+      IS_SCRIPT_OR_DATA: IS_SCRIPT_OR_DATA,
+      ATTR_WHITESPACE: ATTR_WHITESPACE,
+      DOCTYPE_NAME: DOCTYPE_NAME
+    });
+
+    const getGlobal = () => typeof window === 'undefined' ? null : window;
+    /**
+     * Creates a no-op policy for internal use only.
+     * Don't export this function outside this module!
+     * @param {?TrustedTypePolicyFactory} trustedTypes The policy factory.
+     * @param {HTMLScriptElement} purifyHostElement The Script element used to load DOMPurify (to determine policy name suffix).
+     * @return {?TrustedTypePolicy} The policy created (or null, if Trusted Types
+     * are not supported or creating the policy failed).
+     */
+
+
+    const _createTrustedTypesPolicy = function _createTrustedTypesPolicy(trustedTypes, purifyHostElement) {
+      if (typeof trustedTypes !== 'object' || typeof trustedTypes.createPolicy !== 'function') {
+        return null;
+      } // Allow the callers to control the unique policy name
+      // by adding a data-tt-policy-suffix to the script element with the DOMPurify.
+      // Policy creation with duplicate names throws in Trusted Types.
+
+
+      let suffix = null;
+      const ATTR_NAME = 'data-tt-policy-suffix';
+
+      if (purifyHostElement && purifyHostElement.hasAttribute(ATTR_NAME)) {
+        suffix = purifyHostElement.getAttribute(ATTR_NAME);
+      }
+
+      const policyName = 'dompurify' + (suffix ? '#' + suffix : '');
+
+      try {
+        return trustedTypes.createPolicy(policyName, {
+          createHTML(html) {
+            return html;
+          },
+
+          createScriptURL(scriptUrl) {
+            return scriptUrl;
+          }
+
+        });
+      } catch (_) {
+        // Policy creation failed (most likely another DOMPurify script has
+        // already run). Skip creating the policy, as this will only cause errors
+        // if TT are enforced.
+        console.warn('TrustedTypes policy ' + policyName + ' could not be created.');
+        return null;
+      }
+    };
+
+    function createDOMPurify() {
+      let window = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : getGlobal();
+
+      const DOMPurify = root => createDOMPurify(root);
+      /**
+       * Version label, exposed for easier checks
+       * if DOMPurify is up to date or not
+       */
+
+
+      DOMPurify.version = '3.0.3';
+      /**
+       * Array of elements that DOMPurify removed during sanitation.
+       * Empty if nothing was removed.
+       */
+
+      DOMPurify.removed = [];
+
+      if (!window || !window.document || window.document.nodeType !== 9) {
+        // Not running in a browser, provide a factory function
+        // so that you can pass your own Window
+        DOMPurify.isSupported = false;
+        return DOMPurify;
+      }
+
+      const originalDocument = window.document;
+      const currentScript = originalDocument.currentScript;
+      let {
+        document
+      } = window;
+      const {
+        DocumentFragment,
+        HTMLTemplateElement,
+        Node,
+        Element,
+        NodeFilter,
+        NamedNodeMap = window.NamedNodeMap || window.MozNamedAttrMap,
+        HTMLFormElement,
+        DOMParser,
+        trustedTypes
+      } = window;
+      const ElementPrototype = Element.prototype;
+      const cloneNode = lookupGetter(ElementPrototype, 'cloneNode');
+      const getNextSibling = lookupGetter(ElementPrototype, 'nextSibling');
+      const getChildNodes = lookupGetter(ElementPrototype, 'childNodes');
+      const getParentNode = lookupGetter(ElementPrototype, 'parentNode'); // As per issue #47, the web-components registry is inherited by a
+      // new document created via createHTMLDocument. As per the spec
+      // (http://w3c.github.io/webcomponents/spec/custom/#creating-and-passing-registries)
+      // a new empty registry is used when creating a template contents owner
+      // document, so we use that as our parent document to ensure nothing
+      // is inherited.
+
+      if (typeof HTMLTemplateElement === 'function') {
+        const template = document.createElement('template');
+
+        if (template.content && template.content.ownerDocument) {
+          document = template.content.ownerDocument;
+        }
+      }
+
+      let trustedTypesPolicy;
+      let emptyHTML = '';
+      const {
+        implementation,
+        createNodeIterator,
+        createDocumentFragment,
+        getElementsByTagName
+      } = document;
+      const {
+        importNode
+      } = originalDocument;
+      let hooks = {};
+      /**
+       * Expose whether this browser supports running the full DOMPurify.
+       */
+
+      DOMPurify.isSupported = typeof entries === 'function' && typeof getParentNode === 'function' && implementation && implementation.createHTMLDocument !== undefined;
+      const {
+        MUSTACHE_EXPR,
+        ERB_EXPR,
+        TMPLIT_EXPR,
+        DATA_ATTR,
+        ARIA_ATTR,
+        IS_SCRIPT_OR_DATA,
+        ATTR_WHITESPACE
+      } = EXPRESSIONS;
+      let {
+        IS_ALLOWED_URI: IS_ALLOWED_URI$1
+      } = EXPRESSIONS;
+      /**
+       * We consider the elements and attributes below to be safe. Ideally
+       * don't add any new ones but feel free to remove unwanted ones.
+       */
+
+      /* allowed element names */
+
+      let ALLOWED_TAGS = null;
+      const DEFAULT_ALLOWED_TAGS = addToSet({}, [...html$1, ...svg$1, ...svgFilters, ...mathMl$1, ...text]);
+      /* Allowed attribute names */
+
+      let ALLOWED_ATTR = null;
+      const DEFAULT_ALLOWED_ATTR = addToSet({}, [...html, ...svg, ...mathMl, ...xml]);
+      /*
+       * Configure how DOMPUrify should handle custom elements and their attributes as well as customized built-in elements.
+       * @property {RegExp|Function|null} tagNameCheck one of [null, regexPattern, predicate]. Default: `null` (disallow any custom elements)
+       * @property {RegExp|Function|null} attributeNameCheck one of [null, regexPattern, predicate]. Default: `null` (disallow any attributes not on the allow list)
+       * @property {boolean} allowCustomizedBuiltInElements allow custom elements derived from built-ins if they pass CUSTOM_ELEMENT_HANDLING.tagNameCheck. Default: `false`.
+       */
+
+      let CUSTOM_ELEMENT_HANDLING = Object.seal(Object.create(null, {
+        tagNameCheck: {
+          writable: true,
+          configurable: false,
+          enumerable: true,
+          value: null
+        },
+        attributeNameCheck: {
+          writable: true,
+          configurable: false,
+          enumerable: true,
+          value: null
+        },
+        allowCustomizedBuiltInElements: {
+          writable: true,
+          configurable: false,
+          enumerable: true,
+          value: false
+        }
+      }));
+      /* Explicitly forbidden tags (overrides ALLOWED_TAGS/ADD_TAGS) */
+
+      let FORBID_TAGS = null;
+      /* Explicitly forbidden attributes (overrides ALLOWED_ATTR/ADD_ATTR) */
+
+      let FORBID_ATTR = null;
+      /* Decide if ARIA attributes are okay */
+
+      let ALLOW_ARIA_ATTR = true;
+      /* Decide if custom data attributes are okay */
+
+      let ALLOW_DATA_ATTR = true;
+      /* Decide if unknown protocols are okay */
+
+      let ALLOW_UNKNOWN_PROTOCOLS = false;
+      /* Decide if self-closing tags in attributes are allowed.
+       * Usually removed due to a mXSS issue in jQuery 3.0 */
+
+      let ALLOW_SELF_CLOSE_IN_ATTR = true;
+      /* Output should be safe for common template engines.
+       * This means, DOMPurify removes data attributes, mustaches and ERB
+       */
+
+      let SAFE_FOR_TEMPLATES = false;
+      /* Decide if document with <html>... should be returned */
+
+      let WHOLE_DOCUMENT = false;
+      /* Track whether config is already set on this instance of DOMPurify. */
+
+      let SET_CONFIG = false;
+      /* Decide if all elements (e.g. style, script) must be children of
+       * document.body. By default, browsers might move them to document.head */
+
+      let FORCE_BODY = false;
+      /* Decide if a DOM `HTMLBodyElement` should be returned, instead of a html
+       * string (or a TrustedHTML object if Trusted Types are supported).
+       * If `WHOLE_DOCUMENT` is enabled a `HTMLHtmlElement` will be returned instead
+       */
+
+      let RETURN_DOM = false;
+      /* Decide if a DOM `DocumentFragment` should be returned, instead of a html
+       * string  (or a TrustedHTML object if Trusted Types are supported) */
+
+      let RETURN_DOM_FRAGMENT = false;
+      /* Try to return a Trusted Type object instead of a string, return a string in
+       * case Trusted Types are not supported  */
+
+      let RETURN_TRUSTED_TYPE = false;
+      /* Output should be free from DOM clobbering attacks?
+       * This sanitizes markups named with colliding, clobberable built-in DOM APIs.
+       */
+
+      let SANITIZE_DOM = true;
+      /* Achieve full DOM Clobbering protection by isolating the namespace of named
+       * properties and JS variables, mitigating attacks that abuse the HTML/DOM spec rules.
+       *
+       * HTML/DOM spec rules that enable DOM Clobbering:
+       *   - Named Access on Window (§7.3.3)
+       *   - DOM Tree Accessors (§3.1.5)
+       *   - Form Element Parent-Child Relations (§4.10.3)
+       *   - Iframe srcdoc / Nested WindowProxies (§4.8.5)
+       *   - HTMLCollection (§4.2.10.2)
+       *
+       * Namespace isolation is implemented by prefixing `id` and `name` attributes
+       * with a constant string, i.e., `user-content-`
+       */
+
+      let SANITIZE_NAMED_PROPS = false;
+      const SANITIZE_NAMED_PROPS_PREFIX = 'user-content-';
+      /* Keep element content when removing element? */
+
+      let KEEP_CONTENT = true;
+      /* If a `Node` is passed to sanitize(), then performs sanitization in-place instead
+       * of importing it into a new Document and returning a sanitized copy */
+
+      let IN_PLACE = false;
+      /* Allow usage of profiles like html, svg and mathMl */
+
+      let USE_PROFILES = {};
+      /* Tags to ignore content of when KEEP_CONTENT is true */
+
+      let FORBID_CONTENTS = null;
+      const DEFAULT_FORBID_CONTENTS = addToSet({}, ['annotation-xml', 'audio', 'colgroup', 'desc', 'foreignobject', 'head', 'iframe', 'math', 'mi', 'mn', 'mo', 'ms', 'mtext', 'noembed', 'noframes', 'noscript', 'plaintext', 'script', 'style', 'svg', 'template', 'thead', 'title', 'video', 'xmp']);
+      /* Tags that are safe for data: URIs */
+
+      let DATA_URI_TAGS = null;
+      const DEFAULT_DATA_URI_TAGS = addToSet({}, ['audio', 'video', 'img', 'source', 'image', 'track']);
+      /* Attributes safe for values like "javascript:" */
+
+      let URI_SAFE_ATTRIBUTES = null;
+      const DEFAULT_URI_SAFE_ATTRIBUTES = addToSet({}, ['alt', 'class', 'for', 'id', 'label', 'name', 'pattern', 'placeholder', 'role', 'summary', 'title', 'value', 'style', 'xmlns']);
+      const MATHML_NAMESPACE = 'http://www.w3.org/1998/Math/MathML';
+      const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+      const HTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
+      /* Document namespace */
+
+      let NAMESPACE = HTML_NAMESPACE;
+      let IS_EMPTY_INPUT = false;
+      /* Allowed XHTML+XML namespaces */
+
+      let ALLOWED_NAMESPACES = null;
+      const DEFAULT_ALLOWED_NAMESPACES = addToSet({}, [MATHML_NAMESPACE, SVG_NAMESPACE, HTML_NAMESPACE], stringToString);
+      /* Parsing of strict XHTML documents */
+
+      let PARSER_MEDIA_TYPE;
+      const SUPPORTED_PARSER_MEDIA_TYPES = ['application/xhtml+xml', 'text/html'];
+      const DEFAULT_PARSER_MEDIA_TYPE = 'text/html';
+      let transformCaseFunc;
+      /* Keep a reference to config to pass to hooks */
+
+      let CONFIG = null;
+      /* Ideally, do not touch anything below this line */
+
+      /* ______________________________________________ */
+
+      const formElement = document.createElement('form');
+
+      const isRegexOrFunction = function isRegexOrFunction(testValue) {
+        return testValue instanceof RegExp || testValue instanceof Function;
+      };
+      /**
+       * _parseConfig
+       *
+       * @param  {Object} cfg optional config literal
+       */
+      // eslint-disable-next-line complexity
+
+
+      const _parseConfig = function _parseConfig(cfg) {
+        if (CONFIG && CONFIG === cfg) {
+          return;
+        }
+        /* Shield configuration object from tampering */
+
+
+        if (!cfg || typeof cfg !== 'object') {
+          cfg = {};
+        }
+        /* Shield configuration object from prototype pollution */
+
+
+        cfg = clone(cfg);
+        PARSER_MEDIA_TYPE = // eslint-disable-next-line unicorn/prefer-includes
+        SUPPORTED_PARSER_MEDIA_TYPES.indexOf(cfg.PARSER_MEDIA_TYPE) === -1 ? PARSER_MEDIA_TYPE = DEFAULT_PARSER_MEDIA_TYPE : PARSER_MEDIA_TYPE = cfg.PARSER_MEDIA_TYPE; // HTML tags and attributes are not case-sensitive, converting to lowercase. Keeping XHTML as is.
+
+        transformCaseFunc = PARSER_MEDIA_TYPE === 'application/xhtml+xml' ? stringToString : stringToLowerCase;
+        /* Set configuration parameters */
+
+        ALLOWED_TAGS = 'ALLOWED_TAGS' in cfg ? addToSet({}, cfg.ALLOWED_TAGS, transformCaseFunc) : DEFAULT_ALLOWED_TAGS;
+        ALLOWED_ATTR = 'ALLOWED_ATTR' in cfg ? addToSet({}, cfg.ALLOWED_ATTR, transformCaseFunc) : DEFAULT_ALLOWED_ATTR;
+        ALLOWED_NAMESPACES = 'ALLOWED_NAMESPACES' in cfg ? addToSet({}, cfg.ALLOWED_NAMESPACES, stringToString) : DEFAULT_ALLOWED_NAMESPACES;
+        URI_SAFE_ATTRIBUTES = 'ADD_URI_SAFE_ATTR' in cfg ? addToSet(clone(DEFAULT_URI_SAFE_ATTRIBUTES), // eslint-disable-line indent
+        cfg.ADD_URI_SAFE_ATTR, // eslint-disable-line indent
+        transformCaseFunc // eslint-disable-line indent
+        ) // eslint-disable-line indent
+        : DEFAULT_URI_SAFE_ATTRIBUTES;
+        DATA_URI_TAGS = 'ADD_DATA_URI_TAGS' in cfg ? addToSet(clone(DEFAULT_DATA_URI_TAGS), // eslint-disable-line indent
+        cfg.ADD_DATA_URI_TAGS, // eslint-disable-line indent
+        transformCaseFunc // eslint-disable-line indent
+        ) // eslint-disable-line indent
+        : DEFAULT_DATA_URI_TAGS;
+        FORBID_CONTENTS = 'FORBID_CONTENTS' in cfg ? addToSet({}, cfg.FORBID_CONTENTS, transformCaseFunc) : DEFAULT_FORBID_CONTENTS;
+        FORBID_TAGS = 'FORBID_TAGS' in cfg ? addToSet({}, cfg.FORBID_TAGS, transformCaseFunc) : {};
+        FORBID_ATTR = 'FORBID_ATTR' in cfg ? addToSet({}, cfg.FORBID_ATTR, transformCaseFunc) : {};
+        USE_PROFILES = 'USE_PROFILES' in cfg ? cfg.USE_PROFILES : false;
+        ALLOW_ARIA_ATTR = cfg.ALLOW_ARIA_ATTR !== false; // Default true
+
+        ALLOW_DATA_ATTR = cfg.ALLOW_DATA_ATTR !== false; // Default true
+
+        ALLOW_UNKNOWN_PROTOCOLS = cfg.ALLOW_UNKNOWN_PROTOCOLS || false; // Default false
+
+        ALLOW_SELF_CLOSE_IN_ATTR = cfg.ALLOW_SELF_CLOSE_IN_ATTR !== false; // Default true
+
+        SAFE_FOR_TEMPLATES = cfg.SAFE_FOR_TEMPLATES || false; // Default false
+
+        WHOLE_DOCUMENT = cfg.WHOLE_DOCUMENT || false; // Default false
+
+        RETURN_DOM = cfg.RETURN_DOM || false; // Default false
+
+        RETURN_DOM_FRAGMENT = cfg.RETURN_DOM_FRAGMENT || false; // Default false
+
+        RETURN_TRUSTED_TYPE = cfg.RETURN_TRUSTED_TYPE || false; // Default false
+
+        FORCE_BODY = cfg.FORCE_BODY || false; // Default false
+
+        SANITIZE_DOM = cfg.SANITIZE_DOM !== false; // Default true
+
+        SANITIZE_NAMED_PROPS = cfg.SANITIZE_NAMED_PROPS || false; // Default false
+
+        KEEP_CONTENT = cfg.KEEP_CONTENT !== false; // Default true
+
+        IN_PLACE = cfg.IN_PLACE || false; // Default false
+
+        IS_ALLOWED_URI$1 = cfg.ALLOWED_URI_REGEXP || IS_ALLOWED_URI;
+        NAMESPACE = cfg.NAMESPACE || HTML_NAMESPACE;
+        CUSTOM_ELEMENT_HANDLING = cfg.CUSTOM_ELEMENT_HANDLING || {};
+
+        if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck)) {
+          CUSTOM_ELEMENT_HANDLING.tagNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck;
+        }
+
+        if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck)) {
+          CUSTOM_ELEMENT_HANDLING.attributeNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck;
+        }
+
+        if (cfg.CUSTOM_ELEMENT_HANDLING && typeof cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements === 'boolean') {
+          CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements = cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements;
+        }
+
+        if (SAFE_FOR_TEMPLATES) {
+          ALLOW_DATA_ATTR = false;
+        }
+
+        if (RETURN_DOM_FRAGMENT) {
+          RETURN_DOM = true;
+        }
+        /* Parse profile info */
+
+
+        if (USE_PROFILES) {
+          ALLOWED_TAGS = addToSet({}, [...text]);
+          ALLOWED_ATTR = [];
+
+          if (USE_PROFILES.html === true) {
+            addToSet(ALLOWED_TAGS, html$1);
+            addToSet(ALLOWED_ATTR, html);
+          }
+
+          if (USE_PROFILES.svg === true) {
+            addToSet(ALLOWED_TAGS, svg$1);
+            addToSet(ALLOWED_ATTR, svg);
+            addToSet(ALLOWED_ATTR, xml);
+          }
+
+          if (USE_PROFILES.svgFilters === true) {
+            addToSet(ALLOWED_TAGS, svgFilters);
+            addToSet(ALLOWED_ATTR, svg);
+            addToSet(ALLOWED_ATTR, xml);
+          }
+
+          if (USE_PROFILES.mathMl === true) {
+            addToSet(ALLOWED_TAGS, mathMl$1);
+            addToSet(ALLOWED_ATTR, mathMl);
+            addToSet(ALLOWED_ATTR, xml);
+          }
+        }
+        /* Merge configuration parameters */
+
+
+        if (cfg.ADD_TAGS) {
+          if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) {
+            ALLOWED_TAGS = clone(ALLOWED_TAGS);
+          }
+
+          addToSet(ALLOWED_TAGS, cfg.ADD_TAGS, transformCaseFunc);
+        }
+
+        if (cfg.ADD_ATTR) {
+          if (ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) {
+            ALLOWED_ATTR = clone(ALLOWED_ATTR);
+          }
+
+          addToSet(ALLOWED_ATTR, cfg.ADD_ATTR, transformCaseFunc);
+        }
+
+        if (cfg.ADD_URI_SAFE_ATTR) {
+          addToSet(URI_SAFE_ATTRIBUTES, cfg.ADD_URI_SAFE_ATTR, transformCaseFunc);
+        }
+
+        if (cfg.FORBID_CONTENTS) {
+          if (FORBID_CONTENTS === DEFAULT_FORBID_CONTENTS) {
+            FORBID_CONTENTS = clone(FORBID_CONTENTS);
+          }
+
+          addToSet(FORBID_CONTENTS, cfg.FORBID_CONTENTS, transformCaseFunc);
+        }
+        /* Add #text in case KEEP_CONTENT is set to true */
+
+
+        if (KEEP_CONTENT) {
+          ALLOWED_TAGS['#text'] = true;
+        }
+        /* Add html, head and body to ALLOWED_TAGS in case WHOLE_DOCUMENT is true */
+
+
+        if (WHOLE_DOCUMENT) {
+          addToSet(ALLOWED_TAGS, ['html', 'head', 'body']);
+        }
+        /* Add tbody to ALLOWED_TAGS in case tables are permitted, see #286, #365 */
+
+
+        if (ALLOWED_TAGS.table) {
+          addToSet(ALLOWED_TAGS, ['tbody']);
+          delete FORBID_TAGS.tbody;
+        }
+
+        if (cfg.TRUSTED_TYPES_POLICY) {
+          if (typeof cfg.TRUSTED_TYPES_POLICY.createHTML !== 'function') {
+            throw typeErrorCreate('TRUSTED_TYPES_POLICY configuration option must provide a "createHTML" hook.');
+          }
+
+          if (typeof cfg.TRUSTED_TYPES_POLICY.createScriptURL !== 'function') {
+            throw typeErrorCreate('TRUSTED_TYPES_POLICY configuration option must provide a "createScriptURL" hook.');
+          } // Overwrite existing TrustedTypes policy.
+
+
+          trustedTypesPolicy = cfg.TRUSTED_TYPES_POLICY; // Sign local variables required by `sanitize`.
+
+          emptyHTML = trustedTypesPolicy.createHTML('');
+        } else {
+          // Uninitialized policy, attempt to initialize the internal dompurify policy.
+          if (trustedTypesPolicy === undefined) {
+            trustedTypesPolicy = _createTrustedTypesPolicy(trustedTypes, currentScript);
+          } // If creating the internal policy succeeded sign internal variables.
+
+
+          if (trustedTypesPolicy !== null && typeof emptyHTML === 'string') {
+            emptyHTML = trustedTypesPolicy.createHTML('');
+          }
+        } // Prevent further manipulation of configuration.
+        // Not available in IE8, Safari 5, etc.
+
+
+        if (freeze) {
+          freeze(cfg);
+        }
+
+        CONFIG = cfg;
+      };
+
+      const MATHML_TEXT_INTEGRATION_POINTS = addToSet({}, ['mi', 'mo', 'mn', 'ms', 'mtext']);
+      const HTML_INTEGRATION_POINTS = addToSet({}, ['foreignobject', 'desc', 'title', 'annotation-xml']); // Certain elements are allowed in both SVG and HTML
+      // namespace. We need to specify them explicitly
+      // so that they don't get erroneously deleted from
+      // HTML namespace.
+
+      const COMMON_SVG_AND_HTML_ELEMENTS = addToSet({}, ['title', 'style', 'font', 'a', 'script']);
+      /* Keep track of all possible SVG and MathML tags
+       * so that we can perform the namespace checks
+       * correctly. */
+
+      const ALL_SVG_TAGS = addToSet({}, svg$1);
+      addToSet(ALL_SVG_TAGS, svgFilters);
+      addToSet(ALL_SVG_TAGS, svgDisallowed);
+      const ALL_MATHML_TAGS = addToSet({}, mathMl$1);
+      addToSet(ALL_MATHML_TAGS, mathMlDisallowed);
+      /**
+       *
+       *
+       * @param  {Element} element a DOM element whose namespace is being checked
+       * @returns {boolean} Return false if the element has a
+       *  namespace that a spec-compliant parser would never
+       *  return. Return true otherwise.
+       */
+
+      const _checkValidNamespace = function _checkValidNamespace(element) {
+        let parent = getParentNode(element); // In JSDOM, if we're inside shadow DOM, then parentNode
+        // can be null. We just simulate parent in this case.
+
+        if (!parent || !parent.tagName) {
+          parent = {
+            namespaceURI: NAMESPACE,
+            tagName: 'template'
+          };
+        }
+
+        const tagName = stringToLowerCase(element.tagName);
+        const parentTagName = stringToLowerCase(parent.tagName);
+
+        if (!ALLOWED_NAMESPACES[element.namespaceURI]) {
+          return false;
+        }
+
+        if (element.namespaceURI === SVG_NAMESPACE) {
+          // The only way to switch from HTML namespace to SVG
+          // is via <svg>. If it happens via any other tag, then
+          // it should be killed.
+          if (parent.namespaceURI === HTML_NAMESPACE) {
+            return tagName === 'svg';
+          } // The only way to switch from MathML to SVG is via`
+          // svg if parent is either <annotation-xml> or MathML
+          // text integration points.
+
+
+          if (parent.namespaceURI === MATHML_NAMESPACE) {
+            return tagName === 'svg' && (parentTagName === 'annotation-xml' || MATHML_TEXT_INTEGRATION_POINTS[parentTagName]);
+          } // We only allow elements that are defined in SVG
+          // spec. All others are disallowed in SVG namespace.
+
+
+          return Boolean(ALL_SVG_TAGS[tagName]);
+        }
+
+        if (element.namespaceURI === MATHML_NAMESPACE) {
+          // The only way to switch from HTML namespace to MathML
+          // is via <math>. If it happens via any other tag, then
+          // it should be killed.
+          if (parent.namespaceURI === HTML_NAMESPACE) {
+            return tagName === 'math';
+          } // The only way to switch from SVG to MathML is via
+          // <math> and HTML integration points
+
+
+          if (parent.namespaceURI === SVG_NAMESPACE) {
+            return tagName === 'math' && HTML_INTEGRATION_POINTS[parentTagName];
+          } // We only allow elements that are defined in MathML
+          // spec. All others are disallowed in MathML namespace.
+
+
+          return Boolean(ALL_MATHML_TAGS[tagName]);
+        }
+
+        if (element.namespaceURI === HTML_NAMESPACE) {
+          // The only way to switch from SVG to HTML is via
+          // HTML integration points, and from MathML to HTML
+          // is via MathML text integration points
+          if (parent.namespaceURI === SVG_NAMESPACE && !HTML_INTEGRATION_POINTS[parentTagName]) {
+            return false;
+          }
+
+          if (parent.namespaceURI === MATHML_NAMESPACE && !MATHML_TEXT_INTEGRATION_POINTS[parentTagName]) {
+            return false;
+          } // We disallow tags that are specific for MathML
+          // or SVG and should never appear in HTML namespace
+
+
+          return !ALL_MATHML_TAGS[tagName] && (COMMON_SVG_AND_HTML_ELEMENTS[tagName] || !ALL_SVG_TAGS[tagName]);
+        } // For XHTML and XML documents that support custom namespaces
+
+
+        if (PARSER_MEDIA_TYPE === 'application/xhtml+xml' && ALLOWED_NAMESPACES[element.namespaceURI]) {
+          return true;
+        } // The code should never reach this place (this means
+        // that the element somehow got namespace that is not
+        // HTML, SVG, MathML or allowed via ALLOWED_NAMESPACES).
+        // Return false just in case.
+
+
+        return false;
+      };
+      /**
+       * _forceRemove
+       *
+       * @param  {Node} node a DOM node
+       */
+
+
+      const _forceRemove = function _forceRemove(node) {
+        arrayPush(DOMPurify.removed, {
+          element: node
+        });
+
+        try {
+          // eslint-disable-next-line unicorn/prefer-dom-node-remove
+          node.parentNode.removeChild(node);
+        } catch (_) {
+          node.remove();
+        }
+      };
+      /**
+       * _removeAttribute
+       *
+       * @param  {String} name an Attribute name
+       * @param  {Node} node a DOM node
+       */
+
+
+      const _removeAttribute = function _removeAttribute(name, node) {
+        try {
+          arrayPush(DOMPurify.removed, {
+            attribute: node.getAttributeNode(name),
+            from: node
+          });
+        } catch (_) {
+          arrayPush(DOMPurify.removed, {
+            attribute: null,
+            from: node
+          });
+        }
+
+        node.removeAttribute(name); // We void attribute values for unremovable "is"" attributes
+
+        if (name === 'is' && !ALLOWED_ATTR[name]) {
+          if (RETURN_DOM || RETURN_DOM_FRAGMENT) {
+            try {
+              _forceRemove(node);
+            } catch (_) {}
+          } else {
+            try {
+              node.setAttribute(name, '');
+            } catch (_) {}
+          }
+        }
+      };
+      /**
+       * _initDocument
+       *
+       * @param  {String} dirty a string of dirty markup
+       * @return {Document} a DOM, filled with the dirty markup
+       */
+
+
+      const _initDocument = function _initDocument(dirty) {
+        /* Create a HTML document */
+        let doc;
+        let leadingWhitespace;
+
+        if (FORCE_BODY) {
+          dirty = '<remove></remove>' + dirty;
+        } else {
+          /* If FORCE_BODY isn't used, leading whitespace needs to be preserved manually */
+          const matches = stringMatch(dirty, /^[\r\n\t ]+/);
+          leadingWhitespace = matches && matches[0];
+        }
+
+        if (PARSER_MEDIA_TYPE === 'application/xhtml+xml' && NAMESPACE === HTML_NAMESPACE) {
+          // Root of XHTML doc must contain xmlns declaration (see https://www.w3.org/TR/xhtml1/normative.html#strict)
+          dirty = '<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body>' + dirty + '</body></html>';
+        }
+
+        const dirtyPayload = trustedTypesPolicy ? trustedTypesPolicy.createHTML(dirty) : dirty;
+        /*
+         * Use the DOMParser API by default, fallback later if needs be
+         * DOMParser not work for svg when has multiple root element.
+         */
+
+        if (NAMESPACE === HTML_NAMESPACE) {
+          try {
+            doc = new DOMParser().parseFromString(dirtyPayload, PARSER_MEDIA_TYPE);
+          } catch (_) {}
+        }
+        /* Use createHTMLDocument in case DOMParser is not available */
+
+
+        if (!doc || !doc.documentElement) {
+          doc = implementation.createDocument(NAMESPACE, 'template', null);
+
+          try {
+            doc.documentElement.innerHTML = IS_EMPTY_INPUT ? emptyHTML : dirtyPayload;
+          } catch (_) {// Syntax error if dirtyPayload is invalid xml
+          }
+        }
+
+        const body = doc.body || doc.documentElement;
+
+        if (dirty && leadingWhitespace) {
+          body.insertBefore(document.createTextNode(leadingWhitespace), body.childNodes[0] || null);
+        }
+        /* Work on whole document or just its body */
+
+
+        if (NAMESPACE === HTML_NAMESPACE) {
+          return getElementsByTagName.call(doc, WHOLE_DOCUMENT ? 'html' : 'body')[0];
+        }
+
+        return WHOLE_DOCUMENT ? doc.documentElement : body;
+      };
+      /**
+       * _createIterator
+       *
+       * @param  {Document} root document/fragment to create iterator for
+       * @return {Iterator} iterator instance
+       */
+
+
+      const _createIterator = function _createIterator(root) {
+        return createNodeIterator.call(root.ownerDocument || root, root, // eslint-disable-next-line no-bitwise
+        NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_TEXT, null, false);
+      };
+      /**
+       * _isClobbered
+       *
+       * @param  {Node} elm element to check for clobbering attacks
+       * @return {Boolean} true if clobbered, false if safe
+       */
+
+
+      const _isClobbered = function _isClobbered(elm) {
+        return elm instanceof HTMLFormElement && (typeof elm.nodeName !== 'string' || typeof elm.textContent !== 'string' || typeof elm.removeChild !== 'function' || !(elm.attributes instanceof NamedNodeMap) || typeof elm.removeAttribute !== 'function' || typeof elm.setAttribute !== 'function' || typeof elm.namespaceURI !== 'string' || typeof elm.insertBefore !== 'function' || typeof elm.hasChildNodes !== 'function');
+      };
+      /**
+       * _isNode
+       *
+       * @param  {Node} obj object to check whether it's a DOM node
+       * @return {Boolean} true is object is a DOM node
+       */
+
+
+      const _isNode = function _isNode(object) {
+        return typeof Node === 'object' ? object instanceof Node : object && typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string';
+      };
+      /**
+       * _executeHook
+       * Execute user configurable hooks
+       *
+       * @param  {String} entryPoint  Name of the hook's entry point
+       * @param  {Node} currentNode node to work on with the hook
+       * @param  {Object} data additional hook parameters
+       */
+
+
+      const _executeHook = function _executeHook(entryPoint, currentNode, data) {
+        if (!hooks[entryPoint]) {
+          return;
+        }
+
+        arrayForEach(hooks[entryPoint], hook => {
+          hook.call(DOMPurify, currentNode, data, CONFIG);
+        });
+      };
+      /**
+       * _sanitizeElements
+       *
+       * @protect nodeName
+       * @protect textContent
+       * @protect removeChild
+       *
+       * @param   {Node} currentNode to check for permission to exist
+       * @return  {Boolean} true if node was killed, false if left alive
+       */
+
+
+      const _sanitizeElements = function _sanitizeElements(currentNode) {
+        let content;
+        /* Execute a hook if present */
+
+        _executeHook('beforeSanitizeElements', currentNode, null);
+        /* Check if element is clobbered or can clobber */
+
+
+        if (_isClobbered(currentNode)) {
+          _forceRemove(currentNode);
+
+          return true;
+        }
+        /* Now let's check the element's type and name */
+
+
+        const tagName = transformCaseFunc(currentNode.nodeName);
+        /* Execute a hook if present */
+
+        _executeHook('uponSanitizeElement', currentNode, {
+          tagName,
+          allowedTags: ALLOWED_TAGS
+        });
+        /* Detect mXSS attempts abusing namespace confusion */
+
+
+        if (currentNode.hasChildNodes() && !_isNode(currentNode.firstElementChild) && (!_isNode(currentNode.content) || !_isNode(currentNode.content.firstElementChild)) && regExpTest(/<[/\w]/g, currentNode.innerHTML) && regExpTest(/<[/\w]/g, currentNode.textContent)) {
+          _forceRemove(currentNode);
+
+          return true;
+        }
+        /* Remove element if anything forbids its presence */
+
+
+        if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) {
+          /* Check if we have a custom element to handle */
+          if (!FORBID_TAGS[tagName] && _basicCustomElementTest(tagName)) {
+            if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, tagName)) return false;
+            if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(tagName)) return false;
+          }
+          /* Keep content except for bad-listed elements */
+
+
+          if (KEEP_CONTENT && !FORBID_CONTENTS[tagName]) {
+            const parentNode = getParentNode(currentNode) || currentNode.parentNode;
+            const childNodes = getChildNodes(currentNode) || currentNode.childNodes;
+
+            if (childNodes && parentNode) {
+              const childCount = childNodes.length;
+
+              for (let i = childCount - 1; i >= 0; --i) {
+                parentNode.insertBefore(cloneNode(childNodes[i], true), getNextSibling(currentNode));
+              }
+            }
+          }
+
+          _forceRemove(currentNode);
+
+          return true;
+        }
+        /* Check whether element has a valid namespace */
+
+
+        if (currentNode instanceof Element && !_checkValidNamespace(currentNode)) {
+          _forceRemove(currentNode);
+
+          return true;
+        }
+        /* Make sure that older browsers don't get noscript mXSS */
+
+
+        if ((tagName === 'noscript' || tagName === 'noembed') && regExpTest(/<\/no(script|embed)/i, currentNode.innerHTML)) {
+          _forceRemove(currentNode);
+
+          return true;
+        }
+        /* Sanitize element content to be template-safe */
+
+
+        if (SAFE_FOR_TEMPLATES && currentNode.nodeType === 3) {
+          /* Get the element's text content */
+          content = currentNode.textContent;
+          content = stringReplace(content, MUSTACHE_EXPR, ' ');
+          content = stringReplace(content, ERB_EXPR, ' ');
+          content = stringReplace(content, TMPLIT_EXPR, ' ');
+
+          if (currentNode.textContent !== content) {
+            arrayPush(DOMPurify.removed, {
+              element: currentNode.cloneNode()
+            });
+            currentNode.textContent = content;
+          }
+        }
+        /* Execute a hook if present */
+
+
+        _executeHook('afterSanitizeElements', currentNode, null);
+
+        return false;
+      };
+      /**
+       * _isValidAttribute
+       *
+       * @param  {string} lcTag Lowercase tag name of containing element.
+       * @param  {string} lcName Lowercase attribute name.
+       * @param  {string} value Attribute value.
+       * @return {Boolean} Returns true if `value` is valid, otherwise false.
+       */
+      // eslint-disable-next-line complexity
+
+
+      const _isValidAttribute = function _isValidAttribute(lcTag, lcName, value) {
+        /* Make sure attribute cannot clobber */
+        if (SANITIZE_DOM && (lcName === 'id' || lcName === 'name') && (value in document || value in formElement)) {
+          return false;
+        }
+        /* Allow valid data-* attributes: At least one character after "-"
+            (https://html.spec.whatwg.org/multipage/dom.html#embedding-custom-non-visible-data-with-the-data-*-attributes)
+            XML-compatible (https://html.spec.whatwg.org/multipage/infrastructure.html#xml-compatible and http://www.w3.org/TR/xml/#d0e804)
+            We don't need to check the value; it's always URI safe. */
+
+
+        if (ALLOW_DATA_ATTR && !FORBID_ATTR[lcName] && regExpTest(DATA_ATTR, lcName)) ; else if (ALLOW_ARIA_ATTR && regExpTest(ARIA_ATTR, lcName)) ; else if (!ALLOWED_ATTR[lcName] || FORBID_ATTR[lcName]) {
+          if ( // First condition does a very basic check if a) it's basically a valid custom element tagname AND
+          // b) if the tagName passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.tagNameCheck
+          // and c) if the attribute name passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.attributeNameCheck
+          _basicCustomElementTest(lcTag) && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, lcTag) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(lcTag)) && (CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.attributeNameCheck, lcName) || CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.attributeNameCheck(lcName)) || // Alternative, second condition checks if it's an `is`-attribute, AND
+          // the value passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.tagNameCheck
+          lcName === 'is' && CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, value) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(value))) ; else {
+            return false;
+          }
+          /* Check value is safe. First, is attr inert? If so, is safe */
+
+        } else if (URI_SAFE_ATTRIBUTES[lcName]) ; else if (regExpTest(IS_ALLOWED_URI$1, stringReplace(value, ATTR_WHITESPACE, ''))) ; else if ((lcName === 'src' || lcName === 'xlink:href' || lcName === 'href') && lcTag !== 'script' && stringIndexOf(value, 'data:') === 0 && DATA_URI_TAGS[lcTag]) ; else if (ALLOW_UNKNOWN_PROTOCOLS && !regExpTest(IS_SCRIPT_OR_DATA, stringReplace(value, ATTR_WHITESPACE, ''))) ; else if (value) {
+          return false;
+        } else ;
+
+        return true;
+      };
+      /**
+       * _basicCustomElementCheck
+       * checks if at least one dash is included in tagName, and it's not the first char
+       * for more sophisticated checking see https://github.com/sindresorhus/validate-element-name
+       * @param {string} tagName name of the tag of the node to sanitize
+       */
+
+
+      const _basicCustomElementTest = function _basicCustomElementTest(tagName) {
+        return tagName.indexOf('-') > 0;
+      };
+      /**
+       * _sanitizeAttributes
+       *
+       * @protect attributes
+       * @protect nodeName
+       * @protect removeAttribute
+       * @protect setAttribute
+       *
+       * @param  {Node} currentNode to sanitize
+       */
+
+
+      const _sanitizeAttributes = function _sanitizeAttributes(currentNode) {
+        let attr;
+        let value;
+        let lcName;
+        let l;
+        /* Execute a hook if present */
+
+        _executeHook('beforeSanitizeAttributes', currentNode, null);
+
+        const {
+          attributes
+        } = currentNode;
+        /* Check if we have attributes; if not we might have a text node */
+
+        if (!attributes) {
+          return;
+        }
+
+        const hookEvent = {
+          attrName: '',
+          attrValue: '',
+          keepAttr: true,
+          allowedAttributes: ALLOWED_ATTR
+        };
+        l = attributes.length;
+        /* Go backwards over all attributes; safely remove bad ones */
+
+        while (l--) {
+          attr = attributes[l];
+          const {
+            name,
+            namespaceURI
+          } = attr;
+          value = name === 'value' ? attr.value : stringTrim(attr.value);
+          lcName = transformCaseFunc(name);
+          /* Execute a hook if present */
+
+          hookEvent.attrName = lcName;
+          hookEvent.attrValue = value;
+          hookEvent.keepAttr = true;
+          hookEvent.forceKeepAttr = undefined; // Allows developers to see this is a property they can set
+
+          _executeHook('uponSanitizeAttribute', currentNode, hookEvent);
+
+          value = hookEvent.attrValue;
+          /* Did the hooks approve of the attribute? */
+
+          if (hookEvent.forceKeepAttr) {
+            continue;
+          }
+          /* Remove attribute */
+
+
+          _removeAttribute(name, currentNode);
+          /* Did the hooks approve of the attribute? */
+
+
+          if (!hookEvent.keepAttr) {
+            continue;
+          }
+          /* Work around a security issue in jQuery 3.0 */
+
+
+          if (!ALLOW_SELF_CLOSE_IN_ATTR && regExpTest(/\/>/i, value)) {
+            _removeAttribute(name, currentNode);
+
+            continue;
+          }
+          /* Sanitize attribute content to be template-safe */
+
+
+          if (SAFE_FOR_TEMPLATES) {
+            value = stringReplace(value, MUSTACHE_EXPR, ' ');
+            value = stringReplace(value, ERB_EXPR, ' ');
+            value = stringReplace(value, TMPLIT_EXPR, ' ');
+          }
+          /* Is `value` valid for this attribute? */
+
+
+          const lcTag = transformCaseFunc(currentNode.nodeName);
+
+          if (!_isValidAttribute(lcTag, lcName, value)) {
+            continue;
+          }
+          /* Full DOM Clobbering protection via namespace isolation,
+           * Prefix id and name attributes with `user-content-`
+           */
+
+
+          if (SANITIZE_NAMED_PROPS && (lcName === 'id' || lcName === 'name')) {
+            // Remove the attribute with this value
+            _removeAttribute(name, currentNode); // Prefix the value and later re-create the attribute with the sanitized value
+
+
+            value = SANITIZE_NAMED_PROPS_PREFIX + value;
+          }
+          /* Handle attributes that require Trusted Types */
+
+
+          if (trustedTypesPolicy && typeof trustedTypes === 'object' && typeof trustedTypes.getAttributeType === 'function') {
+            if (namespaceURI) ; else {
+              switch (trustedTypes.getAttributeType(lcTag, lcName)) {
+                case 'TrustedHTML':
+                  {
+                    value = trustedTypesPolicy.createHTML(value);
+                    break;
+                  }
+
+                case 'TrustedScriptURL':
+                  {
+                    value = trustedTypesPolicy.createScriptURL(value);
+                    break;
+                  }
+              }
+            }
+          }
+          /* Handle invalid data-* attribute set by try-catching it */
+
+
+          try {
+            if (namespaceURI) {
+              currentNode.setAttributeNS(namespaceURI, name, value);
+            } else {
+              /* Fallback to setAttribute() for browser-unrecognized namespaces e.g. "x-schema". */
+              currentNode.setAttribute(name, value);
+            }
+
+            arrayPop(DOMPurify.removed);
+          } catch (_) {}
+        }
+        /* Execute a hook if present */
+
+
+        _executeHook('afterSanitizeAttributes', currentNode, null);
+      };
+      /**
+       * _sanitizeShadowDOM
+       *
+       * @param  {DocumentFragment} fragment to iterate over recursively
+       */
+
+
+      const _sanitizeShadowDOM = function _sanitizeShadowDOM(fragment) {
+        let shadowNode;
+
+        const shadowIterator = _createIterator(fragment);
+        /* Execute a hook if present */
+
+
+        _executeHook('beforeSanitizeShadowDOM', fragment, null);
+
+        while (shadowNode = shadowIterator.nextNode()) {
+          /* Execute a hook if present */
+          _executeHook('uponSanitizeShadowNode', shadowNode, null);
+          /* Sanitize tags and elements */
+
+
+          if (_sanitizeElements(shadowNode)) {
+            continue;
+          }
+          /* Deep shadow DOM detected */
+
+
+          if (shadowNode.content instanceof DocumentFragment) {
+            _sanitizeShadowDOM(shadowNode.content);
+          }
+          /* Check attributes, sanitize if necessary */
+
+
+          _sanitizeAttributes(shadowNode);
+        }
+        /* Execute a hook if present */
+
+
+        _executeHook('afterSanitizeShadowDOM', fragment, null);
+      };
+      /**
+       * Sanitize
+       * Public method providing core sanitation functionality
+       *
+       * @param {String|Node} dirty string or DOM node
+       * @param {Object} configuration object
+       */
+      // eslint-disable-next-line complexity
+
+
+      DOMPurify.sanitize = function (dirty) {
+        let cfg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        let body;
+        let importedNode;
+        let currentNode;
+        let returnNode;
+        /* Make sure we have a string to sanitize.
+          DO NOT return early, as this will return the wrong type if
+          the user has requested a DOM object rather than a string */
+
+        IS_EMPTY_INPUT = !dirty;
+
+        if (IS_EMPTY_INPUT) {
+          dirty = '<!-->';
+        }
+        /* Stringify, in case dirty is an object */
+
+
+        if (typeof dirty !== 'string' && !_isNode(dirty)) {
+          if (typeof dirty.toString === 'function') {
+            dirty = dirty.toString();
+
+            if (typeof dirty !== 'string') {
+              throw typeErrorCreate('dirty is not a string, aborting');
+            }
+          } else {
+            throw typeErrorCreate('toString is not a function');
+          }
+        }
+        /* Return dirty HTML if DOMPurify cannot run */
+
+
+        if (!DOMPurify.isSupported) {
+          return dirty;
+        }
+        /* Assign config vars */
+
+
+        if (!SET_CONFIG) {
+          _parseConfig(cfg);
+        }
+        /* Clean up removed elements */
+
+
+        DOMPurify.removed = [];
+        /* Check if dirty is correctly typed for IN_PLACE */
+
+        if (typeof dirty === 'string') {
+          IN_PLACE = false;
+        }
+
+        if (IN_PLACE) {
+          /* Do some early pre-sanitization to avoid unsafe root nodes */
+          if (dirty.nodeName) {
+            const tagName = transformCaseFunc(dirty.nodeName);
+
+            if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) {
+              throw typeErrorCreate('root node is forbidden and cannot be sanitized in-place');
+            }
+          }
+        } else if (dirty instanceof Node) {
+          /* If dirty is a DOM element, append to an empty document to avoid
+             elements being stripped by the parser */
+          body = _initDocument('<!---->');
+          importedNode = body.ownerDocument.importNode(dirty, true);
+
+          if (importedNode.nodeType === 1 && importedNode.nodeName === 'BODY') {
+            /* Node is already a body, use as is */
+            body = importedNode;
+          } else if (importedNode.nodeName === 'HTML') {
+            body = importedNode;
+          } else {
+            // eslint-disable-next-line unicorn/prefer-dom-node-append
+            body.appendChild(importedNode);
+          }
+        } else {
+          /* Exit directly if we have nothing to do */
+          if (!RETURN_DOM && !SAFE_FOR_TEMPLATES && !WHOLE_DOCUMENT && // eslint-disable-next-line unicorn/prefer-includes
+          dirty.indexOf('<') === -1) {
+            return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(dirty) : dirty;
+          }
+          /* Initialize the document to work on */
+
+
+          body = _initDocument(dirty);
+          /* Check we have a DOM node from the data */
+
+          if (!body) {
+            return RETURN_DOM ? null : RETURN_TRUSTED_TYPE ? emptyHTML : '';
+          }
+        }
+        /* Remove first element node (ours) if FORCE_BODY is set */
+
+
+        if (body && FORCE_BODY) {
+          _forceRemove(body.firstChild);
+        }
+        /* Get node iterator */
+
+
+        const nodeIterator = _createIterator(IN_PLACE ? dirty : body);
+        /* Now start iterating over the created document */
+
+
+        while (currentNode = nodeIterator.nextNode()) {
+          /* Sanitize tags and elements */
+          if (_sanitizeElements(currentNode)) {
+            continue;
+          }
+          /* Shadow DOM detected, sanitize it */
+
+
+          if (currentNode.content instanceof DocumentFragment) {
+            _sanitizeShadowDOM(currentNode.content);
+          }
+          /* Check attributes, sanitize if necessary */
+
+
+          _sanitizeAttributes(currentNode);
+        }
+        /* If we sanitized `dirty` in-place, return it. */
+
+
+        if (IN_PLACE) {
+          return dirty;
+        }
+        /* Return sanitized string or DOM */
+
+
+        if (RETURN_DOM) {
+          if (RETURN_DOM_FRAGMENT) {
+            returnNode = createDocumentFragment.call(body.ownerDocument);
+
+            while (body.firstChild) {
+              // eslint-disable-next-line unicorn/prefer-dom-node-append
+              returnNode.appendChild(body.firstChild);
+            }
+          } else {
+            returnNode = body;
+          }
+
+          if (ALLOWED_ATTR.shadowroot || ALLOWED_ATTR.shadowrootmod) {
+            /*
+              AdoptNode() is not used because internal state is not reset
+              (e.g. the past names map of a HTMLFormElement), this is safe
+              in theory but we would rather not risk another attack vector.
+              The state that is cloned by importNode() is explicitly defined
+              by the specs.
+            */
+            returnNode = importNode.call(originalDocument, returnNode, true);
+          }
+
+          return returnNode;
+        }
+
+        let serializedHTML = WHOLE_DOCUMENT ? body.outerHTML : body.innerHTML;
+        /* Serialize doctype if allowed */
+
+        if (WHOLE_DOCUMENT && ALLOWED_TAGS['!doctype'] && body.ownerDocument && body.ownerDocument.doctype && body.ownerDocument.doctype.name && regExpTest(DOCTYPE_NAME, body.ownerDocument.doctype.name)) {
+          serializedHTML = '<!DOCTYPE ' + body.ownerDocument.doctype.name + '>\n' + serializedHTML;
+        }
+        /* Sanitize final string template-safe */
+
+
+        if (SAFE_FOR_TEMPLATES) {
+          serializedHTML = stringReplace(serializedHTML, MUSTACHE_EXPR, ' ');
+          serializedHTML = stringReplace(serializedHTML, ERB_EXPR, ' ');
+          serializedHTML = stringReplace(serializedHTML, TMPLIT_EXPR, ' ');
+        }
+
+        return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(serializedHTML) : serializedHTML;
+      };
+      /**
+       * Public method to set the configuration once
+       * setConfig
+       *
+       * @param {Object} cfg configuration object
+       */
+
+
+      DOMPurify.setConfig = function (cfg) {
+        _parseConfig(cfg);
+
+        SET_CONFIG = true;
+      };
+      /**
+       * Public method to remove the configuration
+       * clearConfig
+       *
+       */
+
+
+      DOMPurify.clearConfig = function () {
+        CONFIG = null;
+        SET_CONFIG = false;
+      };
+      /**
+       * Public method to check if an attribute value is valid.
+       * Uses last set config, if any. Otherwise, uses config defaults.
+       * isValidAttribute
+       *
+       * @param  {string} tag Tag name of containing element.
+       * @param  {string} attr Attribute name.
+       * @param  {string} value Attribute value.
+       * @return {Boolean} Returns true if `value` is valid. Otherwise, returns false.
+       */
+
+
+      DOMPurify.isValidAttribute = function (tag, attr, value) {
+        /* Initialize shared config vars if necessary. */
+        if (!CONFIG) {
+          _parseConfig({});
+        }
+
+        const lcTag = transformCaseFunc(tag);
+        const lcName = transformCaseFunc(attr);
+        return _isValidAttribute(lcTag, lcName, value);
+      };
+      /**
+       * AddHook
+       * Public method to add DOMPurify hooks
+       *
+       * @param {String} entryPoint entry point for the hook to add
+       * @param {Function} hookFunction function to execute
+       */
+
+
+      DOMPurify.addHook = function (entryPoint, hookFunction) {
+        if (typeof hookFunction !== 'function') {
+          return;
+        }
+
+        hooks[entryPoint] = hooks[entryPoint] || [];
+        arrayPush(hooks[entryPoint], hookFunction);
+      };
+      /**
+       * RemoveHook
+       * Public method to remove a DOMPurify hook at a given entryPoint
+       * (pops it from the stack of hooks if more are present)
+       *
+       * @param {String} entryPoint entry point for the hook to remove
+       * @return {Function} removed(popped) hook
+       */
+
+
+      DOMPurify.removeHook = function (entryPoint) {
+        if (hooks[entryPoint]) {
+          return arrayPop(hooks[entryPoint]);
+        }
+      };
+      /**
+       * RemoveHooks
+       * Public method to remove all DOMPurify hooks at a given entryPoint
+       *
+       * @param  {String} entryPoint entry point for the hooks to remove
+       */
+
+
+      DOMPurify.removeHooks = function (entryPoint) {
+        if (hooks[entryPoint]) {
+          hooks[entryPoint] = [];
+        }
+      };
+      /**
+       * RemoveAllHooks
+       * Public method to remove all DOMPurify hooks
+       *
+       */
+
+
+      DOMPurify.removeAllHooks = function () {
+        hooks = {};
+      };
+
+      return DOMPurify;
+    }
+
+    var purify = createDOMPurify();
 
     let LMSCardDetailsModal = class LMSCardDetailsModal extends s {
         constructor() {
@@ -3082,7 +4711,7 @@ ${value}</textarea
             return x `
       <div class="backdrop" ?hidden=${!this.isOpen}></div>
       <div
-        class="modal fade ${o$1({
+        class="modal fade ${o$2({
             "d-block": this.isOpen,
             show: this.isOpen,
         })}"
@@ -3133,7 +4762,7 @@ ${value}</textarea
                       <span>${litFontawesome_2(faInfoCircle)}</span>
                       <strong>${__("Description")}</strong>
                     </p>
-                    <p>${description}</p>
+                    <p>${o$1(purify.sanitize(description !== null && description !== void 0 ? description : ""))}</p>
                   </div>
                 </div>
                 <div class="col">
@@ -3243,10 +4872,10 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSCardDetailsModal.prototype, "event", void 0);
     __decorate([
-        e$2({ type: Boolean })
+        e$3({ type: Boolean })
     ], LMSCardDetailsModal.prototype, "isOpen", void 0);
     __decorate([
         t$1()
@@ -3264,7 +4893,7 @@ ${value}</textarea
         i$2(".close")
     ], LMSCardDetailsModal.prototype, "closeButton", void 0);
     LMSCardDetailsModal = __decorate([
-        e$3("lms-card-details-modal")
+        e$4("lms-card-details-modal")
     ], LMSCardDetailsModal);
     var LMSCardDetailsModal$1 = LMSCardDetailsModal;
 
@@ -3372,7 +5001,7 @@ ${value}</textarea
         render() {
             return x `
       <div
-        class="btn-group ${o$1({
+        class="btn-group ${o$2({
             "d-none": this.isHidden,
             "w-100": this.shouldFold,
         })}"
@@ -3380,7 +5009,7 @@ ${value}</textarea
       >
         <button
           type="button"
-          class="btn btn-outline-secondary dropdown-toggle ${o$1({
+          class="btn btn-outline-secondary dropdown-toggle ${o$2({
             "btn-sm": this.shouldFold,
         })}"
           aria-haspopup="true"
@@ -3390,7 +5019,7 @@ ${value}</textarea
           ${this.label}
         </button>
         <div
-          class="dropdown-menu p-2 ${o$1({ show: this.isOpen })}"
+          class="dropdown-menu p-2 ${o$2({ show: this.isOpen })}"
           tabindex="0"
         >
           <slot></slot>
@@ -3401,22 +5030,22 @@ ${value}</textarea
     };
     LMSDropdown.styles = [bootstrapStyles];
     __decorate([
-        e$2({ type: Boolean })
+        e$3({ type: Boolean })
     ], LMSDropdown.prototype, "isHidden", void 0);
     __decorate([
-        e$2({ type: Boolean })
+        e$3({ type: Boolean })
     ], LMSDropdown.prototype, "shouldFold", void 0);
     __decorate([
-        e$2({ type: Boolean })
+        e$3({ type: Boolean })
     ], LMSDropdown.prototype, "isOpen", void 0);
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSDropdown.prototype, "label", void 0);
     __decorate([
         i$2(".dropdown-menu")
     ], LMSDropdown.prototype, "dropdownMenu", void 0);
     LMSDropdown = __decorate([
-        e$3("lms-dropdown")
+        e$4("lms-dropdown")
     ], LMSDropdown);
     var LMSDropdown$1 = LMSDropdown;
 
@@ -3720,7 +5349,7 @@ ${value}</textarea
             return x `
       <div class="card" @change=${this.handleChange}>
         <div
-          class="card-header container-fluid ${o$1({
+          class="card-header container-fluid ${o$2({
             "justify-content-between": !this.isHidden,
             "justify-content-center": this.isHidden,
             "flex-column": this.shouldFold,
@@ -3728,12 +5357,12 @@ ${value}</textarea
         >
           <div class="row">
             <div
-              class="col-1 ${o$1({
+              class="col-1 ${o$2({
             "d-none": this.shouldFold,
         })}"
             >
               <h5
-                class="nobr ${o$1({
+                class="nobr ${o$2({
             "d-inline": !this.shouldFold,
         })}"
               >
@@ -3742,7 +5371,7 @@ ${value}</textarea
             </div>
 
             <div
-              class=${o$1({
+              class=${o$2({
             "col-3": !this.shouldFold,
             "mb-3": this.shouldFold,
             "col-12": this.shouldFold,
@@ -3755,13 +5384,13 @@ ${value}</textarea
             </div>
 
             <div
-              class=${o$1({
+              class=${o$2({
             col: !this.shouldFold,
             "col-12": this.shouldFold,
         })}
             >
               <div
-                class="btn-group ${o$1({
+                class="btn-group ${o$2({
             "d-none": !this.shouldFold,
             "w-100": this.shouldFold,
         })}"
@@ -3786,7 +5415,7 @@ ${value}</textarea
               </div>
 
               <div
-                class="dropdowns ${o$1({
+                class="dropdowns ${o$2({
             "d-flex": !this.shouldFold,
             "flex-wrap": !this.shouldFold,
             "gap-3": !this.shouldFold,
@@ -3798,7 +5427,7 @@ ${value}</textarea
                   .label=${__("Sort by")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  ${o$2(["start_time", "end_time", "event_type", "location"], (value, index) => x `
+                  ${o$3(["start_time", "end_time", "event_type", "location"], (value, index) => x `
                       <div class="dropdown-item">
                         <input
                           type="radio"
@@ -3818,7 +5447,7 @@ ${value}</textarea
                   .label=${__("Event Type")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  ${o$2(this.facets.eventTypeIds, (eventTypeId) => {
+                  ${o$3(this.facets.eventTypeIds, (eventTypeId) => {
             var _a;
             return x `
                       <div class="dropdown-item">
@@ -3845,7 +5474,7 @@ ${value}</textarea
                   .label=${__("Target Group")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  ${o$2(this.facets.targetGroupIds, (targetGroupId) => {
+                  ${o$3(this.facets.targetGroupIds, (targetGroupId) => {
             var _a;
             return x `
                       <div class="dropdown-item">
@@ -3871,7 +5500,7 @@ ${value}</textarea
                   .shouldFold=${this.shouldFold}
                   .label=${__("Age")}
                   @toggle=${this.handleDropdownToggle}
-                  class=${o$1({
+                  class=${o$2({
             "d-none": !this.getSettingsValueForToggle("opac_filters_age_enabled"),
         })}
                 >
@@ -3906,7 +5535,7 @@ ${value}</textarea
                   .shouldFold=${this.shouldFold}
                   .label=${__("Registration & Dates")}
                   @toggle=${this.handleDropdownToggle}
-                  class=${o$1({
+                  class=${o$2({
             "d-none": !this.getSettingsValueForToggle("opac_filters_registration_and_dates_enabled"),
         })}
                 >
@@ -3945,7 +5574,7 @@ ${value}</textarea
                   .label=${__("Location")}
                   @toggle=${this.handleDropdownToggle}
                 >
-                  ${o$2(this.facets.locationIds, (locationId) => {
+                  ${o$3(this.facets.locationIds, (locationId) => {
             var _a;
             return x ` <div class="dropdown-item">
                         <input
@@ -3969,7 +5598,7 @@ ${value}</textarea
                   .shouldFold=${this.shouldFold}
                   .label=${__("Fee")}
                   @toggle=${this.handleDropdownToggle}
-                  class=${o$1({
+                  class=${o$2({
             "d-none": !this.getSettingsValueForToggle("opac_filters_fee_enabled"),
         })}
                 >
@@ -4010,16 +5639,16 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSEventsFilter.prototype, "events", void 0);
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSEventsFilter.prototype, "facetsStrategy", void 0);
     __decorate([
-        e$2({ type: Boolean })
+        e$3({ type: Boolean })
     ], LMSEventsFilter.prototype, "isHidden", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSEventsFilter.prototype, "settings", void 0);
     __decorate([
         t$1()
@@ -4037,13 +5666,13 @@ ${value}</textarea
         t$1()
     ], LMSEventsFilter.prototype, "activeFilters", void 0);
     __decorate([
-        e$1("input")
+        e$2("input")
     ], LMSEventsFilter.prototype, "inputs", void 0);
     __decorate([
-        e$1("lms-dropdown")
+        e$2("lms-dropdown")
     ], LMSEventsFilter.prototype, "lmsDropdowns", void 0);
     LMSEventsFilter = __decorate([
-        e$3("lms-events-filter")
+        e$4("lms-events-filter")
     ], LMSEventsFilter);
     var LMSEventsFilter$1 = LMSEventsFilter;
 
@@ -4085,7 +5714,7 @@ ${value}</textarea
             ${this.items.map((item) => {
             const matches = this.isUrlMatchingSearchParams(item.url, this.currentSearchParams);
             return x `
-                <li class=${o$1({ "nav-item": true, active: matches })}>
+                <li class=${o$2({ "nav-item": true, active: matches })}>
                   <a class="nav-link" href=${item.url}>
                     ${litFontawesome_2(item.icon)} ${item.name}
                     ${matches
@@ -4117,19 +5746,19 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSFloatingMenu.prototype, "brand", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSFloatingMenu.prototype, "items", void 0);
     __decorate([
-        e$2({ type: URLSearchParams, attribute: false })
+        e$3({ type: URLSearchParams, attribute: false })
     ], LMSFloatingMenu.prototype, "currentSearchParams", void 0);
     __decorate([
         i$2("#navbarNav")
     ], LMSFloatingMenu.prototype, "navbarNav", void 0);
     LMSFloatingMenu = __decorate([
-        e$3("lms-floating-menu")
+        e$4("lms-floating-menu")
     ], LMSFloatingMenu);
     var LMSFloatingMenu$1 = LMSFloatingMenu;
 
@@ -4215,7 +5844,7 @@ ${value}</textarea
             return x `
       <div class="container-fluid">
         <div class="card-deck">
-          ${o$2(this.uploadedImages, (uploadedImage, index) => {
+          ${o$3(this.uploadedImages, (uploadedImage, index) => {
             const { image, metadata } = uploadedImage;
             const { dtcreated, filename, hashvalue } = metadata;
             const filetype = filename.split(".").pop();
@@ -4320,20 +5949,20 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({
+        e$3({
             type: Array,
             attribute: "uploaded-images",
             converter: { fromAttribute: (value) => (value ? JSON.parse(value) : []) },
         })
     ], LMSImageBrowser.prototype, "uploadedImages", void 0);
     __decorate([
-        e$1('[id^="button-"]')
+        e$2('[id^="button-"]')
     ], LMSImageBrowser.prototype, "buttonReferences", void 0);
     __decorate([
-        e$1('[id^="tooltip-"]')
+        e$2('[id^="tooltip-"]')
     ], LMSImageBrowser.prototype, "tooltipReferences", void 0);
     LMSImageBrowser = __decorate([
-        e$3("lms-image-browser")
+        e$4("lms-image-browser")
     ], LMSImageBrowser);
     var LMSImageBrowser$1 = LMSImageBrowser;
 
@@ -4341,7 +5970,7 @@ ${value}</textarea
      * @license
      * Copyright 2018 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const i="important",n=" !"+i,o=e(class extends i$1{constructor(t$1){var e;if(super(t$1),t$1.type!==t.ATTRIBUTE||"style"!==t$1.name||(null===(e=t$1.strings)||void 0===e?void 0:e.length)>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(t){return Object.keys(t).reduce(((e,r)=>{const s=t[r];return null==s?e:e+`${r=r.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${s};`}),"")}update(e,[r]){const{style:s}=e.element;if(void 0===this.ut){this.ut=new Set;for(const t in r)this.ut.add(t);return this.render(r)}this.ut.forEach((t=>{null==r[t]&&(this.ut.delete(t),t.includes("-")?s.removeProperty(t):s[t]="");}));for(const t in r){const e=r[t];if(null!=e){this.ut.add(t);const r="string"==typeof e&&e.endsWith(n);t.includes("-")||r?s.setProperty(t,r?e.slice(0,-11):e,r?i:""):s[t]=e;}}return T}});
+     */const i="important",n=" !"+i,o=e$1(class extends i$1{constructor(t$1){var e;if(super(t$1),t$1.type!==t.ATTRIBUTE||"style"!==t$1.name||(null===(e=t$1.strings)||void 0===e?void 0:e.length)>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(t){return Object.keys(t).reduce(((e,r)=>{const s=t[r];return null==s?e:e+`${r=r.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${s};`}),"")}update(e,[r]){const{style:s}=e.element;if(void 0===this.ut){this.ut=new Set;for(const t in r)this.ut.add(t);return this.render(r)}this.ut.forEach((t=>{null==r[t]&&(this.ut.delete(t),t.includes("-")?s.removeProperty(t):s[t]="");}));for(const t in r){const e=r[t];if(null!=e){this.ut.add(t);const r="string"==typeof e&&e.endsWith(n);t.includes("-")||r?s.setProperty(t,r?e.slice(0,-11):e,r?i:""):s[t]=e;}}return T}});
 
     class IntersectionObserverHandler {
         constructor({ intersecting, intersected }) {
@@ -4430,7 +6059,7 @@ ${value}</textarea
                         message: Array.isArray(result.error)
                             ? x `<span>Sorry!</span>
                 <ol>
-                  ${o$2(result.error, (message) => x `<li>${message}</li>`)}
+                  ${o$3(result.error, (message) => x `<li>${message}</li>`)}
                 </ol>`
                             : x `<span>Sorry! ${result.error}</span>`,
                     };
@@ -4441,7 +6070,7 @@ ${value}</textarea
                         active: true,
                         message: x `<span>Sorry!</span>
             <ol>
-              ${o$2(result.errors, (error) => x `<li>
+              ${o$3(result.errors, (error) => x `<li>
                     ${error.message}
                     ${litFontawesome_2(faArrowRight, {
                         className: "color-unset",
@@ -4529,7 +6158,7 @@ ${value}</textarea
       >
         <button
           @click=${this.toggleModal}
-          class="btn-modal ${o$1({ tilted: this.isOpen })}"
+          class="btn-modal ${o$2({ tilted: this.isOpen })}"
           type="button"
         >
           ${litFontawesome_2(faPlus)}
@@ -4541,7 +6170,7 @@ ${value}</textarea
         @click=${this.toggleModal}
       ></div>
       <div
-        class="modal fade ${o$1({
+        class="modal fade ${o$2({
             "d-block": this.isOpen,
             show: this.isOpen,
         })}"
@@ -4574,7 +6203,7 @@ ${value}</textarea
                 <div
                   role="alert"
                   ?hidden=${!this.alert.active}
-                  class="alert ${o$1({
+                  class="alert ${o$2({
             "alert-danger": this.alert.active,
         })} alert-dismissible fade show"
                 >
@@ -4589,7 +6218,7 @@ ${value}</textarea
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                ${o$2(this.fields, (value) => this.getFieldMarkup(value))}
+                ${o$3(this.fields, (value) => this.getFieldMarkup(value))}
               </div>
               <div class="modal-footer">
                 <button
@@ -4706,13 +6335,13 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSModal.prototype, "fields", void 0);
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSModal.prototype, "createOpts", void 0);
     __decorate([
-        e$2({ type: Boolean })
+        e$3({ type: Boolean })
     ], LMSModal.prototype, "editable", void 0);
     __decorate([
         t$1()
@@ -4730,7 +6359,7 @@ ${value}</textarea
         i$2(".close")
     ], LMSModal.prototype, "closeButton", void 0);
     LMSModal = __decorate([
-        e$3("lms-modal")
+        e$4("lms-modal")
     ], LMSModal);
     var LMSModal$1 = LMSModal;
 
@@ -4830,7 +6459,7 @@ ${value}</textarea
       <nav aria-label=${attr__("Table navigation")}>
         <ul class="pagination justify-content-end mb-0">
           <li
-            class="page-item ${o$1({
+            class="page-item ${o$2({
             disabled: !this.hasPrevious,
         })}"
           >
@@ -4841,9 +6470,9 @@ ${value}</textarea
               >${__("Previous")}</a
             >
           </li>
-          ${o$2(this.pageSizes, (pageSize) => x `
+          ${o$3(this.pageSizes, (pageSize) => x `
               <li
-                class="page-item ${o$1({
+                class="page-item ${o$2({
             active: pageSize === this._per_page,
         })}"
               >
@@ -4857,7 +6486,7 @@ ${value}</textarea
             `)}
           <li
             class="page-item
-            ${o$1({
+            ${o$2({
             disabled: !this.hasNext,
         })}"
           >
@@ -4866,13 +6495,13 @@ ${value}</textarea
               href=${this.getLinkForPage(this._page, "next")}
               @click=${this.handlePaginationChange}
               ><span
-                class=${o$1({
+                class=${o$2({
             "d-none": this.hasNext === undefined,
         })}
                 >${__("Next")}</span
               >
               <div
-                class="spinner-border spinner-border-sm align-middle text-primary ${o$1({
+                class="spinner-border spinner-border-sm align-middle text-primary ${o$2({
             "d-none": this.hasNext !== undefined,
         })}"
                 role="status"
@@ -4888,25 +6517,25 @@ ${value}</textarea
     };
     LMSPagination.styles = [bootstrapStyles, skeletonStyles];
     __decorate([
-        e$2({ type: Array, attribute: "page-sizes" })
+        e$3({ type: Array, attribute: "page-sizes" })
     ], LMSPagination.prototype, "pageSizes", void 0);
     __decorate([
-        e$2({ type: Boolean })
+        e$3({ type: Boolean })
     ], LMSPagination.prototype, "hasPrevious", void 0);
     __decorate([
-        e$2({ type: Boolean })
+        e$3({ type: Boolean })
     ], LMSPagination.prototype, "hasNext", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSPagination.prototype, "nextPage", void 0);
     __decorate([
-        e$2({ type: Number })
+        e$3({ type: Number })
     ], LMSPagination.prototype, "_page", void 0);
     __decorate([
-        e$2({ type: Number })
+        e$3({ type: Number })
     ], LMSPagination.prototype, "_per_page", void 0);
     LMSPagination = __decorate([
-        e$3("lms-pagination")
+        e$4("lms-pagination")
     ], LMSPagination);
     var LMSPagination$1 = LMSPagination;
 
@@ -5203,7 +6832,7 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSPellEditor.prototype, "value", void 0);
     __decorate([
         i$2("#modal")
@@ -5227,7 +6856,7 @@ ${value}</textarea
         t$1()
     ], LMSPellEditor.prototype, "hasVisibleToggle", void 0);
     LMSPellEditor = __decorate([
-        e$3("lms-pell-editor")
+        e$4("lms-pell-editor")
     ], LMSPellEditor);
     var LMSPellEditor$1 = LMSPellEditor;
 
@@ -5418,13 +7047,13 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSSearch.prototype, "sortableColumns", void 0);
     __decorate([
         i$2("input")
     ], LMSSearch.prototype, "input", void 0);
     LMSSearch = __decorate([
-        e$3("lms-search")
+        e$4("lms-search")
     ], LMSSearch);
     var LMSSearch$1 = LMSSearch;
 
@@ -5529,19 +7158,19 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSToast.prototype, "heading", void 0);
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSToast.prototype, "message", void 0);
     __decorate([
-        e$2({ state: true })
+        e$3({ state: true })
     ], LMSToast.prototype, "_elapsedTime", void 0);
     __decorate([
         i$2(".toast")
     ], LMSToast.prototype, "toast", void 0);
     LMSToast = __decorate([
-        e$3("lms-toast")
+        e$4("lms-toast")
     ], LMSToast);
     var LMSToast$1 = LMSToast;
 
@@ -5637,22 +7266,22 @@ ${value}</textarea
     }
   `;
     __decorate([
-        e$2({ type: String, attribute: "data-text" })
+        e$3({ type: String, attribute: "data-text" })
     ], LMSTooltip.prototype, "text", void 0);
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSTooltip.prototype, "target", void 0);
     __decorate([
-        e$2({ type: String, attribute: "data-placement" })
+        e$3({ type: String, attribute: "data-placement" })
     ], LMSTooltip.prototype, "placement", void 0);
     __decorate([
-        e$2({ type: Number, attribute: "data-timeout" })
+        e$3({ type: Number, attribute: "data-timeout" })
     ], LMSTooltip.prototype, "timeout", void 0);
     __decorate([
         i$2("span.tooltip")
     ], LMSTooltip.prototype, "tooltip", void 0);
     LMSTooltip = __decorate([
-        e$3("lms-tooltip")
+        e$4("lms-tooltip")
     ], LMSTooltip);
     var LMSTooltip$1 = LMSTooltip;
 
@@ -5708,13 +7337,13 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSEventMangementMenu.prototype, "baseurl", void 0);
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSEventMangementMenu.prototype, "pluginclass", void 0);
     LMSEventMangementMenu = __decorate([
-        e$3("lms-event-management-menu")
+        e$4("lms-event-management-menu")
     ], LMSEventMangementMenu);
     var LMSEventMangementMenu$1 = LMSEventMangementMenu;
 
@@ -5956,13 +7585,13 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSEventsModal.prototype, "createOpts", void 0);
     __decorate([
         t$1()
     ], LMSEventsModal.prototype, "selectedEventTypeId", void 0);
     LMSEventsModal = __decorate([
-        e$3("lms-events-modal")
+        e$4("lms-events-modal")
     ], LMSEventsModal);
     var LMSEventsModal$1 = LMSEventsModal;
 
@@ -6075,10 +7704,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSEventTypesModal.prototype, "createOpts", void 0);
     LMSEventTypesModal = __decorate([
-        e$3("lms-event-types-modal")
+        e$4("lms-event-types-modal")
     ], LMSEventTypesModal);
     var LMSEventTypesModal$1 = LMSEventTypesModal;
 
@@ -6371,7 +8000,7 @@ ${value}</textarea
           ></lms-pagination>
         </lms-table-controls>
         <div
-          class="alert alert-info text-center ${o$1({
+          class="alert alert-info text-center ${o$2({
             "d-none": !this.hasNoResults,
         })}"
           role="alert"
@@ -6387,13 +8016,13 @@ ${value}</textarea
           </div>
         </div>
         <table
-          class="table table-striped table-bordered table-hover ${o$1({
+          class="table table-striped table-bordered table-hover ${o$2({
             "d-none": this.hasNoResults,
         })}"
         >
           <thead>
             <tr>
-              ${o$2(this.headers, (key) => {
+              ${o$3(this.headers, (key) => {
             if (!this.sortableColumns.includes(key)) {
                 return x `<th scope="col">${__(key)}</th>`;
             }
@@ -6411,9 +8040,9 @@ ${value}</textarea
             </tr>
           </thead>
           <tbody>
-            ${o$2(this.data, (datum) => x `
+            ${o$3(this.data, (datum) => x `
                 <tr>
-                  ${o$2(this.headers, (header) => x `<td class="align-middle">${datum[header]}</td>`)}
+                  ${o$3(this.headers, (header) => x `<td class="align-middle">${datum[header]}</td>`)}
                   ${this.isEditable
             ? x `
                         <td class="align-middle">
@@ -6546,52 +8175,52 @@ ${value}</textarea
     `,
     ];
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSTable.prototype, "data", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSTable.prototype, "order", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSTable.prototype, "headers", void 0);
     __decorate([
-        e$2({ type: Boolean, attribute: "is-editable" })
+        e$3({ type: Boolean, attribute: "is-editable" })
     ], LMSTable.prototype, "isEditable", void 0);
     __decorate([
-        e$2({ type: Boolean, attribute: "is-deletable" })
+        e$3({ type: Boolean, attribute: "is-deletable" })
     ], LMSTable.prototype, "isDeletable", void 0);
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSTable.prototype, "queryBuilder", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSTable.prototype, "nextPage", void 0);
     __decorate([
-        e$2({ type: Boolean })
+        e$3({ type: Boolean })
     ], LMSTable.prototype, "hasNoResults", void 0);
     __decorate([
-        e$2({ type: Number })
+        e$3({ type: Number })
     ], LMSTable.prototype, "_page", void 0);
     __decorate([
-        e$2({ type: Number })
+        e$3({ type: Number })
     ], LMSTable.prototype, "_per_page", void 0);
     __decorate([
         t$1()
     ], LMSTable.prototype, "toast", void 0);
     __decorate([
-        e$1("input, select, textarea")
+        e$2("input, select, textarea")
     ], LMSTable.prototype, "inputs", void 0);
     __decorate([
-        e$1(".btn-edit")
+        e$2(".btn-edit")
     ], LMSTable.prototype, "editButtons", void 0);
     __decorate([
-        e$1(".collapse")
+        e$2(".collapse")
     ], LMSTable.prototype, "collapsibles", void 0);
     __decorate([
         i$2("table")
     ], LMSTable.prototype, "table", void 0);
     LMSTable = __decorate([
-        e$3("lms-table")
+        e$4("lms-table")
     ], LMSTable);
     var LMSTable$1 = LMSTable;
 
@@ -6722,16 +8351,16 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSEventTypesTable$1.prototype, "target_groups", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSEventTypesTable$1.prototype, "locations", void 0);
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSEventTypesTable$1.prototype, "event_types", void 0);
     LMSEventTypesTable$1 = __decorate([
-        e$3("lms-event-types-table")
+        e$4("lms-event-types-table")
     ], LMSEventTypesTable$1);
     var LMSEventTypesTable$2 = LMSEventTypesTable$1;
 
@@ -6802,10 +8431,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSLocationsModal.prototype, "createOpts", void 0);
     LMSLocationsModal = __decorate([
-        e$3("lms-locations-modal")
+        e$4("lms-locations-modal")
     ], LMSLocationsModal);
     var LMSLocationsModal$1 = LMSLocationsModal;
 
@@ -6897,10 +8526,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSLocationsTable.prototype, "locations", void 0);
     LMSLocationsTable = __decorate([
-        e$3("lms-locations-table")
+        e$4("lms-locations-table")
     ], LMSLocationsTable);
     var LMSLocationsTable$1 = LMSLocationsTable;
 
@@ -6978,10 +8607,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSSettingsTable.prototype, "settings", void 0);
     LMSSettingsTable = __decorate([
-        e$3("lms-settings-table")
+        e$4("lms-settings-table")
     ], LMSSettingsTable);
     var LMSSettingsTable$1 = LMSSettingsTable;
 
@@ -7028,10 +8657,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$2({ type: Object })
+        e$3({ type: Object })
     ], LMSTargetGroupsModal.prototype, "createOpts", void 0);
     LMSTargetGroupsModal = __decorate([
-        e$3("lms-target-groups-modal")
+        e$4("lms-target-groups-modal")
     ], LMSTargetGroupsModal);
     var LMSTargetGroupsModal$1 = LMSTargetGroupsModal;
 
@@ -7123,10 +8752,10 @@ ${value}</textarea
         }
     };
     __decorate([
-        e$2({ type: Array })
+        e$3({ type: Array })
     ], LMSEventTypesTable.prototype, "target_groups", void 0);
     LMSEventTypesTable = __decorate([
-        e$3("lms-target-groups-table")
+        e$4("lms-target-groups-table")
     ], LMSEventTypesTable);
     var LMSTargetGroupsTable = LMSEventTypesTable;
 
@@ -7399,7 +9028,7 @@ ${value}</textarea
             >
               ${!this.hasLoaded
             ? x `<div class="card-deck">
-                    ${o$2([...Array(10)], () => x `<div class="skeleton skeleton-card"></div>`)}
+                    ${o$3([...Array(10)], () => x `<div class="skeleton skeleton-card"></div>`)}
                   </div>`
             : A}
               ${this.hasLoaded && !this.events.length
@@ -7411,7 +9040,7 @@ ${value}</textarea
             : A}
               <div class="col-12" ?hidden=${!this.events.length}>
                 <div class="card-deck">
-                  ${(_a = o$2(this.events, (event) => {
+                  ${(_a = o$3(this.events, (event) => {
             var _a;
             const [sDate, sTime] = splitDateTime(event.start_time, locale);
             const [eDate, eTime] = splitDateTime(event.end_time, locale);
@@ -7479,7 +9108,7 @@ ${value}</textarea
         cardDeckStylesOpac,
     ];
     __decorate([
-        e$2({ type: String })
+        e$3({ type: String })
     ], LMSEventsView.prototype, "borrowernumber", void 0);
     __decorate([
         t$1()
@@ -7497,7 +9126,7 @@ ${value}</textarea
         i$2(".load-more")
     ], LMSEventsView.prototype, "loadMore", void 0);
     LMSEventsView = __decorate([
-        e$3("lms-events-view")
+        e$4("lms-events-view")
     ], LMSEventsView);
     var LMSEventsView$1 = LMSEventsView;
 
@@ -7632,7 +9261,7 @@ ${value}</textarea
             if (!this.hasLoaded) {
                 return x ` <div class="container-fluid mx-0">
         <div class="card-deck">
-          ${o$2([...Array(10)], () => x `<div class="skeleton skeleton-card"></div>`)}
+          ${o$3([...Array(10)], () => x `<div class="skeleton skeleton-card"></div>`)}
         </div>
       </div>`;
             }
@@ -7714,7 +9343,7 @@ ${value}</textarea
         t$1()
     ], StaffEventsView.prototype, "nextPage", void 0);
     StaffEventsView = __decorate([
-        e$3("lms-staff-events-view")
+        e$4("lms-staff-events-view")
     ], StaffEventsView);
     var StaffEventsView$1 = StaffEventsView;
 
@@ -7873,7 +9502,7 @@ ${value}</textarea
     };
     StaffEventTypesView$1.styles = [bootstrapStyles, skeletonStyles];
     __decorate([
-        e$2({ type: Object, attribute: false })
+        e$3({ type: Object, attribute: false })
     ], StaffEventTypesView$1.prototype, "href", void 0);
     __decorate([
         t$1()
@@ -7882,7 +9511,7 @@ ${value}</textarea
         t$1()
     ], StaffEventTypesView$1.prototype, "nextPage", void 0);
     StaffEventTypesView$1 = __decorate([
-        e$3("lms-staff-event-types-view")
+        e$4("lms-staff-event-types-view")
     ], StaffEventTypesView$1);
     var StaffEventTypesView$2 = StaffEventTypesView$1;
 
@@ -7995,7 +9624,7 @@ ${value}</textarea
         t$1()
     ], StaffLocationsView.prototype, "nextPage", void 0);
     StaffLocationsView = __decorate([
-        e$3("lms-staff-locations-view")
+        e$4("lms-staff-locations-view")
     ], StaffLocationsView);
     var StaffLocationsView$1 = StaffLocationsView;
 
@@ -8044,10 +9673,10 @@ ${value}</textarea
     };
     StaffSettingsView.styles = [bootstrapStyles, skeletonStyles];
     __decorate([
-        e$2({ type: Boolean })
+        e$3({ type: Boolean })
     ], StaffSettingsView.prototype, "hasLoaded", void 0);
     StaffSettingsView = __decorate([
-        e$3("lms-staff-settings-view")
+        e$4("lms-staff-settings-view")
     ], StaffSettingsView);
     var StaffSettingsView$1 = StaffSettingsView;
 
@@ -8162,7 +9791,7 @@ ${value}</textarea
         t$1()
     ], StaffEventTypesView.prototype, "nextPage", void 0);
     StaffEventTypesView = __decorate([
-        e$3("lms-staff-target-groups-view")
+        e$4("lms-staff-target-groups-view")
     ], StaffEventTypesView);
     var StaffTargetGroupsView = StaffEventTypesView;
 
