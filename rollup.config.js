@@ -35,10 +35,10 @@ export default {
       declaration: false,
       declarationMap: false,
     }),
-    minifyHTML(),
-    terser(),
-    analyze({
-      summaryOnly: true,
-    }),
+    // minifyHTML(),
+    // terser(),
+    // analyze({
+      // summaryOnly: true,
+    // }),
   ],
 };

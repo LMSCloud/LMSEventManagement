@@ -30,6 +30,7 @@
     "@rmp135/sql-ts": "^1.16.0",
     "@rollup/plugin-terser": "^0.4.1",
     "@rollup/plugin-typescript": "^11.1.0",
+    "@tailwindcss/forms": "^0.5.3",
     "@types/dompurify": "^3.0.2",
     "@types/gettext.js": "^1.0.0",
     "@types/pell": "^1.0.1",
@@ -39,6 +40,8 @@
     "chai": "^4.3.7",
     "chai-http": "^4.3.0",
     "chalk": "^5.2.0",
+    "commander": "^10.0.1",
+    "daisyui": "^3.0.3",
     "dotenv": "^16.0.3",
     "eslint": "^8.38.0",
     "eslint-plugin-lit": "^1.8.2",
@@ -54,6 +57,7 @@
     "node-datetime": "^2.1.2",
     "node-fetch": "^3.3.1",
     "po2json": "1.0.0-beta-3",
+    "postcss-lit": "^1.1.0",
     "rollup": "^2.79.1",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-minify-html-literals": "^1.2.6",
@@ -62,7 +66,8 @@
     "tailwindcss": "^3.3.2",
     "ts-lit-plugin": "^1.2.1",
     "tslib": "^2.5.0",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "winston": "^3.9.0"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.4.0",

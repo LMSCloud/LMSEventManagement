@@ -57,12 +57,11 @@ program
     "Tailwind CSS config file",
     "./tailwind.config.js"
   )
-  .option("-p, --purge", "Enable CSS purging")
   .option("-w, --watch", "Enable file watching")
   .parse(process.argv);
 
 const options = program.opts();
-const outputPath = resolve(process.cwd(), options.output) + "/tailwind.lit.js"; 
+const outputPath = resolve(process.cwd(), options.output) + "/tailwind.lit.js";
 const configPath = options.config
   ? resolve(process.cwd(), options.config)
   : undefined;
@@ -98,11 +97,6 @@ try {
   logger.info(chalk.yellow(`Using config file: ${configPath}`));
   logger.info(chalk.yellow(`Using output file: ${outputPath}`));
 
-  if (options.purge) {
-    tailwindCommand += " --purge";
-    logger.info(chalk.yellow(`CSS purging is enabled.`));
-  }
-
   // Execute the tailwindcss command with the specified input
   let tailwindCSS = undefined;
   try {
@@ -112,7 +106,7 @@ try {
     if (fs.existsSync(declarationFilePath)) {
       fs.unlinkSync(declarationFilePath);
     }
-    
+
     logger.info(chalk.yellow(`Executing command: ${tailwindCommand}`));
     const execOptions = {
       stdio: ["inherit", "pipe", "pipe"],
@@ -127,8 +121,11 @@ try {
   logger.info(chalk.green("Tailwind CSS generated successfully!"));
 
   // Wrap the generated CSS in a template literal
-  let cleanContents = tailwindCSS.replace(/`/g, "");
-  cleanContents = cleanContents.replace(/\\/g, "\\\\");
+  let cleanContents;
+
+  // Replace backticks inside the CSSResult
+  cleanContents = tailwindCSS.replace(/`/g, "");
+  
   const litContents = `
     import { css } from "lit";
     export const tailwindStyles = css\`${cleanContents}\`;
@@ -141,7 +138,7 @@ try {
     export const tailwindStyles: CSSResult;
   `;
   const declarationFilePath = outputPath.replace(".js", ".d.ts");
-  
+
   if (!fs.existsSync(declarationFilePath)) {
     fs.writeFileSync(declarationFilePath, tsDeclaration.trim());
   }

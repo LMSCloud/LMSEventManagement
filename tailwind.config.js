@@ -1,4 +1,4 @@
-const {tailwindTransform} = require("postcss-lit");
+const { tailwindTransform } = require("postcss-lit");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -6,5 +6,8 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms"), require("daisyui")],
+  daisyui: {
+    logs: false,
+  }
 };
