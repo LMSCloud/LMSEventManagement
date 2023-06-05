@@ -30,15 +30,15 @@ export default {
       ),
       minimize: true,
       sourceMap: true,
-    }),
+    }),    
     typescript({
       declaration: false,
       declarationMap: false,
     }),
-    // minifyHTML(),
-    // terser(),
-    // analyze({
-    //   summaryOnly: true,
-    // }),
+    minifyHTML(),
+    terser(),
+    analyze({
+      summaryOnly: true,
+    }),
   ],
 };

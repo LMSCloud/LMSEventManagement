@@ -7,12 +7,13 @@
     "package-kpz:build": "cd package-kpz && cargo build --release && cd ../ && ln -s ./package-kpz/target/release/package-kpz ./p-kpz",
     "ktd-plugin-tools:build": "cd ktd-plugin-tools && go build && cd ../ && ln -s ./ktd-plugin-tools/ktd-plugin-tools ./kpt",
     "lint": "eslint \"src/**/*.{js,ts}\"",
-    "build": "npx rollup -c && ./p-kpz -r \"lms-event-management\" -p \"Koha/Plugin/Com/LMSCloud/EventManagement.pm\"",
+    "build": "npm run css:build && npx rollup -c && ./p-kpz -r \"lms-event-management\" -p \"Koha/Plugin/Com/LMSCloud/EventManagement.pm\"",
     "test": "mocha \"test/**/*.test.mjs\"",
     "docs:package": "./tools/generate_docs.mjs",
     "translate:extract": "./tools/extract_translations.sh --output com.lmscloud.eventmanagement.pot --source \"src/*.ts\" --source \"src/**/*.ts\" --source \"src/components/**/*.ts\" --source \"Koha/Plugin/Com/LMSCloud/EventManagement/**/*.pm\" --template \"Koha/Plugin/Com/LMSCloud/EventManagement/views/**/*.tt\"",
     "translate:instantiate": "[[ -z \"$LOCALE\" ]] && echo \"LOCALE not set\" || (if [ ! -f locales/$LOCALE.po ]; then msginit --input=com.lmscloud.eventmanagement.pot --locale=$LOCALE --output-file=locales/$LOCALE.po; else msgmerge --update locales/$LOCALE.po com.lmscloud.eventmanagement.pot; fi)",
-    "translate:package": "./tools/package_translations.mjs && ./tools/add_static_routes.mjs"
+    "translate:package": "./tools/package_translations.mjs && ./tools/add_static_routes.mjs",
+    "css:build": "./tools/generate_tw_css_result.mjs -o src"
   },
   "repository": {
     "type": "git",
@@ -58,6 +59,7 @@
     "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-postcss": "^4.0.2",
     "showdown": "^2.1.0",
+    "tailwindcss": "^3.3.2",
     "ts-lit-plugin": "^1.2.1",
     "tslib": "^2.5.0",
     "typescript": "^4.9.5"
