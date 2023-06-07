@@ -16,12 +16,12 @@ TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE. 
 */
 
-import fs from "fs";
-import { Command } from "commander";
-import { resolve } from "path";
-import { createLogger, format, transports } from "winston";
 import chalk from "chalk";
 import { execSync } from "child_process";
+import { Command } from "commander";
+import fs from "fs";
+import { resolve } from "path";
+import { createLogger, format, transports } from "winston";
 
 // Create a logger instance
 const logger = createLogger({
@@ -125,7 +125,16 @@ try {
 
   // Replace backticks inside the CSSResult
   cleanContents = tailwindCSS.replace(/`/g, "");
-  
+
+  // Replace \: with \\: to properly escape colons in JavaScript
+  cleanContents = cleanContents.replace(/\\:/g, "\\\\:");
+
+  // Replace \! with \\! to properly escape exclamation points in JavaScript
+  cleanContents = cleanContents.replace(/\\!/g, "\\\\!");
+
+  // Replace :root with :host to scope the CSS to the component
+  cleanContents = cleanContents.replace(/:root/g, ":host");
+
   const litContents = `
     import { css } from "lit";
     export const tailwindStyles = css\`${cleanContents}\`;
