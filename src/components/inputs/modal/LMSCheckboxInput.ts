@@ -1,8 +1,8 @@
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { ModalField } from "../../../sharedDeclarations";
+import { tailwindStyles } from "../../../tailwind.lit";
 
 @customElement("lms-checkbox-input")
 export default class LMSCheckboxInput extends LitElement {
@@ -10,7 +10,7 @@ export default class LMSCheckboxInput extends LitElement {
 
   @property({ type: Object }) value = "";
 
-  static override styles = [bootstrapStyles];
+  static override styles = [tailwindStyles];
 
   private handleChange(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -32,19 +32,21 @@ export default class LMSCheckboxInput extends LitElement {
   override render() {
     const { name, desc, placeholder, value, required } = this.field;
     return html`
-      <div class="form-check">
-        <input
-          type="checkbox"
-          name=${name}
-          id=${name}
-          value=${value ? 1 : 0}
-          class="form-check-input"
-          placeholder=${ifDefined(placeholder)}
-          @change=${this.handleChange}
-          ?required=${required}
-          ?checked=${this.getCheckedState}
-        />
-        <label for=${name}>&nbsp;${desc}</label>
+      <div class="form-control">
+        <label for=${name} class="label cursor-pointer">
+          <input
+            type="checkbox"
+            name=${name}
+            id=${name}
+            value=${value ? 1 : 0}
+            class="checkbox"
+            placeholder=${ifDefined(placeholder)}
+            @change=${this.handleChange}
+            ?required=${required}
+            ?checked=${this.getCheckedState}
+          />
+          <span class="label-text">${desc}</span>
+        </label>
       </div>
     `;
   }

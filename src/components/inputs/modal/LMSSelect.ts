@@ -1,8 +1,8 @@
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, PropertyValueMap, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { ModalField, SelectOption } from "../../../sharedDeclarations";
+import { tailwindStyles } from "../../../tailwind.lit";
 
 @customElement("lms-select")
 export default class LMSSelect extends LitElement {
@@ -10,9 +10,11 @@ export default class LMSSelect extends LitElement {
 
   private defaultOption = {} as SelectOption;
 
-  static override styles = [bootstrapStyles];
+  static override styles = [tailwindStyles];
 
-  protected override updated(_changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>): void {
+  protected override updated(
+    _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+  ): void {
     super.updated(_changedProperties);
     if (_changedProperties.has("field")) {
       this.setDefaultOption();
@@ -32,12 +34,14 @@ export default class LMSSelect extends LitElement {
   override render() {
     const { name, desc, value, required, dbData } = this.field;
     return html`
-      <div class="form-group">
-        <label for=${name}>${desc}</label>
+      <div class="form-control w-full">
+        <label for=${name} class="label"
+          ><span class="label-text">${desc}</span></label
+        >
         <select
           name=${name}
           id=${name}
-          class="form-control"
+          class="select select-bordered"
           @change=${(e: Event) => {
             this.field.value = (e.target as HTMLSelectElement).value ?? value;
             this.dispatchEvent(

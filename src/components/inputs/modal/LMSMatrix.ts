@@ -46,27 +46,29 @@ export default class LMSMatrix extends LitElement {
   override render() {
     const { field } = this;
     return html` <label for=${field.name}>${field.desc}</label>
-      <table class="table table-bordered" id=${field.name}>
-        <thead>
-          <tr>
-            ${map(
-              field.headers,
-              ([name]) => html`<th scope="col">${__(name)}</th>`
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          ${map(
-            field.dbData,
-            (row) => html`<tr>
-              <td class="align-middle">${row.name}</td>
-              ${map(field.headers, (header) =>
-                this.getMatrixInputMarkup({ field, row, header })
+      <div class="overflow-x-auto">
+        <table class="table" id=${field.name}>
+          <thead>
+            <tr>
+              ${map(
+                field.headers,
+                ([name]) => html`<th scope="col">${__(name)}</th>`
               )}
-            </tr>`
-          )}
-        </tbody>
-      </table>`;
+            </tr>
+          </thead>
+          <tbody>
+            ${map(
+              field.dbData,
+              (row) => html`<tr>
+                <td class="align-middle">${row.name}</td>
+                ${map(field.headers, (header) =>
+                  this.getMatrixInputMarkup({ field, row, header })
+                )}
+              </tr>`
+            )}
+          </tbody>
+        </table>
+      </div>`;
   }
 
   private handleInput({ e, id, header }: InputHandlerArgs) {
