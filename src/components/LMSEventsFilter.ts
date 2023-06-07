@@ -1,4 +1,3 @@
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
 import { LitElement, css, html } from "lit";
 import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
@@ -7,627 +6,690 @@ import { requestHandler } from "../lib/RequestHandler";
 import { __, attr__ } from "../lib/translate";
 import { deepCopy, throttle } from "../lib/utilities";
 import {
-  Facets,
-  LMSEvent,
-  LMSEventType,
-  LMSLocation,
-  LMSSettingResponse,
-  LMSTargetGroup,
+    Facets,
+    LMSEvent,
+    LMSEventType,
+    LMSLocation,
+    LMSSettingResponse,
+    LMSTargetGroup,
 } from "../sharedDeclarations";
 import { skeletonStyles } from "../styles/skeleton";
 import { utilityStyles } from "../styles/utilities";
+import { tailwindStyles } from "../tailwind.lit";
 import LMSDropdown from "./LMSDropdown";
 import LMSSearch from "./LMSSearch";
 
 declare global {
-  interface HTMLElementTagNameMap {
-    "lms-search": LMSSearch;
-    "lms-dropdown": LMSDropdown;
-  }
+    interface HTMLElementTagNameMap {
+        "lms-search": LMSSearch;
+        "lms-dropdown": LMSDropdown;
+    }
 }
 
 @customElement("lms-events-filter")
 export default class LMSEventsFilter extends LitElement {
-  private shouldFold = window.innerWidth <= 992;
+    private shouldFold = window.innerWidth <= 992;
 
-  @property({ type: Array }) events: LMSEvent[] = [];
+    @property({ type: Array }) events: LMSEvent[] = [];
 
-  @property({ type: String }) facetsStrategy: "preserve" | "update" =
-    "preserve";
+    @property({ type: String }) facetsStrategy: "preserve" | "update" =
+        "preserve";
 
-  @property({ type: Boolean }) isHidden = this.shouldFold;
+    @property({ type: Boolean }) isHidden = this.shouldFold;
 
-  @property({ type: Array }) settings: LMSSettingResponse[] = [];
+    @property({ type: Array }) settings: LMSSettingResponse[] = [];
 
-  @state() facets: Partial<Facets> = {};
+    @state() facets: Partial<Facets> = {};
 
-  @state() event_types: LMSEventType[] = [];
+    @state() event_types: LMSEventType[] = [];
 
-  @state() target_groups: LMSTargetGroup[] = [];
+    @state() target_groups: LMSTargetGroup[] = [];
 
-  @state() locations: LMSLocation[] = [];
+    @state() locations: LMSLocation[] = [];
 
-  @state() activeFilters: Map<string, string | boolean> = new Map();
+    @state() activeFilters: Map<string, string | boolean> = new Map();
 
-  @queryAll("input") inputs!: NodeListOf<HTMLInputElement>;
+    @queryAll("input") inputs!: NodeListOf<HTMLInputElement>;
 
-  @queryAll("lms-dropdown") lmsDropdowns!: NodeListOf<LMSDropdown>;
+    @queryAll("lms-dropdown") lmsDropdowns!: NodeListOf<LMSDropdown>;
 
-  private inputHandlers: {
-    [type: string]: (input: HTMLInputElement) => string | boolean;
-  } = {
-    checkbox: (input: HTMLInputElement) => {
-      if (input.id === "open_registration") {
-        return input.checked;
-      }
+    private inputHandlers: {
+        [type: string]: (input: HTMLInputElement) => string | boolean;
+    } = {
+        checkbox: (input: HTMLInputElement) => {
+            if (input.id === "open_registration") {
+                return input.checked;
+            }
 
-      const { value } = input;
-      if (value) {
-        return input.checked ? value : false;
-      }
+            const { value } = input;
+            if (value) {
+                return input.checked ? value : false;
+            }
 
-      return input.checked ? input.id : false;
-    },
-    radio: (input: HTMLInputElement) => (input.checked ? input.value : false),
-    date: (input: HTMLInputElement) => input.value,
-    number: (input: HTMLInputElement) => input.value,
-    default: (input: HTMLInputElement) => input.value,
-  };
-
-  private resetHandlers: {
-    [type: string]: (input: HTMLInputElement) => void;
-  } = {
-    checkbox: (input: HTMLInputElement) => {
-      if (input.id === "open_registration") {
-        input.checked = true;
-        return;
-      }
-      input.checked = false;
-    },
-    radio: (input: HTMLInputElement) => {
-      input.checked = false;
-    },
-    date: (input: HTMLInputElement) => {
-      input.value = "";
-    },
-    number: (input: HTMLInputElement) => {
-      if (["min_age", "max_age"].includes(input.id)) {
-        input.value = "";
-        return;
-      }
-      input.value = input.min;
-    },
-    default: (input: HTMLInputElement) => {
-      input.value = "";
-    },
-  };
-
-  private _eventsDeepCopy: LMSEvent[] = [];
-
-  private get eventsDeepCopy(): LMSEvent[] {
-    return this._eventsDeepCopy;
-  }
-
-  private set eventsDeepCopy(value: LMSEvent[]) {
-    if (this._eventsDeepCopy.length === 0) {
-      this._eventsDeepCopy = value;
-    }
-  }
-
-  private facetsStrategyManager() {
-    switch (this.facetsStrategy) {
-      case "preserve":
-        return this.eventsDeepCopy;
-      case "update":
-        return this.events;
-      default:
-        throw new Error("Invalid facetsStrategy");
-    }
-  }
-
-  private throttledHandleResize: () => void;
-
-  static override styles = [
-    bootstrapStyles,
-    skeletonStyles,
-    utilityStyles,
-    css`
-      .gap-3 {
-        gap: 1rem;
-      }
-
-      .nobr {
-        white-space: nowrap;
-      }
-    `,
-  ];
-
-  constructor() {
-    super();
-    this.throttledHandleResize = throttle(this.handleResize.bind(this), 250);
-  }
-
-  private handleResize() {
-    this.shouldFold = window.innerWidth <= 992;
-    this.isHidden = this.shouldFold;
-    this.requestUpdate();
-  }
-
-  override connectedCallback() {
-    super.connectedCallback();
-
-    window.addEventListener("resize", this.throttledHandleResize);
-
-    fetch("/api/v1/contrib/eventmanagement/public/settings")
-      .then((response) => response.json())
-      .then((settings) => {
-        this.settings = settings.map((setting: LMSSettingResponse) => {
-          try {
-            return {
-              ...setting,
-              plugin_value: JSON.parse(setting.plugin_value.toString()),
-            };
-          } catch {
-            return setting;
-          }
-        });
-      });
-
-    requestHandler
-      .request("getEventTypesPublic")
-      .then((response) => response.json())
-      .then((event_types: LMSEventType[]) => (this.event_types = event_types));
-
-    requestHandler
-      .request("getTargetGroupsPublic")
-      .then((response) => response.json())
-      .then(
-        (target_groups: LMSTargetGroup[]) =>
-          (this.target_groups = target_groups)
-      );
-
-    requestHandler
-      .request("getLocationsPublic")
-      .then((response) => response.json())
-      .then((locations: LMSLocation[]) => (this.locations = locations));
-  }
-
-  override disconnectedCallback(): void {
-    super.disconnectedCallback();
-    window.removeEventListener("resize", this.throttledHandleResize);
-  }
-
-  override willUpdate() {
-    this.eventsDeepCopy = deepCopy(this.events);
-    const events = this.facetsStrategyManager();
-    if (!events.length) return;
-    this.facets = {
-      eventTypeIds: [...new Set(events.map((event) => event.event_type))],
-      targetGroupIds: [
-        ...new Set(
-          events.flatMap((event: any) =>
-            event.target_groups.map((target_group: any) =>
-              target_group.selected ? target_group.target_group_id : NaN
-            )
-          )
-        ),
-      ].filter(Number.isInteger),
-      locationIds: [...new Set(events.map((event) => event.location))],
-      ...events
-        .map((event: any) => {
-          const { event_type, location, target_groups, ...rest } = event; // eslint-disable-line @typescript-eslint/no-unused-vars
-          return rest;
-        })
-        .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+            return input.checked ? input.id : false;
+        },
+        radio: (input: HTMLInputElement) =>
+            input.checked ? input.value : false,
+        date: (input: HTMLInputElement) => input.value,
+        number: (input: HTMLInputElement) => input.value,
+        default: (input: HTMLInputElement) => input.value,
     };
-  }
 
-  private handleReset() {
-    this.inputs.forEach((input) => this.resetHandlers[input.type](input));
-    this.dispatchEvent(
-      new CustomEvent("filter", {
-        detail: "",
-        composed: true,
-        bubbles: true,
-      })
-    );
-  }
+    private resetHandlers: {
+        [type: string]: (input: HTMLInputElement) => void;
+    } = {
+        checkbox: (input: HTMLInputElement) => {
+            if (input.id === "open_registration") {
+                input.checked = true;
+                return;
+            }
+            input.checked = false;
+        },
+        radio: (input: HTMLInputElement) => {
+            input.checked = false;
+        },
+        date: (input: HTMLInputElement) => {
+            input.value = "";
+        },
+        number: (input: HTMLInputElement) => {
+            if (["min_age", "max_age"].includes(input.id)) {
+                input.value = "";
+                return;
+            }
+            input.value = input.min;
+        },
+        default: (input: HTMLInputElement) => {
+            input.value = "";
+        },
+    };
 
-  private isAllowedFilter(
-    name: string | boolean | undefined,
-    value: unknown,
-    exclude: string[]
-  ) {
-    if (!name) return false;
-    return !(name && exclude.includes(name.toString()) && value === false);
-  }
+    private _eventsDeepCopy: LMSEvent[] = [];
 
-  private getParamsFromActiveFilters() {
-    return [...(this.inputs ?? [])]
-      .filter((input) => input.value || input.checked)
-      .map((input) => {
-        const handler =
-          this.inputHandlers?.[input.type] || this.inputHandlers.default;
-        if (!handler) return [input.name, undefined];
-        const value = handler(input);
-        return [input.name, value];
-      })
-      .filter(([name, value]) =>
-        this.isAllowedFilter(name, value, [
-          "event_type",
-          "target_group",
-          "location",
-          "_order_by",
-        ])
-      );
-  }
-
-  private handleChange() {
-    const query = new URLSearchParams();
-    this.getParamsFromActiveFilters().forEach(([name, value]) => {
-      if (typeof name === "string" && value !== undefined) {
-        return query.append(name, value?.toString());
-      }
-    });
-
-    this.dispatchEvent(
-      new CustomEvent("filter", {
-        detail: query.toString(),
-        composed: true,
-        bubbles: true,
-      })
-    );
-  }
-
-  private handleSearch(e: CustomEvent) {
-    const { q } = e.detail;
-    const query = new URLSearchParams();
-    this.getParamsFromActiveFilters().forEach(([name, value]) => {
-      if (typeof name === "string" && value !== undefined) {
-        return query.append(name, value?.toString());
-      }
-    });
-    this.dispatchEvent(
-      new CustomEvent("search", {
-        detail: query.toString() + (q ? `&q=${q}` : ""),
-        composed: true,
-        bubbles: true,
-      })
-    );
-  }
-
-  private emitChange(e: Event) {
-    const target = e.target as HTMLInputElement;
-    if (target) {
-      target.dispatchEvent(
-        new Event("change", { composed: true, bubbles: true })
-      );
+    private get eventsDeepCopy(): LMSEvent[] {
+        return this._eventsDeepCopy;
     }
-  }
 
-  private handleHideToggle() {
-    this.isHidden = !this.isHidden;
-    this.dispatchEvent(
-      new CustomEvent("hide", {
-        detail: this.isHidden,
-        composed: true,
-        bubbles: true,
-      })
-    );
-  }
+    private set eventsDeepCopy(value: LMSEvent[]) {
+        if (this._eventsDeepCopy.length === 0) {
+            this._eventsDeepCopy = value;
+        }
+    }
 
-  private handleDropdownToggle(e: Event) {
-    const target = e.target as LMSDropdown;
-    this.lmsDropdowns.forEach((lmsDropdown) => {
-      if (lmsDropdown !== target) {
-        lmsDropdown.isOpen = false;
-      }
-    });
-  }
+    private facetsStrategyManager() {
+        switch (this.facetsStrategy) {
+            case "preserve":
+                return this.eventsDeepCopy;
+            case "update":
+                return this.events;
+            default:
+                throw new Error("Invalid facetsStrategy");
+        }
+    }
 
-  private getSettingsValueForToggle(plugin_key: string) {
-    return Boolean(
-      Number(
-        this.settings instanceof Array
-          ? this.settings.find((setting) => setting.plugin_key === plugin_key)
-              ?.plugin_value
-          : undefined
-      )
-    );
-  }
+    private throttledHandleResize: () => void;
 
-  override render() {
-    return html`
-      <div class="card" @change=${this.handleChange}>
-        <div
-          class="card-header container-fluid ${classMap({
-            "justify-content-between": !this.isHidden,
-            "justify-content-center": this.isHidden,
-            "flex-column": this.shouldFold,
-          })} sticky-top bg-white"
-        >
-          <div class="row">
-            <div
-              class="col-1 ${classMap({
-                "d-none": this.shouldFold,
-              })}"
-            >
-              <h5
-                class="nobr ${classMap({
-                  "d-inline": !this.shouldFold,
-                })}"
-              >
-                ${__("Filter")}
-              </h5>
-            </div>
+    static override styles = [
+        tailwindStyles,
+        skeletonStyles,
+        utilityStyles,
+        css`
+            .gap-3 {
+                gap: 1rem;
+            }
 
-            <div
-              class=${classMap({
-                "col-3": !this.shouldFold,
-                "mb-3": this.shouldFold,
-                "col-12": this.shouldFold,
-              })}
-            >
-              <lms-search
-                @search=${this.handleSearch}
-                .sortableColumns=${["name", "description"]}
-              ></lms-search>
-            </div>
+            .nobr {
+                white-space: nowrap;
+            }
+        `,
+    ];
 
-            <div
-              class=${classMap({
-                col: !this.shouldFold,
-                "col-12": this.shouldFold,
-              })}
-            >
-              <div
-                class="btn-group ${classMap({
-                  "d-none": !this.shouldFold,
-                  "w-100": this.shouldFold,
-                })}"
-              >
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary btn-sm"
-                  @click=${this.handleHideToggle}
-                  aria-label=${this.isHidden
-                    ? attr__("Show filters")
-                    : attr__("Hide filters")}
+    constructor() {
+        super();
+        this.throttledHandleResize = throttle(
+            this.handleResize.bind(this),
+            250
+        );
+    }
+
+    private handleResize() {
+        this.shouldFold = window.innerWidth <= 992;
+        this.isHidden = this.shouldFold;
+        this.requestUpdate();
+    }
+
+    override connectedCallback() {
+        super.connectedCallback();
+
+        window.addEventListener("resize", this.throttledHandleResize);
+
+        fetch("/api/v1/contrib/eventmanagement/public/settings")
+            .then((response) => response.json())
+            .then((settings) => {
+                this.settings = settings.map((setting: LMSSettingResponse) => {
+                    try {
+                        return {
+                            ...setting,
+                            plugin_value: JSON.parse(
+                                setting.plugin_value.toString()
+                            ),
+                        };
+                    } catch {
+                        return setting;
+                    }
+                });
+            });
+
+        requestHandler
+            .request("getEventTypesPublic")
+            .then((response) => response.json())
+            .then(
+                (event_types: LMSEventType[]) =>
+                    (this.event_types = event_types)
+            );
+
+        requestHandler
+            .request("getTargetGroupsPublic")
+            .then((response) => response.json())
+            .then(
+                (target_groups: LMSTargetGroup[]) =>
+                    (this.target_groups = target_groups)
+            );
+
+        requestHandler
+            .request("getLocationsPublic")
+            .then((response) => response.json())
+            .then((locations: LMSLocation[]) => (this.locations = locations));
+    }
+
+    override disconnectedCallback(): void {
+        super.disconnectedCallback();
+        window.removeEventListener("resize", this.throttledHandleResize);
+    }
+
+    override willUpdate() {
+        this.eventsDeepCopy = deepCopy(this.events);
+        const events = this.facetsStrategyManager();
+        if (!events.length) return;
+        this.facets = {
+            eventTypeIds: [...new Set(events.map((event) => event.event_type))],
+            targetGroupIds: [
+                ...new Set(
+                    events.flatMap((event: any) =>
+                        event.target_groups.map((target_group: any) =>
+                            target_group.selected
+                                ? target_group.target_group_id
+                                : NaN
+                        )
+                    )
+                ),
+            ].filter(Number.isInteger),
+            locationIds: [...new Set(events.map((event) => event.location))],
+            ...events
+                .map((event: any) => {
+                    const { event_type, location, target_groups, ...rest } =
+                        event; // eslint-disable-line @typescript-eslint/no-unused-vars
+                    return rest;
+                })
+                .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+        };
+    }
+
+    private handleReset() {
+        this.inputs.forEach((input) => this.resetHandlers[input.type](input));
+        this.dispatchEvent(
+            new CustomEvent("filter", {
+                detail: "",
+                composed: true,
+                bubbles: true,
+            })
+        );
+    }
+
+    private isAllowedFilter(
+        name: string | boolean | undefined,
+        value: unknown,
+        exclude: string[]
+    ) {
+        if (!name) return false;
+        return !(name && exclude.includes(name.toString()) && value === false);
+    }
+
+    private getParamsFromActiveFilters() {
+        return [...(this.inputs ?? [])]
+            .filter((input) => input.value || input.checked)
+            .map((input) => {
+                const handler =
+                    this.inputHandlers?.[input.type] ||
+                    this.inputHandlers.default;
+                if (!handler) return [input.name, undefined];
+                const value = handler(input);
+                return [input.name, value];
+            })
+            .filter(([name, value]) =>
+                this.isAllowedFilter(name, value, [
+                    "event_type",
+                    "target_group",
+                    "location",
+                    "_order_by",
+                ])
+            );
+    }
+
+    private handleChange() {
+        const query = new URLSearchParams();
+        this.getParamsFromActiveFilters().forEach(([name, value]) => {
+            if (typeof name === "string" && value !== undefined) {
+                return query.append(name, value?.toString());
+            }
+        });
+
+        this.dispatchEvent(
+            new CustomEvent("filter", {
+                detail: query.toString(),
+                composed: true,
+                bubbles: true,
+            })
+        );
+    }
+
+    private handleSearch(e: CustomEvent) {
+        const { q } = e.detail;
+        const query = new URLSearchParams();
+        this.getParamsFromActiveFilters().forEach(([name, value]) => {
+            if (typeof name === "string" && value !== undefined) {
+                return query.append(name, value?.toString());
+            }
+        });
+        this.dispatchEvent(
+            new CustomEvent("search", {
+                detail: query.toString() + (q ? `&q=${q}` : ""),
+                composed: true,
+                bubbles: true,
+            })
+        );
+    }
+
+    private emitChange(e: Event) {
+        const target = e.target as HTMLInputElement;
+        if (target) {
+            target.dispatchEvent(
+                new Event("change", { composed: true, bubbles: true })
+            );
+        }
+    }
+
+    private handleHideToggle() {
+        this.isHidden = !this.isHidden;
+        this.dispatchEvent(
+            new CustomEvent("hide", {
+                detail: this.isHidden,
+                composed: true,
+                bubbles: true,
+            })
+        );
+    }
+
+    private handleDropdownToggle(e: Event) {
+        const target = e.target as LMSDropdown;
+        this.lmsDropdowns.forEach((lmsDropdown) => {
+            if (lmsDropdown !== target) {
+                lmsDropdown.isOpen = false;
+            }
+        });
+    }
+
+    private getSettingsValueForToggle(plugin_key: string) {
+        return Boolean(
+            Number(
+                this.settings instanceof Array
+                    ? this.settings.find(
+                          (setting) => setting.plugin_key === plugin_key
+                      )?.plugin_value
+                    : undefined
+            )
+        );
+    }
+
+    override render() {
+        return html`
+            <div class="mx-8" @change=${this.handleChange}>
+                <div
+                    class="sticky top-4 z-10 mb-8 rounded-2xl bg-white p-4 shadow-sm"
                 >
-                  ${this.isHidden ? __("Show filters") : __("Hide filters")}
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary btn-sm"
-                  @click=${this.handleReset}
-                >
-                  ${__("Reset filters")}
-                </button>
-              </div>
-
-              <div
-                class="dropdowns ${classMap({
-                  "d-flex": !this.shouldFold,
-                  "flex-wrap": !this.shouldFold,
-                  "gap-3": !this.shouldFold,
-                })}"
-              >
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Sort by")}
-                  @toggle=${this.handleDropdownToggle}
-                >
-                  ${map(
-                    ["start_time", "end_time", "event_type", "location"],
-                    (value, index) => html`
-                      <div class="dropdown-item">
-                        <input
-                          type="radio"
-                          id="_order_by_${value}"
-                          name="_order_by"
-                          value=${value}
-                          ?checked=${index === 0}
-                        />
-                        <label for="_order_by_${value}">${__(value)}</label>
-                      </div>
-                    `
-                  )}
-                </lms-dropdown>
-
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Event Type")}
-                  @toggle=${this.handleDropdownToggle}
-                >
-                  ${map(
-                    this.facets.eventTypeIds,
-                    (eventTypeId) => html`
-                      <div class="dropdown-item">
-                        <input
-                          type="checkbox"
-                          class="form-check-input"
-                          name="event_type"
-                          id="event_type_${eventTypeId}"
-                          value=${eventTypeId}
-                        />
-                        <label
-                          class="form-check-label"
-                          for="event_type_${eventTypeId}"
-                          >${this.event_types.find(
-                            (event_type) => event_type.id === eventTypeId
-                          )?.name}</label
-                        >
-                      </div>
-                    `
-                  )}
-                </lms-dropdown>
-
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Target Group")}
-                  @toggle=${this.handleDropdownToggle}
-                >
-                  ${map(
-                    this.facets.targetGroupIds,
-                    (targetGroupId) => html`
-                      <div class="dropdown-item">
-                        <input
-                          type="checkbox"
-                          class="form-check-input"
-                          name="target_group"
-                          id="target_group_${targetGroupId}"
-                          value=${targetGroupId}
-                        />
-                        <label
-                          class="form-check-label"
-                          for="target_group_${targetGroupId}"
-                          >${this.target_groups.find(
-                            (target_group) => target_group.id === targetGroupId
-                          )?.name}</label
-                        >
-                      </div>
-                    `
-                  )}
-                </lms-dropdown>
-
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Age")}
-                  @toggle=${this.handleDropdownToggle}
-                  class=${classMap({
-                    "d-none": !this.getSettingsValueForToggle(
-                      "opac_filters_age_enabled"
-                    ),
-                  })}
-                >
-                  <div class="dropdown-item">
-                    <label for="min_age">${__("Min Age")}</label>
-                    <input
-                      type="number"
-                      class="form-control form-control-sm"
-                      id="min_age"
-                      name="min_age"
-                      min="0"
-                      max="120"
-                      value=""
-                      @input=${this.emitChange}
-                    />
-                    <label for="max_age">${__("Max Age")}</label>
-                    <input
-                      type="number"
-                      class="form-control form-control-sm"
-                      id="max_age"
-                      name="max_age"
-                      min="0"
-                      max="120"
-                      value=""
-                      @input=${this.emitChange}
-                    />
-                  </div>
-                </lms-dropdown>
-
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Registration & Dates")}
-                  @toggle=${this.handleDropdownToggle}
-                  class=${classMap({
-                    "d-none": !this.getSettingsValueForToggle(
-                      "opac_filters_registration_and_dates_enabled"
-                    ),
-                  })}
-                >
-                  <div class="dropdown-item">
-                    <input
-                      type="checkbox"
-                      class="form-check-input"
-                      id="open_registration"
-                      name="open_registration"
-                      checked
-                    />
-                    <label for="open_registration"
-                      >${__("Open Registration")}</label
+                    <div
+                        class="${classMap({
+                            "justify-between": !this.isHidden,
+                            "justify-center": this.isHidden,
+                            "flex-col": this.shouldFold,
+                        })} flex items-center gap-4"
                     >
-                  </div>
-                  <div class="dropdown-item">
-                    <label for="start_time">${__("Start Date")}</label>
-                    <input
-                      type="date"
-                      class="form-control form-control-sm"
-                      id="start_time"
-                      name="start_time"
-                    />
-                    <label for="end_time">${__("End Date")}</label>
-                    <input
-                      type="date"
-                      class="form-control form-control-sm"
-                      id="end_time"
-                      name="end_time"
-                    /></div
-                ></lms-dropdown>
-
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Location")}
-                  @toggle=${this.handleDropdownToggle}
-                >
-                  ${map(
-                    this.facets.locationIds,
-                    (locationId) =>
-                      html` <div class="dropdown-item">
-                        <input
-                          type="checkbox"
-                          class="form-check-input"
-                          name="location"
-                          id="location_${locationId}"
-                          value=${locationId}
-                        />
-                        <label
-                          class="form-check-label"
-                          for="location_${locationId}"
-                          >${this.locations.find(
-                            (location) => location.id === locationId
-                          )?.name}</label
+                        <div
+                            class="${classMap({
+                                hidden: this.shouldFold,
+                            })} flex-none"
                         >
-                      </div>`
-                  )}
-                </lms-dropdown>
+                            <h5
+                                class="${classMap({
+                                    inline: !this.shouldFold,
+                                })} whitespace-nowrap"
+                            >
+                                ${__("Filter")}
+                            </h5>
+                        </div>
 
-                <lms-dropdown
-                  .isHidden=${this.isHidden}
-                  .shouldFold=${this.shouldFold}
-                  .label=${__("Fee")}
-                  @toggle=${this.handleDropdownToggle}
-                  class=${classMap({
-                    "d-none": !this.getSettingsValueForToggle(
-                      "opac_filters_fee_enabled"
-                    ),
-                  })}
-                >
-                  <div class="dropdown-item">
-                    <label for="fee">${__("Fee")}</label>
-                    <input
-                      type="number"
-                      class="form-control form-control-sm"
-                      id="fee"
-                      name="fee"
-                      @input=${this.emitChange}
-                    />
-                  </div>
-                </lms-dropdown>
-              </div>
+                        <div
+                            class="${classMap({
+                                "mb-3": this.shouldFold,
+                            })} w-32 flex-auto"
+                        >
+                            <lms-search
+                                @search=${this.handleSearch}
+                                .sortableColumns=${["name", "description"]}
+                            ></lms-search>
+                        </div>
+
+                        <div class="flex-auto">
+                            <div
+                                class="${classMap({
+                                    hidden: !this.shouldFold,
+                                    "w-full": this.shouldFold,
+                                })}"
+                            >
+                                <button
+                                    type="button"
+                                    class="btn-secondary btn-outline btn-sm btn"
+                                    @click=${this.handleHideToggle}
+                                    aria-label=${this.isHidden
+                                        ? attr__("Show filters")
+                                        : attr__("Hide filters")}
+                                >
+                                    ${this.isHidden
+                                        ? __("Show filters")
+                                        : __("Hide filters")}
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn-secondary btn-outline btn-sm btn"
+                                    @click=${this.handleReset}
+                                >
+                                    ${__("Reset filters")}
+                                </button>
+                            </div>
+
+                            <div
+                                class="dropdowns ${classMap({
+                                    flex: !this.shouldFold,
+                                    "flex-wrap": !this.shouldFold,
+                                    "gap-3": !this.shouldFold,
+                                })}"
+                            >
+                                <lms-dropdown
+                                    .isHidden=${this.isHidden}
+                                    .shouldFold=${this.shouldFold}
+                                    .label=${__("Sort by")}
+                                    @toggle=${this.handleDropdownToggle}
+                                >
+                                    ${map(
+                                        [
+                                            "start_time",
+                                            "end_time",
+                                            "event_type",
+                                            "location",
+                                        ],
+                                        (value, index) => html`
+                                            <div class="form-control">
+                                                <label
+                                                    for="_order_by_${value}"
+                                                    class="label cursor-pointer"
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        class="radio checked:bg-primary"
+                                                        id="_order_by_${value}"
+                                                        name="_order_by"
+                                                        value=${value}
+                                                        ?checked=${index === 0}
+                                                    />
+                                                    <span class="label-text">
+                                                        ${__(value)}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        `
+                                    )}
+                                </lms-dropdown>
+
+                                <lms-dropdown
+                                    .isHidden=${this.isHidden}
+                                    .shouldFold=${this.shouldFold}
+                                    .label=${__("Event Type")}
+                                    @toggle=${this.handleDropdownToggle}
+                                >
+                                    ${map(
+                                        this.facets.eventTypeIds,
+                                        (eventTypeId) => html`
+                                            <div class="form-control">
+                                                <label
+                                                    class="label cursor-pointer"
+                                                    for="event_type_${eventTypeId}"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        class="checkbox"
+                                                        name="event_type"
+                                                        id="event_type_${eventTypeId}"
+                                                        value=${eventTypeId}
+                                                    />
+                                                    <span class="label-text"
+                                                        >${this.event_types.find(
+                                                            (event_type) =>
+                                                                event_type.id ===
+                                                                eventTypeId
+                                                        )?.name}</span
+                                                    >
+                                                </label>
+                                            </div>
+                                        `
+                                    )}
+                                </lms-dropdown>
+
+                                <lms-dropdown
+                                    .isHidden=${this.isHidden}
+                                    .shouldFold=${this.shouldFold}
+                                    .label=${__("Target Group")}
+                                    @toggle=${this.handleDropdownToggle}
+                                >
+                                    ${map(
+                                        this.facets.targetGroupIds,
+                                        (targetGroupId) => html`
+                                            <div class="form-control">
+                                                <label
+                                                    class="label cursor-pointer"
+                                                    for="target_group_${targetGroupId}"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        class="checkbox"
+                                                        name="target_group"
+                                                        id="target_group_${targetGroupId}"
+                                                        value=${targetGroupId}
+                                                    />
+                                                    <span class="label-text">
+                                                        ${this.target_groups.find(
+                                                            (target_group) =>
+                                                                target_group.id ===
+                                                                targetGroupId
+                                                        )?.name}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        `
+                                    )}
+                                </lms-dropdown>
+
+                                <lms-dropdown
+                                    .isHidden=${this.isHidden}
+                                    .shouldFold=${this.shouldFold}
+                                    .label=${__("Age")}
+                                    @toggle=${this.handleDropdownToggle}
+                                    class=${classMap({
+                                        hidden: !this.getSettingsValueForToggle(
+                                            "opac_filters_age_enabled"
+                                        ),
+                                    })}
+                                >
+                                    <div class="form-control w-full">
+                                        <label for="min_age" class="label"
+                                            >${__("Min Age")}</label
+                                        >
+                                        <input
+                                            type="number"
+                                            class="input-bordered input w-full"
+                                            id="min_age"
+                                            name="min_age"
+                                            min="0"
+                                            max="120"
+                                            value=""
+                                            @input=${this.emitChange}
+                                        />
+                                    </div>
+                                    <div class="form-control w-full">
+                                        <label for="max_age" class="label">
+                                            ${__("Max Age")}</label
+                                        >
+                                        <input
+                                            type="number"
+                                            class="input-bordered input w-full"
+                                            id="max_age"
+                                            name="max_age"
+                                            min="0"
+                                            max="120"
+                                            value=""
+                                            @input=${this.emitChange}
+                                        />
+                                    </div>
+                                </lms-dropdown>
+
+                                <lms-dropdown
+                                    .isHidden=${this.isHidden}
+                                    .shouldFold=${this.shouldFold}
+                                    .label=${__("Registration & Dates")}
+                                    @toggle=${this.handleDropdownToggle}
+                                    class=${classMap({
+                                        hidden: !this.getSettingsValueForToggle(
+                                            "opac_filters_registration_and_dates_enabled"
+                                        ),
+                                    })}
+                                >
+                                    <div class="form-control">
+                                        <label
+                                            for="open_registration"
+                                            class="label cursor-pointer"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                class="checkbox"
+                                                id="open_registration"
+                                                name="open_registration"
+                                                checked
+                                            />
+                                            <span class="label-text">
+                                                ${__("Open Registration")}
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div class="form-control w-full">
+                                        <label for="start_time" class="label">
+                                            <span class="label-text">
+                                                ${__("Start Date")}</span
+                                            >
+                                        </label>
+                                        <input
+                                            type="date"
+                                            class="input-bordered input w-full"
+                                            id="start_time"
+                                            name="start_time"
+                                        />
+                                        <label for="start_time" class="label">
+                                            <span class="label-text">
+                                                ${__("End Date")}</span
+                                            >
+                                        </label>
+                                        <input
+                                            type="date"
+                                            class="input-bordered input w-full"
+                                            id="end_time"
+                                            name="end_time"
+                                        /></div
+                                ></lms-dropdown>
+
+                                <lms-dropdown
+                                    .isHidden=${this.isHidden}
+                                    .shouldFold=${this.shouldFold}
+                                    .label=${__("Location")}
+                                    @toggle=${this.handleDropdownToggle}
+                                >
+                                    ${map(
+                                        this.facets.locationIds,
+                                        (locationId) =>
+                                            html` <div class="form-control">
+                                                <label
+                                                    class="label cursor-pointer"
+                                                    for="location_${locationId}"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        class="checkbox"
+                                                        name="location"
+                                                        id="location_${locationId}"
+                                                        value=${locationId}
+                                                    />
+                                                    <span class="label-text">
+                                                        ${this.locations.find(
+                                                            (location) =>
+                                                                location.id ===
+                                                                locationId
+                                                        )?.name}
+                                                    </span>
+                                                </label>
+                                            </div>`
+                                    )}
+                                </lms-dropdown>
+
+                                <lms-dropdown
+                                    .isHidden=${this.isHidden}
+                                    .shouldFold=${this.shouldFold}
+                                    .label=${__("Fee")}
+                                    @toggle=${this.handleDropdownToggle}
+                                    class=${classMap({
+                                        hidden: !this.getSettingsValueForToggle(
+                                            "opac_filters_fee_enabled"
+                                        ),
+                                    })}
+                                >
+                                    <div class="form-control">
+                                        <label for="fee">
+                                            <span class="label-text">
+                                                ${__("Fee")}
+                                            </span>
+                                        </label>
+                                        <input
+                                            type="number"
+                                            class="input-bordered input w-full"
+                                            id="fee"
+                                            name="fee"
+                                            @input=${this.emitChange}
+                                        />
+                                    </div>
+                                </lms-dropdown>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <slot></slot>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <slot></slot>
-        </div>
-      </div>
-    `;
-  }
+        `;
+    }
 }
