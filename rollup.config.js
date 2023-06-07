@@ -1,12 +1,11 @@
-import typescript from "@rollup/plugin-typescript";
-import nodeResolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
+import nodeResolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
+import typescript from "@rollup/plugin-typescript";
+import autoprefixer from "autoprefixer";
+import path from "path";
 import minifyHTML from "rollup-plugin-minify-html-literals";
 import postcss from "rollup-plugin-postcss";
-import autoprefixer from "autoprefixer";
-import analyze from "rollup-plugin-analyzer";
-import path from "path";
 
 export default {
   input: "./src/main.ts",
@@ -35,10 +34,10 @@ export default {
       declaration: false,
       declarationMap: false,
     }),
-    // minifyHTML(),
-    // terser(),
-    // analyze({
-      // summaryOnly: true,
-    // }),
+     minifyHTML(),
+     terser(),
+    //  analyze({
+    //   summaryOnly: true,
+    //  }),
   ],
 };
