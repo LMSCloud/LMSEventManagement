@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
+import chalk from "chalk";
 import fs from "fs/promises";
 import path from "path";
-import chalk from "chalk";
 import {
   get_plugin_object,
   recursive_dir_search,
@@ -78,7 +78,7 @@ async function main() {
   const staticapi_file = `${plugin_content_path}/staticapi.json`;
 
   const locales_path = `${plugin_content_path}/locales`;
-  const static_dir = `${plugin_content_path}/static`;
+  const static_dir = `${plugin_content_path}/assets`;
   const dist_dir = `${plugin_content_path}/dist`;
 
   let path_specs = {};
@@ -107,12 +107,12 @@ async function main() {
       }
     }
 
-    // Add path specs for files in the static directory
+    // Add path specs for files in the assets directory
     if (await directory_exists(static_dir)) {
       console.info(chalk.cyan(`Processing ${static_dir} directory...`));
       const static_files = await fs.readdir(static_dir);
       for (const file of static_files) {
-        path_specs[`/static/${file}`] = create_path_spec_object();
+        path_specs[`/assets/${file}`] = create_path_spec_object();
       }
     }
 
