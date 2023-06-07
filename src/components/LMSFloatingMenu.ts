@@ -1,100 +1,100 @@
-import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
+import { IconDefinition, faBars } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { LitElement, css, html } from "lit";
-import { customElement, property, query } from "lit/decorators.js";
-import { classMap } from "lit/directives/class-map.js";
-import { __, attr__ } from "../lib/translate";
+import { customElement, property } from "lit/decorators.js";
 import { TranslatedString } from "../sharedDeclarations";
+import { tailwindStyles } from "../tailwind.lit";
 
 type MenuEntry = {
-  name: string | TranslatedString;
-  icon: IconDefinition;
-  url: string;
-  method: string;
+    name: string | TranslatedString;
+    icon: IconDefinition;
+    url: string;
+    method: string;
+};
+
+type Logo = {
+    src: string;
+    alt: string;
 };
 
 @customElement("lms-floating-menu")
 export default class LMSFloatingMenu extends LitElement {
-  @property({ type: String }) brand = "Navigation";
+    @property({ type: String }) brand = "Navigation";
 
-  @property({ type: Array }) items: MenuEntry[] = [];
+    @property({
+        type: Object,
+        converter: (value) => (value ? JSON.parse(value) : {}),
+    })
+    logo: Logo = {} as Logo;
 
-  @property({ type: URLSearchParams, attribute: false })
-  private currentSearchParams = new URLSearchParams(window.location.search);
+    @property({ type: Array }) items: MenuEntry[] = [];
 
-  @query("#navbarNav") private navbarNav!: HTMLElement;
+    static override styles = [
+        tailwindStyles,
+        css`
+            svg {
+                width: 1rem;
+                height: 1rem;
+            }
+        `,
+    ];
 
-  private isOpen = false;
-
-  static override styles = [
-    bootstrapStyles,
-    css`
-      svg {
-        width: 1rem;
-        height: 1rem;
-      }
-
-      nav {
-        background-color: var(--background-color);
-        backdrop-filter: blur(5px);
-        box-shadow: var(--shadow-hv);
-      }
-    `,
-  ];
-
-  private toggleNavbarCollapse() {
-    this.navbarNav.classList.toggle("collapse");
-    this.isOpen = this.navbarNav.classList.contains("show");
-  }
-
-  private isUrlMatchingSearchParams(
-    url: string,
-    searchParams: URLSearchParams
-  ): boolean {
-    const [, itemSearchParams]: string[] | URLSearchParams[] = url.split("?");
-    const itemSearchParamsObj = new URLSearchParams(itemSearchParams ?? "");
-    return itemSearchParamsObj.toString() === searchParams.toString();
-  }
-
-  override render() {
-    return html`
-      <nav class="navbar navbar-expand-lg navbar-light mx-2 mt-3 mb-5 rounded">
-        <a class="navbar-brand" href="#"><strong>${this.brand}</strong></a>
-        <button
-          @click=${this.toggleNavbarCollapse}
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded=${this.isOpen ? "true" : "false"}
-          aria-label=${attr__("Toggle navigation")}
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            ${this.items.map((item) => {
-              const matches = this.isUrlMatchingSearchParams(
-                item.url,
-                this.currentSearchParams
-              );
-
-              return html`
-                <li class=${classMap({ "nav-item": true, active: matches })}>
-                  <a class="nav-link" href=${item.url}>
-                    ${litFontawesome(item.icon)} ${item.name}
-                    ${matches
-                      ? html`<span class="sr-only">(${__("current")})</span>`
-                      : ""}
-                  </a>
-                </li>
-              `;
-            })}
-          </ul>
-        </div>
-      </nav>
-    `;
-  }
+    override render() {
+        return html`
+            <div class="navbar mb-8 rounded-lg bg-white shadow-md">
+                <div class="navbar-start">
+                    <div class="dropdown">
+                        <label tabindex="0" class="btn-ghost btn lg:hidden">
+                            ${litFontawesome(faBars)}
+                        </label>
+                        <ul
+                            tabindex="0"
+                            class="dropdown-content menu rounded-box menu-sm z-50 mt-3 w-56 bg-white p-2 shadow"
+                        >
+                            ${this.items.map(
+                                ({ url, icon, name }) =>
+                                    html`
+                                        <li
+                                            class="rounded-lg hover:bg-gray-100"
+                                        >
+                                            <a href=${url} class="font-medium text-base">
+                                                ${litFontawesome(icon)}&nbsp;
+                                                ${name}</a
+                                            >
+                                        </li>
+                                    `
+                            )}
+                        </ul>
+                    </div>
+                    <figure class="p-4" ?hidden=${Boolean(!this.logo?.src)}>
+                        <img
+                            src=${this.logo?.src}
+                            alt=${this.logo?.alt}
+                            class="h-8 w-8"
+                        />
+                    </figure>
+                    <a class="text-xl normal-case" href="#"
+                        ><strong ?hidden=${!this.brand}
+                            >${this.brand}</strong
+                        ></a
+                    >
+                </div>
+                <div class="navbar-center hidden lg:flex">
+                    <ul class="menu menu-horizontal px-1">
+                        ${this.items.map(
+                            ({ url, icon, name }) =>
+                                html`
+                                    <li class="rounded-lg hover:bg-gray-100">
+                                        <a href=${url}
+                                            >${litFontawesome(icon)}&nbsp;
+                                            ${name}</a
+                                        >
+                                    </li>
+                                `
+                        )}
+                    </ul>
+                </div>
+            </div>
+        `;
+    }
 }

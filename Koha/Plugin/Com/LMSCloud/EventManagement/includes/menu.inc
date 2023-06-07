@@ -2,6 +2,8 @@
 
 <lms-event-management-menu
   brand="LMSEventManagement"
-  baseurl="[% base_url %]"
-  pluginclass="[% CLASS %]"
-></lms-event-management-menu>
+  logo='{"src":"/api/v1/contrib/eventmanagement/static/assets/lmscloud.webp","alt":"LMSCloud logo"}'
+  base-url="[% base_url %]"
+  plugin-class="[% CLASS %]"
+>
+</lms-event-management-menu>
