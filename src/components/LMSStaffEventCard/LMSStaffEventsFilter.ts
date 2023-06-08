@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, property, queryAll } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { __ } from "../../lib/translate";
@@ -10,11 +10,13 @@ import {
 } from "../../sharedDeclarations";
 import { utilityStyles } from "../../styles/utilities";
 import { tailwindStyles } from "../../tailwind.lit";
+import LMSDataNavbar from "../LMSDataNavbar";
 import LMSDropdown from "../LMSDropdown";
 
 declare global {
     interface HTMLElementTagNameMap {
         "lms-dropdown": LMSDropdown;
+        "lms-data-navbar": LMSDataNavbar;
     }
 }
 
@@ -71,11 +73,12 @@ export default class LMSStaffEventsFilter extends LitElement {
 
     override render() {
         return html`
-            <nav
-                class="navbar-light sticky-top navbar rounded border bg-white"
-                @dropdown-toggle=${this.handleDropdownToggle}
-            >
-                <div @change=${this.handleChange} class="dropdown-wrapper">
+            <lms-data-navbar @dropdown-toggle=${this.handleDropdownToggle}>
+                <div
+                    @change=${this.handleChange}
+                    class="dropdown-wrapper"
+                    slot="navbar-start"
+                >
                     <lms-dropdown
                         .label=${__("Sort by")}
                         @change=${this.handleSort}
@@ -83,16 +86,22 @@ export default class LMSStaffEventsFilter extends LitElement {
                         ${map(
                             this.sortableColumns,
                             (column) => html`
-                                <div>
-                                    <input
-                                        type="radio"
-                                        name="_order_by"
-                                        id="_order_by_${column}"
-                                        value=${column}
-                                        ?checked=${column === "id"}
-                                    />
-                                    <label for="_order_by_${column}">
-                                        ${__(column)}
+                                <div class="form-control z-50">
+                                    <label
+                                        for="_order_by_${column}"
+                                        class="label cursor-pointer"
+                                    >
+                                        <input
+                                            type="radio"
+                                            class="radio checked:bg-primary"
+                                            name="_order_by"
+                                            id="_order_by_${column}"
+                                            value=${column}
+                                            ?checked=${column === "id"}
+                                        />
+                                        <span class="label-text"
+                                            >${__(column)}</span
+                                        >
                                     </label>
                                 </div>
                             `
@@ -102,15 +111,21 @@ export default class LMSStaffEventsFilter extends LitElement {
                         ${map(
                             this.event_types,
                             (event_type) => html`
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        name="event_type"
-                                        id="event_types_${event_type.id}"
-                                        value=${event_type.id}
-                                    />
-                                    <label for="event_types_${event_type.id}">
-                                        ${event_type.name}
+                                <div class="form-control z-50">
+                                    <label
+                                        for="event_types_${event_type.id}"
+                                        class="label cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            class="checkbox"
+                                            name="event_type"
+                                            id="event_types_${event_type.id}"
+                                            value=${event_type.id}
+                                        />
+                                        <span class="label-text">
+                                            ${event_type.name}</span
+                                        >
                                     </label>
                                 </div>
                             `
@@ -120,17 +135,21 @@ export default class LMSStaffEventsFilter extends LitElement {
                         ${map(
                             this.target_groups,
                             (target_group) => html`
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        name="target_group"
-                                        id="target_groups_${target_group.id}"
-                                        value=${target_group.id}
-                                    />
+                                <div class="form-control z-50">
                                     <label
                                         for="target_groups_${target_group.id}"
+                                        class="label cursor-pointer"
                                     >
-                                        ${target_group.name}
+                                        <input
+                                            type="checkbox"
+                                            class="checkbox"
+                                            name="target_group"
+                                            id="target_groups_${target_group.id}"
+                                            value=${target_group.id}
+                                        />
+                                        <span class="label-text">
+                                            ${target_group.name}
+                                        </span>
                                     </label>
                                 </div>
                             `
@@ -140,23 +159,34 @@ export default class LMSStaffEventsFilter extends LitElement {
                         ${map(
                             this.locations,
                             (location) => html`
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        name="location"
-                                        id="locations_${location.id}"
-                                        value=${location.id}
-                                    />
-                                    <label for="locations_${location.id}">
-                                        ${location.name}
+                                <div class="form-control z-50">
+                                    <label
+                                        for="locations_${location.id}"
+                                        class="label cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            class="checkbox"
+                                            name="location"
+                                            id="locations_${location.id}"
+                                            value=${location.id}
+                                        />
+                                        <span class="label-text">
+                                            ${location.name}
+                                        </span>
                                     </label>
                                 </div>
                             `
                         )}
                     </lms-dropdown>
                 </div>
-                <slot></slot>
-            </nav>
+                <div slot="navbar-center">
+                    <slot name="navbar-center"></slot>
+                </div>
+                <div slot="navbar-end">
+                    <slot name="navbar-end"></slot>
+                </div>
+            </lms-data-navbar>
         `;
     }
 }
