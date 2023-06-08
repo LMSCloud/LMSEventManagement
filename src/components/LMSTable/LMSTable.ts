@@ -5,7 +5,7 @@ import {
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
+import { css, html, LitElement, nothing, PropertyValueMap } from "lit";
 import {
     customElement,
     property,
@@ -16,10 +16,10 @@ import {
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { searchSyntax } from "../../docs/searchSyntax";
+import { InputConverter } from "../../lib/converters";
 import { IntersectionObserverHandler } from "../../lib/IntersectionObserverHandler";
 import { QueryBuilder } from "../../lib/QueryBuilder";
-import { InputConverter } from "../../lib/converters";
-import { __, attr__ } from "../../lib/translate";
+import { attr__, __ } from "../../lib/translate";
 import { throttle } from "../../lib/utilities";
 import {
     Column,
@@ -31,14 +31,14 @@ import {
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
 import { tailwindStyles } from "../../tailwind.lit";
+import LMSDataNavbar from "../LMSDataNavbar";
 import LMSPagination from "../LMSPagination";
 import LMSSearch from "../LMSSearch";
 import LMSToast from "../LMSToast";
-import LMSTableControls from "./LMSTableControls";
 
 declare global {
     interface HTMLElementTagNameMap {
-        "lms-table-controls": LMSTableControls;
+        "lms-data-navbar": LMSDataNavbar;
         "lms-pagination": LMSPagination;
         "lms-search": LMSSearch;
     }
@@ -530,7 +530,7 @@ export default class LMSTable extends LitElement {
 
         return html`
             <div class="mx-4">
-                <lms-table-controls ?hidden=${!this.hasControls}>
+                <lms-data-navbar ?hidden=${!this.hasControls}>
                     <lms-search
                         slot="navbar-center"
                         @search=${this.handleSearch}
@@ -542,7 +542,7 @@ export default class LMSTable extends LitElement {
                         ._page=${this._page}
                         ._per_page=${this._per_page}
                     ></lms-pagination>
-                </lms-table-controls>
+                </lms-data-navbar>
                 <div
                     class="${classMap({
                         hidden: !this.hasNoResults,
