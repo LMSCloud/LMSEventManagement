@@ -1,9 +1,7 @@
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, css, html } from "lit";
+import { LitElement, html } from "lit";
 import { customElement, property, queryAll } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { __ } from "../../lib/translate";
-import { throttle } from "../../lib/utilities";
 import {
     LMSEventType,
     LMSLocation,
@@ -11,6 +9,7 @@ import {
     SortableColumns,
 } from "../../sharedDeclarations";
 import { utilityStyles } from "../../styles/utilities";
+import { tailwindStyles } from "../../tailwind.lit";
 import LMSDropdown from "../LMSDropdown";
 
 declare global {
@@ -33,55 +32,7 @@ export default class LMSStaffEventsFilter extends LitElement {
 
     @queryAll("input[type=checkbox]") checkboxes!: NodeListOf<HTMLInputElement>;
 
-    private throttledHandleResize: () => void;
-
-    static override styles = [
-        bootstrapStyles,
-        utilityStyles,
-        css`
-            nav > * {
-                margin: 0.5rem 0;
-            }
-
-            @media (max-width: 576px) {
-                .dropdown-wrapper {
-                    width: 100%;
-                }
-            }
-        `,
-    ];
-
-    constructor() {
-        super();
-        this.throttledHandleResize = throttle(
-            this.handleResize.bind(this),
-            250
-        );
-    }
-
-    override connectedCallback(): void {
-        super.connectedCallback();
-        window.addEventListener("resize", this.throttledHandleResize);
-    }
-
-    override disconnectedCallback(): void {
-        super.disconnectedCallback();
-        window.removeEventListener("resize", this.throttledHandleResize);
-    }
-
-    private handleResize() {
-        const width = window.innerWidth;
-        this.lmsDropdowns.forEach((lmsDropdown) => {
-            const shouldFold = width < 576;
-            lmsDropdown.shouldFold = shouldFold;
-            if (shouldFold) {
-                lmsDropdown.classList.add("w-100");
-                return;
-            }
-
-            lmsDropdown.classList.remove("w-100");
-        });
-    }
+    static override styles = [tailwindStyles, utilityStyles];
 
     private handleSort(e: Event) {
         e.stopPropagation();
@@ -107,20 +58,22 @@ export default class LMSStaffEventsFilter extends LitElement {
         );
     }
 
-    private handleDropdownToggle(e: Event) {
-        const target = e.target as LMSDropdown;
-        this.lmsDropdowns.forEach((lmsDropdown) => {
-            if (lmsDropdown !== target) {
-                lmsDropdown.isOpen = false;
-            }
-        });
+    private handleDropdownToggle(e: CustomEvent) {
+        const { id, open } = e.detail;
+        if (open) {
+            this.lmsDropdowns.forEach((lmsDropdown) => {
+                if (lmsDropdown.uuid !== id) {
+                    lmsDropdown.close();
+                }
+            });
+        }
     }
 
     override render() {
         return html`
             <nav
                 class="navbar-light sticky-top navbar rounded border bg-white"
-                @toggle=${this.handleDropdownToggle}
+                @dropdown-toggle=${this.handleDropdownToggle}
             >
                 <div @change=${this.handleChange} class="dropdown-wrapper">
                     <lms-dropdown

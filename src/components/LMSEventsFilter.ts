@@ -329,13 +329,15 @@ export default class LMSEventsFilter extends LitElement {
         );
     }
 
-    private handleDropdownToggle(e: Event) {
-        const target = e.target as LMSDropdown;
-        this.lmsDropdowns.forEach((lmsDropdown) => {
-            if (lmsDropdown !== target) {
-                lmsDropdown.isOpen = false;
-            }
-        });
+    private handleDropdownToggle(e: CustomEvent) {
+        const { id, open } = e.detail;
+        if (open) {
+            this.lmsDropdowns.forEach((lmsDropdown) => {
+                if (lmsDropdown.uuid !== id) {
+                    lmsDropdown.close();
+                }
+            });
+        }
     }
 
     private getSettingsValueForToggle(plugin_key: string) {
