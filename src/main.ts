@@ -20,7 +20,7 @@ import LMSAnchor from "./components/LMSAnchor";
 import LMSCard from "./components/LMSCard";
 import LMSCardDetailsModal from "./components/LMSCardDetailsModal";
 import LMSContainer from "./components/LMSContainer";
-import LMSView from "./components/LMSContent";
+import LMSDataNavbar from "./components/LMSDataNavbar";
 import LMSDropdown from "./components/LMSDropdown";
 import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
@@ -29,9 +29,9 @@ import LMSModal from "./components/LMSModal";
 import LMSPagination from "./components/LMSPagination";
 import LMSPellEditor from "./components/LMSPellEditor";
 import LMSSearch from "./components/LMSSearch";
-import LMSTableControls from "./components/LMSTable/LMSTableControls";
 import LMSToast from "./components/LMSToast";
 import LMSTooltip from "./components/LMSTooltip";
+import LMSView from "./components/LMSView";
 
 /** extensions */
 import LMSEventManagementMenu from "./extensions/LMSEventManagementMenu";
@@ -62,7 +62,7 @@ export default {
     LMSStaffEventCardForm,
     LMSStaffEventCardsDeck,
     LMSStaffEventsFilter,
-    LMSTableControls,
+    LMSDataNavbar,
     LMSAnchor,
     LMSCard,
     LMSCardDetailsModal,
