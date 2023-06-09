@@ -132,6 +132,9 @@ try {
   // Replace \! with \\! to properly escape exclamation points in JavaScript
   cleanContents = cleanContents.replace(/\\!/g, "\\\\!");
 
+  // Replace \/ with \\/ to properly escape forward slashes in JavaScript
+  cleanContents = cleanContents.replace(/\\\//g, "\\\\/");
+
   // Replace :root with :host to scope the CSS to the component
   cleanContents = cleanContents.replace(/:root/g, ":host");
 
