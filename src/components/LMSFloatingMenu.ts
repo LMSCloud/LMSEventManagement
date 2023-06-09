@@ -1,6 +1,6 @@
-import { IconDefinition, faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { LitElement, css, html } from "lit";
+import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { TranslatedString } from "../sharedDeclarations";
 import { tailwindStyles } from "../tailwind.lit";
@@ -57,7 +57,10 @@ export default class LMSFloatingMenu extends LitElement {
                                         <li
                                             class="rounded-lg hover:bg-gray-100"
                                         >
-                                            <a href=${url} class="font-medium text-base">
+                                            <a
+                                                href=${url}
+                                                class="text-base font-medium"
+                                            >
                                                 ${litFontawesome(icon)}&nbsp;
                                                 ${name}</a
                                             >
@@ -84,7 +87,9 @@ export default class LMSFloatingMenu extends LitElement {
                         ${this.items.map(
                             ({ url, icon, name }) =>
                                 html`
-                                    <li class="rounded-lg hover:bg-gray-100">
+                                    <li
+                                        class="rounded-lg text-base hover:bg-gray-100"
+                                    >
                                         <a href=${url}
                                             >${litFontawesome(icon)}&nbsp;
                                             ${name}</a
