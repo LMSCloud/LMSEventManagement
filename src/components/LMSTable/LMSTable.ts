@@ -168,13 +168,12 @@ export default class LMSTable extends LitElement {
             .pip {
                 background: #ffffff;
                 bottom: 1em;
-                box-shadow: var(--shadow-hv);
                 height: fit-content !important;
                 left: 1em;
                 max-height: 30vh;
                 overflow-y: scroll;
                 padding: 1em;
-                position: absolute;
+                position: fixed;
             }
 
             @media (max-width: 576px) {
