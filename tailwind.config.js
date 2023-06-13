@@ -10,19 +10,20 @@ module.exports = {
   daisyui: {
     logs: false,
     themes: [
-      {
-        LMSCloud: {
-          "primary": "#db72bd",
-          "secondary": "#2044f7",
-          "accent": "#79b71b",
-          "neutral": "#2b2c36",
-          "base-100": "#faf8fc",
-          "info": "#97d0ed",
-          "success": "#18bf5a",
-          "warning": "#a3630f",
-          "error": "#fb6a80"
-        }
-      }
-    ]
+      "corporate",
+      // {
+      //   LMSCloud: {
+      //     "primary": "#db72bd",
+      //     "secondary": "#2044f7",
+      //     "accent": "#79b71b",
+      //     "neutral": "#2b2c36",
+      //     "base-100": "#faf8fc",
+      //     "info": "#97d0ed",
+      //     "success": "#18bf5a",
+      //     "warning": "#a3630f",
+      //     "error": "#fb6a80"
+      //   }
+      // }
+    ],
   },
 };
