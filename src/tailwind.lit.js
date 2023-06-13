@@ -3650,6 +3650,10 @@ details.collapse summary::-webkit-details-marker {
   margin-top: 0.75rem;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
 .inline-block {
   display: inline-block;
 }
@@ -3688,6 +3692,10 @@ details.collapse summary::-webkit-details-marker {
 
 .w-1\\/2 {
   width: 50%;
+}
+
+.w-1\\/4 {
+  width: 25%;
 }
 
 .w-11\\/12 {
@@ -3748,6 +3756,10 @@ details.collapse summary::-webkit-details-marker {
 
 .flex-wrap {
   flex-wrap: wrap;
+}
+
+.content-center {
+  align-content: center;
 }
 
 .content-end {
@@ -3876,11 +3888,6 @@ details.collapse summary::-webkit-details-marker {
 
 .p-4 {
   padding: 1rem;
-}
-
-.px-0 {
-  padding-left: 0px;
-  padding-right: 0px;
 }
 
 .px-1 {
