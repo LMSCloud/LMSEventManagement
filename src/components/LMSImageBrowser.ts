@@ -1,17 +1,17 @@
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, html, css, PropertyValues } from "lit";
+import { faCopy } from "@fortawesome/free-solid-svg-icons";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { css, html, LitElement, PropertyValues } from "lit";
 import {
   customElement,
   property /* state */,
   queryAll,
 } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
-import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { faCopy } from "@fortawesome/free-solid-svg-icons";
-import LMSTooltip from "./LMSTooltip";
-import insertResponsiveWrapper from "../lib/insertResponsiveWrapper";
-import { __, attr__ } from "../lib/translate";
+import { attr__, __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
+import { tailwindStyles } from "../tailwind.lit";
+import LMSTooltip from "./LMSTooltip";
 
 type UploadedImage = {
   image: string;
@@ -40,46 +40,27 @@ export default class LMSImageBrowser extends LitElement {
   @property({
     type: Array,
     attribute: "uploaded-images",
-    converter: { fromAttribute: (value) => (value ? JSON.parse(value) : []) },
+    converter: {
+      fromAttribute: (value) => (value ? JSON.parse(value) : []),
+    },
   })
   uploadedImages: UploadedImage[] = [];
-  @queryAll('[id^="button-"]') buttonReferences!: NodeListOf<HTMLButtonElement>;
+  @queryAll('[id^="button-"]')
+  buttonReferences!: NodeListOf<HTMLButtonElement>;
   @queryAll('[id^="tooltip-"]') tooltipReferences!: NodeListOf<LMSTooltip>;
   private boundEventHandler: (event: MessageEvent) => void = () => undefined;
 
   static override styles = [
-    bootstrapStyles,
+    tailwindStyles,
     skeletonStyles,
     css`
-      img {
-        aspect-ratio: 4 / 3;
-        object-fit: cover;
-      }
-
-      img,
-      .card {
-        max-width: 300px;
-      }
-
-      .font-size-sm {
-        font-size: 1rem;
-      }
-
-      svg {
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        color: #ffffff;
-      }
-
-      button {
-        white-space: nowrap;
-      }
-
-      button.btn-modal > svg {
-        color: var(--text-color);
-      }
-    `,
+            svg {
+                display: inline-block;
+                width: 1em;
+                height: 1em;
+                color: #ffffff;
+            }
+        `,
   ];
 
   loadImages() {
@@ -87,7 +68,10 @@ export default class LMSImageBrowser extends LitElement {
       await fetch("/api/v1/contrib/eventmanagement/images");
 
     uploadedImages()
-      .then(async (response): Promise<UploadedImage[]> => await response.json())
+      .then(
+        async (response): Promise<UploadedImage[]> =>
+          await response.json()
+      )
       .then((uploadedImages) => {
         this.uploadedImages = uploadedImages;
       })
@@ -134,90 +118,104 @@ export default class LMSImageBrowser extends LitElement {
       this.tooltipReferences.forEach((tooltipReference: LMSTooltip) => {
         const { id } = tooltipReference;
         const tooltipHashvalue = id.split("-").pop();
-        tooltipReference.target = Array.from(this.buttonReferences).find(
-          (buttonReference) => {
-            const { id } = buttonReference;
-            const buttonHashvalue = id.split("-").pop();
-            return buttonHashvalue === tooltipHashvalue
-              ? buttonReference
-              : null;
-          }
-        ) as HTMLElement | null;
+        tooltipReference.target = Array.from(
+          this.buttonReferences
+        ).find((buttonReference) => {
+          const { id } = buttonReference;
+          const buttonHashvalue = id.split("-").pop();
+          return buttonHashvalue === tooltipHashvalue
+            ? buttonReference
+            : null;
+        }) as HTMLElement | null;
       });
     }
   }
 
   override render() {
     return html`
-      <div class="container-fluid">
-        <div class="card-deck">
-          ${map(this.uploadedImages, (uploadedImage, index) => {
-            const { image, metadata } = uploadedImage;
-            const { dtcreated, filename, hashvalue } = metadata;
-            const filetype = filename.split(".").pop();
-            let isValidFiletype;
-            if (filetype) {
-              isValidFiletype = [
-                "png",
-                "jpg",
-                "jpeg",
-                "webp",
-                "avif",
-                "gif",
-              ].includes(filetype);
-            }
-            return html`
-              <div class="card mb-5">
-                <img
-                  ?hidden=${!isValidFiletype}
-                  src="data:image/${filetype};base64,${image}"
-                  class="card-img-top"
-                  alt=${filename}
-                />
-                <div class="card-body">
-                  <p
-                    data-placement="top"
-                    title=${attr__("Link constructed!")}
-                    @click=${() => {
-                      this.handleClipboardCopy(hashvalue);
-                    }}
-                    class="font-weight-bold p-2 border border-secondary rounded text-center"
-                  >
-                    ${hashvalue}
-                  </p>
-                  <div class="text-center">
-                    <lms-tooltip
-                      id="tooltip-${hashvalue}"
-                      data-placement="top"
-                      data-text="${attr__("Link constructed")}!"
-                      data-timeout="1000"
-                    >
-                      <button
-                        id="button-${hashvalue}"
-                        data-placement="bottom"
-                        title="${attr__("Link constructed")}!"
-                        @click=${() => {
-                          this.handleClipboardCopy(hashvalue);
-                        }}
-                        class="btn btn-primary text-center"
-                      >
-                        ${litFontawesome(faCopy)}
-                        <span>${__("Copy to clipboard")}</span>
-                      </button>
-                    </lms-tooltip>
-                  </div>
+            <div class="mx-8">
+                <div class="card-deck">
+                    ${map(this.uploadedImages, (uploadedImage) => {
+      const { image, metadata } = uploadedImage;
+      const { dtcreated, filename, hashvalue } = metadata;
+      const filetype = filename.split(".").pop();
+      let isValidFiletype;
+      if (filetype) {
+        isValidFiletype = [
+          "png",
+          "jpg",
+          "jpeg",
+          "webp",
+          "avif",
+          "gif",
+        ].includes(filetype);
+      }
+      return html`
+                            <div
+                                class="card card-compact bg-base-100 shadow-xl"
+                            >
+                                <figure>
+                                    <img
+                                        src="data:image/${filetype};base64,${image}"
+                                        class=${classMap({
+        hidden: !isValidFiletype,
+      })}
+                                        alt=${filename}
+                                    />
+                                </figure>
+                                <div class="card-body">
+                                    <p
+                                        data-placement="top"
+                                        title=${attr__("Link constructed!")}
+                                        @click=${() => {
+          this.handleClipboardCopy(hashvalue);
+        }}
+                                        class="font-weight-bold rounded border border-secondary p-2 text-center"
+                                    >
+                                        ${hashvalue}
+                                    </p>
+                                    <div class="text-center">
+                                        <lms-tooltip
+                                            id="tooltip-${hashvalue}"
+                                            data-placement="top"
+                                            data-text="${attr__(
+          "Link constructed"
+        )}!"
+                                            data-timeout="1000"
+                                        >
+                                            <button
+                                                id="button-${hashvalue}"
+                                                data-placement="bottom"
+                                                title="${attr__(
+          "Link constructed"
+        )}!"
+                                                @click=${() => {
+          this.handleClipboardCopy(
+            hashvalue
+          );
+        }}
+                                                class="btn-primary btn text-center"
+                                            >
+                                                ${litFontawesome(faCopy)}
+                                                <span
+                                                    >${__(
+          "Copy to clipboard"
+        )}</span
+                                                >
+                                            </button>
+                                        </lms-tooltip>
+                                    </div>
+                                </div>
+                                <div class="card-actions justify-center">
+                                    <p class="font-thin">
+                                        ${filename}&nbsp;-&nbsp;${dtcreated}
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+    })}
                 </div>
-                <div class="card-footer">
-                  <p class="font-weight-light text-muted font-size-sm">
-                    ${filename}&nbsp;-&nbsp;${dtcreated}
-                  </p>
-                </div>
-              </div>
-              ${insertResponsiveWrapper(index)}
-            `;
-          })}
-        </div>
-      </div>
-    `;
+            </div>
+        `;
   }
 }

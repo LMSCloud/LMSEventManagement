@@ -3630,10 +3630,6 @@ details.collapse summary::-webkit-details-marker {
   margin-bottom: 1rem;
 }
 
-.mb-5 {
-  margin-bottom: 1.25rem;
-}
-
 .mb-8 {
   margin-bottom: 2rem;
 }
@@ -3652,10 +3648,6 @@ details.collapse summary::-webkit-details-marker {
 
 .mt-3 {
   margin-top: 0.75rem;
-}
-
-.block {
-  display: block;
 }
 
 .inline-block {
@@ -3939,6 +3931,10 @@ details.collapse summary::-webkit-details-marker {
 
 .font-medium {
   font-weight: 500;
+}
+
+.font-thin {
+  font-weight: 100;
 }
 
 .normal-case {
