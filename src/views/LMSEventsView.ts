@@ -292,7 +292,7 @@ export default class LMSEventsView extends LitElement {
                                         .isOpen=${this.hasOpenModal}
                                     ></lms-card-details-modal>
                                 </div>
-                                <div class="load-more flex content-center">
+                                <div class="load-more flex justify-center">
                                     <span class="mt-4 hidden text-center"
                                         >${__("You've reached the end")}</span
                                     >

@@ -1,5 +1,6 @@
-import { LitElement, css, html, nothing } from "lit";
+import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 import { tailwindStyles } from "../tailwind.lit";
 
 type Image = {
@@ -39,13 +40,15 @@ export default class LMSCard extends LitElement {
     override render() {
         return html`
             <div
-                class="card shadow-xl hover:relative hover:bottom-2 hover:cursor-pointer hover:shadow-2xl"
+                class="card shadow-md hover:relative hover:bottom-2 hover:cursor-pointer hover:shadow-lg"
             >
                 <figure>
                     <img
                         src=${this.image.src}
                         alt=${this.image.alt}
-                        ?hidden=${!this.image.src}
+                        class="${classMap({
+                            hidden: !this.image.src,
+                        })} w-full"
                     />
                 </figure>
                 <div class="card-body">

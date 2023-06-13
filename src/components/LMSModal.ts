@@ -5,13 +5,13 @@ import {
     faXmarkCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { LitElement, TemplateResult, css, html, nothing } from "lit";
+import { css, html, LitElement, nothing, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { DirectiveResult } from "lit/directive";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
-import { TranslateDirective, __, locale } from "../lib/translate";
+import { locale, TranslateDirective, __ } from "../lib/translate";
 import {
     CreateOpts,
     KohaAPIError,
@@ -264,7 +264,9 @@ export default class LMSModal extends LitElement {
     override render() {
         return html`
             <button
-                class="btn-modal btn-circle btn-lg btn fixed bottom-4 right-4 rounded-full border-none bg-primary shadow hover:shadow-md"
+                class="btn-modal ${classMap({
+                    "rotate-45": this.isOpen,
+                })} btn-circle btn fixed bottom-4 right-4 h-20 w-20 rounded-full border-none bg-primary text-4xl shadow hover:shadow-md"
                 @click=${this.toggleModal}
             >
                 <span class="flex items-center justify-center">

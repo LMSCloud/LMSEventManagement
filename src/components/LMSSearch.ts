@@ -1,4 +1,4 @@
-import { LitElement, css, html } from "lit";
+import { css, html, LitElement } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { attr__ } from "../lib/translate";
@@ -211,24 +211,24 @@ export default class LMSSearch extends LitElement {
             <div class="relative">
                 <input
                     type="text"
-                    class="input input-bordered rounded-xl w-full"
+                    class="input-bordered input w-full rounded-xl"
                     placeholder=${attr__("Search")}
                     aria-label=${attr__("Search")}
                     @input=${this.handleInput}
                     @focus=${this.handleFocus}
                     @blur=${this.handleBlur}
                 />
-                <span class="absolute inset-y-0 right-2 flex items-center"  >
+                <span class="absolute inset-y-0 right-2 flex items-center">
                     <kbd
-                        class="kbd kbd-md mr-1 ${classMap({
+                        class="${classMap({
                             hidden: this.isInputFocused,
-                        })}"
+                        })} kbd kbd-md mr-1"
                         >${shortcutText}</kbd
                     >
                     <kbd
-                        class="kbd kbd-md ${classMap({
+                        class="${classMap({
                             hidden: this.isInputFocused,
-                        })}"
+                        })} kbd kbd-md"
                         >E</kbd
                     >
                 </span>

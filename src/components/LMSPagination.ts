@@ -1,8 +1,8 @@
-import { LitElement, PropertyValues, html } from "lit";
+import { html, LitElement, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
-import { __, attr__ } from "../lib/translate";
+import { attr__, __ } from "../lib/translate";
 import { isDeepEqual } from "../lib/utilities";
 import { Column } from "../sharedDeclarations";
 import { skeletonStyles } from "../styles/skeleton";
