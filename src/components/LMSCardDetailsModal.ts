@@ -212,29 +212,40 @@ export default class LMSCardDetailsModal extends LitElement {
         const quantity = this.getSelectedQuantity(targetGroupFees);
         return targetGroupFees
             ? targetGroupFees.map((targetGroupFee, index) => {
-                const hasTargetGroupId = {}.hasOwnProperty.call(
-                    targetGroupFee,
-                    "target_group_id"
-                );
-                if (hasTargetGroupId) return nothing;
+                  const hasTargetGroupId = {}.hasOwnProperty.call(
+                      targetGroupFee,
+                      "target_group_id"
+                  );
+                  if (hasTargetGroupId) return nothing;
 
-                const { name, min_age, max_age, fee, selected } =
-                    targetGroupFee as LMSEventTargetGroupFee;
+                  const { name, min_age, max_age, fee, selected } =
+                      targetGroupFee as LMSEventTargetGroupFee;
 
-                if (!selected) return nothing;
-                return noFees
-                    ? html`<span
+                  if (!selected) return nothing;
+                  return noFees
+                      ? html`<span
                             >${name}${index + 1 < quantity ? ", " : ""}</span
                         >`
-                    : html`
+                      : html`
                             <tr>
                                 <td>${name}</td>
                                 <td>${min_age} - ${max_age}</td>
                                 <td>${fee}</td>
                             </tr>
                         `;
-            })
+              })
             : nothing;
+    }
+
+    private renderDateAndTime(start_time: Date | null, end_time: Date | null) {
+        const [sDate, sTime] = splitDateTime(start_time, this.locale);
+        const [eDate, eTime] = splitDateTime(end_time, this.locale);
+        const isSameDay = sDate === eDate;
+        return html`${sDate}, ${sTime}
+        ${isSameDay
+            ? html`- ${eTime}`
+            : html` <span>${litFontawesome(faArrowRight)}</span>
+                  ${eDate}, ${eTime}`}`;
     }
 
     override render() {
@@ -262,10 +273,6 @@ export default class LMSCardDetailsModal extends LitElement {
                 ) ?? true;
         }
 
-        const [sDate, sTime] = splitDateTime(start_time, this.locale);
-        const [eDate, eTime] = splitDateTime(end_time, this.locale);
-        const isSameDay = sDate === eDate;
-
         if (this.isOpen && !this.lmsModal.open) this.lmsModal.showModal();
         return html`
             <dialog
@@ -284,66 +291,73 @@ export default class LMSCardDetailsModal extends LitElement {
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <div class="flex">
+                        <!-- Left Column -->
                         <div class="w-1/2">
-                            <p>
-                                <span>${litFontawesome(faCalendar)}</span>
-                                <strong>${__("Date and Time")}</strong>
-                            </p>
-                            <p>
-                                ${sDate}, ${sTime}
-                                ${isSameDay
-                ? html`- ${eTime}`
-                : html` <span
-                                              >${litFontawesome(
-                    faArrowRight
-                )}</span
-                                          >
-                                          ${eDate}, ${eTime}`}
-                            </p>
+                            <!-- Date and Time -->
+                            <div class="p-4">
+                                <p class="mb-2">
+                                    <span>${litFontawesome(faCalendar)}</span>
+                                    <strong>${__("Date and Time")}</strong>
+                                </p>
+                                <p>
+                                    ${this.renderDateAndTime(
+                                        start_time,
+                                        end_time
+                                    )}
+                                </p>
+                            </div>
 
-                            <p class="wrapper">
-                                <span>${litFontawesome(faInfoCircle)}</span>
-                                <strong>${__("Description")}</strong>
-                            </p>
-                            <p>
-                                ${unsafeHTML(
-                    DOMPurify.sanitize(description ?? "")
-                )}
-                            </p>
+                            <!-- Description -->
+                            <div class="p-4">
+                                <p class="mb-2">
+                                    <span>${litFontawesome(faInfoCircle)}</span>
+                                    <strong>${__("Description")}</strong>
+                                </p>
+                                <p>
+                                    ${unsafeHTML(
+                                        DOMPurify.sanitize(description ?? "")
+                                    )}
+                                </p>
+                            </div>
                         </div>
+
+                        <!-- Right Column -->
                         <div class="w-1/2">
                             <img
                                 src=${ifDefined(image ?? undefined)}
                                 ?hidden=${!image}
-                                class="mb-4 aspect-video w-full rounded object-cover"
+                                class="aspect-video w-full rounded object-cover"
                             />
 
-                            <div>
-                                <p>
+                            <!-- Fees -->
+                            <div class="p-4">
+                                <p class="mb-2">
                                     <span>${litFontawesome(faCreditCard)}</span>
                                     <strong>${__("Fees")}</strong>
                                 </p>
+
                                 <div
-                                    class=${classMap({
-                    hidden: !noFees,
-                })}
+                                    class="${classMap({
+                                        hidden: !noFees,
+                                    })}"
                                 >
-                                    <p>${__("No fees")}</p>
-                                    <p>
+                                    <p class="mb-2">${__("No fees")}</p>
+                                    <p class="mb-2">
                                         <span>${litFontawesome(faUsers)}</span>
                                         <strong>${__("Target Groups")}</strong>
                                     </p>
                                     <p>
                                         ${this.renderTargetGroupInfo(
-                    target_groups as LMSEventTargetGroupFee[],
-                    noFees
-                )}
+                                            target_groups as LMSEventTargetGroupFee[],
+                                            noFees
+                                        )}
                                     </p>
                                 </div>
+
                                 <table
                                     class="${classMap({
-                    hidden: noFees,
-                })} table"
+                                        hidden: noFees,
+                                    })} table"
                                 >
                                     <thead>
                                         <tr>
@@ -354,15 +368,15 @@ export default class LMSCardDetailsModal extends LitElement {
                                     </thead>
                                     <tbody>
                                         ${this.renderTargetGroupInfo(
-                    target_groups as LMSEventTargetGroupFee[],
-                    noFees
-                )}
+                                            target_groups as LMSEventTargetGroupFee[],
+                                            noFees
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
 
-                            <div>
-                                <p>
+                            <div class="p-4">
+                                <p class="mb-2">
                                     <span>${litFontawesome(faMapMarker)}</span>
                                     <strong>${__("Location")}</strong>
                                 </p>
