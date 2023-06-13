@@ -76,7 +76,6 @@
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
-    "@granite-elements/granite-lit-bootstrap": "4.6.0-0",
     "@lit-labs/task": "^2.1.0",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
