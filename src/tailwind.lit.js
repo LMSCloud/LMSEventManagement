@@ -3790,10 +3790,6 @@ details.collapse summary::-webkit-details-marker {
   gap: 1rem;
 }
 
-.overflow-x-auto {
-  overflow-x: auto;
-}
-
 .whitespace-nowrap {
   white-space: nowrap;
 }

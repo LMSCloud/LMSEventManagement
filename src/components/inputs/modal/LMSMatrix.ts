@@ -1,5 +1,4 @@
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, TemplateResult, css, html } from "lit";
+import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { DirectiveResult } from "lit/directive";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -10,6 +9,7 @@ import {
   MatrixGroup,
   ModalField,
 } from "../../../sharedDeclarations";
+import { tailwindStyles } from "../../../tailwind.lit";
 
 type Row = {
   id: string | number;
@@ -34,41 +34,42 @@ export default class LMSMatrix extends LitElement {
 
   @property({ type: Array }) value: MatrixGroup[] = [];
 
-  static override styles = [
-    bootstrapStyles,
-    css`
-      input[type="checkbox"].form-control {
-        font-size: 0.375rem;
-      }
-    `,
-  ];
+  static override styles = [tailwindStyles];
 
   override render() {
     const { field } = this;
-    return html` <label for=${field.name}>${field.desc}</label>
-      <div class="overflow-x-auto">
-        <table class="table" id=${field.name}>
-          <thead>
-            <tr>
-              ${map(
-                field.headers,
-                ([name]) => html`<th scope="col">${__(name)}</th>`
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            ${map(
-              field.dbData,
-              (row) => html`<tr>
-                <td class="align-middle">${row.name}</td>
-                ${map(field.headers, (header) =>
-                  this.getMatrixInputMarkup({ field, row, header })
-                )}
-              </tr>`
-            )}
-          </tbody>
-        </table>
-      </div>`;
+    return html`
+            <div class="form-control w-full">
+                <label for=${field.name} class="label">
+                    <span class="label-text"> ${field.desc} </span>
+                </label>
+                <table class="table" id=${field.name}>
+                    <thead>
+                        <tr>
+                            ${map(
+      field.headers,
+      ([name]) => html`<th>${__(name)}</th>`
+    )}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${map(
+      field.dbData,
+      (row) => html`<tr>
+                                <td class="align-middle">${row.name}</td>
+                                ${map(field.headers, (header) =>
+        this.getMatrixInputMarkup({
+          field,
+          row,
+          header,
+        })
+      )}
+                            </tr>`
+    )}
+                    </tbody>
+                </table>
+            </div>
+        `;
   }
 
   private handleInput({ e, id, header }: InputHandlerArgs) {
@@ -116,7 +117,11 @@ export default class LMSMatrix extends LitElement {
     }
   }
 
-  private getValue(name: string, value: BaseFieldValue | undefined, row: Row) {
+  private getValue(
+    name: string,
+    value: BaseFieldValue | undefined,
+    row: Row
+  ) {
     if (value instanceof Array) {
       return value.find((item) => item.id == row.id)?.[name] ?? "0";
     }
@@ -138,7 +143,9 @@ export default class LMSMatrix extends LitElement {
     row: Row
   ) {
     if (value instanceof Array) {
-      return value.find((item) => item.id == row.id)?.[name] === 1 ?? false;
+      return (
+        value.find((item) => item.id == row.id)?.[name] === 1 ?? false
+      );
     }
 
     if (typeof value === "boolean") {
@@ -156,32 +163,34 @@ export default class LMSMatrix extends LitElement {
     const [name, type] = header;
     const inputTypes: Record<string, TemplateResult> = {
       number: html`<td class="align-middle">
-        <input
-          type="number"
-          name=${row.name}
-          id=${row.id}
-          value=${this.getValue(name, field.value, row)}
-          class="form-control"
-          step=${ifDefined(
-            field.attributes
-              ?.find(([attribute]) => attribute === "step")
-              ?.slice(-1)[0] as number
-          )}
-          @input=${(e: Event) => this.handleInput({ e, id: row.id, header })}
-          ?required=${field.required}
-        />
-      </td>`,
+                <input
+                    type="number"
+                    name=${row.name}
+                    id=${row.id}
+                    value=${this.getValue(name, field.value, row)}
+                    class="input-bordered input w-full"
+                    step=${ifDefined(
+        field.attributes
+          ?.find(([attribute]) => attribute === "step")
+          ?.slice(-1)[0] as number
+      )}
+                    @input=${(e: Event) =>
+          this.handleInput({ e, id: row.id, header })}
+                    ?required=${field.required}
+                />
+            </td>`,
       checkbox: html` <td class="align-middle">
-        <input
-          type="checkbox"
-          name=${row.name}
-          id=${row.id}
-          class="form-control"
-          @input=${(e: Event) => this.handleInput({ e, id: row.id, header })}
-          ?required=${field.required}
-          ?checked=${this.getCheckedState(name, field.value, row)}
-        />
-      </td>`,
+                <input
+                    type="checkbox"
+                    name=${row.name}
+                    id=${row.id}
+                    class="checkbox"
+                    @input=${(e: Event) =>
+          this.handleInput({ e, id: row.id, header })}
+                    ?required=${field.required}
+                    ?checked=${this.getCheckedState(name, field.value, row)}
+                />
+            </td>`,
     };
 
     return {}.hasOwnProperty.call(inputTypes, type)

@@ -1,24 +1,25 @@
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, PropertyValues, css, html, nothing } from "lit";
+import { css, html, LitElement, nothing, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { URIComponents } from "../sharedDeclarations";
+import { tailwindStyles } from "../tailwind.lit";
 
 /** We don't allow iframes */
 type AnchorTarget = "_self" | "_blank" | "_parent" | "_top";
 
 @customElement("lms-anchor")
 export default class LMSAnchor extends LitElement {
-  @property({ type: Object, attribute: "data-href" }) href: URIComponents = {};
+  @property({ type: Object, attribute: "data-href" }) href: URIComponents =
+    {};
 
   @property({ type: String }) target: AnchorTarget = "_self";
 
   static override styles = [
-    bootstrapStyles,
+    tailwindStyles,
     css`
-      :host {
-        display: inline-flex;
-      }
-    `,
+            :host {
+                display: inline-flex;
+            }
+        `,
   ];
 
   assembleURI(): string {
@@ -76,13 +77,13 @@ export default class LMSAnchor extends LitElement {
     }
 
     return html`
-      <a
-        @click=${this.handleClick}
-        .href=${this.assembleURI()}
-        .target=${this.target}
-      >
-        <slot></slot>
-      </a>
-    `;
+            <a
+                @click=${this.handleClick}
+                .href=${this.assembleURI()}
+                .target=${this.target}
+            >
+                <slot></slot>
+            </a>
+        `;
   }
 }

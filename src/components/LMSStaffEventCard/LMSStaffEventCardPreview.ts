@@ -1,9 +1,9 @@
-import { bootstrapStyles } from "@granite-elements/granite-lit-bootstrap/granite-lit-bootstrap-min.js";
-import { LitElement, TemplateResult, css, html } from "lit";
+import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { TemplateResultConverter } from "../../lib/converters";
 import { Column } from "../../sharedDeclarations";
 import { skeletonStyles } from "../../styles/skeleton";
+import { tailwindStyles } from "../../tailwind.lit";
 import LMSCard from "../LMSCard";
 
 declare global {
@@ -23,20 +23,20 @@ export default class LMSStaffEventCardPreview extends LitElement {
   private templateResultConverter = new TemplateResultConverter(undefined);
 
   static override styles = [
-    bootstrapStyles,
+    tailwindStyles,
     skeletonStyles,
     css`
-      svg {
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        color: #ffffff;
-      }
+            svg {
+                display: inline-block;
+                width: 1em;
+                height: 1em;
+                color: #ffffff;
+            }
 
-      button {
-        white-space: nowrap;
-      }
-    `,
+            button {
+                white-space: nowrap;
+            }
+        `,
   ];
 
   override connectedCallback() {
@@ -55,6 +55,7 @@ export default class LMSStaffEventCardPreview extends LitElement {
   }
 
   override render() {
-    return html`<lms-card .title=${this.title} .text=${this.text}> </lms-card>`;
+    return html`<lms-card .title=${this.title} .text=${this.text}>
+        </lms-card>`;
   }
 }
