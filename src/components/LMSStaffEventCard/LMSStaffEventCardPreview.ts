@@ -1,7 +1,13 @@
+import {
+    faCalendarAlt,
+    faMapMarkerAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { css, html, LitElement, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { TemplateResultConverter } from "../../lib/converters";
-import { Column } from "../../sharedDeclarations";
+import { customElement, property, state } from "lit/decorators.js";
+import { splitDateTime, TemplateResultConverter } from "../../lib/converters";
+import { locale } from "../../lib/translate";
+import { Column, Image } from "../../sharedDeclarations";
 import { skeletonStyles } from "../../styles/skeleton";
 import { tailwindStyles } from "../../tailwind.lit";
 import LMSCard from "../LMSCard";
@@ -16,11 +22,13 @@ declare global {
 export default class LMSStaffEventCardPreview extends LitElement {
     @property({ type: Array }) datum: Column = {} as Column;
 
-    @property({ type: String }) override title = "";
+    @state() override title = "";
 
-    @property({ type: String }) text = "";
+    @state() image: Image = {} as Image;
 
-    private templateResultConverter = new TemplateResultConverter(undefined);
+    @state() listItems: TemplateResult[] = [];
+
+    private trc = new TemplateResultConverter(undefined);
 
     static override styles = [
         tailwindStyles,
@@ -32,30 +40,70 @@ export default class LMSStaffEventCardPreview extends LitElement {
                 height: 1em;
                 color: #ffffff;
             }
-
-            button {
-                white-space: nowrap;
-            }
         `,
     ];
 
     override connectedCallback() {
         super.connectedCallback();
 
-        const { name, description } = this.datum;
+        const { name, image, location, start_time, end_time } = this.datum;
 
-        this.title = this.templateResultConverter.getValueByIndex(
+        this.title = this.trc.getValueByIndex(
             name as TemplateResult,
             0
-        );
-        this.text = this.templateResultConverter.getValueByIndex(
-            description as TemplateResult,
+        ) as string;
+
+        const src = this.trc.getValueByIndex(
+            image as TemplateResult,
             0
-        );
+        ) as string;
+
+        this.image = {
+            src,
+            alt: this.title,
+        };
+
+        const locationTemplateValues = this.trc.getRenderValues(
+            location
+        ) as Array<[number, boolean, string]>;
+        const [, , loc] = locationTemplateValues
+            .filter(([, selected]) => selected)
+            .flat();
+
+        const startTime = this.trc.getValueByIndex(
+            start_time as TemplateResult,
+            0
+        ) as string;
+
+        const endTime = this.trc.getValueByIndex(
+            end_time as TemplateResult,
+            0
+        ) as string;
+
+        const [sDate, sTime] = splitDateTime(startTime, locale);
+        const [eDate, eTime] = splitDateTime(endTime, locale);
+        const isSameDay = sDate === eDate;
+
+        this.listItems = [
+            html`<span class="font-thin">
+                <small> ${litFontawesome(faMapMarkerAlt)} ${loc} </small>
+            </span>`,
+            html`<span class="font-thin">
+                <small>
+                    ${litFontawesome(faCalendarAlt)} ${sDate}, ${sTime} -
+                    ${isSameDay ? eTime : `${eDate}, ${eTime}`}</small
+                ></span
+            >`,
+        ];
     }
 
     override render() {
-        return html`<lms-card .title=${this.title} .text=${this.text}>
+        return html`<lms-card
+            .title=${this.title}
+            .image=${this.image}
+            .listItems=${this.listItems}
+            class="m-4"
+        >
         </lms-card>`;
     }
 }
