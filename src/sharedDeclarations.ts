@@ -69,6 +69,11 @@ export type HandlerCallbackFunction = ({
     fields: Array<ModalField>;
 }) => Promise<void>;
 
+export type Image = {
+    src: string;
+    alt: string;
+};
+
 export type Input = {
     name: string;
     value: string;
