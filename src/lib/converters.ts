@@ -66,7 +66,7 @@ export class TemplateResultConverter {
     public getValueByIndex(
         templateResult: TemplateResult,
         index: number
-    ): string {
+    ): unknown {
         this.templateResult = templateResult;
         const renderValue = this.getRenderValues()[index];
         return typeof renderValue === "string"
@@ -88,6 +88,18 @@ export class TemplateResultConverter {
     }
 
     /**
+     * Checks if the provided value is a TemplateResult.
+     * @param value
+     * @returns
+     */
+    private isTemplateResult(value: unknown): boolean {
+        return (
+            typeof value === "object" &&
+            {}.hasOwnProperty.call(value, "_$litType$")
+        );
+    }
+
+    /**
      * Retrieves all the rendered values from the TemplateResult.
      * @param data - The data object to extract values from. Defaults to the stored TemplateResult.
      * @returns An array of the extracted values.
@@ -98,9 +110,33 @@ export class TemplateResultConverter {
         const values = (data as TemplateResult)?.values ?? [];
 
         // Now, we can map through the values array directly
-        return [...values, ""].map((e) =>
-            typeof e === "object" ? this.getRenderValues(e) : e
-        );
+        return [...values].flatMap((e) => {
+            if (this.isTemplateResult(e)) {
+                return this.getRenderValues(e);
+            }
+
+            if (
+                Array.isArray(e) &&
+                e.some((item) => this.isTemplateResult(item))
+            ) {
+                const indices: number[] = [];
+                let index;
+                for (index = 0; index < e.length; index += 1) {
+                    if ({}.hasOwnProperty.call(e[index], "_$litType$")) {
+                        indices.push(index);
+                    }
+                }
+                return e.map((item, index) => {
+                    if (indices.includes(index)) {
+                        return this.getRenderValues(item);
+                    }
+
+                    return item;
+                });
+            }
+
+            return e;
+        });
     }
 }
 
@@ -271,7 +307,7 @@ export class InputConverter {
                         ${__("Target Groups")}
                     </summary>
                     <div class="collapse-content">
-                        <table class="table-md table">
+                        <table class="table-xs table">
                             <thead>
                                 <tr>
                                     <th>${__("target_group")}</th>
