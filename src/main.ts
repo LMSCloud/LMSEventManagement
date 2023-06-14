@@ -1,5 +1,3 @@
-import "./main.css";
-
 /** components */
 /**   /Inputs */
 /**     /Modal */
