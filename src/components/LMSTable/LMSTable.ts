@@ -20,7 +20,6 @@ import { InputConverter } from "../../lib/converters";
 import { IntersectionObserverHandler } from "../../lib/IntersectionObserverHandler";
 import { QueryBuilder } from "../../lib/QueryBuilder";
 import { attr__, __ } from "../../lib/translate";
-import { throttle } from "../../lib/utilities";
 import {
     Column,
     KohaAPIError,
@@ -102,8 +101,6 @@ export default class LMSTable extends LitElement {
     private notImplementedInBaseMessage =
         "Implement this method in your extended LMSTable component.";
 
-    private throttledHandleResize: () => void;
-
     private intersectionObserverHandler: IntersectionObserverHandler | null =
         null;
 
@@ -115,11 +112,6 @@ export default class LMSTable extends LitElement {
         skeletonStyles,
         utilityStyles,
         css`
-            table {
-                background: white;
-                padding: 1em;
-            }
-
             svg {
                 display: inline-block;
                 width: 1em;
@@ -127,46 +119,7 @@ export default class LMSTable extends LitElement {
                 color: #ffffff;
             }
 
-            .fa-sort-up,
-            .fa-sort-down {
-                color: #000000;
-            }
-
-            button {
-                white-space: nowrap;
-            }
-
-            input[type="checkbox"].form-control {
-                font-size: 0.375rem;
-            }
-
-            .table tr {
-                height: 100%;
-            }
-
-            input:not([type="checkbox"]),
-            select,
-            textarea {
-                border: none !important;
-                border-radius: 0 !important;
-                height: inherit !important;
-                width: 100%;
-                min-width: fit-content;
-                padding: 1.5rem 0.75rem;
-            }
-
-            .table th {
-                cursor: pointer;
-            }
-
-            .table td {
-                padding: 0;
-                text-align: center;
-                height: inherit;
-            }
-
             .pip {
-                background: #ffffff;
                 bottom: 1em;
                 height: fit-content !important;
                 left: 1em;
@@ -176,36 +129,25 @@ export default class LMSTable extends LitElement {
                 position: fixed;
             }
 
-            @media (max-width: 576px) {
-                lms-search {
-                    width: 100%;
-                    margin-bottom: 1rem;
-                }
+            input:not([type="checkbox"]),
+            select,
+            textarea,
+            details {
+                border: none !important;
+                border-radius: 0 !important;
+                height: inherit !important;
+                width: 100%;
+                min-width: fit-content;
+                padding: 1.5rem 0.75rem;
+            }
 
-                lms-pagination {
-                    width: 100%;
-                }
+            input:not([type="checkbox"]):focus,
+            select:focus,
+            textarea:focus {
+                outline: none !important;
             }
         `,
     ];
-
-    constructor() {
-        super();
-        this.throttledHandleResize = throttle(
-            this.handleResize.bind(this),
-            250
-        );
-    }
-
-    override connectedCallback(): void {
-        super.connectedCallback();
-        window.addEventListener("resize", this.throttledHandleResize);
-    }
-
-    override disconnectedCallback(): void {
-        super.disconnectedCallback();
-        window.removeEventListener("resize", this.throttledHandleResize);
-    }
 
     private updateButtonState(button: HTMLButtonElement, isActive: boolean) {
         button.classList.toggle("active", isActive);
@@ -561,129 +503,139 @@ export default class LMSTable extends LitElement {
                         ${searchSyntax}
                     </div>
                 </div>
-                <table
-                    class="${classMap({
-                        hidden: this.hasNoResults,
-                    })} table"
-                >
-                    <thead>
-                        <tr>
-                            ${map(this.headers, (key) => {
-                                if (!this.sortableColumns.includes(key)) {
+                <div class="overflow-x-auto">
+                    <table
+                        class="${classMap({
+                            hidden: this.hasNoResults,
+                        })} table-lg table table bg-base-100"
+                    >
+                        <thead>
+                            <tr>
+                                ${map(this.headers, (key) => {
+                                    if (!this.sortableColumns.includes(key)) {
+                                        return html`<th
+                                            class="text-center text-base font-medium"
+                                        >
+                                            ${__(key)}
+                                        </th>`;
+                                    }
+
                                     return html`<th
-                                        class="text-base font-medium"
+                                        class="text-center text-base font-medium"
+                                        data-name=${key}
+                                        @click=${this.handleSortChange}
                                     >
                                         ${__(key)}
                                     </th>`;
-                                }
-
-                                return html`<th
-                                    class="text-base font-medium"
-                                    data-name=${key}
-                                    @click=${this.handleSortChange}
-                                >
-                                    ${__(key)}
-                                </th>`;
-                            })}
-                            ${this.isEditable
-                                ? html`<th class="text-base font-medium">
-                                      ${__("actions")}
-                                  </th>`
-                                : nothing}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${map(
-                            this.data,
-                            (datum) => html`
-                                <tr>
-                                    ${map(
-                                        this.headers,
-                                        (header) =>
-                                            html`<td>${datum[header]}</td>`
-                                    )}
-                                    ${this.isEditable
-                                        ? html`
-                                              <td class="align-middle">
-                                                  <div>
-                                                      <button
-                                                          @click=${this
-                                                              .toggleEdit}
-                                                          type="button"
-                                                          class="btn-edit btn-secondary btn mx-2"
-                                                          aria-label=${attr__(
-                                                              "Edit"
-                                                          )}
-                                                      >
-                                                          <span
-                                                              class="start-edit pointer-events-none"
-                                                              >${litFontawesome(
-                                                                  faEdit
+                                })}
+                                ${this.isEditable
+                                    ? html`<th
+                                          class="text-center text-base font-medium"
+                                      >
+                                          ${__("actions")}
+                                      </th>`
+                                    : nothing}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${map(
+                                this.data,
+                                (datum) => html`
+                                    <tr class="h-full">
+                                        ${map(
+                                            this.headers,
+                                            (header) =>
+                                                html`<td
+                                                    class="h-inherit p-0 text-center"
+                                                >
+                                                    ${datum[header]}
+                                                </td>`
+                                        )}
+                                        ${this.isEditable
+                                            ? html`
+                                                  <td
+                                                      class="h-inherit p-0 text-center align-middle"
+                                                  >
+                                                      <div>
+                                                          <button
+                                                              @click=${this
+                                                                  .toggleEdit}
+                                                              type="button"
+                                                              class="btn-edit btn-secondary btn mx-2"
+                                                              aria-label=${attr__(
+                                                                  "Edit"
+                                                              )}
+                                                          >
+                                                              <span
+                                                                  class="start-edit pointer-events-none"
+                                                                  >${litFontawesome(
+                                                                      faEdit
+                                                                  )}
+                                                                  <span
+                                                                      >${__(
+                                                                          "Edit"
+                                                                      )}</span
+                                                                  ></span
+                                                              >
+                                                              <span
+                                                                  class="abort-edit pointer-events-none hidden"
+                                                                  >${litFontawesome(
+                                                                      faTimes
+                                                                  )}<span
+                                                                      >${__(
+                                                                          "Abort"
+                                                                      )}</span
+                                                                  ></span
+                                                              >
+                                                          </button>
+                                                          <button
+                                                              @click=${this
+                                                                  .handleSave}
+                                                              type="button"
+                                                              class="btn-secondary btn mx-2"
+                                                              aria-label=${attr__(
+                                                                  "Save"
+                                                              )}
+                                                          >
+                                                              ${litFontawesome(
+                                                                  faSave
                                                               )}
                                                               <span
                                                                   >${__(
-                                                                      "Edit"
+                                                                      "Save"
                                                                   )}</span
-                                                              ></span
-                                                          >
-                                                          <span
-                                                              class="abort-edit pointer-events-none hidden"
-                                                              >${litFontawesome(
-                                                                  faTimes
-                                                              )}<span
-                                                                  >${__(
-                                                                      "Abort"
-                                                                  )}</span
-                                                              ></span
-                                                          >
-                                                      </button>
-                                                      <button
-                                                          @click=${this
-                                                              .handleSave}
-                                                          type="button"
-                                                          class="btn-secondary btn mx-2"
-                                                          aria-label=${attr__(
-                                                              "Save"
-                                                          )}
-                                                      >
-                                                          ${litFontawesome(
-                                                              faSave
-                                                          )}
-                                                          <span
-                                                              >${__(
-                                                                  "Save"
-                                                              )}</span
-                                                          >
-                                                      </button>
-                                                      <button
-                                                          @click=${this
-                                                              .handleDelete}
-                                                          ?hidden=${!this
-                                                              .isDeletable}
-                                                          type="button"
-                                                          class="btn-warning btn mx-2"
-                                                          aria-label=${attr__(
-                                                              "Delete"
-                                                          )}
-                                                      >
-                                                          ${litFontawesome(
-                                                              faTrash
-                                                          )}
-                                                          <span
-                                                              >${__(
+                                                              >
+                                                          </button>
+                                                          <button
+                                                              @click=${this
+                                                                  .handleDelete}
+                                                              ?hidden=${!this
+                                                                  .isDeletable}
+                                                              type="button"
+                                                              class="btn-warning btn mx-2"
+                                                              aria-label=${attr__(
                                                                   "Delete"
-                                                              )}</span
+                                                              )}
                                                           >
-                                                      </button>
-                                                  </div>
-                                              </td>
-                                          `
-                                        : nothing}
-                                </tr>
-                            `
-                        )}
-                    </tbody>
-                </table>
+                                                              ${litFontawesome(
+                                                                  faTrash
+                                                              )}
+                                                              <span
+                                                                  >${__(
+                                                                      "Delete"
+                                                                  )}</span
+                                                              >
+                                                          </button>
+                                                      </div>
+                                                  </td>
+                                              `
+                                            : nothing}
+                                    </tr>
+                                `
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         `;
     }
