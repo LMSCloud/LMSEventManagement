@@ -10,7 +10,7 @@ module.exports = {
   daisyui: {
     logs: false,
     themes: [
-      "corporate",
+      "emerald",
       // {
       //   LMSCloud: {
       //     "primary": "#db72bd",
