@@ -277,7 +277,7 @@ export default class LMSModal extends LitElement {
                 <form
                     @submit=${this.create}
                     method="dialog"
-                    class="modal-box bg-white"
+                    class="modal-box bg-base-100"
                 >
                     <button
                         for="lms-modal"

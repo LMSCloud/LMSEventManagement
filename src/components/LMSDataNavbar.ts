@@ -8,7 +8,7 @@ export default class LMSDataNavbar extends LitElement {
 
     override render() {
         return html`
-            <nav class="navbar mb-4 rounded-xl bg-white">
+            <nav class="navbar mb-4 rounded-xl bg-base-100">
                 <div class="navbar-start">
                     <slot name="navbar-start"></slot>
                 </div>

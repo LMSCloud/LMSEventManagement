@@ -41,7 +41,7 @@ export default class LMSFloatingMenu extends LitElement {
 
     override render() {
         return html`
-            <div class="navbar mb-8 rounded-lg bg-white shadow-md">
+            <div class="navbar mb-8 rounded-lg bg-base-100 shadow-md">
                 <div class="navbar-start">
                     <div class="dropdown">
                         <label tabindex="0" class="btn-ghost btn lg:hidden">
@@ -49,13 +49,13 @@ export default class LMSFloatingMenu extends LitElement {
                         </label>
                         <ul
                             tabindex="0"
-                            class="dropdown-content menu rounded-box menu-sm z-50 mt-3 w-56 bg-white p-2 shadow"
+                            class="dropdown-content menu rounded-box menu-sm z-50 mt-3 w-56 bg-base-100 p-2 shadow"
                         >
                             ${this.items.map(
                                 ({ url, icon, name }) =>
                                     html`
                                         <li
-                                            class="rounded-lg hover:bg-gray-100"
+                                            class="rounded-lg hover:bg-base-200"
                                         >
                                             <a
                                                 href=${url}
@@ -88,7 +88,7 @@ export default class LMSFloatingMenu extends LitElement {
                             ({ url, icon, name }) =>
                                 html`
                                     <li
-                                        class="rounded-lg text-base hover:bg-gray-100"
+                                        class="rounded-lg text-base hover:bg-base-200"
                                     >
                                         <a href=${url}
                                             >${litFontawesome(icon)}&nbsp;

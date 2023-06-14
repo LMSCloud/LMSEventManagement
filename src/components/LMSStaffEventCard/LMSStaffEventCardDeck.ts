@@ -233,7 +233,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
                         ).getRenderValues();
                         const [state] = this.cardStates.get(uuid) || "data";
                         return html`
-                            <div class="card bg-white shadow-md">
+                            <div class="card bg-base-100 shadow-md">
                                 <div>
                                     <div class="tabs w-full">
                                         <a
@@ -267,7 +267,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
                                         style="background-image: url(${src});"
                                     >
                                         <h3
-                                            class="rounded-lg bg-white p-2 text-3xl"
+                                            class="rounded-lg bg-base-100 p-2 text-xl"
                                         >
                                             ${title}
                                         </h3>
