@@ -6,7 +6,7 @@ export function deepCopy<T>(obj: T): T {
 
     const newObj = Object.create(Object.getPrototypeOf(obj)) as T;
     for (const key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        if ({}.hasOwnProperty.call(obj, key)) {
             (newObj as Record<string, unknown>)[key] = deepCopy(
                 (obj as Record<string, unknown>)[key]
             );
