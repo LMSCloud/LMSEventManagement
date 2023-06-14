@@ -433,7 +433,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                 <!-- Group 1: Basic Information -->
                 <details
                     tabindex="0"
-                    class="collapse-arrow collapse border border-base-300 bg-base-200"
+                    class="collapse-arrow collapse mb-4 border border-base-300 bg-base-200"
                 >
                     <summary
                         class="collapse-title w-full text-left text-xl font-medium"
@@ -470,7 +470,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                 <!-- Group 2: Age and Participants -->
                 <details
                     tabindex="0"
-                    class="collapse-arrow collapse border border-base-300 bg-base-200"
+                    class="collapse-arrow collapse mb-4 border border-base-300 bg-base-200"
                 >
                     <summary
                         class="collapse-title w-full text-left text-xl font-medium"
@@ -505,7 +505,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                 <!-- Group 3: Event Times -->
                 <details
                     tabindex="0"
-                    class="collapse-arrow collapse border border-base-300 bg-base-200"
+                    class="collapse-arrow collapse mb-4 border border-base-300 bg-base-200"
                 >
                     <summary
                         class="collapse-title w-full text-left text-xl font-medium"
@@ -555,7 +555,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                 <!-- Group 4: Additional Information -->
                 <details
                     tabindex="0"
-                    class="collapse-arrow collapse border border-base-300 bg-base-200"
+                    class="collapse-arrow collapse mb-4 border border-base-300 bg-base-200"
                 >
                     <summary
                         class="collapse-title w-full text-left text-xl font-medium"
