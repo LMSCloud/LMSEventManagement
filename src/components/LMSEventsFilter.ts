@@ -226,8 +226,13 @@ export default class LMSEventsFilter extends LitElement {
             locationIds: [...new Set(events.map((event) => event.location))],
             ...events
                 .map((event: any) => {
-                    const { event_type, location, target_groups, ...rest } =
-                        event; // eslint-disable-line @typescript-eslint/no-unused-vars
+                    const {
+                        event_type,
+                        location,
+                        target_groups,
+                        ...rest
+                    } = // eslint-disable-line @typescript-eslint/no-unused-vars
+                        event;
                     return rest;
                 })
                 .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
@@ -356,7 +361,7 @@ export default class LMSEventsFilter extends LitElement {
         return html`
             <div class="mx-8" @change=${this.handleChange}>
                 <div
-                    class="sticky top-4 z-10 mb-8 rounded-2xl bg-white p-4 shadow-sm"
+                    class="sticky top-4 z-10 mb-8 rounded-2xl bg-base-100 p-4 shadow-sm"
                 >
                     <div
                         class="${classMap({
@@ -446,7 +451,7 @@ export default class LMSEventsFilter extends LitElement {
                                                 >
                                                     <input
                                                         type="radio"
-                                                        class="radio checked:bg-primary"
+                                                        class="radio mr-2 checked:bg-primary"
                                                         id="_order_by_${value}"
                                                         name="_order_by"
                                                         value=${value}
@@ -477,7 +482,7 @@ export default class LMSEventsFilter extends LitElement {
                                                 >
                                                     <input
                                                         type="checkbox"
-                                                        class="checkbox"
+                                                        class="checkbox mr-2"
                                                         name="event_type"
                                                         id="event_type_${eventTypeId}"
                                                         value=${eventTypeId}
@@ -511,7 +516,7 @@ export default class LMSEventsFilter extends LitElement {
                                                 >
                                                     <input
                                                         type="checkbox"
-                                                        class="checkbox"
+                                                        class="checkbox mr-2"
                                                         name="target_group"
                                                         id="target_group_${targetGroupId}"
                                                         value=${targetGroupId}
@@ -641,7 +646,7 @@ export default class LMSEventsFilter extends LitElement {
                                                 >
                                                     <input
                                                         type="checkbox"
-                                                        class="checkbox"
+                                                        class="checkbox mr-2"
                                                         name="location"
                                                         id="location_${locationId}"
                                                         value=${locationId}

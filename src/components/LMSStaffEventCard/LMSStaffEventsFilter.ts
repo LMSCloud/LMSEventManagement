@@ -86,14 +86,14 @@ export default class LMSStaffEventsFilter extends LitElement {
                         ${map(
                             this.sortableColumns,
                             (column) => html`
-                                <div class="form-control z-50">
+                                <div class="form-control">
                                     <label
                                         for="_order_by_${column}"
                                         class="label cursor-pointer"
                                     >
                                         <input
                                             type="radio"
-                                            class="radio checked:bg-primary"
+                                            class="radio mr-2 checked:bg-primary"
                                             name="_order_by"
                                             id="_order_by_${column}"
                                             value=${column}
@@ -111,14 +111,14 @@ export default class LMSStaffEventsFilter extends LitElement {
                         ${map(
                             this.event_types,
                             (event_type) => html`
-                                <div class="form-control z-50">
+                                <div class="form-control ">
                                     <label
                                         for="event_types_${event_type.id}"
                                         class="label cursor-pointer"
                                     >
                                         <input
                                             type="checkbox"
-                                            class="checkbox"
+                                            class="checkbox mr-2"
                                             name="event_type"
                                             id="event_types_${event_type.id}"
                                             value=${event_type.id}
@@ -135,14 +135,14 @@ export default class LMSStaffEventsFilter extends LitElement {
                         ${map(
                             this.target_groups,
                             (target_group) => html`
-                                <div class="form-control z-50">
+                                <div class="form-control ">
                                     <label
                                         for="target_groups_${target_group.id}"
                                         class="label cursor-pointer"
                                     >
                                         <input
                                             type="checkbox"
-                                            class="checkbox"
+                                            class="checkbox mr-2"
                                             name="target_group"
                                             id="target_groups_${target_group.id}"
                                             value=${target_group.id}
@@ -159,14 +159,14 @@ export default class LMSStaffEventsFilter extends LitElement {
                         ${map(
                             this.locations,
                             (location) => html`
-                                <div class="form-control z-50">
+                                <div class="form-control">
                                     <label
                                         for="locations_${location.id}"
                                         class="label cursor-pointer"
                                     >
                                         <input
                                             type="checkbox"
-                                            class="checkbox"
+                                            class="checkbox mr-2"
                                             name="location"
                                             id="locations_${location.id}"
                                             value=${location.id}
