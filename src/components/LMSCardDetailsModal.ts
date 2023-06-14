@@ -8,22 +8,22 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import DOMPurify from "dompurify";
-import { css, html, LitElement, nothing } from "lit";
+import { html, LitElement, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { formatAddress, splitDateTime } from "../lib/converters";
 import { __ } from "../lib/translate";
+import { skeletonStyles } from "../styles/skeleton";
+import { tailwindStyles } from "../tailwind.lit";
 import {
     LMSEvent,
     LMSEventComprehensive,
     LMSEventTargetGroupFee,
     LMSEventType,
     LMSLocation,
-} from "../sharedDeclarations";
-import { skeletonStyles } from "../styles/skeleton";
-import { tailwindStyles } from "../tailwind.lit";
+} from "../types/common";
 
 @customElement("lms-card-details-modal")
 export default class LMSCardDetailsModal extends LitElement {
@@ -47,18 +47,7 @@ export default class LMSCardDetailsModal extends LitElement {
     private boundHandleKeyDown = (e: KeyboardEvent) =>
         this.handleKeyDown.bind(this)(e);
 
-    static override styles = [
-        tailwindStyles,
-        skeletonStyles,
-        css`
-            svg {
-                display: inline-block;
-                width: 1em;
-                height: 1em;
-                color: #6c757d;
-            }
-        `,
-    ];
+    static override styles = [tailwindStyles, skeletonStyles];
 
     override connectedCallback() {
         super.connectedCallback();
@@ -244,7 +233,11 @@ export default class LMSCardDetailsModal extends LitElement {
         return html`${sDate}, ${sTime}
         ${isSameDay
             ? html`- ${eTime}`
-            : html` <span>${litFontawesome(faArrowRight)}</span>
+            : html` <span
+                      >${litFontawesome(faArrowRight, {
+                          className: "w-4 h-4 inline-block",
+                      })}</span
+                  >
                   ${eDate}, ${eTime}`}`;
     }
 
@@ -296,7 +289,11 @@ export default class LMSCardDetailsModal extends LitElement {
                             <!-- Date and Time -->
                             <div class="p-4">
                                 <p class="mb-2">
-                                    <span>${litFontawesome(faCalendar)}</span>
+                                    <span
+                                        >${litFontawesome(faCalendar, {
+                                            className: "w-4 h-4 inline-block",
+                                        })}</span
+                                    >
                                     <strong>${__("Date and Time")}</strong>
                                 </p>
                                 <p>
@@ -310,7 +307,11 @@ export default class LMSCardDetailsModal extends LitElement {
                             <!-- Description -->
                             <div class="p-4">
                                 <p class="mb-2">
-                                    <span>${litFontawesome(faInfoCircle)}</span>
+                                    <span
+                                        >${litFontawesome(faInfoCircle, {
+                                            className: "w-4 h-4 inline-block",
+                                        })}</span
+                                    >
                                     <strong>${__("Description")}</strong>
                                 </p>
                                 <p>
@@ -332,7 +333,11 @@ export default class LMSCardDetailsModal extends LitElement {
                             <!-- Fees -->
                             <div class="p-4">
                                 <p class="mb-2">
-                                    <span>${litFontawesome(faCreditCard)}</span>
+                                    <span
+                                        >${litFontawesome(faCreditCard, {
+                                            className: "w-4 h-4 inline-block",
+                                        })}</span
+                                    >
                                     <strong>${__("Fees")}</strong>
                                 </p>
 
@@ -343,7 +348,12 @@ export default class LMSCardDetailsModal extends LitElement {
                                 >
                                     <p class="mb-2">${__("No fees")}</p>
                                     <p class="mb-2">
-                                        <span>${litFontawesome(faUsers)}</span>
+                                        <span
+                                            >${litFontawesome(faUsers, {
+                                                className:
+                                                    "w-4 h-4 inline-block",
+                                            })}</span
+                                        >
                                         <strong>${__("Target Groups")}</strong>
                                     </p>
                                     <p>
@@ -377,7 +387,11 @@ export default class LMSCardDetailsModal extends LitElement {
 
                             <div class="p-4">
                                 <p class="mb-2">
-                                    <span>${litFontawesome(faMapMarker)}</span>
+                                    <span
+                                        >${litFontawesome(faMapMarker, {
+                                            className: "w-4 h-4 inline-block",
+                                        })}</span
+                                    >
                                     <strong>${__("Location")}</strong>
                                 </p>
                                 <p>${formatAddress(location)}</p>

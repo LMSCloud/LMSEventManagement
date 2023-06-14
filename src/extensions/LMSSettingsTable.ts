@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable/LMSTable";
-import { Input, LMSSettingResponse } from "../sharedDeclarations";
+import { Input, LMSSettingResponse } from "../types/common";
 
 type WithChangedPropertyNames<T> = {
     [P in keyof T as P extends "plugin_key"

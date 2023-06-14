@@ -1,7 +1,7 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { attr__, __ } from "../lib/translate";
-import { CreateOpts, LMSLocation, LMSTargetGroup } from "../sharedDeclarations";
+import { CreateOpts, LMSLocation, LMSTargetGroup } from "../types/common";
 
 @customElement("lms-event-types-modal")
 export default class LMSEventTypesModal extends LMSModal {

@@ -2,14 +2,14 @@ import { html, LitElement } from "lit";
 import { customElement, property, queryAll } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { __ } from "../../lib/translate";
+import { utilityStyles } from "../../styles/utilities";
+import { tailwindStyles } from "../../tailwind.lit";
 import {
     LMSEventType,
     LMSLocation,
     LMSTargetGroup,
     SortableColumns,
-} from "../../sharedDeclarations";
-import { utilityStyles } from "../../styles/utilities";
-import { tailwindStyles } from "../../tailwind.lit";
+} from "../../types/common";
 import LMSDataNavbar from "../LMSDataNavbar";
 import LMSDropdown from "../LMSDropdown";
 

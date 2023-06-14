@@ -3,8 +3,8 @@ import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { attr__ } from "../lib/translate";
 import { debounce } from "../lib/utilities";
-import { SortableColumns } from "../sharedDeclarations";
 import { tailwindStyles } from "../tailwind.lit";
+import { SortableColumns } from "../types/common";
 
 interface QueryEntry {
     operator: string;

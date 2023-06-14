@@ -1,8 +1,8 @@
 import { html, LitElement, PropertyValueMap } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
-import { ModalField, SelectOption } from "../../../sharedDeclarations";
 import { tailwindStyles } from "../../../tailwind.lit";
+import { ModalField, SelectOption } from "../../../types/common";
 
 @customElement("lms-select")
 export default class LMSSelect extends LitElement {

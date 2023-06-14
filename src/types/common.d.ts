@@ -1,6 +1,6 @@
 import { TemplateResult } from "lit";
 import { DirectiveResult } from "lit/directive";
-import { TranslateDirective } from "./lib/translate";
+import { TranslateDirective } from "../lib/translate";
 
 /* Utility types */
 export type BaseField = {

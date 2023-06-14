@@ -1,9 +1,9 @@
 import { html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { __ } from "../lib/translate";
-import { Column, LMSSettingResponse } from "../sharedDeclarations";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
+import { Column, LMSSettingResponse } from "../types/common";
 
 @customElement("lms-staff-settings-view")
 export default class StaffSettingsView extends LitElement {

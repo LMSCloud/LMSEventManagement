@@ -4,12 +4,8 @@ import { DirectiveResult } from "lit/directive";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { map } from "lit/directives/map.js";
 import { TranslateDirective, __ } from "../../../lib/translate";
-import {
-    BaseFieldValue,
-    MatrixGroup,
-    ModalField,
-} from "../../../sharedDeclarations";
 import { tailwindStyles } from "../../../tailwind.lit";
+import { BaseFieldValue, MatrixGroup, ModalField } from "../../../types/common";
 
 type Row = {
     id: string | number;

@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable/LMSTable";
-import { Input, LMSTargetGroup } from "../sharedDeclarations";
+import { Input, LMSTargetGroup } from "../types/common";
 
 @customElement("lms-target-groups-table")
 export default class LMSEventTypesTable extends LMSTable {

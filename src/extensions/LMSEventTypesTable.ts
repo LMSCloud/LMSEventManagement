@@ -1,11 +1,7 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSAnchor from "../components/LMSAnchor";
 import LMSTable from "../components/LMSTable/LMSTable";
-import {
-    LMSEventType,
-    LMSLocation,
-    LMSTargetGroup,
-} from "../sharedDeclarations";
+import { LMSEventType, LMSLocation, LMSTargetGroup } from "../types/common";
 
 declare global {
     interface HTMLElementTagNameMap {

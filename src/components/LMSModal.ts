@@ -5,21 +5,21 @@ import {
     faXmarkCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { css, html, LitElement, nothing, TemplateResult } from "lit";
+import { html, LitElement, nothing, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { DirectiveResult } from "lit/directive";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
 import { locale, TranslateDirective, __ } from "../lib/translate";
+import { skeletonStyles } from "../styles/skeleton";
+import { tailwindStyles } from "../tailwind.lit";
 import {
     CreateOpts,
     KohaAPIError,
     MatrixGroup,
     ModalField,
-} from "../sharedDeclarations";
-import { skeletonStyles } from "../styles/skeleton";
-import { tailwindStyles } from "../tailwind.lit";
+} from "../types/common";
 import LMSCheckboxInput from "./inputs/modal/LMSCheckboxInput";
 import LMSMatrix from "./inputs/modal/LMSMatrix";
 import LMSPrimitivesInput from "./inputs/modal/LMSPrimitivesInput";
@@ -73,27 +73,7 @@ export default class LMSModal extends LitElement {
     private boundHandleKeyDown = (e: KeyboardEvent) =>
         this.handleKeyDown.bind(this)(e);
 
-    static override styles = [
-        tailwindStyles,
-        skeletonStyles,
-        css`
-            button.btn-modal:not(.tilted) {
-                transition: 0.2s;
-                transition-timing-function: ease-in-out;
-            }
-            .tilted {
-                transition: 0.2s;
-                transition-timing-function: ease-in-out;
-                transform: rotate(45deg);
-            }
-            svg {
-                display: inline-block;
-                width: 1em;
-                height: 1em;
-                color: var(--background-color);
-            }
-        `,
-    ];
+    static override styles = [tailwindStyles, skeletonStyles];
 
     private toggleModal(e?: Event) {
         e?.preventDefault();
@@ -172,7 +152,7 @@ export default class LMSModal extends LitElement {
                                     html`<li>
                                         ${error.message}
                                         ${litFontawesome(faArrowRight, {
-                                            className: "color-unset",
+                                            className: "w-4 h-4 inline-block",
                                         })}
                                         ${error.path}
                                     </li>`
@@ -270,7 +250,9 @@ export default class LMSModal extends LitElement {
                 @click=${this.toggleModal}
             >
                 <span class="flex items-center justify-center">
-                    ${litFontawesome(faPlus)}
+                    ${litFontawesome(faPlus, {
+                        className: "w-12 h-12 inline-block",
+                    })}
                 </span>
             </button>
             <dialog id="lms-modal" class="modal modal-bottom sm:modal-middle">
@@ -315,11 +297,15 @@ export default class LMSModal extends LitElement {
                             class="btn-secondary btn"
                             @click=${this.toggleModal}
                         >
-                            ${litFontawesome(faClose)}
+                            ${litFontawesome(faClose, {
+                                className: "w-4 h-4 inline-block",
+                            })}
                             <span>${__("Close")}</span>
                         </button>
                         <button type="submit" class="btn-primary btn">
-                            ${litFontawesome(faPlus)}
+                            ${litFontawesome(faPlus, {
+                                className: "w-4 h-4 inline-block",
+                            })}
                             <span>${__("Create")}</span>
                         </button>
                     </div>

@@ -5,10 +5,10 @@ import LMSStaffEventCardsDeck from "../components/LMSStaffEventCard/LMSStaffEven
 import LMSEventsModal from "../extensions/LMSEventsModal";
 import { QueryBuilder } from "../lib/QueryBuilder";
 import { __ } from "../lib/translate";
-import { Column, URIComponents } from "../sharedDeclarations";
 import { cardDeckStylesStaff } from "../styles/cardDeck";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
+import { Column, URIComponents } from "../types/common";
 
 declare global {
     interface HTMLElementTagNameMap {

@@ -1,8 +1,8 @@
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
-import { ModalField } from "../../../sharedDeclarations";
 import { tailwindStyles } from "../../../tailwind.lit";
+import { ModalField } from "../../../types/common";
 
 @customElement("lms-checkbox-input")
 export default class LMSCheckboxInput extends LitElement {

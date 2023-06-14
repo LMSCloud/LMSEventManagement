@@ -1,8 +1,8 @@
-import { css, html, LitElement, nothing } from "lit";
+import { html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { Image } from "../sharedDeclarations";
 import { tailwindStyles } from "../tailwind.lit";
+import { Image } from "../types/common";
 
 type Link = {
     href: string;
@@ -21,17 +21,7 @@ export default class LMSCard extends LitElement {
 
     @property({ type: Array }) listItems = [];
 
-    static override styles = [
-        tailwindStyles,
-        css`
-            svg {
-                display: inline-block;
-                width: 0.75em;
-                height: 0.75em;
-                color: #6c757d;
-            }
-        `,
-    ];
+    static override styles = [tailwindStyles];
 
     override render() {
         return html`

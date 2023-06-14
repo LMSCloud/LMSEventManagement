@@ -1,7 +1,7 @@
 import { css, html, LitElement, nothing, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { URIComponents } from "../sharedDeclarations";
 import { tailwindStyles } from "../tailwind.lit";
+import { URIComponents } from "../types/common";
 
 /** We don't allow iframes */
 type AnchorTarget = "_self" | "_blank" | "_parent" | "_top";

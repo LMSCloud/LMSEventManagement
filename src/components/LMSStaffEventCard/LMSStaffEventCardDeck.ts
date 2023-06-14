@@ -5,6 +5,10 @@ import { map } from "lit/directives/map.js";
 import { searchSyntax } from "../../docs/searchSyntax";
 import { InputConverter, TemplateResultConverter } from "../../lib/converters";
 import { __ } from "../../lib/translate";
+import { cardDeckStylesStaff } from "../../styles/cardDeck";
+import { skeletonStyles } from "../../styles/skeleton";
+import { utilityStyles } from "../../styles/utilities";
+import { tailwindStyles } from "../../tailwind.lit";
 import {
     Column,
     LMSEvent,
@@ -14,11 +18,7 @@ import {
     SortableColumns,
     TaggedColumn,
     TaggedData,
-} from "../../sharedDeclarations";
-import { cardDeckStylesStaff } from "../../styles/cardDeck";
-import { skeletonStyles } from "../../styles/skeleton";
-import { utilityStyles } from "../../styles/utilities";
-import { tailwindStyles } from "../../tailwind.lit";
+} from "../../types/common";
 import LMSAnchor from "../LMSAnchor";
 import LMSSearch from "../LMSSearch";
 import LMSStaffEventCardAttendees from "./LMSStaffEventCardAttendees";

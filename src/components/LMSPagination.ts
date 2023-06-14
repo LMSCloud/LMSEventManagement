@@ -4,9 +4,9 @@ import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { attr__, __ } from "../lib/translate";
 import { isDeepEqual } from "../lib/utilities";
-import { Column } from "../sharedDeclarations";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
+import { Column } from "../types/common";
 import LMSAnchor from "./LMSAnchor";
 
 declare global {

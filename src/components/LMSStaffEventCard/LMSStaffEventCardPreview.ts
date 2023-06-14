@@ -3,13 +3,13 @@ import {
     faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { css, html, LitElement, TemplateResult } from "lit";
+import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { splitDateTime, TemplateResultConverter } from "../../lib/converters";
 import { locale } from "../../lib/translate";
-import { Column, Image } from "../../sharedDeclarations";
 import { skeletonStyles } from "../../styles/skeleton";
 import { tailwindStyles } from "../../tailwind.lit";
+import { Column, Image } from "../../types/common";
 import LMSCard from "../LMSCard";
 
 declare global {
@@ -30,18 +30,7 @@ export default class LMSStaffEventCardPreview extends LitElement {
 
     private trc = new TemplateResultConverter(undefined);
 
-    static override styles = [
-        tailwindStyles,
-        skeletonStyles,
-        css`
-            svg {
-                display: inline-block;
-                width: 1em;
-                height: 1em;
-                color: #ffffff;
-            }
-        `,
-    ];
+    static override styles = [tailwindStyles, skeletonStyles];
 
     override connectedCallback() {
         super.connectedCallback();
@@ -86,11 +75,19 @@ export default class LMSStaffEventCardPreview extends LitElement {
 
         this.listItems = [
             html`<span class="font-thin">
-                <small> ${litFontawesome(faMapMarkerAlt)} ${loc} </small>
+                <small>
+                    ${litFontawesome(faMapMarkerAlt, {
+                        className: "w-4 h-4 inline-block",
+                    })}
+                    ${loc}
+                </small>
             </span>`,
             html`<span class="font-thin">
                 <small>
-                    ${litFontawesome(faCalendarAlt)} ${sDate}, ${sTime} -
+                    ${litFontawesome(faCalendarAlt, {
+                        className: "w-4 h-4 inline-block",
+                    })}
+                    ${sDate}, ${sTime} -
                     ${isSameDay ? eTime : `${eDate}, ${eTime}`}</small
                 ></span
             >`,

@@ -10,15 +10,15 @@ import { css, html, LitElement } from "lit";
 import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { TemplateResultConverter } from "../../lib/converters";
 import { attr__, __ } from "../../lib/translate";
+import { skeletonStyles } from "../../styles/skeleton";
+import { utilityStyles } from "../../styles/utilities";
+import { tailwindStyles } from "../../tailwind.lit";
 import {
     Column,
     KohaAPIError,
     LMSEventTargetGroupFeeReduced,
     Toast,
-} from "../../sharedDeclarations";
-import { skeletonStyles } from "../../styles/skeleton";
-import { utilityStyles } from "../../styles/utilities";
-import { tailwindStyles } from "../../tailwind.lit";
+} from "../../types/common";
 import LMSToast from "../LMSToast";
 
 /**
@@ -46,19 +46,12 @@ export default class LMSStaffEventCardForm extends LitElement {
         skeletonStyles,
         utilityStyles,
         css`
-            svg {
-                display: inline-block;
-                width: 1em;
-                height: 1em;
-                color: #6c757d;
-            }
-
-            .section {
+            /* .section {
                 border: 1px solid transparent;
                 background-color: #f8f9fa;
                 margin-bottom: 1em;
                 border-radius: 1.5rem;
-            }
+            } */
         `,
     ];
 
@@ -397,19 +390,23 @@ export default class LMSStaffEventCardForm extends LitElement {
                         class="btn-edit btn-secondary btn-outline join-item btn flex-auto"
                     >
                         <span class="start-edit pointer-events-none"
-                            >${litFontawesome(faEdit)}&nbsp;${__("Edit")}</span
+                            >${litFontawesome(faEdit, {
+                                className: "w-4 h-4 inline-block",
+                            })}&nbsp;${__("Edit")}</span
                         >
                         <span class="abort-edit pointer-events-none hidden"
-                            >${litFontawesome(faTimes)}&nbsp;${__(
-                                "Abort"
-                            )}</span
+                            >${litFontawesome(faTimes, {
+                                className: "w-4 h-4 inline-block",
+                            })}&nbsp;${__("Abort")}</span
                         >
                     </button>
                     <button
                         type="submit"
                         class="btn-secondary btn-outline join-item btn flex-auto"
                     >
-                        ${litFontawesome(faSave)}
+                        ${litFontawesome(faSave, {
+                            className: "w-4 h-4 inline-block",
+                        })}
                         <span>&nbsp;${__("Save")}</span>
                     </button>
                     <button
@@ -417,7 +414,9 @@ export default class LMSStaffEventCardForm extends LitElement {
                         type="button"
                         class="btn-secondary btn-outline join-item btn flex-auto"
                     >
-                        ${litFontawesome(faTrash)}
+                        ${litFontawesome(faTrash, {
+                            className: "w-4 h-4 inline-block",
+                        })}
                         <span>&nbsp;${__("Delete")}</span>
                     </button>
                     <button
@@ -425,7 +424,9 @@ export default class LMSStaffEventCardForm extends LitElement {
                         class="btn-secondary btn-outline join-item btn flex-auto"
                         @click=${this.collapseAll}
                     >
-                        ${litFontawesome(faCompressAlt)}
+                        ${litFontawesome(faCompressAlt, {
+                            className: "w-4 h-4 inline-block",
+                        })}
                         <span>&nbsp;${__("Collapse All")}</span>
                     </button>
                 </div>

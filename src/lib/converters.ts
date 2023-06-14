@@ -8,7 +8,7 @@ import {
     LMSLocation,
     LMSTargetGroup,
     TaggedData,
-} from "../sharedDeclarations";
+} from "../types/common";
 
 type InputTypeValue =
     | string

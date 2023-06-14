@@ -4,9 +4,9 @@ import LMSTargetGroupsModal from "../extensions/LMSTargetGroupsModal";
 import LMSTargetGroupsTable from "../extensions/LMSTargetGroupsTable";
 import { QueryBuilder } from "../lib/QueryBuilder";
 import { __ } from "../lib/translate";
-import { Column } from "../sharedDeclarations";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
+import { Column } from "../types/common";
 
 declare global {
     interface HTMLElementTagNameMap {

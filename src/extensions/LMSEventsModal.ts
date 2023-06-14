@@ -8,7 +8,7 @@ import {
     LMSLocation,
     LMSTargetGroup,
     ModalField,
-} from "../sharedDeclarations";
+} from "../types/common";
 
 @customElement("lms-events-modal")
 export default class LMSEventsModal extends LMSModal {

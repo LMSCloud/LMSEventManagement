@@ -3694,12 +3694,20 @@ details.collapse summary::-webkit-details-marker {
   aspect-ratio: 16 / 9;
 }
 
+.h-12 {
+  height: 3rem;
+}
+
 .h-20 {
   height: 5rem;
 }
 
 .h-24 {
   height: 6rem;
+}
+
+.h-4 {
+  height: 1rem;
 }
 
 .h-8 {
@@ -3722,12 +3730,20 @@ details.collapse summary::-webkit-details-marker {
   width: 91.666667%;
 }
 
+.w-12 {
+  width: 3rem;
+}
+
 .w-20 {
   width: 5rem;
 }
 
 .w-32 {
   width: 8rem;
+}
+
+.w-4 {
+  width: 1rem;
 }
 
 .w-52 {

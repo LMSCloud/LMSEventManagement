@@ -13,10 +13,10 @@ import { splitDateTime } from "../lib/converters";
 import { QueryBuilder } from "../lib/QueryBuilder";
 import { requestHandler } from "../lib/RequestHandler";
 import { locale, __ } from "../lib/translate";
-import { LMSEvent, LMSLocation } from "../sharedDeclarations";
 import { cardDeckStylesOpac } from "../styles/cardDeck";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
+import { LMSEvent, LMSLocation } from "../types/common";
 
 declare global {
     interface HTMLElementTagNameMap {
@@ -253,7 +253,11 @@ export default class LMSEventsView extends LitElement {
                                                     >
                                                         <small>
                                                             ${litFontawesome(
-                                                                faMapMarkerAlt
+                                                                faMapMarkerAlt,
+                                                                {
+                                                                    className:
+                                                                        "w-4 h-4 inline-block",
+                                                                }
                                                             )}
                                                             ${this.locations.find(
                                                                 (location) =>
@@ -270,7 +274,11 @@ export default class LMSEventsView extends LitElement {
                                                     >
                                                         <small>
                                                             ${litFontawesome(
-                                                                faCalendarAlt
+                                                                faCalendarAlt,
+                                                                {
+                                                                    className:
+                                                                        "w-4 h-4 inline-block",
+                                                                }
                                                             )}
                                                             ${sDate}, ${sTime} -
                                                             ${isSameDay

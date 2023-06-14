@@ -2,8 +2,8 @@ import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { convertToISO8601 } from "../../../lib/converters";
-import { InputType, ModalField } from "../../../sharedDeclarations";
 import { tailwindStyles } from "../../../tailwind.lit";
+import { InputType, ModalField } from "../../../types/common";
 
 @customElement("lms-primitives-input")
 export default class LMSPrimitivesInput extends LitElement {

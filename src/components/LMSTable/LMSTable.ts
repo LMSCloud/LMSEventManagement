@@ -20,16 +20,16 @@ import { InputConverter } from "../../lib/converters";
 import { IntersectionObserverHandler } from "../../lib/IntersectionObserverHandler";
 import { QueryBuilder } from "../../lib/QueryBuilder";
 import { attr__, __ } from "../../lib/translate";
+import { skeletonStyles } from "../../styles/skeleton";
+import { utilityStyles } from "../../styles/utilities";
+import { tailwindStyles } from "../../tailwind.lit";
 import {
     Column,
     KohaAPIError,
     SortableColumns,
     TaggedData,
     Toast,
-} from "../../sharedDeclarations";
-import { skeletonStyles } from "../../styles/skeleton";
-import { utilityStyles } from "../../styles/utilities";
-import { tailwindStyles } from "../../tailwind.lit";
+} from "../../types/common";
 import LMSDataNavbar from "../LMSDataNavbar";
 import LMSPagination from "../LMSPagination";
 import LMSSearch from "../LMSSearch";
@@ -112,13 +112,6 @@ export default class LMSTable extends LitElement {
         skeletonStyles,
         utilityStyles,
         css`
-            svg {
-                display: inline-block;
-                width: 1em;
-                height: 1em;
-                color: #ffffff;
-            }
-
             .pip {
                 bottom: 1em;
                 height: fit-content !important;
@@ -569,7 +562,11 @@ export default class LMSTable extends LitElement {
                                                               <span
                                                                   class="start-edit pointer-events-none"
                                                                   >${litFontawesome(
-                                                                      faEdit
+                                                                      faEdit,
+                                                                      {
+                                                                          className:
+                                                                              "w-4 h-4 inline-block",
+                                                                      }
                                                                   )}
                                                                   <span
                                                                       >${__(
@@ -580,7 +577,11 @@ export default class LMSTable extends LitElement {
                                                               <span
                                                                   class="abort-edit pointer-events-none hidden"
                                                                   >${litFontawesome(
-                                                                      faTimes
+                                                                      faTimes,
+                                                                      {
+                                                                          className:
+                                                                              "w-4 h-4 inline-block",
+                                                                      }
                                                                   )}<span
                                                                       >${__(
                                                                           "Abort"
@@ -598,7 +599,11 @@ export default class LMSTable extends LitElement {
                                                               )}
                                                           >
                                                               ${litFontawesome(
-                                                                  faSave
+                                                                  faSave,
+                                                                  {
+                                                                      className:
+                                                                          "w-4 h-4 inline-block",
+                                                                  }
                                                               )}
                                                               <span
                                                                   >${__(
@@ -618,7 +623,11 @@ export default class LMSTable extends LitElement {
                                                               )}
                                                           >
                                                               ${litFontawesome(
-                                                                  faTrash
+                                                                  faTrash,
+                                                                  {
+                                                                      className:
+                                                                          "w-4 h-4 inline-block",
+                                                                  }
                                                               )}
                                                               <span
                                                                   >${__(

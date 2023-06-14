@@ -3,7 +3,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import LMSEventTypesModal from "../extensions/LMSEventTypesModal";
 import LMSEventTypesTable from "../extensions/LMSEventTypesTable";
 import { __ } from "../lib/translate";
-import { Column, URIComponents } from "../sharedDeclarations";
+import { Column, URIComponents } from "../types/common";
 
 import { QueryBuilder } from "../lib/QueryBuilder";
 import { skeletonStyles } from "../styles/skeleton";

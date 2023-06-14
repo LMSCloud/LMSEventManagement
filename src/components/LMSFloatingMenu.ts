@@ -1,9 +1,9 @@
 import { faBars, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { css, html, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { TranslatedString } from "../sharedDeclarations";
 import { tailwindStyles } from "../tailwind.lit";
+import { TranslatedString } from "../types/common";
 
 type MenuEntry = {
     name: string | TranslatedString;
@@ -29,15 +29,7 @@ export default class LMSFloatingMenu extends LitElement {
 
     @property({ type: Array }) items: MenuEntry[] = [];
 
-    static override styles = [
-        tailwindStyles,
-        css`
-            svg {
-                width: 1rem;
-                height: 1rem;
-            }
-        `,
-    ];
+    static override styles = [tailwindStyles];
 
     override render() {
         return html`
@@ -45,7 +37,9 @@ export default class LMSFloatingMenu extends LitElement {
                 <div class="navbar-start">
                     <div class="dropdown">
                         <label tabindex="0" class="btn-ghost btn lg:hidden">
-                            ${litFontawesome(faBars)}
+                            ${litFontawesome(faBars, {
+                                className: "w-4 h-4 inline-block",
+                            })}
                         </label>
                         <ul
                             tabindex="0"
@@ -61,7 +55,10 @@ export default class LMSFloatingMenu extends LitElement {
                                                 href=${url}
                                                 class="text-base font-medium"
                                             >
-                                                ${litFontawesome(icon)}&nbsp;
+                                                ${litFontawesome(icon, {
+                                                    className:
+                                                        "w-4 h-4 inline-block",
+                                                })}&nbsp;
                                                 ${name}</a
                                             >
                                         </li>
@@ -91,7 +88,10 @@ export default class LMSFloatingMenu extends LitElement {
                                         class="rounded-lg text-base hover:bg-base-200"
                                     >
                                         <a href=${url}
-                                            >${litFontawesome(icon)}&nbsp;
+                                            >${litFontawesome(icon, {
+                                                className:
+                                                    "w-4 h-4 inline-block",
+                                            })}&nbsp;
                                             ${name}</a
                                         >
                                     </li>
