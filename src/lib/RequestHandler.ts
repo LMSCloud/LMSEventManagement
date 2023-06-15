@@ -49,7 +49,8 @@ class RequestHandler {
                 : "force-cache";
         }
 
-        let url = endpointData.url + (pathParams ? `/${pathParams.join("/")}` : "") ;
+        let url =
+            endpointData.url + (pathParams ? `/${pathParams.join("/")}` : "");
 
         if (queryParams) {
             const searchParams = new URLSearchParams(queryParams);
@@ -78,7 +79,7 @@ class RequestHandler {
 const BASE_URL = "/api/v1/contrib/eventmanagement";
 const endpoints: Endpoints = {
     getEventsPublic: {
-        url: "${BASE_URL}/public/events",
+        url: `${BASE_URL}/public/events`,
         cache: false,
     },
     getTargetGroupsPublic: {
