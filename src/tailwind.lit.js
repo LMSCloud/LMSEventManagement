@@ -3810,10 +3810,6 @@ details.collapse summary::-webkit-details-marker {
   max-width: 64rem;
 }
 
-.max-w-md {
-  max-width: 28rem;
-}
-
 .flex-auto {
   flex: 1 1 auto;
 }

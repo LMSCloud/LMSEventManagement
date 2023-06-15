@@ -187,7 +187,7 @@ export default class LMSImageBrowser extends LitElement {
                         }
                         return html`
                             <div
-                                class="card card-compact max-w-md bg-base-100 shadow-xl"
+                                class="card card-compact bg-base-100 shadow-xl"
                             >
                                 <figure>
                                     <img
