@@ -6,11 +6,4 @@
     <div class="lmse-content-block" id="entry-point">
         <lms-image-browser></lms-image-browser>    
     </div>
-    <div class="lmse-footer" id="entry-point">
-        <div class="text-center">
-            <lms-anchor data-href='{ "path": "/cgi-bin/koha/tools/upload.pl" }' target="_blank">
-                <i class="fa fa-upload"></i>&nbsp;[% "Upload images" | gettext %]
-            </lms-anchor>
-        </div>
-    </div>
 [% END %]

@@ -1,4 +1,4 @@
-import { faCopy } from "@fortawesome/free-solid-svg-icons";
+import { faCopy, faMouse } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement, PropertyValues } from "lit";
 import {
@@ -9,6 +9,7 @@ import {
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { attr__, __ } from "../lib/translate";
+import { cardDeckStylesStaff } from "../styles/cardDeck";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
 import LMSTooltip from "./LMSTooltip";
@@ -45,14 +46,19 @@ export default class LMSImageBrowser extends LitElement {
         },
     })
     uploadedImages: UploadedImage[] = [];
+
     @queryAll('[id^="button-"]')
     buttonReferences!: NodeListOf<HTMLButtonElement>;
+
     @queryAll('[id^="tooltip-"]') tooltipReferences!: NodeListOf<LMSTooltip>;
-    private boundEventHandler: (event: MessageEvent) => void = () => undefined;
 
-    static override styles = [tailwindStyles, skeletonStyles];
+    static override styles = [
+        tailwindStyles,
+        skeletonStyles,
+        cardDeckStylesStaff,
+    ];
 
-    loadImages() {
+    private loadImages() {
         const uploadedImages = async () =>
             await fetch("/api/v1/contrib/eventmanagement/images");
 
@@ -69,32 +75,15 @@ export default class LMSImageBrowser extends LitElement {
             });
     }
 
-    handleClipboardCopy(hashvalue: string) {
+    private handleClipboardCopy(hashvalue: string) {
         navigator.clipboard.writeText(
             `/cgi-bin/koha/opac-retrieve-file.pl?id=${hashvalue}`
         );
     }
 
-    handleMessageEvent(event: MessageEvent) {
-        if (event.data === "reloaded") {
-            this.loadImages();
-        }
-    }
-
     override connectedCallback(): void {
         super.connectedCallback();
-
-        /** This is the counterpart to the script in the intranet_js hook */
-        this.boundEventHandler = this.handleMessageEvent.bind(this);
-        window.addEventListener("message", this.boundEventHandler);
-
-        /** This loadImages call is independent of the eventListener. */
         this.loadImages();
-    }
-
-    override disconnectedCallback(): void {
-        super.disconnectedCallback();
-        window.removeEventListener("message", this.boundEventHandler);
     }
 
     override updated(changedProperties: PropertyValues<this>) {
@@ -120,9 +109,66 @@ export default class LMSImageBrowser extends LitElement {
         }
     }
 
+    private handleFiles(files: FileList | null) {
+        console.log("handleFiles", files);
+    }
+
+    private handleDragOver(event: DragEvent) {
+        event.preventDefault();
+        const target = event.target as HTMLDivElement;
+        target.classList.add("bg-primary", "bg-opacity-10");
+        if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = "copy";
+        }
+    }
+
+    private handleDragLeave(event: DragEvent) {
+        event.preventDefault();
+        const target = event.target as HTMLDivElement;
+        target.classList.remove("bg-primary", "bg-opacity-10");
+    }
+
+    private handleDrop(event: DragEvent) {
+        event.preventDefault();
+        const target = event.target as HTMLDivElement;
+        target.classList.remove("bg-primary", "bg-opacity-10");
+        if (event.dataTransfer) {
+            const files = event.dataTransfer.files;
+            this.handleFiles(files);
+        }
+    }
+
     override render() {
         return html`
             <div class="mx-8">
+                <div
+                    class="mb-12 rounded-md border-2 border-dashed border-gray-400 p-8"
+                    @dragover=${this.handleDragOver}
+                    @dragleave=${this.handleDragLeave}
+                    @drop=${this.handleDrop}
+                >
+                    <div class="flex flex-col items-center">
+                        ${litFontawesome(faMouse, {
+                            className: "w-12 h-12 text-gray-400",
+                        })}
+                        <div class="mb-4 mt-1 text-sm text-gray-600">
+                            <label class="btn-link btn p-0">
+                                <span>${__("Select images")}</span>
+                                <input
+                                    type="file"
+                                    class="hidden"
+                                    @change=${this.handleFiles}
+                                    multiple
+                                    accept="image/png, image/jpeg, image/gif, image/webp, image/avif"
+                                />
+                            </label>
+                            ${__("or drag and drop")}
+                        </div>
+                        <p class="mt-1 text-xs text-gray-600">
+                            PNG, JPG, GIF, WEBP, AVIF ${__("up to")} 10MB
+                        </p>
+                    </div>
+                </div>
                 <div class="card-deck">
                     ${map(this.uploadedImages, (uploadedImage) => {
                         const { image, metadata } = uploadedImage;
@@ -141,14 +187,14 @@ export default class LMSImageBrowser extends LitElement {
                         }
                         return html`
                             <div
-                                class="card card-compact bg-base-100 shadow-xl"
+                                class="card card-compact max-w-md bg-base-100 shadow-xl"
                             >
                                 <figure>
                                     <img
                                         src="data:image/${filetype};base64,${image}"
-                                        class=${classMap({
+                                        class="${classMap({
                                             hidden: !isValidFiletype,
-                                        })}
+                                        })} aspect-square object-cover"
                                         alt=${filename}
                                     />
                                 </figure>
@@ -167,25 +213,25 @@ export default class LMSImageBrowser extends LitElement {
                                         <lms-tooltip
                                             id="tooltip-${hashvalue}"
                                             data-placement="top"
-                                            data-text="${attr__(
+                                            data-text=${attr__(
                                                 "Link constructed"
-                                            )}!"
+                                            )}
                                             data-timeout="1000"
                                         >
                                             <button
                                                 id="button-${hashvalue}"
                                                 data-placement="bottom"
-                                                title="${attr__(
-                                                    "Link constructed"
-                                                )}!"
                                                 @click=${() => {
                                                     this.handleClipboardCopy(
                                                         hashvalue
                                                     );
                                                 }}
-                                                class="btn-primary btn text-center"
+                                                class="btn-secondary btn text-center"
                                             >
-                                                ${litFontawesome(faCopy)}
+                                                ${litFontawesome(faCopy, {
+                                                    className:
+                                                        "w-4 h-4 inline-block",
+                                                })}
                                                 <span
                                                     >${__(
                                                         "Copy to clipboard"
@@ -196,7 +242,7 @@ export default class LMSImageBrowser extends LitElement {
                                     </div>
                                 </div>
                                 <div class="card-actions justify-center">
-                                    <p class="font-thin">
+                                    <p class="p-2 text-sm">
                                         ${filename}&nbsp;-&nbsp;${dtcreated}
                                     </p>
                                 </div>

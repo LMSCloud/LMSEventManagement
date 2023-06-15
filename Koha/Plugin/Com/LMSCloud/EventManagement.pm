@@ -240,40 +240,7 @@ sub intranet_head {
 sub intranet_js {
     my ($self) = @_;
 
-    return <<~'JS';
-        <script>
-            $(document).ready(function () {
-                // Check if a flag 'formSubmitted' exists in sessionStorage
-                const formSubmitted = sessionStorage.getItem("formSubmitted");
-
-                if (formSubmitted) {
-                    // Get the current URL
-                    const currentUrl = window.location.href;
-
-                    // Check if the URL contains 'upload.pl'
-                    if (currentUrl.indexOf("upload.pl") !== -1) {
-                        // Send a message to the parent window (the opener)
-                        if (window.opener) {
-                            window.opener.postMessage("reloaded", "*");
-                        }
-
-                        // Close the current window
-                        window.close();
-                    }
-
-                    // Clear the formSubmitted flag from sessionStorage
-                    sessionStorage.removeItem("formSubmitted");
-                }
-            });
-
-            // Add a submit event listener to your form
-            $("form").on("submit", function () {
-                // Set the 'formSubmitted' flag in sessionStorage when the form is submitted
-                sessionStorage.setItem("formSubmitted", "true");
-            });
-
-        </script>
-    JS
+    return q{};
 
 }
 
