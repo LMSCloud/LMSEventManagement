@@ -100,13 +100,6 @@ export default class LMSPellEditor extends LitElement {
                 color: #007bff;
             }
 
-            svg {
-                display: inline-block;
-                width: 0.75em;
-                height: 0.75em;
-                color: #6c757d;
-            }
-
             .input-slot {
                 height: 100%;
             }

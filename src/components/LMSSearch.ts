@@ -1,4 +1,4 @@
-import { css, html, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { attr__ } from "../lib/translate";
@@ -28,16 +28,7 @@ export default class LMSSearch extends LitElement {
     private boundHandleShortcut = (e: KeyboardEvent) =>
         this.handleShortcut.bind(this)(e);
 
-    static override styles = [
-        tailwindStyles,
-        css`
-            svg {
-                color: #000000;
-                height: 1rem;
-                width: 1rem;
-            }
-        `,
-    ];
+    static override styles = [tailwindStyles];
 
     private parseQuery(query: string): ParsedQuery {
         const entries: ParsedQuery = {};

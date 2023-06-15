@@ -1,6 +1,6 @@
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { css, html, LitElement, PropertyValues } from "lit";
+import { html, LitElement, PropertyValues } from "lit";
 import {
     customElement,
     property /* state */,
@@ -50,18 +50,7 @@ export default class LMSImageBrowser extends LitElement {
     @queryAll('[id^="tooltip-"]') tooltipReferences!: NodeListOf<LMSTooltip>;
     private boundEventHandler: (event: MessageEvent) => void = () => undefined;
 
-    static override styles = [
-        tailwindStyles,
-        skeletonStyles,
-        css`
-            svg {
-                display: inline-block;
-                width: 1em;
-                height: 1em;
-                color: #ffffff;
-            }
-        `,
-    ];
+    static override styles = [tailwindStyles, skeletonStyles];
 
     loadImages() {
         const uploadedImages = async () =>
