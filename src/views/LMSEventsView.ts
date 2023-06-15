@@ -193,7 +193,7 @@ export default class LMSEventsView extends LitElement {
 
     override render() {
         return html`
-            <div class="mx-8">
+            <div class="mx-4">
                 <div class="flex">
                     <div class="mb-4 w-full">
                         <lms-events-filter
