@@ -38,18 +38,33 @@ export default class LMSCard extends LitElement {
                     />
                 </figure>
                 <div class="card-body">
-                    <h5 class="card-title" ?hidden=${!this.title}>
+                    <h5
+                        class="${classMap({
+                            hidden: !this.title,
+                        })} card-title"
+                    >
                         ${this.title}
                     </h5>
-                    <p ?hidden=${!this.text}>${this.text}</p>
-                    <ul ?hidden=${!this.listItems.length}>
+                    <p
+                        class=${classMap({
+                            hidden: !this.text,
+                        })}
+                    >
+                        ${this.text}
+                    </p>
+                    <ul
+                        class=${classMap({
+                            hidden: !this.listItems.length,
+                        })}
+                    >
                         ${this.listItems.map(
                             (listItem) => html`<li>${listItem}</li>`
                         )}
                     </ul>
                     <div
-                        class="card-actions justify-end"
-                        ?hidden=${!this.links.length}
+                        class="${classMap({
+                            hidden: !this.links.length,
+                        })} card-actions justify-end"
                     >
                         ${this.links.length
                             ? this.links.map(

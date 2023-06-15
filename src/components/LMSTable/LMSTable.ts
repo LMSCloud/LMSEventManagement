@@ -464,7 +464,11 @@ export default class LMSTable extends LitElement {
 
         return html`
             <div class="mx-4">
-                <lms-data-navbar ?hidden=${!this.hasControls}>
+                <lms-data-navbar
+                    class=${classMap({
+                        hidden: !this.hasControls,
+                    })}
+                >
                     <lms-search
                         slot="navbar-center"
                         @search=${this.handleSearch}
@@ -614,10 +618,13 @@ export default class LMSTable extends LitElement {
                                                           <button
                                                               @click=${this
                                                                   .handleDelete}
-                                                              ?hidden=${!this
-                                                                  .isDeletable}
                                                               type="button"
-                                                              class="btn-warning btn mx-2"
+                                                              class="${classMap(
+                                                                  {
+                                                                      hidden: !this
+                                                                          .isDeletable,
+                                                                  }
+                                                              )} btn-warning btn mx-2"
                                                               aria-label=${attr__(
                                                                   "Delete"
                                                               )}

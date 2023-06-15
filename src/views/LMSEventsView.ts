@@ -214,8 +214,9 @@ export default class LMSEventsView extends LitElement {
                                 : nothing}
                             ${this.hasLoaded && !this.events.length
                                 ? html`<div
-                                      class="w-full"
-                                      ?hidden=${this.events.length > 0}
+                                      class="${classMap({
+                                          hidden: this.events.length > 0,
+                                      })} w-full"
                                   >
                                       <div class="alert alert-info">
                                           ${__(
@@ -314,8 +315,9 @@ export default class LMSEventsView extends LitElement {
                                         >${__("You've reached the end")}</span
                                     >
                                     <button
-                                        class="btn-primary btn-block btn mt-4 w-1/4"
-                                        ?hidden=${!this.events.length}
+                                        class="${classMap({
+                                            hidden: this.events.length,
+                                        })} btn-primary btn-block btn mt-4 w-1/4"
                                         @click=${this.handleLoadMore}
                                     >
                                         ${__("Load more")}

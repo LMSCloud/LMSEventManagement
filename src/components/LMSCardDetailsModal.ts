@@ -326,8 +326,9 @@ export default class LMSCardDetailsModal extends LitElement {
                         <div class="w-1/2">
                             <img
                                 src=${ifDefined(image ?? undefined)}
-                                ?hidden=${!image}
-                                class="aspect-video w-full rounded object-cover"
+                                class="${classMap({
+                                    hidden: !image,
+                                })} aspect-video w-full rounded object-cover"
                             />
 
                             <!-- Fees -->
@@ -406,8 +407,9 @@ export default class LMSCardDetailsModal extends LitElement {
                             ${__("Close")}
                         </button>
                         <a
-                            class="btn-primary btn"
-                            ?hidden=${!registration_link}
+                            class="${classMap({
+                                hidden: !registration_link,
+                            })} btn-primary btn"
                             href=${ifDefined(registration_link ?? undefined)}
                         >
                             ${__("Register")}

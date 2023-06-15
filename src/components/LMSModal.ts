@@ -277,7 +277,9 @@ export default class LMSModal extends LitElement {
                                 hidden: !this.alert.active,
                             })} alert alert-error"
                         >
-                            ${litFontawesome(faXmarkCircle)}
+                            ${litFontawesome(faXmarkCircle, {
+                                className: "w-4 h-4 inline-block",
+                            })}
                             <span>${this.alert.message}</span>
                             <button
                                 for="lms-modal"

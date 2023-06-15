@@ -274,13 +274,19 @@ export default class LMSStaffEventCardDeck extends LitElement {
                                     </div>
                                     <lms-staff-event-card-form
                                         .datum=${datum}
-                                        ?hidden=${!(state === "data")}
+                                        class=${classMap({
+                                            hidden: !(state === "data"),
+                                        })}
                                     ></lms-staff-event-card-form>
                                     <lms-staff-event-card-attendees
-                                        ?hidden=${!(state === "attendees")}
+                                        class=${classMap({
+                                            hidden: !(state === "attendees"),
+                                        })}
                                     ></lms-staff-event-card-attendees>
                                     <lms-staff-event-card-preview
-                                        ?hidden=${!(state === "preview")}
+                                        class=${classMap({
+                                            hidden: !(state === "preview"),
+                                        })}
                                         .datum=${datum}
                                     ></lms-staff-event-card-preview>
                                 </div>
