@@ -359,7 +359,7 @@ export default class LMSEventsFilter extends LitElement {
 
     override render() {
         return html`
-            <div class="mx-8" @change=${this.handleChange}>
+            <div @change=${this.handleChange}>
                 <div
                     class="sticky top-4 z-10 mb-8 rounded-2xl bg-base-100 p-4 shadow-sm"
                 >
