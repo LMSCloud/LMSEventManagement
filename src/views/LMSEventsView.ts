@@ -5,6 +5,7 @@ import {
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import LMSCard from "../components/LMSCard";
 import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
@@ -31,6 +32,8 @@ export default class LMSEventsView extends LitElement {
     @property({ type: String }) borrowernumber = undefined;
 
     @state() events: LMSEvent[] = [];
+
+    @state() events_count: number | undefined;
 
     @state() locations: LMSLocation[] = [];
 
@@ -83,14 +86,16 @@ export default class LMSEventsView extends LitElement {
                 "getEventsPublic",
                 this.queryBuilder.query.toString()
             ),
+            requestHandler.request("getEventsCountPublic"),
             requestHandler.request("getLocationsPublic"),
         ])
             .then((results) =>
                 Promise.all(results.map((result) => result.json()))
             )
-            .then(([events, locations]) => {
+            .then(([events, events_count, locations]) => {
                 this.hasLoaded = true;
                 this.events = events;
+                this.events_count = events_count;
                 this.locations = locations;
                 this.queryBuilder.updateUrl();
             })
@@ -300,7 +305,11 @@ export default class LMSEventsView extends LitElement {
                                         .isOpen=${this.hasOpenModal}
                                     ></lms-card-details-modal>
                                 </div>
-                                <div class="load-more flex justify-center">
+                                <div
+                                    class="load-more ${classMap({
+                                        hidden: this.events_count ?? 0 < 20,
+                                    })} flex justify-center"
+                                >
                                     <span class="mt-4 hidden text-center"
                                         >${__("You've reached the end")}</span
                                     >

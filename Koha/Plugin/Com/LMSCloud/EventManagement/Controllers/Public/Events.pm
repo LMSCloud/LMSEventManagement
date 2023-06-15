@@ -40,6 +40,7 @@ sub get {
 
     return try {
         my $events_set   = Koha::LMSCloud::EventManagement::Events->new;
+        my $events_total_count = $events_set->count;
         my $defined_keys = [ map { defined $params->{$_} ? $_ : () } keys %{$params} ];
         if ( @{$defined_keys} ) {
             $events_set = $events_set->filter($params);

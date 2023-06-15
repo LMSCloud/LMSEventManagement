@@ -22,7 +22,7 @@ class RequestHandler {
     }
 
     public async request(
-        endpoint: string,
+        endpoint: keyof Endpoints,
         queryParams?: Record<string, string> | string,
         pathParams?: Array<string>
     ): Promise<Response> {
@@ -80,6 +80,10 @@ const BASE_URL = "/api/v1/contrib/eventmanagement";
 const endpoints: Endpoints = {
     getEventsPublic: {
         url: `${BASE_URL}/public/events`,
+        cache: false,
+    },
+    getEventsCountPublic: {
+        url: `${BASE_URL}/public/events_count`,
         cache: false,
     },
     getTargetGroupsPublic: {

@@ -3,7 +3,9 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Events#get",
       "operationId": "getEventsPublic",
-      "tags": ["events"],
+      "tags": [
+        "events"
+      ],
       "parameters": [
         {
           "name": "name",
@@ -97,7 +99,12 @@
         {
           "name": "_match",
           "description": "Matching criteria",
-          "enum": ["contains", "exact", "starts_with", "ends_with"],
+          "enum": [
+            "contains",
+            "exact",
+            "starts_with",
+            "ends_with"
+          ],
           "in": "query",
           "required": false,
           "type": "string"
@@ -132,7 +139,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Array of events",
@@ -145,49 +154,94 @@
                   "type": "integer"
                 },
                 "name": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "event_type": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "branch": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "target_group": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "max_age": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "min_age": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "open_registration": {
-                  "type": ["boolean", "null"]
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
                 },
                 "max_participants": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "fee": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "location": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "description": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "image": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "start_time": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "end_time": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "link_to_registration": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               }
             }
@@ -200,7 +254,106 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/public/events_count": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::EventTypes#get",
+      "operationId": "getEventsCountPublic",
+      "tags": [
+        "events"
+      ],
+      "description": "Get the total number of events",
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Total number of events",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -272,9 +425,13 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::EventTypes#list",
       "operationId": "listEventTypesPublic",
-      "tags": ["event_types"],
+      "tags": [
+        "event_types"
+      ],
       "description": "List all event types",
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Event types",
@@ -322,7 +479,10 @@
                   "type": "string"
                 },
                 "image": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "location": {
                   "type": "integer"
@@ -338,7 +498,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -410,9 +573,13 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Locations#list",
       "operationId": "listLocationsPublic",
-      "tags": ["locations"],
+      "tags": [
+        "locations"
+      ],
       "description": "List all locations",
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Locations",
@@ -453,7 +620,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -525,9 +695,13 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::TargetGroups#list",
       "operationId": "listTargetGroupsPublic",
-      "tags": ["target_groups"],
+      "tags": [
+        "target_groups"
+      ],
       "description": "List target groups",
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "List of target groups",
@@ -559,7 +733,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -631,9 +808,13 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Settings#list",
       "operationId": "listEventManagementSettingsPublic",
-      "tags": ["settings"],
+      "tags": [
+        "settings"
+      ],
       "description": "List public settings",
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "List of public settings",
@@ -646,7 +827,13 @@
                   "type": "string"
                 },
                 "value": {
-                  "type": ["string", "number", "boolean", "array", "object"]
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object"
+                  ]
                 }
               }
             }
@@ -659,7 +846,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -731,9 +921,13 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Settings#list",
       "operationId": "listEventManagementSettings",
-      "tags": ["settings"],
+      "tags": [
+        "settings"
+      ],
       "description": "List settings",
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "List of settings",
@@ -746,7 +940,13 @@
                   "type": "string"
                 },
                 "value": {
-                  "type": ["string", "number", "boolean", "array", "object"]
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object"
+                  ]
                 }
               }
             }
@@ -759,7 +959,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -834,7 +1037,9 @@
     "post": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Settings#add",
       "operationId": "addEventManagementSettings",
-      "tags": ["settings"],
+      "tags": [
+        "settings"
+      ],
       "parameters": [
         {
           "name": "body",
@@ -850,7 +1055,13 @@
                   "type": "string"
                 },
                 "value": {
-                  "type": ["string", "number", "boolean", "array", "object"]
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object"
+                  ]
                 }
               }
             }
@@ -858,7 +1069,9 @@
         }
       ],
       "description": "Add settings",
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "List of settings",
@@ -871,7 +1084,13 @@
                   "type": "string"
                 },
                 "value": {
-                  "type": ["string", "number", "boolean", "array", "object"]
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object"
+                  ]
                 }
               }
             }
@@ -884,7 +1103,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -961,7 +1183,9 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Setting#get",
       "operationId": "getEventManagementSetting",
-      "tags": ["settings"],
+      "tags": [
+        "settings"
+      ],
       "parameters": [
         {
           "name": "key",
@@ -972,12 +1196,20 @@
         }
       ],
       "description": "Get setting by key",
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "A setting",
           "schema": {
-            "type": ["string", "number", "boolean", "array", "object"]
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object"
+            ]
           }
         },
         "400": {
@@ -987,7 +1219,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -1062,7 +1297,9 @@
     "put": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Setting#update",
       "operationId": "updateEventManagementSetting",
-      "tags": ["settings"],
+      "tags": [
+        "settings"
+      ],
       "parameters": [
         {
           "name": "key",
@@ -1080,19 +1317,33 @@
             "type": "object",
             "properties": {
               "value": {
-                "type": ["string", "number", "boolean", "array", "object"]
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object"
+                ]
               }
             }
           }
         }
       ],
       "description": "Update setting by key",
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "A setting's value",
           "schema": {
-            "type": ["string", "number", "boolean", "array", "object"]
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object"
+            ]
           }
         },
         "400": {
@@ -1102,7 +1353,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -1179,7 +1433,9 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Events#list",
       "operationId": "getEvents",
-      "tags": ["events"],
+      "tags": [
+        "events"
+      ],
       "parameters": [
         {
           "name": "name",
@@ -1273,7 +1529,12 @@
         {
           "name": "_match",
           "description": "Matching criteria",
-          "enum": ["contains", "exact", "starts_with", "ends_with"],
+          "enum": [
+            "contains",
+            "exact",
+            "starts_with",
+            "ends_with"
+          ],
           "in": "query",
           "required": false,
           "type": "string"
@@ -1309,7 +1570,9 @@
         }
       ],
       "description": "Get all events",
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Array of events",
@@ -1322,10 +1585,16 @@
                   "type": "integer"
                 },
                 "name": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "event_type": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "target_groups": {
                   "type": "array",
@@ -1345,44 +1614,80 @@
                   }
                 },
                 "min_age": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "max_age": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "max_participants": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "start_time": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "format": "date-time"
                 },
                 "end_time": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "format": "date-time"
                 },
                 "registration_start": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "format": "date-time"
                 },
                 "registration_end": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "format": "date-time"
                 },
                 "location": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "image": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "description": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "registration_link": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "open_registration": {
-                  "type": ["boolean", "null"]
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
                 }
               }
             }
@@ -1395,7 +1700,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -1462,13 +1770,20 @@
         }
       },
       "x-koha-authorization": {
-        "permissions": { "plugins": ["configure", "tool"] }
+        "permissions": {
+          "plugins": [
+            "configure",
+            "tool"
+          ]
+        }
       }
     },
     "post": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Events#add",
       "operationId": "addEvent",
-      "tags": ["events"],
+      "tags": [
+        "events"
+      ],
       "description": "Add an event",
       "parameters": [
         {
@@ -1480,10 +1795,16 @@
             "type": "object",
             "properties": {
               "name": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "event_type": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "target_groups": {
                 "type": "array",
@@ -1503,44 +1824,80 @@
                 }
               },
               "min_age": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "max_age": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "max_participants": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "start_time": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "end_time": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "registration_start": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "registration_end": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "location": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "image": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "description": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "registration_link": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "open_registration": {
-                "type": ["boolean", "null"]
+                "type": [
+                  "boolean",
+                  "null"
+                ]
               }
             }
           }
@@ -1553,7 +1910,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Event",
@@ -1564,49 +1923,94 @@
                 "type": "integer"
               },
               "name": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "event_type": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "branch": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "target_group": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "max_age": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "min_age": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "open_registration": {
-                "type": ["boolean", "null"]
+                "type": [
+                  "boolean",
+                  "null"
+                ]
               },
               "max_participants": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "fee": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "location": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "description": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "image": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "start_time": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "end_time": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "link_to_registration": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -1618,7 +2022,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -1695,7 +2102,9 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Event#get",
       "operationId": "getEvent",
-      "tags": ["events"],
+      "tags": [
+        "events"
+      ],
       "description": "Get a single event",
       "parameters": [
         {
@@ -1713,7 +2122,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Event",
@@ -1724,10 +2135,16 @@
                 "type": "integer"
               },
               "name": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "event_type": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "target_groups": {
                 "type": "array",
@@ -1747,44 +2164,80 @@
                 }
               },
               "min_age": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "max_age": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "max_participants": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "start_time": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "end_time": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "registration_start": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "registration_end": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "location": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "image": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "description": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "registration_link": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "open_registration": {
-                "type": ["boolean", "null"]
+                "type": [
+                  "boolean",
+                  "null"
+                ]
               }
             }
           }
@@ -1796,7 +2249,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -1864,14 +2320,19 @@
       },
       "x-koha-authorization": {
         "permissions": {
-          "plugins": ["configure", "tool"]
+          "plugins": [
+            "configure",
+            "tool"
+          ]
         }
       }
     },
     "put": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Event#update",
       "operationId": "updateEvent",
-      "tags": ["events"],
+      "tags": [
+        "events"
+      ],
       "description": "Update an event",
       "parameters": [
         {
@@ -1890,10 +2351,16 @@
             "type": "object",
             "properties": {
               "name": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "event_type": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "target_groups": {
                 "type": "array",
@@ -1913,44 +2380,80 @@
                 }
               },
               "min_age": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "max_age": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "max_participants": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "start_time": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "end_time": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "registration_start": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "registration_end": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "location": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "image": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "description": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "registration_link": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "open_registration": {
-                "type": ["boolean", "null"]
+                "type": [
+                  "boolean",
+                  "null"
+                ]
               }
             }
           }
@@ -1963,7 +2466,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Event",
@@ -1974,56 +2479,104 @@
                 "type": "integer"
               },
               "name": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "event_type": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "target_group": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "min_age": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "max_age": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "max_participants": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "start_time": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "end_time": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "registration_start": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "registration_end": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               },
               "fee": {
-                "type": ["number", "null"]
+                "type": [
+                  "number",
+                  "null"
+                ]
               },
               "location": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "image": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "description": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "registration_link": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "open_registration": {
-                "type": ["boolean", "null"]
+                "type": [
+                  "boolean",
+                  "null"
+                ]
               }
             }
           }
@@ -2035,7 +2588,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -2110,7 +2666,9 @@
     "delete": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Event#delete",
       "operationId": "deleteEvent",
-      "tags": ["events"],
+      "tags": [
+        "events"
+      ],
       "description": "Delete an event",
       "parameters": [
         {
@@ -2128,7 +2686,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "204": {
           "description": "Event",
@@ -2143,7 +2703,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -2220,14 +2783,23 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::EventTypes#list",
       "operationId": "listEventTypes",
-      "tags": ["event_types"],
+      "tags": [
+        "event_types"
+      ],
       "description": "List all event types",
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "parameters": [
         {
           "name": "_match",
           "description": "Matching criteria",
-          "enum": ["contains", "exact", "starts_with", "ends_with"],
+          "enum": [
+            "contains",
+            "exact",
+            "starts_with",
+            "ends_with"
+          ],
           "in": "query",
           "required": false,
           "type": "string"
@@ -2309,7 +2881,10 @@
                   "type": "string"
                 },
                 "image": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "location": {
                   "type": "integer"
@@ -2325,7 +2900,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -2393,14 +2971,19 @@
       },
       "x-koha-authorization": {
         "permissions": {
-          "plugins": ["configure", "tool"]
+          "plugins": [
+            "configure",
+            "tool"
+          ]
         }
       }
     },
     "post": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::EventTypes#add",
       "operationId": "addEventType",
-      "tags": ["event_types"],
+      "tags": [
+        "event_types"
+      ],
       "description": "Add an event type",
       "parameters": [
         {
@@ -2447,7 +3030,10 @@
                 "type": "string"
               },
               "image": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "location": {
                 "type": "integer"
@@ -2463,7 +3049,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Event type",
@@ -2524,7 +3112,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -2601,7 +3192,9 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::EventType#get",
       "operationId": "getEventType",
-      "tags": ["event_types"],
+      "tags": [
+        "event_types"
+      ],
       "description": "Get an event type",
       "parameters": [
         {
@@ -2619,7 +3212,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Event type",
@@ -2665,7 +3260,10 @@
                 "type": "string"
               },
               "image": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "location": {
                 "type": "integer"
@@ -2680,7 +3278,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -2748,14 +3349,19 @@
       },
       "x-koha-authorization": {
         "permissions": {
-          "plugins": ["configure", "tool"]
+          "plugins": [
+            "configure",
+            "tool"
+          ]
         }
       }
     },
     "put": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::EventType#update",
       "operationId": "updateEventType",
-      "tags": ["event_types"],
+      "tags": [
+        "event_types"
+      ],
       "description": "Update an event type",
       "parameters": [
         {
@@ -2809,7 +3415,10 @@
                 "type": "string"
               },
               "image": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "location": {
                 "type": "integer"
@@ -2825,7 +3434,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Event type",
@@ -2886,7 +3497,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -2961,7 +3575,9 @@
     "delete": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::EventType#delete",
       "operationId": "deleteEventType",
-      "tags": ["event_types"],
+      "tags": [
+        "event_types"
+      ],
       "description": "Delete an event type",
       "parameters": [
         {
@@ -2979,7 +3595,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "204": {
           "description": "Event Type",
@@ -2994,7 +3612,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -3071,9 +3692,13 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Images#list",
       "operationId": "listImages",
-      "tags": ["images"],
+      "tags": [
+        "images"
+      ],
       "description": "List all uploaded files in formats: jpeg, jpg, png, webp, avif, gif. These are returned as base64 encoded strings.",
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Images",
@@ -3131,7 +3756,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -3208,14 +3836,23 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Locations#list",
       "operationId": "listLocations",
-      "tags": ["locations"],
+      "tags": [
+        "locations"
+      ],
       "description": "List all locations",
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "parameters": [
         {
           "name": "_match",
           "description": "Matching criteria",
-          "enum": ["contains", "exact", "starts_with", "ends_with"],
+          "enum": [
+            "contains",
+            "exact",
+            "starts_with",
+            "ends_with"
+          ],
           "in": "query",
           "required": false,
           "type": "string"
@@ -3290,7 +3927,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -3358,14 +3998,19 @@
       },
       "x-koha-authorization": {
         "permissions": {
-          "plugins": ["configure", "tool"]
+          "plugins": [
+            "configure",
+            "tool"
+          ]
         }
       }
     },
     "post": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Locations#add",
       "operationId": "addLocation",
-      "tags": ["locations"],
+      "tags": [
+        "locations"
+      ],
       "description": "Add a location",
       "parameters": [
         {
@@ -3405,7 +4050,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Location",
@@ -3443,7 +4090,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -3520,7 +4170,9 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Location#get",
       "operationId": "getLocation",
-      "tags": ["locations"],
+      "tags": [
+        "locations"
+      ],
       "description": "Get a location",
       "parameters": [
         {
@@ -3538,7 +4190,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Location",
@@ -3576,7 +4230,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -3644,14 +4301,19 @@
       },
       "x-koha-authorization": {
         "permissions": {
-          "plugins": ["configure", "tool"]
+          "plugins": [
+            "configure",
+            "tool"
+          ]
         }
       }
     },
     "put": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Location#update",
       "operationId": "updateLocation",
-      "tags": ["locations"],
+      "tags": [
+        "locations"
+      ],
       "description": "Update a location",
       "parameters": [
         {
@@ -3701,7 +4363,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Location",
@@ -3739,7 +4403,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -3814,7 +4481,9 @@
     "delete": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Location#delete",
       "operationId": "deleteLocation",
-      "tags": ["locations"],
+      "tags": [
+        "locations"
+      ],
       "description": "Delete a location",
       "parameters": [
         {
@@ -3832,7 +4501,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "204": {
           "description": "Location",
@@ -3847,7 +4518,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -3924,13 +4598,20 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::TargetGroups#list",
       "operationId": "listTargetGroups",
-      "tags": ["target_groups"],
+      "tags": [
+        "target_groups"
+      ],
       "description": "List target groups",
       "parameters": [
         {
           "name": "_match",
           "description": "Matching criteria",
-          "enum": ["contains", "exact", "starts_with", "ends_with"],
+          "enum": [
+            "contains",
+            "exact",
+            "starts_with",
+            "ends_with"
+          ],
           "in": "query",
           "required": false,
           "type": "string"
@@ -3965,7 +4646,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "List of target groups",
@@ -3997,7 +4680,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -4065,14 +4751,19 @@
       },
       "x-koha-authorization": {
         "permissions": {
-          "plugins": ["configure", "tool"]
+          "plugins": [
+            "configure",
+            "tool"
+          ]
         }
       }
     },
     "post": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::TargetGroups#add",
       "operationId": "addTargetGroup",
-      "tags": ["target_groups"],
+      "tags": [
+        "target_groups"
+      ],
       "description": "Add a target group",
       "parameters": [
         {
@@ -4103,7 +4794,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Target group",
@@ -4132,7 +4825,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -4209,7 +4905,9 @@
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::TargetGroup#get",
       "operationId": "getTargetGroup",
-      "tags": ["target_groups"],
+      "tags": [
+        "target_groups"
+      ],
       "description": "Get a target group",
       "parameters": [
         {
@@ -4227,7 +4925,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Target group",
@@ -4256,7 +4956,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -4324,14 +5027,19 @@
       },
       "x-koha-authorization": {
         "permissions": {
-          "plugins": ["configure", "tool"]
+          "plugins": [
+            "configure",
+            "tool"
+          ]
         }
       }
     },
     "put": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::TargetGroup#update",
       "operationId": "updateTargetGroup",
-      "tags": ["target_groups"],
+      "tags": [
+        "target_groups"
+      ],
       "description": "Update a target group",
       "parameters": [
         {
@@ -4369,7 +5077,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "200": {
           "description": "Target group",
@@ -4398,7 +5108,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
@@ -4473,7 +5186,9 @@
     "delete": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::TargetGroup#delete",
       "operationId": "deleteTargetGroup",
-      "tags": ["target_groups"],
+      "tags": [
+        "target_groups"
+      ],
       "description": "Delete a target group",
       "parameters": [
         {
@@ -4491,7 +5206,9 @@
           "type": "string"
         }
       ],
-      "produces": ["application/json"],
+      "produces": [
+        "application/json"
+      ],
       "responses": {
         "204": {
           "description": "Target group",
@@ -4506,7 +5223,10 @@
             "properties": {
               "error": {
                 "description": "An explanation for the error",
-                "type": ["string", "array"]
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             }
           }
