@@ -1,5 +1,5 @@
 type Endpoint = {
-    url: string;
+    url?: string;
     cache?: boolean;
     ignoreCache?: boolean;
     requestInfo?: { [key in keyof RequestInit]?: RequestInit[key] };
@@ -23,7 +23,8 @@ class RequestHandler {
 
     public async request(
         endpoint: string,
-        queryParams?: Record<string, string> | string
+        queryParams?: Record<string, string> | string,
+        pathParams?: Array<string>
     ): Promise<Response> {
         const endpointData = this.endpoints[endpoint];
 
@@ -48,7 +49,7 @@ class RequestHandler {
                 : "force-cache";
         }
 
-        let url = endpointData.url;
+        let url = endpointData.url + (pathParams ? `/${pathParams.join("/")}` : "") ;
 
         if (queryParams) {
             const searchParams = new URLSearchParams(queryParams);
@@ -74,22 +75,111 @@ class RequestHandler {
     }
 }
 
+const BASE_URL = "/api/v1/contrib/eventmanagement";
 const endpoints: Endpoints = {
     getEventsPublic: {
-        url: "/api/v1/contrib/eventmanagement/public/events",
+        url: "${BASE_URL}/public/events",
         cache: false,
     },
     getTargetGroupsPublic: {
-        url: "/api/v1/contrib/eventmanagement/public/target_groups",
+        url: `${BASE_URL}/public/target_groups`,
         cache: true,
     },
     getEventTypesPublic: {
-        url: "/api/v1/contrib/eventmanagement/public/event_types",
+        url: `${BASE_URL}/public/event_types`,
         cache: true,
     },
     getLocationsPublic: {
-        url: "/api/v1/contrib/eventmanagement/public/locations",
+        url: `${BASE_URL}/public/locations`,
         cache: true,
+    },
+    getSettingsPublic: {
+        url: `${BASE_URL}/public/settings`,
+        cache: true,
+    },
+    getSettings: {
+        url: `${BASE_URL}/settings`,
+        cache: false,
+    },
+    postSettings: {
+        url: `${BASE_URL}/settings`,
+        cache: false,
+    },
+    getSetting: {
+        url: `${BASE_URL}/settings`,
+        cache: false,
+    },
+    putSetting: {
+        url: `${BASE_URL}/settings`,
+        cache: false,
+    },
+    getEvents: {
+        url: `${BASE_URL}/events`,
+        cache: false,
+    },
+    postEvents: {
+        url: `${BASE_URL}/events`,
+        cache: false,
+    },
+    getEvent: {
+        url: `${BASE_URL}/events`,
+        cache: false,
+    },
+    putEvent: {
+        url: `${BASE_URL}/events`,
+        cache: false,
+    },
+    getEventTypes: {
+        url: `${BASE_URL}/event_types`,
+        cache: true,
+    },
+    postEventTypes: {
+        url: `${BASE_URL}/event_types`,
+        cache: false,
+    },
+    getEventType: {
+        url: `${BASE_URL}/event_types`,
+        cache: false,
+    },
+    putEventType: {
+        url: `${BASE_URL}/event_types`,
+        cache: false,
+    },
+    getImages: {
+        url: `${BASE_URL}/images`,
+        cache: true,
+    },
+    getLocations: {
+        url: `${BASE_URL}/locations`,
+        cache: true,
+    },
+    postLocations: {
+        url: `${BASE_URL}/locations`,
+        cache: false,
+    },
+    getLocation: {
+        url: `${BASE_URL}/locations`,
+        cache: false,
+    },
+    putLocation: {
+        url: `${BASE_URL}/locations`,
+        cache: false,
+    },
+    getTargetGroups: {
+        url: `${BASE_URL}/target_groups`,
+        cache: true,
+    },
+    postTargetGroups: {
+        url: `${BASE_URL}/target_groups`,
+        cache: false,
+    },
+    getTargetGroup: {
+        url: `${BASE_URL}/target_groups`,
+        cache: false,
+    },
+    putTargetGroup: {
+        url: `${BASE_URL}/target_groups`,
+        cache: false,
     },
 };
 
