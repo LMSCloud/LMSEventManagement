@@ -29,7 +29,7 @@ bind_textdomain_filter 'com.lmscloud.eventmanagement', \&Encode::decode_utf8;
 bindtextdomain 'com.lmscloud.eventmanagement' => $self->bundle_path . '/locales/';
 
 Readonly::Scalar my $UPPER_AGE_BOUNDARY          => 255;
-Readonly::Scalar my $UPPER_PARTICIPANTS_BOUNDARY => 65535;
+Readonly::Scalar my $UPPER_PARTICIPANTS_BOUNDARY => 65_535;
 
 sub _validate {
     my ($args) = @_;

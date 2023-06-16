@@ -2,6 +2,7 @@ import { faBars, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 import { tailwindStyles } from "../tailwind.lit";
 import { TranslatedString } from "../types/common";
 
@@ -66,7 +67,11 @@ export default class LMSFloatingMenu extends LitElement {
                             )}
                         </ul>
                     </div>
-                    <figure class="p-4" ?hidden=${Boolean(!this.logo?.src)}>
+                    <figure
+                        class="${classMap({
+                            hidden: Boolean(!this.logo?.src),
+                        })} p-4"
+                    >
                         <img
                             src=${this.logo?.src}
                             alt=${this.logo?.alt}

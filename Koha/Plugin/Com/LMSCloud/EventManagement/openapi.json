@@ -3832,6 +3832,167 @@
       }
     }
   },
+  "/image": {
+    "post": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Image#add",
+      "operationId": "addImage",
+      "tags": [
+        "images"
+      ],
+      "description": "Upload file in formats: jpeg, jpg, png, webp, avif, gif.",
+      "consumes": [
+        "multipart/form-data"
+      ],
+      "parameters": [
+        {
+          "name": "file",
+          "in": "formData",
+          "description": "File to upload",
+          "required": true,
+          "type": "string",
+          "format": "binary"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Added image",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "image": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "object",
+                "properties": {
+                  "dtcreated": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "permanent": {
+                    "type": "integer"
+                  },
+                  "dir": {
+                    "type": "string"
+                  },
+                  "public": {
+                    "type": "integer"
+                  },
+                  "filename": {
+                    "type": "string"
+                  },
+                  "uploadcategorycode": {
+                    "type": "string"
+                  },
+                  "owner": {
+                    "type": "integer"
+                  },
+                  "hashvalue": {
+                    "type": "string"
+                  },
+                  "filesize": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": [
+                  "string",
+                  "array"
+                ]
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "tool"
+        }
+      }
+    }
+  },
   "/locations": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Locations#list",

@@ -154,6 +154,10 @@ const endpoints: Endpoints = {
         url: `${BASE_URL}/images`,
         cache: true,
     },
+    postImages: {
+        url: `${BASE_URL}/images`,
+        cache: false,
+    },
     getLocations: {
         url: `${BASE_URL}/locations`,
         cache: true,

@@ -109,8 +109,37 @@ export default class LMSImageBrowser extends LitElement {
         }
     }
 
+    private handleChange(event: Event) {
+        const target = event.target as HTMLInputElement;
+        const files = target.files;
+        this.handleFiles(files);
+    }
+
     private handleFiles(files: FileList | null) {
-        console.log("handleFiles", files);
+        if (files) {
+            Array.from(files).forEach((file) => {
+                const formData = new FormData();
+                formData.append("file", file);
+
+                const uploadImages = async () =>
+                    await fetch("/api/v1/contrib/eventmanagement/image", {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                uploadImages()
+                    .then(
+                        async (response): Promise<UploadedImage[]> =>
+                            await response.json()
+                    )
+                    .then((uploadedImages) => {
+                        this.uploadedImages = uploadedImages;
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            });
+        }
     }
 
     private handleDragOver(event: DragEvent) {
@@ -157,7 +186,7 @@ export default class LMSImageBrowser extends LitElement {
                                 <input
                                     type="file"
                                     class="hidden"
-                                    @change=${this.handleFiles}
+                                    @change=${this.handleChange}
                                     multiple
                                     accept="image/png, image/jpeg, image/gif, image/webp, image/avif"
                                 />
