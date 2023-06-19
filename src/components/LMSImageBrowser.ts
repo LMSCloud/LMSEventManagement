@@ -1,10 +1,11 @@
-import { faCopy, faMouse } from "@fortawesome/free-solid-svg-icons";
+import { faCopy, faMouse, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement, PropertyValues } from "lit";
 import {
     customElement,
     property /* state */,
     queryAll,
+    state,
 } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
@@ -12,6 +13,8 @@ import { attr__, __ } from "../lib/translate";
 import { cardDeckStylesStaff } from "../styles/cardDeck";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
+import { KohaAPIError, Toast } from "../types/common";
+import LMSToast from "./LMSToast";
 import LMSTooltip from "./LMSTooltip";
 
 type UploadedImage = {
@@ -33,6 +36,7 @@ type UploadedImage = {
 declare global {
     interface HTMLElementTagNameMap {
         "lms-tooltip": LMSTooltip;
+        "lms-toast": LMSToast;
     }
 }
 
@@ -51,6 +55,11 @@ export default class LMSImageBrowser extends LitElement {
     buttonReferences!: NodeListOf<HTMLButtonElement>;
 
     @queryAll('[id^="tooltip-"]') tooltipReferences!: NodeListOf<LMSTooltip>;
+
+    @state() toast: Toast = {
+        heading: "",
+        message: "",
+    };
 
     static override styles = [
         tailwindStyles,
@@ -109,6 +118,48 @@ export default class LMSImageBrowser extends LitElement {
         }
     }
 
+    private renderToast(
+        status: string,
+        result: { error: string | string[]; errors: KohaAPIError[] }
+    ) {
+        if (result.error) {
+            this.toast = {
+                heading: status,
+                message: Array.isArray(result.error)
+                    ? html`<span>Sorry!</span>
+                          <ol>
+                              ${result.error.map(
+                                  (message: string) => html`<li>${message}</li>`
+                              )}
+                          </ol>`
+                    : html`<span>Sorry! ${result.error}</span>`,
+            };
+        }
+
+        if (result.errors) {
+            this.toast = {
+                heading: status,
+                message: html`<span>Sorry!</span>
+                    <ol>
+                        ${result.errors.map(
+                            (error: KohaAPIError) =>
+                                html`<li>
+                                    ${error.message} ${__("Path")}:
+                                    ${error.path}
+                                </li>`
+                        )}
+                    </ol>`,
+            };
+        }
+
+        const lmsToast = document.createElement("lms-toast", {
+            is: "lms-toast",
+        }) as LMSToast;
+        lmsToast.heading = this.toast.heading;
+        lmsToast.message = this.toast.message;
+        this.renderRoot.appendChild(lmsToast);
+    }
+
     private handleChange(event: Event) {
         const target = event.target as HTMLInputElement;
         const files = target.files;
@@ -122,18 +173,20 @@ export default class LMSImageBrowser extends LitElement {
                 formData.append("file", file);
 
                 const uploadImages = async () =>
-                    await fetch("/api/v1/contrib/eventmanagement/image", {
+                    await fetch("/api/v1/contrib/eventmanagement/images", {
                         method: "POST",
                         body: formData,
                     });
 
                 uploadImages()
-                    .then(
-                        async (response): Promise<UploadedImage[]> =>
-                            await response.json()
-                    )
-                    .then((uploadedImages) => {
-                        this.uploadedImages = uploadedImages;
+                    .then(async (response) => {
+                        if (!response.ok) {
+                            const error = await response.json();
+                            this.renderToast(response.statusText, error);
+                        }
+                    })
+                    .then(() => {
+                        this.loadImages();
                     })
                     .catch((error) => {
                         console.error(error);
@@ -165,6 +218,29 @@ export default class LMSImageBrowser extends LitElement {
             const files = event.dataTransfer.files;
             this.handleFiles(files);
         }
+    }
+
+    private handleDelete(event: Event) {
+        const target = event.target as HTMLButtonElement;
+        const { hashvalue } = target.dataset;
+        const deleteImage = async () =>
+            await fetch(`/api/v1/contrib/eventmanagement/image/${hashvalue}`, {
+                method: "DELETE",
+            });
+
+        deleteImage()
+            .then(async (response) => {
+                if (!response.ok) {
+                    const error = await response.json();
+                    this.renderToast(response.statusText, error);
+                }
+            })
+            .then(() => {
+                this.loadImages();
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     override render() {
@@ -200,7 +276,7 @@ export default class LMSImageBrowser extends LitElement {
                 </div>
                 <div class="card-deck">
                     ${map(this.uploadedImages, (uploadedImage) => {
-                        const { image, metadata } = uploadedImage;
+                        const { metadata } = uploadedImage;
                         const { dtcreated, filename, hashvalue } = metadata;
                         const filetype = filename.split(".").pop();
                         let isValidFiletype;
@@ -220,7 +296,7 @@ export default class LMSImageBrowser extends LitElement {
                             >
                                 <figure>
                                     <img
-                                        src="data:image/${filetype};base64,${image}"
+                                        src="/api/v1/contrib/eventmanagement/public/image/${hashvalue}"
                                         class="${classMap({
                                             hidden: !isValidFiletype,
                                         })} aspect-square object-cover"
@@ -238,7 +314,18 @@ export default class LMSImageBrowser extends LitElement {
                                     >
                                         ${hashvalue}
                                     </p>
-                                    <div class="text-center">
+                                    <div class="flex justify-center gap-4">
+                                        <button
+                                            class="btn-error btn"
+                                            data-hashvalue=${hashvalue}
+                                            @click=${this.handleDelete}
+                                        >
+                                            ${litFontawesome(faTrash, {
+                                                className:
+                                                    "w-4 h-4 inline-block",
+                                            })}
+                                            ${__("Delete")}
+                                        </button>
                                         <lms-tooltip
                                             id="tooltip-${hashvalue}"
                                             data-placement="top"

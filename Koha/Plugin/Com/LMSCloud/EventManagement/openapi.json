@@ -917,6 +917,124 @@
       }
     }
   },
+  "/public/image/{hashvalue}": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Image#get",
+      "operationId": "getImage",
+      "tags": [
+        "images"
+      ],
+      "description": "Retrieve a file as an octet-stream",
+      "parameters": [
+        {
+          "name": "hashvalue",
+          "in": "path",
+          "description": "Hashvalue of the file",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "produces": [
+        "image/jpg",
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/avif",
+        "image/webp"
+      ],
+      "responses": {
+        "200": {
+          "description": "File octet-stream",
+          "schema": {
+            "type": "string",
+            "format": "binary"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": [
+                  "string",
+                  "array"
+                ]
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/settings": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Settings#list",
@@ -3830,11 +3948,9 @@
           "plugins": "tool"
         }
       }
-    }
-  },
-  "/image": {
+    },
     "post": {
-      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Image#add",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Images#add",
       "operationId": "addImage",
       "tags": [
         "images"
@@ -3864,50 +3980,10 @@
         "application/json"
       ],
       "responses": {
-        "200": {
-          "description": "Added image",
+        "201": {
+          "description": "Image upload successful",
           "schema": {
-            "type": "object",
-            "properties": {
-              "image": {
-                "type": "string"
-              },
-              "metadata": {
-                "type": "object",
-                "properties": {
-                  "dtcreated": {
-                    "type": "string"
-                  },
-                  "id": {
-                    "type": "integer"
-                  },
-                  "permanent": {
-                    "type": "integer"
-                  },
-                  "dir": {
-                    "type": "string"
-                  },
-                  "public": {
-                    "type": "integer"
-                  },
-                  "filename": {
-                    "type": "string"
-                  },
-                  "uploadcategorycode": {
-                    "type": "string"
-                  },
-                  "owner": {
-                    "type": "integer"
-                  },
-                  "hashvalue": {
-                    "type": "string"
-                  },
-                  "filesize": {
-                    "type": "integer"
-                  }
-                }
-              }
-            }
+            "type": "object"
           }
         },
         "400": {
@@ -3989,6 +4065,118 @@
       "x-koha-authorization": {
         "permissions": {
           "plugins": "tool"
+        }
+      }
+    }
+  },
+  "/image/{hashvalue}": {
+    "delete": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Image#delete",
+      "operationId": "deleteImage",
+      "tags": [
+        "images"
+      ],
+      "description": "Delete an image by its hashvalue",
+      "parameters": [
+        {
+          "name": "hashvalue",
+          "in": "path",
+          "description": "Image hashvalue",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "description": "Language code of the navigator",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "204": {
+          "description": "Image deleted",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": [
+                  "string",
+                  "array"
+                ]
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "The object was not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
         }
       }
     }

@@ -68,7 +68,7 @@ export default class LMSToast extends LitElement {
 
         setTimeout(() => {
             this.remove();
-        }, 1000000);
+        }, 10000);
     }
 
     override disconnectedCallback() {
