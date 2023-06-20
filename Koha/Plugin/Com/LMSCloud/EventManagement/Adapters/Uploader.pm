@@ -52,7 +52,7 @@ sub upload {
     local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
     # Computing hash value for the file
-    my $hashvalue = md5_hex( $args->{'filename'} . ( $args->{'userid'} // '0' ) . $self->{'category'} . substr $args->{'filecontent'}, 0, $BYTES_DIGEST );
+    my $hashvalue = md5_hex( $args->{'filename'} . $self->{'category'} . substr $args->{'filecontent'}, 0, $BYTES_DIGEST );
 
     # Check if a file with the same hashvalue already exists
     my $existing_file = Koha::UploadedFiles->find( { hashvalue => $hashvalue } );
