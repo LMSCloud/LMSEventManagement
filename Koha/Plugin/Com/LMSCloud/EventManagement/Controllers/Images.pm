@@ -41,9 +41,8 @@ sub add {
     return try {
         my $upload_adapter = Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Uploader->new( { category => 'LMSEventManagement', public => 1 } );
 
-        my $upload = $c->req->upload('file');
-        my $userid = '42';
-
+        my $upload      = $c->req->upload('file');
+        my $userid      = $c->stash('koha.user')->borrowernumber;
         my $filename    = $upload->{'filename'};
         my $filecontent = $upload->slurp;
 
