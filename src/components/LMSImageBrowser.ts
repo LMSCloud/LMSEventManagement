@@ -13,25 +13,9 @@ import { attr__, __ } from "../lib/translate";
 import { cardDeckStylesStaff } from "../styles/cardDeck";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
-import { KohaAPIError, Toast } from "../types/common";
+import { KohaAPIError, Toast, UploadedImage } from "../types/common";
 import LMSToast from "./LMSToast";
 import LMSTooltip from "./LMSTooltip";
-
-type UploadedImage = {
-    image: string;
-    metadata: {
-        dtcreated: string;
-        id: number;
-        permanent: number;
-        dir: string;
-        public: number;
-        filename: string;
-        uploadcategorycode: string;
-        owner: number;
-        hashvalue: string;
-        filesize: number;
-    };
-};
 
 declare global {
     interface HTMLElementTagNameMap {

@@ -42,10 +42,10 @@ export default class LMSStaffEventCardPreview extends LitElement {
             0
         ) as string;
 
-        const src = this.trc.getValueByIndex(
-            image as TemplateResult,
-            0
-        ) as string;
+        const imageRenderValues = this.trc.getRenderValues(
+            image as TemplateResult
+        );
+        const src = imageRenderValues[imageRenderValues.length - 1] as string;
 
         this.image = {
             src,

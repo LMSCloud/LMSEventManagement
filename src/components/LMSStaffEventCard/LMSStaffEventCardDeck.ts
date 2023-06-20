@@ -18,6 +18,7 @@ import {
     SortableColumns,
     TaggedColumn,
     TaggedData,
+    UploadedImage,
 } from "../../types/common";
 import LMSAnchor from "../LMSAnchor";
 import LMSSearch from "../LMSSearch";
@@ -46,6 +47,8 @@ export default class LMSStaffEventCardDeck extends LitElement {
     @property({ type: Array }) target_groups: LMSTargetGroup[] = [];
 
     @property({ type: Array }) locations: LMSLocation[] = [];
+
+    @property({ type: Array }) images: UploadedImage[] = [];
 
     @property({ type: Array }) nextPage: Column[] | undefined = undefined;
 
@@ -122,6 +125,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
                     ["target_groups", this.target_groups],
                     ["location", this.locations],
                     ["event_type", this.event_types],
+                    ["image", this.images],
                 ])
             );
         });
@@ -228,9 +232,11 @@ export default class LMSStaffEventCardDeck extends LitElement {
                         const [title] = new TemplateResultConverter(
                             name
                         ).getRenderValues();
-                        const [src] = new TemplateResultConverter(
+                        const imageRenderValues = new TemplateResultConverter(
                             image
                         ).getRenderValues();
+                        const src =
+                            imageRenderValues[imageRenderValues.length - 1];
                         const [state] = this.cardStates.get(uuid) || "data";
                         return html`
                             <div class="card bg-base-100 shadow-md">

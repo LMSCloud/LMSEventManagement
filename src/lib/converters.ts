@@ -8,6 +8,7 @@ import {
     LMSLocation,
     LMSTargetGroup,
     TaggedData,
+    UploadedImage,
 } from "../types/common";
 
 type InputTypeValue =
@@ -26,12 +27,12 @@ type TemplateQuery = {
 
 type TemplateFunction = (
     value: InputTypeValue,
-    data?: LMSEventType[] | LMSLocation[] | LMSTargetGroup[]
+    data?: LMSEventType[] | LMSLocation[] | LMSTargetGroup[] | UploadedImage[]
 ) => TemplateResult;
 
 declare global {
     interface HTMLElementTagNameMap {
-        "lms-pell-editor": LMSPellEditor;
+        "lms-image-picker": LMSPellEditor;
     }
 }
 
@@ -403,13 +404,20 @@ export class InputConverter {
                         </option>`
                 )}
             </select>`,
-            image: (value) => html`<input
-                class="input-bordered input w-full"
-                type="text"
-                name="image"
-                value=${value}
-                disabled
-            />`,
+            image: (value, data) =>
+                html` <lms-image-picker
+                    .uploads=${data as UploadedImage[]}
+                    .selected=${value as string}
+                    .disabled=${true}
+                >
+                    <input
+                        slot="input"
+                        class="input-bordered input w-full"
+                        name="image"
+                        value=${value}
+                        disabled
+                    />
+                </lms-image-picker>`,
             description: (value) => {
                 return html` <lms-pell-editor .value=${value}>
                     <textarea
@@ -563,7 +571,9 @@ ${value}</textarea
      * @returns A boolean indicating whether the input template requires data.
      */
     private needsData(name: string): boolean {
-        return ["target_groups", "event_type", "location"].includes(name);
+        return ["target_groups", "event_type", "location", "image"].includes(
+            name
+        );
     }
 
     /**
@@ -597,7 +607,12 @@ ${value}</textarea
     private findDataByName(
         name: string,
         data?: TaggedData[]
-    ): LMSTargetGroup[] | LMSLocation[] | LMSEventType[] | undefined {
+    ):
+        | LMSTargetGroup[]
+        | LMSLocation[]
+        | LMSEventType[]
+        | UploadedImage[]
+        | undefined {
         if (!data) return undefined;
 
         const [, foundData] =

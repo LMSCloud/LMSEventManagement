@@ -39,6 +39,8 @@ export default class StaffEventsView extends LitElement {
 
     private locations: Column[] = [];
 
+    private images: Column[] = [];
+
     private queryBuilder = new QueryBuilder();
 
     private filters: NodeListOf<HTMLInputElement> | undefined = undefined;
@@ -89,14 +91,16 @@ export default class StaffEventsView extends LitElement {
             fetch("/api/v1/contrib/eventmanagement/event_types"),
             fetch("/api/v1/contrib/eventmanagement/target_groups"),
             fetch("/api/v1/contrib/eventmanagement/locations"),
+            fetch("/api/v1/contrib/eventmanagement/images"),
         ])
             .then((results) =>
                 Promise.all(results.map((result) => result.json()))
             )
-            .then(([events, event_types, target_groups, locations]) => {
+            .then(([events, event_types, target_groups, locations, images]) => {
                 this.event_types = event_types;
                 this.target_groups = target_groups;
                 this.locations = locations;
+                this.images = images;
                 this.events = events;
             })
             .then(() => {
@@ -258,6 +262,7 @@ export default class StaffEventsView extends LitElement {
                 .event_types=${this.event_types}
                 .target_groups=${this.target_groups}
                 .locations=${this.locations}
+                .images=${this.images}
                 ._page=${this._page}
                 ._per_page=${this._per_page}
                 .nextPage=${this.nextPage}

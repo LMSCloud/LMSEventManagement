@@ -23,6 +23,7 @@ import LMSDropdown from "./components/LMSDropdown";
 import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
 import LMSImageBrowser from "./components/LMSImageBrowser";
+import LMSImagePicker from "./components/LMSImagePicker";
 import LMSModal from "./components/LMSModal";
 import LMSPagination from "./components/LMSPagination";
 import LMSPellEditor from "./components/LMSPellEditor";
@@ -70,6 +71,7 @@ export default {
     LMSEventsFilter,
     LMSFloatingMenu,
     LMSImageBrowser,
+    LMSImagePicker,
     LMSModal,
     LMSPagination,
     LMSPellEditor,

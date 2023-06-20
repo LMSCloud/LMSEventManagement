@@ -136,7 +136,7 @@ export type TaggedColumn = Column & {
 };
 
 export type TaggedData = [
-    "target_groups" | "location" | "event_type",
+    "target_groups" | "location" | "event_type" | "image",
     Array<unknown>
 ];
 
@@ -146,6 +146,22 @@ export type Toast = {
 };
 
 export type TranslatedString = DirectiveResult<typeof TranslateDirective>;
+
+export type UploadedImage = {
+    image: string;
+    metadata: {
+        dtcreated: string;
+        id: number;
+        permanent: number;
+        dir: string;
+        public: number;
+        filename: string;
+        uploadcategorycode: string;
+        owner: number;
+        hashvalue: string;
+        filesize: number;
+    };
+};
 
 export type URIComponents = {
     path?: string;
