@@ -9,6 +9,7 @@ import { map } from "lit/directives/map.js";
 import { utilityStyles } from "../styles/utilities";
 import { tailwindStyles } from "../tailwind.lit";
 import { UploadedImage } from "../types/common";
+import { __, attr__ } from "../lib/translate";
 
 @customElement("lms-image-picker")
 export default class LMSImagePicker extends LitElement {
@@ -81,7 +82,7 @@ export default class LMSImagePicker extends LitElement {
                                         @input=${this.handleInput}
                                         type="text"
                                         class="input-bordered input w-full"
-                                        placeholder="Custom"
+                                        placeholder=${attr__("Custom Image URL, e.g. https://example.com/image.png")}
                                     />
                                 </label>
                             </div>
@@ -124,7 +125,7 @@ export default class LMSImagePicker extends LitElement {
                     </ul>
                     <div class="modal-action">
                         <button class="btn" @click=${this.closeModal}>
-                            Close
+                            ${__("Close")}
                         </button>
                     </div>
                 </form>

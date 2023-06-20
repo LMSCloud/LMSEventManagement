@@ -13,8 +13,21 @@ use Digest::MD5 qw(md5_hex);
 use Time::HiRes;
 use IO::File;
 use Readonly;
+use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
+use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
+use POSIX qw(setlocale);
+use Encode;
+
+use Koha::Plugin::Com::LMSCloud::EventManagement;
 
 our $VERSION = '1.0.0';
+
+my $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
+
+setlocale Locale::Messages::LC_MESSAGES(), q{};
+textdomain 'com.lmscloud.eventmanagement';
+bind_textdomain_filter 'com.lmscloud.eventmanagement', \&Encode::decode_utf8;
+bindtextdomain 'com.lmscloud.eventmanagement' => $self->bundle_path . '/locales/';
 
 Readonly::Scalar my $KOHA_UPLOAD     => 'koha_upload';
 Readonly::Scalar my $BYTES_DIGEST    => 2048;
@@ -35,6 +48,8 @@ sub new {
 
 sub upload {
     my ( $self, $args ) = @_;
+    local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
+    local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
     # Computing hash value for the file
     my $hashvalue = md5_hex( $args->{'filename'} . ( $args->{'userid'} // '0' ) . $self->{'category'} . substr $args->{'filecontent'}, 0, $BYTES_DIGEST );
@@ -42,18 +57,18 @@ sub upload {
     # Check if a file with the same hashvalue already exists
     my $existing_file = Koha::UploadedFiles->find( { hashvalue => $hashvalue } );
     if ($existing_file) {
-        return { error => 'A file with the same content already exists' };
+        return { error => __('A file with the same content already exists') };
     }
 
     # Check if the file has an allowed extension
     if ( $args->{'filename'} !~ /[.](?:jpg|jpeg|png|gif|avif|webp)\z/ismx ) {
-        return { error => 'File type is not allowed. Only jpg, jpeg, png, gif, avif, and webp files are allowed.' };
+        return { error => __('File type is not allowed. Only jpg, jpeg, png, gif, avif, and webp files are allowed.') };
     }
 
     # Check if the file size is less than or equal to 10MB
     my $filesize = length( $args->{'filecontent'} );    # gets the size of filecontent in bytes
     if ( $filesize > $_10_MB_IN_BYTES ) {
-        return { error => 'File size exceeds 10MB limit' };
+        return { error => __('File size exceeds 10MB limit') };
     }
 
     my $dir = $self->{'rootdir'} . q{/} . $self->{'category'};
@@ -63,9 +78,9 @@ sub upload {
     my $stored_filename = $hashvalue . '_' . $args->{'filename'};
 
     my $file_path = "$dir/$stored_filename";
-    open my $fh, '>', $file_path or return { error => "Could not open file '$file_path' $OS_ERROR" };
-    syswrite $fh, $args->{'filecontent'} or return { error => "Could not write to file '$file_path' $OS_ERROR" };
-    close $fh or return { error => "Could not close file '$file_path' $OS_ERROR" };
+    open my $fh, '>', $file_path or return { error => __('Could not open file') . "'$file_path' $OS_ERROR" };
+    syswrite $fh, $args->{'filecontent'} or return { error => __('Could not write to file') . "'$file_path' $OS_ERROR" };
+    close $fh or return { error => __('Could not close file') . "'$file_path' $OS_ERROR" };
 
     # Register the file in the database
     my $uploaded_file = Koha::UploadedFile->new(
@@ -82,7 +97,7 @@ sub upload {
 
     # check if file was stored successfully
     if ( !$uploaded_file ) {
-        return { error => 'Failed to store uploaded file in database' };
+        return { error => __('Failed to store uploaded file in database') };
     }
 
     return $uploaded_file;
