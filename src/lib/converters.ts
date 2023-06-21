@@ -409,6 +409,7 @@ export class InputConverter {
                     .uploads=${data as UploadedImage[]}
                     .selected=${value as string}
                     .disabled=${true}
+                    class="lit-element"
                 >
                     <input
                         slot="input"

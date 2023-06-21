@@ -1,7 +1,12 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSAnchor from "../components/LMSAnchor";
 import LMSTable from "../components/LMSTable/LMSTable";
-import { LMSEventType, LMSLocation, LMSTargetGroup } from "../types/common";
+import {
+    LMSEventType,
+    LMSLocation,
+    LMSTargetGroup,
+    UploadedImage,
+} from "../types/common";
 
 declare global {
     interface HTMLElementTagNameMap {
@@ -16,6 +21,8 @@ export default class LMSEventTypesTable extends LMSTable {
     @property({ type: Array }) locations: LMSLocation[] = [];
 
     @property({ type: Array }) event_types: LMSEventType[] = [];
+
+    @property({ type: Array }) uploads: UploadedImage[] = [];
 
     private handleInput(
         input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
@@ -180,6 +187,7 @@ export default class LMSEventTypesTable extends LMSTable {
                     this.getColumnData(event_type, [
                         ["target_groups", this.target_groups],
                         ["location", this.locations],
+                        ["image", this.uploads],
                     ])
                 )
         );

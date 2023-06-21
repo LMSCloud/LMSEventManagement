@@ -29,6 +29,10 @@ export default class LMSImagePicker extends LitElement {
             :host {
                 background: transparent;
             }
+
+            .input-slot {
+                height: 100%;
+            }
         `,
     ];
 
@@ -61,7 +65,11 @@ export default class LMSImagePicker extends LitElement {
 
     override render() {
         return html`
-            <slot name="input" @click=${this.showModal}></slot>
+            <slot
+                name="input"
+                @click=${this.showModal}
+                class="input-slot"
+            ></slot>
             <dialog id="lms-modal" class="modal">
                 <form method="dialog" class="modal-box max-w-max">
                     <ul>

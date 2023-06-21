@@ -154,7 +154,7 @@ export default class LMSTable extends LitElement {
 
     private toggleInputs(tableRow: Element, isEnabled: boolean) {
         const inputs = tableRow.querySelectorAll(
-            "input, select, textarea, .btn-embedded"
+            "input, select, textarea, .lit-element"
         );
         inputs.forEach((input) => {
             isEnabled

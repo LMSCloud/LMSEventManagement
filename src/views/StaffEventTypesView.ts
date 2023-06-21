@@ -45,6 +45,8 @@ export default class StaffEventTypesView extends LitElement {
 
     private locations: Column[] = [];
 
+    private images: Column[] = [];
+
     private queryBuilder = new QueryBuilder();
 
     static override styles = [tailwindStyles, skeletonStyles];
@@ -70,6 +72,7 @@ export default class StaffEventTypesView extends LitElement {
         Promise.all([
             fetch("/api/v1/contrib/eventmanagement/target_groups"),
             fetch("/api/v1/contrib/eventmanagement/locations"),
+            fetch("/api/v1/contrib/eventmanagement/images"),
             fetch(
                 `/api/v1/contrib/eventmanagement/event_types?${this.queryBuilder.query.toString()}`
             ),
@@ -77,9 +80,10 @@ export default class StaffEventTypesView extends LitElement {
             .then((results) =>
                 Promise.all(results.map((result) => result.json()))
             )
-            .then(([target_groups, locations, event_types]) => {
+            .then(([target_groups, locations, images, event_types]) => {
                 this.target_groups = target_groups;
                 this.locations = locations;
+                this.images = images;
                 this.event_types = event_types;
             })
             .then(() => {
@@ -194,6 +198,7 @@ export default class StaffEventTypesView extends LitElement {
             <lms-event-types-table
                 .target_groups=${this.target_groups}
                 .locations=${this.locations}
+                .uploads=${this.images}
                 .event_types=${this.event_types}
                 ._page=${this._page}
                 ._per_page=${this._per_page}
