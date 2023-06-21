@@ -564,7 +564,7 @@ export default class LMSTable extends LitElement {
                                                               )}
                                                           >
                                                               <span
-                                                                  class="start-edit pointer-events-none"
+                                                                  class="start-edit pointer-events-none flex gap-2"
                                                                   >${litFontawesome(
                                                                       faEdit,
                                                                       {
@@ -579,7 +579,7 @@ export default class LMSTable extends LitElement {
                                                                   ></span
                                                               >
                                                               <span
-                                                                  class="abort-edit pointer-events-none hidden"
+                                                                  class="abort-edit pointer-events-none flex hidden gap-2"
                                                                   >${litFontawesome(
                                                                       faTimes,
                                                                       {
