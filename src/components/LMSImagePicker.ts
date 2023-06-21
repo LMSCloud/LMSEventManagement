@@ -5,6 +5,7 @@ import {
     query,
     queryAssignedElements,
 } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { attr__, __ } from "../lib/translate";
 import { utilityStyles } from "../styles/utilities";
@@ -18,6 +19,8 @@ export default class LMSImagePicker extends LitElement {
     @property({ type: Boolean, reflect: true }) disabled = false;
 
     @query("dialog") dialog!: HTMLDialogElement;
+
+    @query("#custom-image-radio") customImageRadio!: HTMLInputElement;
 
     @queryAssignedElements({ slot: "input", selector: "input" })
     input!: HTMLInputElement[];
@@ -36,6 +39,16 @@ export default class LMSImagePicker extends LitElement {
         `,
     ];
 
+    private handleFocus(e: Event) {
+        const target = e.target as HTMLInputElement;
+        const [formInput] = this.input;
+        if (target.id === "custom-image-url-input") {
+            this.customImageRadio.checked = true;
+            formInput.value = target.value;
+            this.requestUpdate();
+        }
+    }
+
     private handleInput(e: Event) {
         const target = e.target as HTMLInputElement;
         const [formInput] = this.input;
@@ -46,13 +59,24 @@ export default class LMSImagePicker extends LitElement {
         const target = e.target as HTMLInputElement;
         const [formInput] = this.input;
 
-        if (target.id === "custom-image-url") {
+        if (target.id === "custom-image-radio") {
             const customInput = target.nextElementSibling as HTMLInputElement;
             formInput.value = customInput?.value ?? "";
+            this.requestUpdate();
             return;
         }
 
         formInput.value = target.value;
+        this.requestUpdate();
+    }
+
+    private handleImageKeyDown(e: KeyboardEvent, imageUrl: string) {
+        if (e.key === "Enter") {
+            const [formInput] = this.input;
+            formInput.value = imageUrl;
+            this.requestUpdate();
+            this.closeModal();
+        }
     }
 
     private showModal() {
@@ -64,29 +88,45 @@ export default class LMSImagePicker extends LitElement {
     }
 
     override render() {
+        const [formInput] = this.input;
+        const isCustomSelected = this.customImageRadio?.checked;
         return html`
             <slot
                 name="input"
                 @click=${this.showModal}
                 class="input-slot"
+                tabindex="0"
             ></slot>
-            <dialog id="lms-modal" class="modal">
+            <dialog
+                id="lms-modal"
+                class="modal"
+                role="dialog"
+                aria-labelledby="dialog-title"
+                tabindex="-1"
+            >
                 <form method="dialog" class="modal-box max-w-max">
                     <ul>
                         <li class="w-full">
                             <div class="form-contol">
-                                <label class="label cursor-pointer">
+                                <label
+                                    class="${classMap({
+                                        "border-primary": isCustomSelected,
+                                        "border-transparent": !isCustomSelected,
+                                    })} label relative block cursor-pointer rounded-md rounded-xl border-2"
+                                >
                                     <input
-                                        id="custom-image-url"
+                                        id="custom-image-radio"
                                         type="radio"
                                         name="lms-combo-box"
-                                        class="radio mr-4 checked:bg-primary"
+                                        class="sr-only"
                                         value=""
                                         @change=${this.handleChange}
                                         ?disabled=${this.disabled}
                                     />
                                     <input
+                                        id="custom-image-url-input"
                                         value=""
+                                        @focus=${this.handleFocus}
                                         @input=${this.handleInput}
                                         type="text"
                                         class="input-bordered input w-full"
@@ -101,26 +141,40 @@ export default class LMSImagePicker extends LitElement {
                             ${map(this.uploads, ({ metadata }) => {
                                 const { hashvalue } = metadata;
                                 const imageUrl = `/api/v1/contrib/eventmanagement/public/image/${hashvalue}`;
-                                const [formInput] = this.input;
+                                const isSelected =
+                                    formInput?.value === imageUrl;
                                 return html`
-                                    <li>
+                                    <li
+                                        tabindex="0"
+                                        @keydown=${(e: KeyboardEvent) =>
+                                            this.handleImageKeyDown(
+                                                e,
+                                                imageUrl
+                                            )}
+                                    >
                                         <div class="form-contol">
-                                            <label class="label cursor-pointer">
+                                            <label
+                                                class="${classMap({
+                                                    "border-primary":
+                                                        isSelected,
+                                                    "border-transparent":
+                                                        !isSelected,
+                                                })} label relative block cursor-pointer rounded-md rounded-xl border-2"
+                                            >
                                                 <input
                                                     type="radio"
                                                     name="lms-combo-box"
-                                                    ?checked=${formInput?.value ===
-                                                    imageUrl}
+                                                    ?checked=${isSelected}
                                                     value=${imageUrl}
-                                                    class="radio mr-4 checked:bg-primary"
+                                                    class="sr-only"
                                                     @change=${this.handleChange}
                                                     ?disabled=${this.disabled}
                                                 />
 
-                                                <figure class="mr-4">
+                                                <figure>
                                                     <img
                                                         src=${imageUrl}
-                                                        class="aspect-video w-full rounded-lg object-cover"
+                                                        class="aspect-square h-96 rounded-lg object-cover"
                                                     />
                                                     <figcaption class="text-sm">
                                                         ${hashvalue}
