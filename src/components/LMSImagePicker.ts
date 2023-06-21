@@ -137,7 +137,9 @@ export default class LMSImagePicker extends LitElement {
                                 </label>
                             </div>
                         </li>
-                        <div class="grid w-fit grid-cols-3 gap-4">
+                        <div
+                            class="grid w-fit grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
+                        >
                             ${map(this.uploads, ({ metadata }) => {
                                 const { hashvalue } = metadata;
                                 const imageUrl = `/api/v1/contrib/eventmanagement/public/image/${hashvalue}`;
@@ -174,7 +176,7 @@ export default class LMSImagePicker extends LitElement {
                                                 <figure>
                                                     <img
                                                         src=${imageUrl}
-                                                        class="aspect-square h-96 rounded-lg object-cover"
+                                                        class="aspect-square h-auto rounded-lg object-cover"
                                                     />
                                                     <figcaption class="text-sm">
                                                         ${hashvalue}
