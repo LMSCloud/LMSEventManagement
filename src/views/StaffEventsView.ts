@@ -3,6 +3,7 @@ import { customElement, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import LMSStaffEventCardsDeck from "../components/LMSStaffEventCard/LMSStaffEventCardDeck";
 import LMSEventsModal from "../extensions/LMSEventsModal";
+import { normalizeForInput } from "../lib/converters";
 import { QueryBuilder } from "../lib/QueryBuilder";
 import { __ } from "../lib/translate";
 import { cardDeckStylesStaff } from "../styles/cardDeck";
@@ -41,6 +42,11 @@ export default class StaffEventsView extends LitElement {
 
     private images: Column[] = [];
 
+    private start_time: string = normalizeForInput(
+        new Date().toString(),
+        "datetime-local"
+    );
+
     private queryBuilder = new QueryBuilder();
 
     private filters: NodeListOf<HTMLInputElement> | undefined = undefined;
@@ -68,6 +74,7 @@ export default class StaffEventsView extends LitElement {
             "_page",
             "_per_page",
             "q",
+            "start_time",
         ];
         this.queryBuilder.query = window.location.search;
         this.queryBuilder.staticParams = ["class", "method", "op"];
@@ -77,7 +84,7 @@ export default class StaffEventsView extends LitElement {
             "location",
         ];
         this.queryBuilder.updateQuery(
-            `_order_by=id&_page=${this._page}&_per_page=${this._per_page}`
+            `_order_by=id&_page=${this._page}&_per_page=${this._per_page}&start_time=${this.start_time}`
         );
     }
 
@@ -195,6 +202,13 @@ export default class StaffEventsView extends LitElement {
         this.fetchUpdate();
     }
 
+    private handleStartTimeChange(e: CustomEvent) {
+        const { start_time } = e.detail;
+        this.start_time = start_time;
+        this.queryBuilder.updateQuery(`start_time=${start_time}`);
+        this.fetchUpdate();
+    }
+
     override render() {
         if (!this.hasLoaded) {
             return html` <div class="mx-8">
@@ -263,6 +277,7 @@ export default class StaffEventsView extends LitElement {
                 .target_groups=${this.target_groups}
                 .locations=${this.locations}
                 .images=${this.images}
+                .start_time=${this.start_time}
                 ._page=${this._page}
                 ._per_page=${this._per_page}
                 .nextPage=${this.nextPage}
@@ -272,6 +287,7 @@ export default class StaffEventsView extends LitElement {
                 @sort=${this.handleSort}
                 @search=${this.handleSearch}
                 @filter=${this.handleFilter}
+                @start-time-change=${this.handleStartTimeChange}
                 @page=${this.handlePageChange}
                 @prefetch=${this.prefetchUpdate}
             ></lms-staff-event-card-deck>

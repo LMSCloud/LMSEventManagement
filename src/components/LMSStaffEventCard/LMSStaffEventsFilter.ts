@@ -1,6 +1,7 @@
 import { html, LitElement } from "lit";
-import { customElement, property, queryAll } from "lit/decorators.js";
+import { customElement, property, query, queryAll } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
+import { normalizeForInput } from "../../lib/converters";
 import { __ } from "../../lib/translate";
 import { utilityStyles } from "../../styles/utilities";
 import { tailwindStyles } from "../../tailwind.lit";
@@ -30,9 +31,13 @@ export default class LMSStaffEventsFilter extends LitElement {
 
     @property({ type: Array }) locations: LMSLocation[] = [];
 
+    @property({ type: Object }) start_time: string | undefined;
+
     @queryAll("lms-dropdown") lmsDropdowns!: NodeListOf<LMSDropdown>;
 
     @queryAll("input[type=checkbox]") checkboxes!: NodeListOf<HTMLInputElement>;
+
+    @query("#start_time") startTimeInput!: HTMLInputElement;
 
     static override styles = [tailwindStyles, utilityStyles];
 
@@ -71,12 +76,31 @@ export default class LMSStaffEventsFilter extends LitElement {
         }
     }
 
+    private handleStartTimeChange(e: CustomEvent) {
+        const target = e.target as HTMLInputElement;
+        if (target.id === "start_time_now") {
+            this.startTimeInput.value = normalizeForInput(
+                new Date().toString(),
+                "datetime-local"
+            );
+        }
+        this.dispatchEvent(
+            new CustomEvent("start-time-change", {
+                detail: {
+                    start_time: this.startTimeInput.value,
+                },
+                bubbles: true,
+                composed: true,
+            })
+        );
+    }
+
     override render() {
         return html`
             <lms-data-navbar @dropdown-toggle=${this.handleDropdownToggle}>
                 <div
                     @change=${this.handleChange}
-                    class="dropdown-wrapper flex gap-3"
+                    class="dropdown-wrapper flex items-center gap-3"
                     slot="navbar-start"
                 >
                     <lms-dropdown
@@ -179,6 +203,31 @@ export default class LMSStaffEventsFilter extends LitElement {
                             `
                         )}
                     </lms-dropdown>
+
+                    <div class="join">
+                        <button
+                            class="join-item btn"
+                            @click=${this.handleStartTimeChange}
+                        >
+                            ${__("Show events from")}
+                        </button>
+                        <button
+                            class="btn-primary join-item btn"
+                            id="start_time_now"
+                            @click=${this.handleStartTimeChange}
+                        >
+                            ${__("now on")}
+                        </button>
+                        <div class="form-control join-item">
+                            <input
+                                type="datetime-local"
+                                class="input-bordered input"
+                                value=${this.start_time}
+                                name="start_time"
+                                id="start_time"
+                            />
+                        </div>
+                    </div>
                 </div>
                 <div slot="navbar-center">
                     <slot name="navbar-center"></slot>

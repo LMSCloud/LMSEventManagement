@@ -50,6 +50,8 @@ export default class LMSStaffEventCardDeck extends LitElement {
 
     @property({ type: Array }) images: UploadedImage[] = [];
 
+    @property({ type: Object }) start_time: string | undefined;
+
     @property({ type: Array }) nextPage: Column[] | undefined = undefined;
 
     @property({ type: Boolean }) hasNoResults = false;
@@ -194,6 +196,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
                     .event_types=${this.event_types}
                     .target_groups=${this.target_groups}
                     .locations=${this.locations}
+                    .start_time=${this.start_time}
                 >
                     <lms-search
                         slot="navbar-center"
