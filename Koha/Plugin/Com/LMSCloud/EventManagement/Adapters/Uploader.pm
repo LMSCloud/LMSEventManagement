@@ -42,13 +42,15 @@ sub new {
     $self->{'rootdir'}  = Koha::UploadedFile->permanent_directory;
     $self->{'category'} = $params->{'category'} || $KOHA_UPLOAD;
     $self->{'public'}   = $params->{'public'} // 0;
+    $self->{'lang'}     = $params->{'lang'} || 'en';
 
     return $self;
 }
 
 sub upload {
     my ( $self, $args ) = @_;
-    local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
+
+    local $ENV{LANGUAGE}       = $self->{'lang'};
     local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
     # Computing hash value for the file
