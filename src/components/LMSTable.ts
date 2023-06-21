@@ -15,25 +15,25 @@ import {
 } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
-import { searchSyntax } from "../../docs/searchSyntax";
-import { InputConverter } from "../../lib/converters";
-import { IntersectionObserverHandler } from "../../lib/IntersectionObserverHandler";
-import { QueryBuilder } from "../../lib/QueryBuilder";
-import { attr__, __ } from "../../lib/translate";
-import { skeletonStyles } from "../../styles/skeleton";
-import { utilityStyles } from "../../styles/utilities";
-import { tailwindStyles } from "../../tailwind.lit";
+import { searchSyntax } from "../docs/searchSyntax";
+import { InputConverter } from "../lib/converters";
+import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
+import { QueryBuilder } from "../lib/QueryBuilder";
+import { attr__, __ } from "../lib/translate";
+import { skeletonStyles } from "../styles/skeleton";
+import { utilityStyles } from "../styles/utilities";
+import { tailwindStyles } from "../tailwind.lit";
 import {
     Column,
     KohaAPIError,
     SortableColumns,
     TaggedData,
     Toast,
-} from "../../types/common";
-import LMSDataNavbar from "../LMSDataNavbar";
-import LMSPagination from "../LMSPagination";
-import LMSSearch from "../LMSSearch";
-import LMSToast from "../LMSToast";
+} from "../types/common";
+import LMSDataNavbar from "./LMSDataNavbar";
+import LMSPagination from "./LMSPagination";
+import LMSSearch from "./LMSSearch";
+import LMSToast from "./LMSToast";
 
 declare global {
     interface HTMLElementTagNameMap {
@@ -164,15 +164,17 @@ export default class LMSTable extends LitElement {
     }
 
     private toggleCollapse(tableRow: Element, isExpanded: boolean) {
-        const collapsibles = tableRow.querySelectorAll(".collapse");
+        const collapsibles = tableRow.querySelectorAll(
+            ".collapse"
+        ) as NodeListOf<HTMLDetailsElement>;
         collapsibles.forEach((collapse) => {
             const parent = collapse.parentElement;
             if (isExpanded) {
                 parent?.classList.add("pip");
-                collapse.classList.add("show");
+                collapse.open = true;
             } else {
                 parent?.classList.remove("pip");
-                collapse.classList.remove("show");
+                collapse.open = false;
             }
         });
     }
@@ -551,7 +553,7 @@ export default class LMSTable extends LitElement {
                                         ${this.isEditable
                                             ? html`
                                                   <td
-                                                      class="h-inherit p-0 text-center align-middle"
+                                                      class="h-inherit p-0 text-center"
                                                   >
                                                       <div>
                                                           <button

@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSAnchor from "../components/LMSAnchor";
-import LMSTable from "../components/LMSTable/LMSTable";
+import LMSTable from "../components/LMSTable";
 import {
     LMSEventType,
     LMSLocation,

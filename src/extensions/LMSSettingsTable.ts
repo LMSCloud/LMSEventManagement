@@ -1,5 +1,5 @@
 import { customElement, property } from "lit/decorators.js";
-import LMSTable from "../components/LMSTable/LMSTable";
+import LMSTable from "../components/LMSTable";
 import { Input, LMSSettingResponse } from "../types/common";
 
 type WithChangedPropertyNames<T> = {
