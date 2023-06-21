@@ -44,7 +44,7 @@ export default class LMSFloatingMenu extends LitElement {
                         </label>
                         <ul
                             tabindex="0"
-                            class="dropdown-content menu rounded-box menu-sm z-50 mt-3 w-56 bg-base-100 p-2 shadow"
+                            class="dropdown-content menu rounded-box menu-sm z-50 mt-3 w-fit bg-base-100 p-4 shadow"
                         >
                             ${this.items.map(
                                 ({ url, icon, name }) =>
@@ -78,7 +78,10 @@ export default class LMSFloatingMenu extends LitElement {
                             class="h-8 w-8"
                         />
                     </figure>
-                    <a class="text-xl normal-case" href="#"
+                    <a
+                        class="text-xl normal-case"
+                        href="https://github.com/LMSCloud/LMSEventManagement"
+                        target="_blank"
                         ><strong ?hidden=${!this.brand}
                             >${this.brand}</strong
                         ></a
