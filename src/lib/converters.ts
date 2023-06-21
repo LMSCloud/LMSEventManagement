@@ -317,10 +317,10 @@ export class InputConverter {
                                 </tr>
                             </thead>
                             <tbody>
-                                ${(data as unknown as LMSTargetGroup[]).map(
+                                ${(data as LMSTargetGroup[]).map(
                                     ({ id, name }: LMSTargetGroup) => {
                                         const targetGroupFee = (
-                                            value as unknown as LMSEventTargetGroupFee[]
+                                            value as LMSEventTargetGroupFee[]
                                         ).find(
                                             (
                                                 targetGroupFee: LMSEventTargetGroupFee
@@ -397,7 +397,7 @@ export class InputConverter {
                 name="location"
                 disabled
             >
-                ${(data as unknown as LMSLocation[])?.map(
+                ${(data as LMSLocation[])?.map(
                     ({ id, name }: LMSLocation) =>
                         html`<option value=${id} ?selected=${id == value}>
                             ${name}
