@@ -300,7 +300,7 @@ export default class LMSImageBrowser extends LitElement {
                                     </p>
                                     <div class="flex justify-center gap-4">
                                         <button
-                                            class="btn-error btn"
+                                            class="btn-warning btn"
                                             data-hashvalue=${hashvalue}
                                             @click=${this.handleDelete}
                                         >
