@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, LitElement, SVGTemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { tailwindStyles } from "../tailwind.lit";
 
@@ -10,7 +10,13 @@ export default class LMSDropdown extends LitElement {
 
     @property({ type: String }) label = "";
 
+    @property({ type: Object }) icon: SVGTemplateResult | undefined;
+
     @query("details") details!: HTMLDetailsElement;
+
+    @query("#label") labelElement!: HTMLSpanElement;
+
+    @query("#icon") iconElement!: HTMLSpanElement;
 
     public uuid = crypto.getRandomValues(new Uint32Array(2)).join("-");
 
@@ -47,6 +53,10 @@ export default class LMSDropdown extends LitElement {
 
     private dispatchToggleEvent() {
         if (this.details && this.uuid) {
+            if (this.label && this.icon) {
+                this.labelElement.classList.toggle("hidden");
+                this.iconElement.classList.toggle("hidden");
+            }
             this.dispatchEvent(
                 new CustomEvent("dropdown-toggle", {
                     bubbles: true,
@@ -61,6 +71,7 @@ export default class LMSDropdown extends LitElement {
     }
 
     private handleBlur(event: FocusEvent) {
+        console.log("blur");
         // Check if the new target of focus is inside the dropdown
         if (!this.contains(event.relatedTarget as Node)) {
             this.close();
@@ -76,7 +87,10 @@ export default class LMSDropdown extends LitElement {
                 @blur=${this.handleBlur}
                 tabindex="0"
             >
-                <summary class="btn">${this.label}</summary>
+                <summary class="btn">
+                    <span id="icon">${this.icon}</span>
+                    <span id="label" class="hidden">${this.label}</span>
+                </summary>
                 <ul
                     class="dropdown-content menu rounded-box z-40 w-max bg-base-100 p-2 shadow"
                 >

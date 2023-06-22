@@ -1,3 +1,11 @@
+import {
+    faBullseye,
+    faClock,
+    faMapMarker,
+    faSort,
+    faTag,
+} from "@fortawesome/free-solid-svg-icons";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement } from "lit";
 import { customElement, property, query, queryAll } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
@@ -105,6 +113,9 @@ export default class LMSStaffEventsFilter extends LitElement {
                 >
                     <lms-dropdown
                         .label=${__("Sort by")}
+                        .icon=${litFontawesome(faSort, {
+                            className: "h-4 w-4 inline-block",
+                        })}
                         @change=${this.handleSort}
                     >
                         ${map(
@@ -131,7 +142,12 @@ export default class LMSStaffEventsFilter extends LitElement {
                             `
                         )}
                     </lms-dropdown>
-                    <lms-dropdown .label=${__("Event type")}>
+                    <lms-dropdown
+                        .label=${__("Event type")}
+                        .icon=${litFontawesome(faTag, {
+                            className: "h-4 w-4 inline-block",
+                        })}
+                    >
                         ${map(
                             this.event_types,
                             (event_type) => html`
@@ -155,7 +171,12 @@ export default class LMSStaffEventsFilter extends LitElement {
                             `
                         )}
                     </lms-dropdown>
-                    <lms-dropdown .label=${__("Target group")}>
+                    <lms-dropdown
+                        .label=${__("Target group")}
+                        .icon=${litFontawesome(faBullseye, {
+                            className: "h-4 w-4 inline-block",
+                        })}
+                    >
                         ${map(
                             this.target_groups,
                             (target_group) => html`
@@ -179,7 +200,12 @@ export default class LMSStaffEventsFilter extends LitElement {
                             `
                         )}
                     </lms-dropdown>
-                    <lms-dropdown .label=${__("Location")}>
+                    <lms-dropdown
+                        .label=${__("Location")}
+                        .icon=${litFontawesome(faMapMarker, {
+                            className: "h-4 w-4 inline-block",
+                        })}
+                    >
                         ${map(
                             this.locations,
                             (location) => html`
@@ -204,30 +230,37 @@ export default class LMSStaffEventsFilter extends LitElement {
                         )}
                     </lms-dropdown>
 
-                    <div class="join">
-                        <button
-                            class="join-item btn"
-                            @click=${this.handleStartTimeChange}
-                        >
-                            ${__("Show events from")}
-                        </button>
-                        <button
-                            class="btn-primary join-item btn"
-                            id="start_time_now"
-                            @click=${this.handleStartTimeChange}
-                        >
-                            ${__("now on")}
-                        </button>
-                        <div class="form-control join-item">
-                            <input
-                                type="datetime-local"
-                                class="input-bordered input"
-                                value=${this.start_time}
-                                name="start_time"
-                                id="start_time"
-                            />
+                    <lms-dropdown
+                        .label=${__("Show events from")}
+                        .icon=${litFontawesome(faClock, {
+                            className: "h-4 w-4 inline-block",
+                        })}
+                    >
+                        <div class="join">
+                            <button
+                                class="btn-primary join-item btn"
+                                id="start_time_now"
+                                @click=${this.handleStartTimeChange}
+                            >
+                                ${__("Now on")}
+                            </button>
+                            <button
+                                class="join-item btn"
+                                @click=${this.handleStartTimeChange}
+                            >
+                                ${__("Custom date")}
+                            </button>
+                            <div class="form-control join-item">
+                                <input
+                                    type="datetime-local"
+                                    class="input-bordered input"
+                                    value=${this.start_time}
+                                    name="start_time"
+                                    id="start_time"
+                                />
+                            </div>
                         </div>
-                    </div>
+                    </lms-dropdown>
                 </div>
                 <div slot="navbar-center">
                     <slot name="navbar-center"></slot>
