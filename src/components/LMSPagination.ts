@@ -1,3 +1,8 @@
+import {
+    faAngleDoubleLeft,
+    faAngleDoubleRight,
+} from "@fortawesome/free-solid-svg-icons";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
@@ -147,8 +152,11 @@ export default class LMSPagination extends LitElement {
                     ?disabled=${!this.hasPrevious}
                     href=${this.getLinkForPage(this._page, "previous")}
                     @click=${this.handlePaginationChange}
-                    >${__("Previous")}</a
-                >
+                    ><span class="hidden lg:inline"> ${__("Previous")} </span>
+                    ${litFontawesome(faAngleDoubleLeft, {
+                        className: "w-4 h-4 inline-block lg:hidden",
+                    })}
+                </a>
                 ${map(
                     this.pageSizes,
                     (pageSize) => html`
@@ -167,12 +175,10 @@ export default class LMSPagination extends LitElement {
                     ?disabled=${!this.hasNext}
                     href=${this.getLinkForPage(this._page, "next")}
                     @click=${this.handlePaginationChange}
-                    ><span
-                        class=${classMap({
-                            hidden: this.hasNext === undefined,
-                        })}
-                        >${__("Next")}</span
-                    >
+                    ><span class="hidden lg:inline"> ${__("Next")} </span>
+                    ${litFontawesome(faAngleDoubleRight, {
+                        className: "w-4 h-4 inline-block lg:hidden",
+                    })}
                     <div
                         class="spinner-border spinner-border-sm ${classMap({
                             "d-none": this.hasNext !== undefined,
