@@ -41,31 +41,33 @@ export default class LMSDataNavbar extends LitElement {
         window.removeEventListener("resize", this.boundHandleResize);
     }
 
+    private setStateDrawer(
+        transform: string,
+        opacity: string,
+        visibility: string
+    ) {
+        this.navbarDrawer.style.transform = transform;
+        this.navbarBackdrop.style.opacity = opacity;
+        this.navbarBackdrop.style.visibility = visibility;
+    }
+
     protected override updated(
         _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
     ): void {
         if (_changedProperties.has("isDrawerOpen") && this.isXs) {
             if (this.isDrawerOpen) {
-                this.navbarDrawer.style.transform = "translateY(0)";
-                this.navbarBackdrop.style.opacity = "0.3";
-                this.navbarBackdrop.style.visibility = "visible";
+                this.setStateDrawer("translateY(0)", "0.3", "visible");
             } else {
-                this.navbarDrawer.style.transform = "translateY(100%)";
-                this.navbarBackdrop.style.opacity = "0";
-                this.navbarBackdrop.style.visibility = "hidden";
+                this.setStateDrawer("translateY(100%)", "0", "hidden");
             }
         }
 
         if (_changedProperties.has("isXs")) {
             if (this.isXs) {
                 this.isDrawerOpen = false;
-                this.navbarDrawer.style.transform = "translateY(100%)";
-                this.navbarBackdrop.style.opacity = "0";
-                this.navbarBackdrop.style.visibility = "hidden";
+                this.setStateDrawer("translateY(100%)", "0", "hidden");
             } else {
-                this.navbarDrawer.style.transform = "";
-                this.navbarBackdrop.style.opacity = "0.3";
-                this.navbarBackdrop.style.visibility = "visible";
+                this.setStateDrawer("", "", "");
             }
         }
     }
