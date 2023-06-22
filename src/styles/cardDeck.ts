@@ -4,13 +4,10 @@ export const cardDeckStylesStaff = css`
     .card-deck {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+        grid-gap: 3rem;
     }
 
     @media (min-width: 992px) {
-        .card-deck {
-            grid-gap: 3rem;
-        }
-
         .card-deck {
             grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
         }
@@ -39,13 +36,10 @@ export const cardDeckStylesOpac = css`
     .card-deck {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+        grid-gap: 1rem;
     }
 
     @media (min-width: 768px) {
-        .card-deck {
-            grid-gap: 1rem;
-        }
-
         .card-deck {
             grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
         }

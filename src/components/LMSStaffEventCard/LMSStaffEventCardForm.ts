@@ -392,12 +392,16 @@ export default class LMSStaffEventCardForm extends LitElement {
                         <span class="start-edit pointer-events-none"
                             >${litFontawesome(faEdit, {
                                 className: "w-4 h-4 inline-block",
-                            })}&nbsp;${__("Edit")}</span
+                            })}&nbsp;<span class="hidden sm:inline"
+                                >${__("Edit")}</span
+                            ></span
                         >
                         <span class="abort-edit pointer-events-none hidden"
                             >${litFontawesome(faTimes, {
                                 className: "w-4 h-4 inline-block",
-                            })}&nbsp;${__("Abort")}</span
+                            })}&nbsp;<span class="hidden sm:inline"
+                                >${__("Abort")}</span
+                            ></span
                         >
                     </button>
                     <button
@@ -407,7 +411,9 @@ export default class LMSStaffEventCardForm extends LitElement {
                         ${litFontawesome(faSave, {
                             className: "w-4 h-4 inline-block",
                         })}
-                        <span>&nbsp;${__("Save")}</span>
+                        <span class="hidden sm:inline"
+                            >&nbsp;${__("Save")}</span
+                        >
                     </button>
                     <button
                         @click=${this.handleDelete}
@@ -417,7 +423,9 @@ export default class LMSStaffEventCardForm extends LitElement {
                         ${litFontawesome(faTrash, {
                             className: "w-4 h-4 inline-block",
                         })}
-                        <span>&nbsp;${__("Delete")}</span>
+                        <span class="hidden sm:inline"
+                            >&nbsp;${__("Delete")}</span
+                        >
                     </button>
                     <button
                         type="button"
@@ -427,7 +435,9 @@ export default class LMSStaffEventCardForm extends LitElement {
                         ${litFontawesome(faCompressAlt, {
                             className: "w-4 h-4 inline-block",
                         })}
-                        <span>&nbsp;${__("Collapse All")}</span>
+                        <span class="hidden sm:inline"
+                            >&nbsp;${__("Collapse All")}</span
+                        >
                     </button>
                 </div>
 

@@ -555,12 +555,14 @@ export default class LMSTable extends LitElement {
                                                   <td
                                                       class="h-inherit p-0 text-center"
                                                   >
-                                                      <div>
+                                                      <div
+                                                          class="whitespace-nowrap p-2 sm:p-0"
+                                                      >
                                                           <button
                                                               @click=${this
                                                                   .toggleEdit}
                                                               type="button"
-                                                              class="btn-edit btn-secondary btn mx-2"
+                                                              class="btn-edit btn-secondary btn mx-0 sm:mx-2"
                                                               aria-label=${attr__(
                                                                   "Edit"
                                                               )}
@@ -575,6 +577,7 @@ export default class LMSTable extends LitElement {
                                                                       }
                                                                   )}
                                                                   <span
+                                                                      class="hidden sm:inline"
                                                                       >${__(
                                                                           "Edit"
                                                                       )}</span
@@ -588,7 +591,9 @@ export default class LMSTable extends LitElement {
                                                                           className:
                                                                               "w-4 h-4 inline-block",
                                                                       }
-                                                                  )}<span
+                                                                  )}
+                                                                  <span
+                                                                      class="hidden sm:inline"
                                                                       >${__(
                                                                           "Abort"
                                                                       )}</span
@@ -599,7 +604,7 @@ export default class LMSTable extends LitElement {
                                                               @click=${this
                                                                   .handleSave}
                                                               type="button"
-                                                              class="btn-secondary btn mx-2"
+                                                              class="btn-secondary btn mx-0 sm:mx-2"
                                                               aria-label=${attr__(
                                                                   "Save"
                                                               )}
@@ -612,6 +617,7 @@ export default class LMSTable extends LitElement {
                                                                   }
                                                               )}
                                                               <span
+                                                                  class="hidden sm:inline"
                                                                   >${__(
                                                                       "Save"
                                                                   )}</span
@@ -626,7 +632,7 @@ export default class LMSTable extends LitElement {
                                                                       hidden: !this
                                                                           .isDeletable,
                                                                   }
-                                                              )} btn-warning btn mx-2"
+                                                              )} btn-warning btn mx-0 sm:mx-2"
                                                               aria-label=${attr__(
                                                                   "Delete"
                                                               )}
@@ -639,6 +645,7 @@ export default class LMSTable extends LitElement {
                                                                   }
                                                               )}
                                                               <span
+                                                                  class="hidden sm:inline"
                                                                   >${__(
                                                                       "Delete"
                                                                   )}</span

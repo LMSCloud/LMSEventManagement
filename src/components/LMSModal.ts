@@ -246,12 +246,13 @@ export default class LMSModal extends LitElement {
             <button
                 class="btn-modal ${classMap({
                     "rotate-45": this.isOpen,
-                })} btn-circle btn fixed bottom-4 right-4 h-20 w-20 rounded-full border-none bg-primary text-4xl shadow hover:shadow-md"
+                })} btn-circle btn fixed bottom-4 right-4 h-20 w-20 rounded-full 
+                border-none bg-primary text-4xl shadow hover:shadow-md"
                 @click=${this.toggleModal}
             >
                 <span class="flex items-center justify-center">
                     ${litFontawesome(faPlus, {
-                        className: "w-12 h-12 inline-block",
+                        className: "w-8 h-8 inline-block",
                     })}
                 </span>
             </button>

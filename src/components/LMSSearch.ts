@@ -209,7 +209,9 @@ export default class LMSSearch extends LitElement {
                     @focus=${this.handleFocus}
                     @blur=${this.handleBlur}
                 />
-                <span class="absolute inset-y-0 right-2 flex items-center">
+                <span
+                    class="absolute inset-y-0 right-2 hidden items-center sm:flex"
+                >
                     <kbd
                         class="${classMap({
                             hidden: this.isInputFocused,
