@@ -2,7 +2,6 @@ import { faSliders, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement, PropertyValueMap } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
-import { classMap } from "lit/directives/class-map.js";
 import { __ } from "../lib/translate";
 import { tailwindStyles } from "../tailwind.lit";
 
@@ -58,15 +57,15 @@ export default class LMSDataNavbar extends LitElement {
         }
 
         if (_changedProperties.has("isXs")) {
-            if (!this.isXs) {
-                this.navbarDrawer.style.transform = "translateY(0)";
-                this.navbarBackdrop.style.opacity = "0";
-                this.navbarBackdrop.style.visibility = "hidden";
-            } else if (this.isXs) {
+            if (this.isXs) {
                 this.isDrawerOpen = false;
                 this.navbarDrawer.style.transform = "translateY(100%)";
                 this.navbarBackdrop.style.opacity = "0";
                 this.navbarBackdrop.style.visibility = "hidden";
+            } else {
+                this.navbarDrawer.style.transform = "";
+                this.navbarBackdrop.style.opacity = "0.3";
+                this.navbarBackdrop.style.visibility = "visible";
             }
         }
     }
@@ -89,13 +88,10 @@ export default class LMSDataNavbar extends LitElement {
             ></div>
             <nav
                 id="navbar-drawer"
-                class="${classMap({
-                    "-translate-x-full": this.isXs,
-                    "translate-x-0": !this.isXs,
-                })} navbar fixed bottom-0 left-0 z-[1050] mb-4 w-full min-w-min flex-col
-                gap-4 overflow-auto rounded-t-lg bg-base-100 p-8
+                class="navbar fixed bottom-0 left-0 z-[1050] mb-4 w-full 
+                min-w-min flex-col gap-4 rounded-t-xl bg-base-100 p-8
                 transition-all duration-200 sm:min-h-16 sm:static
-                sm:z-auto sm:flex sm:flex-row sm:rounded-xl sm:p-0"
+                sm:flex sm:flex-row sm:rounded-xl sm:p-4"
             >
                 <div class="p-4 sm:hidden">
                     <h2 class="text-lg font-bold">${__("Table Controls")}</h2>

@@ -3633,6 +3633,14 @@ details.collapse summary::-webkit-details-marker {
   top: 1rem;
 }
 
+.isolate {
+  isolation: isolate;
+}
+
+.-z-0 {
+  z-index: 0;
+}
+
 .z-10 {
   z-index: 10;
 }
@@ -3672,11 +3680,6 @@ details.collapse summary::-webkit-details-marker {
 .mx-0 {
   margin-left: 0px;
   margin-right: 0px;
-}
-
-.mx-2 {
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
 }
 
 .mx-4 {
@@ -3833,10 +3836,6 @@ details.collapse summary::-webkit-details-marker {
   width: 1rem;
 }
 
-.w-52 {
-  width: 13rem;
-}
-
 .w-8 {
   width: 2rem;
 }
@@ -3884,16 +3883,6 @@ details.collapse summary::-webkit-details-marker {
 
 .flex-none {
   flex: none;
-}
-
-.-translate-x-full {
-  --tw-translate-x: -100%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.translate-x-0 {
-  --tw-translate-x: 0px;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .rotate-45 {
@@ -3965,16 +3954,8 @@ details.collapse summary::-webkit-details-marker {
   gap: 1rem;
 }
 
-.overflow-auto {
-  overflow: auto;
-}
-
 .overflow-x-auto {
   overflow-x: auto;
-}
-
-.overflow-y-scroll {
-  overflow-y: scroll;
 }
 
 .whitespace-nowrap {
@@ -4005,9 +3986,9 @@ details.collapse summary::-webkit-details-marker {
   border-radius: 0.75rem;
 }
 
-.rounded-t-lg {
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
+.rounded-t-xl {
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
 }
 
 .border {
@@ -4326,8 +4307,13 @@ details.collapse summary::-webkit-details-marker {
     position: static;
   }
 
-  .sm\\:z-auto {
-    z-index: auto;
+  .sm\\:mx-2 {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+
+  .sm\\:inline {
+    display: inline;
   }
 
   .sm\\:flex {
@@ -4369,6 +4355,10 @@ details.collapse summary::-webkit-details-marker {
   .sm\\:p-0 {
     padding: 0px;
   }
+
+  .sm\\:p-4 {
+    padding: 1rem;
+  }
 }
 
 @media (min-width: 768px) {
@@ -4378,6 +4368,10 @@ details.collapse summary::-webkit-details-marker {
 }
 
 @media (min-width: 1024px) {
+  .lg\\:inline {
+    display: inline;
+  }
+
   .lg\\:flex {
     display: flex;
   }
