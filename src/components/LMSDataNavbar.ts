@@ -47,11 +47,11 @@ export default class LMSDataNavbar extends LitElement {
     ): void {
         if (_changedProperties.has("isDrawerOpen") && this.isXs) {
             if (this.isDrawerOpen) {
-                this.navbarDrawer.style.transform = "translateX(0)";
+                this.navbarDrawer.style.transform = "translateY(0)";
                 this.navbarBackdrop.style.opacity = "0.3";
                 this.navbarBackdrop.style.visibility = "visible";
             } else {
-                this.navbarDrawer.style.transform = "translateX(-100%)";
+                this.navbarDrawer.style.transform = "translateY(100%)";
                 this.navbarBackdrop.style.opacity = "0";
                 this.navbarBackdrop.style.visibility = "hidden";
             }
@@ -59,18 +59,23 @@ export default class LMSDataNavbar extends LitElement {
 
         if (_changedProperties.has("isXs")) {
             if (!this.isXs) {
-                this.navbarDrawer.style.transform = "translateX(0)";
+                this.navbarDrawer.style.transform = "translateY(0)";
                 this.navbarBackdrop.style.opacity = "0";
                 this.navbarBackdrop.style.visibility = "hidden";
-            } else if (this.isXs && this.isDrawerOpen) {
+            } else if (this.isXs) {
                 this.isDrawerOpen = false;
+                this.navbarDrawer.style.transform = "translateY(100%)";
+                this.navbarBackdrop.style.opacity = "0";
+                this.navbarBackdrop.style.visibility = "hidden";
             }
         }
     }
 
     override render() {
         return html`
-            <nav class="navbar mb-4 rounded-xl bg-base-100 sm:hidden">
+            <nav
+                class="navbar mb-4 max-w-min rounded-xl bg-base-100 sm:hidden sm:w-full"
+            >
                 <button class="btn-ghost btn" @click=${this.handleClick}>
                     ${litFontawesome(faSliders, {
                         className: "w-4 h-4 inline-block",
@@ -87,13 +92,13 @@ export default class LMSDataNavbar extends LitElement {
                 class="${classMap({
                     "-translate-x-full": this.isXs,
                     "translate-x-0": !this.isXs,
-                })} navbar fixed left-0 top-0 z-40 mb-4 
-                min-h-full w-4/5 flex-col gap-4 rounded-none
-                bg-base-100 transition-all duration-200 sm:min-h-16 sm:static sm:z-auto
-                sm:flex sm:w-full sm:flex-row sm:rounded-xl"
+                })} navbar fixed bottom-0 left-0 z-[1050] mb-4 w-full min-w-min flex-col
+                gap-4 overflow-auto rounded-t-lg bg-base-100 p-8
+                transition-all duration-200 sm:min-h-16 sm:static
+                sm:z-auto sm:flex sm:flex-row sm:rounded-xl sm:p-0"
             >
                 <div class="p-4 sm:hidden">
-                    <h2 class="text-lg font-bold">${__("Menu")}</h2>
+                    <h2 class="text-lg font-bold">${__("Table Controls")}</h2>
                 </div>
                 <button
                     class="btn-ghost btn absolute right-0 top-0 m-2 sm:hidden"
@@ -103,13 +108,17 @@ export default class LMSDataNavbar extends LitElement {
                         className: "w-4 h-4 inline-block",
                     })}
                 </button>
-                <div class="w-full sm:navbar-start sm:w-1/2">
+                <div
+                    class="w-full justify-start justify-center sm:navbar-start sm:w-1/2"
+                >
                     <slot name="navbar-start"></slot>
                 </div>
-                <div class="w-full sm:navbar-center sm:w-auto">
+                <div class="w-full justify-center sm:navbar-center sm:w-auto">
                     <slot name="navbar-center"></slot>
                 </div>
-                <div class="w-full sm:navbar-end sm:w-1/2">
+                <div
+                    class="w-full justify-end justify-center sm:navbar-end sm:w-1/2"
+                >
                     <slot name="navbar-end"></slot>
                 </div>
             </nav>

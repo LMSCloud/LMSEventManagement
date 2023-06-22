@@ -78,7 +78,7 @@ export default class LMSDropdown extends LitElement {
             >
                 <summary class="btn">${this.label}</summary>
                 <ul
-                    class="dropdown-content menu rounded-box z-40 w-52 w-max bg-base-100 p-2 shadow"
+                    class="dropdown-content menu rounded-box z-40 w-52 w-max overflow-y-scroll bg-base-100 p-2 shadow"
                 >
                     <slot></slot>
                 </ul>

@@ -100,7 +100,7 @@ export default class LMSStaffEventsFilter extends LitElement {
             <lms-data-navbar @dropdown-toggle=${this.handleDropdownToggle}>
                 <div
                     @change=${this.handleChange}
-                    class="dropdown-wrapper flex items-center gap-3"
+                    class="dropdown-wrapper flex flex-wrap items-center gap-3 sm:flex-nowrap"
                     slot="navbar-start"
                 >
                     <lms-dropdown

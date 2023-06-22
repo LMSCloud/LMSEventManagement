@@ -3597,6 +3597,10 @@ details.collapse summary::-webkit-details-marker {
   bottom: 0px;
 }
 
+.bottom-0 {
+  bottom: 0px;
+}
+
 .bottom-4 {
   bottom: 1rem;
 }
@@ -3643,6 +3647,10 @@ details.collapse summary::-webkit-details-marker {
 
 .z-50 {
   z-index: 50;
+}
+
+.z-\\[1050\\] {
+  z-index: 1050;
 }
 
 .m-2 {
@@ -3797,10 +3805,6 @@ details.collapse summary::-webkit-details-marker {
   height: 100vh;
 }
 
-.min-h-full {
-  min-height: 100%;
-}
-
 .w-1\\/2 {
   width: 50%;
 }
@@ -3829,10 +3833,6 @@ details.collapse summary::-webkit-details-marker {
   width: 1rem;
 }
 
-.w-4\\/5 {
-  width: 80%;
-}
-
 .w-52 {
   width: 13rem;
 }
@@ -3859,6 +3859,11 @@ details.collapse summary::-webkit-details-marker {
   width: 100vw;
 }
 
+.min-w-min {
+  min-width: -moz-min-content;
+  min-width: min-content;
+}
+
 .max-w-5xl {
   max-width: 64rem;
 }
@@ -3866,6 +3871,11 @@ details.collapse summary::-webkit-details-marker {
 .max-w-max {
   max-width: -moz-max-content;
   max-width: max-content;
+}
+
+.max-w-min {
+  max-width: -moz-min-content;
+  max-width: min-content;
 }
 
 .flex-auto {
@@ -3927,6 +3937,10 @@ details.collapse summary::-webkit-details-marker {
   align-items: center;
 }
 
+.justify-start {
+  justify-content: flex-start;
+}
+
 .justify-end {
   justify-content: flex-end;
 }
@@ -3951,8 +3965,16 @@ details.collapse summary::-webkit-details-marker {
   gap: 1rem;
 }
 
+.overflow-auto {
+  overflow: auto;
+}
+
 .overflow-x-auto {
   overflow-x: auto;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll;
 }
 
 .whitespace-nowrap {
@@ -3979,12 +4001,13 @@ details.collapse summary::-webkit-details-marker {
   border-radius: 0.375rem;
 }
 
-.rounded-none {
-  border-radius: 0px;
-}
-
 .rounded-xl {
   border-radius: 0.75rem;
+}
+
+.rounded-t-lg {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
 }
 
 .border {
@@ -4335,8 +4358,16 @@ details.collapse summary::-webkit-details-marker {
     flex-direction: row;
   }
 
+  .sm\\:flex-nowrap {
+    flex-wrap: nowrap;
+  }
+
   .sm\\:rounded-xl {
     border-radius: 0.75rem;
+  }
+
+  .sm\\:p-0 {
+    padding: 0px;
   }
 }
 
