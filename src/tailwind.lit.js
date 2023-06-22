@@ -3633,14 +3633,6 @@ details.collapse summary::-webkit-details-marker {
   top: 1rem;
 }
 
-.isolate {
-  isolation: isolate;
-}
-
-.-z-0 {
-  z-index: 0;
-}
-
 .z-10 {
   z-index: 10;
 }
