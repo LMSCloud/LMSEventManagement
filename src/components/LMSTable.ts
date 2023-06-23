@@ -575,13 +575,13 @@ export default class LMSTable extends LitElement {
                                             ? html`
                                                   <td class="p-0 text-center">
                                                       <div
-                                                          class="w-max whitespace-nowrap p-2 sm:p-0"
+                                                          class="join min-w-fit whitespace-nowrap"
                                                       >
                                                           <button
                                                               @click=${this
                                                                   .toggleEdit}
                                                               type="button"
-                                                              class="btn-edit btn-secondary btn mx-0 sm:mx-2"
+                                                              class="btn-edit btn-secondary join-item btn rounded-none"
                                                               aria-label=${attr__(
                                                                   "Edit"
                                                               )}
@@ -592,7 +592,7 @@ export default class LMSTable extends LitElement {
                                                                       faEdit,
                                                                       {
                                                                           className:
-                                                                              "w-4 h-4 inline-block",
+                                                                              "w-4 h-4 inline-block sm:hidden",
                                                                       }
                                                                   )}
                                                                   <span
@@ -608,7 +608,7 @@ export default class LMSTable extends LitElement {
                                                                       faTimes,
                                                                       {
                                                                           className:
-                                                                              "w-4 h-4 inline-block",
+                                                                              "w-4 h-4 inline-block sm:hidden",
                                                                       }
                                                                   )}
                                                                   <span
@@ -623,7 +623,7 @@ export default class LMSTable extends LitElement {
                                                               @click=${this
                                                                   .handleSave}
                                                               type="button"
-                                                              class="btn-secondary btn mx-0 sm:mx-2"
+                                                              class="btn-secondary join-item btn rounded-none"
                                                               aria-label=${attr__(
                                                                   "Save"
                                                               )}
@@ -632,7 +632,7 @@ export default class LMSTable extends LitElement {
                                                                   faSave,
                                                                   {
                                                                       className:
-                                                                          "w-4 h-4 inline-block",
+                                                                          "w-4 h-4 inline-block sm:hidden",
                                                                   }
                                                               )}
                                                               <span
@@ -651,7 +651,7 @@ export default class LMSTable extends LitElement {
                                                                       hidden: !this
                                                                           .isDeletable,
                                                                   }
-                                                              )} btn-warning btn mx-0 sm:mx-2"
+                                                              )} btn-warning join-item btn rounded-none"
                                                               aria-label=${attr__(
                                                                   "Delete"
                                                               )}
@@ -660,7 +660,7 @@ export default class LMSTable extends LitElement {
                                                                   faTrash,
                                                                   {
                                                                       className:
-                                                                          "w-4 h-4 inline-block",
+                                                                          "w-4 h-4 inline-block sm:hidden",
                                                                   }
                                                               )}
                                                               <span

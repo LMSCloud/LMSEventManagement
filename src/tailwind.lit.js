@@ -3863,6 +3863,11 @@ details.collapse summary::-webkit-details-marker {
   width: 100vw;
 }
 
+.min-w-fit {
+  min-width: -moz-fit-content;
+  min-width: fit-content;
+}
+
 .min-w-min {
   min-width: -moz-min-content;
   min-width: min-content;
@@ -3993,6 +3998,10 @@ details.collapse summary::-webkit-details-marker {
 
 .rounded-md {
   border-radius: 0.375rem;
+}
+
+.rounded-none {
+  border-radius: 0px;
 }
 
 .rounded-xl {
@@ -4320,11 +4329,6 @@ details.collapse summary::-webkit-details-marker {
     position: static;
   }
 
-  .sm\\:mx-2 {
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
-  }
-
   .sm\\:inline {
     display: inline;
   }
@@ -4367,10 +4371,6 @@ details.collapse summary::-webkit-details-marker {
 
   .sm\\:rounded-xl {
     border-radius: 0.75rem;
-  }
-
-  .sm\\:p-0 {
-    padding: 0px;
   }
 
   .sm\\:p-4 {
