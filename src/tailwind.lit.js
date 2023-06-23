@@ -3863,11 +3863,6 @@ details.collapse summary::-webkit-details-marker {
   width: 100vw;
 }
 
-.min-w-fit {
-  min-width: -moz-fit-content;
-  min-width: fit-content;
-}
-
 .min-w-min {
   min-width: -moz-min-content;
   min-width: min-content;
@@ -3885,6 +3880,10 @@ details.collapse summary::-webkit-details-marker {
 .max-w-min {
   max-width: -moz-min-content;
   max-width: min-content;
+}
+
+.flex-1 {
+  flex: 1 1 0%;
 }
 
 .flex-auto {

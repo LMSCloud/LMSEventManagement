@@ -574,14 +574,12 @@ export default class LMSTable extends LitElement {
                                         ${this.isEditable
                                             ? html`
                                                   <td class="p-0 text-center">
-                                                      <div
-                                                          class="join min-w-fit whitespace-nowrap"
-                                                      >
+                                                      <div class="join !flex">
                                                           <button
                                                               @click=${this
                                                                   .toggleEdit}
                                                               type="button"
-                                                              class="btn-edit btn-secondary join-item btn rounded-none"
+                                                              class="btn-edit btn-secondary join-item btn flex-1 rounded-none"
                                                               aria-label=${attr__(
                                                                   "Edit"
                                                               )}
@@ -623,7 +621,7 @@ export default class LMSTable extends LitElement {
                                                               @click=${this
                                                                   .handleSave}
                                                               type="button"
-                                                              class="btn-secondary join-item btn rounded-none"
+                                                              class="btn-secondary join-item btn flex-1 rounded-none"
                                                               aria-label=${attr__(
                                                                   "Save"
                                                               )}
@@ -651,7 +649,7 @@ export default class LMSTable extends LitElement {
                                                                       hidden: !this
                                                                           .isDeletable,
                                                                   }
-                                                              )} btn-warning join-item btn rounded-none"
+                                                              )} btn-warning join-item btn flex-1 rounded-none"
                                                               aria-label=${attr__(
                                                                   "Delete"
                                                               )}
