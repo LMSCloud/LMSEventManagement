@@ -90,10 +90,10 @@ export default class LMSDataNavbar extends LitElement {
             ></div>
             <nav
                 id="navbar-drawer"
-                class="navbar fixed bottom-0 left-0 z-[1050] mb-4 w-full 
-                min-w-min flex-col gap-4 rounded-t-xl bg-base-100 p-8
+                class="navbar fixed bottom-0 left-0 z-[1050] mb-4 min-h-fit w-full
+                min-w-min flex-col gap-4 overflow-y-scroll rounded-t-xl bg-base-100 p-8
                 transition-all duration-200 sm:min-h-16 sm:static
-                sm:flex sm:flex-row sm:rounded-xl sm:p-4"
+                sm:flex sm:flex-row sm:overflow-y-visible sm:rounded-xl sm:p-4"
             >
                 <div class="p-4 sm:hidden">
                     <h2 class="text-lg font-bold">${__("Table Controls")}</h2>

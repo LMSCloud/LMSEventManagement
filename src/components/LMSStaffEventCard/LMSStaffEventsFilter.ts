@@ -7,7 +7,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement } from "lit";
-import { customElement, property, query, queryAll } from "lit/decorators.js";
+import {
+    customElement,
+    property,
+    query,
+    queryAll,
+    state,
+} from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { normalizeForInput } from "../../lib/converters";
 import { __ } from "../../lib/translate";
@@ -41,13 +47,31 @@ export default class LMSStaffEventsFilter extends LitElement {
 
     @property({ type: Object }) start_time: string | undefined;
 
+    @state() isXs = window.matchMedia("(max-width: 640px)").matches;
+
     @queryAll("lms-dropdown") lmsDropdowns!: NodeListOf<LMSDropdown>;
 
     @queryAll("input[type=checkbox]") checkboxes!: NodeListOf<HTMLInputElement>;
 
     @query("#start_time") startTimeInput!: HTMLInputElement;
 
+    private boundHandleResize = this.handleResize.bind(this);
+
     static override styles = [tailwindStyles, utilityStyles];
+
+    private handleResize() {
+        this.isXs = window.matchMedia("(max-width: 640px)").matches;
+    }
+
+    override connectedCallback() {
+        super.connectedCallback();
+        window.addEventListener("resize", this.boundHandleResize);
+    }
+
+    override disconnectedCallback() {
+        super.disconnectedCallback();
+        window.removeEventListener("resize", this.boundHandleResize);
+    }
 
     private handleSort(e: Event) {
         e.stopPropagation();
@@ -235,6 +259,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                         .icon=${litFontawesome(faClock, {
                             className: "h-4 w-4 inline-block",
                         })}
+                        .position=${this.isXs ? ["end", "bottom"] : []}
                     >
                         <div class="join">
                             <button

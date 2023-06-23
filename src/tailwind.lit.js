@@ -3800,6 +3800,11 @@ details.collapse summary::-webkit-details-marker {
   height: 100vh;
 }
 
+.min-h-fit {
+  min-height: -moz-fit-content;
+  min-height: fit-content;
+}
+
 .w-1\\/2 {
   width: 50%;
 }
@@ -3948,6 +3953,14 @@ details.collapse summary::-webkit-details-marker {
 
 .overflow-x-auto {
   overflow-x: auto;
+}
+
+.overflow-y-clip {
+  overflow-y: clip;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll;
 }
 
 .whitespace-nowrap {
@@ -4338,6 +4351,10 @@ details.collapse summary::-webkit-details-marker {
 
   .sm\\:flex-nowrap {
     flex-wrap: nowrap;
+  }
+
+  .sm\\:overflow-y-visible {
+    overflow-y: visible;
   }
 
   .sm\\:rounded-xl {

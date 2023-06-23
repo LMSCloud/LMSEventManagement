@@ -1,6 +1,11 @@
 import { html, LitElement, SVGTemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
+import { ClassInfo, classMap } from "lit/directives/class-map.js";
 import { tailwindStyles } from "../tailwind.lit";
+
+type Positions = "end" | "top" | "bottom" | "left" | "right";
+
+type PositionsTuple = [Positions?, Positions?];
 
 @customElement("lms-dropdown")
 export default class LMSDropdown extends LitElement {
@@ -11,6 +16,8 @@ export default class LMSDropdown extends LitElement {
     @property({ type: String }) label = "";
 
     @property({ type: Object }) icon: SVGTemplateResult | undefined;
+
+    @property({ type: Array }) position: PositionsTuple = [];
 
     @query("details") details!: HTMLDetailsElement;
 
@@ -78,10 +85,21 @@ export default class LMSDropdown extends LitElement {
         }
     }
 
+    private composePosition(): ClassInfo {
+        if (!this.position.length) return {};
+        return {
+            "dropdown-end": this.position.includes("end"),
+            "dropdown-top": this.position.includes("top"),
+            "dropdown-bottom": this.position.includes("bottom"),
+            "dropdown-left": this.position.includes("left"),
+            "dropdown-right": this.position.includes("right"),
+        };
+    }
+
     override render() {
         return html`
             <details
-                class="dropdown"
+                class="${classMap(this.composePosition())} dropdown"
                 id=${this.uuid}
                 @toggle=${this.dispatchToggleEvent}
                 @blur=${this.handleBlur}

@@ -304,7 +304,7 @@ export class InputConverter {
                     class="collapse h-full bg-base-200"
                     @click=${this.togglePip}
                 >
-                    <summary class="collapse-title text-xl font-medium">
+                    <summary class="collapse-title gap-4 text-xl font-medium">
                         ${__("Target Groups")}
                     </summary>
                     <div class="collapse-content">
@@ -559,7 +559,7 @@ ${value}</textarea
         if (!details) return;
 
         const parent = details.parentElement;
-        if (details.open) {
+        if (parent?.classList.contains("pip")) {
             parent?.classList.remove("pip");
         } else {
             parent?.classList.add("pip");

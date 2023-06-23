@@ -113,13 +113,32 @@ export default class LMSTable extends LitElement {
         utilityStyles,
         css`
             .pip {
-                bottom: 1em;
+                background: #ffffff;
+                border-radius: 0.5rem;
                 height: fit-content !important;
-                left: 1em;
-                max-height: 30vh;
+                max-height: fit-content;
+                opacity: 1;
                 overflow-y: scroll;
                 padding: 1em;
                 position: fixed;
+                bottom: 1em;
+                left: 1em;
+                z-index: 50;
+                transition: transform 0.3s ease-out;
+            }
+
+            @media (max-width: 640px) {
+                .pip {
+                    position: fixed;
+                    bottom: 0 !important;
+                    left: 0;
+                    right: 0;
+                    width: 100%;
+                    max-height: 30vh;
+                    max-height: 30dvh;
+                    z-index: 1031;
+                    border-radius: 0.75rem 0.75rem 0 0;
+                }
             }
 
             input:not([type="checkbox"]),
@@ -502,7 +521,7 @@ export default class LMSTable extends LitElement {
                         ${searchSyntax}
                     </div>
                 </div>
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto overflow-y-clip">
                     <table
                         class="${classMap({
                             hidden: this.hasNoResults,
@@ -556,7 +575,7 @@ export default class LMSTable extends LitElement {
                                                       class="h-inherit p-0 text-center"
                                                   >
                                                       <div
-                                                          class="whitespace-nowrap p-2 sm:p-0"
+                                                          class="w-max whitespace-nowrap p-2 sm:p-0"
                                                       >
                                                           <button
                                                               @click=${this
