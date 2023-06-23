@@ -99,7 +99,10 @@ export default class LMSDropdown extends LitElement {
     override render() {
         return html`
             <details
-                class="${classMap(this.composePosition())} dropdown"
+                class="${classMap({
+                    ...this.composePosition(),
+                    hidden: this.isHidden,
+                })} dropdown"
                 id=${this.uuid}
                 @toggle=${this.dispatchToggleEvent}
                 @blur=${this.handleBlur}
@@ -107,7 +110,13 @@ export default class LMSDropdown extends LitElement {
             >
                 <summary class="btn">
                     <span id="icon">${this.icon}</span>
-                    <span id="label" class="hidden">${this.label}</span>
+                    <span
+                        id="label"
+                        class=${classMap({
+                            hidden: this.label && Boolean(this.icon),
+                        })}
+                        >${this.label}</span
+                    >
                 </summary>
                 <ul
                     class="dropdown-content menu rounded-box z-40 w-max bg-base-100 p-2 shadow"
