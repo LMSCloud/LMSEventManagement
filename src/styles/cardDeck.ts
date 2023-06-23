@@ -7,27 +7,33 @@ export const cardDeckStylesStaff = css`
         grid-gap: 3rem;
     }
 
-    @media (min-width: 992px) {
+    @media (min-width: 1024px) {
         .card-deck {
             grid-template-columns: repeat(auto-fill, minmax(33.33%, 1fr));
         }
     }
 
-    @media (min-width: 1200px) {
+    @media (min-width: 1280px) {
         .card-deck {
             grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
         }
     }
 
-    @media (min-width: 1600px) {
+    @media (min-width: 1536px) {
         .card-deck {
             grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
         }
     }
 
-    @media (min-width: 1920px) {
+    @media (min-width: 1792px) {
         .card-deck {
             grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
+        }
+    }
+
+    @media (min-width: 2048px) {
+        .card-deck {
+            grid-template-columns: repeat(auto-fill, minmax(14.28%, 1fr));
         }
     }
 `;
@@ -45,21 +51,27 @@ export const cardDeckStylesOpac = css`
         }
     }
 
-    @media (min-width: 992px) {
+    @media (min-width: 1024px) {
         .card-deck {
             grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
         }
     }
 
-    @media (min-width: 1200px) {
+    @media (min-width: 1536px) {
         .card-deck {
             grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
         }
     }
 
-    @media (min-width: 1600px) {
+    @media (min-width: 1792px) {
         .card-deck {
             grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
+        }
+    }
+
+    @media (min-width: 2048px) {
+        .card-deck {
+            grid-template-columns: repeat(auto-fill, minmax(14.28%, 1fr));
         }
     }
 `;
