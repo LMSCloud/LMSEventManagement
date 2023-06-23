@@ -556,7 +556,7 @@ ${value}</textarea
     private togglePip(e: MouseEvent) {
         const target = e.target as HTMLElement;
         const details = target.closest("details");
-        if (!details) return;
+        if (!details || target.tagName !== "SUMMARY") return;
 
         const parent = details.parentElement;
         if (parent?.classList.contains("pip")) {
