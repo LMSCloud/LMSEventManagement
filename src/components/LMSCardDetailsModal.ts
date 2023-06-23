@@ -283,9 +283,9 @@ export default class LMSCardDetailsModal extends LitElement {
                     >
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <div class="flex">
+                    <div class="flex flex-col md:flex-row">
                         <!-- Left Column -->
-                        <div class="w-1/2">
+                        <div class="w-full md:w-1/2">
                             <!-- Date and Time -->
                             <div class="p-4">
                                 <p class="mb-2">
@@ -323,7 +323,7 @@ export default class LMSCardDetailsModal extends LitElement {
                         </div>
 
                         <!-- Right Column -->
-                        <div class="w-1/2">
+                        <div class="w-full md:w-1/2">
                             <img
                                 src=${ifDefined(image ?? undefined)}
                                 class="${classMap({
@@ -368,7 +368,7 @@ export default class LMSCardDetailsModal extends LitElement {
                                 <table
                                     class="${classMap({
                                         hidden: noFees,
-                                    })} table"
+                                    })} table-xs table"
                                 >
                                     <thead>
                                         <tr>
