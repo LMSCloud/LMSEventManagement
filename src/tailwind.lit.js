@@ -3005,6 +3005,10 @@ details.collapse summary::-webkit-details-marker {
   border-radius: var(--rounded-box, 1rem);
 }
 
+.min-h-12 {
+  min-height: 3rem;
+}
+
 .btm-nav-xs > *:where(.active) {
   border-top-width: 1px;
 }
@@ -3742,6 +3746,10 @@ details.collapse summary::-webkit-details-marker {
 
 .inline {
   display: inline;
+}
+
+.\\!flex {
+  display: flex !important;
 }
 
 .flex {

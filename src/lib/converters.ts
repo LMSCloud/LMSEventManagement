@@ -300,11 +300,10 @@ export class InputConverter {
                 )};
             </select>`,
             target_groups: (value, data) => html`
-                <details
-                    class="collapse h-full bg-base-200"
-                    @click=${this.togglePip}
-                >
-                    <summary class="collapse-title gap-4 text-xl font-medium">
+                <details class="collapse bg-base-200" @click=${this.togglePip}>
+                    <summary
+                        class="collapse-title min-h-12 !flex items-center justify-center p-0 "
+                    >
                         ${__("Target Groups")}
                     </summary>
                     <div class="collapse-content">
@@ -422,7 +421,7 @@ export class InputConverter {
             description: (value) => {
                 return html` <lms-pell-editor .value=${value}>
                     <textarea
-                        class="h-inherit input-bordered input w-full"
+                        class="input-bordered input block w-full"
                         name="description"
                         disabled
                     >

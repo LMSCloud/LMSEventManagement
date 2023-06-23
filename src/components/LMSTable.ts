@@ -147,9 +147,11 @@ export default class LMSTable extends LitElement {
             details {
                 border: none !important;
                 border-radius: 0 !important;
-                height: inherit !important;
                 width: 100%;
                 min-width: fit-content;
+            }
+
+            input:not([type="checkbox"]) {
                 padding: 1.5rem 0.75rem;
             }
 
@@ -525,7 +527,7 @@ export default class LMSTable extends LitElement {
                     <table
                         class="${classMap({
                             hidden: this.hasNoResults,
-                        })} table-lg table table bg-base-100"
+                        })} table-lg table bg-base-100"
                     >
                         <thead>
                             <tr>
@@ -564,16 +566,14 @@ export default class LMSTable extends LitElement {
                                             this.headers,
                                             (header) =>
                                                 html`<td
-                                                    class="h-inherit p-0 text-center"
+                                                    class="p-0 text-center"
                                                 >
                                                     ${datum[header]}
                                                 </td>`
                                         )}
                                         ${this.isEditable
                                             ? html`
-                                                  <td
-                                                      class="h-inherit p-0 text-center"
-                                                  >
+                                                  <td class="p-0 text-center">
                                                       <div
                                                           class="w-max whitespace-nowrap p-2 sm:p-0"
                                                       >
