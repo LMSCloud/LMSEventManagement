@@ -147,6 +147,18 @@ try {
   // Replace \] with \\] to properly escape closing brackets in JavaScript
   cleanContents = cleanContents.replace(/\\\]/g, "\\\\]");
 
+  // Replace \( with \\( to properly escape opening parentheses in JavaScript
+  cleanContents = cleanContents.replace(/\\\(/g, "\\\\\(");
+
+  // Replace \) with \\) to properly escape closing parentheses in JavaScript
+  cleanContents = cleanContents.replace(/\\\)/g, "\\\\\)");
+
+  // Replace \- with \\- to properly escape hyphens in JavaScript
+  cleanContents = cleanContents.replace(/\\-/g, "\\\\-");
+
+  // Replace \-- with \\-- to properly escape CSS variable syntax in JavaScript
+  cleanContents = cleanContents.replace(/\\--/g, "\\\\--");
+
   // Replace :root with :host to scope the CSS to the component
   cleanContents = cleanContents.replace(/:root/g, ":host");
 
