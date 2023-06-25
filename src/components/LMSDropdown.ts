@@ -9,10 +9,6 @@ type PositionsTuple = [Positions?, Positions?];
 
 @customElement("lms-dropdown")
 export default class LMSDropdown extends LitElement {
-    @property({ type: Boolean }) isHidden = false;
-
-    @property({ type: Boolean }) shouldFold = false;
-
     @property({ type: String }) label = "";
 
     @property({ type: Object }) icon: SVGTemplateResult | undefined;
@@ -78,7 +74,6 @@ export default class LMSDropdown extends LitElement {
     }
 
     private handleBlur(event: FocusEvent) {
-        console.log("blur");
         // Check if the new target of focus is inside the dropdown
         if (!this.contains(event.relatedTarget as Node)) {
             this.close();
@@ -99,10 +94,7 @@ export default class LMSDropdown extends LitElement {
     override render() {
         return html`
             <details
-                class="${classMap({
-                    ...this.composePosition(),
-                    hidden: this.isHidden,
-                })} dropdown"
+                class="${classMap(this.composePosition())} dropdown"
                 id=${this.uuid}
                 @toggle=${this.dispatchToggleEvent}
                 @blur=${this.handleBlur}

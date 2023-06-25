@@ -377,7 +377,6 @@ export default class LMSStaffEventCardForm extends LitElement {
      */
     override render() {
         const { datum } = this;
-        // const shouldFold = window.innerWidth <= 420;
         return html`
             <form @submit=${this.handleSave}>
                 <div
