@@ -17,6 +17,11 @@
 [% INCLUDE 'bodytag.inc' bodyid='opac-lms-event-management' %]
     [% INCLUDE 'masthead.inc' %]
 
+    <style>
+        .lmse-content-block > h1 {
+            margin: 0 1rem 1rem;
+        }
+    </style>
     <div id="lmse" class="main">
         <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
             <ol class="breadcrumb">
