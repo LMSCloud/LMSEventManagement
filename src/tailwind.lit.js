@@ -434,10 +434,13 @@ html {
 }
 
 :host {
-  color-scheme: dark;
-  --pf: 262 80% 43%;
-  --sf: 316 70% 43%;
-  --af: 175 70% 34%;
+  color-scheme: light;
+  --pf: 141 50% 53%;
+  --sf: 219 96% 53%;
+  --af: 10 81% 49%;
+  --nf: 219 20% 18%;
+  --b2: 0 0% 93%;
+  --b3: 0 0% 86%;
   --in: 198 93% 60%;
   --su: 158 64% 52%;
   --wa: 43 96% 56%;
@@ -449,26 +452,23 @@ html {
   --rounded-box: 1rem;
   --rounded-btn: 0.5rem;
   --rounded-badge: 1.9rem;
-  --animation-btn: 0.25s;
-  --animation-input: .2s;
   --btn-text-case: uppercase;
-  --btn-focus-scale: 0.95;
   --border-btn: 1px;
   --tab-border: 1px;
   --tab-radius: 0.5rem;
-  --p: 262 80% 50%;
-  --pc: 0 0% 100%;
-  --s: 316 70% 50%;
-  --sc: 0 0% 100%;
-  --a: 175 70% 41%;
-  --ac: 0 0% 100%;
-  --n: 213 18% 20%;
-  --nf: 212 17% 17%;
-  --nc: 220 13% 69%;
-  --b1: 212 18% 14%;
-  --b2: 213 18% 12%;
-  --b3: 213 18% 10%;
-  --bc: 220 13% 69%;
+  --p: 141 50% 60%;
+  --pc: 151 28% 19%;
+  --s: 219 96% 60%;
+  --sc: 210 20% 98%;
+  --a: 10 81% 56%;
+  --ac: 210 20% 98%;
+  --n: 219 20% 25%;
+  --nc: 210 20% 98%;
+  --b1: 0 0% 100%;
+  --bc: 219 20% 25%;
+  --animation-btn: 0;
+  --animation-input: 0;
+  --btn-focus-scale: 1;
 }
 
 *, ::before, ::after {
