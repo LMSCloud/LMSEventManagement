@@ -30,6 +30,12 @@ export default class LMSSearch extends LitElement {
 
     static override styles = [tailwindStyles];
 
+    /**
+     * Parse a query string into a structured query object.
+     *
+     * @param {string} query - The query string to parse.
+     * @returns {ParsedQuery} The structured query object.
+     */
     private parseQuery(query: string): ParsedQuery {
         const entries: ParsedQuery = {};
         const parts = query.split(" AND ");
@@ -81,8 +87,16 @@ export default class LMSSearch extends LitElement {
         return entries;
     }
 
-    private buildQuery(query: ParsedQuery): Record<string, any> {
-        let builtQuery: any[] = [];
+    /**
+     * Build a structured query object into the format expected by the backend.
+     *
+     * @param {ParsedQuery} query - The structured query object to build.
+     * @returns {unknown[] | Record<string, unknown>} The built query.
+     */
+    private buildQuery(
+        query: ParsedQuery
+    ): unknown[] | Record<string, unknown> {
+        const builtQuery: unknown[] = [];
         for (const [key, { operator, value }] of Object.entries(query)) {
             switch (operator) {
                 case "=":
@@ -103,11 +117,19 @@ export default class LMSSearch extends LitElement {
         }
 
         if (builtQuery.length === 1) {
-            [builtQuery] = builtQuery;
+            const [queryItem] = builtQuery;
+            return queryItem as Record<string, unknown>;
         }
+
         return builtQuery;
     }
 
+    /**
+     * Get the query string or build a structured query.
+     *
+     * @param {string} query - The query string or structured query to get.
+     * @returns {string} The built query as a string.
+     */
     private getQuery(query: string): string {
         let q = undefined;
         if (query) {
@@ -131,7 +153,7 @@ export default class LMSSearch extends LitElement {
                         });
                         return entries;
                     },
-                    [] as Array<Record<string, any>>
+                    [] as Array<Record<string, unknown>>
                 );
                 q = JSON.stringify(wildcardQuery);
             }
@@ -158,11 +180,21 @@ export default class LMSSearch extends LitElement {
         false
     );
 
+    /**
+     * Handle the input event by debouncing the search.
+     *
+     * @param {InputEvent} e - The input event.
+     */
     private handleInput(e: InputEvent) {
         const inputElement = e.target as HTMLInputElement;
         this.debouncedSearch(inputElement.value);
     }
 
+    /**
+     * Handle keyboard shortcuts to focus and blur the search input.
+     *
+     * @param {KeyboardEvent} e - The keyboard event.
+     */
     private handleShortcut(e: KeyboardEvent) {
         const isCmdOrCtrlPressed = e.metaKey || e.ctrlKey;
         if (isCmdOrCtrlPressed && e.key.toLowerCase() === "e") {
@@ -187,10 +219,16 @@ export default class LMSSearch extends LitElement {
         document.removeEventListener("keydown", this.boundHandleShortcut);
     }
 
+    /**
+     * Set the isInputFocused state to true when the search input is focused.
+     */
     private handleFocus() {
         this.isInputFocused = true;
     }
 
+    /**
+     * Set the isInputFocused state to false when the search input is blurred.
+     */
     private handleBlur() {
         this.isInputFocused = false;
     }
