@@ -202,7 +202,7 @@ export default class LMSImageBrowser extends LitElement {
         const { hashvalue } = target.dataset;
         if (hashvalue) {
             requestHandler
-                .delete("images", undefined, [hashvalue])
+                .delete("image", undefined, [hashvalue])
                 .then(async (response) => {
                     if (!response.ok) {
                         const error = await response.json();
