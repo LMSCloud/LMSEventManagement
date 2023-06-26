@@ -1,5 +1,6 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
+import { requestHandler } from "../lib/RequestHandler";
 import { Input, LMSSettingResponse } from "../types/common";
 
 type WithChangedPropertyNames<T> = {
@@ -35,22 +36,20 @@ export default class LMSSettingsTable extends LMSTable {
             return;
         }
 
-        const response = await fetch(
-            `/api/v1/contrib/eventmanagement/settings/${key}`,
+        const response = await requestHandler.put(
+            "settings",
             {
-                method: "PUT",
-                body: JSON.stringify({
-                    ...Array.from(inputs).reduce(
-                        (acc: { [key: string]: string }, input: Input) => {
-                            acc[input.name] = input.value;
-                            return acc;
-                        },
-                        {}
-                    ),
-                }),
-            }
+                ...Array.from(inputs).reduce(
+                    (acc: { [key: string]: string }, input: Input) => {
+                        acc[input.name] = input.value;
+                        return acc;
+                    },
+                    {}
+                ),
+            },
+            undefined,
+            [key.toString()]
         );
-
         if (response.status >= 200 && response.status <= 299) {
             inputs.forEach((input) => {
                 input.disabled = true;

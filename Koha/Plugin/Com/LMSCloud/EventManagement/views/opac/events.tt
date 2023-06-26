@@ -6,7 +6,6 @@
 
 [% INCLUDE 'doc-head-open.inc' %]
     <title>[% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %]Koha [% "online" | gettext %][% END %] [% "catalog" | gettext %] &rsaquo; [% "Events" | gettext %]</title>
-    <link rel="stylesheet" href="/api/v1/contrib/eventmanagement/static/dist/main.css">
     <script type="text/javascript" src="/api/v1/contrib/eventmanagement/static/dist/main.js"></script>
     [% INCLUDE 'doc-head-close.inc' %]
 </head>

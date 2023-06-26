@@ -82,12 +82,12 @@ export default class LMSEventsView extends LitElement {
         window.addEventListener("popstate", this.boundHandlePopState);
 
         Promise.all([
-            requestHandler.request(
-                "getEventsPublic",
+            requestHandler.get(
+                "eventsPublic",
                 this.queryBuilder.query.toString()
             ),
-            requestHandler.request("getEventsCountPublic"),
-            requestHandler.request("getLocationsPublic"),
+            requestHandler.get("eventsCountPublic"),
+            requestHandler.get("locationsPublic"),
         ])
             .then((results) =>
                 Promise.all(results.map((result) => result.json()))
@@ -123,8 +123,8 @@ export default class LMSEventsView extends LitElement {
         this.queryBuilder.updateQuery(query);
 
         const response = async () =>
-            await requestHandler.request(
-                "getEventsPublic",
+            await requestHandler.get(
+                "eventsPublic",
                 this.queryBuilder.query.toString()
             );
         response()
@@ -163,8 +163,8 @@ export default class LMSEventsView extends LitElement {
         const nextPage = parseInt(currentPage, 10) + 1;
         this.queryBuilder.updateQuery(`_page=${nextPage}`);
         const response = async () =>
-            await requestHandler.request(
-                "getEventsPublic",
+            await requestHandler.get(
+                "eventsPublic",
                 this.queryBuilder.query.toString()
             );
         response()

@@ -14,6 +14,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { formatAddress, splitDateTime } from "../lib/converters";
+import { requestHandler } from "../lib/RequestHandler";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
@@ -52,36 +53,26 @@ export default class LMSCardDetailsModal extends LitElement {
     override connectedCallback() {
         super.connectedCallback();
 
-        const event_types = async () => {
-            const response = await fetch(
-                "/api/v1/contrib/eventmanagement/public/event_types"
+        requestHandler
+            .get("eventTypesPublic")
+            .then((response) => response.json())
+            .then(
+                (event_types: LMSEventType[]) =>
+                    (this.event_types = event_types)
             );
-            return response.json();
-        };
-        event_types().then(
-            (event_types: LMSEventType[]) => (this.event_types = event_types)
-        );
 
-        const locations = async () => {
-            const response = await fetch(
-                "/api/v1/contrib/eventmanagement/public/locations"
-            );
-            return response.json();
-        };
-        locations().then(
-            (locations: LMSLocation[]) => (this.locations = locations)
-        );
+        requestHandler
+            .get("locationsPublic")
+            .then((response) => response.json())
+            .then((locations: LMSLocation[]) => (this.locations = locations));
 
-        const target_groups = async () => {
-            const response = await fetch(
-                "/api/v1/contrib/eventmanagement/public/target_groups"
+        requestHandler
+            .get("targetGroupsPublic")
+            .then((response) => response.json())
+            .then(
+                (target_groups: LMSEventTargetGroupFee[]) =>
+                    (this.target_groups = target_groups)
             );
-            return response.json();
-        };
-        target_groups().then(
-            (target_groups: LMSEventTargetGroupFee[]) =>
-                (this.target_groups = target_groups)
-        );
 
         this.locale = document.documentElement.lang;
 

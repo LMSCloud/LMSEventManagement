@@ -1,38 +1,90 @@
+/**
+ * @property {string} url - The URL of the endpoint.
+ * @property {boolean} cache - If true, cache the result of requests to this endpoint.
+ * @property {boolean} ignoreCache - If true, ignore any cached data and always fetch from this endpoint.
+ * @property {Object} requestInfo - Additional request info to send with fetch.
+ * @property {Object} queryParams - Default query parameters to append to the URL.
+ * @property {Array<string>} pathParams - Default path parameters to append to the URL.
+ */
 type Endpoint = {
     url?: string;
     cache?: boolean;
     ignoreCache?: boolean;
     requestInfo?: { [key in keyof RequestInit]?: RequestInit[key] };
     queryParams?: Record<string, string>;
+    pathParams?: Array<string>;
 };
 
-type Endpoints = Record<string, Endpoint>;
+/**
+ * @property {Record<string, Endpoint>} endpoints - Group of API endpoints
+ */
+type ApiGroup = Record<string, Endpoint>;
 
+/**
+ * @property {ApiGroup} get - Endpoints for GET requests
+ * @property {ApiGroup} post - Endpoints for POST requests
+ * @property {ApiGroup} put - Endpoints for PUT requests
+ * @property {ApiGroup} delete - Endpoints for DELETE requests
+ */
+type ApiEndpoints = {
+    get: ApiGroup;
+    post: ApiGroup;
+    put: ApiGroup;
+    delete: ApiGroup;
+};
+
+/**
+ * @class
+ * @description RequestHandler class handles requests to a set of configured API endpoints.
+ */
 class RequestHandler {
-    private endpoints: Record<string, Endpoint> = {};
+    private endpoints: ApiEndpoints;
 
-    constructor(endpoints: Record<string, Endpoint> | Map<string, Endpoint>) {
-        if (endpoints instanceof Map) {
-            endpoints.forEach((value, key) => {
-                this.endpoints[key] = value;
-            });
-        } else {
-            this.endpoints = endpoints;
-        }
+    /**
+     * @constructor
+     * @param {ApiEndpoints} endpoints - API endpoints
+     */
+    constructor(endpoints: ApiEndpoints) {
+        this.endpoints = endpoints;
     }
 
-    public async request(
-        endpoint: keyof Endpoints,
+    /**
+     * @method makeRequest
+     * @description Makes a request to a configured endpoint.
+     * @private
+     * @param {keyof ApiEndpoints} method - The HTTP method to use for the request
+     * @param {string} endpoint - The name of the endpoint to request
+     * @param {any} [body] - The body of the request
+     * @param {Record<string, string> | string} [queryParams] - Additional query parameters to append to the URL
+     * @param {Array<string>} [pathParams] - Path parameters to append to the URL
+     * @throws {Error} - Throws an error if the specified endpoint is not found
+     * @returns {Promise<Response>} - A promise that resolves to the fetch Response
+     */
+    private async makeRequest(
+        method: keyof ApiEndpoints,
+        endpoint: keyof ApiGroup,
+        body?: unknown,
         queryParams?: Record<string, string> | string,
         pathParams?: Array<string>
     ): Promise<Response> {
-        const endpointData = this.endpoints[endpoint];
+        const endpointData = this.endpoints[method][endpoint];
 
         if (!endpointData) {
             throw new Error(`Endpoint not found: ${endpoint}`);
         }
 
-        const requestInfo = endpointData.requestInfo || {};
+        let url =
+            endpointData.url + (pathParams ? `/${pathParams.join("/")}` : "");
+
+        const requestInfo: RequestInit = {
+            ...endpointData.requestInfo,
+            headers: {
+                ...(endpointData.requestInfo?.headers || {}),
+                "Content-Type": "application/json",
+            },
+            method,
+            body: body ? JSON.stringify(body) : undefined,
+        };
 
         let cacheMode: RequestCache;
         const userAgent = navigator.userAgent.toLowerCase();
@@ -41,7 +93,6 @@ class RequestHandler {
         } else if (userAgent.includes("firefox")) {
             cacheMode = endpointData.ignoreCache ? "no-cache" : "default";
         } else {
-            // For other browsers, use the default behavior
             cacheMode = endpointData.ignoreCache
                 ? "no-cache"
                 : endpointData.cache
@@ -49,8 +100,7 @@ class RequestHandler {
                 : "force-cache";
         }
 
-        let url =
-            endpointData.url + (pathParams ? `/${pathParams.join("/")}` : "");
+        requestInfo.cache = cacheMode;
 
         if (queryParams) {
             const searchParams = new URLSearchParams(queryParams);
@@ -60,135 +110,227 @@ class RequestHandler {
             url += `?${searchParams.toString()}`;
         }
 
-        const response = await fetch(url, {
-            cache: cacheMode,
-            headers: {
-                ...requestInfo.headers,
-                "Content-Type": "application/json",
-            },
-            method: requestInfo.method || "GET",
-            body: requestInfo.body
-                ? JSON.stringify(requestInfo.body)
-                : undefined,
-        });
-
+        const response = await fetch(url, requestInfo);
         return response;
+    }
+
+    /**
+     * @method get
+     * @description Makes a GET request to a configured endpoint.
+     * @public
+     * @param {string} endpoint - The name of the endpoint to request
+     * @param {Record<string, string> | string} [queryParams] - Additional query parameters to append to the URL
+     * @param {Array<string>} [pathParams] - Path parameters to append to the URL
+     * @throws {Error} - Throws an error if the specified endpoint is not found
+     * @returns {Promise<Response>} - A promise that resolves to the fetch Response
+     */
+    public async get(
+        endpoint: keyof ApiGroup,
+        queryParams?: Record<string, string> | string,
+        pathParams?: Array<string>
+    ): Promise<Response> {
+        return this.makeRequest(
+            "get",
+            endpoint,
+            undefined,
+            queryParams,
+            pathParams
+        );
+    }
+
+    /**
+     * @method post
+     * @description Makes a POST request to a configured endpoint.
+     * @public
+     * @param {string} endpoint - The name of the endpoint to request
+     * @param {any} [body] - The body of the request
+     * @param {Record<string, string> | string} [queryParams] - Additional query parameters to append to the URL
+     * @param {Array<string>} [pathParams] - Path parameters to append to the URL
+     * @throws {Error} - Throws an error if the specified endpoint is not found
+     * @returns {Promise<Response>} - A promise that resolves to the fetch Response
+     */
+    public async post(
+        endpoint: keyof ApiGroup,
+        body?: unknown,
+        queryParams?: Record<string, string> | string,
+        pathParams?: Array<string>
+    ): Promise<Response> {
+        return this.makeRequest(
+            "post",
+            endpoint,
+            body,
+            queryParams,
+            pathParams
+        );
+    }
+
+    /**
+     * @method put
+     * @description Makes a PUT request to a configured endpoint.
+     * @public
+     * @param {string} endpoint - The name of the endpoint to request
+     * @param {any} [body] - The body of the request
+     * @param {Record<string, string> | string} [queryParams] - Additional query parameters to append to the URL
+     * @param {Array<string>} [pathParams] - Path parameters to append to the URL
+     * @throws {Error} - Throws an error if the specified endpoint is not found
+     * @returns {Promise<Response>} - A promise that resolves to the fetch Response
+     */
+    public async put(
+        endpoint: keyof ApiGroup,
+        body?: unknown,
+        queryParams?: Record<string, string> | string,
+        pathParams?: Array<string>
+    ): Promise<Response> {
+        return this.makeRequest("put", endpoint, body, queryParams, pathParams);
+    }
+
+    /**
+     * @method delete
+     * @description Makes a DELETE request to a configured endpoint.
+     * @public
+     * @param {string} endpoint - The name of the endpoint to request
+     * @param {any} [body] - The body of the request
+     * @param {Record<string, string> | string} [queryParams] - Additional query parameters to append to the URL
+     * @param {Array<string>} [pathParams] - Path parameters to append to the URL
+     * @throws {Error} - Throws an error if the specified endpoint is not found
+     * @returns {Promise<Response>} - A promise that resolves to the fetch Response
+     */
+    public async delete(
+        endpoint: keyof ApiGroup,
+        queryParams?: Record<string, string> | string,
+        pathParams?: Array<string>
+    ): Promise<Response> {
+        return this.makeRequest(
+            "delete",
+            endpoint,
+            undefined,
+            queryParams,
+            pathParams
+        );
     }
 }
 
 const BASE_URL = "/api/v1/contrib/eventmanagement";
-const endpoints: Endpoints = {
-    getEventsPublic: {
-        url: `${BASE_URL}/public/events`,
-        cache: false,
+const endpoints: ApiEndpoints = {
+    get: {
+        eventsPublic: {
+            url: `${BASE_URL}/public/events`,
+            cache: false,
+        },
+        eventsCountPublic: {
+            url: `${BASE_URL}/public/events_count`,
+            cache: false,
+        },
+        targetGroupsPublic: {
+            url: `${BASE_URL}/public/target_groups`,
+            cache: true,
+        },
+        eventTypesPublic: {
+            url: `${BASE_URL}/public/event_types`,
+            cache: true,
+        },
+        imagePublic: {
+            url: `${BASE_URL}/public/image`,
+            cache: true,
+        },
+        locationsPublic: {
+            url: `${BASE_URL}/public/locations`,
+            cache: true,
+        },
+        settingsPublic: {
+            url: `${BASE_URL}/public/settings`,
+            cache: true,
+        },
+        settings: {
+            url: `${BASE_URL}/settings`,
+            cache: false,
+        },
+        events: {
+            url: `${BASE_URL}/events`,
+            cache: false,
+        },
+        eventTypes: {
+            url: `${BASE_URL}/event_types`,
+            cache: true,
+        },
+        images: {
+            url: `${BASE_URL}/images`,
+            cache: true,
+        },
+        locations: {
+            url: `${BASE_URL}/locations`,
+            cache: true,
+        },
+        targetGroups: {
+            url: `${BASE_URL}/target_groups`,
+            cache: true,
+        },
     },
-    getEventsCountPublic: {
-        url: `${BASE_URL}/public/events_count`,
-        cache: false,
+    post: {
+        settings: {
+            url: `${BASE_URL}/settings`,
+            cache: false,
+        },
+        events: {
+            url: `${BASE_URL}/events`,
+            cache: false,
+        },
+        eventTypes: {
+            url: `${BASE_URL}/event_types`,
+            cache: false,
+        },
+        images: {
+            url: `${BASE_URL}/images`,
+            cache: false,
+        },
+        locations: {
+            url: `${BASE_URL}/locations`,
+            cache: false,
+        },
+        targetGroups: {
+            url: `${BASE_URL}/target_groups`,
+            cache: false,
+        },
     },
-    getTargetGroupsPublic: {
-        url: `${BASE_URL}/public/target_groups`,
-        cache: true,
+    put: {
+        settings: {
+            url: `${BASE_URL}/settings`,
+            cache: false,
+        },
+        events: {
+            url: `${BASE_URL}/events`,
+            cache: false,
+        },
+        eventTypes: {
+            url: `${BASE_URL}/event_types`,
+            cache: false,
+        },
+        locations: {
+            url: `${BASE_URL}/locations`,
+            cache: false,
+        },
+        targetGroups: {
+            url: `${BASE_URL}/target_groups`,
+            cache: false,
+        },
     },
-    getEventTypesPublic: {
-        url: `${BASE_URL}/public/event_types`,
-        cache: true,
-    },
-    getLocationsPublic: {
-        url: `${BASE_URL}/public/locations`,
-        cache: true,
-    },
-    getSettingsPublic: {
-        url: `${BASE_URL}/public/settings`,
-        cache: true,
-    },
-    getSettings: {
-        url: `${BASE_URL}/settings`,
-        cache: false,
-    },
-    postSettings: {
-        url: `${BASE_URL}/settings`,
-        cache: false,
-    },
-    getSetting: {
-        url: `${BASE_URL}/settings`,
-        cache: false,
-    },
-    putSetting: {
-        url: `${BASE_URL}/settings`,
-        cache: false,
-    },
-    getEvents: {
-        url: `${BASE_URL}/events`,
-        cache: false,
-    },
-    postEvents: {
-        url: `${BASE_URL}/events`,
-        cache: false,
-    },
-    getEvent: {
-        url: `${BASE_URL}/events`,
-        cache: false,
-    },
-    putEvent: {
-        url: `${BASE_URL}/events`,
-        cache: false,
-    },
-    getEventTypes: {
-        url: `${BASE_URL}/event_types`,
-        cache: true,
-    },
-    postEventTypes: {
-        url: `${BASE_URL}/event_types`,
-        cache: false,
-    },
-    getEventType: {
-        url: `${BASE_URL}/event_types`,
-        cache: false,
-    },
-    putEventType: {
-        url: `${BASE_URL}/event_types`,
-        cache: false,
-    },
-    getImages: {
-        url: `${BASE_URL}/images`,
-        cache: true,
-    },
-    postImages: {
-        url: `${BASE_URL}/images`,
-        cache: false,
-    },
-    getLocations: {
-        url: `${BASE_URL}/locations`,
-        cache: true,
-    },
-    postLocations: {
-        url: `${BASE_URL}/locations`,
-        cache: false,
-    },
-    getLocation: {
-        url: `${BASE_URL}/locations`,
-        cache: false,
-    },
-    putLocation: {
-        url: `${BASE_URL}/locations`,
-        cache: false,
-    },
-    getTargetGroups: {
-        url: `${BASE_URL}/target_groups`,
-        cache: true,
-    },
-    postTargetGroups: {
-        url: `${BASE_URL}/target_groups`,
-        cache: false,
-    },
-    getTargetGroup: {
-        url: `${BASE_URL}/target_groups`,
-        cache: false,
-    },
-    putTargetGroup: {
-        url: `${BASE_URL}/target_groups`,
-        cache: false,
+    delete: {
+        events: {
+            url: `${BASE_URL}/events`,
+            cache: false,
+        },
+        eventTypes: {
+            url: `${BASE_URL}/event_types`,
+            cache: false,
+        },
+        locations: {
+            url: `${BASE_URL}/locations`,
+            cache: false,
+        },
+        targetGroups: {
+            url: `${BASE_URL}/target_groups`,
+            cache: false,
+        },
     },
 };
 

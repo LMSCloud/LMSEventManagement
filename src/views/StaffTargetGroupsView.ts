@@ -3,6 +3,7 @@ import { customElement, state } from "lit/decorators.js";
 import LMSTargetGroupsModal from "../extensions/LMSTargetGroupsModal";
 import LMSTargetGroupsTable from "../extensions/LMSTargetGroupsTable";
 import { QueryBuilder } from "../lib/QueryBuilder";
+import { requestHandler } from "../lib/RequestHandler";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
@@ -53,10 +54,8 @@ export default class StaffEventTypesView extends LitElement {
 
     override connectedCallback() {
         super.connectedCallback();
-        const target_groups = fetch(
-            `/api/v1/contrib/eventmanagement/target_groups?${this.queryBuilder.query.toString()}`
-        );
-        target_groups
+        requestHandler
+            .get("targetGroups", this.queryBuilder.query.toString())
             .then((response) => response.json())
             .then((result) => {
                 this.target_groups = result;
@@ -69,8 +68,9 @@ export default class StaffEventTypesView extends LitElement {
     }
 
     async fetchUpdate() {
-        const response = await fetch(
-            `/api/v1/contrib/eventmanagement/target_groups?${this.queryBuilder.query.toString()}`
+        const response = await requestHandler.get(
+            "targetGroups",
+            this.queryBuilder.query.toString()
         );
         this.target_groups = await response.json();
         this.hasNoResults = this.target_groups.length === 0;
@@ -81,8 +81,9 @@ export default class StaffEventTypesView extends LitElement {
     async prefetchUpdate(e: CustomEvent) {
         const { _page, _per_page } = e.detail;
         this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
-        const response = await fetch(
-            `/api/v1/contrib/eventmanagement/target_groups?${this.queryBuilder.query.toString()}`
+        const response = await requestHandler.get(
+            "targetGroups",
+            this.queryBuilder.query.toString()
         );
         this.nextPage = await response.json();
         this.queryBuilder.updateQuery(

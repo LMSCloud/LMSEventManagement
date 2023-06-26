@@ -1,6 +1,7 @@
 import { PropertyValueMap } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
+import { requestHandler } from "../lib/RequestHandler";
 import { attr__, __ } from "../lib/translate";
 import {
     CreateOpts,
@@ -41,9 +42,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "select",
                 desc: __("Event Type"),
                 logic: async () => {
-                    const response = await fetch(
-                        "/api/v1/contrib/eventmanagement/event_types"
-                    );
+                    const response = await requestHandler.get("eventTypes");
                     const result = await response.json();
                     return result.map((event_type: LMSEventType) => ({
                         id: event_type.id,
@@ -62,9 +61,7 @@ export default class LMSEventsModal extends LMSModal {
                 ],
                 desc: __("Target Groups"),
                 logic: async () => {
-                    const response = await fetch(
-                        "/api/v1/contrib/eventmanagement/target_groups"
-                    );
+                    const response = await requestHandler.get("targetGroups");
                     const result = await response.json();
                     return result.map((target_group: LMSTargetGroup) => ({
                         id: target_group.id,
@@ -141,9 +138,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "select",
                 desc: __("Location"),
                 logic: async () => {
-                    const response = await fetch(
-                        "/api/v1/contrib/eventmanagement/locations"
-                    );
+                    const response = await requestHandler.get("locations");
                     const result = await response.json();
                     return result.map((location: LMSLocation) => ({
                         id: location.id,
@@ -204,7 +199,8 @@ export default class LMSEventsModal extends LMSModal {
     }
 
     private async fetchEventType(id: number) {
-        return fetch(`/api/v1/contrib/eventmanagement/event_types/${id}`)
+        return requestHandler
+            .get("eventTypes", undefined, [id.toString()])
             .then((response) => response.json())
             .then((event_type) => event_type as LMSEventType);
     }

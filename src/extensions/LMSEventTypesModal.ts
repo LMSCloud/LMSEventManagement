@@ -1,5 +1,6 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
+import { requestHandler } from "../lib/RequestHandler";
 import { attr__, __ } from "../lib/translate";
 import { CreateOpts, LMSLocation, LMSTargetGroup } from "../types/common";
 
@@ -38,9 +39,7 @@ export default class LMSEventTypesModal extends LMSModal {
                 ],
                 desc: __("Target Groups"),
                 logic: async () => {
-                    const response = await fetch(
-                        "/api/v1/contrib/eventmanagement/target_groups"
-                    );
+                    const response = await requestHandler.get("targetGroups");
                     const result = await response.json();
                     return result.map((target_group: LMSTargetGroup) => ({
                         id: target_group.id,
@@ -85,9 +84,7 @@ export default class LMSEventTypesModal extends LMSModal {
                 type: "select",
                 desc: __("Location"),
                 logic: async () => {
-                    const response = await fetch(
-                        "/api/v1/contrib/eventmanagement/locations"
-                    );
+                    const response = await requestHandler.get("locations");
                     const result = await response.json();
                     return result.map((location: LMSLocation) => ({
                         id: location.id,

@@ -1,5 +1,6 @@
 import { html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { requestHandler } from "../lib/RequestHandler";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
@@ -17,8 +18,8 @@ export default class StaffSettingsView extends LitElement {
 
     override connectedCallback() {
         super.connectedCallback();
-        const settings = fetch(`/api/v1/contrib/eventmanagement/settings`);
-        settings
+        requestHandler
+            .get("settings")
             .then((response) => response.json())
             .then((settings) => {
                 this.settings = settings.map((setting: LMSSettingResponse) => {

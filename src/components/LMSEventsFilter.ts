@@ -159,7 +159,8 @@ export default class LMSEventsFilter extends LitElement {
 
         window.addEventListener("resize", this.throttledHandleResize);
 
-        fetch("/api/v1/contrib/eventmanagement/public/settings")
+        requestHandler
+            .get("settingsPublic")
             .then((response) => response.json())
             .then((settings) => {
                 this.settings = settings.map((setting: LMSSettingResponse) => {
@@ -177,7 +178,7 @@ export default class LMSEventsFilter extends LitElement {
             });
 
         requestHandler
-            .request("getEventTypesPublic")
+            .get("eventTypesPublic")
             .then((response) => response.json())
             .then(
                 (event_types: LMSEventType[]) =>
@@ -185,7 +186,7 @@ export default class LMSEventsFilter extends LitElement {
             );
 
         requestHandler
-            .request("getTargetGroupsPublic")
+            .get("targetGroupsPublic")
             .then((response) => response.json())
             .then(
                 (target_groups: LMSTargetGroup[]) =>
@@ -193,7 +194,7 @@ export default class LMSEventsFilter extends LitElement {
             );
 
         requestHandler
-            .request("getLocationsPublic")
+            .get("locationsPublic")
             .then((response) => response.json())
             .then((locations: LMSLocation[]) => (this.locations = locations));
     }

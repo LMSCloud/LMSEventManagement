@@ -3,6 +3,7 @@ import { customElement, state } from "lit/decorators.js";
 import LMSLocationsModal from "../extensions/LMSLocationsModal";
 import LMSLocationsTable from "../extensions/LMSLocationsTable";
 import { QueryBuilder } from "../lib/QueryBuilder";
+import { requestHandler } from "../lib/RequestHandler";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
@@ -53,10 +54,8 @@ export default class StaffLocationsView extends LitElement {
 
     override connectedCallback() {
         super.connectedCallback();
-        const locations = fetch(
-            `/api/v1/contrib/eventmanagement/locations?${this.queryBuilder.query.toString()}`
-        );
-        locations
+        requestHandler
+            .get("locations", this.queryBuilder.query.toString())
             .then((response) => response.json())
             .then((result) => {
                 this.locations = result;
@@ -69,8 +68,9 @@ export default class StaffLocationsView extends LitElement {
     }
 
     async fetchUpdate() {
-        const response = await fetch(
-            `/api/v1/contrib/eventmanagement/locations?${this.queryBuilder.query.toString()}`
+        const response = await requestHandler.get(
+            "locations",
+            this.queryBuilder.query.toString()
         );
         this.locations = await response.json();
         this.hasNoResults = this.locations.length === 0;
@@ -81,8 +81,9 @@ export default class StaffLocationsView extends LitElement {
     async prefetchUpdate(e: CustomEvent) {
         const { _page, _per_page } = e.detail;
         this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
-        const response = await fetch(
-            `/api/v1/contrib/eventmanagement/locations?${this.queryBuilder.query.toString()}`
+        const response = await requestHandler.get(
+            "locations",
+            this.queryBuilder.query.toString()
         );
         this.nextPage = await response.json();
         this.queryBuilder.updateQuery(

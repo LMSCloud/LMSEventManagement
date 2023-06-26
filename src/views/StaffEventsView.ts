@@ -5,6 +5,7 @@ import LMSStaffEventCardsDeck from "../components/LMSStaffEventCard/LMSStaffEven
 import LMSEventsModal from "../extensions/LMSEventsModal";
 import { normalizeForInput } from "../lib/converters";
 import { QueryBuilder } from "../lib/QueryBuilder";
+import { requestHandler } from "../lib/RequestHandler";
 import { __ } from "../lib/translate";
 import { cardDeckStylesStaff } from "../styles/cardDeck";
 import { skeletonStyles } from "../styles/skeleton";
@@ -92,13 +93,11 @@ export default class StaffEventsView extends LitElement {
         super.connectedCallback();
 
         Promise.all([
-            fetch(
-                `/api/v1/contrib/eventmanagement/events?${this.queryBuilder.query.toString()}`
-            ),
-            fetch("/api/v1/contrib/eventmanagement/event_types"),
-            fetch("/api/v1/contrib/eventmanagement/target_groups"),
-            fetch("/api/v1/contrib/eventmanagement/locations"),
-            fetch("/api/v1/contrib/eventmanagement/images"),
+            requestHandler.get("events", this.queryBuilder.query.toString()),
+            requestHandler.get("eventTypes"),
+            requestHandler.get("targetGroups"),
+            requestHandler.get("locations"),
+            requestHandler.get("images"),
         ])
             .then((results) =>
                 Promise.all(results.map((result) => result.json()))
@@ -133,8 +132,9 @@ export default class StaffEventsView extends LitElement {
     }
 
     async fetchUpdate() {
-        const response = await fetch(
-            `/api/v1/contrib/eventmanagement/events?${this.queryBuilder.query.toString()}`
+        const response = await requestHandler.get(
+            "events",
+            this.queryBuilder.query.toString()
         );
         this.events = await response.json();
         this.hasNoResults = this.events.length === 0;
@@ -145,8 +145,9 @@ export default class StaffEventsView extends LitElement {
     async prefetchUpdate(e: CustomEvent) {
         const { _page, _per_page } = e.detail;
         this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
-        const response = await fetch(
-            `/api/v1/contrib/eventmanagement/events?${this.queryBuilder.query.toString()}`
+        const response = await requestHandler.get(
+            "events",
+            this.queryBuilder.query.toString()
         );
         this.nextPage = await response.json();
         this.queryBuilder.updateQuery(

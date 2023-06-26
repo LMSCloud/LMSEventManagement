@@ -1,5 +1,6 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
+import { requestHandler } from "../lib/RequestHandler";
 import { Input, LMSLocation } from "../types/common";
 
 @customElement("lms-locations-table")
@@ -25,25 +26,20 @@ export default class LMSLocationsTable extends LMSTable {
             return;
         }
 
-        const response = await fetch(
-            `/api/v1/contrib/eventmanagement/locations/${id}`,
+        const response = await requestHandler.put(
+            "locations",
             {
-                method: "PUT",
-                body: JSON.stringify({
-                    ...Array.from(inputs).reduce(
-                        (
-                            acc: { [key: string]: number | string },
-                            input: Input
-                        ) => {
-                            acc[input.name] = input.value;
-                            return acc;
-                        },
-                        {}
-                    ),
-                }),
-            }
+                ...Array.from(inputs).reduce(
+                    (acc: { [key: string]: number | string }, input: Input) => {
+                        acc[input.name] = input.value;
+                        return acc;
+                    },
+                    {}
+                ),
+            },
+            undefined,
+            [id.toString()]
         );
-
         if (response.status >= 200 && response.status <= 299) {
             inputs.forEach((input) => {
                 input.disabled = true;
@@ -80,11 +76,9 @@ export default class LMSLocationsTable extends LMSTable {
             return;
         }
 
-        const response = await fetch(
-            `/api/v1/contrib/eventmanagement/locations/${id}`,
-            { method: "DELETE" }
-        );
-
+        const response = await requestHandler.delete("locations", undefined, [
+            id.toString(),
+        ]);
         if (response.status >= 200 && response.status <= 299) {
             this.dispatchEvent(new CustomEvent("deleted", { detail: id }));
             return;

@@ -9,6 +9,7 @@ import {
 } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
+import { requestHandler } from "../lib/RequestHandler";
 import { attr__, __ } from "../lib/translate";
 import { cardDeckStylesStaff } from "../styles/cardDeck";
 import { skeletonStyles } from "../styles/skeleton";
@@ -52,10 +53,8 @@ export default class LMSImageBrowser extends LitElement {
     ];
 
     private loadImages() {
-        const uploadedImages = async () =>
-            await fetch("/api/v1/contrib/eventmanagement/images");
-
-        uploadedImages()
+        requestHandler
+            .get("images")
             .then(
                 async (response): Promise<UploadedImage[]> =>
                     await response.json()
@@ -155,14 +154,8 @@ export default class LMSImageBrowser extends LitElement {
             Array.from(files).forEach((file) => {
                 const formData = new FormData();
                 formData.append("file", file);
-
-                const uploadImages = async () =>
-                    await fetch("/api/v1/contrib/eventmanagement/images", {
-                        method: "POST",
-                        body: formData,
-                    });
-
-                uploadImages()
+                requestHandler
+                    .post("images", formData)
                     .then(async (response) => {
                         if (!response.ok) {
                             const error = await response.json();
@@ -207,24 +200,22 @@ export default class LMSImageBrowser extends LitElement {
     private handleDelete(event: Event) {
         const target = event.target as HTMLButtonElement;
         const { hashvalue } = target.dataset;
-        const deleteImage = async () =>
-            await fetch(`/api/v1/contrib/eventmanagement/image/${hashvalue}`, {
-                method: "DELETE",
-            });
-
-        deleteImage()
-            .then(async (response) => {
-                if (!response.ok) {
-                    const error = await response.json();
-                    this.renderToast(response.statusText, error);
-                }
-            })
-            .then(() => {
-                this.loadImages();
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        if (hashvalue) {
+            requestHandler
+                .delete("images", undefined, [hashvalue])
+                .then(async (response) => {
+                    if (!response.ok) {
+                        const error = await response.json();
+                        this.renderToast(response.statusText, error);
+                    }
+                })
+                .then(() => {
+                    this.loadImages();
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
     }
 
     override render() {

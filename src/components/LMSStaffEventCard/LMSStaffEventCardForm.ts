@@ -9,6 +9,7 @@ import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { css, html, LitElement } from "lit";
 import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { TemplateResultConverter } from "../../lib/converters";
+import { requestHandler } from "../../lib/RequestHandler";
 import { attr__, __ } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
@@ -284,11 +285,13 @@ export default class LMSStaffEventCardForm extends LitElement {
 
         requestBody.target_groups = Object.values(target_groups);
         requestBody.open_registration = openRegistration;
-        const response = await fetch(
-            `/api/v1/contrib/eventmanagement/events/${id}`,
-            { method: "PUT", body: JSON.stringify(requestBody) }
-        );
 
+        const response = await requestHandler.put(
+            "events",
+            requestBody,
+            undefined,
+            [id.toString()]
+        );
         if (response.ok) {
             target
                 ?.querySelectorAll("input, select, textarea")
