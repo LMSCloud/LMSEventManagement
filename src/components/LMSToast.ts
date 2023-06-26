@@ -1,3 +1,5 @@
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
@@ -23,25 +25,44 @@ export default class LMSToast extends LitElement {
 
     static override styles = [tailwindStyles, skeletonStyles];
 
+    private handleDismiss() {
+        this.remove();
+    }
+
     override render() {
         return html`
             <div class="toast-center toast z-50">
-                <div class="alert alert-error grid-rows-2 gap-2">
-                    <div
-                        class="grid-row-1 flex w-full items-center justify-center"
-                    >
+                <div class="alert alert-error gap-2">
+                    <div id="heading">
                         <strong class="mr-auto">${this.heading}</strong>
-                        <small>${this.elapsedTime} ${__("sec ago")}</small>
-                        <button
-                            class="btn-round btn-ghost btn-sm btn"
-                            data-dismiss="toast"
-                        >
-                            <span aria-hidden="true">&times;</span>
-                        </button>
                     </div>
 
-                    <div class="grid-row-2">
+                    <div
+                        class="inline-block h-full min-h-[1em] w-0.5 
+                        self-stretch bg-current opacity-100 dark:opacity-50"
+                    ></div>
+
+                    <div id="message">
                         <span>${this.message}</span>
+                    </div>
+
+                    <div
+                        class="inline-block h-full min-h-[1em] w-0.5 
+                        self-stretch  bg-current opacity-100 dark:opacity-50"
+                    ></div>
+
+                    <div id="controls" class="flex items-center justify-center">
+                        <span>${this.elapsedTime} ${__("sec ago")}</span>
+                        <button
+                            class="btn-ghost btn"
+                            @click=${this.handleDismiss}
+                        >
+                            <span aria-hidden="true"
+                                >${litFontawesome(faTimes, {
+                                    className: "w-4 h-4 inline-block",
+                                })}</span
+                            >
+                        </button>
                     </div>
                 </div>
             </div>
