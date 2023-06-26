@@ -12,13 +12,6 @@ This is a big one! This koha-plugin will make it easy for you to create, manage 
     AllowOverride None
     Require all granted
 </Directory>
-
-
-<Directory /var/lib/koha/INSTANCE/uploads/LMSEventManagement>
-    Options Indexes FollowSymLinks
-    AllowOverride None
-    Require all granted
-</Directory>
 ```
 
 ### /etc/apache2/sites-available/INSTANCE.conf
@@ -32,13 +25,6 @@ Alias /plugin "/var/lib/koha/INSTANCE/plugins"
 
 ```conf
 <Directory /var/lib/koha/INSTANCE/plugins/>
-    Options Indexes FollowSymLinks
-    AllowOverride None
-    Require all granted
-</Directory>
-
-
-<Directory /var/lib/koha/INSTANCE/uploads/LMSEventManagement>
     Options Indexes FollowSymLinks
     AllowOverride None
     Require all granted
