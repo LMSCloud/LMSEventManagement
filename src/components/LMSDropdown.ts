@@ -56,9 +56,9 @@ export default class LMSDropdown extends LitElement {
 
     private dispatchToggleEvent() {
         if (this.details && this.uuid) {
-            if (this.label && this.icon) {
-                this.labelElement.classList.toggle("hidden");
-                this.iconElement.classList.toggle("hidden");
+            if (this.label && this.icon && !this.details.open) {
+                this.labelElement.classList.add("hidden");
+                this.iconElement.classList.remove("hidden");
             }
             this.dispatchEvent(
                 new CustomEvent("dropdown-toggle", {
@@ -91,6 +91,19 @@ export default class LMSDropdown extends LitElement {
         };
     }
 
+    private handleHover(e: MouseEvent) {
+        if (this.details.open || !(this.label && this.icon)) return;
+        if (e.type === "mouseenter") {
+            this.labelElement.classList.remove("hidden");
+            this.iconElement.classList.add("hidden");
+            return;
+        }
+        if (e.type === "mouseleave") {
+            this.labelElement.classList.add("hidden");
+            this.iconElement.classList.remove("hidden");
+        }
+    }
+
     override render() {
         return html`
             <details
@@ -98,15 +111,17 @@ export default class LMSDropdown extends LitElement {
                 id=${this.uuid}
                 @toggle=${this.dispatchToggleEvent}
                 @blur=${this.handleBlur}
+                @mouseenter=${this.handleHover}
+                @mouseleave=${this.handleHover}
                 tabindex="0"
             >
                 <summary class="btn">
-                    <span id="icon">${this.icon}</span>
+                    <span id="icon" class="xl:hidden">${this.icon}</span>
                     <span
                         id="label"
-                        class=${classMap({
+                        class="${classMap({
                             hidden: this.label && Boolean(this.icon),
-                        })}
+                        })} xl:block"
                         >${this.label}</span
                     >
                 </summary>

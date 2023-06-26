@@ -354,7 +354,7 @@ export default class LMSEventsFilter extends LitElement {
                     class="sticky top-0 z-10 mb-4 rounded-b-xl bg-base-100 text-sm shadow-lg lg:text-base"
                 >
                     <div
-                        class="flex flex-col items-center justify-center gap-4 p-2 lg:flex-row lg:justify-start"
+                        class="flex flex-col items-center justify-center gap-4 p-2 lg:flex-row lg:justify-between"
                     >
                         <div class="hidden lg:block">
                             <h5 class="whitespace-nowrap">
@@ -363,20 +363,9 @@ export default class LMSEventsFilter extends LitElement {
                         </div>
 
                         <div
-                            class="search ${classMap({
-                                hidden: this.isHidden,
-                            })} lg:block"
-                        >
-                            <lms-search
-                                @search=${this.handleSearch}
-                                .sortableColumns=${["name", "description"]}
-                            ></lms-search>
-                        </div>
-
-                        <div
                             class="dropdowns ${classMap({
                                 hidden: this.isHidden,
-                            })} flex flex-wrap justify-center gap-4 lg:justify-start"
+                            })} flex flex-1 flex-wrap justify-center gap-4 lg:justify-start"
                         >
                             <lms-dropdown
                                 .label=${__("Sort by")}
@@ -644,6 +633,17 @@ export default class LMSEventsFilter extends LitElement {
                                     />
                                 </div>
                             </lms-dropdown>
+                        </div>
+
+                        <div
+                            class="search ${classMap({
+                                hidden: this.isHidden,
+                            })} lg:block"
+                        >
+                            <lms-search
+                                @search=${this.handleSearch}
+                                .sortableColumns=${["name", "description"]}
+                            ></lms-search>
                         </div>
 
                         <div class="actions">

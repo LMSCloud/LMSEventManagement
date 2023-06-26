@@ -4428,8 +4428,22 @@ details.collapse summary::-webkit-details-marker {
     justify-content: flex-start;
   }
 
+  .lg\\:justify-between {
+    justify-content: space-between;
+  }
+
   .lg\\:text-base {
     font-size: 1rem;
     line-height: 1.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .xl\\:block {
+    display: block;
+  }
+
+  .xl\\:hidden {
+    display: none;
   }
 }`;
