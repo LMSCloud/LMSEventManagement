@@ -579,7 +579,7 @@ export default class LMSTable extends LitElement {
                                                               @click=${this
                                                                   .toggleEdit}
                                                               type="button"
-                                                              class="btn-edit btn-secondary join-item btn flex-1 rounded-none"
+                                                              class="btn-edit join-item btn flex-1 rounded-none"
                                                               aria-label=${attr__(
                                                                   "Edit"
                                                               )}
@@ -621,7 +621,7 @@ export default class LMSTable extends LitElement {
                                                               @click=${this
                                                                   .handleSave}
                                                               type="button"
-                                                              class="btn-secondary join-item btn flex-1 rounded-none"
+                                                              class="join-item btn flex-1 rounded-none"
                                                               aria-label=${attr__(
                                                                   "Save"
                                                               )}
@@ -649,7 +649,7 @@ export default class LMSTable extends LitElement {
                                                                       hidden: !this
                                                                           .isDeletable,
                                                                   }
-                                                              )} btn-warning join-item btn flex-1 rounded-none"
+                                                              )} join-item btn flex-1 rounded-none"
                                                               aria-label=${attr__(
                                                                   "Delete"
                                                               )}
