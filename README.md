@@ -25,7 +25,7 @@ Alias /plugin "/var/lib/koha/INSTANCE/plugins"
 
 ```conf
 <Directory /var/lib/koha/INSTANCE/plugins/>
-    Options Indexes FollowSymLinks
+    Options FollowSymLinks
     AllowOverride None
     Require all granted
 </Directory>
