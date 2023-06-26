@@ -26,7 +26,6 @@ This is a big one! This koha-plugin will make it easy for you to create, manage 
 ```conf
 ScriptAlias /events "/var/lib/koha/INSTANCE/plugins/Koha/Plugin/Com/LMSCloud/EventManagement/Opac/events.pl"
 Alias /plugin "/var/lib/koha/INSTANCE/plugins"
-Alias /lms-event-management/images "/var/lib/koha/INSTANCE/uploads/LMSEventManagement/"
 ```
 
 ### Or in /etc/apache2/sites-available/INSTANCE.conf
@@ -47,7 +46,6 @@ Alias /lms-event-management/images "/var/lib/koha/INSTANCE/uploads/LMSEventManag
 
 ScriptAlias /events "/var/lib/koha/INSTANCE/plugins/Koha/Plugin/Com/LMSCloud/EventManagement/Opac/events.pl"
 Alias /plugin "/var/lib/koha/INSTANCE/plugins"
-Alias /lms-event-management/images "/var/lib/koha/INSTANCE/uploads/LMSEventManagement/"
 ```
 
 ## Usage
