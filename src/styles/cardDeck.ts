@@ -30,12 +30,6 @@ export const cardDeckStylesStaff = css`
             grid-template-columns: repeat(auto-fill, minmax(16.67%, 1fr));
         }
     }
-
-    @media (min-width: 2048px) {
-        .card-deck {
-            grid-template-columns: repeat(auto-fill, minmax(14.28%, 1fr));
-        }
-    }
 `;
 
 export const cardDeckStylesOpac = css`
