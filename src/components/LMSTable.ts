@@ -4,7 +4,6 @@ import {
     faTimes,
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { css, html, LitElement, nothing, PropertyValueMap } from "lit";
 import {
     customElement,
@@ -586,36 +585,30 @@ export default class LMSTable extends LitElement {
                                                           >
                                                               <span
                                                                   class="start-edit pointer-events-none flex gap-2"
-                                                                  >${litFontawesome(
-                                                                      faEdit,
-                                                                      {
-                                                                          className:
-                                                                              "w-4 h-4 inline-block sm:hidden",
-                                                                      }
-                                                                  )}
-                                                                  <span
-                                                                      class="hidden sm:inline"
-                                                                      >${__(
-                                                                          "Edit"
-                                                                      )}</span
-                                                                  ></span
                                                               >
+                                                                  <lms-icon-span
+                                                                      .icon=${faEdit}
+                                                                      .textSize="text-base"
+                                                                      .iconOnXs=${true}
+                                                                  >
+                                                                      ${__(
+                                                                          "Edit"
+                                                                      )}
+                                                                  </lms-icon-span>
+                                                              </span>
                                                               <span
                                                                   class="abort-edit pointer-events-none flex hidden gap-2"
-                                                                  >${litFontawesome(
-                                                                      faTimes,
-                                                                      {
-                                                                          className:
-                                                                              "w-4 h-4 inline-block sm:hidden",
-                                                                      }
-                                                                  )}
-                                                                  <span
-                                                                      class="hidden sm:inline"
-                                                                      >${__(
-                                                                          "Abort"
-                                                                      )}</span
-                                                                  ></span
                                                               >
+                                                                  <lms-icon-span
+                                                                      .icon=${faTimes}
+                                                                      .textSize="text-base"
+                                                                      .iconOnXs=${true}
+                                                                  >
+                                                                      ${__(
+                                                                          "Abort"
+                                                                      )}
+                                                                  </lms-icon-span>
+                                                              </span>
                                                           </button>
                                                           <button
                                                               @click=${this
@@ -626,19 +619,13 @@ export default class LMSTable extends LitElement {
                                                                   "Save"
                                                               )}
                                                           >
-                                                              ${litFontawesome(
-                                                                  faSave,
-                                                                  {
-                                                                      className:
-                                                                          "w-4 h-4 inline-block sm:hidden",
-                                                                  }
-                                                              )}
-                                                              <span
-                                                                  class="hidden sm:inline"
-                                                                  >${__(
-                                                                      "Save"
-                                                                  )}</span
+                                                              <lms-icon-span
+                                                                  .icon=${faSave}
+                                                                  .textSize="text-base"
+                                                                  .iconOnXs=${true}
                                                               >
+                                                                  ${__("Save")}
+                                                              </lms-icon-span>
                                                           </button>
                                                           <button
                                                               @click=${this
@@ -654,19 +641,15 @@ export default class LMSTable extends LitElement {
                                                                   "Delete"
                                                               )}
                                                           >
-                                                              ${litFontawesome(
-                                                                  faTrash,
-                                                                  {
-                                                                      className:
-                                                                          "w-4 h-4 inline-block sm:hidden",
-                                                                  }
-                                                              )}
-                                                              <span
-                                                                  class="hidden sm:inline"
-                                                                  >${__(
-                                                                      "Delete"
-                                                                  )}</span
+                                                              <lms-icon-span
+                                                                  .icon=${faTrash}
+                                                                  .textSize="text-base"
+                                                                  .iconOnXs=${true}
                                                               >
+                                                                  ${__(
+                                                                      "Delete"
+                                                                  )}
+                                                              </lms-icon-span>
                                                           </button>
                                                       </div>
                                                   </td>
