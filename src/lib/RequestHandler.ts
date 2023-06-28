@@ -76,14 +76,23 @@ class RequestHandler {
         let url =
             endpointData.url + (pathParams ? `/${pathParams.join("/")}` : "");
 
+        // Check if the body is FormData
+        const isFormData = body instanceof FormData;
+
         const requestInfo: RequestInit = {
             ...endpointData.requestInfo,
             headers: {
                 ...(endpointData.requestInfo?.headers || {}),
-                "Content-Type": "application/json",
+                // Only set Content-Type to application/json if the body is not FormData
+                ...(isFormData ? {} : { "Content-Type": "application/json" }),
             },
             method,
-            body: body ? JSON.stringify(body) : undefined,
+            // Only stringify the body if it's not FormData
+            body: isFormData
+                ? (body as FormData)
+                : body
+                ? JSON.stringify(body)
+                : undefined,
         };
 
         let cacheMode: RequestCache;
@@ -321,6 +330,10 @@ const endpoints: ApiEndpoints = {
         },
         eventTypes: {
             url: `${BASE_URL}/event_types`,
+            cache: false,
+        },
+        image: {
+            url: `${BASE_URL}/image`,
             cache: false,
         },
         locations: {
