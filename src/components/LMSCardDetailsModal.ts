@@ -6,7 +6,6 @@ import {
     faMapMarker,
     faUsers,
 } from "@fortawesome/free-solid-svg-icons";
-import { litFontawesome } from "@weavedev/lit-fontawesome";
 import DOMPurify from "dompurify";
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
@@ -25,6 +24,14 @@ import {
     LMSEventType,
     LMSLocation,
 } from "../types/common";
+import LMSIconSpan from "./LMSIconSpan";
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "lms-card-details-modal": LMSCardDetailsModal;
+        "lms-icon-span": LMSIconSpan;
+    }
+}
 
 @customElement("lms-card-details-modal")
 export default class LMSCardDetailsModal extends LitElement {
@@ -224,12 +231,12 @@ export default class LMSCardDetailsModal extends LitElement {
         return html`${sDate}, ${sTime}
         ${isSameDay
             ? html`- ${eTime}`
-            : html` <span
-                      >${litFontawesome(faArrowRight, {
-                          className: "w-4 h-4 inline-block",
-                      })}</span
-                  >
-                  ${eDate}, ${eTime}`}`;
+            : html` <lms-icon-span
+                  .icon=${faArrowRight}
+                  .textSize=${"text-base"}
+              >
+                  ${eDate}, ${eTime}
+              </lms-icon-span>`}`;
     }
 
     override render() {
@@ -280,12 +287,12 @@ export default class LMSCardDetailsModal extends LitElement {
                             <!-- Date and Time -->
                             <div class="p-4">
                                 <p class="mb-2">
-                                    <span
-                                        >${litFontawesome(faCalendar, {
-                                            className: "w-4 h-4 inline-block",
-                                        })}</span
+                                    <lms-icon-span
+                                        .icon=${faCalendar}
+                                        .textSize=${"text-lg"}
                                     >
-                                    <strong>${__("Date and Time")}</strong>
+                                        ${__("Date and Time")}
+                                    </lms-icon-span>
                                 </p>
                                 <p>
                                     ${this.renderDateAndTime(
@@ -298,12 +305,12 @@ export default class LMSCardDetailsModal extends LitElement {
                             <!-- Description -->
                             <div class="p-4">
                                 <p class="mb-2">
-                                    <span
-                                        >${litFontawesome(faInfoCircle, {
-                                            className: "w-4 h-4 inline-block",
-                                        })}</span
+                                    <lms-icon-span
+                                        .icon=${faInfoCircle}
+                                        .textSize=${"text-lg"}
                                     >
-                                    <strong>${__("Description")}</strong>
+                                        ${__("Description")}
+                                    </lms-icon-span>
                                 </p>
                                 <p>
                                     ${unsafeHTML(
@@ -325,28 +332,27 @@ export default class LMSCardDetailsModal extends LitElement {
                             <!-- Fees -->
                             <div class="p-4">
                                 <p class="mb-2">
-                                    <span
-                                        >${litFontawesome(faCreditCard, {
-                                            className: "w-4 h-4 inline-block",
-                                        })}</span
+                                    <lms-icon-span
+                                        .icon=${faCreditCard}
+                                        .textSize=${"text-lg"}
                                     >
-                                    <strong>${__("Fees")}</strong>
+                                        ${__("Fees")}
+                                    </lms-icon-span>
                                 </p>
 
                                 <div
-                                    class="${classMap({
+                                    class=${classMap({
                                         hidden: !noFees,
-                                    })}"
+                                    })}
                                 >
                                     <p class="mb-2">${__("No fees")}</p>
                                     <p class="mb-2">
-                                        <span
-                                            >${litFontawesome(faUsers, {
-                                                className:
-                                                    "w-4 h-4 inline-block",
-                                            })}</span
+                                        <lms-icon-span
+                                            .icon=${faUsers}
+                                            .textSize=${"text-lg"}
                                         >
-                                        <strong>${__("Target Groups")}</strong>
+                                            ${__("Target Groups")}
+                                        </lms-icon-span>
                                     </p>
                                     <p>
                                         ${this.renderTargetGroupInfo(
@@ -379,12 +385,12 @@ export default class LMSCardDetailsModal extends LitElement {
 
                             <div class="p-4">
                                 <p class="mb-2">
-                                    <span
-                                        >${litFontawesome(faMapMarker, {
-                                            className: "w-4 h-4 inline-block",
-                                        })}</span
+                                    <lms-icon-span
+                                        .icon=${faMapMarker}
+                                        .textSize=${"text-lg"}
                                     >
-                                    <strong>${__("Location")}</strong>
+                                        ${__("Location")}
+                                    </lms-icon-span>
                                 </p>
                                 <p>${formatAddress(location)}</p>
                             </div>

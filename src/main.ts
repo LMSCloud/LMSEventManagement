@@ -22,6 +22,7 @@ import LMSDataNavbar from "./components/LMSDataNavbar";
 import LMSDropdown from "./components/LMSDropdown";
 import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
+import LMSIconSpan from "./components/LMSIconSpan";
 import LMSImageBrowser from "./components/LMSImageBrowser";
 import LMSImagePicker from "./components/LMSImagePicker";
 import LMSModal from "./components/LMSModal";
@@ -70,6 +71,7 @@ export default {
     LMSDropdown,
     LMSEventsFilter,
     LMSFloatingMenu,
+    LMSIconSpan,
     LMSImageBrowser,
     LMSImagePicker,
     LMSModal,
