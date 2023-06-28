@@ -24,7 +24,6 @@ import LMSCheckboxInput from "./inputs/modal/LMSCheckboxInput";
 import LMSMatrix from "./inputs/modal/LMSMatrix";
 import LMSPrimitivesInput from "./inputs/modal/LMSPrimitivesInput";
 import LMSSelect from "./inputs/modal/LMSSelect";
-import LMSIconSpan from "./LMSIconSpan";
 
 declare global {
     interface HTMLElementTagNameMap {
@@ -32,7 +31,6 @@ declare global {
         "lms-checkbox-input": LMSCheckboxInput;
         "lms-primitives-input": LMSPrimitivesInput;
         "lms-matrix": LMSMatrix;
-        "lms-icon-span": LMSIconSpan;
     }
 }
 
@@ -280,12 +278,10 @@ export default class LMSModal extends LitElement {
                                 hidden: !this.alert.active,
                             })} alert alert-error"
                         >
-                            <lms-icon-span
-                                .icon=${faXmarkCircle}
-                                .textSize="text-lg"
-                            >
-                                ${this.alert.message}
-                            </lms-icon-span>
+                            ${litFontawesome(faXmarkCircle, {
+                                className: "w-4 h-4 inline-block",
+                            })}
+                            <span>${this.alert.message}</span>
                             <button
                                 for="lms-modal"
                                 class="btn-ghost btn-sm btn-circle btn absolute right-2 top-2"
@@ -304,20 +300,16 @@ export default class LMSModal extends LitElement {
                             class="btn-secondary btn"
                             @click=${this.toggleModal}
                         >
-                            <lms-icon-span
-                                .icon=${faClose}
-                                .textSize="text-base"
-                            >
-                                ${__("Close")}
-                            </lms-icon-span>
+                            ${litFontawesome(faClose, {
+                                className: "w-4 h-4 inline-block",
+                            })}
+                            <span>${__("Close")}</span>
                         </button>
                         <button type="submit" class="btn-primary btn">
-                            <lms-icon-span
-                                .icon=${faPlus}
-                                .textSize="text-base"
-                            >
-                                ${__("Create")}
-                            </lms-icon-span>
+                            ${litFontawesome(faPlus, {
+                                className: "w-4 h-4 inline-block",
+                            })}
+                            <span>${__("Create")}</span>
                         </button>
                     </div>
                 </form>

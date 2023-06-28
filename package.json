@@ -78,7 +78,6 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@lit-labs/task": "^2.1.0",
-    "@lmscloud/lite": "^0.0.3",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@weavedev/lit-fontawesome": "^0.3.2",
