@@ -134,48 +134,52 @@ msgstr ""
 msgid "value"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:288
+#: src/components/LMSCardDetailsModal.ts:265
+msgid "Directions to the venue by"
+msgstr ""
+
+#: src/components/LMSCardDetailsModal.ts:322
 msgid "Date and Time"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:306
+#: src/components/LMSCardDetailsModal.ts:340
 #: src/extensions/LMSEventTypesModal.ts:108
 #: src/extensions/LMSEventsModal.ts:162
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:629
 msgid "Description"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:333
+#: src/components/LMSCardDetailsModal.ts:367
 msgid "Fees"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:341
+#: src/components/LMSCardDetailsModal.ts:375
 msgid "No fees"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:349
+#: src/components/LMSCardDetailsModal.ts:383
 #: src/extensions/LMSEventManagementMenu.ts:43
 #: src/extensions/LMSEventTypesModal.ts:40 src/extensions/LMSEventsModal.ts:62
-#: src/lib/converters.ts:307
+#: src/lib/converters.ts:340
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:475
 msgid "Target Groups"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:366
+#: src/components/LMSCardDetailsModal.ts:400
 #: src/components/LMSEventsFilter.ts:439
 msgid "Target Group"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:367
+#: src/components/LMSCardDetailsModal.ts:401
 msgid "Age Range"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:368
+#: src/components/LMSCardDetailsModal.ts:402
 #: src/components/LMSEventsFilter.ts:606 src/components/LMSEventsFilter.ts:620
 msgid "Fee"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:387
+#: src/components/LMSCardDetailsModal.ts:421
 #: src/components/LMSEventsFilter.ts:572
 #: src/extensions/LMSEventTypesModal.ts:85 src/extensions/LMSEventsModal.ts:139
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:585
@@ -183,13 +187,13 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:398
+#: src/components/LMSCardDetailsModal.ts:433
 #: src/components/LMSImagePicker.ts:194 src/components/LMSModal.ts:306
 #: src/components/LMSPellEditor.ts:141
 msgid "Close"
 msgstr ""
 
-#: src/components/LMSCardDetailsModal.ts:406
+#: src/components/LMSCardDetailsModal.ts:441
 msgid "Register"
 msgstr ""
 
@@ -618,19 +622,19 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:174 src/lib/converters.ts:511
+#: src/extensions/LMSEventsModal.ts:174 src/lib/converters.ts:551
 msgid "Pending"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:175 src/lib/converters.ts:517
+#: src/extensions/LMSEventsModal.ts:175 src/lib/converters.ts:557
 msgid "Confirmed"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:176 src/lib/converters.ts:523
+#: src/extensions/LMSEventsModal.ts:176 src/lib/converters.ts:563
 msgid "Canceled"
 msgstr ""
 
-#: src/extensions/LMSEventsModal.ts:177 src/lib/converters.ts:529
+#: src/extensions/LMSEventsModal.ts:177 src/lib/converters.ts:569
 msgid "Sold Out"
 msgstr ""
 
@@ -691,6 +695,14 @@ msgstr ""
 msgid "Country, e.g. 'USA'."
 msgstr ""
 
+#: src/extensions/LMSLocationsModal.ts:76
+msgid "Link"
+msgstr ""
+
+#: src/extensions/LMSLocationsModal.ts:78
+msgid "Link to the location's website or a map, e.g. 'https://www.example.com' or 'https://openstreetmap.org'."
+msgstr ""
+
 #: src/extensions/LMSTargetGroupsModal.ts:19
 msgid "Create Target Group"
 msgstr ""
@@ -707,27 +719,27 @@ msgstr ""
 msgid "Maximum age of the target group, e.g. '99'."
 msgstr ""
 
-#: src/lib/converters.ts:189
+#: src/lib/converters.ts:190
 msgid "Error: Invalid date"
 msgstr ""
 
-#: src/lib/converters.ts:241 src/lib/converters.ts:258
+#: src/lib/converters.ts:242 src/lib/converters.ts:291
 msgid "There's been an error"
 msgstr ""
 
-#: src/lib/converters.ts:313
+#: src/lib/converters.ts:346
 msgid "target_group"
 msgstr ""
 
-#: src/lib/converters.ts:314
+#: src/lib/converters.ts:347
 msgid "selected"
 msgstr ""
 
-#: src/lib/converters.ts:315
+#: src/lib/converters.ts:348
 msgid "fee"
 msgstr ""
 
-#: src/lib/converters.ts:637
+#: src/lib/converters.ts:677
 msgid "Error"
 msgstr ""
 
