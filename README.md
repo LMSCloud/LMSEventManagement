@@ -65,9 +65,13 @@ Target groups are groups of patrons that can be used to target events to. They h
 of properties which you can use to create certain age cohorts. Of course you can also create groups
 like 'Family' or 'Friends' or 'Staff' for example where the age is not the deciding factor.
 
-- Name
-- Minimum age
-- Maximum age
+| Property    | Database Field | Description                      |
+| ----------- | -------------- | -------------------------------- |
+| Name        | name           | Name of the target group         |
+| Minimum age | min_age        | Lower age boundary of the group  |
+| Maximum age | max_age        | Upper age boundary for the group |
+
+
 
 ## Create locations
 
@@ -75,13 +79,17 @@ Locations are the places where your events will take place. They have a small se
 denote the location's address and you can also add a link to the location's website or a map provider
 of your choice. The provider's hostname will be shown to users so they know where they will be redirected.
 
-- Name
-- Street
-- Number
-- Zip code
-- City
-- Country
-- Site or map provider
+| Property             | Database Field | Description                                      |
+| -------------------- | -------------- | ------------------------------------------------ |
+| Name                 | name           | Name of the location                             |
+| Street               | street         | Street address of the location                   |
+| Number               | number         | Street number of the location                    |
+| Zip code             | zip            | Zip code of the location                         |
+| City                 | city           | City of the location                             |
+| Country              | country        | Country of the location                          |
+| Site or map provider | link           | Link to the location's website or a map provider |
+
+
 
 ## Create event types
 
@@ -89,14 +97,16 @@ Event types are sort of like categories for your events. They allow users to fil
 but also act as templates for new events you'd like to create. You can set a subset of properties
 that actual events will inherit from the event type.
 
-- Name
-- Minimum age
-- Maximum age
-- Maximum number of participants
-- Location, which is a reference to a location you've created
-- Image, which is an internal or external URL to an image
-- Description, which can be just text but also HTML
-- Open registration, which denotes whether users external to your library can register for this event
+| Property                       | Database Field    | Description                                          |
+| ------------------------------ | ----------------- | ---------------------------------------------------- |
+| Name                           | name              | Name of the event type                               |
+| Minimum age                    | min_age           | Minimum age requirement                              |
+| Maximum age                    | max_age           | Maximum age requirement                              |
+| Maximum number of participants | max_participants  | Maximum allowed number of participants               |
+| Location                       | location          | Reference to a created location                      |
+| Image                          | image             | URL to an image                                      |
+| Description                    | description       | Event description                                    |
+| Open registration              | open_registration | Denotes if external users can register for the event |
 
 ## Create events
 
@@ -106,22 +116,29 @@ events from scratch or use an event type as a template. Please note that you wil
 the event to an event type, though. This is just so every event is associated with an event type that
 patrons can use to filter events. 
 
-- Name
-- Event type, which is a reference to an event type you've created
-- Minimum age
-- Maximum age
-- Maximum number of participants
-- Start time, which is a date and time the event will start
-- End time, which is a date and time the event will end
-- The following three properties are non-functional at the moment but will be used for a native event registration in a future release
+| Property                       | Database Field     | Description                                          |
+| ------------------------------ | ------------------ | ---------------------------------------------------- |
+| Name                           | name               | Name of the event                                    |
+| Event type                     | event_type         | Reference to a created event type                    |
+| Minimum age                    | min_age            | Minimum age requirement                              |
+| Maximum age                    | max_age            | Maximum age requirement                              |
+| Maximum number of participants | max_participants   | Maximum allowed number of participants               |
+| Start time                     | start_time         | Date and time when the event will start              |
+| End time                       | end_time           | Date and time when the event will end                |
+| Registration start time        | registration_start | Date and time when event registration starts         |
+| Registration end time          | registration_end   | Date and time when event registration ends           |
+| Location                       | location           | Reference to a created location                      |
+| Image                          | image              | URL to an image                                      |
+| Description                    | description        | Event description                                    |
+| Registration URL               | registration_link  | URL to an external registration page                 |
+| Open registration              | open_registration  | Denotes if external users can register for the event |
+
+### Note about some properties
+
+Three properties are non-functional at the moment but will be used for a native event registration in a future release
   - Registration start time, which is a date and time when registration for the event will start 
   - Registration end time, which is a date and time when registration for the event will end
-  - Status, which denotes the current state of the event, can be pending, confirmed, cancelled or sold out
-- Location, which is a reference to a location you've created
-- Image, which is an internal or external URL to an image
-- Description, which can be just text but also HTML
-- Registration URL, which is a URL to an external registration page
-- Open registration, which denotes whether users external to your library can register for this event
+  - Status, which denotes the current state of the event, can be pending, confirmed, cancelled o
 
 ## The target group matrices
 
@@ -150,3 +167,7 @@ performance you should keep the file size as small as possible, e.g. in a low ki
 PRs and issues are welcome! Please note that this plugin is in currently in beta.
 We haven't encountered any major issues but bugs are always possible. If you find
 a bug please open an issue and we'll try to fix it as soon as possible.
+
+# License
+
+This plugin is licensed under the GPLv3 license. See the LICENSE file for more information.
