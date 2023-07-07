@@ -381,7 +381,7 @@ export default class LMSEventsFilter extends LitElement {
                                         <div class="form-control">
                                             <label
                                                 for="_order_by_${value}"
-                                                class="label cursor-pointer"
+                                                class="label cursor-pointer justify-start"
                                             >
                                                 <input
                                                     type="radio"
@@ -412,7 +412,7 @@ export default class LMSEventsFilter extends LitElement {
                                     (eventTypeId) => html`
                                         <div class="form-control">
                                             <label
-                                                class="label cursor-pointer"
+                                                class="label cursor-pointer justify-start"
                                                 for="event_type_${eventTypeId}"
                                             >
                                                 <input
@@ -447,7 +447,7 @@ export default class LMSEventsFilter extends LitElement {
                                     (targetGroupId) => html`
                                         <div class="form-control">
                                             <label
-                                                class="label cursor-pointer"
+                                                class="label cursor-pointer justify-start"
                                                 for="target_group_${targetGroupId}"
                                             >
                                                 <input
@@ -529,7 +529,7 @@ export default class LMSEventsFilter extends LitElement {
                                 <div class="form-control">
                                     <label
                                         for="open_registration"
-                                        class="label cursor-pointer"
+                                        class="label cursor-pointer justify-start"
                                     >
                                         <input
                                             type="checkbox"
@@ -580,7 +580,7 @@ export default class LMSEventsFilter extends LitElement {
                                     (locationId) =>
                                         html` <div class="form-control">
                                             <label
-                                                class="label cursor-pointer"
+                                                class="label cursor-pointer justify-start"
                                                 for="location_${locationId}"
                                             >
                                                 <input

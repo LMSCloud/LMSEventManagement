@@ -148,7 +148,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                                 <div class="form-control">
                                     <label
                                         for="_order_by_${column}"
-                                        class="label cursor-pointer"
+                                        class="label cursor-pointer justify-start"
                                     >
                                         <input
                                             type="radio"
@@ -178,7 +178,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                                 <div class="form-control ">
                                     <label
                                         for="event_types_${event_type.id}"
-                                        class="label cursor-pointer"
+                                        class="label cursor-pointer justify-start"
                                     >
                                         <input
                                             type="checkbox"
@@ -207,7 +207,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                                 <div class="form-control ">
                                     <label
                                         for="target_groups_${target_group.id}"
-                                        class="label cursor-pointer"
+                                        class="label cursor-pointer justify-start"
                                     >
                                         <input
                                             type="checkbox"
@@ -236,7 +236,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                                 <div class="form-control">
                                     <label
                                         for="locations_${location.id}"
-                                        class="label cursor-pointer"
+                                        class="label cursor-pointer justify-start"
                                     >
                                         <input
                                             type="checkbox"
