@@ -14,6 +14,10 @@ let translationsLoaded = false;
 const callbacks: { text: string; callback: () => void }[] = [];
 let loadTranslationsCalled = false;
 export const locale = document.documentElement.lang.slice(0, 2);
+export const localeFull =
+    document.documentElement.lang === "en"
+        ? "en_US"
+        : document.documentElement.lang;
 
 async function loadTranslations(
     localeUrl = "/api/v1/contrib/eventmanagement/static/locales"

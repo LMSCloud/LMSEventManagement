@@ -13,7 +13,11 @@ import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import { formatAddress, splitDateTime } from "../lib/converters";
+import {
+    formatAddress,
+    formatMonetaryAmountByLocale,
+    splitDateTime,
+} from "../lib/converters";
 import { requestHandler } from "../lib/RequestHandler";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
@@ -40,6 +44,8 @@ export default class LMSCardDetailsModal extends LitElement {
     @state() target_groups: LMSEventTargetGroupFee[] = [];
 
     @state() locale = "en";
+
+    @state() localeFull = "en_US";
 
     @query(".close") closeButton!: HTMLButtonElement;
 
@@ -75,6 +81,10 @@ export default class LMSCardDetailsModal extends LitElement {
             );
 
         this.locale = document.documentElement.lang;
+        this.localeFull =
+            document.documentElement.lang === "en"
+                ? "en_US"
+                : document.documentElement.lang;
 
         document.addEventListener("keydown", this.boundHandleKeyDown);
     }
@@ -210,7 +220,12 @@ export default class LMSCardDetailsModal extends LitElement {
                             <tr>
                                 <td>${name}</td>
                                 <td>${min_age} - ${max_age}</td>
-                                <td>${fee}</td>
+                                <td>
+                                    ${formatMonetaryAmountByLocale(
+                                        this.localeFull,
+                                        fee
+                                    )}
+                                </td>
                             </tr>
                         `;
               })

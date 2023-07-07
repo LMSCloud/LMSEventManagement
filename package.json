@@ -81,6 +81,7 @@
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@weavedev/lit-fontawesome": "^0.3.2",
+    "country-to-currency": "^1.0.10",
     "dompurify": "^3.0.3",
     "gettext.js": "^1.2.0",
     "interactjs": "^1.10.17",
