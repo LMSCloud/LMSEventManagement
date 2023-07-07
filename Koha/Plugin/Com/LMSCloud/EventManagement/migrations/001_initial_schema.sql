@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS { { locations_table } } (
     `city` VARCHAR(255) DEFAULT '' COMMENT 'city',
     `zip` VARCHAR(255) DEFAULT '' COMMENT 'zip code',
     `country` VARCHAR(255) DEFAULT 'GERMANY' COMMENT 'country',
-    `link` VARCHAR(2000) COMMENT 'link to the location, can be to a map or a website',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS { { event_types_table } } (
@@ -23,7 +22,7 @@ CREATE TABLE IF NOT EXISTS { { event_types_table } } (
     `max_age` TINYINT unsigned DEFAULT NULL COMMENT 'maximum age requirement',
     `max_participants` SMALLINT unsigned DEFAULT NULL COMMENT 'maximum allowed number of participants',
     `location` INT(11) DEFAULT NULL COMMENT 'id of a location from the locations table',
-    `image` VARCHAR(2000) DEFAULT NULL COMMENT 'image from kohas image management',
+    `image` TEXT(65535) DEFAULT NULL COMMENT 'image from kohas image management',
     `description` TEXT COMMENT 'what is happening',
     `open_registration` TINYINT(1) DEFAULT '0' COMMENT 'is the registration to non-patrons via email',
     PRIMARY KEY (`id`)
@@ -40,10 +39,10 @@ CREATE TABLE IF NOT EXISTS { { events_table } } (
     `registration_start` DATETIME DEFAULT NULL COMMENT 'start time of the registration',
     `registration_end` DATETIME DEFAULT NULL COMMENT 'end time of the registration',
     `location` INT(11) DEFAULT NULL COMMENT 'the location id from the locations table',
-    `image` VARCHAR(2000) DEFAULT NULL COMMENT 'image from kohas image management',
+    `image` TEXT(65535) DEFAULT NULL COMMENT 'image from kohas image management',
     `description` TEXT(65535) DEFAULT NULL COMMENT 'description',
     `status` ENUM('pending', 'confirmed', 'canceled', 'sold_out') DEFAULT 'pending' COMMENT 'status of the event',
-    `registration_link` VARCHAR(2000) COMMENT 'link to the registration form',
+    `registration_link` TEXT(65535) COMMENT 'link to the registration form',
     `open_registration` TINYINT(1) DEFAULT '0' COMMENT 'is the registration to non-patrons via email',
     PRIMARY KEY (`id`),
     FOREIGN KEY (`event_type`) REFERENCES { { event_types_table } }(`id`),
@@ -54,7 +53,7 @@ CREATE TABLE IF NOT EXISTS { { event_target_group_fees_table } } (
     `event_id` INT(11) DEFAULT NULL COMMENT 'the event id from the events table',
     `target_group_id` INT(11) DEFAULT NULL COMMENT 'the target group id from the target groups table',
     `selected` TINYINT(1) DEFAULT '0' COMMENT 'is the target group selected for the event',
-    `fee` DECIMAL(15, 4) DEFAULT NULL COMMENT 'fee for the event',
+    `fee` FLOAT unsigned DEFAULT NULL COMMENT 'fee for the event',
     PRIMARY KEY (`id`),
     FOREIGN KEY (`event_id`) REFERENCES { { events_table } }(`id`),
     FOREIGN KEY (`target_group_id`) REFERENCES { { target_groups_table } }(`id`)
@@ -64,7 +63,7 @@ CREATE TABLE IF NOT EXISTS { { event_type_target_group_fees_table } } (
     `event_type_id` INT(11) DEFAULT NULL COMMENT 'the event type id from the event types table',
     `target_group_id` INT(11) DEFAULT NULL COMMENT 'the target group id from the target groups table',
     `selected` TINYINT(1) DEFAULT '0' COMMENT 'is the target group selected for the event',
-    `fee` DECIMAL(15, 4) DEFAULT NULL COMMENT 'fee for the event',
+    `fee` FLOAT unsigned DEFAULT NULL COMMENT 'fee for the event',
     PRIMARY KEY (`id`),
     FOREIGN KEY (`event_type_id`) REFERENCES { { event_types_table } }(`id`),
     FOREIGN KEY (`target_group_id`) REFERENCES { { target_groups_table } }(`id`)

@@ -42,6 +42,7 @@ no if ( $PERL_VERSION >= 5.018 ), 'warnings' => 'experimental';
 
 use Module::Metadata;
 use Koha::Schema;
+use Koha::Plugin::Com::LMSCloud::EventManagement::lib::MigrationHelper;
 
 BEGIN {
     my $path = Module::Metadata->find_module_by_name(__PACKAGE__);
@@ -281,20 +282,7 @@ sub configure {
 sub install() {
     my ( $self, $args ) = @_;
 
-    try {
-        my $dbh = C4::Context->dbh;
-
-        my $table_names = {
-            target_groups_table                => $self->get_qualified_table_name('target_groups'),
-            locations_table                    => $self->get_qualified_table_name('locations'),
-            event_types_table                  => $self->get_qualified_table_name('event_types'),
-            events_table                       => $self->get_qualified_table_name('events'),
-            event_target_group_fees_table      => $self->get_qualified_table_name('e_tg_fees'),
-            event_type_target_group_fees_table => $self->get_qualified_table_name('et_tg_fees'),
-        };
-
-        # Read in the schema.sql file
-        local $INPUT_RECORD_SEPARATOR = undef;    # Enable slurp mode
+    return try {
 
         # We have to go the manual route because $self->bundle_path is undef at this point
         my $file       = __FILE__;
@@ -302,34 +290,26 @@ sub install() {
         $bundle_dir =~ s/[.]pm$//smx;
 
         my $bundle_path = $bundle_dir;
-        open my $fh, '<', $bundle_path . '/sql/schema.sql' or croak "Can't open schema.sql: $OS_ERROR";
-        my $sql = <$fh>;
-        close $fh or croak "Can't close schema.sql: $OS_ERROR";
 
-        # Replace placeholder tokens with table names
-        for my $table ( keys %{$table_names} ) {
-            my $ws         = '\s*';                     # Whitespace character class
-            my $ob         = '\{';                      # Opening brace character class
-            my $cb         = '\}';                      # Closing brace character class
-            my $table_name = '\s*' . $table . '\s*';    # Table name wrapped with optional whitespace
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::EventManagement::lib::MigrationHelper->new(
+            {   table_name_mappings => {
+                    target_groups_table                => $self->get_qualified_table_name('target_groups'),
+                    locations_table                    => $self->get_qualified_table_name('locations'),
+                    event_types_table                  => $self->get_qualified_table_name('event_types'),
+                    events_table                       => $self->get_qualified_table_name('events'),
+                    event_target_group_fees_table      => $self->get_qualified_table_name('e_tg_fees'),
+                    event_type_target_group_fees_table => $self->get_qualified_table_name('et_tg_fees'),
+                },
+                bundle_path => $bundle_path,
+            }
+        );
 
-            my $pattern = $ob . $ws . $ob . $table_name . $cb . $ws . $cb;
-
-            $sql =~ s/$pattern/$table_names->{$table}/smxg;
-        }
-
-        # Split statements and execute each one
-        my $statements = [ split /;\s*\n/smx, $sql ];
-        for my $statement ( @{$statements} ) {
-            $dbh->do($statement);
-        }
+        $migration_helper->install();
 
         return 1;
     }
     catch {
         my $error = $_;
-        use Data::Dumper;
-        carp Dumper($error);
         carp "INSTALL ERROR: $error";
 
         return 0;
@@ -338,6 +318,21 @@ sub install() {
 
 sub upgrade {
     my ( $self, $args ) = @_;
+
+    my $migration_helper = Koha::Plugin::Com::LMSCloud::EventManagement::lib::MigrationHelper->new(
+        {   table_name_mappings => {
+                target_groups_table                => $self->get_qualified_table_name('target_groups'),
+                locations_table                    => $self->get_qualified_table_name('locations'),
+                event_types_table                  => $self->get_qualified_table_name('event_types'),
+                events_table                       => $self->get_qualified_table_name('events'),
+                event_target_group_fees_table      => $self->get_qualified_table_name('e_tg_fees'),
+                event_type_target_group_fees_table => $self->get_qualified_table_name('et_tg_fees'),
+            },
+            bundle_path => $self->bundle_path,
+        }
+    );
+
+    $migration_helper->upgrade();
 
     my $dt = dt_from_string();
     $self->store_data( { last_upgraded => $dt->ymd(q{-}) . q{ } . $dt->hms(q{:}) } );
