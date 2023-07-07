@@ -83,6 +83,14 @@ zip code
 
 country
 
+=head2 link
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 2000
+
+link to the location, can be to a map or a website
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -105,6 +113,8 @@ __PACKAGE__->add_columns(
     is_nullable => 1,
     size => 255,
   },
+  "link",
+  { data_type => "varchar", is_nullable => 1, size => 2000 },
 );
 
 =head1 PRIMARY KEY
@@ -137,8 +147,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-07-07 11:38:59
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:prcQ6PE1LJ4w827y93HHTQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-07-07 12:20:39
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:kG/xNgI4Ty/ACJM/Oa9BcQ
 
 sub koha_object_class {
     'Koha::LMSCloud::EventManagement::Location';

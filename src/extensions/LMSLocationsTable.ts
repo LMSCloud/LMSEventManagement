@@ -100,6 +100,7 @@ export default class LMSLocationsTable extends LMSTable {
             "city",
             "zip",
             "country",
+            "link",
         ];
         this.isEditable = true;
         this.isDeletable = true;

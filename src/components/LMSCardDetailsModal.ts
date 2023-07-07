@@ -247,6 +247,25 @@ export default class LMSCardDetailsModal extends LitElement {
                   ${eDate}, ${eTime}`}`;
     }
 
+    private renderLocationLink(location: LMSLocation | number | null) {
+        if (typeof location === "number") {
+            return nothing;
+        }
+
+        const link = location?.link;
+        if (!link) {
+            return nothing;
+        }
+
+        const url = new URL(link);
+        return html`<a
+            class="link-hover link-neutral link text-sm"
+            href=${link}
+            target="_blank"
+            >${__("Directions to the venue by")} ${url.hostname}</a
+        >`;
+    }
+
     override render() {
         const {
             name,
@@ -401,7 +420,8 @@ export default class LMSCardDetailsModal extends LitElement {
                                     >
                                     <strong>${__("Location")}</strong>
                                 </p>
-                                <p>${formatAddress(location)}</p>
+                                <p class="mb-2">${formatAddress(location)}</p>
+                                <p>${this.renderLocationLink(location)}</p>
                             </div>
                         </div>
                     </div>

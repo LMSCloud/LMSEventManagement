@@ -209,6 +209,7 @@ export interface LMSLocation {
     city: string | null;
     zip: string | null;
     country: string | null;
+    link: string | null;
 }
 
 export interface LMSEventType {

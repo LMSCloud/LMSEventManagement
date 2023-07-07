@@ -142,14 +142,6 @@ status of the event
 
 link to the registration form
 
-=head2 location_link
-
-  data_type: 'varchar'
-  is_nullable: 1
-  size: 2000
-
-link to the location
-
 =head2 open_registration
 
   data_type: 'tinyint'
@@ -211,8 +203,6 @@ __PACKAGE__->add_columns(
     is_nullable => 1,
   },
   "registration_link",
-  { data_type => "varchar", is_nullable => 1, size => 2000 },
-  "location_link",
   { data_type => "varchar", is_nullable => 1, size => 2000 },
   "open_registration",
   { data_type => "tinyint", default_value => 0, is_nullable => 1 },
@@ -288,8 +278,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-07-07 11:54:46
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:1Gdx+NvpTc6rQrhWwpGARQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-07-07 12:20:39
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:E49WjtNAVOTPiXo9H7w6zw
 
 sub koha_object_class {
     'Koha::LMSCloud::EventManagement::Event';

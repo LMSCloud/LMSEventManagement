@@ -608,9 +608,18 @@ html {
 }
 
 @media (hover:hover) {
+  .link-hover:hover {
+    text-decoration-line: underline;
+  }
+
   .label a:hover {
     --tw-text-opacity: 1;
     color: hsl(var(--bc) / var(--tw-text-opacity));
+  }
+
+  .link-neutral:hover {
+    --tw-text-opacity: 1;
+    color: hsl(var(--nf) / var(--tw-text-opacity));
   }
 
   .menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):where(.active), .menu :where(li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title)):where(.active) {
@@ -1289,9 +1298,18 @@ html {
   min-width: 2.2em;
 }
 
+.\\!link {
+  cursor: pointer !important;
+  text-decoration-line: underline !important;
+}
+
 .link {
   cursor: pointer;
   text-decoration-line: underline;
+}
+
+.link-hover {
+  text-decoration-line: none;
 }
 
 .menu {
@@ -2372,9 +2390,24 @@ details.collapse summary::-webkit-details-marker {
   isolation: isolate;
 }
 
+.link-neutral {
+  --tw-text-opacity: 1;
+  color: hsl(var(--n) / var(--tw-text-opacity));
+}
+
+.\\!link:focus {
+  outline: 2px solid transparent !important;
+  outline-offset: 2px !important;
+}
+
 .link:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
+}
+
+.\\!link:focus-visible {
+  outline: 2px solid currentColor !important;
+  outline-offset: 2px !important;
 }
 
 .link:focus-visible {

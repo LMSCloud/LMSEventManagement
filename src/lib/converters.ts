@@ -436,6 +436,13 @@ export class InputConverter {
                         </option>`
                 )}
             </select>`,
+            link: (value) => html`<input
+                class="input-bordered input w-full"
+                type="text"
+                name="link"
+                value=${value}
+                disabled
+            />`,
             image: (value, data) =>
                 html` <lms-image-picker
                     .uploads=${data as UploadedImage[]}

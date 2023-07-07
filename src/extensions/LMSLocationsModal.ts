@@ -70,6 +70,16 @@ export default class LMSLocationsModal extends LMSModal {
                 required: false,
                 value: "",
             },
+            {
+                name: "link",
+                type: "text",
+                desc: __("Link"),
+                placeholder: attr__(
+                    "Link to the location's website or a map, e.g. 'https://www.example.com' or 'https://openstreetmap.org'."
+                ),
+                required: false,
+                value: "",
+            },
         ];
     }
 }

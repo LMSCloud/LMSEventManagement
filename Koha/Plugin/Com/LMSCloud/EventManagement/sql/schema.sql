@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS { { locations_table } } (
     `city` VARCHAR(255) DEFAULT '' COMMENT 'city',
     `zip` VARCHAR(255) DEFAULT '' COMMENT 'zip code',
     `country` VARCHAR(255) DEFAULT 'GERMANY' COMMENT 'country',
+    `link` VARCHAR(2000) COMMENT 'link to the location, can be to a map or a website',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS { { event_types_table } } (
@@ -43,7 +44,6 @@ CREATE TABLE IF NOT EXISTS { { events_table } } (
     `description` TEXT(65535) DEFAULT NULL COMMENT 'description',
     `status` ENUM('pending', 'confirmed', 'canceled', 'sold_out') DEFAULT 'pending' COMMENT 'status of the event',
     `registration_link` VARCHAR(2000) COMMENT 'link to the registration form',
-    `location_link` VARCHAR(2000) COMMENT 'link to the location',
     `open_registration` TINYINT(1) DEFAULT '0' COMMENT 'is the registration to non-patrons via email',
     PRIMARY KEY (`id`),
     FOREIGN KEY (`event_type`) REFERENCES { { event_types_table } }(`id`),
