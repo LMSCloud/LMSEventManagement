@@ -31,7 +31,7 @@ This will be addressed in a future release.
 
 ```conf
 <Directory /var/lib/koha/INSTANCE/plugins/>
-    Options Indexes FollowSymLinks
+    Options FollowSymLinks
     AllowOverride None
     Require all granted
 </Directory>
