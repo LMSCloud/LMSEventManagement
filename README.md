@@ -138,7 +138,7 @@ patrons can use to filter events.
 Three properties are non-functional at the moment but will be used for a native event registration in a future release
   - Registration start time, which is a date and time when registration for the event will start 
   - Registration end time, which is a date and time when registration for the event will end
-  - Status, which denotes the current state of the event, can be pending, confirmed, cancelled o
+  - Status, which denotes the current state of the event, can be pending, confirmed, cancelled or sold out
 
 ## The target group matrices
 
