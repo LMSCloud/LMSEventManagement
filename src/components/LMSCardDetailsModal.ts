@@ -45,7 +45,7 @@ export default class LMSCardDetailsModal extends LitElement {
 
     @state() locale = "en";
 
-    @state() localeFull = "en_US";
+    @state() localeFull = "en-US";
 
     @query(".close") closeButton!: HTMLButtonElement;
 
@@ -83,7 +83,7 @@ export default class LMSCardDetailsModal extends LitElement {
         this.locale = document.documentElement.lang;
         this.localeFull =
             document.documentElement.lang === "en"
-                ? "en_US"
+                ? "en-US"
                 : document.documentElement.lang;
 
         document.addEventListener("keydown", this.boundHandleKeyDown);

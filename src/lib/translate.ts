@@ -16,7 +16,7 @@ let loadTranslationsCalled = false;
 export const locale = document.documentElement.lang.slice(0, 2);
 export const localeFull =
     document.documentElement.lang === "en"
-        ? "en_US"
+        ? "en-US"
         : document.documentElement.lang;
 
 async function loadTranslations(
