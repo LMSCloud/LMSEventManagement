@@ -137,8 +137,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-04-11 13:28:05
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Er8S81beQAb3fUgDUdNNBw
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-07-07 11:38:59
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:prcQ6PE1LJ4w827y93HHTQ
 
 sub koha_object_class {
     'Koha::LMSCloud::EventManagement::Location';

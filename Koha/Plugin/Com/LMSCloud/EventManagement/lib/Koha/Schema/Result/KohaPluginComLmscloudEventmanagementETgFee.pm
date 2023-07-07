@@ -55,9 +55,9 @@ is the target group selected for the event
 
 =head2 fee
 
-  data_type: 'float'
-  extra: {unsigned => 1}
+  data_type: 'decimal'
   is_nullable: 1
+  size: [15,4]
 
 fee for the event
 
@@ -73,7 +73,7 @@ __PACKAGE__->add_columns(
   "selected",
   { data_type => "tinyint", default_value => 0, is_nullable => 1 },
   "fee",
-  { data_type => "float", extra => { unsigned => 1 }, is_nullable => 1 },
+  { data_type => "decimal", is_nullable => 1, size => [15, 4] },
 );
 
 =head1 PRIMARY KEY
@@ -131,8 +131,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-04-11 13:28:05
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:7lIDm1e7vllKVO9ZUcGf5g
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-07-07 11:54:46
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZcCwmR53Cm2CpEu7rXqpCQ
 
 sub koha_object_class {
     'Koha::LMSCloud::EventManagement::Event::TargetGroup::Fee';

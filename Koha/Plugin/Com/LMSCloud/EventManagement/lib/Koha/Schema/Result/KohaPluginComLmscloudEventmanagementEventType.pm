@@ -71,8 +71,9 @@ id of a location from the locations table
 
 =head2 image
 
-  data_type: 'text'
+  data_type: 'varchar'
   is_nullable: 1
+  size: 2000
 
 image from kohas image management
 
@@ -107,7 +108,7 @@ __PACKAGE__->add_columns(
   "location",
   { data_type => "integer", is_nullable => 1 },
   "image",
-  { data_type => "text", is_nullable => 1 },
+  { data_type => "varchar", is_nullable => 1, size => 2000 },
   "description",
   { data_type => "text", is_nullable => 1 },
   "open_registration",
@@ -159,8 +160,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-04-11 13:28:05
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:6nrhPLDqqKB4tyEDkb5pLQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-07-07 11:54:46
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:XW5qmYO/y2WaklCUXwrhqw
 
 sub koha_object_class {
     'Koha::LMSCloud::EventManagement::EventType';

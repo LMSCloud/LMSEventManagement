@@ -124,8 +124,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-04-11 13:28:05
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:2FxMSHxaVMbyMKXVufx7gg
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-07-07 11:38:59
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:jCEkqBEREVrbhwTAPNgXXw
 
 sub koha_object_class {
     'Koha::LMSCloud::EventManagement::TargetGroup';
