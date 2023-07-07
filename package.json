@@ -4,6 +4,7 @@
   "description": "Managing events just got easier!",
   "main": "gulpfile.js",
   "scripts": {
+    "archive": "./tools/archive.mjs",
     "package-kpz:build": "cd package-kpz && cargo build --release && cd ../ && ln -s ./package-kpz/target/release/package-kpz ./p-kpz",
     "ktd-plugin-tools:build": "cd ktd-plugin-tools && go build && cd ../ && ln -s ./ktd-plugin-tools/ktd-plugin-tools ./kpt",
     "lint": "eslint \"src/**/*.{js,ts}\"",

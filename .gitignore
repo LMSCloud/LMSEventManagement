@@ -2,6 +2,7 @@ ValidatorXSC/
 node_modules/
 img/
 
+archive
 package-lock.json
 pnpm-lock.yaml
 *.kpz
