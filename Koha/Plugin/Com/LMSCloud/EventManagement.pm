@@ -344,7 +344,7 @@ sub upgrade {
         );
 
         my $current_migration = $self->retrieve_data('__CURRENT_MIGRATION__');
-        my $is_success        = $migration_helper->upgrade($current_migration);
+        my $is_success        = $migration_helper->upgrade( { current_migration => $current_migration } );
         if ( !$is_success ) {
             croak 'Migration failed';
         }
