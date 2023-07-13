@@ -16,7 +16,7 @@ use C4::Context;
 
 our $VERSION = '1.0.0';
 
-Readonly::Scalar my $INIT => -1;
+Readonly::Scalar my $INIT => 0;
 
 has 'dbh' => (
     is      => 'ro',
