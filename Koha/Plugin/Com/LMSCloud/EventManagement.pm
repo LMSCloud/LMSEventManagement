@@ -319,6 +319,13 @@ sub install() {
 sub upgrade {
     my ( $self, $args ) = @_;
 
+    # We have to go the manual route because $self->bundle_path is undef at this point
+    my $file       = __FILE__;
+    my $bundle_dir = $file;
+    $bundle_dir =~ s/[.]pm$//smx;
+
+    my $bundle_path = $bundle_dir;
+
     return try {
         my $migration_helper = Koha::Plugin::Com::LMSCloud::EventManagement::lib::MigrationHelper->new(
             {   table_name_mappings => {
