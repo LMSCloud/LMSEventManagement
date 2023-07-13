@@ -340,7 +340,8 @@ sub upgrade {
             }
         );
 
-        $migration_helper->upgrade();
+        my $current_migration = $self->retrieve_data('__CURRENT_MIGRATION__');
+        $migration_helper->upgrade($current_migration);
 
         my $dt = dt_from_string();
         $self->store_data( { last_upgraded => $dt->ymd(q{-}) . q{ } . $dt->hms(q{:}) } );

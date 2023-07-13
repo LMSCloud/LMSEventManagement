@@ -60,7 +60,7 @@ sub upgrade() {
     my ( $self, $args ) = @_;
 
     return try {
-        my $last_migration = $self->retrieve_data('__CURRENT_MIGRATION__') // $INIT;
+        my $last_migration = $args->{current_migration} // $INIT;
         if ( !$last_migration ) {
             carp <<~'MESSAGE';
                 No last migration found. This is likely a mistake as there should
