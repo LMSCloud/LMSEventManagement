@@ -60,9 +60,9 @@ sub upgrade() {
     my ( $self, $args ) = @_;
 
     return try {
-        my $last_migration = $args->{current_migration} // $INIT;
+        my $last_migration = $args->{plugin}->retrieve_data('__CURRENT_MIGRATION__') // $INIT;
         if ( !$last_migration ) {
-            carp <<~'MESSAGE';
+            carp <<~"MESSAGE";
                 No last migration found. This is likely a mistake as there should
                 be a last migration number stored after installation. If it's missing
                 you should run the following statement in the DB:
@@ -91,7 +91,7 @@ sub upgrade() {
             $self->_apply_migration( { file => $file } );
 
             # update last_migration
-            $self->store_data( '__CURRENT_MIGRATION__', $number );
+            $args->{plugin}->store_data( '__CURRENT_MIGRATION__', $number );
         }
 
         return 1;
