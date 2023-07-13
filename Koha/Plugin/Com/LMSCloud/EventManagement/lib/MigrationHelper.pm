@@ -91,7 +91,7 @@ sub upgrade() {
             $self->_apply_migration( { file => $file } );
 
             # update last_migration
-            $args->{plugin}->store_data( '__CURRENT_MIGRATION__', $number );
+            $args->{plugin}->store_data( { __CURRENT_MIGRATION__ => $number } );
         }
 
         return 1;
