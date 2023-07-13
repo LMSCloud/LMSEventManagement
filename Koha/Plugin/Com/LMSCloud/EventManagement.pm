@@ -304,7 +304,10 @@ sub install() {
             }
         );
 
-        $migration_helper->install();
+        my $is_success = $migration_helper->install();
+        if ( !$is_success ) {
+            croak 'Migration failed';
+        }
 
         return 1;
     }
@@ -341,7 +344,10 @@ sub upgrade {
         );
 
         my $current_migration = $self->retrieve_data('__CURRENT_MIGRATION__');
-        $migration_helper->upgrade($current_migration);
+        my $is_success        = $migration_helper->upgrade($current_migration);
+        if ( !$is_success ) {
+            croak 'Migration failed';
+        }
 
         my $dt = dt_from_string();
         $self->store_data( { last_upgraded => $dt->ymd(q{-}) . q{ } . $dt->hms(q{:}) } );
