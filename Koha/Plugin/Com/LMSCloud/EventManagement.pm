@@ -336,7 +336,7 @@ sub upgrade {
                     event_target_group_fees_table      => $self->get_qualified_table_name('e_tg_fees'),
                     event_type_target_group_fees_table => $self->get_qualified_table_name('et_tg_fees'),
                 },
-                bundle_path => $self->bundle_path,
+                bundle_path => $bundle_path,
             }
         );
 
