@@ -77,7 +77,7 @@ BEGIN {
 }
 
 ## Here we set our plugin version
-our $VERSION         = '1.0.0';
+our $VERSION         = '1.1.0';
 our $MINIMUM_VERSION = '18.05';
 
 ## Here is our metadata, some keys are required, some are optional
@@ -85,7 +85,7 @@ our $METADATA = {
     name            => 'LMSEventManagement',
     author          => 'LMSCloud GmbH',
     date_authored   => '2021-10-15',
-    date_updated    => '2023-05-17',
+    date_updated    => '2023-07-13',
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
@@ -319,25 +319,33 @@ sub install() {
 sub upgrade {
     my ( $self, $args ) = @_;
 
-    my $migration_helper = Koha::Plugin::Com::LMSCloud::EventManagement::lib::MigrationHelper->new(
-        {   table_name_mappings => {
-                target_groups_table                => $self->get_qualified_table_name('target_groups'),
-                locations_table                    => $self->get_qualified_table_name('locations'),
-                event_types_table                  => $self->get_qualified_table_name('event_types'),
-                events_table                       => $self->get_qualified_table_name('events'),
-                event_target_group_fees_table      => $self->get_qualified_table_name('e_tg_fees'),
-                event_type_target_group_fees_table => $self->get_qualified_table_name('et_tg_fees'),
-            },
-            bundle_path => $self->bundle_path,
-        }
-    );
+    return try {
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::EventManagement::lib::MigrationHelper->new(
+            {   table_name_mappings => {
+                    target_groups_table                => $self->get_qualified_table_name('target_groups'),
+                    locations_table                    => $self->get_qualified_table_name('locations'),
+                    event_types_table                  => $self->get_qualified_table_name('event_types'),
+                    events_table                       => $self->get_qualified_table_name('events'),
+                    event_target_group_fees_table      => $self->get_qualified_table_name('e_tg_fees'),
+                    event_type_target_group_fees_table => $self->get_qualified_table_name('et_tg_fees'),
+                },
+                bundle_path => $self->bundle_path,
+            }
+        );
 
-    $migration_helper->upgrade();
+        $migration_helper->upgrade();
 
-    my $dt = dt_from_string();
-    $self->store_data( { last_upgraded => $dt->ymd(q{-}) . q{ } . $dt->hms(q{:}) } );
+        my $dt = dt_from_string();
+        $self->store_data( { last_upgraded => $dt->ymd(q{-}) . q{ } . $dt->hms(q{:}) } );
 
-    return 1;
+        return 1;
+    }
+    catch {
+        my $error = $_;
+        carp "UPGRADE ERROR: $error";
+
+        return 0;
+    };
 }
 
 sub uninstall() {
