@@ -90,6 +90,8 @@ export default class LMSSettingsTable extends LMSTable {
                         "__ENABLED__",
                         "__INSTALLED__",
                         "__INSTALLED_VERSION__",
+                        "last_upgraded",
+                        "__CURRENT_MIGRATION__",
                     ].includes(plugin_key)
             )
             .map((setting) => {
