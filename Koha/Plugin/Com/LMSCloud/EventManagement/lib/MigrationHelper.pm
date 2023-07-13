@@ -81,20 +81,21 @@ sub upgrade() {
         }
 
         my @migration_files = $self->_get_migration_files();
-
+        my $is_success      = 0;
         for my $file (@migration_files) {
             my ($number) = ( $file =~ /(\d+)/smx );    # extract number from file name
 
             # skip migrations that have been applied already
             next if $number <= $last_migration;
 
-            $self->_apply_migration( { file => $file } );
+            $is_success = $self->_apply_migration( { file => $file } );
+            last if !$is_success;
 
             # update last_migration
             $args->{plugin}->store_data( { __CURRENT_MIGRATION__ => $number } );
         }
 
-        return 1;
+        return $is_success;
 
     }
     catch {
