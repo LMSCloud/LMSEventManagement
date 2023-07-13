@@ -60,12 +60,24 @@ sub upgrade() {
     my ( $self, $args ) = @_;
 
     return try {
-        my $last_migration_file = 'last_migration.txt';
-        my $last_migration      = $INIT;                  # Initialize to a value that indicates no migrations have been applied yet.
-        if ( -e $last_migration_file ) {
-            open my $fh, '<', $last_migration_file or croak "Can't open $last_migration_file: $OS_ERROR";
-            $last_migration = <$fh>;
-            close $fh or croak "Can't close $last_migration_file: $OS_ERROR";
+        my $last_migration = $self->retrieve_data('__CURRENT_MIGRATION__') // $INIT;
+        if ( !$last_migration ) {
+            carp <<~'MESSAGE';
+                No last migration found. This is likely a mistake as there should
+                be a last migration number stored after installation. If it's missing
+                you should run the following statement in the DB:
+
+                INSERT INTO plugin_data (plugin_class, plugin_key, plugin_value)
+                VALUES (
+                    'Koha::Plugin::Com::LMSCloud::EventManagement',
+                    '__CURRENT_MIGRATION__',
+                    '<initial_migration_number>'
+                );
+
+                where <initial_migration_number> is the number of the initial schema.
+            MESSAGE
+
+            return 0;
         }
 
         my @migration_files = $self->_get_migration_files();
@@ -79,9 +91,7 @@ sub upgrade() {
             $self->_apply_migration( { file => $file } );
 
             # update last_migration
-            open my $fh, '>>', $last_migration_file or croak "Can't open $last_migration_file: $OS_ERROR";
-            print {$fh} $number or croak "Can't write to $last_migration_file: $OS_ERROR";
-            close $fh           or croak "Can't close $last_migration_file: $OS_ERROR";
+            $self->store_data( '__CURRENT_MIGRATION__', $number );
         }
 
         return 1;
@@ -134,7 +144,6 @@ sub _apply_migration {
 
         my $statements = [ split /;\s*\n/smx, $sql ];
         for my $statement ( @{$statements} ) {
-            warn $statement;
             $self->dbh->do($statement);
         }
         return 1;
