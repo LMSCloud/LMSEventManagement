@@ -83,7 +83,8 @@ sub upgrade() {
         my @migration_files = $self->_get_migration_files();
         my $is_success      = 0;
         for my $file (@migration_files) {
-            my ($number) = ( $file =~ /(\d+)/smx );    # extract number from file name
+            my ($filename) = fileparse($file);
+            my ($number)   = ( $filename =~ m{(\d+)_?.*}smx );    # extract number from file name
 
             # skip migrations that have been applied already
             next if $number <= $last_migration;
@@ -114,10 +115,12 @@ sub _get_migration_files {
     # List all SQL files in migrations directory
     my @migration_files = glob "$migrations_path/*.sql";
 
-    # Sort files based on the numerical part in their filenames
-    @migration_files = sort { ( $a =~ /(\d+)/smx )[0] <=> ( $b =~ /(\d+)/smx )[0] } @migration_files;
+    # Extract numbers from filenames and sort based on the numbers
+    my @sorted_files = map { $_->[0] }
+        sort { $a->[1] <=> $b->[1] }
+        map { [ $_, ( fileparse($_) =~ m{(\d+)_?.*}smx ) ] } @migration_files;
 
-    return @migration_files;
+    return @sorted_files;
 }
 
 sub _apply_migration {
