@@ -38,44 +38,61 @@ has 'bundle_path' => (
 sub install() {
     my ( $self, $args ) = @_;
 
-    my @migration_files = $self->_get_migration_files();
+    return try {
+        my @migration_files = $self->_get_migration_files();
 
-    # Loop over migration files and apply each one
-    for my $file (@migration_files) {
-        $self->_apply_migration( { file => $file } );
+        # Loop over migration files and apply each one
+        for my $file (@migration_files) {
+            $self->_apply_migration( { file => $file } );
+        }
+
+        return 1;
     }
+    catch {
+        my $error = $_;
+        carp "INSTALLATION ERROR: $error";
 
-    return 1;
+        return 0;
+    };
 }
 
 sub upgrade() {
     my ( $self, $args ) = @_;
 
-    my $last_migration_file = 'last_migration.txt';
-    my $last_migration      = $INIT;                  # Initialize to a value that indicates no migrations have been applied yet.
-    if ( -e $last_migration_file ) {
-        open my $fh, '<', $last_migration_file or croak "Can't open $last_migration_file: $OS_ERROR";
-        $last_migration = <$fh>;
-        close $fh or croak "Can't close $last_migration_file: $OS_ERROR";
+    return try {
+        my $last_migration_file = 'last_migration.txt';
+        my $last_migration      = $INIT;                  # Initialize to a value that indicates no migrations have been applied yet.
+        if ( -e $last_migration_file ) {
+            open my $fh, '<', $last_migration_file or croak "Can't open $last_migration_file: $OS_ERROR";
+            $last_migration = <$fh>;
+            close $fh or croak "Can't close $last_migration_file: $OS_ERROR";
+        }
+
+        my @migration_files = $self->_get_migration_files();
+
+        for my $file (@migration_files) {
+            my ($number) = ( $file =~ /(\d+)/smx );    # extract number from file name
+
+            # skip migrations that have been applied already
+            next if $number <= $last_migration;
+
+            $self->_apply_migration( { file => $file } );
+
+            # update last_migration
+            open my $fh, '>>', $last_migration_file or croak "Can't open $last_migration_file: $OS_ERROR";
+            print {$fh} $number or croak "Can't write to $last_migration_file: $OS_ERROR";
+            close $fh           or croak "Can't close $last_migration_file: $OS_ERROR";
+        }
+
+        return 1;
+
     }
+    catch {
+        my $error = $_;
+        carp "UPGRADE ERROR: $error";
 
-    my @migration_files = $self->_get_migration_files();
-
-    for my $file (@migration_files) {
-        my ($number) = ( $file =~ /(\d+)/smx );    # extract number from file name
-
-        # skip migrations that have been applied already
-        next if $number <= $last_migration;
-
-        $self->_apply_migration( { file => $file } );
-
-        # update last_migration
-        open my $fh, '>>', $last_migration_file or croak "Can't open $last_migration_file: $OS_ERROR";
-        print {$fh} $number or croak "Can't write to $last_migration_file: $OS_ERROR";
-        close $fh           or croak "Can't close $last_migration_file: $OS_ERROR";
-    }
-
-    return 1;
+        return 0;
+    };
 }
 
 sub _get_migration_files {
@@ -112,7 +129,6 @@ sub _apply_migration {
             my $pattern = $ob . $ws . $ob . $table_name . $cb . $ws . $cb;
 
             my $table_identifier = $self->table_name_mappings->{$table};
-            warn $table_identifier;
             $sql =~ s/$pattern/$table_identifier/smxg;
         }
 
