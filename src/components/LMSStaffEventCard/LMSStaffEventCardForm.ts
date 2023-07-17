@@ -152,9 +152,7 @@ export default class LMSStaffEventCardForm extends LitElement {
 
     /**
      * Processes the datetime-local elements in the form.
-     * We need to assure they aren't rejected by the api validation.
-     * We remove the idiosyncracies from the ISO8601 standard
-     * and convert straight into sql writable strings.
+     * Converts the datetime values to SQL-writable strings while respecting the timezone.
      * @param target - The HTMLFormElement containing the datetime-local elements.
      * @returns The processed datetime-local elements.
      */
@@ -164,22 +162,22 @@ export default class LMSStaffEventCardForm extends LitElement {
         );
         if (!datetimeLocalElements.length) return;
 
-        const affected_fields = [
+        const affectedFields = [
             "start_time",
             "end_time",
             "registration_start",
             "registration_end",
         ];
 
-        // return an array of objects with the updated SQL-formatted datetime values
+        // Return an array of objects with the updated SQL-formatted datetime values
         return datetimeLocalElements.map((element) => {
             const { name, value } = element;
 
-            if (affected_fields.includes(name) && value) {
-                const [date, time] = value.split("T");
-                const [year, month, day] = date.split("-");
-                const [hour, minute] = time.split(":");
-                const iso8601formattedDate = `${year}-${month}-${day}T${hour}:${minute}:00Z`;
+            if (affectedFields.includes(name) && value) {
+                const localDate = new Date(value); // Parse the local date string
+
+                // Convert the local date to UTC and format it as an SQL-writable string
+                const iso8601formattedDate = localDate.toISOString();
 
                 return { name, value: iso8601formattedDate };
             }

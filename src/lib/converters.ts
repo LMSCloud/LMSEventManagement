@@ -202,31 +202,54 @@ export function splitDateTime(
 }
 
 /**
- * Normalizes a datetime string for use in an input field of type "datetime-local".
- * @param string - The datetime string to normalize.
- * @param format - The format of the datetime string.
- * @returns The normalized datetime string.
+ * Formats a part of a datetime string.
+ * @param part
+ * @param length
+ * @returns
  */
-export function normalizeForInput(string: string, format: string): string {
-    if (format === "datetime-local") {
-        const datetime = new Date(string);
-        const normalizedDateTime = datetime.toISOString().slice(0, 16);
-        return normalizedDateTime;
-    }
-
-    return string;
+function formatPart(part: number, length = 2) {
+    return part.toString().padStart(length, "0");
 }
 
 /**
- * Converts a datetime string to ISO8601 format.
+ * Normalizes a datetime string for use in an input field of type "datetime-local".
+ * @param datetimeString - The datetime string to normalize.
+ * @param format - The format of the datetime string.
+ * @returns The normalized datetime string.
+ */
+export function normalizeForInput(
+    datetimeString: string,
+    format: string
+): string {
+    // If the format is not "datetime-local", return the original string
+    if (format !== "datetime-local") {
+        return datetimeString;
+    }
+
+    // Parse the input string as a date
+    const datetime = new Date(datetimeString);
+
+    // Format each part of the date
+    const year = formatPart(datetime.getFullYear(), 4);
+    const month = formatPart(datetime.getMonth() + 1); // Months are 0-indexed
+    const day = formatPart(datetime.getDate());
+    const hours = formatPart(datetime.getHours());
+    const minutes = formatPart(datetime.getMinutes());
+
+    // Combine the date parts into a "datetime-local" string
+    const normalizedDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+    return normalizedDateTime;
+}
+
+/**
+ * Converts a datetime string to ISO8601 format with the caller's timezone offset.
  * @param string - The datetime string to convert.
- * @returns The converted datetime string.
+ * @returns The converted datetime string in ISO8601 format with the caller's timezone offset.
  * @see https://en.wikipedia.org/wiki/ISO_8601
- * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
  */
 export function convertToISO8601(string: string): string {
-    const datetime = new Date(string);
-    return datetime.toISOString();
+    return new Date(string).toISOString();
 }
 
 /**
