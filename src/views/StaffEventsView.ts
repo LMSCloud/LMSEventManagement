@@ -44,7 +44,7 @@ export default class StaffEventsView extends LitElement {
     private images: Column[] = [];
 
     private start_time: string = normalizeForInput(
-        new Date().toString(),
+        new Date(),
         "datetime-local"
     );
 

@@ -112,7 +112,7 @@ export default class LMSStaffEventsFilter extends LitElement {
         const target = e.target as HTMLInputElement;
         if (target.id === "start_time_now") {
             this.startTimeInput.value = normalizeForInput(
-                new Date().toString(),
+                new Date(),
                 "datetime-local"
             );
         }

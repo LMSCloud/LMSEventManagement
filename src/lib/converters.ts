@@ -202,44 +202,122 @@ export function splitDateTime(
 }
 
 /**
- * Formats a part of a datetime string.
- * @param part
- * @param length
- * @returns
+ * Represents a DatetimeLocal object.
  */
-function formatPart(part: number, length = 2) {
-    return part.toString().padStart(length, "0");
+class DatetimeLocal {
+    year!: number;
+    month!: number;
+    day!: number;
+    hours!: number;
+    minutes!: number;
+
+    private static cache: Map<string, Partial<DatetimeLocal>> = new Map();
+
+    /**
+     * Creates a new instance of DatetimeLocal.
+     * @param date The date to create the DatetimeLocal object from.
+     * @returns A new instance of DatetimeLocal.
+     */
+    static fromDate(date: Date): Partial<DatetimeLocal> {
+        return {
+            year: date.getUTCFullYear(),
+            month: date.getUTCMonth() + 1, // Months are 0-indexed
+            day: date.getUTCDate(),
+            hours: date.getUTCHours(),
+            minutes: date.getUTCMinutes(),
+        };
+    }
+
+    /**
+     * Creates a new instance of DatetimeLocal.
+     * @param datetime The datetime string to create the DatetimeLocal object from.
+     * @returns A new instance of DatetimeLocal.
+     */
+    static fromString(datetime: string): Partial<DatetimeLocal> {
+        // Look for the datetime string in the cache
+        const cachedDatetime = this.cache.get(datetime);
+        if (cachedDatetime !== undefined) {
+            return cachedDatetime;
+        }
+
+        const [datePart, timePart] = datetime.split("T");
+        const offsetPart = timePart.slice(-6);
+        const [year, month, day] = datePart
+            .split("-")
+            .map((part) => parseInt(part, 10));
+        let [hours, minutes] = timePart
+            .slice(0, 5)
+            .split(":")
+            .map((part) => parseInt(part, 10));
+
+        if (offsetPart.includes("+") || offsetPart.includes("-")) {
+            const offsetSign = offsetPart[0] === "+" ? 1 : -1;
+            const offsetHours = parseInt(offsetPart.slice(1, 3), 10);
+            const offsetMinutes = parseInt(offsetPart.slice(4), 10);
+
+            hours += offsetSign * offsetHours;
+            minutes += offsetSign * offsetMinutes;
+        }
+
+        const parsedDatetime = { year, month, day, hours, minutes };
+
+        // Store the parsed datetime in the cache
+        this.cache.set(datetime, parsedDatetime);
+
+        return parsedDatetime;
+    }
 }
 
 /**
- * Normalizes a datetime string for use in an input field of type "datetime-local".
- * @param datetimeString - The datetime string to normalize.
- * @param format - The format of the datetime string.
- * @returns The normalized datetime string.
+ * Pads a number with the specified character to the specified length.
+ * @param value value to pad
+ * @param length length to pad to
+ * @param padChar character to pad with
+ * @returns padded string
+ */
+function padStart(
+    value: number | undefined,
+    length: number,
+    padChar = "0"
+): string {
+    return String(value).padStart(length, padChar);
+}
+
+/**
+ * Normalizes a datetime string for use in an input field.
+ * @param datetime
+ * @param format 
+ * @returns 
  */
 export function normalizeForInput(
-    datetimeString: string,
+    datetime: string | Date,
     format: string
 ): string {
-    // If the format is not "datetime-local", return the original string
     if (format !== "datetime-local") {
-        return datetimeString;
+        return datetime instanceof Date ? datetime.toString() : datetime;
     }
 
-    // Parse the input string as a date
-    const datetime = new Date(datetimeString);
+    try {
+        let dateParts: Partial<DatetimeLocal>;
 
-    // Format each part of the date
-    const year = formatPart(datetime.getFullYear(), 4);
-    const month = formatPart(datetime.getMonth() + 1); // Months are 0-indexed
-    const day = formatPart(datetime.getDate());
-    const hours = formatPart(datetime.getHours());
-    const minutes = formatPart(datetime.getMinutes());
+        if (datetime instanceof Date) {
+            dateParts = DatetimeLocal.fromDate(datetime);
+        } else {
+            dateParts = DatetimeLocal.fromString(datetime);
+        }
 
-    // Combine the date parts into a "datetime-local" string
-    const normalizedDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        const { year, month, day, hours, minutes } = dateParts;
 
-    return normalizedDateTime;
+        const paddedYear = padStart(year, 4);
+        const paddedMonth = padStart(month, 2);
+        const paddedDay = padStart(day, 2);
+        const paddedHours = padStart(hours, 2);
+        const paddedMinutes = padStart(minutes, 2);
+        return `${paddedYear}-${paddedMonth}-${paddedDay}T${paddedHours}:${paddedMinutes}`;
+    } catch (error) {
+        console.error(`Failed to normalize datetime: ${error}`);
+        return datetime instanceof Date ? datetime.toString() : datetime;
+    }
 }
 
 /**
