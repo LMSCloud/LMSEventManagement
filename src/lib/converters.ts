@@ -286,8 +286,8 @@ function padStart(
 /**
  * Normalizes a datetime string for use in an input field.
  * @param datetime
- * @param format 
- * @returns 
+ * @param format
+ * @returns
  */
 export function normalizeForInput(
     datetime: string | Date,
