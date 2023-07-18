@@ -21,6 +21,7 @@ import {
     Toast,
 } from "../../types/common";
 import LMSToast from "../LMSToast";
+import { convertToISO8601 } from "../../lib/converters/datetimeConverters";
 
 /**
  * Custom element representing an event card form for staff members.
@@ -164,7 +165,7 @@ export default class LMSStaffEventCardForm extends LitElement {
         );
         if (!datetimeLocalElements.length) return;
 
-        const affected_fields = [
+        const affectedFields = [
             "start_time",
             "end_time",
             "registration_start",
@@ -175,12 +176,8 @@ export default class LMSStaffEventCardForm extends LitElement {
         return datetimeLocalElements.map((element) => {
             const { name, value } = element;
 
-            if (affected_fields.includes(name) && value) {
-                const [date, time] = value.split("T");
-                const [year, month, day] = date.split("-");
-                const [hour, minute] = time.split(":");
-                const iso8601formattedDate = `${year}-${month}-${day}T${hour}:${minute}:00Z`;
-
+            if (affectedFields.includes(name) && value) {
+                const iso8601formattedDate = convertToISO8601(value);
                 return { name, value: iso8601formattedDate };
             }
             return { name, value };
@@ -214,8 +211,8 @@ export default class LMSStaffEventCardForm extends LitElement {
                     ? html`<span>Sorry!</span>
                           <ol>
                               ${result.error.map(
-                                  (message: string) => html`<li>${message}</li>`
-                              )}
+                        (message: string) => html`<li>${message}</li>`
+                    )}
                           </ol>`
                     : html`<span>Sorry! ${result.error}</span>`,
             };
@@ -227,12 +224,12 @@ export default class LMSStaffEventCardForm extends LitElement {
                 message: html`<span>Sorry!</span>
                     <ol>
                         ${result.errors.map(
-                            (error: KohaAPIError) =>
-                                html`<li>
+                    (error: KohaAPIError) =>
+                        html`<li>
                                     ${error.message} ${__("Path")}:
                                     ${error.path}
                                 </li>`
-                        )}
+                )}
                     </ol>`,
             };
         }
@@ -393,15 +390,15 @@ export default class LMSStaffEventCardForm extends LitElement {
                     >
                         <span class="start-edit pointer-events-none"
                             >${litFontawesome(faEdit, {
-                                className: "w-4 h-4 inline-block sm:hidden",
-                            })}&nbsp;<span class="hidden sm:inline"
+            className: "w-4 h-4 inline-block sm:hidden",
+        })}&nbsp;<span class="hidden sm:inline"
                                 >${__("Edit")}</span
                             ></span
                         >
                         <span class="abort-edit pointer-events-none hidden"
                             >${litFontawesome(faTimes, {
-                                className: "w-4 h-4 inline-block sm:hidden",
-                            })}&nbsp;<span class="hidden sm:inline"
+            className: "w-4 h-4 inline-block sm:hidden",
+        })}&nbsp;<span class="hidden sm:inline"
                                 >${__("Abort")}</span
                             ></span
                         >
@@ -411,8 +408,8 @@ export default class LMSStaffEventCardForm extends LitElement {
                         class="btn-secondary btn-outline join-item btn flex-auto"
                     >
                         ${litFontawesome(faSave, {
-                            className: "w-4 h-4 inline-block sm:hidden",
-                        })}
+            className: "w-4 h-4 inline-block sm:hidden",
+        })}
                         <span class="hidden sm:inline"
                             >&nbsp;${__("Save")}</span
                         >
@@ -423,8 +420,8 @@ export default class LMSStaffEventCardForm extends LitElement {
                         class="btn-secondary btn-outline join-item btn flex-auto"
                     >
                         ${litFontawesome(faTrash, {
-                            className: "w-4 h-4 inline-block sm:hidden",
-                        })}
+            className: "w-4 h-4 inline-block sm:hidden",
+        })}
                         <span class="hidden sm:inline"
                             >&nbsp;${__("Delete")}</span
                         >
@@ -435,8 +432,8 @@ export default class LMSStaffEventCardForm extends LitElement {
                         @click=${this.collapseAll}
                     >
                         ${litFontawesome(faCompressAlt, {
-                            className: "w-4 h-4 inline-block sm:hidden",
-                        })}
+            className: "w-4 h-4 inline-block sm:hidden",
+        })}
                         <span class="hidden sm:inline"
                             >&nbsp;${__("Collapse All")}</span
                         >
