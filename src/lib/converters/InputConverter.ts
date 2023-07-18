@@ -1,5 +1,5 @@
 import { html, TemplateResult } from "lit";
-import LMSPellEditor from "../../components/LMSPellEditor";
+import LMSPellEditor from "../../components/custom/LMSPellEditor";
 import {
     InputType,
     LMSEventTargetGroupFee,

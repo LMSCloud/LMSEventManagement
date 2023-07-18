@@ -7,10 +7,10 @@ import {
 } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
-import { attr__, __ } from "../lib/translate";
-import { utilityStyles } from "../styles/utilities";
-import { tailwindStyles } from "../tailwind.lit";
-import { UploadedImage } from "../types/common";
+import { attr__, __ } from "../../lib/translate";
+import { utilityStyles } from "../../styles/utilities";
+import { tailwindStyles } from "../../tailwind.lit";
+import { UploadedImage } from "../../types/common";
 
 @customElement("lms-image-picker")
 export default class LMSImagePicker extends LitElement {

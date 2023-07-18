@@ -9,14 +9,14 @@ import {
 } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
-import { requestHandler } from "../lib/RequestHandler";
-import { attr__, __ } from "../lib/translate";
-import { cardDeckStylesStaff } from "../styles/cardDeck";
-import { skeletonStyles } from "../styles/skeleton";
-import { tailwindStyles } from "../tailwind.lit";
-import { KohaAPIError, Toast, UploadedImage } from "../types/common";
-import LMSToast from "./LMSToast";
-import LMSTooltip from "./LMSTooltip";
+import { requestHandler } from "../../lib/RequestHandler";
+import { attr__, __ } from "../../lib/translate";
+import { cardDeckStylesStaff } from "../../styles/cardDeck";
+import { skeletonStyles } from "../../styles/skeleton";
+import { tailwindStyles } from "../../tailwind.lit";
+import { KohaAPIError, Toast, UploadedImage } from "../../types/common";
+import LMSToast from "../LMSToast";
+import LMSTooltip from "../LMSTooltip";
 
 declare global {
     interface HTMLElementTagNameMap {

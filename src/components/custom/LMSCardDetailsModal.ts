@@ -13,22 +13,22 @@ import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import { splitDateTime } from "../lib/converters/datetimeConverters";
+import { splitDateTime } from "../../lib/converters/datetimeConverters";
 import {
     formatAddress,
     formatMonetaryAmountByLocale,
-} from "../lib/converters/displayConverters";
-import { requestHandler } from "../lib/RequestHandler";
-import { __ } from "../lib/translate";
-import { skeletonStyles } from "../styles/skeleton";
-import { tailwindStyles } from "../tailwind.lit";
+} from "../../lib/converters/displayConverters";
+import { requestHandler } from "../../lib/RequestHandler";
+import { __ } from "../../lib/translate";
+import { skeletonStyles } from "../../styles/skeleton";
+import { tailwindStyles } from "../../tailwind.lit";
 import {
     LMSEvent,
     LMSEventComprehensive,
     LMSEventTargetGroupFee,
     LMSEventType,
     LMSLocation,
-} from "../types/common";
+} from "../../types/common";
 
 @customElement("lms-card-details-modal")
 export default class LMSCardDetailsModal extends LitElement {

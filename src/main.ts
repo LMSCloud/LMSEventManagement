@@ -14,19 +14,19 @@ import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEve
 import LMSStaffEventsFilter from "./components/LMSStaffEventCard/LMSStaffEventsFilter";
 
 /**   /LMSTable */
+import LMSCardDetailsModal from "./components/custom/LMSCardDetailsModal";
+import LMSEventsFilter from "./components/custom/LMSEventsFilter";
+import LMSImageBrowser from "./components/custom/LMSImageBrowser";
+import LMSImagePicker from "./components/custom/LMSImagePicker";
+import LMSPellEditor from "./components/custom/LMSPellEditor";
 import LMSAnchor from "./components/LMSAnchor";
 import LMSCard from "./components/LMSCard";
-import LMSCardDetailsModal from "./components/LMSCardDetailsModal";
 import LMSContainer from "./components/LMSContainer";
 import LMSDataNavbar from "./components/LMSDataNavbar";
 import LMSDropdown from "./components/LMSDropdown";
-import LMSEventsFilter from "./components/LMSEventsFilter";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
-import LMSImageBrowser from "./components/LMSImageBrowser";
-import LMSImagePicker from "./components/LMSImagePicker";
 import LMSModal from "./components/LMSModal";
 import LMSPagination from "./components/LMSPagination";
-import LMSPellEditor from "./components/LMSPellEditor";
 import LMSSearch from "./components/LMSSearch";
 import LMSToast from "./components/LMSToast";
 import LMSTooltip from "./components/LMSTooltip";

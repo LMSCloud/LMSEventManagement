@@ -12,12 +12,12 @@ import { html, LitElement } from "lit";
 import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
-import { requestHandler } from "../lib/RequestHandler";
-import { attr__, __ } from "../lib/translate";
-import { deepCopy, throttle } from "../lib/utilities";
-import { skeletonStyles } from "../styles/skeleton";
-import { utilityStyles } from "../styles/utilities";
-import { tailwindStyles } from "../tailwind.lit";
+import { requestHandler } from "../../lib/RequestHandler";
+import { attr__, __ } from "../../lib/translate";
+import { deepCopy, throttle } from "../../lib/utilities";
+import { skeletonStyles } from "../../styles/skeleton";
+import { utilityStyles } from "../../styles/utilities";
+import { tailwindStyles } from "../../tailwind.lit";
 import {
     Facets,
     LMSEvent,
@@ -25,9 +25,9 @@ import {
     LMSLocation,
     LMSSettingResponse,
     LMSTargetGroup,
-} from "../types/common";
-import LMSDropdown from "./LMSDropdown";
-import LMSSearch from "./LMSSearch";
+} from "../../types/common";
+import LMSDropdown from "../LMSDropdown";
+import LMSSearch from "../LMSSearch";
 
 declare global {
     interface HTMLElementTagNameMap {

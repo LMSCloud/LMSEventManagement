@@ -2,11 +2,11 @@ import interact from "interactjs";
 import { css, html, LitElement, PropertyValues } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import pell from "pell";
-import { __ } from "../lib/translate";
-import { debounce } from "../lib/utilities";
-import { skeletonStyles } from "../styles/skeleton";
-import { utilityStyles } from "../styles/utilities";
-import { tailwindStyles } from "../tailwind.lit";
+import { __ } from "../../lib/translate";
+import { debounce } from "../../lib/utilities";
+import { skeletonStyles } from "../../styles/skeleton";
+import { utilityStyles } from "../../styles/utilities";
+import { tailwindStyles } from "../../tailwind.lit";
 
 type StyleProperties =
     | "marginTop"
