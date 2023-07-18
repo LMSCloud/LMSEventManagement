@@ -46,6 +46,7 @@
     "chalk": "^5.2.0",
     "commander": "^10.0.1",
     "daisyui": "^3.0.3",
+    "dayjs": "^1.11.9",
     "dotenv": "^16.0.3",
     "eslint": "^8.38.0",
     "eslint-plugin-lit": "^1.8.2",

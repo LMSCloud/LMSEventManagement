@@ -1,4 +1,5 @@
-import { html, nothing } from "lit";
+import dayjs from "dayjs";
+import { html, TemplateResult } from "lit";
 
 /**
  * Converts a datetime string to the specified format.
@@ -12,27 +13,8 @@ export function convertToFormat(
     format: string,
     locale: string
 ): string {
-    if (format === "datetime") {
-        const datetime = new Date(string);
-        return datetime.toLocaleString(locale, {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-    }
-
-    if (format === "date") {
-        const date = new Date(string);
-        return date.toLocaleDateString(locale, {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-        });
-    }
-
-    return string;
+    const datetime = dayjs(string);
+    return datetime.locale(locale).format(format);
 }
 
 /**
@@ -46,16 +28,9 @@ export function splitDateTime(
     locale: string
 ): string[] {
     if (!string) return [`${__("Error: Invalid date")}`, ""];
-    const datetime = new Date(string);
-    const date = datetime.toLocaleDateString(locale, {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
-    const time = datetime.toLocaleTimeString(locale, {
-        hour: "2-digit",
-        minute: "2-digit",
-    });
+    const datetime = dayjs(string).locale(locale);
+    const date = datetime.format("YYYY-MM-DD");
+    const time = datetime.format("HH:mm");
     return [date, time];
 }
 
@@ -67,9 +42,7 @@ export function splitDateTime(
  */
 export function normalizeForInput(string: string, format: string): string {
     if (format === "datetime-local") {
-        const datetime = new Date(string);
-        const normalizedDateTime = datetime.toISOString().slice(0, 16);
-        return normalizedDateTime;
+        return dayjs(string).format("YYYY-MM-DDTHH:mm");
     }
 
     return string;
@@ -83,8 +56,7 @@ export function normalizeForInput(string: string, format: string): string {
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
  */
 export function convertToISO8601(string: string): string {
-    const datetime = new Date(string);
-    return datetime.toISOString();
+    return dayjs(string).format("YYYY-MM-DDTHH:mm:ss.SSSZ");
 }
 
 /**
@@ -96,13 +68,10 @@ export function convertToISO8601(string: string): string {
 export function formatDatetimeByLocale(
     datetime: string | Date | null,
     locale: string
-) {
+): TemplateResult {
     if (!datetime) return html`<span>${__("There's been an error")}..</span>`;
-    if (datetime) {
-        return new Intl.DateTimeFormat(locale, {
-            dateStyle: "full",
-            timeStyle: "short",
-        }).format(new Date(datetime));
-    }
-    return nothing;
+    const formattedDatetime = dayjs(datetime).locale(locale).format(
+        "LLLL" // Use the appropriate format for the desired localized datetime representation
+    );
+    return html`<span>${formattedDatetime}</span>`;
 }
