@@ -210,6 +210,13 @@ export default class StaffEventsView extends LitElement {
         this.fetchUpdate();
     }
 
+    private handleReset() {
+        this.queryBuilder.updateQuery(
+            `_order_by=id&_page=${this._page}&_per_page=${this._per_page}&start_time=${this.start_time}`
+        );
+        this.fetchUpdate();
+    }
+
     override render() {
         if (!this.hasLoaded) {
             return html` <div class="mx-8">
@@ -291,6 +298,7 @@ export default class StaffEventsView extends LitElement {
                 @start-time-change=${this.handleStartTimeChange}
                 @page=${this.handlePageChange}
                 @prefetch=${this.prefetchUpdate}
+                @reset=${this.handleReset}
             ></lms-staff-event-card-deck>
             <lms-events-modal @created=${this.fetchUpdate}></lms-events-modal>
         `;

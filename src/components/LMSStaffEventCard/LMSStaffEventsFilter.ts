@@ -4,6 +4,7 @@ import {
     faMapMarker,
     faSort,
     faTag,
+    faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement } from "lit";
@@ -121,6 +122,15 @@ export default class LMSStaffEventsFilter extends LitElement {
                 detail: {
                     start_time: this.startTimeInput.value,
                 },
+                bubbles: true,
+                composed: true,
+            })
+        );
+    }
+
+    private handleReset() {
+        this.dispatchEvent(
+            new CustomEvent("reset", {
                 bubbles: true,
                 composed: true,
             })
@@ -286,6 +296,17 @@ export default class LMSStaffEventsFilter extends LitElement {
                             </div>
                         </div>
                     </lms-dropdown>
+
+                    <button
+                        class="btn-secondary btn-outline btn"
+                        @click=${this.handleReset}
+                    >
+                        ${this.isXs
+                            ? litFontawesome(faUndo, {
+                                  className: "h-4 w-4 inline-block",
+                              })
+                            : __("Reset Filters")}
+                    </button>
                 </div>
                 <div slot="navbar-center">
                     <slot name="navbar-center"></slot>
