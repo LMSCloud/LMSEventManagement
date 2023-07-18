@@ -30,6 +30,7 @@ import {
     TaggedData,
     Toast,
 } from "../types/common";
+import LMSConfirmationModal from "./LMSConfirmationModal";
 import LMSDataNavbar from "./LMSDataNavbar";
 import LMSPagination from "./LMSPagination";
 import LMSSearch from "./LMSSearch";
@@ -37,6 +38,7 @@ import LMSToast from "./LMSToast";
 
 declare global {
     interface HTMLElementTagNameMap {
+        "lms-confirmation-modal": LMSConfirmationModal;
         "lms-data-navbar": LMSDataNavbar;
         "lms-pagination": LMSPagination;
         "lms-search": LMSSearch;
@@ -87,6 +89,8 @@ export default class LMSTable extends LitElement {
     @queryAll(".collapse") collapsibles!: NodeListOf<HTMLElement>;
 
     @query("table") table!: HTMLTableElement;
+
+    @query("lms-confirmation-modal") confirmationModal!: LMSConfirmationModal;
 
     protected emptyTableMessage = html`${__("No data to display")}.`;
 
@@ -248,6 +252,25 @@ export default class LMSTable extends LitElement {
         console.info(e, this.notImplementedInBaseMessage);
     }
 
+    private handleConfirm(e: Event) {
+        this.confirmationModal.header = __("Please confirm");
+
+        const name = this.findInRow(e.target as HTMLButtonElement, "name");
+        if (typeof name === "string") {
+            this.confirmationModal.message = __(
+                "Are you sure you want to delete: "
+            );
+            this.confirmationModal.obj = name;
+        } else {
+            this.confirmationModal.message = __(
+                "Are you sure you want to delete this entry?"
+            );
+        }
+
+        this.confirmationModal.ref = e.target;
+        this.confirmationModal.showModal();
+    }
+
     protected *getColumnData(
         query: Record<
             string,
@@ -266,6 +289,40 @@ export default class LMSTable extends LitElement {
                 this.inputConverter.getInputTemplate({ name, value, data }),
             ];
         }
+    }
+
+    protected findInRow(target: HTMLElement, name: string) {
+        let parent = target.parentElement;
+        while (parent && parent.tagName !== "TR") {
+            parent = parent.parentElement;
+        }
+
+        const position = this.order.indexOf(name as string);
+        let entity: string | null = null;
+        if (parent) {
+            let element = parent.children[position];
+            const tagName = parent.children[position].tagName;
+            if (tagName === "TD") {
+                element = element.firstElementChild as HTMLElement;
+            }
+
+            switch (element.tagName) {
+                case "INPUT":
+                    entity = (element as HTMLInputElement).value;
+                    break;
+                case "SELECT":
+                    entity = (element as HTMLSelectElement).value;
+                    break;
+                case "TEXTAREA":
+                    entity = (element as HTMLTextAreaElement).value;
+                    break;
+                default:
+                    entity = element.textContent;
+                    break;
+            }
+        }
+
+        return entity;
     }
 
     protected renderToast(
@@ -642,7 +699,7 @@ export default class LMSTable extends LitElement {
                                                           </button>
                                                           <button
                                                               @click=${this
-                                                                  .handleDelete}
+                                                                  .handleConfirm}
                                                               type="button"
                                                               class="${classMap(
                                                                   {
@@ -668,6 +725,10 @@ export default class LMSTable extends LitElement {
                                                                   )}</span
                                                               >
                                                           </button>
+                                                          <lms-confirmation-modal
+                                                              @confirm=${this
+                                                                  .handleDelete}
+                                                          ></lms-confirmation-modal>
                                                       </div>
                                                   </td>
                                               `

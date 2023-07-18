@@ -7,7 +7,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { css, html, LitElement } from "lit";
-import { customElement, property, queryAll, state } from "lit/decorators.js";
+import {
+    customElement,
+    property,
+    query,
+    queryAll,
+    state,
+} from "lit/decorators.js";
 import { convertToISO8601 } from "../../lib/converters/datetimeConverters";
 import { TemplateResultConverter } from "../../lib/converters/TemplateResultConverter";
 import { requestHandler } from "../../lib/RequestHandler";
@@ -21,7 +27,15 @@ import {
     LMSEventTargetGroupFeeReduced,
     Toast,
 } from "../../types/common";
+import LMSConfirmationModal from "../LMSConfirmationModal";
 import LMSToast from "../LMSToast";
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "lms-confirmation-modal": LMSConfirmationModal;
+        "lms-toast": LMSToast;
+    }
+}
 
 /**
  * Custom element representing an event card form for staff members.
@@ -39,6 +53,8 @@ export default class LMSStaffEventCardForm extends LitElement {
 
     @queryAll("input, select, textarea, lms-image-picker")
     inputs!: NodeListOf<HTMLInputElement>;
+
+    @query("lms-confirmation-modal") confirmationModal!: LMSConfirmationModal;
 
     /**
      * The static styles for the element.
@@ -371,6 +387,27 @@ export default class LMSStaffEventCardForm extends LitElement {
         });
     }
 
+    private handleConfirm(e: Event) {
+        this.confirmationModal.header = __("Please confirm");
+
+        const [name] = new TemplateResultConverter(
+            this.datum.name
+        ).getRenderValues();
+        if (typeof name === "string") {
+            this.confirmationModal.message = __(
+                "Are you sure you want to delete: "
+            );
+            this.confirmationModal.obj = name;
+        } else {
+            this.confirmationModal.message = __(
+                "Are you sure you want to delete this event?"
+            );
+        }
+
+        this.confirmationModal.ref = e.target;
+        this.confirmationModal.showModal();
+    }
+
     /**
      * Renders the element.
      * @returns The rendered template result.
@@ -415,7 +452,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                         >
                     </button>
                     <button
-                        @click=${this.handleDelete}
+                        @click=${this.handleConfirm}
                         type="button"
                         class="btn-secondary btn-outline join-item btn flex-auto"
                     >
@@ -631,6 +668,9 @@ export default class LMSStaffEventCardForm extends LitElement {
                     </div>
                 </details>
             </form>
+            <lms-confirmation-modal
+                @confirm=${this.handleDelete}
+            ></lms-confirmation-modal>
         `;
     }
 }

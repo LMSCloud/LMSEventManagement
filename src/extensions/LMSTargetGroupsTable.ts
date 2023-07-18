@@ -59,8 +59,13 @@ export default class LMSEventTypesTable extends LMSTable {
         }
     }
 
-    override async handleDelete(e: Event) {
-        const target = e.target as HTMLElement;
+    override async handleDelete(
+        e: Event,
+        target = this.confirmationModal.ref as HTMLElement
+    ) {
+        if (!target) {
+            target = e.target as HTMLElement;
+        }
 
         let parent = target.parentElement;
         while (parent && parent.tagName !== "TR") {

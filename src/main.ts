@@ -1,6 +1,14 @@
 /** components */
-/**   /Inputs */
-/**     /Modal */
+
+/**   /custom */
+import LMSCardDetailsModal from "./components/custom/LMSCardDetailsModal";
+import LMSEventsFilter from "./components/custom/LMSEventsFilter";
+import LMSImageBrowser from "./components/custom/LMSImageBrowser";
+import LMSImagePicker from "./components/custom/LMSImagePicker";
+import LMSPellEditor from "./components/custom/LMSPellEditor";
+
+/**   /inputs */
+/**     /modal */
 import LMSCheckboxInput from "./components/inputs/modal/LMSCheckboxInput";
 import LMSMatrix from "./components/inputs/modal/LMSMatrix";
 import LMSPrimitivesInput from "./components/inputs/modal/LMSPrimitivesInput";
@@ -13,14 +21,9 @@ import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventC
 import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSStaffEventsFilter from "./components/LMSStaffEventCard/LMSStaffEventsFilter";
 
-/**   /LMSTable */
-import LMSCardDetailsModal from "./components/custom/LMSCardDetailsModal";
-import LMSEventsFilter from "./components/custom/LMSEventsFilter";
-import LMSImageBrowser from "./components/custom/LMSImageBrowser";
-import LMSImagePicker from "./components/custom/LMSImagePicker";
-import LMSPellEditor from "./components/custom/LMSPellEditor";
 import LMSAnchor from "./components/LMSAnchor";
 import LMSCard from "./components/LMSCard";
+import LMSConfirmationModal from "./components/LMSConfirmationModal";
 import LMSContainer from "./components/LMSContainer";
 import LMSDataNavbar from "./components/LMSDataNavbar";
 import LMSDropdown from "./components/LMSDropdown";
@@ -64,6 +67,7 @@ export default {
     LMSDataNavbar,
     LMSAnchor,
     LMSCard,
+    LMSConfirmationModal,
     LMSCardDetailsModal,
     LMSContainer,
     LMSView,
