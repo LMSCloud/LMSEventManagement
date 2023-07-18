@@ -58,10 +58,19 @@ export class TemplateResultConverter {
      * @returns
      */
     private isTemplateResult(value: unknown): boolean {
-        return (
-            typeof value === "object" &&
-            {}.hasOwnProperty.call(value, "_$litType$")
-        );
+        try {
+            if (!value) return false;
+
+            return (
+                typeof value === "object" &&
+                {}.hasOwnProperty.call(value, "_$litType$")
+            );
+        } catch (error) {
+            console.error(
+                `Error checking if value: ${value} is TemplateResult: ${error}`
+            );
+            return false;
+        }
     }
 
     /**
