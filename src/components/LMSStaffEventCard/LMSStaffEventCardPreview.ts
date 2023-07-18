@@ -5,7 +5,8 @@ import {
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { splitDateTime, TemplateResultConverter } from "../../lib/converters";
+import { splitDateTime } from "../../lib/converters/datetimeConverters";
+import { TemplateResultConverter } from "../../lib/converters/TemplateResultConverter";
 import { locale } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";
 import { tailwindStyles } from "../../tailwind.lit";

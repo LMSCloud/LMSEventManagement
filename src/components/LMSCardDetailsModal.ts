@@ -13,11 +13,11 @@ import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import { splitDateTime } from "../lib/converters/datetimeConverters";
 import {
     formatAddress,
     formatMonetaryAmountByLocale,
-    splitDateTime,
-} from "../lib/converters";
+} from "../lib/converters/displayConverters";
 import { requestHandler } from "../lib/RequestHandler";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";

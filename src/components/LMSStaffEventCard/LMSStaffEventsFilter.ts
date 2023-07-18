@@ -15,7 +15,7 @@ import {
     state,
 } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
-import { normalizeForInput } from "../../lib/converters";
+import { normalizeForInput } from "../../lib/converters/datetimeConverters";
 import { __ } from "../../lib/translate";
 import { utilityStyles } from "../../styles/utilities";
 import { tailwindStyles } from "../../tailwind.lit";
@@ -112,7 +112,7 @@ export default class LMSStaffEventsFilter extends LitElement {
         const target = e.target as HTMLInputElement;
         if (target.id === "start_time_now") {
             this.startTimeInput.value = normalizeForInput(
-                new Date(),
+                new Date().toString(),
                 "datetime-local"
             );
         }

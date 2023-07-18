@@ -8,7 +8,7 @@ import {
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { css, html, LitElement } from "lit";
 import { customElement, property, queryAll, state } from "lit/decorators.js";
-import { TemplateResultConverter } from "../../lib/converters";
+import { TemplateResultConverter } from "../../lib/converters/TemplateResultConverter";
 import { requestHandler } from "../../lib/RequestHandler";
 import { attr__, __ } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";

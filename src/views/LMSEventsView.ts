@@ -10,7 +10,7 @@ import { map } from "lit/directives/map.js";
 import LMSCard from "../components/LMSCard";
 import LMSCardDetailsModal from "../components/LMSCardDetailsModal";
 import LMSEventsFilter from "../components/LMSEventsFilter";
-import { splitDateTime } from "../lib/converters";
+import { splitDateTime } from "../lib/converters/datetimeConverters";
 import { QueryBuilder } from "../lib/QueryBuilder";
 import { requestHandler } from "../lib/RequestHandler";
 import { locale, __ } from "../lib/translate";

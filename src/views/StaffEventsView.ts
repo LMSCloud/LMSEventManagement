@@ -3,7 +3,7 @@ import { customElement, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import LMSStaffEventCardsDeck from "../components/LMSStaffEventCard/LMSStaffEventCardDeck";
 import LMSEventsModal from "../extensions/LMSEventsModal";
-import { normalizeForInput } from "../lib/converters";
+import { normalizeForInput } from "../lib/converters/datetimeConverters";
 import { QueryBuilder } from "../lib/QueryBuilder";
 import { requestHandler } from "../lib/RequestHandler";
 import { __ } from "../lib/translate";
@@ -44,7 +44,7 @@ export default class StaffEventsView extends LitElement {
     private images: Column[] = [];
 
     private start_time: string = normalizeForInput(
-        new Date(),
+        new Date().toString(),
         "datetime-local"
     );
 
