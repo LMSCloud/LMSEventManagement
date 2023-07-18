@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-24 12:16+0200\n"
-"PO-Revision-Date: 2023-07-07 15:31+0200\n"
+"PO-Revision-Date: 2023-07-18 12:03+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -221,7 +221,7 @@ msgstr "Veranstaltungstyp"
 
 #: src/components/LMSEventsFilter.ts:474
 msgid "Age"
-msgstr "Alterspanne"
+msgstr "Altersspanne"
 
 #: src/components/LMSEventsFilter.ts:487
 #: src/extensions/LMSEventTypesModal.ts:55 src/extensions/LMSEventsModal.ts:76
