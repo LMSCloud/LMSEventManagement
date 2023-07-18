@@ -17,7 +17,7 @@ import {
 } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { normalizeForInput } from "../../lib/converters/datetimeConverters";
-import { __ } from "../../lib/translate";
+import { attr__, __ } from "../../lib/translate";
 import { utilityStyles } from "../../styles/utilities";
 import { tailwindStyles } from "../../tailwind.lit";
 import {
@@ -300,12 +300,11 @@ export default class LMSStaffEventsFilter extends LitElement {
                     <button
                         class="btn-secondary btn-outline btn"
                         @click=${this.handleReset}
+                        title=${attr__("Reset Filters")}
                     >
-                        ${this.isXs
-                            ? litFontawesome(faUndo, {
-                                  className: "h-4 w-4 inline-block",
-                              })
-                            : __("Reset Filters")}
+                        ${litFontawesome(faUndo, {
+                            className: "h-4 w-4 inline-block",
+                        })}
                     </button>
                 </div>
                 <div slot="navbar-center">
