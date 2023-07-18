@@ -202,6 +202,7 @@ export function splitDateTime(
 }
 
 /**
+<<<<<<< HEAD
  * Represents a DatetimeLocal object.
  */
 class DatetimeLocal {
@@ -318,16 +319,33 @@ export function normalizeForInput(
         console.error(`Failed to normalize datetime: ${error}`);
         return datetime instanceof Date ? datetime.toString() : datetime;
     }
+=======
+ * Normalizes a datetime string for use in an input field of type "datetime-local".
+ * @param string - The datetime string to normalize.
+ * @param format - The format of the datetime string.
+ * @returns The normalized datetime string.
+ */
+export function normalizeForInput(string: string, format: string): string {
+    if (format === "datetime-local") {
+        const datetime = new Date(string);
+        const normalizedDateTime = datetime.toISOString().slice(0, 16);
+        return normalizedDateTime;
+    }
+
+    return string;
+>>>>>>> parent of 2885b7e (fix: always write ISO8601 to db, offset in format)
 }
 
 /**
- * Converts a datetime string to ISO8601 format with the caller's timezone offset.
+ * Converts a datetime string to ISO8601 format.
  * @param string - The datetime string to convert.
- * @returns The converted datetime string in ISO8601 format with the caller's timezone offset.
+ * @returns The converted datetime string.
  * @see https://en.wikipedia.org/wiki/ISO_8601
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
  */
 export function convertToISO8601(string: string): string {
-    return new Date(string).toISOString();
+    const datetime = new Date(string);
+    return datetime.toISOString();
 }
 
 /**
