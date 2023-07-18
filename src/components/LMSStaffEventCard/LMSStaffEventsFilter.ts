@@ -300,7 +300,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                     <button
                         class="btn-secondary btn-outline btn"
                         @click=${this.handleReset}
-                        title=${attr__("Reset Filters")}
+                        title=${attr__("Reset filters")}
                     >
                         ${litFontawesome(faUndo, {
                             className: "h-4 w-4 inline-block",
