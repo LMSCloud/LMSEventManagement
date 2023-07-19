@@ -4,7 +4,6 @@ import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { searchSyntax } from "../../docs/searchSyntax";
 import { InputConverter } from "../../lib/converters/InputConverter";
-import { TemplateResultConverter } from "../../lib/converters/TemplateResultConverter";
 import { __ } from "../../lib/translate";
 import { cardDeckStylesStaff } from "../../styles/cardDeck";
 import { skeletonStyles } from "../../styles/skeleton";
@@ -13,11 +12,11 @@ import { tailwindStyles } from "../../tailwind.lit";
 import {
     Column,
     LMSEvent,
+    LMSEventComprehensive,
     LMSEventType,
     LMSLocation,
     LMSTargetGroup,
     SortableColumns,
-    TaggedColumn,
     TaggedData,
     UploadedImage,
 } from "../../types/common";
@@ -61,9 +60,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
 
     @property({ type: Number }) _per_page = 20;
 
-    private data: TaggedColumn[] = [];
-
-    private cardStates: Map<string, string[]> = new Map();
+    private data: LMSEventComprehensive[] = [];
 
     private inputConverter = new InputConverter();
 
@@ -113,16 +110,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
     }
 
     private hydrate() {
-        /** Here we initialize the card states so we can track them
-         *  individually going forward. */
-        this.events.forEach(() => {
-            this.cardStates.set(
-                crypto.getRandomValues(new Uint32Array(2)).join("-"),
-                ["data"]
-            );
-        });
-
-        const data = this.events.map((event: LMSEvent) => {
+        this.data = this.events.map((event: LMSEvent) => {
             return Object.fromEntries(
                 this.getColumnData(event, [
                     ["target_groups", this.target_groups],
@@ -132,15 +120,6 @@ export default class LMSStaffEventCardDeck extends LitElement {
                 ])
             );
         });
-
-        /** Here we tag every datum with the uuid we generated earlier. */
-        this.data = data.map((datum, index) => {
-            const [uuid] = [...this.cardStates][index];
-            return {
-                ...datum,
-                uuid,
-            };
-        });
     }
 
     override updated(changedProperties: Map<string, never>) {
@@ -149,25 +128,6 @@ export default class LMSStaffEventCardDeck extends LitElement {
             this.hydrate();
             this.requestUpdate();
         }
-    }
-
-    private handleTabClick(event: Event) {
-        event.preventDefault();
-        const tab = event.target as HTMLElement;
-        if (!tab) return;
-
-        const previousActiveTab = tab
-            .closest("div")
-            ?.querySelector(".tab-active");
-        if (!previousActiveTab) return;
-        previousActiveTab.classList.remove("tab-active");
-
-        tab.classList.add("tab-active");
-
-        const { content, uuid } = tab.dataset;
-        if (!content || !uuid) return;
-        this.cardStates.set(uuid, [content]);
-        this.requestUpdate();
     }
 
     private handleSearch(e: CustomEvent) {
@@ -231,78 +191,13 @@ export default class LMSStaffEventCardDeck extends LitElement {
                     </div>
                 </div>
                 <div class="card-deck">
-                    ${map(this.data, (datum) => {
-                        const { name, image, uuid } = datum;
-                        const [title] = new TemplateResultConverter(
-                            name
-                        ).getRenderValues();
-                        const imageRenderValues = new TemplateResultConverter(
-                            image
-                        ).getRenderValues();
-                        const src =
-                            imageRenderValues[imageRenderValues.length - 1];
-                        const [state] = this.cardStates.get(uuid) || "data";
-                        return html`
-                            <div class="card bg-base-100 shadow-md">
-                                <div>
-                                    <div class="tabs w-full">
-                                        <a
-                                            class="tab-bordered tab tab-active tab-lg flex-auto text-base"
-                                            data-content="data"
-                                            data-uuid=${datum.uuid}
-                                            @click=${this.handleTabClick}
-                                            >${__("Data")}</a
-                                        >
-                                        <a
-                                            class="tab-bordered tab tab-lg flex-auto text-base"
-                                            data-content="attendees"
-                                            data-uuid=${datum.uuid}
-                                            @click=${this.handleTabClick}
-                                        >
-                                            ${__("Waitlist")}</a
-                                        >
-                                        <a
-                                            class="tab-bordered tab tab-lg flex-auto text-base"
-                                            data-content="preview"
-                                            data-uuid=${datum.uuid}
-                                            @click=${this.handleTabClick}
-                                        >
-                                            ${__("Preview")}</a
-                                        >
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div
-                                        class="card-title flex h-24 items-center justify-center rounded-md bg-cover bg-center"
-                                        style="background-image: url(${src});"
-                                    >
-                                        <h3
-                                            class="rounded-lg bg-base-100 p-2 text-xl"
-                                        >
-                                            ${title}
-                                        </h3>
-                                    </div>
-                                    <lms-staff-event-card-form
-                                        .datum=${datum}
-                                        class=${classMap({
-                                            hidden: !(state === "data"),
-                                        })}
-                                    ></lms-staff-event-card-form>
-                                    <lms-staff-event-card-attendees
-                                        class=${classMap({
-                                            hidden: !(state === "attendees"),
-                                        })}
-                                    ></lms-staff-event-card-attendees>
-                                    <lms-staff-event-card-preview
-                                        class=${classMap({
-                                            hidden: !(state === "preview"),
-                                        })}
-                                        .datum=${datum}
-                                    ></lms-staff-event-card-preview>
-                                </div>
-                            </div>
-                        `;
-                    })}
+                    ${map(
+                        this.data,
+                        (datum) =>
+                            html`<lms-staff-event-card
+                                .datum=${datum}
+                            ></lms-staff-event-card>`
+                    )}
                 </div>
             </div>
         `;

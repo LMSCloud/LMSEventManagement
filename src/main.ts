@@ -15,6 +15,7 @@ import LMSPrimitivesInput from "./components/inputs/modal/LMSPrimitivesInput";
 import LMSSelect from "./components/inputs/modal/LMSSelect";
 
 /**   /LMSStaffEventCard */
+import LMSStaffEventCard from "./components/LMSStaffEventCard/LMSStaffEventCard";
 import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffEventCardAttendees";
 import LMSStaffEventCardsDeck from "./components/LMSStaffEventCard/LMSStaffEventCardDeck";
 import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventCardForm";
@@ -59,6 +60,7 @@ export default {
     LMSMatrix,
     LMSPrimitivesInput,
     LMSSelect,
+    LMSStaffEventCard,
     LMSStaffEventCardAttendees,
     LMSStaffEventCardPreview,
     LMSStaffEventCardForm,

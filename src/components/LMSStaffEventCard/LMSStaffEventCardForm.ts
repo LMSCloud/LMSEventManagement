@@ -6,7 +6,7 @@ import {
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { css, html, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import {
     customElement,
     property,
@@ -56,22 +56,9 @@ export default class LMSStaffEventCardForm extends LitElement {
 
     @query("lms-confirmation-modal") confirmationModal!: LMSConfirmationModal;
 
-    /**
-     * The static styles for the element.
-     */
-    static override styles = [
-        tailwindStyles,
-        skeletonStyles,
-        utilityStyles,
-        css`
-            /* .section {
-                border: 1px solid transparent;
-                background-color: #f8f9fa;
-                margin-bottom: 1em;
-                border-radius: 1.5rem;
-            } */
-        `,
-    ];
+    private trc = new TemplateResultConverter(undefined);
+
+    static override styles = [tailwindStyles, skeletonStyles, utilityStyles];
 
     /**
      * Toggles the edit mode of the form.
@@ -265,12 +252,10 @@ export default class LMSStaffEventCardForm extends LitElement {
     private async handleSave(e: Event) {
         e.preventDefault();
         const target = e.target;
-        const [id] = new TemplateResultConverter(
-            this.datum.id
-        ).getRenderValues();
-        if (!(target instanceof HTMLFormElement) || !id) return;
 
-        const keys = Object.keys(this.datum).filter((key) => key !== "uuid");
+        this.trc.templateResult = this.datum.id;
+        const [id] = this.trc.getRenderValues();
+        if (!(target instanceof HTMLFormElement) || !id) return;
 
         const target_groups = this.processTargetGroupElements(target);
         if (!target_groups) return;
@@ -286,6 +271,7 @@ export default class LMSStaffEventCardForm extends LitElement {
             formData.set(name, value)
         );
 
+        const keys = Object.keys(this.datum);
         const requestBody = Array.from(formData).reduce(
             (acc: { [key: string]: unknown }, [key, value]) => {
                 if (keys.includes(key)) {
@@ -339,19 +325,16 @@ export default class LMSStaffEventCardForm extends LitElement {
      */
     private async handleDelete(e: Event) {
         e.preventDefault();
-        const [id] = new TemplateResultConverter(
-            this.datum.id
-        ).getRenderValues();
 
+        this.trc.templateResult = this.datum.id;
+        const [id] = this.trc.getRenderValues();
         if (!id) {
             return;
         }
 
-        const response = await fetch(
-            `/api/v1/contrib/eventmanagement/events/${id}`,
-            { method: "DELETE" }
-        );
-
+        const response = await requestHandler.delete("events", undefined, [
+            id.toString(),
+        ]);
         if (response.status >= 200 && response.status <= 299) {
             this.dispatchEvent(
                 new CustomEvent("deleted", {
@@ -360,6 +343,9 @@ export default class LMSStaffEventCardForm extends LitElement {
                     composed: true,
                 })
             );
+
+            this.resetAll();
+
             return;
         }
 
@@ -385,6 +371,20 @@ export default class LMSStaffEventCardForm extends LitElement {
         this.collapsibles.forEach((collapsible) => {
             collapsible.open = true;
         });
+    }
+
+    private resetAll() {
+        this.datum = {} as Column;
+        this.toast = {
+            heading: "",
+            message: "",
+        };
+
+        this.toggleEdit(
+            new CustomEvent("click", {
+                detail: this.renderRoot.querySelector(".btn-edit"),
+            })
+        );
     }
 
     private handleConfirm(e: Event) {
