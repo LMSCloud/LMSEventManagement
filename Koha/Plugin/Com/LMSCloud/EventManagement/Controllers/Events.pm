@@ -250,7 +250,7 @@ sub add {
         my $event_target_group_fees =
             Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $event->id }, { columns => [ 'target_group_id', 'selected', 'fee' ] } );
 
-        return $c->render( status => 200, openapi => { %{ $event->unblessed }, target_groups => $event_target_group_fees->as_list } || {} );
+        return $c->render( status => 200, openapi => { %{ $event->unblessed }, target_groups => $event_target_group_fees->unblessed } || {} );
     }
     catch {
         return $c->unhandled_exception($_);
