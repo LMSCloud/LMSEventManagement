@@ -1,24 +1,31 @@
-import { PropertyValueMap } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
-import { requestHandler } from "../lib/RequestHandler";
 import { attr__, __ } from "../lib/translate";
 import {
     CreateOpts,
+    LMSEvent,
     LMSEventType,
     LMSLocation,
     LMSTargetGroup,
-    ModalField,
+    UploadedImage,
 } from "../types/common";
 
 @customElement("lms-events-modal")
 export default class LMSEventsModal extends LMSModal {
+    @property({ type: Array }) events: LMSEvent[] = [];
+
+    @property({ type: Array }) event_types: LMSEventType[] = [];
+
+    @property({ type: Array }) target_groups: LMSTargetGroup[] = [];
+
+    @property({ type: Array }) locations: LMSLocation[] = [];
+
+    @property({ type: Array }) images: UploadedImage[] = [];
+
     @property({ type: Object }) override createOpts: CreateOpts = {
         method: "POST",
         endpoint: "/api/v1/contrib/eventmanagement/events",
     };
-
-    @state() selectedEventTypeId: number | undefined = undefined;
 
     override async connectedCallback() {
         super.connectedCallback();
@@ -41,14 +48,6 @@ export default class LMSEventsModal extends LMSModal {
                 name: "event_type",
                 type: "select",
                 desc: __("Event Type"),
-                logic: async () => {
-                    const response = await requestHandler.get("eventTypes");
-                    const result = await response.json();
-                    return result.map((event_type: LMSEventType) => ({
-                        id: event_type.id,
-                        name: event_type.name,
-                    }));
-                },
                 required: true,
             },
             {
@@ -60,14 +59,6 @@ export default class LMSEventsModal extends LMSModal {
                     ["fee", "number"],
                 ],
                 desc: __("Target Groups"),
-                logic: async () => {
-                    const response = await requestHandler.get("targetGroups");
-                    const result = await response.json();
-                    return result.map((target_group: LMSTargetGroup) => ({
-                        id: target_group.id,
-                        name: target_group.name,
-                    }));
-                },
                 required: false,
             },
             {
@@ -137,14 +128,6 @@ export default class LMSEventsModal extends LMSModal {
                 name: "location",
                 type: "select",
                 desc: __("Location"),
-                logic: async () => {
-                    const response = await requestHandler.get("locations");
-                    const result = await response.json();
-                    return result.map((location: LMSLocation) => ({
-                        id: location.id,
-                        name: location.name,
-                    }));
-                },
                 required: false,
             },
             {
@@ -169,14 +152,6 @@ export default class LMSEventsModal extends LMSModal {
                 name: "status",
                 type: "select",
                 desc: __("Status"),
-                logic: async () => {
-                    return [
-                        { id: "pending", name: __("Pending") },
-                        { id: "confirmed", name: __("Confirmed") },
-                        { id: "canceled", name: __("Canceled") },
-                        { id: "sold_out", name: __("Sold Out") },
-                    ];
-                },
                 required: true,
             },
             {
@@ -196,94 +171,25 @@ export default class LMSEventsModal extends LMSModal {
                 value: 1,
             },
         ];
-    }
 
-    private async fetchEventType(id: number) {
-        return requestHandler
-            .get("eventTypes", undefined, [id.toString()])
-            .then((response) => response.json())
-            .then((event_type) => event_type as LMSEventType);
-    }
-
-    private convertFieldValuesToRequestedType(eventType: LMSEventType) {
-        const eventTypeFields = Object.entries(eventType);
-        eventTypeFields.forEach(([property, value]) => {
-            const field = this.fields.find((field) => field.name === property);
-            if (field) {
-                switch (typeof value) {
-                    case "number":
-                        field.value = value.toString();
-                        break;
-                    case "boolean":
-                        field.value = value ? 1 : 0;
-                        break;
-                    case "object":
-                        if (value instanceof Array) {
-                            field.value = value.map((item) => ({
-                                id: item.target_group_id.toString(),
-                                selected: item.selected ? 1 : 0,
-                                fee: item.fee.toString(),
-                            }));
-                        }
-                        break;
-                    default:
-                        field.value = value;
-                }
-            }
+        this.inputs = this.fields.flatMap((field) => {
+            return Array.from(
+                this.getColumnData({ name: field.name, value: field }, [
+                    ["event_type", this.event_types],
+                    ["target_groups", this.target_groups],
+                    ["location", this.locations],
+                    ["image", this.images],
+                    [
+                        "status",
+                        [
+                            { id: 1, name: __("pending") },
+                            { id: 2, name: __("confirmed") },
+                            { id: 3, name: __("canceled") },
+                            { id: 4, name: __("sold_out") },
+                        ],
+                    ],
+                ])
+            );
         });
-    }
-
-    override willUpdate(changedProperties: PropertyValueMap<never>) {
-        super.willUpdate(changedProperties);
-
-        const eventTypeField = this.findEventTypeField();
-        if (!eventTypeField) {
-            return;
-        }
-
-        const dbDataExists = eventTypeField.dbData && eventTypeField.dbData[0];
-        if (!dbDataExists) {
-            return;
-        }
-
-        const id = this.determineId(eventTypeField);
-
-        if (!changedProperties.has("selectedEventTypeId")) {
-            this.fetchAndUpdateEventType(id);
-        }
-    }
-
-    private findEventTypeField() {
-        const { fields } = this;
-        return fields.find((field) => field.name === "event_type");
-    }
-
-    private determineId(eventTypeField: ModalField) {
-        const { dbData } = eventTypeField;
-        if (!dbData || !dbData[0]) {
-            return;
-        }
-
-        const [{ id: defaultId }] = dbData;
-        const selectedId = eventTypeField.value ?? defaultId;
-        return parseInt(selectedId.toString(), 10);
-    }
-
-    private fetchAndUpdateEventType(id: number | undefined) {
-        if (!id) return;
-
-        this.fetchEventType(id)
-            .then((event_type) => {
-                const isNewId =
-                    !this.selectedEventTypeId ||
-                    this.selectedEventTypeId !== id;
-                if (isNewId) {
-                    this.convertFieldValuesToRequestedType(event_type);
-                    this.selectedEventTypeId = id;
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
     }
 }

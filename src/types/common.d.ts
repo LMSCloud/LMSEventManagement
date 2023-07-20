@@ -3,28 +3,12 @@ import { DirectiveResult } from "lit/directive";
 import { TranslateDirective } from "../lib/translate";
 
 /* Utility types */
-export type BaseField = {
-    name: string;
-    desc?: string | TranslatedString;
-    placeholder?: TranslatedString;
-    required: boolean;
-} & Partial<{
-    logic?: () => Promise<Array<SelectOption>>;
-    dbData: Array<SelectOption>;
-    value: BaseFieldValue;
-    attributes: Array<[string, string | number]>;
-    required: boolean;
-}>;
-
-export type BaseFieldValue =
-    | string
-    | number
-    | boolean
-    | Array<Record<string, string | number | boolean>>;
 
 export type Column = Record<string, ColumnValue>;
 
 type ColumnValue = string | number | TemplateResult;
+
+export type ComprehensiveInputType = InputType | SpecialFieldType | "matrix";
 
 export type CreateOpts = Omit<RequestInit, "endpoint"> & {
     endpoint: string;
@@ -49,25 +33,6 @@ export type Facets = {
     status: "pending" | "confirmed" | "canceled" | "sold_out";
     targetGroupIds: Array<number | null>;
 };
-
-export type Field = BaseField & {
-    type: InputType;
-};
-
-type FieldType = {
-    headers?: Array<Array<string>>;
-    matrixInputType?: InputType;
-};
-
-export type HandlerCallbackFunction = ({
-    e,
-    value,
-    fields,
-}: {
-    e?: Event;
-    value?: string | number;
-    fields: Array<ModalField>;
-}) => Promise<void>;
 
 export type Image = {
     src: string;
@@ -109,13 +74,23 @@ export type KohaAPIError = Record<"message" | "path", string>;
 
 export type MatrixGroup = {
     id: string;
-    [key: string]: string | number;
+    [key: string]: string | number | boolean;
 };
 
-export type ModalField = BaseField & {
-    type?: InputType | SpecialFieldType | "matrix";
-    handler?: HandlerCallbackFunction;
-} & FieldType;
+export type ModalField = {
+    name: string;
+    type: ComprehensiveInputType;
+    desc: string | TranslatedString;
+    placeholder?: string | TranslatedString;
+    required?: boolean;
+    value?:
+        | string
+        | number
+        | boolean
+        | Array<unknown>
+        | Record<string, unknown>;
+    headers?: Array<Array<string>>;
+};
 
 export type SelectOption = {
     id: string | number;
@@ -123,10 +98,6 @@ export type SelectOption = {
 };
 
 export type SortableColumns = Array<string> & { 0: "id" };
-
-export type SpecialField = BaseField & {
-    type: SpecialFieldType;
-};
 
 export type SpecialFieldType = "checkbox" | "info" | "select";
 
@@ -137,7 +108,7 @@ export type TaggedColumn = Column & {
 };
 
 export type TaggedData = [
-    "target_groups" | "location" | "event_type" | "image",
+    "target_groups" | "location" | "event_type" | "image" | "status",
     Array<unknown>
 ];
 

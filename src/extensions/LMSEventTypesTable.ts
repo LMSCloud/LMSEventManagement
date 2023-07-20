@@ -30,7 +30,7 @@ export default class LMSEventTypesTable extends LMSTable {
         value: unknown
     ) {
         if (input instanceof HTMLInputElement && input.type === "checkbox") {
-            return input.checked ? true : false;
+            return Boolean(input.checked);
         }
 
         return value;

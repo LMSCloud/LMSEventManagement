@@ -348,7 +348,7 @@ export default class LMSEventsFilter extends LitElement {
     private getSettingsValueForToggle(plugin_key: string) {
         return Boolean(
             Number(
-                this.settings instanceof Array
+                Array.isArray(this.settings)
                     ? this.settings.find(
                           (setting) => setting.plugin_key === plugin_key
                       )?.plugin_value

@@ -7,13 +7,6 @@ import LMSImageBrowser from "./components/custom/LMSImageBrowser";
 import LMSImagePicker from "./components/custom/LMSImagePicker";
 import LMSPellEditor from "./components/custom/LMSPellEditor";
 
-/**   /inputs */
-/**     /modal */
-import LMSCheckboxInput from "./components/inputs/modal/LMSCheckboxInput";
-import LMSMatrix from "./components/inputs/modal/LMSMatrix";
-import LMSPrimitivesInput from "./components/inputs/modal/LMSPrimitivesInput";
-import LMSSelect from "./components/inputs/modal/LMSSelect";
-
 /**   /LMSStaffEventCard */
 import LMSStaffEventCard from "./components/LMSStaffEventCard/LMSStaffEventCard";
 import LMSStaffEventCardAttendees from "./components/LMSStaffEventCard/LMSStaffEventCardAttendees";
@@ -56,10 +49,6 @@ import StaffSettingsView from "./views/StaffSettingsView";
 import StaffTargetGroupsView from "./views/StaffTargetGroupsView";
 
 export default {
-    LMSCheckboxInput,
-    LMSMatrix,
-    LMSPrimitivesInput,
-    LMSSelect,
     LMSStaffEventCard,
     LMSStaffEventCardAttendees,
     LMSStaffEventCardPreview,

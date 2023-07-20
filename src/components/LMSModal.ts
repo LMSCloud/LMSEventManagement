@@ -5,11 +5,12 @@ import {
     faXmarkCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { html, LitElement, nothing, TemplateResult } from "lit";
+import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { DirectiveResult } from "lit/directive";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
+import { InputConverter } from "../lib/converters/InputConverter";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
 import { locale, TranslateDirective, __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
@@ -17,22 +18,9 @@ import { tailwindStyles } from "../tailwind.lit";
 import {
     CreateOpts,
     KohaAPIError,
-    MatrixGroup,
     ModalField,
+    TaggedData,
 } from "../types/common";
-import LMSCheckboxInput from "./inputs/modal/LMSCheckboxInput";
-import LMSMatrix from "./inputs/modal/LMSMatrix";
-import LMSPrimitivesInput from "./inputs/modal/LMSPrimitivesInput";
-import LMSSelect from "./inputs/modal/LMSSelect";
-
-declare global {
-    interface HTMLElementTagNameMap {
-        "lms-select": LMSSelect;
-        "lms-checkbox-input": LMSCheckboxInput;
-        "lms-primitives-input": LMSPrimitivesInput;
-        "lms-matrix": LMSMatrix;
-    }
-}
 
 export type Alert = {
     active: boolean;
@@ -49,6 +37,8 @@ export default class LMSModal extends LitElement {
 
     @property({ type: Boolean }) editable = false;
 
+    @property({ type: Array }) inputs: TemplateResult[] = [];
+
     @state() protected isOpen = false;
 
     @state() protected alert: Alert = { active: false, message: undefined };
@@ -62,6 +52,8 @@ export default class LMSModal extends LitElement {
     @query(".close") closeButton!: HTMLElement;
 
     @query("#lms-modal") modal!: HTMLDialogElement;
+
+    protected inputConverter = new InputConverter();
 
     /** TODO: Maybe we can find a cleaner way to do the intersection observations than in the base modal component */
     private footer: HTMLElement | undefined | null =
@@ -226,19 +218,18 @@ export default class LMSModal extends LitElement {
 
             this.intersectionObserverHandler.init();
         }
+    }
 
-        const dbDataPopulated = this.fields.map(async (field: ModalField) => {
-            if (field.logic) {
-                return {
-                    ...field,
-                    dbData: await field.logic(),
-                };
-            }
-            return field;
-        });
+    protected *getColumnData(
+        query: { name: string; value: ModalField },
+        data?: TaggedData[]
+    ) {
+        const { value } = query;
 
-        Promise.all(dbDataPopulated).then((fields: ModalField[]) => {
-            this.fields = fields;
+        yield this.inputConverter.getInputTemplate({
+            name: `modal_${value.type}`,
+            value,
+            data,
         });
     }
 
@@ -260,6 +251,7 @@ export default class LMSModal extends LitElement {
             <dialog id="lms-modal" class="modal modal-bottom sm:modal-middle">
                 <form
                     @submit=${this.create}
+                    @change=${this.mediateChange}
                     method="dialog"
                     class="modal-box bg-base-100"
                 >
@@ -291,9 +283,8 @@ export default class LMSModal extends LitElement {
                                 &times;
                             </button>
                         </div>
-                        ${map(this.fields, (value) =>
-                            this.getFieldMarkup(value)
-                        )}
+                        <!-- Here we render the inputs -->
+                        ${this.inputs}
                     </div>
                     <div class="modal-action">
                         <button
@@ -318,8 +309,17 @@ export default class LMSModal extends LitElement {
         `;
     }
 
-    protected mediateChange(e: CustomEvent) {
-        const { name, value } = e.detail;
+    protected mediateChange(e: Event | CustomEvent) {
+        let source: HTMLInputElement | { name: string; value: string };
+        if (e instanceof CustomEvent) {
+            const { detail } = e;
+            source = detail;
+        } else {
+            const target = e.target as HTMLInputElement;
+            source = target;
+        }
+
+        const { name, value } = source;
 
         // Create a copy of fields, modify it, and then replace the original.
         const newFields = this.fields.map((field) =>
@@ -330,40 +330,5 @@ export default class LMSModal extends LitElement {
 
         // Explicitly request an update since we're changing a sub-property.
         this.requestUpdate("fields");
-    }
-
-    private getFieldMarkup(field: ModalField) {
-        const { type, desc } = field;
-        if (!type || !desc) {
-            return nothing;
-        }
-
-        const { value } = field;
-        const fieldTypes: Record<string, TemplateResult> = {
-            select: html`<lms-select
-                @change=${this.mediateChange}
-                .field=${field}
-            ></lms-select>`,
-            checkbox: html`<lms-checkbox-input
-                @change=${this.mediateChange}
-                .field=${field}
-                .value=${value as boolean}
-            ></lms-checkbox-input>`,
-            info: html`<p>${desc}</p>`,
-            matrix: html`<lms-matrix
-                @change=${this.mediateChange}
-                .field=${field}
-                .value=${value as MatrixGroup[]}
-            ></lms-matrix>`,
-            default: html`<lms-primitives-input
-                @change=${this.mediateChange}
-                .field=${field}
-                .value=${value as string | number}
-            ></lms-primitives-input>`,
-        };
-
-        return {}.hasOwnProperty.call(fieldTypes, type)
-            ? fieldTypes[type]
-            : fieldTypes["default"];
     }
 }

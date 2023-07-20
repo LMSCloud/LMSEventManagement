@@ -1,4 +1,6 @@
 import { html, TemplateResult } from "lit";
+import { map } from "lit/directives/map.js";
+import { z } from "zod";
 import LMSPellEditor from "../../components/custom/LMSPellEditor";
 import {
     InputType,
@@ -6,10 +8,11 @@ import {
     LMSEventType,
     LMSLocation,
     LMSTargetGroup,
+    ModalField,
     TaggedData,
     UploadedImage,
 } from "../../types/common";
-import { normalizeForInput } from "./datetimeConverters";
+import { convertToISO8601, normalizeForInput } from "./datetimeConverters";
 
 type InputTypeValue =
     | string
@@ -21,14 +24,19 @@ type InputTypeValue =
 
 type TemplateQuery = {
     name: string;
-    value: InputType | InputTypeValue;
+    value: InputType | InputTypeValue | ModalField;
     data?: TaggedData[];
 };
 
 type TemplateFunction = (
-    value: InputTypeValue,
+    value: InputTypeValue | ModalField,
     data?: LMSEventType[] | LMSLocation[] | LMSTargetGroup[] | UploadedImage[]
 ) => TemplateResult;
+
+type Option = {
+    id: number;
+    name: string;
+};
 
 declare global {
     interface HTMLElementTagNameMap {
@@ -42,9 +50,14 @@ declare global {
 export class InputConverter {
     private conversionMap: Record<string, TemplateFunction> = {};
 
-    /**
-     * Creates a new instance of InputConverter.
-     */
+    private static readonly DATA_REQUIRING_TEMPLATES = [
+        "target_groups",
+        "event_type",
+        "location",
+        "image",
+        "status",
+    ];
+
     constructor() {
         this.conversionMap = {
             name: (value) => html`<input
@@ -322,7 +335,257 @@ ${value}</textarea
                     disabled
                 />`;
             },
+            modal_text: (value) => {
+                const {
+                    name,
+                    desc,
+                    placeholder,
+                    required,
+                    value: initialValue,
+                } = value as ModalField;
+                return html` <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">${desc}</span>
+                    </label>
+                    <input
+                        class="input-bordered input w-full"
+                        type="text"
+                        name=${name}
+                        placeholder=${placeholder}
+                        ?required=${required}
+                        value=${initialValue}
+                    />
+                </div>`;
+            },
+            modal_number: (value) => {
+                const {
+                    name,
+                    desc,
+                    placeholder,
+                    required,
+                    value: initialValue,
+                } = value as ModalField;
+                return html` <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">${desc}</span>
+                    </label>
+                    <input
+                        class="input-bordered input w-full"
+                        type="text"
+                        name=${name}
+                        placeholder=${placeholder}
+                        ?required=${required}
+                        value=${initialValue}
+                        step=${name === "fee" ? "0.01" : "1"}
+                    />
+                </div>`;
+            },
+            modal_matrix: (value, data) => {
+                const { name, headers } = value as ModalField;
+
+                if (name !== "target_groups") {
+                    return this.renderError();
+                }
+
+                return html`<table
+                    class="table-xs my-4 table"
+                    @change=${this.handleMatrixChange}
+                >
+                    <thead>
+                        <tr>
+                            ${map(headers, (header) => {
+                                let [title] = header;
+                                if (!title) {
+                                    title = "Unknown";
+                                }
+
+                                return html`<th>${__(title)}</th>`;
+                            })}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${(data as any).map((datum: any) => {
+                            return html`
+                                <tr>
+                                    <td id=${datum.id} class="align-middle">
+                                        ${datum.name}
+                                    </td>
+                                    <td class="align-middle">
+                                        <input
+                                            type="checkbox"
+                                            data-group="target_groups"
+                                            name="selected"
+                                            id=${datum.id}
+                                            class="checkbox"
+                                            ?checked=${datum.selected}
+                                        />
+                                    </td>
+                                    <td class="align-middle">
+                                        <input
+                                            type="number"
+                                            data-group="target_groups"
+                                            name="fee"
+                                            id=${datum.id}
+                                            step="0.01"
+                                            class="input-bordered input w-full"
+                                            value=${datum.fee}
+                                        />
+                                    </td>
+                                </tr>
+                            `;
+                        })}
+                    </tbody>
+                </table>`;
+            },
+            modal_select: (value, data) => {
+                const {
+                    name,
+                    desc,
+                    required,
+                    value: initialValue,
+                } = value as ModalField;
+                if (!data) {
+                    return this.renderError();
+                }
+
+                return html` <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">${desc}</span>
+                    </label>
+                    <select
+                        class="select-bordered select"
+                        name=${name}
+                        ?required=${required}
+                    >
+                        <option selected disabled>
+                            ${__("Please select an option")}
+                        </option>
+                        ${(data as Option[]).map(
+                            (datum) =>
+                                html`<option
+                                    value=${datum.id}
+                                    ?selected=${datum.id === initialValue}
+                                >
+                                    ${datum.name}
+                                </option>`
+                        )}
+                    </select>
+                </div>`;
+            },
+            modal_checkbox: (value) => {
+                const {
+                    name,
+                    desc,
+                    required,
+                    value: initialValue,
+                } = value as ModalField;
+                return html` <div class="form-control">
+                    <label class="label cursor-pointer">
+                        <input
+                            type="checkbox"
+                            ?checked=${initialValue}
+                            class="checkbox"
+                            name=${name}
+                            ?required=${required}
+                        />
+                        <span class="label-text">${desc}</span>
+                    </label>
+                </div>`;
+            },
+            "modal_datetime-local": (value) => {
+                const {
+                    name,
+                    desc,
+                    required,
+                    value: initialValue,
+                } = value as ModalField;
+                return html` <div
+                    class="form-control w-full"
+                    @change=${this.handleDatetimeLocalChange}
+                >
+                    <label class="label">
+                        <span class="label-text">${desc}</span>
+                    </label>
+                    <input
+                        class="input-bordered input w-full"
+                        type="datetime-local"
+                        name=${name}
+                        ?required=${required}
+                        value=${initialValue}
+                    />
+                </div>`;
+            },
         };
+    }
+
+    private handleDatetimeLocalChange(e: Event | CustomEvent): void {
+        if (e instanceof CustomEvent) {
+            return;
+        }
+
+        e.stopPropagation();
+        const target = e.target as HTMLInputElement;
+        const { name } = target;
+        let { value } = target;
+
+        value = convertToISO8601(value);
+
+        const changeEvent = new CustomEvent("change", {
+            detail: { name, value },
+            bubbles: true,
+        });
+
+        target.dispatchEvent(changeEvent);
+    }
+
+    private handleMatrixChange(e: Event | CustomEvent): void {
+        if (e instanceof CustomEvent) {
+            return;
+        }
+
+        const TargetGroupSchema = z.object({
+            id: z.string().transform((val) => Number(val)),
+            selected: z.string().transform((val) => val === "true"),
+            fee: z.string().transform((val) => parseFloat(val)),
+        });
+
+        const table = e.currentTarget as HTMLTableElement;
+        const rows = Array.from(table.querySelectorAll("tbody > tr"));
+        const matrixData = rows.map((row) => {
+            const id = row.querySelector("td")?.id;
+            const selectedInput = row.querySelector(
+                'input[type="checkbox"]'
+            ) as HTMLInputElement;
+            const feeInput = row.querySelector(
+                'input[type="number"]'
+            ) as HTMLInputElement;
+
+            if (!id || !selectedInput || !feeInput) {
+                return;
+            }
+
+            const selected = selectedInput.checked.toString();
+            const fee = feeInput.value || "0";
+
+            // Validate and coerce the data with Zod
+            const groupData = { id, selected, fee };
+            const validationResult = TargetGroupSchema.safeParse(groupData);
+
+            if (!validationResult.success) {
+                // Handle validation errors
+                console.error(validationResult.error);
+                return;
+            }
+
+            return validationResult.data; // Return the validated and coerced data
+        });
+
+        // Emit a custom event here with matrixData as its detail
+        const changeEvent = new CustomEvent("change", {
+            detail: { name: "target_groups", value: matrixData },
+            bubbles: true,
+        });
+        table.dispatchEvent(changeEvent);
     }
 
     /**
@@ -344,63 +607,41 @@ ${value}</textarea
         }
     }
 
-    /**
-     * Checks if a particular input template requires data to be rendered correctly.
-     * @param name - The name of the input template.
-     * @returns A boolean indicating whether the input template requires data.
-     */
-    private needsData(name: string): boolean {
-        return ["target_groups", "event_type", "location", "image"].includes(
-            name
-        );
+    private needsData(templateName: string): boolean {
+        return InputConverter.DATA_REQUIRING_TEMPLATES.includes(templateName);
     }
 
-    /**
-     * Retrieves the appropriate input template based on the provided query.
-     * @param query - The query object containing the name, value, and optional data for the input template.
-     * @returns The TemplateResult representing the input template.
-     */
     public getInputTemplate({
         name,
         value,
         data,
     }: TemplateQuery): TemplateResult {
         const template = this.conversionMap[name];
-        if (!template) {
-            return this.renderValue(value);
-        }
+        if (!template) return this.renderValue(value);
 
-        if (this.needsData(name)) {
-            const requiredData = this.findDataByName(name, data);
+        const targetName = this.getTargetName(name, value);
+        if (!targetName) return this.renderError();
+
+        if (this.needsData(targetName)) {
+            const requiredData = this.findDataByName(targetName, data);
             if (!requiredData) return this.renderError();
+
             return template(value, requiredData);
         }
 
         return template(value);
     }
 
-    /**
-     * Finds the required data based on the name from the provided data array.
-     * @param name - The name of the required data.
-     * @param data - The data array to search in.
-     * @returns The found data if available, otherwise undefined.
-     */
-    private findDataByName(
-        name: string,
-        data?: TaggedData[]
-    ):
-        | LMSTargetGroup[]
-        | LMSLocation[]
-        | LMSEventType[]
-        | UploadedImage[]
-        | undefined {
-        if (!data) {
-            return undefined;
+    private getTargetName(name: string, value: unknown): string | undefined {
+        if (name.startsWith("modal_")) {
+            return (value as ModalField)?.name;
         }
 
-        const [, foundData] =
-            data.find(([tag]) => tag === name) ?? new Array(2).fill(undefined);
-        return foundData;
+        return name;
+    }
+
+    private findDataByName(name: string, data?: TaggedData[]): any {
+        return data?.find(([tag]) => tag === name)?.[1];
     }
 
     /**

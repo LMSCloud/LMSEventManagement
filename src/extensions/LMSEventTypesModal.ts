@@ -1,11 +1,24 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
-import { requestHandler } from "../lib/RequestHandler";
 import { attr__, __ } from "../lib/translate";
-import { CreateOpts, LMSLocation, LMSTargetGroup } from "../types/common";
+import {
+    CreateOpts,
+    LMSEventType,
+    LMSLocation,
+    LMSTargetGroup,
+    UploadedImage,
+} from "../types/common";
 
 @customElement("lms-event-types-modal")
 export default class LMSEventTypesModal extends LMSModal {
+    @property({ type: Array }) target_groups: LMSTargetGroup[] = [];
+
+    @property({ type: Array }) locations: LMSLocation[] = [];
+
+    @property({ type: Array }) event_types: LMSEventType[] = [];
+
+    @property({ type: Array }) uploads: UploadedImage[] = [];
+
     @property({ type: Object }) override createOpts: CreateOpts = {
         method: "POST",
         endpoint: "/api/v1/contrib/eventmanagement/event_types",
@@ -38,14 +51,6 @@ export default class LMSEventTypesModal extends LMSModal {
                     ["fee", "number"],
                 ],
                 desc: __("Target Groups"),
-                logic: async () => {
-                    const response = await requestHandler.get("targetGroups");
-                    const result = await response.json();
-                    return result.map((target_group: LMSTargetGroup) => ({
-                        id: target_group.id,
-                        name: target_group.name,
-                    }));
-                },
                 required: false,
                 value: [],
             },
@@ -83,14 +88,6 @@ export default class LMSEventTypesModal extends LMSModal {
                 name: "location",
                 type: "select",
                 desc: __("Location"),
-                logic: async () => {
-                    const response = await requestHandler.get("locations");
-                    const result = await response.json();
-                    return result.map((location: LMSLocation) => ({
-                        id: location.id,
-                        name: location.name,
-                    }));
-                },
                 required: false,
                 value: [],
             },
@@ -120,5 +117,15 @@ export default class LMSEventTypesModal extends LMSModal {
                 value: 1,
             },
         ];
+
+        this.inputs = this.fields.flatMap((field) => {
+            return Array.from(
+                this.getColumnData({ name: field.name, value: field }, [
+                    ["target_groups", this.target_groups],
+                    ["location", this.locations],
+                    ["image", this.uploads],
+                ])
+            );
+        });
     }
 }

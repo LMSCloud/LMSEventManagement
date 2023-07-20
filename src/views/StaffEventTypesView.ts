@@ -217,6 +217,10 @@ export default class StaffEventTypesView extends LitElement {
                 @prefetch=${this.prefetchUpdate}
             ></lms-event-types-table>
             <lms-event-types-modal
+                .target_groups=${this.target_groups}
+                .locations=${this.locations}
+                .uploads=${this.images}
+                .event_types=${this.event_types}
                 @created=${this.fetchUpdate}
             ></lms-event-types-modal>
         `;

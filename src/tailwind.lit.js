@@ -3725,6 +3725,11 @@ details.collapse summary::-webkit-details-marker {
   margin-right: 2rem;
 }
 
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
 .mb-12 {
   margin-bottom: 3rem;
 }

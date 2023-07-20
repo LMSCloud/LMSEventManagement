@@ -380,7 +380,7 @@ export default class LMSTable extends LitElement {
     }
 
     private sortByOrder(data: unknown, order: string[]) {
-        if (!(data instanceof Array)) {
+        if (!Array.isArray(data)) {
             return data;
         }
 

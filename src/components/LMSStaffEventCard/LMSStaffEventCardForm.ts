@@ -211,7 +211,7 @@ export default class LMSStaffEventCardForm extends LitElement {
             return;
         }
 
-        return openRegistrationElement.checked ? 1 : 0;
+        return Boolean(openRegistrationElement.checked);
     }
 
     protected renderToast(

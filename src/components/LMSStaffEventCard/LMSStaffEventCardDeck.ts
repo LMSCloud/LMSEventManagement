@@ -117,6 +117,15 @@ export default class LMSStaffEventCardDeck extends LitElement {
                     ["location", this.locations],
                     ["event_type", this.event_types],
                     ["image", this.images],
+                    [
+                        "status",
+                        [
+                            { id: 1, name: __("pending") },
+                            { id: 2, name: __("confirmed") },
+                            { id: 3, name: __("canceled") },
+                            { id: 4, name: __("sold_out") },
+                        ],
+                    ],
                 ])
             );
         });

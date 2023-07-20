@@ -302,7 +302,13 @@ export default class StaffEventsView extends LitElement {
                 @prefetch=${this.prefetchUpdate}
                 @reset=${this.handleReset}
             ></lms-staff-event-card-deck>
-            <lms-events-modal @created=${this.fetchUpdate}></lms-events-modal>
+            <lms-events-modal
+                .event_types=${this.event_types}
+                .target_groups=${this.target_groups}
+                .locations=${this.locations}
+                .images=${this.images}
+                @created=${this.fetchUpdate}
+            ></lms-events-modal>
         `;
     }
 }
