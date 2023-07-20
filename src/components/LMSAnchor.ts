@@ -81,6 +81,7 @@ export default class LMSAnchor extends LitElement {
                 @click=${this.handleClick}
                 .href=${this.assembleURI()}
                 .target=${this.target}
+                class="link"
             >
                 <slot></slot>
             </a>
