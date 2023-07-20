@@ -368,6 +368,7 @@ msgstr ""
 #: src/extensions/LMSEventTypesModal.ts:53 src/extensions/LMSEventsModal.ts:61
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:528
 #: src/components/custom/LMSCardDetailsModal.ts:390
+#: src/lib/converters/InputConverter.ts:91
 msgid "Target Groups"
 msgstr ""
 
@@ -867,6 +868,51 @@ msgstr ""
 
 #: src/components/custom/LMSPellEditor.ts:135
 msgid "Reset size"
+msgstr ""
+
+#: src/lib/converters/InputConverter.ts:97
+msgid "target_group"
+msgstr ""
+
+#: src/lib/converters/InputConverter.ts:98
+msgid "selected"
+msgstr ""
+
+#: src/lib/converters/InputConverter.ts:99
+msgid "fee"
+msgstr ""
+
+#: src/lib/converters/InputConverter.ts:302
+msgid "Pending"
+msgstr ""
+
+#: src/lib/converters/InputConverter.ts:308
+msgid "Confirmed"
+msgstr ""
+
+#: src/lib/converters/InputConverter.ts:314
+msgid "Canceled"
+msgstr ""
+
+#: src/lib/converters/InputConverter.ts:320
+msgid "Sold Out"
+msgstr ""
+
+#: src/lib/converters/InputConverter.ts:462
+msgid "Please select an option"
+msgstr ""
+
+#: src/lib/converters/InputConverter.ts:662
+msgid "Error"
+msgstr ""
+
+#: src/lib/converters/datetimeConverters.ts:31
+msgid "Error: Invalid date"
+msgstr ""
+
+#: src/lib/converters/datetimeConverters.ts:76
+#: src/lib/converters/displayConverters.ts:44
+msgid "There's been an error"
 msgstr ""
 
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Adapters/Uploader.pm:62

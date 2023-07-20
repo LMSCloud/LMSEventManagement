@@ -12,6 +12,7 @@ import {
     TaggedData,
     UploadedImage,
 } from "../../types/common";
+import { __ } from "../translate";
 import { convertToISO8601, normalizeForInput } from "./datetimeConverters";
 
 type InputTypeValue =

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-24 12:16+0200\n"
-"PO-Revision-Date: 2023-07-20 21:19+0200\n"
+"PO-Revision-Date: 2023-07-20 21:30+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -410,6 +410,7 @@ msgstr "Einstellungen"
 #: src/extensions/LMSEventTypesModal.ts:53 src/extensions/LMSEventsModal.ts:61
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:528
 #: src/components/custom/LMSCardDetailsModal.ts:390
+#: src/lib/converters/InputConverter.ts:91
 msgid "Target Groups"
 msgstr "Zielgruppen"
 
@@ -591,19 +592,16 @@ msgstr "Registrierungslink, bspw. ‘https://example.com’."
 
 #: src/extensions/LMSEventsModal.ts:185
 #: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:123
-#, fuzzy
 msgid "pending"
 msgstr "Ausstehend"
 
 #: src/extensions/LMSEventsModal.ts:186
 #: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:124
-#, fuzzy
 msgid "confirmed"
 msgstr "Bestätigt"
 
 #: src/extensions/LMSEventsModal.ts:187
 #: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:125
-#, fuzzy
 msgid "canceled"
 msgstr "Abgesagt"
 
@@ -918,6 +916,51 @@ msgstr "Eigene Bild-URL, bspw. ‘https://example.com/image.png’"
 msgid "Reset size"
 msgstr "Größe zurücksetzen"
 
+#: src/lib/converters/InputConverter.ts:97
+msgid "target_group"
+msgstr "Zielgruppe"
+
+#: src/lib/converters/InputConverter.ts:98
+msgid "selected"
+msgstr "Ausgewählt"
+
+#: src/lib/converters/InputConverter.ts:99
+msgid "fee"
+msgstr "Teilnahmegebühr"
+
+#: src/lib/converters/InputConverter.ts:302
+msgid "Pending"
+msgstr "Ausstehend"
+
+#: src/lib/converters/InputConverter.ts:308
+msgid "Confirmed"
+msgstr "Bestätigt"
+
+#: src/lib/converters/InputConverter.ts:314
+msgid "Canceled"
+msgstr "Abgesagt"
+
+#: src/lib/converters/InputConverter.ts:320
+msgid "Sold Out"
+msgstr "Ausverkauft"
+
+#: src/lib/converters/InputConverter.ts:462
+msgid "Please select an option"
+msgstr "Bitte wählen Sie eine Option"
+
+#: src/lib/converters/InputConverter.ts:662
+msgid "Error"
+msgstr "Fehler"
+
+#: src/lib/converters/datetimeConverters.ts:31
+msgid "Error: Invalid date"
+msgstr "Fehler: Ungültiges Datum"
+
+#: src/lib/converters/datetimeConverters.ts:76
+#: src/lib/converters/displayConverters.ts:44
+msgid "There's been an error"
+msgstr "Es ist ein Fehler aufgetreten"
+
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Adapters/Uploader.pm:62
 msgid "A file with the same content already exists"
 msgstr "Eine Datei mit dem selben Namen existiert bereits"
@@ -1087,30 +1130,9 @@ msgstr "Katalog"
 msgid "Home"
 msgstr "Start"
 
-#~ msgid "Sold Out"
-#~ msgstr "Ausverkauft"
-
 #, fuzzy
 #~ msgid "Reset Filters"
 #~ msgstr "Filter zurücksetzen"
-
-#~ msgid "Error: Invalid date"
-#~ msgstr "Fehler: Ungültiges Datum"
-
-#~ msgid "There's been an error"
-#~ msgstr "Es ist ein Fehler aufgetreten"
-
-#~ msgid "target_group"
-#~ msgstr "Zielgruppe"
-
-#~ msgid "selected"
-#~ msgstr "Ausgewählt"
-
-#~ msgid "fee"
-#~ msgstr "Teilnahmegebühr"
-
-#~ msgid "Error"
-#~ msgstr "Fehler"
 
 #~ msgid "Toggle navigation"
 #~ msgstr "Navigation umschalten"
