@@ -27,7 +27,10 @@ export function splitDateTime(
     string: string | Date | null,
     locale: string
 ): string[] {
-    if (!string) return [`${__("Error: Invalid date")}`, ""];
+    if (!string) {
+        return [`${__("Error: Invalid date")}`, ""];
+    }
+
     const datetime = dayjs(string).locale(locale);
     const date = datetime.format("YYYY-MM-DD");
     const time = datetime.format("HH:mm");
@@ -69,7 +72,10 @@ export function formatDatetimeByLocale(
     datetime: string | Date | null,
     locale: string
 ): TemplateResult {
-    if (!datetime) return html`<span>${__("There's been an error")}..</span>`;
+    if (!datetime) {
+        return html`<span>${__("There's been an error")}..</span>`;
+    }
+
     const formattedDatetime = dayjs(datetime).locale(locale).format(
         "LLLL" // Use the appropriate format for the desired localized datetime representation
     );

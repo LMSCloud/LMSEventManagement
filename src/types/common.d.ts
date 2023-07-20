@@ -108,7 +108,8 @@ export type InputType =
 export type KohaAPIError = Record<"message" | "path", string>;
 
 export type MatrixGroup = {
-    [key in InputType]?: string;
+    id: string;
+    [key: string]: string | number;
 };
 
 export type ModalField = BaseField & {

@@ -51,9 +51,11 @@ export default class LMSSearch extends LitElement {
 
         parts.forEach((part) => {
             const [rawKey, rawValue] = part.split(":").map((s) => s.trim());
-            if (!rawKey || rawValue === undefined) return;
+            if (!rawKey || rawValue === undefined) {
+                return;
+            }
 
-            let value: string | number | string[] = rawValue;
+            let value: string | number | string[] | undefined = rawValue;
             let operator = "=";
 
             // Handle OR queries
@@ -75,7 +77,11 @@ export default class LMSSearch extends LitElement {
                     if (rawValue.includes(op)) {
                         operator = operators[op as keyof typeof operators];
                         [, value] = rawValue.split(op);
-                        value = value.trim();
+                        if (value) {
+                            value = value.trim();
+                        } else {
+                            value = "";
+                        }
                         break;
                     }
                 }

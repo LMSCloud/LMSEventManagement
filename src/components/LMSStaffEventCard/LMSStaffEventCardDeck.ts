@@ -144,7 +144,9 @@ export default class LMSStaffEventCardDeck extends LitElement {
     private toggleDoc(e: MouseEvent) {
         const target = e.target as HTMLElement;
         const doc = target.nextElementSibling;
-        if (!doc) return;
+        if (!doc) {
+            return;
+        }
 
         doc.classList.toggle("hidden");
     }

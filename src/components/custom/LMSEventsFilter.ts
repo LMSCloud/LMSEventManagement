@@ -207,7 +207,10 @@ export default class LMSEventsFilter extends LitElement {
     override willUpdate() {
         this.eventsDeepCopy = deepCopy(this.events);
         const events = this.facetsStrategyManager();
-        if (!events.length) return;
+        if (!events.length) {
+            return;
+        }
+
         this.facets = {
             eventTypeIds: [...new Set(events.map((event) => event.event_type))],
             targetGroupIds: [
@@ -238,7 +241,7 @@ export default class LMSEventsFilter extends LitElement {
     }
 
     private handleReset() {
-        this.inputs.forEach((input) => this.resetHandlers[input.type](input));
+        this.inputs.forEach((input) => this.resetHandlers[input.type]?.(input));
         this.dispatchEvent(
             new CustomEvent("filter", {
                 detail: "",
@@ -253,7 +256,10 @@ export default class LMSEventsFilter extends LitElement {
         value: unknown,
         exclude: string[]
     ) {
-        if (!name) return false;
+        if (!name) {
+            return false;
+        }
+
         return !(name && exclude.includes(name.toString()) && value === false);
     }
 
@@ -263,8 +269,11 @@ export default class LMSEventsFilter extends LitElement {
             .map((input) => {
                 const handler =
                     this.inputHandlers?.[input.type] ||
-                    this.inputHandlers.default;
-                if (!handler) return [input.name, undefined];
+                    this.inputHandlers["default"];
+                if (!handler) {
+                    return [input.name, undefined];
+                }
+
                 const value = handler(input);
                 return [input.name, value];
             })

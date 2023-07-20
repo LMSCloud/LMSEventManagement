@@ -219,7 +219,9 @@ export default class LMSTable extends LitElement {
         } else {
             button = e.target as HTMLButtonElement;
         }
-        if (!button) return;
+        if (!button) {
+            return;
+        }
 
         this.inputs?.forEach((input) => {
             input.setAttribute("disabled", "");
@@ -301,7 +303,17 @@ export default class LMSTable extends LitElement {
         let entity: string | null = null;
         if (parent) {
             let element = parent.children[position];
-            const tagName = parent.children[position].tagName;
+            const elementAtPosition = parent.children[position];
+
+            let tagName: string | null = null;
+            if (elementAtPosition) {
+                tagName = elementAtPosition.tagName;
+            }
+
+            if (!tagName || !element) {
+                return null;
+            }
+
             if (tagName === "TD") {
                 element = element.firstElementChild as HTMLElement;
             }
@@ -431,10 +443,17 @@ export default class LMSTable extends LitElement {
         if (this.footer && this.collapsibles.length) {
             const footer = this.footer;
             const [someCollapsible] = this.collapsibles;
+            if (!someCollapsible) {
+                return;
+            }
+
             const bottom = this.getBottomFromTestElement(someCollapsible);
             this.collapsibles.forEach((collapsible) => {
                 const pip = collapsible.parentElement;
-                if (!pip) return;
+                if (!pip) {
+                    return;
+                }
+
                 this.intersectionObserverHandler =
                     new IntersectionObserverHandler({
                         intersecting: {
@@ -504,7 +523,9 @@ export default class LMSTable extends LitElement {
     private handleSortChange(e: Event) {
         const target = e.target as HTMLInputElement;
         const tableHeader = target.closest("th");
-        if (!tableHeader) return;
+        if (!tableHeader) {
+            return;
+        }
 
         const { name } = tableHeader.dataset;
         this.dispatchEvent(
@@ -532,7 +553,9 @@ export default class LMSTable extends LitElement {
     private toggleDoc(e: MouseEvent) {
         const target = e.target as HTMLElement;
         const doc = target.nextElementSibling;
-        if (!doc) return;
+        if (!doc) {
+            return;
+        }
 
         doc.classList.toggle("hidden");
     }

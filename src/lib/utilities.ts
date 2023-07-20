@@ -1,8 +1,15 @@
 export function deepCopy<T>(obj: T): T {
-    if (obj === null || typeof obj !== "object") return obj as T;
-    if (obj instanceof Date) return new Date(obj.getTime()) as T;
-    if (Array.isArray(obj))
+    if (obj === null || typeof obj !== "object") {
+        return obj as T;
+    }
+
+    if (obj instanceof Date) {
+        return new Date(obj.getTime()) as T;
+    }
+
+    if (Array.isArray(obj)) {
         return obj.map((item) => deepCopy(item)) as unknown as T;
+    }
 
     const newObj = Object.create(Object.getPrototypeOf(obj)) as T;
     for (const key in obj) {

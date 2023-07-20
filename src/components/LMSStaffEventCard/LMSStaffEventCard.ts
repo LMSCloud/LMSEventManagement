@@ -26,18 +26,25 @@ export default class LMSStaffEventCard extends LitElement {
     private handleTabClick(event: Event) {
         event.preventDefault();
         const tab = event.target as HTMLElement;
-        if (!tab) return;
+        if (!tab) {
+            return;
+        }
 
         const previousActiveTab = tab
             .closest("div")
             ?.querySelector(".tab-active");
-        if (!previousActiveTab) return;
-        previousActiveTab.classList.remove("tab-active");
+        if (!previousActiveTab) {
+            return;
+        }
 
+        previousActiveTab.classList.remove("tab-active");
         tab.classList.add("tab-active");
 
         const { content, id } = tab.dataset;
-        if (!content || !id) return;
+        if (!content || !id) {
+            return;
+        }
+
         this.state = content as "data" | "attendees" | "preview";
         this.requestUpdate();
     }

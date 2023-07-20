@@ -10,6 +10,9 @@
     "outDir": "./Koha/Plugin/Com/LMSCloud/EventManagement/dist/",
     "rootDir": "./src",
     "strict": true,
+    "alwaysStrict": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmitOnError": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
@@ -21,6 +24,12 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "useUnknownInCatchVariables": true,
     "plugins": [
       {
         "name": "ts-lit-plugin",

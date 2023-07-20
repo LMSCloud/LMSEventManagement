@@ -72,7 +72,9 @@ export default class LMSStaffEventCardForm extends LitElement {
         } else {
             button = e.target as HTMLButtonElement;
         }
-        if (!button) return;
+        if (!button) {
+            return;
+        }
 
         if (button.classList.contains("active")) {
             button.classList.remove("active");
@@ -112,7 +114,9 @@ export default class LMSStaffEventCardForm extends LitElement {
         const targetGroupElements: Array<HTMLInputElement> = Array.from(
             target.querySelectorAll(`[data-group="target_groups"]`)
         );
-        if (!targetGroupElements.length) return;
+        if (!targetGroupElements.length) {
+            return;
+        }
 
         return targetGroupElements.reduce(
             (
@@ -132,16 +136,19 @@ export default class LMSStaffEventCardForm extends LitElement {
                 }
 
                 if (element instanceof HTMLInputElement) {
+                    const target_group = target_groups[databaseId];
                     switch (name) {
                         case "selected":
-                            target_groups[databaseId].selected = element.checked
-                                ? true
-                                : false;
+                            if (target_group) {
+                                target_group.selected = element.checked
+                                    ? true
+                                    : false;
+                            }
                             break;
                         case "fee":
-                            target_groups[databaseId].fee = parseFloat(
-                                element.value
-                            );
+                            if (target_group) {
+                                target_group.fee = parseFloat(element.value);
+                            }
                             break;
                         default:
                             break;
@@ -166,7 +173,9 @@ export default class LMSStaffEventCardForm extends LitElement {
         const datetimeLocalElements: Array<HTMLInputElement> = Array.from(
             target.querySelectorAll(`[type="datetime-local"]`)
         );
-        if (!datetimeLocalElements.length) return;
+        if (!datetimeLocalElements.length) {
+            return;
+        }
 
         const affectedFields = [
             "start_time",
@@ -198,7 +207,9 @@ export default class LMSStaffEventCardForm extends LitElement {
             (target?.querySelector(
                 '[name="open_registration"]'
             ) as HTMLInputElement) ?? undefined;
-        if (!openRegistrationElement) return;
+        if (!openRegistrationElement) {
+            return;
+        }
 
         return openRegistrationElement.checked ? 1 : 0;
     }
@@ -253,18 +264,26 @@ export default class LMSStaffEventCardForm extends LitElement {
         e.preventDefault();
         const target = e.target;
 
-        this.trc.templateResult = this.datum.id;
+        this.trc.templateResult = this.datum["id"];
         const [id] = this.trc.getRenderValues();
-        if (!(target instanceof HTMLFormElement) || !id) return;
+        if (!(target instanceof HTMLFormElement) || !id) {
+            return;
+        }
 
         const target_groups = this.processTargetGroupElements(target);
-        if (!target_groups) return;
+        if (!target_groups) {
+            return;
+        }
 
         const datetimeLocalElements = this.processDatetimeLocalElements(target);
-        if (!datetimeLocalElements) return;
+        if (!datetimeLocalElements) {
+            return;
+        }
 
         const openRegistration = this.processOpenRegistrationElement(target);
-        if (openRegistration === undefined) return;
+        if (openRegistration === undefined) {
+            return;
+        }
 
         const formData = new FormData(target);
         datetimeLocalElements.forEach(({ name, value }) =>
@@ -282,8 +301,8 @@ export default class LMSStaffEventCardForm extends LitElement {
             {}
         );
 
-        requestBody.target_groups = Object.values(target_groups);
-        requestBody.open_registration = openRegistration;
+        requestBody["target_groups"] = Object.values(target_groups);
+        requestBody["open_registration"] = openRegistration;
 
         const response = await requestHandler.put(
             "events",
@@ -326,7 +345,7 @@ export default class LMSStaffEventCardForm extends LitElement {
     private async handleDelete(e: Event) {
         e.preventDefault();
 
-        this.trc.templateResult = this.datum.id;
+        this.trc.templateResult = this.datum["id"];
         const [id] = this.trc.getRenderValues();
         if (!id) {
             return;
@@ -391,7 +410,7 @@ export default class LMSStaffEventCardForm extends LitElement {
         this.confirmationModal.header = __("Please confirm");
 
         const [name] = new TemplateResultConverter(
-            this.datum.name
+            this.datum["name"]
         ).getRenderValues();
         if (typeof name === "string") {
             this.confirmationModal.message = __(
@@ -492,7 +511,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                             <label for="name" class="label">
                                 <span class="label-text">${__("Name")}</span>
                             </label>
-                            ${datum.name}
+                            ${datum["name"]}
                         </div>
                         <div class="form-control inline-block w-1/2">
                             <label for="event_type" class="label">
@@ -500,7 +519,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                                     ${__("Event Type")}
                                 </span>
                             </label>
-                            ${datum.event_type}
+                            ${datum["event_type"]}
                         </div>
 
                         <div class="form-control w-full">
@@ -509,7 +528,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                                     ${__("Target Groups")}</span
                                 ></label
                             >
-                            ${datum.target_groups}
+                            ${datum["target_groups"]}
                         </div>
                     </div>
                 </details>
@@ -529,13 +548,13 @@ export default class LMSStaffEventCardForm extends LitElement {
                             <label for="min_age" class="label">
                                 <span class="label-text">${__("Min Age")}</span>
                             </label>
-                            ${datum.min_age}
+                            ${datum["min_age"]}
                         </div>
                         <div class="form-control inline-block w-1/2">
                             <label for="max_age" class="label">
                                 <span class="label-text">${__("Max Age")}</span>
                             </label>
-                            ${datum.max_age}
+                            ${datum["max_age"]}
                         </div>
 
                         <div class="form-control inline-block w-1/2">
@@ -544,7 +563,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                                     >${__("Max Participants")}</span
                                 >
                             </label>
-                            ${datum.max_participants}
+                            ${datum["max_participants"]}
                         </div>
                     </div>
                 </details>
@@ -569,7 +588,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                                     >${__("Start Time")}</span
                                 >
                             </label>
-                            ${datum.start_time}
+                            ${datum["start_time"]}
                         </div>
                         <div class="form-control inline-block w-1/2">
                             <label for="end_time" class="label">
@@ -577,7 +596,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                                     >${__("End Time")}</span
                                 >
                             </label>
-                            ${datum.end_time}
+                            ${datum["end_time"]}
                         </div>
 
                         <div class="form-control inline-block w-1/2">
@@ -586,7 +605,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                                     >${__("Registration Start")}</span
                                 >
                             </label>
-                            ${datum.registration_start}
+                            ${datum["registration_start"]}
                         </div>
                         <div class="form-control inline-block w-1/2">
                             <label for="registration_end" class="label">
@@ -594,7 +613,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                                     >${__("Registration End")}</span
                                 >
                             </label>
-                            ${datum.registration_end}
+                            ${datum["registration_end"]}
                         </div>
                     </div>
                 </details>
@@ -619,21 +638,21 @@ export default class LMSStaffEventCardForm extends LitElement {
                                     >${__("Location")}</span
                                 >
                             </label>
-                            ${datum.location}
+                            ${datum["location"]}
                         </div>
 
                         <div class="form-control inline-block w-full">
                             <label for="image" class="label">
                                 <span class="label-text">${__("Image")}</span>
                             </label>
-                            ${datum.image}
+                            ${datum["image"]}
                         </div>
 
                         <div class="form-control inline-block w-full">
                             <label for="status" class="label">
                                 <span class="label-text">${__("Status")}</span>
                             </label>
-                            ${datum.status}
+                            ${datum["status"]}
                         </div>
 
                         <div class="form-control inline-block w-full">
@@ -642,7 +661,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                                     >${__("Registration Link")}</span
                                 >
                             </label>
-                            ${datum.registration_link}
+                            ${datum["registration_link"]}
                         </div>
 
                         <div class="form-control">
@@ -650,7 +669,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                                 for="open_registration"
                                 class="label cursor-pointer"
                             >
-                                ${datum.open_registration}
+                                ${datum["open_registration"]}
                                 <span class="label-text"
                                     >${__("Open Registration")}</span
                                 >
@@ -663,7 +682,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                                     >${__("Description")}</span
                                 >
                             </label>
-                            ${datum.description}
+                            ${datum["description"]}
                         </div>
                     </div>
                 </details>

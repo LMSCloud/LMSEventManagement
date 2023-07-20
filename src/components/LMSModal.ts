@@ -243,7 +243,6 @@ export default class LMSModal extends LitElement {
     }
 
     override render() {
-        console.log(this.fields);
         return html`
             <button
                 class="btn-modal ${classMap({
@@ -335,7 +334,9 @@ export default class LMSModal extends LitElement {
 
     private getFieldMarkup(field: ModalField) {
         const { type, desc } = field;
-        if (!type || !desc) return nothing;
+        if (!type || !desc) {
+            return nothing;
+        }
 
         const { value } = field;
         const fieldTypes: Record<string, TemplateResult> = {

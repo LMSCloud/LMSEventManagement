@@ -158,7 +158,9 @@ export default class LMSEventsView extends LitElement {
 
     private handleLoadMore() {
         const currentPage = this.queryBuilder.getParamValue("_page");
-        if (!currentPage) return;
+        if (!currentPage) {
+            return;
+        }
 
         const nextPage = parseInt(currentPage, 10) + 1;
         this.queryBuilder.updateQuery(`_page=${nextPage}`);

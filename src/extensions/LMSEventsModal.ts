@@ -237,12 +237,14 @@ export default class LMSEventsModal extends LMSModal {
         super.willUpdate(changedProperties);
 
         const eventTypeField = this.findEventTypeField();
-
-        if (!eventTypeField) return;
+        if (!eventTypeField) {
+            return;
+        }
 
         const dbDataExists = eventTypeField.dbData && eventTypeField.dbData[0];
-
-        if (!dbDataExists) return;
+        if (!dbDataExists) {
+            return;
+        }
 
         const id = this.determineId(eventTypeField);
 
@@ -258,7 +260,9 @@ export default class LMSEventsModal extends LMSModal {
 
     private determineId(eventTypeField: ModalField) {
         const { dbData } = eventTypeField;
-        if (!dbData) return;
+        if (!dbData || !dbData[0]) {
+            return;
+        }
 
         const [{ id: defaultId }] = dbData;
         const selectedId = eventTypeField.value ?? defaultId;

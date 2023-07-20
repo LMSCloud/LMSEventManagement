@@ -189,7 +189,10 @@ export default class LMSCardDetailsModal extends LitElement {
     private getSelectedQuantity(
         targetGroupFees: LMSEventTargetGroupFee[] | null
     ) {
-        if (!targetGroupFees) return 0;
+        if (!targetGroupFees) {
+            return 0;
+        }
+
         return targetGroupFees?.filter(
             (targetGroupFee) => targetGroupFee.selected
         ).length;
@@ -206,12 +209,16 @@ export default class LMSCardDetailsModal extends LitElement {
                       targetGroupFee,
                       "target_group_id"
                   );
-                  if (hasTargetGroupId) return nothing;
+                  if (hasTargetGroupId) {
+                      return nothing;
+                  }
 
                   const { name, min_age, max_age, fee, selected } =
                       targetGroupFee as LMSEventTargetGroupFee;
 
-                  if (!selected) return nothing;
+                  if (!selected) {
+                      return nothing;
+                  }
                   return noFees
                       ? html`<span
                             >${name}${index + 1 < quantity ? ", " : ""}</span

@@ -168,10 +168,12 @@ export default class StaffEventsView extends LitElement {
             .map((checkbox) => ({ [checkbox.name]: checkbox.value }))
             .reduce((acc: string, filter: Record<string, unknown>, index) => {
                 const [entries] = Object.entries(filter);
-                const [param, value] = entries;
-                acc += `${param}=${value}${
-                    index < checkboxesArr.length - 1 ? "&" : ""
-                }`;
+                if (entries) {
+                    const [param, value] = entries;
+                    acc += `${param}=${value}${
+                        index < checkboxesArr.length - 1 ? "&" : ""
+                    }`;
+                }
                 return acc;
             }, "");
     }

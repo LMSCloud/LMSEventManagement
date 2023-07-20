@@ -64,10 +64,10 @@ export default class LMSEventTypesTable extends LMSTable {
             {
                 ...Array.from(inputs).reduce((acc, input) => {
                     if (
-                        input.dataset.group &&
+                        input.dataset["group"] &&
                         input instanceof HTMLInputElement
                     ) {
-                        const group = input.dataset.group;
+                        const group = input.dataset["group"];
                         if (!(group in acc)) {
                             acc[group] = [];
                         }
@@ -78,7 +78,7 @@ export default class LMSEventTypesTable extends LMSTable {
                             Record<string, unknown>
                         >;
                         const groupIndex = groupArray.findIndex(
-                            (item) => item.id === id
+                            (item) => item["id"] === id
                         );
 
                         if (groupIndex === -1) {
@@ -89,10 +89,11 @@ export default class LMSEventTypesTable extends LMSTable {
                             return acc;
                         }
 
-                        groupArray[groupIndex][name] = this.handleInput(
-                            input,
-                            value
-                        );
+                        const groupItem = groupArray[groupIndex];
+                        if (groupItem) {
+                            groupItem[name] = this.handleInput(input, value);
+                        }
+
                         return acc;
                     }
 

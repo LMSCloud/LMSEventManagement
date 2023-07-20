@@ -332,7 +332,9 @@ ${value}</textarea
     private togglePip(e: MouseEvent) {
         const target = e.target as HTMLElement;
         const details = target.closest("details");
-        if (!details || target.tagName !== "SUMMARY") return;
+        if (!details || target.tagName !== "SUMMARY") {
+            return;
+        }
 
         const parent = details.parentElement;
         if (parent?.classList.contains("pip")) {
@@ -364,7 +366,9 @@ ${value}</textarea
         data,
     }: TemplateQuery): TemplateResult {
         const template = this.conversionMap[name];
-        if (!template) return this.renderValue(value);
+        if (!template) {
+            return this.renderValue(value);
+        }
 
         if (this.needsData(name)) {
             const requiredData = this.findDataByName(name, data);
@@ -390,7 +394,9 @@ ${value}</textarea
         | LMSEventType[]
         | UploadedImage[]
         | undefined {
-        if (!data) return undefined;
+        if (!data) {
+            return undefined;
+        }
 
         const [, foundData] =
             data.find(([tag]) => tag === name) ?? new Array(2).fill(undefined);

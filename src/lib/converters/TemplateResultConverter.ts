@@ -59,7 +59,9 @@ export class TemplateResultConverter {
      */
     private isTemplateResult(value: unknown): boolean {
         try {
-            if (!value) return false;
+            if (!value) {
+                return false;
+            }
 
             return (
                 typeof value === "object" &&

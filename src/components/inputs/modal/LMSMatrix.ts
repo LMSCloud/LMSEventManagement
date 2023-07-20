@@ -1,4 +1,4 @@
-import { html, LitElement, TemplateResult } from "lit";
+import { html, LitElement, nothing, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { DirectiveResult } from "lit/directive";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -43,8 +43,9 @@ export default class LMSMatrix extends LitElement {
                     <thead>
                         <tr>
                             ${map(
-                                field.headers,
-                                ([name]) => html`<th>${__(name)}</th>`
+                                field["headers"],
+                                ([name]) =>
+                                    html`<th>${__(name ?? "Error")}</th>`
                             )}
                         </tr>
                     </thead>
@@ -69,11 +70,17 @@ export default class LMSMatrix extends LitElement {
     }
 
     private handleInput({ e, id, header }: InputHandlerArgs) {
-        if (!(e.target instanceof HTMLInputElement)) return;
+        if (!(e.target instanceof HTMLInputElement)) {
+            return;
+        }
 
         const { field } = this;
         const { type } = e.target;
+
         const [name] = header;
+        if (!name) {
+            return;
+        }
 
         const updateOrCreateItem = (value: string | number) => {
             let newValue: MatrixGroup[];
@@ -86,7 +93,7 @@ export default class LMSMatrix extends LitElement {
                 /** Now it must be an array because the guard clause
                  *  didn't return in the previous step. We check if
                  *  the item exists and update it if it does. */
-                const item = field.value.find((item) => item.id == id);
+                const item = field.value.find((item) => item["id"] == id);
                 if (item) {
                     item[name] = value;
                     newValue = [...field.value] as MatrixGroup[];
@@ -132,7 +139,7 @@ export default class LMSMatrix extends LitElement {
         row: Row
     ) {
         if (value instanceof Array) {
-            return value.find((item) => item.id == row.id)?.[name] ?? "0";
+            return value.find((item) => item["id"] == row.id)?.[name] ?? "0";
         }
 
         if (typeof value === "string") {
@@ -153,7 +160,8 @@ export default class LMSMatrix extends LitElement {
     ) {
         if (value instanceof Array) {
             return (
-                value.find((item) => item.id == row.id)?.[name] === 1 ?? false
+                value.find((item) => item["id"] == row.id)?.[name] === 1 ??
+                false
             );
         }
 
@@ -170,6 +178,10 @@ export default class LMSMatrix extends LitElement {
 
     private getMatrixInputMarkup({ field, row, header }: MatrixMarkupGenArgs) {
         const [name, type] = header;
+        if (!name || !type) {
+            return nothing;
+        }
+
         const inputTypes: Record<string, TemplateResult> = {
             number: html`<td class="align-middle">
                 <input

@@ -42,7 +42,7 @@ export default class LMSImagePicker extends LitElement {
     private handleFocus(e: Event) {
         const target = e.target as HTMLInputElement;
         const [formInput] = this.input;
-        if (target.id === "custom-image-url-input") {
+        if (target.id === "custom-image-url-input" && formInput) {
             this.customImageRadio.checked = true;
             formInput.value = target.value;
             this.requestUpdate();
@@ -52,7 +52,9 @@ export default class LMSImagePicker extends LitElement {
     private handleInput(e: Event) {
         const target = e.target as HTMLInputElement;
         const [formInput] = this.input;
-        formInput.value = target.value;
+        if (formInput) {
+            formInput.value = target.value;
+        }
     }
 
     private handleChange(e: Event) {
@@ -61,19 +63,29 @@ export default class LMSImagePicker extends LitElement {
 
         if (target.id === "custom-image-radio") {
             const customInput = target.nextElementSibling as HTMLInputElement;
-            formInput.value = customInput?.value ?? "";
+            if (formInput) {
+                formInput.value = customInput?.value ?? "";
+            }
+
             this.requestUpdate();
+
             return;
         }
 
-        formInput.value = target.value;
+        if (formInput) {
+            formInput.value = target.value;
+        }
+
         this.requestUpdate();
     }
 
     private handleImageKeyDown(e: KeyboardEvent, imageUrl: string) {
         if (e.key === "Enter") {
             const [formInput] = this.input;
-            formInput.value = imageUrl;
+            if (formInput) {
+                formInput.value = imageUrl;
+            }
+
             this.requestUpdate();
             this.closeModal();
         }

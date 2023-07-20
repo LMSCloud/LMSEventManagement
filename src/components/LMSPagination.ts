@@ -122,7 +122,9 @@ export default class LMSPagination extends LitElement {
         e.preventDefault();
         const target = e.target as HTMLAnchorElement;
         const anchor = target.closest("a");
-        if (!anchor) return;
+        if (!anchor) {
+            return;
+        }
 
         const url = new URL(anchor.href);
         let _page: string | number | null = url.searchParams.get("_page");

@@ -81,7 +81,10 @@ export default class LMSDropdown extends LitElement {
     }
 
     private composePosition(): ClassInfo {
-        if (!this.position.length) return {};
+        if (!this.position.length) {
+            return {};
+        }
+
         return {
             "dropdown-end": this.position.includes("end"),
             "dropdown-top": this.position.includes("top"),
@@ -92,7 +95,10 @@ export default class LMSDropdown extends LitElement {
     }
 
     private handleHover(e: MouseEvent) {
-        if (this.details.open || !(this.label && this.icon)) return;
+        if (this.details.open || !(this.label && this.icon)) {
+            return;
+        }
+
         if (e.type === "mouseenter") {
             this.labelElement.classList.remove("hidden");
             this.iconElement.classList.add("hidden");
