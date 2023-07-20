@@ -14,10 +14,20 @@ export default class LMSCheckboxInput extends LitElement {
 
     private handleChange(e: Event) {
         const input = e.target as HTMLInputElement;
-        this.field.value = input.checked ? 1 : 0;
+        const value = input.checked ? 1 : 0;
+
+        const changeEvent = new CustomEvent("change", {
+            detail: {
+                name: this.field.name,
+                value,
+            },
+            bubbles: true,
+            composed: true,
+        });
+        this.dispatchEvent(changeEvent);
     }
 
-    private getCheckedState() {
+    private get checkedState() {
         if (typeof this.value === "boolean") {
             return this.value;
         }
@@ -43,7 +53,7 @@ export default class LMSCheckboxInput extends LitElement {
                         placeholder=${ifDefined(placeholder)}
                         @change=${this.handleChange}
                         ?required=${required}
-                        ?checked=${this.getCheckedState}
+                        ?checked=${this.checkedState}
                     />
                     <span class="label-text">${desc}</span>
                 </label>

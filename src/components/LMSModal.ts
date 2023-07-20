@@ -201,6 +201,7 @@ export default class LMSModal extends LitElement {
     override disconnectedCallback() {
         super.disconnectedCallback();
         document.removeEventListener("keydown", this.boundHandleKeyDown);
+        this.intersectionObserverHandler?.destroy();
     }
 
     override firstUpdated() {
@@ -242,6 +243,7 @@ export default class LMSModal extends LitElement {
     }
 
     override render() {
+        console.log(this.fields);
         return html`
             <button
                 class="btn-modal ${classMap({
@@ -319,9 +321,16 @@ export default class LMSModal extends LitElement {
 
     protected mediateChange(e: CustomEvent) {
         const { name, value } = e.detail;
-        this.fields = this.fields.map((field) =>
+
+        // Create a copy of fields, modify it, and then replace the original.
+        const newFields = this.fields.map((field) =>
             field.name === name ? { ...field, value } : field
         );
+
+        this.fields = [...newFields];
+
+        // Explicitly request an update since we're changing a sub-property.
+        this.requestUpdate("fields");
     }
 
     private getFieldMarkup(field: ModalField) {
@@ -335,15 +344,18 @@ export default class LMSModal extends LitElement {
                 .field=${field}
             ></lms-select>`,
             checkbox: html`<lms-checkbox-input
+                @change=${this.mediateChange}
                 .field=${field}
                 .value=${value as boolean}
             ></lms-checkbox-input>`,
             info: html`<p>${desc}</p>`,
             matrix: html`<lms-matrix
+                @change=${this.mediateChange}
                 .field=${field}
                 .value=${value as MatrixGroup[]}
             ></lms-matrix>`,
             default: html`<lms-primitives-input
+                @change=${this.mediateChange}
                 .field=${field}
                 .value=${value as string | number}
             ></lms-primitives-input>`,

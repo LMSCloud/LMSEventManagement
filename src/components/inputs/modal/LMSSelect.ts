@@ -1,4 +1,4 @@
-import { html, LitElement, PropertyValueMap } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { tailwindStyles } from "../../../tailwind.lit";
@@ -8,28 +8,7 @@ import { ModalField, SelectOption } from "../../../types/common";
 export default class LMSSelect extends LitElement {
     @property({ type: Object }) field: ModalField = {} as ModalField;
 
-    private defaultOption = {} as SelectOption;
-
     static override styles = [tailwindStyles];
-
-    protected override updated(
-        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
-    ): void {
-        super.updated(_changedProperties);
-        if (_changedProperties.has("field")) {
-            this.setDefaultOption();
-        }
-    }
-
-    private setDefaultOption() {
-        const { dbData } = this.field;
-        if (dbData?.length) {
-            const [defaultOption] = dbData;
-            const { id } = defaultOption;
-            this.field.value = id.toString();
-            this.defaultOption = defaultOption;
-        }
-    }
 
     override render() {
         const { name, desc, value, required, dbData } = this.field;
@@ -63,7 +42,7 @@ export default class LMSSelect extends LitElement {
                         ({ id, name }: SelectOption) =>
                             html`<option
                                 value=${id}
-                                ?selected=${id === this.defaultOption.id}
+                                ?selected=${id.toString() === value}
                             >
                                 ${name}
                             </option>`

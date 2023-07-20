@@ -76,25 +76,38 @@ export default class LMSMatrix extends LitElement {
         const [name] = header;
 
         const updateOrCreateItem = (value: string | number) => {
+            let newValue: MatrixGroup[];
+
             /** If there's no Array present in field.value
              *  we create one and add the item to it. */
             if (!(field?.value instanceof Array)) {
-                field.value = [{ id: id.toString(), [name]: value }];
-                return;
+                newValue = [{ id: id.toString(), [name]: value }];
+            } else {
+                /** Now it must be an array because the guard clause
+                 *  didn't return in the previous step. We check if
+                 *  the item exists and update it if it does. */
+                const item = field.value.find((item) => item.id == id);
+                if (item) {
+                    item[name] = value;
+                    newValue = [...field.value] as MatrixGroup[];
+                } else {
+                    /** If it is an Array but we didn't find an item  we
+                     *  have to add a new one. */
+                    newValue = [
+                        ...field.value,
+                        { id: id.toString(), [name]: value },
+                    ] as MatrixGroup[];
+                }
             }
 
-            /** Now it must be an array because the guard clause
-             *  didn't return in the previous step. We check if
-             *  the item exists and update it if it does. */
-            const item = field.value.find((item) => item.id == id);
-            if (item) {
-                item[name] = value;
-                return;
-            }
-
-            /** If it is an Array but we didn't find an item  we
-             *  have to add a new one. */
-            field.value.push({ id: id.toString(), [name]: value });
+            // Dispatch the custom event
+            this.dispatchEvent(
+                new CustomEvent("change", {
+                    detail: { name: field.name, value: newValue },
+                    bubbles: true,
+                    composed: true,
+                })
+            );
         };
 
         switch (type) {

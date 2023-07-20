@@ -16,10 +16,19 @@ export default class LMSPrimitivesInput extends LitElement {
     private handleInput(e: Event) {
         const { type, value } = e.target as HTMLInputElement;
         if (type === "datetime-local") {
-            this.field.value = convertToISO8601(value);
-            return;
+            this.value = convertToISO8601(value);
+            this.field.value = this.value;
+        } else {
+            this.value = value;
+            this.field.value = this.value;
         }
-        this.field.value = value;
+
+        const event = new CustomEvent("change", {
+            detail: { name: this.field.name, value: this.value },
+            bubbles: true,
+            composed: true,
+        });
+        this.dispatchEvent(event);
     }
 
     override render() {
