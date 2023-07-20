@@ -1,5 +1,6 @@
 import { html, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
+import { __ } from "../lib/translate";
 import { tailwindStyles } from "../tailwind.lit";
 import { TranslatedString } from "../types/common";
 

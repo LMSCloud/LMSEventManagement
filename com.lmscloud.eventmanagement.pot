@@ -134,12 +134,12 @@ msgstr ""
 msgid "value"
 msgstr ""
 
-#: src/components/LMSConfirmationModal.ts:47 src/components/LMSTable.ts:700
+#: src/components/LMSConfirmationModal.ts:48 src/components/LMSTable.ts:700
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:458
 msgid "Abort"
 msgstr ""
 
-#: src/components/LMSConfirmationModal.ts:50
+#: src/components/LMSConfirmationModal.ts:51
 msgid "Confirm"
 msgstr ""
 

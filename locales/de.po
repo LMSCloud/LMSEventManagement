@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-24 12:16+0200\n"
-"PO-Revision-Date: 2023-07-20 21:30+0200\n"
+"PO-Revision-Date: 2023-07-20 21:33+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -138,12 +138,12 @@ msgstr "Einstellung"
 msgid "value"
 msgstr "Wert"
 
-#: src/components/LMSConfirmationModal.ts:47 src/components/LMSTable.ts:700
+#: src/components/LMSConfirmationModal.ts:48 src/components/LMSTable.ts:700
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:458
 msgid "Abort"
 msgstr "Abbrechen"
 
-#: src/components/LMSConfirmationModal.ts:50
+#: src/components/LMSConfirmationModal.ts:51
 msgid "Confirm"
 msgstr "Bestätigen"
 
