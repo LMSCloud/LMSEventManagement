@@ -104,6 +104,8 @@ export default class LMSToast extends LitElement {
                 this.remove();
             }
         });
+
+        this.intersectionObserverHandler?.destroy();
     }
 
     override firstUpdated() {

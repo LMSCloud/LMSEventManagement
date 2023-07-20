@@ -21,7 +21,7 @@ export class IntersectionObserverHandler {
         this.intersected = intersected;
     }
 
-    init() {
+    public init() {
         if (
             this.intersecting.ref instanceof HTMLElement &&
             this.intersected.ref instanceof HTMLElement
@@ -51,5 +51,10 @@ export class IntersectionObserverHandler {
                 "Invalid parameters supplied to IntersectionObserverClass. Please ensure both 'intersecting' and 'intersected' are valid Intersectable types."
             );
         }
+    }
+
+    public destroy() {
+        this.observer?.disconnect();
+        this.observer = null;
     }
 }

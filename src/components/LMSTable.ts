@@ -537,6 +537,11 @@ export default class LMSTable extends LitElement {
         doc.classList.toggle("hidden");
     }
 
+    override disconnectedCallback() {
+        super.disconnectedCallback();
+        this.intersectionObserverHandler?.destroy();
+    }
+
     override render() {
         if (!this.data.length) {
             html`<h1 class="text-center">${this.emptyTableMessage}</h1>`;
