@@ -172,7 +172,7 @@ export default class StaffEventTypesView extends LitElement {
                       <lms-event-types-modal
                           .target_groups=${this.target_groups}
                           .locations=${this.locations}
-                          .uploads=${this.images}
+                          .images=${this.images}
                           @created=${this.fetchUpdate}
                       ></lms-event-types-modal>`
                 : html` <h1 class="text-center">
@@ -205,7 +205,7 @@ export default class StaffEventTypesView extends LitElement {
             <lms-event-types-table
                 .target_groups=${this.target_groups}
                 .locations=${this.locations}
-                .uploads=${this.images}
+                .images=${this.images}
                 .event_types=${this.event_types}
                 ._page=${this._page}
                 ._per_page=${this._per_page}
@@ -222,7 +222,7 @@ export default class StaffEventTypesView extends LitElement {
             <lms-event-types-modal
                 .target_groups=${this.target_groups}
                 .locations=${this.locations}
-                .uploads=${this.images}
+                .images=${this.images}
                 @created=${this.fetchUpdate}
             ></lms-event-types-modal>
         `;

@@ -14,7 +14,7 @@ import { UploadedImage } from "../../types/common";
 
 @customElement("lms-image-picker")
 export default class LMSImagePicker extends LitElement {
-    @property({ type: Array }) uploads: UploadedImage[] = [];
+    @property({ type: Array }) images: UploadedImage[] = [];
 
     @property({ type: Boolean, reflect: true }) disabled = false;
 
@@ -152,7 +152,7 @@ export default class LMSImagePicker extends LitElement {
                         <div
                             class="grid w-fit grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
                         >
-                            ${map(this.uploads, ({ metadata }) => {
+                            ${map(this.images, ({ metadata }) => {
                                 const { hashvalue } = metadata;
                                 const imageUrl = `/api/v1/contrib/eventmanagement/public/image/${hashvalue}`;
                                 const isSelected =

@@ -23,7 +23,7 @@ export default class LMSEventTypesTable extends LMSTable {
 
     @property({ type: Array }) event_types: LMSEventType[] = [];
 
-    @property({ type: Array }) uploads: UploadedImage[] = [];
+    @property({ type: Array }) images: UploadedImage[] = [];
 
     private handleInput(
         input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
@@ -191,7 +191,7 @@ export default class LMSEventTypesTable extends LMSTable {
                     this.getColumnData(event_type, [
                         ["target_groups", this.target_groups],
                         ["location", this.locations],
-                        ["image", this.uploads],
+                        ["image", this.images],
                     ])
                 )
         );
