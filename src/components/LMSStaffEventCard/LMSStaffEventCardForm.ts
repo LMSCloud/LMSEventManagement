@@ -6,7 +6,7 @@ import {
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { html, LitElement } from "lit";
+import { html, LitElement, PropertyValueMap, TemplateResult } from "lit";
 import {
     customElement,
     property,
@@ -15,16 +15,17 @@ import {
     state,
 } from "lit/decorators.js";
 import { convertToISO8601 } from "../../lib/converters/datetimeConverters";
-import { TemplateResultConverter } from "../../lib/converters/TemplateResultConverter";
+import { InputConverter } from "../../lib/converters/InputConverter/InputConverter";
 import { requestHandler } from "../../lib/RequestHandler";
 import { attr__, __ } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
 import { tailwindStyles } from "../../tailwind.lit";
 import {
-    Column,
     KohaAPIError,
+    LMSEvent,
     LMSEventTargetGroupFeeReduced,
+    TaggedData,
     Toast,
 } from "../../types/common";
 import LMSConfirmationModal from "../LMSConfirmationModal";
@@ -37,12 +38,20 @@ declare global {
     }
 }
 
+type Datum = {
+    [key: string]: TemplateResult;
+};
+
 /**
  * Custom element representing an event card form for staff members.
  */
 @customElement("lms-staff-event-card-form")
 export default class LMSStaffEventCardForm extends LitElement {
-    @property({ type: Array }) datum: Column = {} as Column;
+    @property({ type: Array }) event: LMSEvent | undefined;
+
+    @property({ type: Array }) taggedData: TaggedData[] = [];
+
+    @state() datum: Datum = {};
 
     @state() toast: Toast = {
         heading: "",
@@ -56,7 +65,7 @@ export default class LMSStaffEventCardForm extends LitElement {
 
     @query("lms-confirmation-modal") confirmationModal!: LMSConfirmationModal;
 
-    private trc = new TemplateResultConverter(undefined);
+    private inputConverter = new InputConverter();
 
     static override styles = [tailwindStyles, skeletonStyles, utilityStyles];
 
@@ -264,9 +273,7 @@ export default class LMSStaffEventCardForm extends LitElement {
         e.preventDefault();
         const target = e.target;
 
-        this.trc.templateResult = this.datum["id"];
-        const [id] = this.trc.getRenderValues();
-        if (!(target instanceof HTMLFormElement) || !id) {
+        if (!(target instanceof HTMLFormElement) || !this.event?.id) {
             return;
         }
 
@@ -290,7 +297,7 @@ export default class LMSStaffEventCardForm extends LitElement {
             formData.set(name, value)
         );
 
-        const keys = Object.keys(this.datum);
+        const keys = Object.keys(this.event);
         const requestBody = Array.from(formData).reduce(
             (acc: { [key: string]: unknown }, [key, value]) => {
                 if (keys.includes(key)) {
@@ -308,7 +315,7 @@ export default class LMSStaffEventCardForm extends LitElement {
             "events",
             requestBody,
             undefined,
-            [id.toString()]
+            [this.event.id.toString()]
         );
         if (response.ok) {
             target
@@ -324,7 +331,7 @@ export default class LMSStaffEventCardForm extends LitElement {
             );
             this.dispatchEvent(
                 new CustomEvent("updated", {
-                    detail: id,
+                    detail: this.event.id,
                     bubbles: true,
                     composed: true,
                 })
@@ -345,19 +352,17 @@ export default class LMSStaffEventCardForm extends LitElement {
     private async handleDelete(e: Event) {
         e.preventDefault();
 
-        this.trc.templateResult = this.datum["id"];
-        const [id] = this.trc.getRenderValues();
-        if (!id) {
+        if (!this.event?.id) {
             return;
         }
 
         const response = await requestHandler.delete("events", undefined, [
-            id.toString(),
+            this.event.id.toString(),
         ]);
         if (response.status >= 200 && response.status <= 299) {
             this.dispatchEvent(
                 new CustomEvent("deleted", {
-                    detail: id,
+                    detail: this.event.id,
                     bubbles: true,
                     composed: true,
                 })
@@ -393,7 +398,7 @@ export default class LMSStaffEventCardForm extends LitElement {
     }
 
     private resetAll() {
-        this.datum = {} as Column;
+        this.event = {} as LMSEvent;
         this.toast = {
             heading: "",
             message: "",
@@ -409,14 +414,11 @@ export default class LMSStaffEventCardForm extends LitElement {
     private handleConfirm(e: Event) {
         this.confirmationModal.header = __("Please confirm");
 
-        const [name] = new TemplateResultConverter(
-            this.datum["name"]
-        ).getRenderValues();
-        if (typeof name === "string") {
+        if (typeof this.event?.name === "string") {
             this.confirmationModal.message = __(
                 "Are you sure you want to delete: "
             );
-            this.confirmationModal.obj = name;
+            this.confirmationModal.obj = this.event.name;
         } else {
             this.confirmationModal.message = __(
                 "Are you sure you want to delete this event?"
@@ -425,6 +427,31 @@ export default class LMSStaffEventCardForm extends LitElement {
 
         this.confirmationModal.ref = e.target;
         this.confirmationModal.showModal();
+    }
+
+    private getColumnData(query: LMSEvent, data?: TaggedData[]) {
+        const datum: Datum = {};
+        for (const [name, value] of Object.entries(query)) {
+            datum[name] = this.inputConverter.getInputTemplate({
+                name,
+                value,
+                data,
+            });
+        }
+
+        return datum;
+    }
+
+    protected override updated(
+        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+    ): void {
+        if (_changedProperties.has("taggedData")) {
+            if (!this.event) {
+                return;
+            }
+
+            this.datum = this.getColumnData(this.event, this.taggedData);
+        }
     }
 
     /**

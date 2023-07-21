@@ -1,9 +1,8 @@
-import { html, LitElement } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { html, LitElement, PropertyValueMap } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { searchSyntax } from "../../docs/searchSyntax";
-import { InputConverter } from "../../lib/converters/InputConverter/InputConverter";
 import { __ } from "../../lib/translate";
 import { cardDeckStylesStaff } from "../../styles/cardDeck";
 import { skeletonStyles } from "../../styles/skeleton";
@@ -12,7 +11,6 @@ import { tailwindStyles } from "../../tailwind.lit";
 import {
     Column,
     LMSEvent,
-    LMSEventComprehensive,
     LMSEventType,
     LMSLocation,
     LMSTargetGroup,
@@ -60,9 +58,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
 
     @property({ type: Number }) _per_page = 20;
 
-    private data: LMSEventComprehensive[] = [];
-
-    private inputConverter = new InputConverter();
+    @state() taggedData: TaggedData[] = [];
 
     private sortableColumns: SortableColumns = ["id"];
 
@@ -95,46 +91,31 @@ export default class LMSStaffEventCardDeck extends LitElement {
         ];
     }
 
-    override connectedCallback() {
-        super.connectedCallback();
-        this.hydrate();
-    }
+    protected override updated(
+        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+    ): void {
+        super.updated(_changedProperties);
 
-    protected *getColumnData(query: LMSEvent, data?: TaggedData[]) {
-        for (const [name, value] of Object.entries(query)) {
-            yield [
-                name,
-                this.inputConverter.getInputTemplate({ name, value, data }),
-            ];
-        }
-    }
-
-    private hydrate() {
-        this.data = this.events.map((event: LMSEvent) => {
-            return Object.fromEntries(
-                this.getColumnData(event, [
-                    ["target_groups", this.target_groups],
-                    ["location", this.locations],
-                    ["event_type", this.event_types],
-                    ["image", this.images],
+        if (
+            _changedProperties.has("target_groups") ||
+            _changedProperties.has("locations") ||
+            _changedProperties.has("event_types")
+        ) {
+            this.taggedData = [
+                ["target_groups", this.target_groups],
+                ["location", this.locations],
+                ["event_type", this.event_types],
+                ["image", this.images],
+                [
+                    "status",
                     [
-                        "status",
-                        [
-                            { id: 1, name: __("pending") },
-                            { id: 2, name: __("confirmed") },
-                            { id: 3, name: __("canceled") },
-                            { id: 4, name: __("sold_out") },
-                        ],
+                        { id: 1, name: __("pending") },
+                        { id: 2, name: __("confirmed") },
+                        { id: 3, name: __("canceled") },
+                        { id: 4, name: __("sold_out") },
                     ],
-                ])
-            );
-        });
-    }
-
-    override updated(changedProperties: Map<string, never>) {
-        super.updated(changedProperties);
-        if (changedProperties.has("events")) {
-            this.hydrate();
+                ],
+            ];
             this.requestUpdate();
         }
     }
@@ -203,10 +184,11 @@ export default class LMSStaffEventCardDeck extends LitElement {
                 </div>
                 <div class="card-deck">
                     ${map(
-                        this.data,
-                        (datum) =>
+                        this.events,
+                        (event) =>
                             html`<lms-staff-event-card
-                                .datum=${datum}
+                                .event=${event}
+                                .taggedData=${this.taggedData}
                             ></lms-staff-event-card>`
                     )}
                 </div>

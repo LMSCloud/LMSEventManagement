@@ -1,18 +1,17 @@
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { TemplateResultConverter } from "../../lib/converters/TemplateResultConverter";
 import { __ } from "../../lib/translate";
 import { tailwindStyles } from "../../tailwind.lit";
-import { LMSEventComprehensive } from "../../types/common";
+import { LMSEventComprehensive, TaggedData } from "../../types/common";
 
 @customElement("lms-staff-event-card")
 export default class LMSStaffEventCard extends LitElement {
-    @property({ type: Object }) datum: LMSEventComprehensive | undefined;
+    @property({ type: Object }) event: LMSEventComprehensive | undefined;
+
+    @property({ type: Array }) taggedData: TaggedData[] = [];
 
     @state() state: "data" | "attendees" | "preview" = "data";
-
-    private trc = new TemplateResultConverter(undefined);
 
     static override styles = [
         tailwindStyles,
@@ -40,27 +39,20 @@ export default class LMSStaffEventCard extends LitElement {
         previousActiveTab.classList.remove("tab-active");
         tab.classList.add("tab-active");
 
-        const { content, id } = tab.dataset;
-        if (!content || !id) {
+        const { content } = tab.dataset;
+        if (!content) {
             return;
         }
 
         this.state = content as "data" | "attendees" | "preview";
-        this.requestUpdate();
     }
 
     override render() {
-        if (!this.datum) {
+        if (!this.event) {
             return nothing;
         }
 
-        const { name, image } = this.datum;
-
-        this.trc.templateResult = name;
-        const [title] = this.trc.getRenderValues();
-
-        this.trc.templateResult = image;
-        const src = this.trc.getRenderValues().pop();
+        const { name, image } = this.event;
         return html`
             <div class="card bg-base-100 shadow-md">
                 <div>
@@ -68,14 +60,12 @@ export default class LMSStaffEventCard extends LitElement {
                         <a
                             class="tab-bordered tab tab-active tab-lg flex-auto text-base"
                             data-content="data"
-                            data-id=${this.datum.id}
                             @click=${this.handleTabClick}
                             >${__("Data")}</a
                         >
                         <a
                             class="tab-bordered tab tab-lg flex-auto text-base"
                             data-content="attendees"
-                            data-id=${this.datum.id}
                             @click=${this.handleTabClick}
                         >
                             ${__("Waitlist")}</a
@@ -83,7 +73,6 @@ export default class LMSStaffEventCard extends LitElement {
                         <a
                             class="tab-bordered tab tab-lg flex-auto text-base"
                             data-content="preview"
-                            data-id=${this.datum.id}
                             @click=${this.handleTabClick}
                         >
                             ${__("Preview")}</a
@@ -93,14 +82,15 @@ export default class LMSStaffEventCard extends LitElement {
                 <div class="card-body">
                     <div
                         class="card-title flex h-24 items-center justify-center rounded-md bg-cover bg-center"
-                        style="background-image: url(${src});"
+                        style="background-image: url(${image});"
                     >
                         <h3 class="rounded-lg bg-base-100 p-2 text-xl">
-                            ${title}
+                            ${name}
                         </h3>
                     </div>
                     <lms-staff-event-card-form
-                        .datum=${this.datum}
+                        .event=${this.event}
+                        .taggedData=${this.taggedData}
                         class=${classMap({
                             hidden: this.state !== "data",
                         })}
@@ -114,7 +104,7 @@ export default class LMSStaffEventCard extends LitElement {
                         class=${classMap({
                             hidden: this.state !== "preview",
                         })}
-                        .datum=${this.datum}
+                        .event=${this.event}
                     ></lms-staff-event-card-preview>
                 </div>
             </div>

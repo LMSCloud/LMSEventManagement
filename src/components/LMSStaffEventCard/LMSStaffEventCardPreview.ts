@@ -6,11 +6,10 @@ import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { splitDateTime } from "../../lib/converters/datetimeConverters";
-import { TemplateResultConverter } from "../../lib/converters/TemplateResultConverter";
 import { locale } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";
 import { tailwindStyles } from "../../tailwind.lit";
-import { Column, Image } from "../../types/common";
+import { Image, LMSEventComprehensive } from "../../types/common";
 import LMSCard from "../LMSCard";
 
 declare global {
@@ -21,7 +20,7 @@ declare global {
 
 @customElement("lms-staff-event-card-preview")
 export default class LMSStaffEventCardPreview extends LitElement {
-    @property({ type: Array }) datum: Column = {} as Column;
+    @property({ type: Array }) event: LMSEventComprehensive | undefined;
 
     @state() override title = "";
 
@@ -29,49 +28,24 @@ export default class LMSStaffEventCardPreview extends LitElement {
 
     @state() listItems: TemplateResult[] = [];
 
-    private trc = new TemplateResultConverter(undefined);
-
     static override styles = [tailwindStyles, skeletonStyles];
 
     override connectedCallback() {
         super.connectedCallback();
+        if (!this.event) {
+            return;
+        }
 
-        const { name, image, location, start_time, end_time } = this.datum;
+        const { name, image, location, start_time, end_time } = this.event;
 
-        this.title = this.trc.getValueByIndex(
-            name as TemplateResult,
-            0
-        ) as string;
-
-        const imageRenderValues = this.trc.getRenderValues(
-            image as TemplateResult
-        );
-        const src = imageRenderValues[imageRenderValues.length - 1] as string;
-
+        this.title = name ?? "";
         this.image = {
-            src,
-            alt: this.title,
+            src: image ?? "",
+            alt: name ?? "",
         };
 
-        const locationTemplateValues = this.trc.getRenderValues(
-            location
-        ) as Array<[number, boolean, string]>;
-        const [, , loc] = locationTemplateValues
-            .filter(([, selected]) => selected)
-            .flat();
-
-        const startTime = this.trc.getValueByIndex(
-            start_time as TemplateResult,
-            0
-        ) as string;
-
-        const endTime = this.trc.getValueByIndex(
-            end_time as TemplateResult,
-            0
-        ) as string;
-
-        const [sDate, sTime] = splitDateTime(startTime, locale);
-        const [eDate, eTime] = splitDateTime(endTime, locale);
+        const [sDate, sTime] = splitDateTime(start_time, locale);
+        const [eDate, eTime] = splitDateTime(end_time, locale);
         const isSameDay = sDate === eDate;
 
         this.listItems = [
@@ -80,7 +54,7 @@ export default class LMSStaffEventCardPreview extends LitElement {
                     ${litFontawesome(faMapMarkerAlt, {
                         className: "w-4 h-4 inline-block",
                     })}
-                    ${loc}
+                    ${location?.name}
                 </small>
             </span>`,
             html`<span class="font-thin">
