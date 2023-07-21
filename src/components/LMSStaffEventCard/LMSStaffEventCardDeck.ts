@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { searchSyntax } from "../../docs/searchSyntax";
-import { InputConverter } from "../../lib/converters/InputConverter";
+import { InputConverter } from "../../lib/converters/InputConverter/InputConverter";
 import { __ } from "../../lib/translate";
 import { cardDeckStylesStaff } from "../../styles/cardDeck";
 import { skeletonStyles } from "../../styles/skeleton";

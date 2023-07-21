@@ -16,7 +16,7 @@ import {
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { searchSyntax } from "../docs/searchSyntax";
-import { InputConverter } from "../lib/converters/InputConverter";
+import { InputConverter } from "../lib/converters/InputConverter/InputConverter";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
 import { QueryBuilder } from "../lib/QueryBuilder";
 import { attr__, __ } from "../lib/translate";

@@ -70,6 +70,14 @@ export type InputType =
     | "url"
     | "week";
 
+export type InputTypeValue =
+    | string
+    | number
+    | boolean
+    | Array<unknown>
+    | Record<string, unknown>
+    | null;
+
 export type KohaAPIError = Record<"message" | "path", string>;
 
 export type MatrixGroup = {

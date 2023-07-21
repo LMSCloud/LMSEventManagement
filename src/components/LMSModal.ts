@@ -10,7 +10,7 @@ import { customElement, property, query, state } from "lit/decorators.js";
 import { DirectiveResult } from "lit/directive";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
-import { InputConverter } from "../lib/converters/InputConverter";
+import { InputConverter } from "../lib/converters/InputConverter/InputConverter";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
 import { locale, TranslateDirective, __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
