@@ -101,10 +101,11 @@ export default class LMSStaffEventCard extends LitElement {
                         })}
                     ></lms-staff-event-card-attendees>
                     <lms-staff-event-card-preview
+                        .event=${this.event}
+                        .taggedData=${this.taggedData}
                         class=${classMap({
                             hidden: this.state !== "preview",
                         })}
-                        .event=${this.event}
                     ></lms-staff-event-card-preview>
                 </div>
             </div>

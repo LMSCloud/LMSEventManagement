@@ -3,13 +3,13 @@ import {
     faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { html, LitElement, TemplateResult } from "lit";
+import { html, LitElement, PropertyValueMap, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { splitDateTime } from "../../lib/converters/datetimeConverters";
 import { locale } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";
 import { tailwindStyles } from "../../tailwind.lit";
-import { Image, LMSEventComprehensive } from "../../types/common";
+import { Image, LMSEvent, LMSLocation, TaggedData } from "../../types/common";
 import LMSCard from "../LMSCard";
 
 declare global {
@@ -20,7 +20,9 @@ declare global {
 
 @customElement("lms-staff-event-card-preview")
 export default class LMSStaffEventCardPreview extends LitElement {
-    @property({ type: Array }) event: LMSEventComprehensive | undefined;
+    @property({ type: Array }) event: LMSEvent | undefined;
+
+    @property({ type: Array }) taggedData: TaggedData[] = [];
 
     @state() override title = "";
 
@@ -30,8 +32,17 @@ export default class LMSStaffEventCardPreview extends LitElement {
 
     static override styles = [tailwindStyles, skeletonStyles];
 
-    override connectedCallback() {
-        super.connectedCallback();
+    protected override updated(
+        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+    ): void {
+        super.updated(_changedProperties);
+        if (
+            !_changedProperties.has("event") &&
+            !_changedProperties.has("taggedData")
+        ) {
+            return;
+        }
+
         if (!this.event) {
             return;
         }
@@ -48,13 +59,19 @@ export default class LMSStaffEventCardPreview extends LitElement {
         const [eDate, eTime] = splitDateTime(end_time, locale);
         const isSameDay = sDate === eDate;
 
+        const taggedLocations = this.taggedData
+            .filter(([tag]) => tag === "location")
+            .flat();
+        const locations = taggedLocations[1] as unknown as LMSLocation[];
+        const locationName = locations?.find((loc) => loc.id == location)?.name;
+
         this.listItems = [
             html`<span class="font-thin">
                 <small>
                     ${litFontawesome(faMapMarkerAlt, {
                         className: "w-4 h-4 inline-block",
                     })}
-                    ${location?.name}
+                    ${locationName}
                 </small>
             </span>`,
             html`<span class="font-thin">
