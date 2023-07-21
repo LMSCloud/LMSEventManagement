@@ -42,9 +42,22 @@ sub install() {
         my @migration_files = $self->_get_migration_files();
 
         # Loop over migration files and apply each one
+        my $last_migration;
         for my $file (@migration_files) {
-            $self->_apply_migration( { file => $file } );
+            my $is_success = $self->_apply_migration( { file => $file } );
+
+            if (!$is_success) {
+                return 0;
+            }
+
+            my ($filename) = fileparse($file);
+            my ($number)   = ( $filename =~ m{(\d+)_?.*}smx );    # extract number from file name
+
+            $last_migration = $number;
         }
+
+        # Store the last migration
+        $args->{plugin}->store_data( { __CURRENT_MIGRATION__ => $last_migration } ) if defined $last_migration;
 
         return 1;
     }
@@ -83,8 +96,7 @@ sub upgrade() {
         my @migration_files = $self->_get_migration_files();
         my $is_success      = 0;
         for my $file (@migration_files) {
-            my ($filename) = fileparse($file);
-            my ($number)   = ( $filename =~ m{(\d+)_?.*}smx );    # extract number from file name
+            my $number = $self->_extract_migration_number($file);
 
             # skip migrations that have been applied already
             next if $number <= $last_migration;
@@ -159,6 +171,8 @@ sub _apply_migration {
         return 0;
     };
 }
+
+
 
 __PACKAGE__->meta->make_immutable;
 
