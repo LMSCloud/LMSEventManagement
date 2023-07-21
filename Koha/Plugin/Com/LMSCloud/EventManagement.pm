@@ -77,7 +77,7 @@ BEGIN {
 }
 
 ## Here we set our plugin version
-our $VERSION         = '1.3.8';
+our $VERSION         = '1.3.10';
 our $MINIMUM_VERSION = '18.05';
 
 ## Here is our metadata, some keys are required, some are optional
@@ -304,7 +304,7 @@ sub install() {
             }
         );
 
-        my $is_success = $migration_helper->install();
+        my $is_success = $migration_helper->install({ plugin => $self });
         if ( !$is_success ) {
             croak 'Migration failed';
         }
