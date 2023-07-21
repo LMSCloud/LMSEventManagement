@@ -1,4 +1,5 @@
-import { customElement, property } from "lit/decorators.js";
+import { PropertyValueMap } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { attr__, __ } from "../lib/translate";
 import {
@@ -26,6 +27,11 @@ export default class LMSEventsModal extends LMSModal {
         method: "POST",
         endpoint: "/api/v1/contrib/eventmanagement/events",
     };
+
+    @query('select[name="event_type"]') eventTypeSelect!: HTMLSelectElement;
+
+    private boundUpdateFieldsOnEventTypeChange =
+        this.updateFieldsOnEventTypeChange.bind(this);
 
     override async connectedCallback() {
         super.connectedCallback();
@@ -172,6 +178,10 @@ export default class LMSEventsModal extends LMSModal {
             },
         ];
 
+        this.renderInputs();
+    }
+
+    private renderInputs() {
         this.inputs = this.fields.flatMap((field) => {
             return Array.from(
                 this.getColumnData({ name: field.name, value: field }, [
@@ -191,5 +201,57 @@ export default class LMSEventsModal extends LMSModal {
                 ])
             );
         });
+    }
+
+    private updateFieldsOnEventTypeChange(e: Event) {
+        const target = e.target as HTMLSelectElement;
+        const { value } = target;
+
+        // If we get a value from the select, we update the fields's values
+        // by the values denoted in the event_type with the id we extracted
+        // out of the value.
+        if (!value) {
+            return;
+        }
+
+        const newEventType = this.event_types.find(
+            (eventType) => eventType.id === parseInt(value)
+        );
+        if (!newEventType) {
+            return;
+        }
+
+        for (const [name, value] of Object.entries(newEventType)) {
+            const field = this.fields.find((field) => field.name === name);
+            if (field) {
+                field.value = value;
+            }
+        }
+
+        this.renderInputs();
+    }
+
+    protected override updated(
+        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+    ): void {
+        super.updated(_changedProperties);
+
+        if (this.eventTypeSelect) {
+            this.eventTypeSelect.addEventListener(
+                "change",
+                this.boundUpdateFieldsOnEventTypeChange
+            );
+        }
+    }
+
+    override disconnectedCallback(): void {
+        super.disconnectedCallback();
+
+        if (this.eventTypeSelect) {
+            this.eventTypeSelect.removeEventListener(
+                "change",
+                this.boundUpdateFieldsOnEventTypeChange
+            );
+        }
     }
 }

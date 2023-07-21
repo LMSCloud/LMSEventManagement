@@ -6,12 +6,21 @@ import { __ } from "../../../../translate";
 export default class ModalMatrix {
     private name: string;
 
+    private value:
+        | string
+        | number
+        | boolean
+        | unknown[]
+        | Record<string, unknown>
+        | undefined;
+
     private headers: string[][] | undefined;
 
     private data: any[] | undefined;
 
     constructor(value: ModalField, data: any[]) {
         this.name = value.name;
+        this.value = value.value;
         this.headers = value.headers;
         this.data = data;
     }
@@ -39,6 +48,18 @@ export default class ModalMatrix {
             </thead>
             <tbody>
                 ${this.data?.map((datum) => {
+                    let checked = undefined;
+                    let fee = undefined;
+                    if (Array.isArray(this.value)) {
+                        const row = this.value.find(
+                            (row: any) => row.target_group_id == datum.id
+                        ) as any;
+                        if (row) {
+                            checked = row.selected;
+                            fee = row.fee;
+                        }
+                    }
+
                     return html`
                         <tr>
                             <td id=${datum.id} class="align-middle">
@@ -51,7 +72,7 @@ export default class ModalMatrix {
                                     name="selected"
                                     id=${datum.id}
                                     class="checkbox"
-                                    ?checked=${datum.selected}
+                                    ?checked=${Boolean(checked)}
                                 />
                             </td>
                             <td class="align-middle">
@@ -62,7 +83,7 @@ export default class ModalMatrix {
                                     id=${datum.id}
                                     step="0.01"
                                     class="input-bordered input w-full"
-                                    value=${datum.fee}
+                                    value=${fee}
                                 />
                             </td>
                         </tr>

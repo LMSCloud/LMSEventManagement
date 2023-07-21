@@ -23,7 +23,7 @@ export default class ModalCheckboxInput {
 
     public render() {
         return html`<div
-            class="form-control mx-4"
+            class="form-control my-4"
             @change=${this.handleCheckboxChange}
         >
             <label class="label cursor-pointer">
