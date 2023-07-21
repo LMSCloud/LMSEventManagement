@@ -1,7 +1,7 @@
 import { html, LitElement, PropertyValueMap } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { map } from "lit/directives/map.js";
+import { repeat } from "lit/directives/repeat.js";
 import { searchSyntax } from "../../docs/searchSyntax";
 import { __ } from "../../lib/translate";
 import { cardDeckStylesStaff } from "../../styles/cardDeck";
@@ -183,8 +183,9 @@ export default class LMSStaffEventCardDeck extends LitElement {
                     </div>
                 </div>
                 <div class="card-deck">
-                    ${map(
+                    ${repeat(
                         this.events,
+                        (event) => event.id,
                         (event) =>
                             html`<lms-staff-event-card
                                 .event=${event}

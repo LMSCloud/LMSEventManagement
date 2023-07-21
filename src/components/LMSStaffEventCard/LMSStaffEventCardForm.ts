@@ -368,8 +368,6 @@ export default class LMSStaffEventCardForm extends LitElement {
                 })
             );
 
-            this.resetAll();
-
             return;
         }
 
@@ -395,20 +393,6 @@ export default class LMSStaffEventCardForm extends LitElement {
         this.collapsibles.forEach((collapsible) => {
             collapsible.open = true;
         });
-    }
-
-    private resetAll() {
-        this.event = {} as LMSEvent;
-        this.toast = {
-            heading: "",
-            message: "",
-        };
-
-        this.toggleEdit(
-            new CustomEvent("click", {
-                detail: this.renderRoot.querySelector(".btn-edit"),
-            })
-        );
     }
 
     private handleConfirm(e: Event) {
