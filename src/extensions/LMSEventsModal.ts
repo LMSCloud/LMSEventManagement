@@ -5,6 +5,7 @@ import { attr__, __ } from "../lib/translate";
 import {
     CreateOpts,
     LMSEvent,
+    LMSEventTargetGroupFee,
     LMSEventType,
     LMSLocation,
     LMSTargetGroup,
@@ -224,6 +225,18 @@ export default class LMSEventsModal extends LMSModal {
         for (const [name, value] of Object.entries(newEventType)) {
             const field = this.fields.find((field) => field.name === name);
             if (field) {
+                if (name === "target_groups") {
+                    field.value = value.map(
+                        ({
+                            target_group_id: id,
+                            selected,
+                            fee,
+                        }: LMSEventTargetGroupFee) => ({ id, selected, fee })
+                    );
+
+                    continue;
+                }
+
                 field.value = value;
             }
         }

@@ -52,8 +52,9 @@ export default class ModalMatrix {
                     let fee = undefined;
                     if (Array.isArray(this.value)) {
                         const row = this.value.find(
-                            (row: any) => row.target_group_id == datum.id
+                            (row: any) => row.id == datum.id
                         ) as any;
+
                         if (row) {
                             checked = row.selected;
                             fee = row.fee;
