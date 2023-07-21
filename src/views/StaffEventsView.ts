@@ -239,6 +239,10 @@ export default class StaffEventsView extends LitElement {
                           )}.
                       </h1>
                       <lms-events-modal
+                          .event_types=${this.event_types}
+                          .target_groups=${this.target_groups}
+                          .locations=${this.locations}
+                          .images=${this.images}
                           @created=${this.fetchUpdate}
                       ></lms-events-modal>`
                 : html`
