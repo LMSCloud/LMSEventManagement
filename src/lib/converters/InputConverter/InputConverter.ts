@@ -82,7 +82,7 @@ export class InputConverter {
             link: (value) => new Input("link", value).render(),
             image: (value, data) =>
                 html` <lms-image-picker
-                    .uploads=${data as UploadedImage[]}
+                    .images=${data as UploadedImage[]}
                     .selected=${value as string}
                     .disabled=${true}
                     class="lit-element"
