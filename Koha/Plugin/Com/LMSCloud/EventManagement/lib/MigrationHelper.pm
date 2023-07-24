@@ -172,7 +172,14 @@ sub _apply_migration {
     };
 }
 
+sub _extract_migration_number {
+    my ($file) = @_;
 
+    my ($filename) = fileparse($file);
+    my ($number)   = ( $filename =~ m{(\d+)_?.*}smx );    # extract number from file name
+
+    return $number;
+}
 
 __PACKAGE__->meta->make_immutable;
 
