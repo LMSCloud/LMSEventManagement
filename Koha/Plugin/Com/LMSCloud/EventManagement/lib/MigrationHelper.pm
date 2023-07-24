@@ -46,7 +46,7 @@ sub install() {
         for my $file (@migration_files) {
             my $is_success = $self->_apply_migration( { file => $file } );
 
-            if (!$is_success) {
+            if ( !$is_success ) {
                 carp "Failed to apply migration from $file. Aborting installation.";
                 return 0;
             }
@@ -103,7 +103,7 @@ sub upgrade() {
             next if $number <= $last_migration;
 
             $is_success = $self->_apply_migration( { file => $file } );
-            if(!$is_success) {
+            if ( !$is_success ) {
                 carp "Failed to apply migration from $file. Aborting upgrade.";
                 return 0;
             }
@@ -166,8 +166,11 @@ sub _apply_migration {
 
         my $statements = [ split /;\s*\n/smx, $sql ];
         for my $statement ( @{$statements} ) {
-            my $rows_affected = $self->dbh->do($statement);
-            croak "Failed to execute statement: $statement" if not defined $rows_affected;
+            my $sth = $self->dbh->prepare($statement);
+            croak "Failed to prepare statement: $statement. DBI error: " . $self->dbh->errstr if !defined $sth;
+
+            my $rows_affected = $sth->execute;
+            croak "Failed to execute statement: $statement. DBI error: " . $sth->errstr if not defined $rows_affected;
         }
         return 1;
     }
@@ -179,9 +182,8 @@ sub _apply_migration {
     };
 }
 
-
 sub _extract_migration_number {
-    my ($file) = @_;
+    my ( $self, $file ) = @_;
 
     my ($filename) = fileparse($file);
     my ($number)   = ( $filename =~ m{(\d+)_?.*}smx );    # extract number from file name
