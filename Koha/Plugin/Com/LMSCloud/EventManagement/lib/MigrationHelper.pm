@@ -47,13 +47,14 @@ sub install() {
             my $is_success = $self->_apply_migration( { file => $file } );
 
             if (!$is_success) {
+                carp "Failed to apply migration from $file. Aborting installation.";
                 return 0;
             }
 
-            my ($filename) = fileparse($file);
-            my ($number)   = ( $filename =~ m{(\d+)_?.*}smx );    # extract number from file name
-
+            my $number = $self->_extract_migration_number($file);
             $last_migration = $number;
+
+            warn "Successfully applied migration from $file.";
         }
 
         # Store the last migration
@@ -102,10 +103,15 @@ sub upgrade() {
             next if $number <= $last_migration;
 
             $is_success = $self->_apply_migration( { file => $file } );
-            last if !$is_success;
+            if(!$is_success) {
+                carp "Failed to apply migration from $file. Aborting upgrade.";
+                return 0;
+            }
 
             # update last_migration
             $args->{plugin}->store_data( { __CURRENT_MIGRATION__ => $number } );
+
+            warn "Successfully applied migration from $file.";
         }
 
         return $is_success;
