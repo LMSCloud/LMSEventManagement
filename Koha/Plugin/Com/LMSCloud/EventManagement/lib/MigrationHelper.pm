@@ -166,7 +166,8 @@ sub _apply_migration {
 
         my $statements = [ split /;\s*\n/smx, $sql ];
         for my $statement ( @{$statements} ) {
-            $self->dbh->do($statement);
+            my $rows_affected = $self->dbh->do($statement);
+            croak "Failed to execute statement: $statement" if not defined $rows_affected;
         }
         return 1;
     }
@@ -177,6 +178,7 @@ sub _apply_migration {
         return 0;
     };
 }
+
 
 sub _extract_migration_number {
     my ($file) = @_;
