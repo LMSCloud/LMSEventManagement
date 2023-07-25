@@ -1,5 +1,9 @@
 import dayjs from "dayjs";
+import "dayjs/locale/de";
+import localizedFormat from "dayjs/plugin/localizedFormat";
 import { html, TemplateResult } from "lit";
+
+dayjs.extend(localizedFormat);
 
 /**
  * Converts a datetime string to the specified format.
@@ -32,8 +36,8 @@ export function splitDateTime(
     }
 
     const datetime = dayjs(string).locale(locale);
-    const date = datetime.format("YYYY-MM-DD");
-    const time = datetime.format("HH:mm");
+    const date = datetime.format("l");
+    const time = datetime.format("LT");
     return [date, time];
 }
 
