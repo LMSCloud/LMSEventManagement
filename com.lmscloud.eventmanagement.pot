@@ -881,6 +881,15 @@ msgstr ""
 msgid "There's been an error"
 msgstr ""
 
+#: src/lib/converters/InputConverter/inputs/modal/ModalMatrix.ts:148
+#: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:60
+msgid "Error"
+msgstr ""
+
+#: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:44
+msgid "Please select an option"
+msgstr ""
+
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Adapters/Uploader.pm:62
 msgid "A file with the same content already exists"
 msgstr ""
