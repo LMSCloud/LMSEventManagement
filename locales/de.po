@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-24 12:16+0200\n"
-"PO-Revision-Date: 2023-08-07 16:28+0200\n"
+"PO-Revision-Date: 2023-08-07 16:41+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -410,6 +410,7 @@ msgstr "Einstellungen"
 #: src/extensions/LMSEventTypesModal.ts:53 src/extensions/LMSEventsModal.ts:68
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:539
 #: src/components/custom/LMSCardDetailsModal.ts:390
+#: src/lib/converters/InputConverter/inputs/Matrix.ts:37
 msgid "Target Groups"
 msgstr "Zielgruppen"
 
@@ -927,10 +928,40 @@ msgstr "Fehler: Ungültiges Datum"
 msgid "There's been an error"
 msgstr "Es ist ein Fehler aufgetreten"
 
+#: src/lib/converters/InputConverter/InputConverter.ts:124
+msgid "Pending"
+msgstr "Ausstehend"
+
+#: src/lib/converters/InputConverter/InputConverter.ts:125
+msgid "Confirmed"
+msgstr "Bestätigt"
+
+#: src/lib/converters/InputConverter/InputConverter.ts:126
+msgid "Canceled"
+msgstr "Abgesagt"
+
+#: src/lib/converters/InputConverter/InputConverter.ts:127
+msgid "Sold Out"
+msgstr "Ausverkauft"
+
+#: src/lib/converters/InputConverter/InputConverter.ts:203
+#: src/lib/converters/InputConverter/inputs/Matrix.ts:114
 #: src/lib/converters/InputConverter/inputs/modal/ModalMatrix.ts:148
 #: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:60
 msgid "Error"
 msgstr "Fehler"
+
+#: src/lib/converters/InputConverter/inputs/Matrix.ts:43
+msgid "target_group"
+msgstr "Zielgruppe"
+
+#: src/lib/converters/InputConverter/inputs/Matrix.ts:44
+msgid "selected"
+msgstr "Ausgewählt"
+
+#: src/lib/converters/InputConverter/inputs/Matrix.ts:45
+msgid "fee"
+msgstr "Teilnahmegebühr"
 
 #: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:44
 msgid "Please select an option"
@@ -1104,27 +1135,6 @@ msgstr "Katalog"
 #: Koha/Plugin/Com/LMSCloud/EventManagement/views/opac/events.tt:28
 msgid "Home"
 msgstr "Start"
-
-#~ msgid "target_group"
-#~ msgstr "Zielgruppe"
-
-#~ msgid "selected"
-#~ msgstr "Ausgewählt"
-
-#~ msgid "fee"
-#~ msgstr "Teilnahmegebühr"
-
-#~ msgid "Pending"
-#~ msgstr "Ausstehend"
-
-#~ msgid "Confirmed"
-#~ msgstr "Bestätigt"
-
-#~ msgid "Canceled"
-#~ msgstr "Abgesagt"
-
-#~ msgid "Sold Out"
-#~ msgstr "Ausverkauft"
 
 #, fuzzy
 #~ msgid "Reset Filters"

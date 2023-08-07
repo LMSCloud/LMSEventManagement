@@ -368,6 +368,7 @@ msgstr ""
 #: src/extensions/LMSEventTypesModal.ts:53 src/extensions/LMSEventsModal.ts:68
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:539
 #: src/components/custom/LMSCardDetailsModal.ts:390
+#: src/lib/converters/InputConverter/inputs/Matrix.ts:37
 msgid "Target Groups"
 msgstr ""
 
@@ -881,9 +882,39 @@ msgstr ""
 msgid "There's been an error"
 msgstr ""
 
+#: src/lib/converters/InputConverter/InputConverter.ts:124
+msgid "Pending"
+msgstr ""
+
+#: src/lib/converters/InputConverter/InputConverter.ts:125
+msgid "Confirmed"
+msgstr ""
+
+#: src/lib/converters/InputConverter/InputConverter.ts:126
+msgid "Canceled"
+msgstr ""
+
+#: src/lib/converters/InputConverter/InputConverter.ts:127
+msgid "Sold Out"
+msgstr ""
+
+#: src/lib/converters/InputConverter/InputConverter.ts:203
+#: src/lib/converters/InputConverter/inputs/Matrix.ts:114
 #: src/lib/converters/InputConverter/inputs/modal/ModalMatrix.ts:148
 #: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:60
 msgid "Error"
+msgstr ""
+
+#: src/lib/converters/InputConverter/inputs/Matrix.ts:43
+msgid "target_group"
+msgstr ""
+
+#: src/lib/converters/InputConverter/inputs/Matrix.ts:44
+msgid "selected"
+msgstr ""
+
+#: src/lib/converters/InputConverter/inputs/Matrix.ts:45
+msgid "fee"
 msgstr ""
 
 #: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:44
