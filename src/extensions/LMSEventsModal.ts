@@ -43,18 +43,18 @@ export default class LMSEventsModal extends LMSModal {
         this.modalTitle = __("Create Event");
         this.fields = [
             {
+                name: "event_type",
+                type: "select",
+                desc: __("Event Type (Changing this will reset other fields)"),
+                required: true,
+            },
+            {
                 name: "name",
                 type: "text",
                 desc: __("Name"),
                 placeholder: attr__(
                     "Name of the event, e.g. 'Concert' or 'Workshop'."
                 ),
-                required: true,
-            },
-            {
-                name: "event_type",
-                type: "select",
-                desc: __("Event Type"),
                 required: true,
             },
             {
