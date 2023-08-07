@@ -183,34 +183,29 @@ export default class LMSEventsModal extends LMSModal {
     }
 
     private renderInputs() {
-        this.inputs = this.fields.flatMap((field) => {
-            return Array.from(
-                this.getColumnData({ name: field.name, value: field }, [
-                    ["event_type", this.event_types],
-                    ["target_groups", this.target_groups],
-                    ["location", this.locations],
-                    ["image", this.images],
+        this.inputs = this.fields.flatMap((field) =>
+            this.composeTaggedInputs(field, [
+                ["event_type", this.event_types],
+                ["target_groups", this.target_groups],
+                ["location", this.locations],
+                ["image", this.images],
+                [
+                    "status",
                     [
-                        "status",
-                        [
-                            { id: 1, name: __("pending") },
-                            { id: 2, name: __("confirmed") },
-                            { id: 3, name: __("canceled") },
-                            { id: 4, name: __("sold_out") },
-                        ],
+                        { id: 1, name: __("pending") },
+                        { id: 2, name: __("confirmed") },
+                        { id: 3, name: __("canceled") },
+                        { id: 4, name: __("sold_out") },
                     ],
-                ])
-            );
-        });
+                ],
+            ])
+        );
     }
 
     private updateFieldsOnEventTypeChange(e: Event) {
         const target = e.target as HTMLSelectElement;
         const { value } = target;
 
-        // If we get a value from the select, we update the fields's values
-        // by the values denoted in the event_type with the id we extracted
-        // out of the value.
         if (!value) {
             return;
         }
@@ -222,8 +217,19 @@ export default class LMSEventsModal extends LMSModal {
             return;
         }
 
+        // Convert fields into a map for O(1) lookup.
+        const fieldsMap = new Map(
+            this.fields.map((field) => [field.name, field])
+        );
+
+        // You can now access and update fields directly in O(1) time.
+        const eventTypeField = fieldsMap.get("event_type");
+        if (eventTypeField) {
+            eventTypeField.value = newEventType.id;
+        }
+
         for (const [name, value] of Object.entries(newEventType)) {
-            const field = this.fields.find((field) => field.name === name);
+            const field = fieldsMap.get(name);
             if (field) {
                 if (name === "target_groups") {
                     field.value = value.map(

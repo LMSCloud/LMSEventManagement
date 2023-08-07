@@ -50,10 +50,8 @@ export default class LMSTargetGroupsModal extends LMSModal {
             },
         ];
 
-        this.inputs = this.fields.flatMap((field) => {
-            return Array.from(
-                this.getColumnData({ name: field.name, value: field })
-            );
-        });
+        this.inputs = this.fields.flatMap((field) =>
+            this.composeTaggedInputs(field)
+        );
     }
 }

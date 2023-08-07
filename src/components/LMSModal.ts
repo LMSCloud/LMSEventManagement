@@ -10,6 +10,7 @@ import { customElement, property, query, state } from "lit/decorators.js";
 import { DirectiveResult } from "lit/directive";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
+import { repeat } from "lit/directives/repeat.js";
 import { InputConverter } from "../lib/converters/InputConverter/InputConverter";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
 import { locale, TranslateDirective, __ } from "../lib/translate";
@@ -37,7 +38,7 @@ export default class LMSModal extends LitElement {
 
     @property({ type: Boolean }) editable = false;
 
-    @property({ type: Array }) inputs: TemplateResult[] = [];
+    @property({ type: Array }) inputs: Array<[ModalField, TemplateResult]> = [];
 
     @state() protected isOpen = false;
 
@@ -185,6 +186,15 @@ export default class LMSModal extends LitElement {
         }
     }
 
+    protected composeTaggedInputs(
+        field: ModalField,
+        taggedData?: TaggedData[]
+    ) {
+        return Array.from(
+            this.getColumnData({ name: field.name, value: field }, taggedData)
+        ).map((template) => [field, template] as [ModalField, TemplateResult]);
+    }
+
     override connectedCallback() {
         super.connectedCallback();
         document.addEventListener("keydown", this.boundHandleKeyDown);
@@ -284,7 +294,11 @@ export default class LMSModal extends LitElement {
                             </button>
                         </div>
                         <!-- Here we render the inputs -->
-                        ${this.inputs}
+                        ${repeat(
+                            this.inputs,
+                            ([field]) => field.value,
+                            ([, templateResult]) => templateResult
+                        )}
                     </div>
                     <div class="modal-action">
                         <button

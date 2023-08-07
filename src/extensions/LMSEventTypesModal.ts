@@ -118,14 +118,12 @@ export default class LMSEventTypesModal extends LMSModal {
             },
         ];
 
-        this.inputs = this.fields.flatMap((field) => {
-            return Array.from(
-                this.getColumnData({ name: field.name, value: field }, [
-                    ["target_groups", this.target_groups],
-                    ["location", this.locations],
-                    ["image", this.images],
-                ])
-            );
-        });
+        this.inputs = this.fields.flatMap((field) =>
+            this.composeTaggedInputs(field, [
+                ["target_groups", this.target_groups],
+                ["location", this.locations],
+                ["image", this.images],
+            ])
+        );
     }
 }
