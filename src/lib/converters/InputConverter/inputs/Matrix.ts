@@ -4,6 +4,7 @@ import {
     LMSEventTargetGroupFee,
     LMSTargetGroup,
 } from "../../../../types/common";
+import { __ } from "../../../translate";
 
 export default class Matrix {
     private name: string;
