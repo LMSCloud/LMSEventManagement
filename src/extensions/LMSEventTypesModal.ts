@@ -17,7 +17,7 @@ export default class LMSEventTypesModal extends LMSModal {
 
     @property({ type: Array }) event_types: LMSEventType[] = [];
 
-    @property({ type: Array }) uploads: UploadedImage[] = [];
+    @property({ type: Array }) images: UploadedImage[] = [];
 
     @property({ type: Object }) override createOpts: CreateOpts = {
         method: "POST",
@@ -123,7 +123,7 @@ export default class LMSEventTypesModal extends LMSModal {
                 this.getColumnData({ name: field.name, value: field }, [
                     ["target_groups", this.target_groups],
                     ["location", this.locations],
-                    ["image", this.uploads],
+                    ["image", this.images],
                 ])
             );
         });
