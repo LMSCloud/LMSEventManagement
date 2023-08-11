@@ -19,11 +19,11 @@ INSERT INTO koha_plugin_com_lmscloud_eventmanagement_locations (name, street, nu
 ('Naturpark', 'Naturweg', '1', 'Wallenheim', '12345', 'Deutschland');
 
 -- Seed the event types table
-INSERT INTO koha_plugin_com_lmscloud_eventmanagement_event_types (name, min_age, max_age, max_participants, location, description, open_registration) VALUES
-('Filmabend', 0, 255, 100, 1, 'Genießen Sie einen Film unter freiem Himmel', 1),
-('Kunstworkshop', 10, 255, 20, 6, 'Kreieren Sie Ihr eigenes Meisterwerk', 0),
-('Naturwanderung', 18, 255, 30, 10, 'Erkunden Sie die Schönheit der Natur', 1),
-('Wissenschaftsmesse', 6, 18, 50, 7, 'Entdecken Sie die Wunder der Wissenschaft', 0);
+INSERT INTO koha_plugin_com_lmscloud_eventmanagement_event_types (name, min_age, max_age, max_participants, location, description, image, open_registration) VALUES
+('Filmabend', 0, 255, 100, 1, 'Genießen Sie einen Film unter freiem Himmel', 'https://lorem.picsum/400/300', 1),
+('Kunstworkshop', 10, 255, 20, 6, 'Kreieren Sie Ihr eigenes Meisterwerk', 'https://lorem.picsum/400/300', 0),
+('Naturwanderung', 18, 255, 30, 10, 'Erkunden Sie die Schönheit der Natur', 'https://lorem.picsum/400/300', 1),
+('Wissenschaftsmesse', 6, 18, 50, 7, 'Entdecken Sie die Wunder der Wissenschaft', 'https://lorem.picsum/400/300', 0);
 
 -- Seed the events table
 INSERT INTO koha_plugin_com_lmscloud_eventmanagement_events (name, event_type, min_age, max_age, max_participants, start_time, end_time, registration_start, registration_end, location, image, description, status, registration_link, open_registration) VALUES
