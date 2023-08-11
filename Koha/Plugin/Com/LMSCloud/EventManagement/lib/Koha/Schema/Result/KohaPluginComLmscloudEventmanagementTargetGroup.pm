@@ -1,4 +1,5 @@
 use utf8;
+
 package Koha::Schema::Result::KohaPluginComLmscloudEventmanagementTargetGroup;
 
 # Created by DBIx::Class::Schema::Loader
@@ -59,24 +60,22 @@ upper age boundary for group
 =cut
 
 __PACKAGE__->add_columns(
-  "id",
-  { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-  "name",
-  { data_type => "varchar", default_value => "", is_nullable => 1, size => 255 },
-  "min_age",
-  {
-    data_type => "tinyint",
-    default_value => 0,
-    extra => { unsigned => 1 },
-    is_nullable => 1,
-  },
-  "max_age",
-  {
-    data_type => "tinyint",
-    default_value => 255,
-    extra => { unsigned => 1 },
-    is_nullable => 1,
-  },
+    "id",
+    { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
+    "name",
+    { data_type => "varchar", default_value => "", is_nullable => 1, size => 255 },
+    "min_age",
+    {   data_type     => "tinyint",
+        default_value => 0,
+        extra         => { unsigned => 1 },
+        is_nullable   => 1,
+    },
+    "max_age",
+    {   data_type     => "tinyint",
+        default_value => 255,
+        extra         => { unsigned => 1 },
+        is_nullable   => 1,
+    },
 );
 
 =head1 PRIMARY KEY
@@ -102,10 +101,8 @@ Related object: L<Koha::Schema::Result::KohaPluginComLmscloudEventmanagementETgF
 =cut
 
 __PACKAGE__->has_many(
-  "koha_plugin_com_lmscloud_eventmanagement_e_tg_fees",
-  "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementETgFee",
-  { "foreign.target_group_id" => "self.id" },
-  { cascade_copy => 0, cascade_delete => 0 },
+    "koha_plugin_com_lmscloud_eventmanagement_e_tg_fees", "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementETgFee",
+    { "foreign.target_group_id" => "self.id" }, { cascade_copy => 0, cascade_delete => 0 },
 );
 
 =head2 koha_plugin_com_lmscloud_eventmanagements_et_tg_fees
@@ -117,12 +114,9 @@ Related object: L<Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEtTg
 =cut
 
 __PACKAGE__->has_many(
-  "koha_plugin_com_lmscloud_eventmanagements_et_tg_fees",
-  "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEtTgFees",
-  { "foreign.target_group_id" => "self.id" },
-  { cascade_copy => 0, cascade_delete => 0 },
+    "koha_plugin_com_lmscloud_eventmanagements_et_tg_fees", "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEtTgFees",
+    { "foreign.target_group_id" => "self.id" }, { cascade_copy => 0, cascade_delete => 0 },
 );
-
 
 # Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-07-07 11:38:59
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:jCEkqBEREVrbhwTAPNgXXw

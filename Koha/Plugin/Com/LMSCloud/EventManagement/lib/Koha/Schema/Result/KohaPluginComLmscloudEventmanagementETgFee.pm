@@ -1,4 +1,5 @@
 use utf8;
+
 package Koha::Schema::Result::KohaPluginComLmscloudEventmanagementETgFee;
 
 # Created by DBIx::Class::Schema::Loader
@@ -64,16 +65,11 @@ fee for the event
 =cut
 
 __PACKAGE__->add_columns(
-  "id",
-  { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-  "event_id",
-  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
-  "target_group_id",
-  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
-  "selected",
-  { data_type => "tinyint", default_value => 0, is_nullable => 1 },
-  "fee",
-  { data_type => "decimal", is_nullable => 1, size => [15, 4] },
+    "id",              { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
+    "event_id",        { data_type => "integer", is_foreign_key    => 1, is_nullable => 1 },
+    "target_group_id", { data_type => "integer", is_foreign_key    => 1, is_nullable => 1 },
+    "selected",        { data_type => "tinyint", default_value     => 0, is_nullable => 1 },
+    "fee",             { data_type => "decimal", is_nullable       => 1, size        => [ 15, 4 ] },
 );
 
 =head1 PRIMARY KEY
@@ -99,15 +95,14 @@ Related object: L<Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEven
 =cut
 
 __PACKAGE__->belongs_to(
-  "event",
-  "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEvent",
-  { id => "event_id" },
-  {
-    is_deferrable => 1,
-    join_type     => "LEFT",
-    on_delete     => "RESTRICT",
-    on_update     => "RESTRICT",
-  },
+    "event",
+    "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEvent",
+    { id => "event_id" },
+    {   is_deferrable => 1,
+        join_type     => "LEFT",
+        on_delete     => "RESTRICT",
+        on_update     => "RESTRICT",
+    },
 );
 
 =head2 target_group
@@ -119,17 +114,15 @@ Related object: L<Koha::Schema::Result::KohaPluginComLmscloudEventmanagementTarg
 =cut
 
 __PACKAGE__->belongs_to(
-  "target_group",
-  "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementTargetGroup",
-  { id => "target_group_id" },
-  {
-    is_deferrable => 1,
-    join_type     => "LEFT",
-    on_delete     => "RESTRICT",
-    on_update     => "RESTRICT",
-  },
+    "target_group",
+    "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementTargetGroup",
+    { id => "target_group_id" },
+    {   is_deferrable => 1,
+        join_type     => "LEFT",
+        on_delete     => "RESTRICT",
+        on_update     => "RESTRICT",
+    },
 );
-
 
 # Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-07-07 11:54:46
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZcCwmR53Cm2CpEu7rXqpCQ

@@ -1,4 +1,5 @@
 use utf8;
+
 package Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEvent;
 
 # Created by DBIx::Class::Schema::Loader
@@ -153,59 +154,54 @@ is the registration to non-patrons via email
 =cut
 
 __PACKAGE__->add_columns(
-  "id",
-  { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-  "name",
-  { data_type => "varchar", default_value => "", is_nullable => 1, size => 255 },
-  "event_type",
-  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
-  "min_age",
-  { data_type => "tinyint", extra => { unsigned => 1 }, is_nullable => 1 },
-  "max_age",
-  { data_type => "tinyint", extra => { unsigned => 1 }, is_nullable => 1 },
-  "max_participants",
-  { data_type => "smallint", extra => { unsigned => 1 }, is_nullable => 1 },
-  "start_time",
-  {
-    data_type => "datetime",
-    datetime_undef_if_invalid => 1,
-    is_nullable => 1,
-  },
-  "end_time",
-  {
-    data_type => "datetime",
-    datetime_undef_if_invalid => 1,
-    is_nullable => 1,
-  },
-  "registration_start",
-  {
-    data_type => "datetime",
-    datetime_undef_if_invalid => 1,
-    is_nullable => 1,
-  },
-  "registration_end",
-  {
-    data_type => "datetime",
-    datetime_undef_if_invalid => 1,
-    is_nullable => 1,
-  },
-  "location",
-  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
-  "image",
-  { data_type => "varchar", is_nullable => 1, size => 2000 },
-  "description",
-  { data_type => "mediumtext", is_nullable => 1 },
-  "status",
-  {
-    data_type => "enum",
-    default_value => "pending",
-    extra => { list => ["pending", "confirmed", "canceled", "sold_out"] },
-    is_nullable => 1,
-  },
-  "registration_link",
-  { data_type => "varchar", is_nullable => 1, size => 2000 },
-  "open_registration",
-  { data_type => "tinyint", default_value => 0, is_nullable => 1 },
+    "id",
+    { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
+    "name",
+    { data_type => "varchar", default_value => "", is_nullable => 1, size => 255 },
+    "event_type",
+    { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
+    "min_age",
+    { data_type => "tinyint", extra => { unsigned => 1 }, is_nullable => 1 },
+    "max_age",
+    { data_type => "tinyint", extra => { unsigned => 1 }, is_nullable => 1 },
+    "max_participants",
+    { data_type => "smallint", extra => { unsigned => 1 }, is_nullable => 1 },
+    "start_time",
+    {   data_type                 => "datetime",
+        datetime_undef_if_invalid => 1,
+        is_nullable               => 1,
+    },
+    "end_time",
+    {   data_type                 => "datetime",
+        datetime_undef_if_invalid => 1,
+        is_nullable               => 1,
+    },
+    "registration_start",
+    {   data_type                 => "datetime",
+        datetime_undef_if_invalid => 1,
+        is_nullable               => 1,
+    },
+    "registration_end",
+    {   data_type                 => "datetime",
+        datetime_undef_if_invalid => 1,
+        is_nullable               => 1,
+    },
+    "location",
+    { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
+    "image",
+    { data_type => "varchar", is_nullable => 1, size => 2000 },
+    "description",
+    { data_type => "mediumtext", is_nullable => 1 },
+    "status",
+    {   data_type     => "enum",
+        default_value => "pending",
+        extra         => { list => [ "pending", "confirmed", "canceled", "sold_out" ] },
+        is_nullable   => 1,
+    },
+    "registration_link",
+    { data_type => "varchar", is_nullable => 1, size => 2000 },
+    "open_registration",
+    { data_type => "tinyint", default_value => 0, is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -231,15 +227,14 @@ Related object: L<Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEven
 =cut
 
 __PACKAGE__->belongs_to(
-  "event_type",
-  "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEventType",
-  { id => "event_type" },
-  {
-    is_deferrable => 1,
-    join_type     => "LEFT",
-    on_delete     => "RESTRICT",
-    on_update     => "RESTRICT",
-  },
+    "event_type",
+    "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEventType",
+    { id => "event_type" },
+    {   is_deferrable => 1,
+        join_type     => "LEFT",
+        on_delete     => "RESTRICT",
+        on_update     => "RESTRICT",
+    },
 );
 
 =head2 koha_plugin_com_lmscloud_eventmanagement_e_tg_fees
@@ -251,10 +246,10 @@ Related object: L<Koha::Schema::Result::KohaPluginComLmscloudEventmanagementETgF
 =cut
 
 __PACKAGE__->has_many(
-  "koha_plugin_com_lmscloud_eventmanagement_e_tg_fees",
-  "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementETgFee",
-  { "foreign.event_id" => "self.id" },
-  { cascade_copy => 0, cascade_delete => 0 },
+    "koha_plugin_com_lmscloud_eventmanagement_e_tg_fees",
+    "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementETgFee",
+    { "foreign.event_id" => "self.id" },
+    { cascade_copy       => 0, cascade_delete => 0 },
 );
 
 =head2 location
@@ -266,17 +261,15 @@ Related object: L<Koha::Schema::Result::KohaPluginComLmscloudEventmanagementLoca
 =cut
 
 __PACKAGE__->belongs_to(
-  "location",
-  "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementLocation",
-  { id => "location" },
-  {
-    is_deferrable => 1,
-    join_type     => "LEFT",
-    on_delete     => "RESTRICT",
-    on_update     => "RESTRICT",
-  },
+    "location",
+    "Koha::Schema::Result::KohaPluginComLmscloudEventmanagementLocation",
+    { id => "location" },
+    {   is_deferrable => 1,
+        join_type     => "LEFT",
+        on_delete     => "RESTRICT",
+        on_update     => "RESTRICT",
+    },
 );
-
 
 # Created by DBIx::Class::Schema::Loader v0.07049 @ 2023-07-07 12:20:39
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:E49WjtNAVOTPiXo9H7w6zw

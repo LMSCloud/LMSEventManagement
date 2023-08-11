@@ -304,7 +304,7 @@ sub install() {
             }
         );
 
-        my $is_success = $migration_helper->install({ plugin => $self });
+        my $is_success = $migration_helper->install( { plugin => $self } );
         if ( !$is_success ) {
             croak 'Migration failed';
         }
