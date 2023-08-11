@@ -100,7 +100,7 @@ sub upgrade() {
         }
 
         my @migration_files = $self->_get_migration_files();
-        my $is_success      = 0;
+        my $is_success      = 1;
         for my $file (@migration_files) {
             my $number = $self->_extract_migration_number($file);
 
