@@ -17,6 +17,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { searchSyntax } from "../docs/searchSyntax";
 import { InputConverter } from "../lib/converters/InputConverter/InputConverter";
+import { InputsSnapshot } from "../lib/InputsSnapshot";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
 import { QueryBuilder } from "../lib/QueryBuilder";
 import { attr__, __ } from "../lib/translate";
@@ -111,6 +112,8 @@ export default class LMSTable extends LitElement {
     private footer: HTMLElement | undefined | null =
         document.getElementById("i18nMenu")?.parentElement;
 
+    private snapshot?: InputsSnapshot;
+
     static override styles = [
         tailwindStyles,
         skeletonStyles,
@@ -204,6 +207,11 @@ export default class LMSTable extends LitElement {
         });
     }
 
+    private takeSnapshot(tableRow: HTMLTableRowElement) {
+        const inputs = tableRow.querySelectorAll("input, select, textarea");
+        this.snapshot = new InputsSnapshot(inputs);
+    }
+
     /**
      * Toggles the edit mode for a table row.
      * For the close on Save feature to work, the button needs to be
@@ -214,7 +222,8 @@ export default class LMSTable extends LitElement {
      */
     protected toggleEdit(e: Event | CustomEvent) {
         let button: HTMLButtonElement;
-        if (e instanceof CustomEvent) {
+        const isSave = e instanceof CustomEvent;
+        if (isSave) {
             button = e.detail;
         } else {
             button = e.target as HTMLButtonElement;
@@ -225,6 +234,7 @@ export default class LMSTable extends LitElement {
 
         this.inputs?.forEach((input) => {
             input.setAttribute("disabled", "");
+            this.snapshot?.revert();
         });
 
         const tableRow = button.closest("tr");
@@ -242,6 +252,7 @@ export default class LMSTable extends LitElement {
         if (tableRow) {
             this.toggleCollapse(tableRow, true);
             this.updateButtonState(button, true);
+            this.takeSnapshot(tableRow);
             this.toggleInputs(tableRow, true);
         }
     }

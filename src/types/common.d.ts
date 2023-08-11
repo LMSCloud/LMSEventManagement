@@ -44,6 +44,11 @@ export type Input = {
     value: string;
 };
 
+export type InputElement =
+    | HTMLInputElement
+    | HTMLSelectElement
+    | HTMLTextAreaElement;
+
 export type InputType =
     | "button"
     | "checkbox"
