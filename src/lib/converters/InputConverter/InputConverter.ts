@@ -96,7 +96,7 @@ export class InputConverter {
                     />
                 </lms-image-picker>`,
             description: (value) => {
-                return html` <lms-pell-editor .value=${value}>
+                return html` <lms-pell-editor .value=${value} class="text-left">
                     <textarea
                         class="input-bordered input block w-full"
                         name="description"
