@@ -12,6 +12,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { repeat } from "lit/directives/repeat.js";
 import { InputConverter } from "../lib/converters/InputConverter/InputConverter";
+import { InputsSnapshot } from "../lib/InputsSnapshot";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
 import { locale, TranslateDirective, __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
@@ -66,6 +67,8 @@ export default class LMSModal extends LitElement {
     private boundHandleKeyDown = (e: KeyboardEvent) =>
         this.handleKeyDown.bind(this)(e);
 
+    private snapshot?: InputsSnapshot;
+
     static override styles = [tailwindStyles, skeletonStyles];
 
     private toggleModal(e?: Event) {
@@ -109,6 +112,7 @@ export default class LMSModal extends LitElement {
 
         if (response.ok) {
             this.toggleModal();
+            this.snapshot?.revert();
 
             const event = new CustomEvent("created", { bubbles: true });
             this.dispatchEvent(event);
@@ -227,6 +231,12 @@ export default class LMSModal extends LitElement {
             });
 
             this.intersectionObserverHandler.init();
+        }
+
+        if (this.modal) {
+            this.snapshot = new InputsSnapshot(
+                this.modal.querySelectorAll("input, select, textarea")
+            );
         }
     }
 
