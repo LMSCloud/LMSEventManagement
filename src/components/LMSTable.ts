@@ -114,6 +114,8 @@ export default class LMSTable extends LitElement {
 
     private snapshot?: InputsSnapshot;
 
+    private orphanedTableRow?: HTMLTableRowElement;
+
     static override styles = [
         tailwindStyles,
         skeletonStyles,
@@ -208,7 +210,9 @@ export default class LMSTable extends LitElement {
     }
 
     private takeSnapshot(tableRow: HTMLTableRowElement) {
-        const inputs = tableRow.querySelectorAll("input, select, textarea");
+        const inputs = tableRow.querySelectorAll(
+            "input, select, textarea, .lit-element"
+        );
         this.snapshot = new InputsSnapshot(inputs);
     }
 
@@ -245,7 +249,13 @@ export default class LMSTable extends LitElement {
             this.toggleCollapse(tableRow, false);
             this.updateButtonState(button, false);
             this.toggleInputs(tableRow, false);
+            this.orphanedTableRow = undefined;
             return;
+        }
+
+        if (this.orphanedTableRow) {
+            this.toggleCollapse(this.orphanedTableRow, false);
+            this.orphanedTableRow = undefined;
         }
 
         this.editButtons?.forEach((editButton) => {
@@ -257,6 +267,7 @@ export default class LMSTable extends LitElement {
             this.updateButtonState(button, true);
             this.takeSnapshot(tableRow);
             this.toggleInputs(tableRow, true);
+            this.orphanedTableRow = tableRow;
         }
     }
 
