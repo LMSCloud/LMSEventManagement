@@ -310,7 +310,7 @@ export default class LMSEventsView extends LitElement {
                                 </div>
                                 <div
                                     class="load-more ${classMap({
-                                        hidden: this.events_count ?? 0 < 20,
+                                        hidden: (this.events_count ?? 0) < 20,
                                     })} flex justify-center"
                                 >
                                     <span class="mt-4 hidden text-center"
@@ -318,7 +318,9 @@ export default class LMSEventsView extends LitElement {
                                     >
                                     <button
                                         class="${classMap({
-                                            hidden: this.events.length,
+                                            hidden:
+                                                this.events.length >=
+                                                (this.events_count ?? 0),
                                         })} btn-primary btn-block btn mt-4 w-1/4"
                                         @click=${this.handleLoadMore}
                                     >
