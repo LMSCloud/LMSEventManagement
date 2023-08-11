@@ -120,7 +120,7 @@ export default class LMSEventsModal extends LMSModal {
                 placeholder: attr__(
                     "Registration start time, e.g. '2023-01-01 08:00'."
                 ),
-                required: true,
+                required: false,
             },
             {
                 name: "registration_end",
@@ -129,7 +129,7 @@ export default class LMSEventsModal extends LMSModal {
                 placeholder: attr__(
                     "Registration end time, e.g. '2023-01-01 09:00'."
                 ),
-                required: true,
+                required: false,
             },
             {
                 name: "location",
