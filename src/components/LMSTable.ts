@@ -234,8 +234,11 @@ export default class LMSTable extends LitElement {
 
         this.inputs?.forEach((input) => {
             input.setAttribute("disabled", "");
-            this.snapshot?.revert();
         });
+
+        if (!isSave) {
+            this.snapshot?.revert();
+        }
 
         const tableRow = button.closest("tr");
         if (button.classList.contains("active") && tableRow) {
