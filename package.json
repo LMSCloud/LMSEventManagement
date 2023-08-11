@@ -8,7 +8,7 @@
     "package-kpz:build": "cd package-kpz && cargo build --release && cd ../ && ln -s ./package-kpz/target/release/package-kpz ./p-kpz",
     "ktd-plugin-tools:build": "cd ktd-plugin-tools && go build && cd ../ && ln -s ./ktd-plugin-tools/ktd-plugin-tools ./kpt",
     "lint": "eslint \"src/**/*.{js,ts}\"",
-    "format": "prettier --write \"src/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" && find Koha/Plugin -type f -name '*.pl' -o -name '*.pm' -exec perltidy -b -nst -bext='/' {} \\;",
     "build": "npm run css:build && npm run format && npx rollup -c && ./p-kpz -r \"lms-event-management\" -p \"Koha/Plugin/Com/LMSCloud/EventManagement.pm\"",
     "test": "mocha \"test/**/*.test.mjs\"",
     "docs:package": "./tools/generate_docs.mjs",
