@@ -31,6 +31,10 @@ export class InputsSnapshot {
         });
     }
 
+    public getAmountSnapshotted() {
+        return this.inputs?.length ?? 0;
+    }
+
     public revert() {
         this.inputs?.forEach((input, index) => {
             const snapshotValue = this.values?.[index];

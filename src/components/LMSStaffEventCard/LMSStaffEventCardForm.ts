@@ -16,6 +16,7 @@ import {
 } from "lit/decorators.js";
 import { convertToISO8601 } from "../../lib/converters/datetimeConverters";
 import { InputConverter } from "../../lib/converters/InputConverter/InputConverter";
+import { InputsSnapshot } from "../../lib/InputsSnapshot";
 import { requestHandler } from "../../lib/RequestHandler";
 import { attr__, __ } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";
@@ -61,11 +62,13 @@ export default class LMSStaffEventCardForm extends LitElement {
     @queryAll("details") collapsibles!: NodeListOf<HTMLDetailsElement>;
 
     @queryAll("input, select, textarea, lms-image-picker")
-    inputs!: NodeListOf<HTMLInputElement>;
+    inputs?: NodeListOf<HTMLInputElement>;
 
     @query("lms-confirmation-modal") confirmationModal!: LMSConfirmationModal;
 
     private inputConverter = new InputConverter();
+
+    private snapshot?: InputsSnapshot;
 
     static override styles = [tailwindStyles, skeletonStyles, utilityStyles];
 
@@ -76,7 +79,8 @@ export default class LMSStaffEventCardForm extends LitElement {
     private toggleEdit(e: Event | CustomEvent) {
         e.preventDefault();
         let button: HTMLButtonElement;
-        if (e instanceof CustomEvent) {
+        const isSave = e instanceof CustomEvent;
+        if (isSave) {
             button = e.detail;
         } else {
             button = e.target as HTMLButtonElement;
@@ -89,9 +93,12 @@ export default class LMSStaffEventCardForm extends LitElement {
             button.classList.remove("active");
             button.querySelector(".start-edit")?.classList.remove("hidden");
             button.querySelector(".abort-edit")?.classList.add("hidden");
-            this.inputs.forEach((input) => {
+            this.inputs?.forEach((input) => {
                 input.setAttribute("disabled", "");
             });
+            if (!isSave) {
+                this.snapshot?.revert();
+            }
 
             this.collapseAll();
             return;
@@ -100,7 +107,7 @@ export default class LMSStaffEventCardForm extends LitElement {
         button.classList.add("active");
         button.querySelector(".start-edit")?.classList.add("hidden");
         button.querySelector(".abort-edit")?.classList.remove("hidden");
-        this.inputs.forEach((input) => {
+        this.inputs?.forEach((input) => {
             input.removeAttribute("disabled");
         });
 
@@ -435,6 +442,11 @@ export default class LMSStaffEventCardForm extends LitElement {
             }
 
             this.datum = this.getColumnData(this.event, this.taggedData);
+        }
+
+        const amountSnapshotted = this.snapshot?.getAmountSnapshotted() ?? 0;
+        if (this.inputs?.length && amountSnapshotted < this.inputs.length) {
+            this.snapshot = new InputsSnapshot(this.inputs);
         }
     }
 
