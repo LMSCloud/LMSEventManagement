@@ -3,7 +3,7 @@ import { InputElement } from "../types/common";
 export class InputsSnapshot {
     private inputs?: InputElement[];
 
-    private values?: unknown[];
+    private values?: { value: string; checked?: boolean }[];
 
     constructor(elements: NodeListOf<Element>) {
         this.snapshot(elements);
@@ -20,12 +20,34 @@ export class InputsSnapshot {
 
     private snapshot(elements: NodeListOf<Element>) {
         this.inputs = this.filterForInputs(elements);
-        this.values = this.inputs.map((element) => element.value);
+        this.values = this.inputs.map((element) => {
+            if (
+                element instanceof HTMLInputElement &&
+                element.type === "checkbox"
+            ) {
+                return { value: element.value, checked: element.checked };
+            }
+            return { value: element.value };
+        });
     }
 
     public revert() {
         this.inputs?.forEach((input, index) => {
-            input.value = this.values?.[index] as string;
+            const snapshotValue = this.values?.[index];
+            if (snapshotValue) {
+                input.value = snapshotValue.value;
+
+                if (
+                    input instanceof HTMLInputElement &&
+                    input.type === "checkbox"
+                ) {
+                    input.checked = !!snapshotValue.checked;
+                }
+
+                if (input instanceof HTMLTextAreaElement) {
+                    input.innerText = snapshotValue.value;
+                }
+            }
         });
     }
 }
