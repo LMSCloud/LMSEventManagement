@@ -104,7 +104,7 @@ sub is_valid_string {
     local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
     my ( $is_valid, $errors ) = $self->is_valid($args);
-    if ( !$is_valid ) {
+    if ( !$is_valid || ( $is_valid && defined $errors && ref($errors) eq 'ARRAY' && !@{$errors} ) ) {
         return ( $is_valid, $errors );
     }
 
@@ -162,7 +162,7 @@ sub is_valid_number {
     local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
     my ( $is_valid, $errors ) = $self->is_valid($args);
-    if ( !$is_valid ) {
+    if ( !$is_valid || ( $is_valid && defined $errors && ref($errors) eq 'ARRAY' && !@{$errors} ) ) {
         return ( $is_valid, $errors );
     }
 
@@ -211,7 +211,7 @@ sub is_valid_datetime {
     local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
     my ( $is_valid, $errors ) = $self->is_valid($args);
-    if ( !$is_valid ) {
+    if ( !$is_valid || ( $is_valid && defined $errors && ref($errors) eq 'ARRAY' && !@{$errors} ) ) {
         return ( $is_valid, $errors );
     }
 
@@ -252,7 +252,7 @@ sub is_valid_color {
     local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
     my ( $is_valid, $errors ) = $self->is_valid($args);
-    if ( !$is_valid ) {
+    if ( !$is_valid || ( $is_valid && defined $errors && ref($errors) eq 'ARRAY' && !@{$errors} ) ) {
         return ( $is_valid, $errors );
     }
 
@@ -280,7 +280,7 @@ sub is_valid_time {
     local $ENV{OUTPUT_CHARSET} = 'UTF-8';
 
     my ( $is_valid, $errors ) = $self->is_valid($args);
-    if ( !$is_valid ) {
+    if ( !$is_valid || ( $is_valid && defined $errors && ref($errors) eq 'ARRAY' && !@{$errors} ) ) {
         return ( $is_valid, $errors );
     }
 
