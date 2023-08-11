@@ -16,7 +16,7 @@ use C4::Context;
 
 our $VERSION = '1.0.0';
 
-Readonly::Scalar my $INIT => 0;
+Readonly::Scalar my $CURRENT_MIGRATION_KEY => '__CURRENT_MIGRATION__';
 
 has 'dbh' => (
     is      => 'ro',
@@ -44,21 +44,26 @@ sub install() {
         # Loop over migration files and apply each one
         my $last_migration;
         for my $file (@migration_files) {
+            $self->dbh->begin_work;
+
             my $is_success = $self->_apply_migration( { file => $file } );
 
             if ( !$is_success ) {
+                $self->dbh->rollback;
                 carp "Failed to apply migration from $file. Aborting installation.";
                 return 0;
             }
 
+            $self->dbh->commit;
+
             my $number = $self->_extract_migration_number($file);
             $last_migration = $number;
 
-            warn "Successfully applied migration from $file.";
+            carp "Successfully applied migration from $file.";
         }
 
         # Store the last migration
-        $args->{plugin}->store_data( { __CURRENT_MIGRATION__ => $last_migration } ) if defined $last_migration;
+        $args->{plugin}->store_data( { $CURRENT_MIGRATION_KEY => $last_migration } ) if defined $last_migration;
 
         return 1;
     }
@@ -74,8 +79,8 @@ sub upgrade() {
     my ( $self, $args ) = @_;
 
     return try {
-        my $last_migration = $args->{plugin}->retrieve_data('__CURRENT_MIGRATION__') // $INIT;
-        if ( !$last_migration ) {
+        my $last_migration = $args->{plugin}->retrieve_data($CURRENT_MIGRATION_KEY);
+        if ( !defined $last_migration ) {
             carp <<~"MESSAGE";
                 No last migration found. This is likely a mistake as there should
                 be a last migration number stored after installation. If it's missing
@@ -102,16 +107,21 @@ sub upgrade() {
             # skip migrations that have been applied already
             next if $number <= $last_migration;
 
+            $self->dbh->begin_work;    # Start transaction
+
             $is_success = $self->_apply_migration( { file => $file } );
             if ( !$is_success ) {
+                $self->dbh->rollback;    # Rollback transaction
                 carp "Failed to apply migration from $file. Aborting upgrade.";
                 return 0;
             }
 
-            # update last_migration
-            $args->{plugin}->store_data( { __CURRENT_MIGRATION__ => $number } );
+            $self->dbh->commit;          # Commit transaction
 
-            warn "Successfully applied migration from $file.";
+            # update last_migration
+            $args->{plugin}->store_data( { $CURRENT_MIGRATION_KEY => $number } );
+
+            carp "Successfully applied migration from $file.";
         }
 
         return $is_success;
@@ -119,8 +129,8 @@ sub upgrade() {
     }
     catch {
         my $error = $_;
+        $self->dbh->rollback if $self->dbh->in_transaction;    # Rollback transaction if inside transaction block
         carp "UPGRADE ERROR: $error";
-
         return 0;
     };
 }
@@ -148,7 +158,7 @@ sub _apply_migration {
     return try {
         local $INPUT_RECORD_SEPARATOR = undef;    # Enable slurp mode
 
-        open my $fh, '<', $file or croak "Can't open $file: $OS_ERROR";
+        open my $fh, '<:encoding(UTF-8)', $file or croak "Can't open $file: $OS_ERROR";
         my $sql = <$fh>;
         close $fh or croak "Can't close $file: $OS_ERROR";
 
