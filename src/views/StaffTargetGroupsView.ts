@@ -73,7 +73,9 @@ export default class StaffEventTypesView extends LitElement {
             this.queryBuilder.query.toString()
         );
         this.target_groups = await response.json();
-        this.hasNoResults = this.target_groups.length === 0;
+        const isEmptyOrNoResults = this.target_groups.length === 0;
+        this.isEmpty = isEmptyOrNoResults;
+        this.hasNoResults = isEmptyOrNoResults;
         this.queryBuilder.updateUrl();
         this.requestUpdate();
     }

@@ -73,7 +73,9 @@ export default class StaffLocationsView extends LitElement {
             this.queryBuilder.query.toString()
         );
         this.locations = await response.json();
-        this.hasNoResults = this.locations.length === 0;
+        const isEmptyOrNoResults = this.locations.length === 0;
+        this.isEmpty = isEmptyOrNoResults;
+        this.hasNoResults = isEmptyOrNoResults;
         this.queryBuilder.updateUrl();
         this.requestUpdate();
     }
