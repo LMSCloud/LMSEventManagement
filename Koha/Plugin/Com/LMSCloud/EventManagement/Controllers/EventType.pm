@@ -13,6 +13,8 @@ use POSIX qw(setlocale);
 use Encode;
 
 use Koha::Plugin::Com::LMSCloud::EventManagement;
+use Koha::LMSCloud::EventManagement::Events;
+use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees;
 use Koha::LMSCloud::EventManagement::EventType;
 use Koha::LMSCloud::EventManagement::EventTypes;
 use Koha::LMSCloud::EventManagement::EventType::TargetGroup::Fee;
@@ -182,17 +184,27 @@ sub delete {
         my $id = $c->validation->param('id');
 
         # This is a temporary fix for the issue with the delete method on rvs of find calls
-        my $event = Koha::LMSCloud::EventManagement::EventTypes->search( { id => $id } );
+        my $event_type = Koha::LMSCloud::EventManagement::EventTypes->search( { id => $id } );
 
-        if ( !$event ) {
+        if ( !$event_type ) {
             return $c->render( status => 404, openapi => { error => __('Event type not found') } );
+        }
+
+        # delete associated events
+        my $events = Koha::LMSCloud::EventManagement::Events->search( { event_type => $id } );
+        while ( my $event = $events->next ) {
+
+            # delete the fees first
+            Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $event->id } )->delete;
+
+            $event->delete;
         }
 
         # delete the entries from the junction table first
         Koha::LMSCloud::EventManagement::EventType::TargetGroup::Fees->search( { event_type_id => $id } )->delete;
 
         # delete the event
-        $event->delete;
+        $event_type->delete;
 
         return $c->render( status => 204, openapi => q{} );
     }
