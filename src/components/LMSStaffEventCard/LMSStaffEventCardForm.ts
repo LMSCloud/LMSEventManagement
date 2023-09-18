@@ -300,9 +300,14 @@ export default class LMSStaffEventCardForm extends LitElement {
         }
 
         const formData = new FormData(target);
-        datetimeLocalElements.forEach(({ name, value }) =>
-            formData.set(name, value)
-        );
+        datetimeLocalElements.forEach(({ name, value }) => {
+            if (!value) {
+                formData.delete(name);
+                return;
+            }
+
+            formData.set(name, value);
+        });
 
         const keys = Object.keys(this.event);
         const requestBody = Array.from(formData).reduce(
