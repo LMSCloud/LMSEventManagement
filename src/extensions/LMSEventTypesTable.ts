@@ -195,6 +195,10 @@ export default class LMSEventTypesTable extends LMSTable {
                     ])
                 )
         );
+
+        this.confirmationModal.message = __(
+            "Are you sure you want to delete (This will delete all events with this event type): "
+        );
     }
 
     override updated(changedProperties: Map<string, never>) {

@@ -283,17 +283,12 @@ export default class LMSTable extends LitElement {
         this.confirmationModal.header = __("Please confirm");
 
         const name = this.findInRow(e.target as HTMLButtonElement, "name");
-        if (typeof name === "string") {
-            this.confirmationModal.message = __(
-                "Are you sure you want to delete: "
-            );
-            this.confirmationModal.obj = name;
-        } else {
-            this.confirmationModal.message = __(
-                "Are you sure you want to delete this entry?"
-            );
-        }
+        this.confirmationModal.message ??=
+            typeof name === "string"
+                ? __("Are you sure you want to delete: ")
+                : __("Are you sure you want to delete this entry?");
 
+        this.confirmationModal.obj = name;
         this.confirmationModal.ref = e.target;
         this.confirmationModal.showModal();
     }
