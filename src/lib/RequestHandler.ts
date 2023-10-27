@@ -227,7 +227,7 @@ const endpoints: ApiEndpoints = {
             cache: false,
         },
         eventsCountPublic: {
-            url: `${BASE_URL}/public/events_count`,
+            url: `${BASE_URL}/public/events/count`,
             cache: false,
         },
         targetGroupsPublic: {

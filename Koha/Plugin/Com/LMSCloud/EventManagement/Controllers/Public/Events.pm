@@ -15,6 +15,23 @@ use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees;
 
 our $VERSION = '1.0.0';
 
+sub count {
+    my $c = shift->openapi->valid_input or return;
+
+    return try {
+        my $events_set         = Koha::LMSCloud::EventManagement::Events->new;
+        my $events_total_count = $events_set->count;
+
+        return $c->render(
+            status  => 200,
+            openapi => $events_total_count,
+        );
+    }
+    catch {
+        $c->unhandled_exception($_);
+    };
+}
+
 sub get {
     my $c = shift->openapi->valid_input or return;
 

@@ -325,9 +325,9 @@
       }
     }
   },
-  "/public/events_count": {
+  "/public/events/count": {
     "get": {
-      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::EventsCount#get",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Events#count",
       "operationId": "getEventsCountPublic",
       "tags": [
         "events"
