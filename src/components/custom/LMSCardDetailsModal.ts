@@ -264,12 +264,27 @@ export default class LMSCardDetailsModal extends LitElement {
             return nothing;
         }
 
-        const url = new URL(link);
+        const protocol = "https";
+        const urlRegex = new RegExp(
+            `^${protocol}:\\/\\/[\\S\\/.$?#][\\S]*$`,
+            "i"
+        );
+
+        const isValid = urlRegex.test(link);
+        const isValidWithProtocol = urlRegex.test(`${protocol}://${link}`);
+        if (!isValid && !isValidWithProtocol) {
+            return nothing;
+        }
+
+        const url =
+            !isValid && isValidWithProtocol
+                ? new URL(`${protocol}://${link}`)
+                : new URL(link);
         return html`<a
             class="link-hover link-neutral link text-sm"
-            href=${link}
+            href=${url?.href}
             target="_blank"
-            >${__("Directions to the venue by")} ${url.hostname}</a
+            >${__("Directions to the venue by")} ${url?.hostname}</a
         >`;
     }
 
