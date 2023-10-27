@@ -15,6 +15,7 @@ import {
 } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
+import { repeat } from "lit/directives/repeat.js";
 import { searchSyntax } from "../docs/searchSyntax";
 import { InputConverter } from "../lib/converters/InputConverter/InputConverter";
 import { InputsSnapshot } from "../lib/InputsSnapshot";
@@ -663,8 +664,9 @@ export default class LMSTable extends LitElement {
                             </tr>
                         </thead>
                         <tbody>
-                            ${map(
+                            ${repeat(
                                 this.data,
+                                (datum) => datum["id"],
                                 (datum) => html`
                                     <tr class="h-full">
                                         ${map(
