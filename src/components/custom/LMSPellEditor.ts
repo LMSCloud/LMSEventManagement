@@ -125,7 +125,7 @@ export default class LMSPellEditor extends LitElement {
 
     override render() {
         return html`
-            <dialog id="modal">
+            <dialog id="modal" class="sm:max-w-5xl">
                 <div id="editor" class="m-auto"></div>
                 <div class="btn-group-modal join mt-3 flex content-end">
                     <button

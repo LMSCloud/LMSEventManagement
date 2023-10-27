@@ -4432,6 +4432,10 @@ details.collapse summary::-webkit-details-marker {
     width: 100%;
   }
 
+  .sm\\:max-w-5xl {
+    max-width: 64rem;
+  }
+
   .sm\\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
