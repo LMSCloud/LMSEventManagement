@@ -77,7 +77,7 @@ BEGIN {
 }
 
 ## Here we set our plugin version
-our $VERSION         = '1.3.31';
+our $VERSION         = '1.4.2';
 our $MINIMUM_VERSION = '18.05';
 
 ## Here is our metadata, some keys are required, some are optional
@@ -85,7 +85,7 @@ our $METADATA = {
     name            => 'LMSEventManagement',
     author          => 'LMSCloud GmbH',
     date_authored   => '2021-10-15',
-    date_updated    => '2023-10-27',
+    date_updated    => '2023-10-28',
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
@@ -194,8 +194,9 @@ sub opac_online_payment_end {
     $m = @accountline_ids || 'no_accountlines';
 
     if ( $amount && @accountline_ids ) {
-        my $account      = Koha::Account->new( { patron_id => $borrowernumber } );
-        my @accountlines = Koha::Account::Lines->search( { accountlines_id => { -in => \@accountline_ids } } )->as_list();
+        my $account = Koha::Account->new( { patron_id => $borrowernumber } );
+        my @accountlines =
+            Koha::Account::Lines->search( { accountlines_id => { -in => \@accountline_ids } } )->as_list();
         foreach my $id (@accountline_ids) {
             $account->pay(
                 {   amount => $amount,
