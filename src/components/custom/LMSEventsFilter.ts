@@ -367,7 +367,12 @@ export default class LMSEventsFilter extends LitElement {
                                 @toggle=${this.handleDropdownToggle}
                             >
                                 ${map(
-                                    ["start_time", "event_type", "location"],
+                                    [
+                                        "id",
+                                        "start_time",
+                                        "event_type",
+                                        "location",
+                                    ],
                                     (value, index) => html`
                                         <div class="form-control">
                                             <label
