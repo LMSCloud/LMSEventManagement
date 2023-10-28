@@ -72,21 +72,9 @@ export default class LMSEventsView extends LitElement {
             "location",
         ];
         this.queryBuilder.query = window.location.search;
-        const requiredParams = {
-            _order_by: this.queryBuilder.getParamValue("_order_by"),
-            _page: this.queryBuilder.getParamValue("_page"),
-            _per_page: this.queryBuilder.getParamValue("_per_page"),
-        };
-
-        const hasRequiredParams = Array.from(
-            Object.entries(requiredParams)
-        ).every(([_, value]) => value);
-        if (!hasRequiredParams) {
-            this.queryBuilder.updateQuery(
-                "_order_by=start_time&_page=1&_per_page=20"
-            );
-            return;
-        }
+        this.queryBuilder.updateQuery(
+            "_order_by=id&_page=1&_per_page=20&open_registration=true"
+        );
     }
 
     override connectedCallback() {
@@ -226,7 +214,6 @@ export default class LMSEventsView extends LitElement {
             "target_group",
             "min_age",
             "max_age",
-            "open_registration",
             "fee",
             "location",
             "start_time",
