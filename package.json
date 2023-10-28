@@ -1,6 +1,6 @@
 {
   "name": "lms-event-management",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Managing events just got easier!",
   "main": "gulpfile.js",
   "scripts": {
@@ -94,5 +94,5 @@
     "urlcat": "^3.1.0",
     "zod": "^3.22.4"
   },
-  "previous_version": "1.3.31"
+  "previous_version": "1.4.2"
 }
