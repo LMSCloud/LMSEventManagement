@@ -14,7 +14,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { requestHandler } from "../../lib/RequestHandler";
 import { attr__, __ } from "../../lib/translate";
-import { deepCopy, throttle } from "../../lib/utilities";
+import { throttle } from "../../lib/utilities";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
 import { tailwindStyles } from "../../tailwind.lit";
@@ -42,8 +42,7 @@ export default class LMSEventsFilter extends LitElement {
 
     @property({ type: Array }) events: LMSEvent[] = [];
 
-    @property({ type: String }) facetsStrategy: "preserve" | "update" =
-        "preserve";
+    @property({ type: Boolean }) shouldUpdateFacets = true;
 
     @property({ type: Boolean }) isHidden = this.shouldFold;
 
@@ -112,29 +111,6 @@ export default class LMSEventsFilter extends LitElement {
             input.value = "";
         },
     };
-
-    private _eventsDeepCopy: LMSEvent[] = [];
-
-    private get eventsDeepCopy(): LMSEvent[] {
-        return this._eventsDeepCopy;
-    }
-
-    private set eventsDeepCopy(value: LMSEvent[]) {
-        if (this._eventsDeepCopy.length === 0) {
-            this._eventsDeepCopy = value;
-        }
-    }
-
-    private facetsStrategyManager() {
-        switch (this.facetsStrategy) {
-            case "preserve":
-                return this.eventsDeepCopy;
-            case "update":
-                return this.events;
-            default:
-                throw new Error("Invalid facetsStrategy");
-        }
-    }
 
     private throttledHandleResize: () => void;
 
@@ -205,17 +181,21 @@ export default class LMSEventsFilter extends LitElement {
     }
 
     override willUpdate() {
-        this.eventsDeepCopy = deepCopy(this.events);
-        const events = this.facetsStrategyManager();
-        if (!events.length) {
+        if (!this.events.length) {
+            return;
+        }
+
+        if (!this.shouldUpdateFacets) {
             return;
         }
 
         this.facets = {
-            eventTypeIds: [...new Set(events.map((event) => event.event_type))],
+            eventTypeIds: [
+                ...new Set(this.events.map((event) => event.event_type)),
+            ],
             targetGroupIds: [
                 ...new Set(
-                    events.flatMap((event: any) =>
+                    this.events.flatMap((event: any) =>
                         event.target_groups.map((target_group: any) =>
                             target_group.selected
                                 ? target_group.target_group_id
@@ -224,8 +204,10 @@ export default class LMSEventsFilter extends LitElement {
                     )
                 ),
             ].filter(Number.isInteger),
-            locationIds: [...new Set(events.map((event) => event.location))],
-            ...events
+            locationIds: [
+                ...new Set(this.events.map((event) => event.location)),
+            ],
+            ...this.events
                 .map((event: any) => {
                     const {
                         event_type,
@@ -497,7 +479,7 @@ export default class LMSEventsFilter extends LitElement {
                                     >
                                     <input
                                         type="number"
-                                        class="input-bordered input w-full"
+                                        class="input input-bordered w-full"
                                         id="min_age"
                                         name="min_age"
                                         min="0"
@@ -512,7 +494,7 @@ export default class LMSEventsFilter extends LitElement {
                                     >
                                     <input
                                         type="number"
-                                        class="input-bordered input w-full"
+                                        class="input input-bordered w-full"
                                         id="max_age"
                                         name="max_age"
                                         min="0"
@@ -560,7 +542,7 @@ export default class LMSEventsFilter extends LitElement {
                                     </label>
                                     <input
                                         type="date"
-                                        class="input-bordered input w-full"
+                                        class="input input-bordered w-full"
                                         id="start_time"
                                         name="start_time"
                                     />
@@ -571,7 +553,7 @@ export default class LMSEventsFilter extends LitElement {
                                     </label>
                                     <input
                                         type="date"
-                                        class="input-bordered input w-full"
+                                        class="input input-bordered w-full"
                                         id="end_time"
                                         name="end_time"
                                     /></div
@@ -631,7 +613,7 @@ export default class LMSEventsFilter extends LitElement {
                                     </label>
                                     <input
                                         type="number"
-                                        class="input-bordered input w-full"
+                                        class="input input-bordered w-full"
                                         id="fee"
                                         name="fee"
                                         @input=${this.emitChange}
@@ -654,7 +636,7 @@ export default class LMSEventsFilter extends LitElement {
                         <div class="actions">
                             <button
                                 type="button"
-                                class="btn-secondary btn-outline btn-xs btn lg:btn-md lg:hidden"
+                                class="btn btn-secondary btn-outline btn-xs lg:btn-md lg:hidden"
                                 @click=${this.handleHideToggle}
                                 aria-label=${this.isHidden
                                     ? attr__("Show filters")
@@ -668,7 +650,7 @@ export default class LMSEventsFilter extends LitElement {
                                 type="button"
                                 class="${classMap({
                                     hidden: this.isHidden,
-                                })} btn-secondary btn-outline btn-xs btn lg:btn-md lg:block"
+                                })} btn btn-secondary btn-outline btn-xs lg:btn-md lg:block"
                                 @click=${this.handleReset}
                             >
                                 ${__("Reset filters")}
