@@ -105,9 +105,10 @@ export default class LMSImagePicker extends LitElement {
         return html`
             <slot
                 name="input"
-                @click=${this.showModal}
+                @dblclick=${this.showModal}
                 class="input-slot"
                 tabindex="0"
+                title=${attr__("Double click to open the image viewer.")}
             ></slot>
             <dialog
                 id="lms-modal"
@@ -124,7 +125,7 @@ export default class LMSImagePicker extends LitElement {
                                     class="${classMap({
                                         "border-primary": isCustomSelected,
                                         "border-transparent": !isCustomSelected,
-                                    })} label relative block cursor-pointer rounded-md rounded-xl border-2"
+                                    })} label relative block cursor-pointer rounded-xl border-2"
                                 >
                                     <input
                                         id="custom-image-radio"
@@ -141,7 +142,7 @@ export default class LMSImagePicker extends LitElement {
                                         @focus=${this.handleFocus}
                                         @input=${this.handleInput}
                                         type="text"
-                                        class="input-bordered input w-full"
+                                        class="input input-bordered w-full"
                                         placeholder=${attr__(
                                             "Custom Image URL, e.g. https://example.com/image.png"
                                         )}
@@ -173,7 +174,7 @@ export default class LMSImagePicker extends LitElement {
                                                         isSelected,
                                                     "border-transparent":
                                                         !isSelected,
-                                                })} label relative block cursor-pointer rounded-md rounded-xl border-2"
+                                                })} label relative block cursor-pointer rounded-xl border-2"
                                             >
                                                 <input
                                                     type="radio"

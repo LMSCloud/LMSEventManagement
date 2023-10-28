@@ -2,7 +2,7 @@ import interact from "interactjs";
 import { css, html, LitElement, PropertyValues } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import pell from "pell";
-import { __ } from "../../lib/translate";
+import { attr__, __ } from "../../lib/translate";
 import { debounce } from "../../lib/utilities";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
@@ -129,26 +129,30 @@ export default class LMSPellEditor extends LitElement {
                 <div id="editor" class="m-auto"></div>
                 <div class="btn-group-modal join mt-3 flex content-end">
                     <button
-                        class="btn-secondary btn-outline btn mr-auto"
+                        class="btn btn-secondary btn-outline mr-auto"
                         @click=${this.resetSize}
                     >
                         ${__("Reset size")}
                     </button>
                     <button
-                        class="btn-secondary btn mr-3"
+                        class="btn btn-secondary mr-3"
                         @click=${this.closeModalWithoutSaving}
                     >
                         ${__("Close")}
                     </button>
                     <button
-                        class="btn-primary btn"
+                        class="btn btn-primary"
                         @click=${this.closeModalWithSave}
                     >
                         ${__("Save")}
                     </button>
                 </div>
             </dialog>
-            <slot @click=${this.openModal} class="input-slot"></slot>
+            <slot
+                @dblclick=${this.openModal}
+                class="input-slot"
+                title=${attr__("Double click to open the editor.")}
+            ></slot>
         `;
     }
 
