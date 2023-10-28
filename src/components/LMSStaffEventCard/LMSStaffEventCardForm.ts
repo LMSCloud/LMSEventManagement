@@ -470,7 +470,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                     <button
                         @click=${this.toggleEdit}
                         type="button"
-                        class="btn-edit btn-secondary btn-outline join-item btn flex-auto"
+                        class="btn-edit btn btn-secondary btn-outline join-item flex-auto"
                     >
                         <span class="start-edit pointer-events-none"
                             >${litFontawesome(faEdit, {
@@ -489,7 +489,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                     </button>
                     <button
                         type="submit"
-                        class="btn-secondary btn-outline join-item btn flex-auto"
+                        class="btn btn-secondary btn-outline join-item flex-auto"
                     >
                         ${litFontawesome(faSave, {
                             className: "w-4 h-4 inline-block sm:hidden",
@@ -501,7 +501,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                     <button
                         @click=${this.handleConfirm}
                         type="button"
-                        class="btn-secondary btn-outline join-item btn flex-auto"
+                        class="btn btn-secondary btn-outline join-item flex-auto"
                     >
                         ${litFontawesome(faTrash, {
                             className: "w-4 h-4 inline-block sm:hidden",
@@ -512,7 +512,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                     </button>
                     <button
                         type="button"
-                        class="btn-secondary btn-outline join-item btn flex-auto"
+                        class="btn btn-secondary btn-outline join-item flex-auto"
                         @click=${this.collapseAll}
                     >
                         ${litFontawesome(faCompressAlt, {
@@ -527,7 +527,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                 <!-- Group 1: Basic Information -->
                 <details
                     tabindex="0"
-                    class="collapse-arrow collapse mb-4 border border-base-300 bg-base-200"
+                    class="collapse collapse-arrow mb-4 border border-base-300 bg-base-200"
                 >
                     <summary
                         class="collapse-title w-full text-left text-xl font-medium"
@@ -564,7 +564,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                 <!-- Group 2: Age and Participants -->
                 <details
                     tabindex="0"
-                    class="collapse-arrow collapse mb-4 border border-base-300 bg-base-200"
+                    class="collapse collapse-arrow mb-4 border border-base-300 bg-base-200"
                 >
                     <summary
                         class="collapse-title w-full text-left text-xl font-medium"
@@ -599,7 +599,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                 <!-- Group 3: Event Times -->
                 <details
                     tabindex="0"
-                    class="collapse-arrow collapse mb-4 border border-base-300 bg-base-200"
+                    class="collapse collapse-arrow mb-4 border border-base-300 bg-base-200"
                 >
                     <summary
                         class="collapse-title w-full text-left text-xl font-medium"
@@ -649,7 +649,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                 <!-- Group 4: Additional Information -->
                 <details
                     tabindex="0"
-                    class="collapse-arrow collapse mb-4 border border-base-300 bg-base-200"
+                    class="collapse collapse-arrow mb-4 border border-base-300 bg-base-200"
                 >
                     <summary
                         class="collapse-title w-full text-left text-xl font-medium"

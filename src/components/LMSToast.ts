@@ -31,7 +31,7 @@ export default class LMSToast extends LitElement {
 
     override render() {
         return html`
-            <div class="toast-center toast z-50">
+            <div class="toast toast-center z-50">
                 <div class="alert alert-error gap-2">
                     <div id="heading">
                         <strong class="mr-auto">${this.heading}</strong>
@@ -54,7 +54,7 @@ export default class LMSToast extends LitElement {
                     <div id="controls" class="flex items-center justify-center">
                         <span>${this.elapsedTime} ${__("sec ago")}</span>
                         <button
-                            class="btn-ghost btn"
+                            class="btn btn-ghost"
                             @click=${this.handleDismiss}
                         >
                             <span aria-hidden="true"

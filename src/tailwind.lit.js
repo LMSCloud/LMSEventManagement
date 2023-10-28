@@ -1,6 +1,6 @@
 import { css } from "lit";
     export const tailwindStyles = css`/*
-! tailwindcss v3.3.2 | MIT License | https://tailwindcss.com
+! tailwindcss v3.3.5 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -192,6 +192,10 @@ select,
 textarea {
   font-family: inherit;
   /* 1 */
+  font-feature-settings: inherit;
+  /* 1 */
+  font-variation-settings: inherit;
+  /* 1 */
   font-size: 100%;
   /* 1 */
   font-weight: inherit;
@@ -339,6 +343,14 @@ ul,
 menu {
   list-style: none;
   margin: 0;
+  padding: 0;
+}
+
+/*
+Reset default styling for dialogs.
+*/
+
+dialog {
   padding: 0;
 }
 
@@ -622,7 +634,9 @@ html {
     color: hsl(var(--nf) / var(--tw-text-opacity));
   }
 
-  .menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):where(.active), .menu :where(li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title)):where(.active) {
+  .menu li > *:not(ul):not(.menu-title):not(details):active,
+.menu li > *:not(ul):not(.menu-title):not(details).active,
+.menu li > details > summary:active {
     --tw-bg-opacity: 1;
     background-color: hsl(var(--n) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -665,16 +679,16 @@ html {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
-  transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  transition-duration: 200ms;
   border-radius: var(--rounded-btn, 0.5rem);
   height: 3rem;
   padding-left: 1rem;
   padding-right: 1rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  line-height: 1em;
   min-height: 3rem;
+  font-size: 0.875rem;
+  line-height: 1em;
   gap: 0.5rem;
   font-weight: 600;
   text-decoration-line: none;
@@ -686,17 +700,13 @@ html {
   background-color: hsl(var(--b2) / var(--tw-bg-opacity));
   --tw-text-opacity: 1;
   color: hsl(var(--bc) / var(--tw-text-opacity));
+  outline-color: hsl(var(--bc) / 1);
 }
 
 .btn-disabled,
   .btn[disabled],
   .btn:disabled {
   pointer-events: none;
-  --tw-border-opacity: 0;
-  background-color: hsl(var(--n) / var(--tw-bg-opacity));
-  --tw-bg-opacity: 0.2;
-  color: hsl(var(--bc) / var(--tw-text-opacity));
-  --tw-text-opacity: 0.2;
 }
 
 .btn-square {
@@ -724,6 +734,7 @@ html {
 
 .btn:is(input[type="checkbox"]),
 .btn:is(input[type="radio"]) {
+  width: auto;
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
@@ -857,7 +868,8 @@ html {
   grid-row-start: 2;
   min-height: 0px;
   transition: visibility 0.2s;
-  transition: padding 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  transition: padding 0.2s ease-out,
+    background-color 0.2s ease-out;
   padding-left: 1rem;
   padding-right: 1rem;
   cursor: unset;
@@ -865,17 +877,20 @@ html {
 
 .collapse[open],
 .collapse-open,
-.collapse:focus:not(.collapse-close),
-.collapse:not(.collapse-close):has(input[type="checkbox"]:checked),
-.collapse:not(.collapse-close):has(input[type="radio"]:checked) {
+.collapse:focus:not(.collapse-close) {
   grid-template-rows: auto 1fr;
 }
 
-.collapse[open] .collapse-content,
-.collapse-open .collapse-content,
-.collapse:focus:not(.collapse-close) .collapse-content,
-.collapse:not(.collapse-close) input[type="checkbox"]:checked ~ .collapse-content,
-.collapse:not(.collapse-close) input[type="radio"]:checked ~ .collapse-content {
+.collapse:not(.collapse-close):has(> input[type="checkbox"]:checked),
+.collapse:not(.collapse-close):has(> input[type="radio"]:checked) {
+  grid-template-rows: auto 1fr;
+}
+
+.collapse[open] > .collapse-content,
+.collapse-open > .collapse-content,
+.collapse:focus:not(.collapse-close) > .collapse-content,
+.collapse:not(.collapse-close) > input[type="checkbox"]:checked ~ .collapse-content,
+.collapse:not(.collapse-close) > input[type="radio"]:checked ~ .collapse-content {
   visibility: visible;
   min-height: -moz-fit-content;
   min-height: fit-content;
@@ -886,7 +901,7 @@ html {
   display: inline-block;
 }
 
-.dropdown > *:focus {
+.dropdown > *:not(summary):focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
@@ -905,8 +920,9 @@ html {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
-  transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  transition-duration: 200ms;
 }
 
 .dropdown-end .dropdown-content {
@@ -914,16 +930,16 @@ html {
 }
 
 .dropdown-left .dropdown-content {
-  top: 0px;
-  right: 100%;
   bottom: auto;
+  right: 100%;
+  top: 0px;
   transform-origin: right;
 }
 
 .dropdown-right .dropdown-content {
+  bottom: auto;
   left: 100%;
   top: 0px;
-  bottom: auto;
   transform-origin: left;
 }
 
@@ -1126,9 +1142,11 @@ html {
     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   }
 
-  .menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):hover, .menu :where(li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title)):hover {
+  :where(.menu li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):not(.active):hover, :where(.menu li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title)):not(.active):hover {
     cursor: pointer;
     background-color: hsl(var(--bc) / 0.1);
+    --tw-text-opacity: 1;
+    color: hsl(var(--bc) / var(--tw-text-opacity));
     outline: 2px solid transparent;
     outline-offset: 2px;
   }
@@ -1164,9 +1182,9 @@ html {
   width: 100%;
   grid-auto-flow: row;
   place-items: start;
-  row-gap: 2.5rem;
   -moz-column-gap: 1rem;
        column-gap: 1rem;
+  row-gap: 2.5rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
@@ -1238,47 +1256,61 @@ html {
   border-radius: var(--rounded-btn, 0.5rem);
 }
 
-.join * {
-  border-radius: inherit;
-}
-
 .join :where(.join-item) {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0;
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+  border-end-start-radius: 0;
+  border-start-start-radius: 0;
 }
 
 .join .join-item:not(:first-child):not(:last-child),
   .join *:not(:first-child):not(:last-child) .join-item {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0;
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+  border-end-start-radius: 0;
+  border-start-start-radius: 0;
 }
 
 .join .join-item:first-child:not(:last-child),
   .join *:first-child:not(:last-child) .join-item {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.join .dropdown .join-item:first-child:not(:last-child),
+  .join *:first-child:not(:last-child) .dropdown .join-item {
+  border-start-end-radius: inherit;
+  border-end-end-radius: inherit;
 }
 
 .join :where(.join-item:first-child:not(:last-child)),
   .join :where(*:first-child:not(:last-child) .join-item) {
-  border-bottom-left-radius: inherit;
-  border-top-left-radius: inherit;
+  border-end-start-radius: inherit;
+  border-start-start-radius: inherit;
 }
 
 .join .join-item:last-child:not(:first-child),
   .join *:last-child:not(:first-child) .join-item {
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0;
+  border-end-start-radius: 0;
+  border-start-start-radius: 0;
 }
 
 .join :where(.join-item:last-child:not(:first-child)),
   .join :where(*:last-child:not(:first-child) .join-item) {
-  border-top-right-radius: inherit;
-  border-bottom-right-radius: inherit;
+  border-start-end-radius: inherit;
+  border-end-end-radius: inherit;
+}
+
+@supports not selector(:has(*)) {
+  :where(.join *) {
+    border-radius: inherit;
+  }
+}
+
+@supports selector(:has(*)) {
+  :where(.join *:has(.join-item)) {
+    border-radius: inherit;
+  }
 }
 
 .kbd {
@@ -1335,21 +1367,10 @@ html {
   align-content: flex-start;
   align-items: center;
   gap: 0.5rem;
-  grid-auto-columns: max-content auto max-content;
+  grid-auto-columns: minmax(auto, max-content) auto max-content;
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  text-align: left;
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
-  transition-duration: 200ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: var(--rounded-btn, 0.5rem);
 }
 
 .menu li.disabled {
@@ -1393,9 +1414,9 @@ html {
   overscroll-behavior: contain;
   z-index: 999;
   background-color: transparent;
-  background-color: rgba(0, 0, 0, 0.3);
+  color: inherit;
   transition-duration: 200ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
   transition-property: transform, opacity, visibility;
   overflow-y: hidden;
 }
@@ -1419,8 +1440,9 @@ html {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
-  transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  transition-duration: 200ms;
   border-top-left-radius: var(--rounded-box, 1rem);
   border-top-right-radius: var(--rounded-box, 1rem);
   border-bottom-left-radius: var(--rounded-box, 1rem);
@@ -1510,7 +1532,6 @@ html {
 
 .select {
   display: inline-flex;
-  flex-shrink: 0;
   cursor: pointer;
   -webkit-user-select: none;
      -moz-user-select: none;
@@ -1530,12 +1551,13 @@ html {
   --tw-border-opacity: 0;
   --tw-bg-opacity: 1;
   background-color: hsl(var(--b1) / var(--tw-bg-opacity));
-  font-weight: 600;
   border-radius: var(--rounded-btn, 0.5rem);
   background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
     linear-gradient(135deg, currentColor 50%, transparent 50%);
-  background-position: calc(100% - 20px) calc(1px + 50%), calc(100% - 16px) calc(1px + 50%);
-  background-size: 4px 4px, 4px 4px;
+  background-position: calc(100% - 20px) calc(1px + 50%),
+    calc(100% - 16.1px) calc(1px + 50%);
+  background-size: 4px 4px,
+    4px 4px;
   background-repeat: no-repeat;
 }
 
@@ -1646,10 +1668,10 @@ html {
 .textarea {
   flex-shrink: 1;
   min-height: 3rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
   padding-left: 1rem;
   padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
   line-height: 2;
@@ -1689,11 +1711,11 @@ html {
   --tw-border-opacity: 0.2;
   background-color: hsl(var(--bc) / var(--tw-bg-opacity));
   --tw-bg-opacity: 0.5;
-  transition-duration: 300ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: var(--rounded-badge, 1.9rem);
-  transition: background, box-shadow var(--animation-input, 0.2s) ease-in-out;
-  box-shadow: var(--handleoffsetcalculator) 0 0 2px var(--tglbg) inset, 0 0 0 2px var(--tglbg) inset,
+  transition: background,
+    box-shadow var(--animation-input, 0.2s) ease-out;
+  box-shadow: var(--handleoffsetcalculator) 0 0 2px var(--tglbg) inset,
+    0 0 0 2px var(--tglbg) inset,
     var(--togglehandleborder);
 }
 
@@ -1744,7 +1766,6 @@ html {
   outline-style: solid;
   outline-width: 2px;
   outline-offset: 2px;
-  outline-color: hsl(var(--bc) / 1);
 }
 
 .btn-primary {
@@ -1754,6 +1775,7 @@ html {
   background-color: hsl(var(--p) / var(--tw-bg-opacity));
   --tw-text-opacity: 1;
   color: hsl(var(--pc) / var(--tw-text-opacity));
+  outline-color: hsl(var(--p) / 1);
 }
 
 .btn-primary.btn-active {
@@ -1763,10 +1785,6 @@ html {
   background-color: hsl(var(--pf) / var(--tw-bg-opacity));
 }
 
-.btn-primary:focus-visible {
-  outline-color: hsl(var(--p) / 1);
-}
-
 .btn-secondary {
   --tw-border-opacity: 1;
   border-color: hsl(var(--s) / var(--tw-border-opacity));
@@ -1774,6 +1792,7 @@ html {
   background-color: hsl(var(--s) / var(--tw-bg-opacity));
   --tw-text-opacity: 1;
   color: hsl(var(--sc) / var(--tw-text-opacity));
+  outline-color: hsl(var(--s) / 1);
 }
 
 .btn-secondary.btn-active {
@@ -1783,10 +1802,6 @@ html {
   background-color: hsl(var(--sf) / var(--tw-bg-opacity));
 }
 
-.btn-secondary:focus-visible {
-  outline-color: hsl(var(--s) / 1);
-}
-
 .btn-accent {
   --tw-border-opacity: 1;
   border-color: hsl(var(--a) / var(--tw-border-opacity));
@@ -1794,6 +1809,7 @@ html {
   background-color: hsl(var(--a) / var(--tw-bg-opacity));
   --tw-text-opacity: 1;
   color: hsl(var(--ac) / var(--tw-text-opacity));
+  outline-color: hsl(var(--a) / 1);
 }
 
 .btn-accent.btn-active {
@@ -1803,10 +1819,6 @@ html {
   background-color: hsl(var(--af) / var(--tw-bg-opacity));
 }
 
-.btn-accent:focus-visible {
-  outline-color: hsl(var(--a) / 1);
-}
-
 .btn-info {
   --tw-border-opacity: 1;
   border-color: hsl(var(--in) / var(--tw-border-opacity));
@@ -1814,6 +1826,7 @@ html {
   background-color: hsl(var(--in) / var(--tw-bg-opacity));
   --tw-text-opacity: 1;
   color: hsl(var(--inc) / var(--tw-text-opacity));
+  outline-color: hsl(var(--in) / 1);
 }
 
 .btn-info.btn-active {
@@ -1823,10 +1836,6 @@ html {
   background-color: hsl(var(--in) / var(--tw-bg-opacity));
 }
 
-.btn-info:focus-visible {
-  outline-color: hsl(var(--in) / 1);
-}
-
 .btn-warning {
   --tw-border-opacity: 1;
   border-color: hsl(var(--wa) / var(--tw-border-opacity));
@@ -1834,6 +1843,7 @@ html {
   background-color: hsl(var(--wa) / var(--tw-bg-opacity));
   --tw-text-opacity: 1;
   color: hsl(var(--wac) / var(--tw-text-opacity));
+  outline-color: hsl(var(--wa) / 1);
 }
 
 .btn-warning.btn-active {
@@ -1843,23 +1853,16 @@ html {
   background-color: hsl(var(--wa) / var(--tw-bg-opacity));
 }
 
-.btn-warning:focus-visible {
-  outline-color: hsl(var(--wa) / 1);
-}
-
 .btn.glass {
   --tw-shadow: 0 0 #0000;
   --tw-shadow-colored: 0 0 #0000;
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  outline-color: currentColor;
 }
 
 .btn.glass.btn-active {
   --glass-opacity: 25%;
   --glass-border-opacity: 15%;
-}
-
-.btn.glass:focus-visible {
-  outline-color: currentColor;
 }
 
 .btn-ghost {
@@ -1870,16 +1873,13 @@ html {
   --tw-shadow: 0 0 #0000;
   --tw-shadow-colored: 0 0 #0000;
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  outline-color: currentColor;
 }
 
 .btn-ghost.btn-active {
   --tw-border-opacity: 0;
   background-color: hsl(var(--bc) / var(--tw-bg-opacity));
   --tw-bg-opacity: 0.2;
-}
-
-.btn-ghost:focus-visible {
-  outline-color: currentColor;
 }
 
 .btn-link {
@@ -1891,16 +1891,13 @@ html {
   --tw-shadow: 0 0 #0000;
   --tw-shadow-colored: 0 0 #0000;
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  outline-color: currentColor;
 }
 
 .btn-link.btn-active {
   border-color: transparent;
   background-color: transparent;
   text-decoration-line: underline;
-}
-
-.btn-link:focus-visible {
-  outline-color: currentColor;
 }
 
 .btn-outline {
@@ -2020,6 +2017,16 @@ html {
   color: hsl(var(--erc) / var(--tw-text-opacity));
 }
 
+.btn.btn-disabled,
+  .btn[disabled],
+  .btn:disabled {
+  --tw-border-opacity: 0;
+  background-color: hsl(var(--n) / var(--tw-bg-opacity));
+  --tw-bg-opacity: 0.2;
+  color: hsl(var(--bc) / var(--tw-text-opacity));
+  --tw-text-opacity: 0.2;
+}
+
 .btn-group > input[type="radio"]:checked.btn,
   .btn-group > .btn-active {
   --tw-border-opacity: 1;
@@ -2124,7 +2131,7 @@ html {
   --tw-bg-opacity: 1;
   background-color: hsl(var(--bc) / var(--tw-bg-opacity));
   background-repeat: no-repeat;
-  animation: checkmark var(--animation-input, 0.2s) ease-in-out;
+  animation: checkmark var(--animation-input, 0.2s) ease-out;
   background-image: linear-gradient(-45deg, transparent 65%, hsl(var(--chkbg)) 65.99%),
       linear-gradient(45deg, transparent 75%, hsl(var(--chkbg)) 75.99%),
       linear-gradient(-45deg, hsl(var(--chkbg)) 40%, transparent 40.99%),
@@ -2142,7 +2149,7 @@ html {
   --tw-bg-opacity: 1;
   background-color: hsl(var(--bc) / var(--tw-bg-opacity));
   background-repeat: no-repeat;
-  animation: checkmark var(--animation-input, 0.2s) ease-in-out;
+  animation: checkmark var(--animation-input, 0.2s) ease-out;
   background-image: linear-gradient(90deg, transparent 80%, hsl(var(--chkbg)) 80%),
       linear-gradient(-90deg, transparent 80%, hsl(var(--chkbg)) 80%),
       linear-gradient(
@@ -2215,15 +2222,15 @@ details.collapse summary::-webkit-details-marker {
 }
 
 .collapse:has(.collapse-title:focus-visible),
-.collapse:has(input[type="checkbox"]:focus-visible),
-.collapse:has(input[type="radio"]:focus-visible) {
+.collapse:has(> input[type="checkbox"]:focus-visible),
+.collapse:has(> input[type="radio"]:focus-visible) {
   outline-style: solid;
   outline-width: 2px;
   outline-offset: 2px;
   outline-color: hsl(var(--bc) / 1);
 }
 
-.collapse-arrow .collapse-title:after {
+.collapse-arrow > .collapse-title:after {
   position: absolute;
   display: block;
   height: 0.5rem;
@@ -2232,9 +2239,10 @@ details.collapse summary::-webkit-details-marker {
   --tw-rotate: 45deg;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
   transition-duration: 150ms;
   transition-duration: 0.2s;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   top: 50%;
   right: 1.4rem;
   content: "";
@@ -2243,31 +2251,32 @@ details.collapse summary::-webkit-details-marker {
   pointer-events: none;
 }
 
-[dir="rtl"] .collapse-arrow .collapse-title:after {
+[dir="rtl"] .collapse-arrow > .collapse-title:after {
   --tw-rotate: -45deg;
 }
 
-.collapse-plus .collapse-title:after {
+.collapse-plus > .collapse-title:after {
   position: absolute;
   display: block;
   height: 0.5rem;
   width: 0.5rem;
   transition-property: all;
-  transition-duration: 300ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  transition-duration: 300ms;
   top: 0.9rem;
   right: 1.4rem;
   content: "+";
   pointer-events: none;
 }
 
-.collapse:not(.collapse-open):not(.collapse-close) input[type="checkbox"],
-.collapse:not(.collapse-open):not(.collapse-close) input[type="radio"]:not(:checked),
-.collapse:not(.collapse-open):not(.collapse-close) .collapse-title {
+.collapse:not(.collapse-open):not(.collapse-close) > input[type="checkbox"],
+.collapse:not(.collapse-open):not(.collapse-close) > input[type="radio"]:not(:checked),
+.collapse:not(.collapse-open):not(.collapse-close) > .collapse-title {
   cursor: pointer;
 }
 
-.collapse:focus:not(.collapse-open):not(.collapse-close):not(.collapse[open]) .collapse-title {
+.collapse:focus:not(.collapse-open):not(.collapse-close):not(.collapse[open]) > .collapse-title {
   cursor: unset;
 }
 
@@ -2287,30 +2296,31 @@ details.collapse summary::-webkit-details-marker {
   padding: 1rem;
   padding-right: 3rem;
   min-height: 3.75rem;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-out;
 }
 
-.collapse[open] :where(.collapse-content),
-.collapse-open :where(.collapse-content),
-.collapse:focus:not(.collapse-close) :where(.collapse-content),
-.collapse:not(.collapse-close) :where(input[type="checkbox"]:checked ~ .collapse-content),
-.collapse:not(.collapse-close) :where(input[type="radio"]:checked ~ .collapse-content) {
+.collapse[open] > :where(.collapse-content),
+.collapse-open > :where(.collapse-content),
+.collapse:focus:not(.collapse-close) > :where(.collapse-content),
+.collapse:not(.collapse-close) > :where(input[type="checkbox"]:checked ~ .collapse-content),
+.collapse:not(.collapse-close) > :where(input[type="radio"]:checked ~ .collapse-content) {
   padding-bottom: 1rem;
-  transition: padding 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  transition: padding 0.2s ease-out,
+    background-color 0.2s ease-out;
 }
 
-.collapse[open].collapse-arrow .collapse-title:after,
-.collapse-open.collapse-arrow .collapse-title:after,
-.collapse-arrow:focus:not(.collapse-close) .collapse-title:after,
-.collapse-arrow:not(.collapse-close) input[type="checkbox"]:checked ~ .collapse-title:after,
-.collapse-arrow:not(.collapse-close) input[type="radio"]:checked ~ .collapse-title:after {
+.collapse[open].collapse-arrow > .collapse-title:after,
+.collapse-open.collapse-arrow > .collapse-title:after,
+.collapse-arrow:focus:not(.collapse-close) > .collapse-title:after,
+.collapse-arrow:not(.collapse-close) > input[type="checkbox"]:checked ~ .collapse-title:after,
+.collapse-arrow:not(.collapse-close) > input[type="radio"]:checked ~ .collapse-title:after {
   --tw-translate-y: -50%;
   --tw-rotate: 225deg;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-[dir="rtl"] .collapse[open].collapse-arrow .collapse-title:after,
-[dir="rtl"] .collapse-open.collapse-arrow .collapse-title:after,
+[dir="rtl"] .collapse[open].collapse-arrow > .collapse-title:after,
+[dir="rtl"] .collapse-open.collapse-arrow > .collapse-title:after,
 [dir="rtl"] .collapse-arrow:focus:not(.collapse-close) .collapse-title:after,
 [dir="rtl"]
   .collapse-arrow:not(.collapse-close)
@@ -2319,11 +2329,11 @@ details.collapse summary::-webkit-details-marker {
   --tw-rotate: 135deg;
 }
 
-.collapse[open].collapse-plus .collapse-title:after,
-.collapse-open.collapse-plus .collapse-title:after,
-.collapse-plus:focus:not(.collapse-close) .collapse-title:after,
-.collapse-plus:not(.collapse-close) input[type="checkbox"]:checked ~ .collapse-title:after,
-.collapse-plus:not(.collapse-close) input[type="radio"]:checked ~ .collapse-title:after {
+.collapse[open].collapse-plus > .collapse-title:after,
+.collapse-open.collapse-plus > .collapse-title:after,
+.collapse-plus:focus:not(.collapse-close) > .collapse-title:after,
+.collapse-plus:not(.collapse-close) > input[type="checkbox"]:checked ~ .collapse-title:after,
+.collapse-plus:not(.collapse-close) > input[type="radio"]:checked ~ .collapse-title:after {
   content: "−";
 }
 
@@ -2342,6 +2352,11 @@ details.collapse summary::-webkit-details-marker {
   color: hsl(var(--bc) / var(--tw-text-opacity));
 }
 
+.input input:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
 .input[list]::-webkit-calendar-picker-indicator {
   line-height: 1em;
 }
@@ -2350,7 +2365,8 @@ details.collapse summary::-webkit-details-marker {
   --tw-border-opacity: 0.2;
 }
 
-.input:focus {
+.input:focus,
+  .input:focus-within {
   outline-style: solid;
   outline-width: 2px;
   outline-offset: 2px;
@@ -2427,11 +2443,11 @@ details.collapse summary::-webkit-details-marker {
           mask-repeat: no-repeat;
   -webkit-mask-position: center;
           mask-position: center;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='24' height='24' stroke='%23000' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_V8m1%7Btransform-origin:center;animation:spinner_zKoa 2s linear infinite%7D.spinner_V8m1 circle%7Bstroke-linecap:round;animation:spinner_YpZS 1.5s ease-in-out infinite%7D%40keyframes spinner_zKoa%7B100%25%7Btransform:rotate(360deg)%7D%7D%40keyframes spinner_YpZS%7B0%25%7Bstroke-dasharray:0 150;stroke-dashoffset:0%7D47.5%25%7Bstroke-dasharray:42 150;stroke-dashoffset:-16%7D95%25%2C100%25%7Bstroke-dasharray:42 150;stroke-dashoffset:-59%7D%7D%3C%2Fstyle%3E%3Cg class='spinner_V8m1'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke-width='3'%3E%3C%2Fcircle%3E%3C%2Fg%3E%3C%2Fsvg%3E");
-          mask-image: url("data:image/svg+xml,%3Csvg width='24' height='24' stroke='%23000' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_V8m1%7Btransform-origin:center;animation:spinner_zKoa 2s linear infinite%7D.spinner_V8m1 circle%7Bstroke-linecap:round;animation:spinner_YpZS 1.5s ease-in-out infinite%7D%40keyframes spinner_zKoa%7B100%25%7Btransform:rotate(360deg)%7D%7D%40keyframes spinner_YpZS%7B0%25%7Bstroke-dasharray:0 150;stroke-dashoffset:0%7D47.5%25%7Bstroke-dasharray:42 150;stroke-dashoffset:-16%7D95%25%2C100%25%7Bstroke-dasharray:42 150;stroke-dashoffset:-59%7D%7D%3C%2Fstyle%3E%3Cg class='spinner_V8m1'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke-width='3'%3E%3C%2Fcircle%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='24' height='24' stroke='%23000' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_V8m1%7Btransform-origin:center;animation:spinner_zKoa 2s linear infinite%7D.spinner_V8m1 circle%7Bstroke-linecap:round;animation:spinner_YpZS 1.5s ease-out infinite%7D%40keyframes spinner_zKoa%7B100%25%7Btransform:rotate(360deg)%7D%7D%40keyframes spinner_YpZS%7B0%25%7Bstroke-dasharray:0 150;stroke-dashoffset:0%7D47.5%25%7Bstroke-dasharray:42 150;stroke-dashoffset:-16%7D95%25%2C100%25%7Bstroke-dasharray:42 150;stroke-dashoffset:-59%7D%7D%3C%2Fstyle%3E%3Cg class='spinner_V8m1'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke-width='3'%3E%3C%2Fcircle%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg width='24' height='24' stroke='%23000' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_V8m1%7Btransform-origin:center;animation:spinner_zKoa 2s linear infinite%7D.spinner_V8m1 circle%7Bstroke-linecap:round;animation:spinner_YpZS 1.5s ease-out infinite%7D%40keyframes spinner_zKoa%7B100%25%7Btransform:rotate(360deg)%7D%7D%40keyframes spinner_YpZS%7B0%25%7Bstroke-dasharray:0 150;stroke-dashoffset:0%7D47.5%25%7Bstroke-dasharray:42 150;stroke-dashoffset:-16%7D95%25%2C100%25%7Bstroke-dasharray:42 150;stroke-dashoffset:-59%7D%7D%3C%2Fstyle%3E%3Cg class='spinner_V8m1'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke-width='3'%3E%3C%2Fcircle%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 }
 
-.menu :where(li:empty) {
+:where(.menu li:empty) {
   background-color: hsl(var(--bc) / 0.1);
   margin: 0.5rem 1rem;
   height: 1px;
@@ -2439,28 +2455,48 @@ details.collapse summary::-webkit-details-marker {
 
 .menu :where(li ul):before {
   position: absolute;
+  bottom: 0.75rem;
   left: 0px;
   top: 0.75rem;
-  bottom: 0.75rem;
   width: 1px;
   background-color: hsl(var(--bc) / 0.1);
   content: "";
 }
 
-.menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)).focus,
-    .menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):focus,
-    .menu :where(li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title)).focus,
-    .menu :where(li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title)):focus {
+.menu :where(li:not(.menu-title) > *:not(ul):not(details):not(.menu-title)),
+.menu :where(li:not(.menu-title) > details > summary:not(.menu-title)) {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: left;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  transition-duration: 200ms;
+  border-radius: var(--rounded-btn, 0.5rem);
+  text-wrap: balance;
+}
+
+:where(.menu li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):not(summary):not(.active).focus,
+  :where(.menu li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):not(summary):not(.active):focus,
+  :where(.menu li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):is(summary):not(.active):focus-visible,
+  :where(.menu li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title)):not(summary):not(.active).focus,
+  :where(.menu li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title)):not(summary):not(.active):focus,
+  :where(.menu li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title)):is(summary):not(.active):focus-visible {
   cursor: pointer;
   background-color: hsl(var(--bc) / 0.1);
+  --tw-text-opacity: 1;
+  color: hsl(var(--bc) / var(--tw-text-opacity));
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
 
-.menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):active,
-    .menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):where(.active),
-    .menu :where(li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title)):active,
-    .menu :where(li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title)):where(.active) {
+.menu li > *:not(ul):not(.menu-title):not(details):active,
+.menu li > *:not(ul):not(.menu-title):not(details).active,
+.menu li > details > summary:active {
   --tw-bg-opacity: 1;
   background-color: hsl(var(--n) / var(--tw-bg-opacity));
   --tw-text-opacity: 1;
@@ -2472,7 +2508,7 @@ details.collapse summary::-webkit-details-marker {
 }
 
 .menu :where(li > details > summary):after,
-  .menu :where(li > .menu-dropdown-toggle):after {
+.menu :where(li > .menu-dropdown-toggle):after {
   justify-self: end;
   display: block;
   margin-top: -0.5rem;
@@ -2489,20 +2525,9 @@ details.collapse summary::-webkit-details-marker {
 }
 
 .menu :where(li > details[open] > summary):after,
-  .menu :where(li > .menu-dropdown-toggle.menu-dropdown-show):after {
+.menu :where(li > .menu-dropdown-toggle.menu-dropdown-show):after {
   transform: rotate(225deg);
   margin-top: 0;
-}
-
-.menu .menu-title {
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  font-weight: 700;
-  color: hsl(var(--bc) / 0.4);
 }
 
 .mockup-phone .display {
@@ -2511,8 +2536,55 @@ details.collapse summary::-webkit-details-marker {
   margin-top: -25px;
 }
 
-.modal::backdrop {
-  background: transparent;
+.mockup-browser .mockup-browser-toolbar .input {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  height: 1.75rem;
+  width: 24rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--b2) / var(--tw-bg-opacity));
+  padding-left: 2rem;
+}
+
+.mockup-browser .mockup-browser-toolbar .input:before {
+  content: "";
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  aspect-ratio: 1 / 1;
+  height: 0.75rem;
+  --tw-translate-y: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  border-radius: 9999px;
+  border-width: 2px;
+  border-color: currentColor;
+  opacity: 0.6;
+}
+
+.mockup-browser .mockup-browser-toolbar .input:after {
+  content: "";
+  position: absolute;
+  left: 1.25rem;
+  top: 50%;
+  height: 0.5rem;
+  --tw-translate-y: 25%;
+  --tw-rotate: -45deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: currentColor;
+  opacity: 0.6;
+}
+
+.modal:not(dialog:not(.modal-open)),
+  .modal::backdrop {
+  background-color: rgba(0, 0, 0, 0.3);
+  animation: modal-pop 0.2s ease-out;
 }
 
 .modal-open .modal-box,
@@ -2531,9 +2603,15 @@ details.collapse summary::-webkit-details-marker {
   margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
+@keyframes modal-pop {
+  0% {
+    opacity: 0;
+  }
+}
+
 @keyframes progress-loading {
   50% {
-    left: 107%;
+    background-position-x: -115%;
   }
 }
 
@@ -2548,8 +2626,9 @@ details.collapse summary::-webkit-details-marker {
   .radio[aria-checked="true"] {
   --tw-bg-opacity: 1;
   background-color: hsl(var(--bc) / var(--tw-bg-opacity));
-  animation: radiomark var(--animation-input, 0.2s) ease-in-out;
-  box-shadow: 0 0 0 4px hsl(var(--b1)) inset, 0 0 0 4px hsl(var(--b1)) inset;
+  animation: radiomark var(--animation-input, 0.2s) ease-out;
+  box-shadow: 0 0 0 4px hsl(var(--b1)) inset,
+      0 0 0 4px hsl(var(--b1)) inset;
 }
 
 .radio:disabled {
@@ -2559,15 +2638,18 @@ details.collapse summary::-webkit-details-marker {
 
 @keyframes radiomark {
   0% {
-    box-shadow: 0 0 0 12px hsl(var(--b1)) inset, 0 0 0 12px hsl(var(--b1)) inset;
+    box-shadow: 0 0 0 12px hsl(var(--b1)) inset,
+      0 0 0 12px hsl(var(--b1)) inset;
   }
 
   50% {
-    box-shadow: 0 0 0 3px hsl(var(--b1)) inset, 0 0 0 3px hsl(var(--b1)) inset;
+    box-shadow: 0 0 0 3px hsl(var(--b1)) inset,
+      0 0 0 3px hsl(var(--b1)) inset;
   }
 
   100% {
-    box-shadow: 0 0 0 4px hsl(var(--b1)) inset, 0 0 0 4px hsl(var(--b1)) inset;
+    box-shadow: 0 0 0 4px hsl(var(--b1)) inset,
+      0 0 0 4px hsl(var(--b1)) inset;
   }
 }
 
@@ -2608,7 +2690,8 @@ details.collapse summary::-webkit-details-marker {
   transform: translateY(-50%);
   --filler-size: 100rem;
   --filler-offset: 0.6rem;
-  box-shadow: 0 0 0 3px hsl(var(--range-shdw)) inset, var(--focus-shadow, 0 0),
+  box-shadow: 0 0 0 3px hsl(var(--range-shdw)) inset,
+      var(--focus-shadow, 0 0),
       calc(var(--filler-size) * -1 - var(--filler-offset)) 0 0 var(--filler-size);
 }
 
@@ -2624,7 +2707,8 @@ details.collapse summary::-webkit-details-marker {
   color: hsl(var(--range-shdw));
   --filler-size: 100rem;
   --filler-offset: 0.5rem;
-  box-shadow: 0 0 0 3px hsl(var(--range-shdw)) inset, var(--focus-shadow, 0 0),
+  box-shadow: 0 0 0 3px hsl(var(--range-shdw)) inset,
+      var(--focus-shadow, 0 0),
       calc(var(--filler-size) * -1 - var(--filler-offset)) 0 0 var(--filler-size);
 }
 
@@ -2684,7 +2768,8 @@ details.collapse summary::-webkit-details-marker {
 }
 
 [dir="rtl"] .select {
-  background-position: calc(0% + 12px) calc(1px + 50%), calc(0% + 16px) calc(1px + 50%);
+  background-position: calc(0% + 12px) calc(1px + 50%),
+    calc(0% + 16px) calc(1px + 50%);
 }
 
 .steps .step:before {
@@ -2981,12 +3066,14 @@ details.collapse summary::-webkit-details-marker {
   --tw-border-opacity: 1;
   --tw-bg-opacity: 1;
   box-shadow: calc(var(--handleoffset) / 2) 0 0 2px var(--tglbg) inset,
-      calc(var(--handleoffset) / -2) 0 0 2px var(--tglbg) inset, 0 0 0 2px var(--tglbg) inset;
+      calc(var(--handleoffset) / -2) 0 0 2px var(--tglbg) inset,
+      0 0 0 2px var(--tglbg) inset;
 }
 
 [dir="rtl"] .toggle:indeterminate {
   box-shadow: calc(var(--handleoffset) / 2) 0 0 2px var(--tglbg) inset,
-        calc(var(--handleoffset) / -2) 0 0 2px var(--tglbg) inset, 0 0 0 2px var(--tglbg) inset;
+        calc(var(--handleoffset) / -2) 0 0 2px var(--tglbg) inset,
+        0 0 0 2px var(--tglbg) inset;
 }
 
 .toggle:disabled {
@@ -2997,41 +3084,6 @@ details.collapse summary::-webkit-details-marker {
   opacity: 0.3;
   --togglehandleborder: 0 0 0 3px hsl(var(--bc)) inset,
       var(--handleoffsetcalculator) 0 0 3px hsl(var(--bc)) inset;
-}
-
-.tooltip.tooltip-primary {
-  --tooltip-color: hsl(var(--p));
-  --tooltip-text-color: hsl(var(--pc));
-}
-
-.tooltip.tooltip-secondary {
-  --tooltip-color: hsl(var(--s));
-  --tooltip-text-color: hsl(var(--sc));
-}
-
-.tooltip.tooltip-accent {
-  --tooltip-color: hsl(var(--a));
-  --tooltip-text-color: hsl(var(--ac));
-}
-
-.tooltip.tooltip-info {
-  --tooltip-color: hsl(var(--in));
-  --tooltip-text-color: hsl(var(--inc));
-}
-
-.tooltip.tooltip-success {
-  --tooltip-color: hsl(var(--su));
-  --tooltip-text-color: hsl(var(--suc));
-}
-
-.tooltip.tooltip-warning {
-  --tooltip-color: hsl(var(--wa));
-  --tooltip-text-color: hsl(var(--wac));
-}
-
-.tooltip.tooltip-error {
-  --tooltip-color: hsl(var(--er));
-  --tooltip-text-color: hsl(var(--erc));
 }
 
 .rounded-box {
@@ -3072,10 +3124,6 @@ details.collapse summary::-webkit-details-marker {
   padding-right: 0.75rem;
   min-height: 2rem;
   font-size: 0.875rem;
-}
-
-.btn-block {
-  width: 100%;
 }
 
 .btn-square:where(.btn-xs) {
@@ -3215,53 +3263,53 @@ details.collapse summary::-webkit-details-marker {
 }
 
 :where(.toast) {
-  right: 0px;
-  left: auto;
-  top: auto;
   bottom: 0px;
+  left: auto;
+  right: 0px;
+  top: auto;
   --tw-translate-x: 0px;
   --tw-translate-y: 0px;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .toast:where(.toast-start) {
-  right: auto;
   left: 0px;
+  right: auto;
   --tw-translate-x: 0px;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .toast:where(.toast-center) {
-  right: 50%;
   left: 50%;
+  right: 50%;
   --tw-translate-x: -50%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .toast:where(.toast-end) {
-  right: 0px;
   left: auto;
+  right: 0px;
   --tw-translate-x: 0px;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .toast:where(.toast-bottom) {
-  top: auto;
   bottom: 0px;
+  top: auto;
   --tw-translate-y: 0px;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .toast:where(.toast-middle) {
-  top: 50%;
   bottom: auto;
+  top: 50%;
   --tw-translate-y: -50%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .toast:where(.toast-top) {
-  top: 0px;
   bottom: auto;
+  top: 0px;
   --tw-translate-y: 0px;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
@@ -3296,8 +3344,8 @@ details.collapse summary::-webkit-details-marker {
 }
 
 .btn-group .btn:first-child:not(:last-child) {
-  margin-top: -0px;
   margin-left: -1px;
+  margin-top: -0px;
   border-top-left-radius: var(--rounded-btn, 0.5rem);
   border-top-right-radius: 0;
   border-bottom-left-radius: var(--rounded-btn, 0.5rem);
@@ -3319,8 +3367,8 @@ details.collapse summary::-webkit-details-marker {
 }
 
 .btn-group-horizontal .btn:first-child:not(:last-child) {
-  margin-top: -0px;
   margin-left: -1px;
+  margin-top: -0px;
   border-top-left-radius: var(--rounded-btn, 0.5rem);
   border-top-right-radius: 0;
   border-bottom-left-radius: var(--rounded-btn, 0.5rem);
@@ -3335,8 +3383,8 @@ details.collapse summary::-webkit-details-marker {
 }
 
 .btn-group-vertical .btn:first-child:not(:last-child) {
-  margin-top: -1px;
   margin-left: -0px;
+  margin-top: -1px;
   border-top-left-radius: var(--rounded-btn, 0.5rem);
   border-top-right-radius: var(--rounded-btn, 0.5rem);
   border-bottom-left-radius: 0;
@@ -3383,21 +3431,24 @@ details.collapse summary::-webkit-details-marker {
 }
 
 .menu-horizontal > li:not(.menu-title) > details > ul {
-  margin-top: 1rem;
   margin-left: 0px;
-  --tw-bg-opacity: 1;
-  background-color: hsl(var(--b1) / var(--tw-bg-opacity));
+  margin-top: 1rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   padding-right: 0.5rem;
-  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  border-radius: var(--rounded-box, 1rem);
 }
 
 .menu-horizontal > li > details > ul:before {
   content: none;
+}
+
+:where(.menu-horizontal > li:not(.menu-title) > details > ul) {
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--b1) / var(--tw-bg-opacity));
+  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  border-radius: var(--rounded-box, 1rem);
 }
 
 .menu-sm :where(li:not(.menu-title) > *:not(ul):not(details):not(.menu-title)),
@@ -3466,8 +3517,8 @@ details.collapse summary::-webkit-details-marker {
 .steps-horizontal .step:before {
   height: 0.5rem;
   width: 100%;
-  --tw-translate-y: 0px;
   --tw-translate-x: 0px;
+  --tw-translate-y: 0px;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   content: "";
   margin-left: -100%;
@@ -3484,8 +3535,8 @@ details.collapse summary::-webkit-details-marker {
 .steps-vertical .step:before {
   height: 100%;
   width: 0.5rem;
-  --tw-translate-y: -50%;
   --tw-translate-x: -50%;
+  --tw-translate-y: -50%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   margin-left: 50%;
 }
@@ -3566,10 +3617,14 @@ details.collapse summary::-webkit-details-marker {
 
 .tooltip.tooltip-open:before,
 .tooltip.tooltip-open:after,
-.tooltip:has(:focus-visible):after,
-.tooltip:has(:focus-visible):before,
 .tooltip:hover:before,
 .tooltip:hover:after {
+  opacity: 1;
+  transition-delay: 75ms;
+}
+
+.tooltip:has(:focus-visible):after,
+.tooltip:has(:focus-visible):before {
   opacity: 1;
   transition-delay: 75ms;
 }

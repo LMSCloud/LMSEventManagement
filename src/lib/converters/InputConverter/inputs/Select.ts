@@ -19,7 +19,7 @@ export default class Select {
 
     public render() {
         return html`<select
-            class="select-bordered select w-full"
+            class="select select-bordered w-full"
             name=${this.name}
             ?disabled=${this.disabled}
         >

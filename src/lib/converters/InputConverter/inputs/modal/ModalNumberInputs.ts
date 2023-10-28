@@ -30,7 +30,7 @@ export default class ModalNumberInput {
                 <span class="label-text">${this.desc}</span>
             </label>
             <input
-                class="input-bordered input w-full"
+                class="input input-bordered w-full"
                 type="text"
                 name=${this.name}
                 placeholder=${this.placeholder}

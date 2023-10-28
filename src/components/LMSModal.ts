@@ -258,7 +258,7 @@ export default class LMSModal extends LitElement {
             <button
                 class="btn-modal ${classMap({
                     "rotate-45": this.isOpen,
-                })} btn-circle btn fixed bottom-4 right-4 h-20 w-20 rounded-full 
+                })} btn btn-circle fixed bottom-4 right-4 h-20 w-20 rounded-full 
                 border-none bg-primary text-4xl shadow hover:shadow-md"
                 @click=${this.toggleModal}
             >
@@ -277,7 +277,7 @@ export default class LMSModal extends LitElement {
                 >
                     <button
                         for="lms-modal"
-                        class="btn-ghost btn-sm btn-circle btn absolute right-2 top-2"
+                        class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
                         @click=${this.toggleModal}
                     >
                         &times;
@@ -297,7 +297,7 @@ export default class LMSModal extends LitElement {
                             <span>${this.alert.message}</span>
                             <button
                                 for="lms-modal"
-                                class="btn-ghost btn-sm btn-circle btn absolute right-2 top-2"
+                                class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
                                 @click=${this.dismissAlert}
                             >
                                 &times;
@@ -313,7 +313,7 @@ export default class LMSModal extends LitElement {
                     <div class="modal-action">
                         <button
                             type="button"
-                            class="btn-secondary btn"
+                            class="btn btn-secondary"
                             @click=${this.toggleModal}
                         >
                             ${litFontawesome(faClose, {
@@ -321,7 +321,7 @@ export default class LMSModal extends LitElement {
                             })}
                             <span>${__("Close")}</span>
                         </button>
-                        <button type="submit" class="btn-primary btn">
+                        <button type="submit" class="btn btn-primary">
                             ${litFontawesome(faPlus, {
                                 className: "w-4 h-4 inline-block",
                             })}

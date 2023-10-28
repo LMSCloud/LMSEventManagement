@@ -246,7 +246,7 @@ export default class LMSSearch extends LitElement {
             <div class="relative">
                 <input
                     type="text"
-                    class="input-bordered input w-full rounded-xl"
+                    class="input input-bordered w-full rounded-xl"
                     placeholder=${attr__("Search")}
                     aria-label=${attr__("Search")}
                     @input=${this.handleInput}

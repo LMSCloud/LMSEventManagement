@@ -58,20 +58,20 @@ export default class LMSStaffEventCard extends LitElement {
                 <div>
                     <div class="tabs w-full">
                         <a
-                            class="tab-bordered tab tab-active tab-lg flex-auto text-base"
+                            class="tab tab-active tab-bordered tab-lg flex-auto text-base"
                             data-content="data"
                             @click=${this.handleTabClick}
                             >${__("Data")}</a
                         >
                         <a
-                            class="tab-bordered tab tab-lg flex-auto text-base"
+                            class="tab tab-bordered tab-lg flex-auto text-base"
                             data-content="attendees"
                             @click=${this.handleTabClick}
                         >
                             ${__("Waitlist")}</a
                         >
                         <a
-                            class="tab-bordered tab tab-lg flex-auto text-base"
+                            class="tab tab-bordered tab-lg flex-auto text-base"
                             data-content="preview"
                             @click=${this.handleTabClick}
                         >

@@ -31,7 +31,7 @@ export default class ModalMatrix {
         }
 
         return html`<table
-            class="table-xs my-4 table"
+            class="table table-xs my-4"
             @change=${this.handleMatrixChange}
         >
             <thead>
@@ -83,7 +83,7 @@ export default class ModalMatrix {
                                     name="fee"
                                     id=${datum.id}
                                     step="0.01"
-                                    class="input-bordered input w-full"
+                                    class="input input-bordered w-full"
                                     value=${fee}
                                 />
                             </td>

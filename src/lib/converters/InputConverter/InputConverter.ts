@@ -89,7 +89,7 @@ export class InputConverter {
                 >
                     <input
                         slot="input"
-                        class="input-bordered input w-full"
+                        class="input input-bordered w-full"
                         name="image"
                         value=${value}
                         disabled
@@ -98,7 +98,7 @@ export class InputConverter {
             description: (value) => {
                 return html` <lms-pell-editor .value=${value} class="text-left">
                     <textarea
-                        class="input-bordered input block w-full"
+                        class="input input-bordered block w-full"
                         name="description"
                         disabled
                     >

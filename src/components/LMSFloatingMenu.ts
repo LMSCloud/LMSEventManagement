@@ -37,14 +37,14 @@ export default class LMSFloatingMenu extends LitElement {
             <div class="navbar mb-8 rounded-lg bg-base-100 shadow-md">
                 <div class="navbar-start">
                     <div class="dropdown">
-                        <label tabindex="0" class="btn-ghost btn lg:hidden">
+                        <label tabindex="0" class="btn btn-ghost lg:hidden">
                             ${litFontawesome(faBars, {
                                 className: "w-4 h-4 inline-block",
                             })}
                         </label>
                         <ul
                             tabindex="0"
-                            class="dropdown-content menu rounded-box menu-sm z-50 mt-3 w-fit bg-base-100 p-4 shadow"
+                            class="menu dropdown-content rounded-box menu-sm z-50 mt-3 w-fit bg-base-100 p-4 shadow"
                         >
                             ${this.items.map(
                                 ({ url, icon, name }) =>

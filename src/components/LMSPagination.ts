@@ -150,7 +150,7 @@ export default class LMSPagination extends LitElement {
         return html`
             <div class="join" aria-label=${attr__("Table navigation")}>
                 <a
-                    class="join-item btn"
+                    class="btn join-item"
                     ?disabled=${!this.hasPrevious}
                     href=${this.getLinkForPage(this._page, "previous")}
                     @click=${this.handlePaginationChange}
@@ -165,7 +165,7 @@ export default class LMSPagination extends LitElement {
                         <a
                             class="${classMap({
                                 "bg-primary-focus": pageSize === this._per_page,
-                            })} btn-square join-item btn"
+                            })} btn btn-square join-item"
                             href=${this.getLinkForPageSize(pageSize)}
                             @click=${this.handlePaginationChange}
                             >${pageSize}</a
@@ -173,7 +173,7 @@ export default class LMSPagination extends LitElement {
                     `
                 )}
                 <a
-                    class="join-item btn"
+                    class="btn join-item"
                     ?disabled=${!this.hasNext}
                     href=${this.getLinkForPage(this._page, "next")}
                     @click=${this.handlePaginationChange}

@@ -44,10 +44,10 @@ export default class LMSConfirmationModal extends LitElement {
                     <span class="font-semibold">${this.obj}</span>
                 </p>
                 <div class="modal-action" @click=${this.handleClick}>
-                    <button class="btn-secondary btn" name="abort">
+                    <button class="btn btn-secondary" name="abort">
                         ${__("Abort")}
                     </button>
-                    <button class="btn-primary btn" name="confirm">
+                    <button class="btn btn-primary" name="confirm">
                         ${__("Confirm")}
                     </button>
                 </div>

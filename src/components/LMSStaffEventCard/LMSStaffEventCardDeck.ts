@@ -172,7 +172,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
                     <h4>${__("No matches found")}.</h4>
                     <p>${__("Try refining your search.")}</p>
                     <button
-                        class="btn-info btn-outline btn"
+                        class="btn btn-info btn-outline"
                         @click=${this.toggleDoc}
                     >
                         ${__("Help")}

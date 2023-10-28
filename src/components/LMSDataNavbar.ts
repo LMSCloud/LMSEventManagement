@@ -77,7 +77,7 @@ export default class LMSDataNavbar extends LitElement {
             <nav
                 class="navbar mb-4 max-w-min rounded-xl bg-base-100 sm:hidden sm:w-full"
             >
-                <button class="btn-ghost btn" @click=${this.handleClick}>
+                <button class="btn btn-ghost" @click=${this.handleClick}>
                     ${litFontawesome(faSliders, {
                         className: "w-4 h-4 inline-block",
                     })}
@@ -99,7 +99,7 @@ export default class LMSDataNavbar extends LitElement {
                     <h2 class="text-lg font-bold">${__("Table Controls")}</h2>
                 </div>
                 <button
-                    class="btn-ghost btn absolute right-0 top-0 m-2 sm:hidden"
+                    class="btn btn-ghost absolute right-0 top-0 m-2 sm:hidden"
                     @click=${this.handleClick}
                 >
                     ${litFontawesome(faTimes, {

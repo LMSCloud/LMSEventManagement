@@ -31,7 +31,7 @@ export default class ModalDatetimeLocalInput {
                 <span class="label-text">${this.desc}</span>
             </label>
             <input
-                class="input-bordered input w-full"
+                class="input input-bordered w-full"
                 type="datetime-local"
                 name=${this.name}
                 ?required=${this.required}

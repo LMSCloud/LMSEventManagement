@@ -232,7 +232,7 @@ export default class LMSImageBrowser extends LitElement {
                             className: "w-12 h-12 text-gray-400",
                         })}
                         <div class="mb-4 mt-1 text-sm text-gray-600">
-                            <label class="btn-link btn p-0">
+                            <label class="btn btn-link p-0">
                                 <span>${__("Select images")}</span>
                                 <input
                                     type="file"
@@ -291,7 +291,7 @@ export default class LMSImageBrowser extends LitElement {
                                     </p>
                                     <div class="flex justify-center gap-4">
                                         <button
-                                            class="btn-warning btn"
+                                            class="btn btn-warning"
                                             data-hashvalue=${hashvalue}
                                             @click=${this.handleDelete}
                                         >
@@ -317,7 +317,7 @@ export default class LMSImageBrowser extends LitElement {
                                                         hashvalue
                                                     );
                                                 }}
-                                                class="btn-secondary btn text-center"
+                                                class="btn btn-secondary text-center"
                                             >
                                                 ${litFontawesome(faCopy, {
                                                     className:

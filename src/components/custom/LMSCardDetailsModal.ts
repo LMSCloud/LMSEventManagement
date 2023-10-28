@@ -326,7 +326,7 @@ export default class LMSCardDetailsModal extends LitElement {
                     </h5>
                     <button
                         @click=${this.toggleModal}
-                        class="btn-ghost btn-sm btn-circle btn absolute right-2 top-2"
+                        class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
                     >
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -415,7 +415,7 @@ export default class LMSCardDetailsModal extends LitElement {
                                 <table
                                     class="${classMap({
                                         hidden: noFees,
-                                    })} table-xs table"
+                                    })} table table-xs"
                                 >
                                     <thead>
                                         <tr>
@@ -449,7 +449,7 @@ export default class LMSCardDetailsModal extends LitElement {
                     </div>
                     <div class="modal-action">
                         <button
-                            class="btn-secondary btn"
+                            class="btn btn-secondary"
                             @click=${this.toggleModal}
                         >
                             ${__("Close")}
@@ -457,7 +457,7 @@ export default class LMSCardDetailsModal extends LitElement {
                         <a
                             class="${classMap({
                                 hidden: !registration_link,
-                            })} btn-primary btn"
+                            })} btn btn-primary"
                             href=${ifDefined(registration_link ?? undefined)}
                         >
                             ${__("Register")}

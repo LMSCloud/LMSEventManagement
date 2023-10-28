@@ -37,7 +37,7 @@ export default class Matrix {
                 ${__("Target Groups")}
             </summary>
             <div class="collapse-content">
-                <table class="table-xs table">
+                <table class="table table-xs">
                     <thead>
                         <tr>
                             <th>${__("target_group")}</th>
@@ -80,7 +80,7 @@ export default class Matrix {
                                                 name="fee"
                                                 id=${id}
                                                 step="0.01"
-                                                class="input-bordered input w-full"
+                                                class="input input-bordered w-full"
                                                 value=${fee}
                                                 ?disabled=${this.disabled}
                                             />

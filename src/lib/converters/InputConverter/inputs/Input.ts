@@ -39,7 +39,7 @@ export default class Input {
 
     public render() {
         return html`<input
-            class="input-bordered input w-full"
+            class="input input-bordered w-full"
             type=${this.associations[this.name]}
             name=${this.name}
             value=${this.formatValue()}

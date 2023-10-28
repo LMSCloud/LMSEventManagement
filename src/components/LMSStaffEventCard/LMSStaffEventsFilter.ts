@@ -273,14 +273,14 @@ export default class LMSStaffEventsFilter extends LitElement {
                     >
                         <div class="join">
                             <button
-                                class="btn-primary join-item btn"
+                                class="btn btn-primary join-item"
                                 id="start_time_now"
                                 @click=${this.handleStartTimeChange}
                             >
                                 ${__("Now on")}
                             </button>
                             <button
-                                class="join-item btn"
+                                class="btn join-item"
                                 @click=${this.handleStartTimeChange}
                             >
                                 ${__("Custom date")}
@@ -288,7 +288,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                             <div class="form-control join-item">
                                 <input
                                     type="datetime-local"
-                                    class="input-bordered input"
+                                    class="input input-bordered"
                                     value=${this.start_time}
                                     name="start_time"
                                     id="start_time"
@@ -298,7 +298,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                     </lms-dropdown>
 
                     <button
-                        class="btn-secondary btn-outline btn"
+                        class="btn btn-secondary btn-outline"
                         @click=${this.handleReset}
                         title=${attr__("Reset filters")}
                     >

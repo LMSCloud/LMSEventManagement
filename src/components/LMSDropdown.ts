@@ -132,7 +132,7 @@ export default class LMSDropdown extends LitElement {
                     >
                 </summary>
                 <ul
-                    class="dropdown-content menu rounded-box z-40 w-max bg-base-100 p-2 shadow"
+                    class="menu dropdown-content rounded-box z-40 w-max bg-base-100 p-2 shadow"
                 >
                     <slot></slot>
                 </ul>

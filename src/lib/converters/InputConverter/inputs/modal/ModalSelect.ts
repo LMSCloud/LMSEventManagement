@@ -36,7 +36,7 @@ export default class ModalSelect {
                 <span class="label-text">${this.desc}</span>
             </label>
             <select
-                class="select-bordered select"
+                class="select select-bordered"
                 name=${this.name}
                 ?required=${this.required}
             >
