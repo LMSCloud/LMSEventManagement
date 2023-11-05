@@ -10,6 +10,7 @@ p-kpz
 kpt
 TO-DO.md
 script.log
+*.cache.json
 
 .DS_Store
 .vscode/

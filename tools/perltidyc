@@ -1,0 +1,99 @@
+#!/usr/bin/env perl
+
+use Modern::Perl;
+use Data::Dumper;
+
+use Carp qw(croak);
+use Getopt::Long;
+use JSON::MaybeXS;
+use Path::Tiny;
+use Perl::Tidy;
+use Try::Tiny;
+
+my $should_cache;
+my $cache_location = q{};
+GetOptions(
+    'cache'            => \$should_cache,
+    'cache-location=s' => \$cache_location,
+);
+push @ARGV, ( '-b', '-nst', q{-bext='/'} );
+
+if ( !$should_cache ) {
+    Perl::Tidy::perltidy;
+}
+
+if ( $should_cache && !$cache_location ) {
+    $cache_location //= '.perltidy.cache.json';
+}
+
+my $path;
+if ( !( -e $cache_location ) ) {
+    my $file = path "./$cache_location";
+    $file->spew_utf8;
+    $path = path $file;
+}
+
+$path = path $cache_location;
+
+if ( !$path ) {
+    say 'Path is undefined';
+}
+
+my $content = $path->slurp_utf8;
+my $files   = [ grep { /[.]pl|[.]pm/ } @ARGV ];
+if ( !$content ) {
+    Perl::Tidy::perltidy;
+
+    $content = {};
+
+    for my $file ( $files->@* ) {
+        say $file;
+
+        $file = path $file;
+        my $hash = $file->digest;
+
+        $content->{$file} = $hash;
+    }
+
+    $path->spew_utf8( encode_json $content );
+
+    exit 1;
+}
+
+my $cache          = decode_json $content;
+my $new_files      = [];
+my $modified_files = [];
+for my $file ( $files->@* ) {
+    if ( exists $cache->{$file} ) {
+        my $cached_file = path $file;
+        my $hash        = $cached_file->digest;
+        if ( $cache->{$file} eq $hash ) {
+            say "$file (cached)";
+            next;
+        }
+
+        push @{$modified_files}, $file;
+        next;
+    }
+
+    push @{$new_files}, $file;
+}
+
+my $new_or_modified_files = [ $modified_files->@*, $new_files->@*, ];
+
+local @ARGV = ( $new_or_modified_files->@*, '-b', '-nst', q{-bext='/'} );
+if ( scalar @ARGV == 3 ) {
+    say 'Everything up-to-date';
+    exit 1;
+}
+
+Perl::Tidy::perltidy;
+
+for my $file ( @{$new_or_modified_files} ) {
+    say "$file (tidied)";
+
+    my $new_or_modified_file = path $file;
+    my $hash                 = $new_or_modified_file->digest;
+
+    $cache->{$file} = $hash;
+}

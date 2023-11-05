@@ -8,7 +8,7 @@
     "package-kpz:build": "cd package-kpz && cargo build --release && cd ../ && ln -s ./package-kpz/target/release/package-kpz ./p-kpz",
     "ktd-plugin-tools:build": "cd ktd-plugin-tools && go build && cd ../ && ln -s ./ktd-plugin-tools/ktd-plugin-tools ./kpt",
     "lint": "eslint \"src/**/*.{js,ts}\"",
-    "format": "prettier --write \"src/**/*.ts\" && find Koha/Plugin -type f -name '*.pl' -o -name '*.pm' -exec perltidy -b -nst -bext='/' {} \\;",
+    "format": "prettier --write --cache --cache-location .prettier.cache.json \"src/**/*.ts\" && ./tools/perltidyc --cache --cache-location .perltidy.cache.json $(find Koha/Plugin -type f -name '*.pl' -o -name '*.pm')",
     "build": "npm run css:build && npm run format && npx rollup -c && ./p-kpz -r \"lms-event-management\" -p \"Koha/Plugin/Com/LMSCloud/EventManagement.pm\"",
     "build:5.030": "npm run css:build && npm run format && npx rollup -c && mkdir -p 5.030 && cp -r Koha 5.030/ && find 5.030 -type f -name '*.pl' -o -name '*.pm' -exec gsed -i 's/5.032/5.030/g' {} + && ./p-kpz -r 'lms-event-management-5.030' -p '5.030/Koha/Plugin/Com/LMSCloud/EventManagement.pm' && rm -rf 5.030",
     "test": "mocha \"test/**/*.test.mjs\"",
