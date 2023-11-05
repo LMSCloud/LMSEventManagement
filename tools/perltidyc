@@ -97,3 +97,5 @@ for my $file ( @{$new_or_modified_files} ) {
 
     $cache->{$file} = $hash;
 }
+
+$path->spew_utf8( encode_json $cache );
