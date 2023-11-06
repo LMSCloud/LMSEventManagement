@@ -38,6 +38,22 @@ export default class StaffSettingsView extends LitElement {
             });
     }
 
+    private async fetchUpdate() {
+        const response = await requestHandler.get("settings");
+        const settings = await response.json();
+        this.settings = settings.map((setting: LMSSettingResponse) => {
+            try {
+                return {
+                    ...setting,
+                    plugin_value: JSON.parse(setting.plugin_value.toString()),
+                };
+            } catch {
+                return setting;
+            }
+        });
+        this.requestUpdate();
+    }
+
     override render() {
         if (!this.hasLoaded) {
             return html` <div class="mx-8">
@@ -53,6 +69,7 @@ export default class StaffSettingsView extends LitElement {
 
         return this.settings
             ? html`<lms-settings-table
+                  @updated=${this.fetchUpdate}
                   .settings=${this.settings}
               ></lms-settings-table>`
             : nothing;

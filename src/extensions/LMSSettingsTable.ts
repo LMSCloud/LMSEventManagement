@@ -5,7 +5,7 @@ import { Input, LMSSettingResponse } from "../types/common";
 
 type WithChangedPropertyNames<T> = {
     [P in keyof T as P extends "plugin_key"
-        ? "setting"
+        ? "id"
         : P extends "plugin_value"
         ? "value"
         : P]: T[P];
@@ -71,7 +71,7 @@ export default class LMSSettingsTable extends LMSTable {
 
     constructor() {
         super();
-        this.order = ["setting", "value"];
+        this.order = ["id", "value"];
         this.isEditable = true;
         this.isDeletable = false;
         this.hasControls = false;
@@ -97,7 +97,7 @@ export default class LMSSettingsTable extends LMSTable {
             .map((setting) => {
                 const { plugin_key, plugin_value } = setting;
                 const settingData: ModifiedLMSSettingResponse = {
-                    setting: plugin_key,
+                    id: plugin_key,
                     value: plugin_value,
                 };
                 return {
