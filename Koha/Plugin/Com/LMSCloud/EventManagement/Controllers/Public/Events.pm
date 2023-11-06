@@ -4,10 +4,13 @@ use 5.032;
 
 use Modern::Perl;
 use utf8;
+
 use Mojo::Base 'Mojolicious::Controller';
-use Try::Tiny;
+
 use DateTime;
 use DateTime::Format::Strptime;
+use List::Util qw(none);
+use Try::Tiny;
 
 use Koha::Plugin::Com::LMSCloud::EventManagement;
 use Koha::LMSCloud::EventManagement::Events;
@@ -35,6 +38,26 @@ sub count {
 sub get {
     my $c = shift->openapi->valid_input or return;
 
+    return try {
+        my $params = _normalize_params($c);
+        my $events = _filter_events( $c, $params );
+
+        _interlace_target_groups($events);
+
+        if ( !$events ) {
+            return $c->render( status => 404, openapi => [] );
+        }
+
+        return $c->render( status => 200, openapi => $events );
+    }
+    catch {
+        $c->unhandled_exception($_);
+    };
+}
+
+sub _normalize_params {
+    my ($c) = @_;
+
     my $params = {
         name              => $c->validation->param('name'),
         event_type        => $c->validation->every_param('event_type'),
@@ -48,93 +71,49 @@ sub get {
         end_time          => $c->validation->param('end_time'),
     };
 
-    # every_param returns an array ref, so we need to check if it's empty
-    foreach my $key ( keys $params->%* ) {
-        if ( ref $params->{$key} eq 'ARRAY' ) {
-            $params->{$key} = undef if !@{ $params->{$key} };
+    for my $key ( keys $params->%* ) {
+        if ( ref $params->{$key} eq 'ARRAY' && none {defined} @{ $params->{$key} } ) {
+            $params->{$key} = undef;
         }
     }
 
-    return try {
-        my $events_set         = Koha::LMSCloud::EventManagement::Events->new;
-        my $events_total_count = $events_set->count;
-        my $defined_keys       = [ map { defined $params->{$_} ? $_ : () } keys %{$params} ];
-        if ( @{$defined_keys} ) {
-            $events_set = $events_set->filter($params);
-        }
-        for my $param ( @{$defined_keys} ) {
-            delete $c->validation->output->{$param};
-        }
+    return $params;
+}
 
-        my $events = $c->objects->search($events_set);
+sub _filter_events {
+    my ( $c, $params ) = @_;
 
-        # Preload event_target_group_fees data for all events
-        my $tg_params = { event_id => { '-in' => [ map { $_->{id} } $events->@* ] } };
-        if ( defined $params->{target_group} && @{ $params->{target_group} } ) {
-            $tg_params->{target_group_id} = { '-in' => $params->{target_group} };
-        }
-        if ( defined $params->{fee} ) {
-            $tg_params->{fee} = { '<=' => $params->{fee} };
-        }
-
-        my $event_target_group_fees =
-            Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( $tg_params, { columns => [ 'event_id', 'target_group_id', 'fee', 'selected' ] } );
-
-        my %fees_by_event_id = map { $_->event_id => [] } $event_target_group_fees->as_list;
-        for my $fee ( $event_target_group_fees->as_list ) {
-            push @{ $fees_by_event_id{ $fee->event_id } }, $fee->unblessed;
-        }
-
-        my $response = [];
-        for my $event ( $events->@* ) {
-
-            # Get the preloaded target group fees for the current event
-            my $target_groups = $fees_by_event_id{ $event->{id} } // [];
-
-            my $has_selected_target_group = 0;
-            if ( defined $params->{target_group} && @{ $params->{target_group} } ) {
-                for my $target_group ( @{$target_groups} ) {
-                    my $has_target_group_id = grep { $_ == $target_group->{target_group_id} } @{ $params->{target_group} };
-                    if ( $target_group->{selected} && $has_target_group_id ) {
-                        $has_selected_target_group = 1;
-                        last;
-                    }
-                }
-            }
-            else {
-                for my $target_group ( @{$target_groups} ) {
-                    if ( $target_group->{selected} ) {
-                        $has_selected_target_group = 1;
-                        last;
-                    }
-                }
-            }
-
-            # We check whether the events start_time is in the future
-            my $strp        = DateTime::Format::Strptime->new( pattern => '%Y-%m-%dT%H:%M:%S' );
-            my $is_upcoming = $strp->parse_datetime( $event->{start_time} ) > DateTime->now( time_zone => 'UTC' );
-
-            # Only push the event onto the response if a selected target group matches the requested target_groups
-            if ( $has_selected_target_group && $is_upcoming ) {
-                push @{$response}, { %{$event}, target_groups => $target_groups };
-            }
-        }
-
-        if ( !$events ) {
-            return $c->render(
-                status  => 404,
-                openapi => []
-            );
-        }
-
-        return $c->render(
-            status  => 200,
-            openapi => $response,
-        );
+    my $events_set = Koha::LMSCloud::EventManagement::Events->new;
+    if ( my @defined_keys = grep { defined $params->{$_} } keys %{$params} ) {
+        delete $c->validation->output->{$_} for @defined_keys;
     }
-    catch {
-        $c->unhandled_exception($_);
-    };
+    $events_set = $events_set->filter($params);
+
+    $events_set = $events_set->are_upcoming;
+
+    my $fees_set       = Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->new;
+    my $fees_event_ids = [
+        $fees_set->search(
+            $events_set->compose_fees_search_params($params),
+            {   column   => ['event_id'],
+                distinct => 1,
+            }
+        )->get_column('event_id')
+    ];
+
+    $events_set = $events_set->search( { 'me.id' => { -in => $fees_event_ids } } );
+
+    return $c->objects->search($events_set);
+}
+
+sub _interlace_target_groups {
+    my ($events) = @_;
+
+    my $fees_set = Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->new;
+    for my $event ( @{$events} ) {
+        my $target_groups = $fees_set->search( { event_id => $event->{'id'} } );
+        $event->{'target_groups'} = $target_groups->as_list;
+    }
 }
 
 1;
