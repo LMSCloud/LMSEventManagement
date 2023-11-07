@@ -52,11 +52,11 @@ sub get {
             return $c->render( status => 404, openapi => { error => __('Event not found') } );
         }
 
-        my $event_target_group_fees =
-            Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $id }, { columns => [ 'target_group_id', 'selected', 'fee' ] } );
+        _interlace_target_groups( [$event], { columns => [ 'target_group_id', 'selected', 'fee' ] } );
+
         return $c->render(
             status  => 200,
-            openapi => { %{ $event->unblessed }, target_groups => $event_target_group_fees->as_list || [] } || {}
+            openapi => $event,
         );
     }
     catch {
@@ -186,12 +186,14 @@ sub update {
         }
 
         $event->discard_changes;
-        my $event_target_group_fees =
-            Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $id }, { columns => [ 'target_group_id', 'selected', 'fee' ] } );
+
+        $event = $event->unblessed;
+
+        _interlace_target_groups( [$event], { columns => [ 'target_group_id', 'selected', 'fee' ] } );
 
         return $c->render(
             status  => 200,
-            openapi => { %{ $event->unblessed }, target_groups => $event_target_group_fees->unblessed } || {}
+            openapi => $event,
         );
     }
     catch {
@@ -225,6 +227,16 @@ sub delete {
     catch {
         return $c->unhandled_exception($_);
     };
+}
+
+sub _interlace_target_groups {
+    my ( $events, $columns ) = @_;
+
+    my $fees_set = Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->new;
+    for my $event ( @{$events} ) {
+        my $target_groups = $fees_set->search( { event_id => $event->{'id'} }, $columns // {} );
+        $event->{'target_groups'} = $target_groups->as_list;
+    }
 }
 
 1;
