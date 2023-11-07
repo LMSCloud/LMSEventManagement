@@ -87,11 +87,14 @@ export default class LMSEventsView extends LitElement {
                 "eventsPublic",
                 this.queryBuilder.query.toString()
             ),
-            requestHandler.get("eventsCountPublic"),
             requestHandler.get("locationsPublic"),
         ])
-            .then((results) =>
-                Promise.all(results.map((result) => result.json()))
+            .then(([eventsResponse, locationsResponse]) =>
+                Promise.all([
+                    eventsResponse.json(),
+                    this.composeTotalCountPromise(eventsResponse),
+                    locationsResponse.json(),
+                ])
             )
             .then(([events, events_count, locations]) => {
                 this.hasLoaded = true;
@@ -110,6 +113,12 @@ export default class LMSEventsView extends LitElement {
         window.removeEventListener("popstate", this.boundHandlePopState);
     }
 
+    private composeTotalCountPromise(response: Response) {
+        return new Promise<number>((resolve) =>
+            resolve(parseInt(response.headers.get("X-Total-Count")!, 10))
+        );
+    }
+
     private handlePopState(e: PopStateEvent) {
         const { state } = e;
         const url = new URL(state?.url || window.location.href);
@@ -123,21 +132,17 @@ export default class LMSEventsView extends LitElement {
         const query = e.detail;
         this.queryBuilder.updateQuery(query);
 
-        const response = async () =>
-            await requestHandler.get(
-                "eventsPublic",
-                this.queryBuilder.query.toString()
-            );
-        response()
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-
-                throw new Error("Something went wrong");
-            })
-            .then((events: LMSEvent[]) => {
+        requestHandler
+            .get("eventsPublic", this.queryBuilder.query.toString())
+            .then((response) =>
+                Promise.all([
+                    response.json(),
+                    this.composeTotalCountPromise(response),
+                ])
+            )
+            .then(([events, events_count]) => {
                 this.events = events;
+                this.events_count = events_count;
                 if (updateUrl) {
                     this.queryBuilder.updateUrl();
                 }
@@ -158,37 +163,37 @@ export default class LMSEventsView extends LitElement {
     }
 
     private handleLoadMore() {
-        const currentSize = this.queryBuilder.getParamValue("_per_page");
+        const params = new URLSearchParams(this.queryBuilder.query);
+
+        const currentSize = params.get("_per_page");
         if (!currentSize) {
             return;
         }
-
         const nextSize = parseInt(currentSize, 10) + 20;
-        this.queryBuilder.updateQuery(`_per_page=${nextSize}`);
-        const response = async () =>
-            await requestHandler.get(
-                "eventsPublic",
-                this.queryBuilder.query.toString()
-            );
-        response()
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
+        params.set("_per_page", nextSize.toString());
 
-                throw new Error("Something went wrong");
-            })
-            .then((events: LMSEvent[]) => {
-                const hasGrown = events.length > this.events.length;
-                if (!hasGrown) {
+        this.queryBuilder.updateQuery(params);
+        requestHandler
+            .get("eventsPublic", this.queryBuilder.query.toString())
+            .then((response) =>
+                Promise.all([
+                    response.json(),
+                    this.composeTotalCountPromise(response),
+                ])
+            )
+            .then(([events, events_count]) => {
+                this.queryBuilder.updateUrl();
+                this.events = events;
+                this.events_count = events_count;
+
+                const hasNext = events_count > events.length;
+                if (!hasNext) {
                     this.loadMore
                         .querySelector("button")
                         ?.classList.add("hidden");
                     this.loadMore.firstElementChild?.classList.remove("hidden");
                     return;
                 }
-                this.queryBuilder.updateUrl();
-                this.events = events;
             })
             .catch((error) => {
                 console.error(error);

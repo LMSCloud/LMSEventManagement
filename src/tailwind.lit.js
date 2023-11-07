@@ -3857,6 +3857,10 @@ details.collapse summary::-webkit-details-marker {
   display: grid;
 }
 
+.contents {
+  display: contents;
+}
+
 .hidden {
   display: none;
 }

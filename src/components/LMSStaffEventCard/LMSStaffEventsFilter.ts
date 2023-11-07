@@ -16,6 +16,7 @@ import {
     state,
 } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
+import { repeat } from "lit/directives/repeat.js";
 import { normalizeForInput } from "../../lib/converters/datetimeConverters";
 import { attr__, __ } from "../../lib/translate";
 import { utilityStyles } from "../../styles/utilities";
@@ -182,8 +183,9 @@ export default class LMSStaffEventsFilter extends LitElement {
                             className: "h-4 w-4 inline-block",
                         })}
                     >
-                        ${map(
+                        ${repeat(
                             this.event_types,
+                            (event_type) => event_type["id"],
                             (event_type) => html`
                                 <div class="form-control ">
                                     <label
@@ -211,8 +213,9 @@ export default class LMSStaffEventsFilter extends LitElement {
                             className: "h-4 w-4 inline-block",
                         })}
                     >
-                        ${map(
+                        ${repeat(
                             this.target_groups,
+                            (target_group) => target_group["id"],
                             (target_group) => html`
                                 <div class="form-control ">
                                     <label
@@ -240,8 +243,9 @@ export default class LMSStaffEventsFilter extends LitElement {
                             className: "h-4 w-4 inline-block",
                         })}
                     >
-                        ${map(
+                        ${repeat(
                             this.locations,
+                            (location) => location["id"],
                             (location) => html`
                                 <div class="form-control">
                                     <label

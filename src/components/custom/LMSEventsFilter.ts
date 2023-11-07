@@ -12,6 +12,7 @@ import { html, LitElement } from "lit";
 import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
+import { repeat } from "lit/directives/repeat.js";
 import { requestHandler } from "../../lib/RequestHandler";
 import { attr__, __ } from "../../lib/translate";
 import { throttle } from "../../lib/utilities";
@@ -192,7 +193,7 @@ export default class LMSEventsFilter extends LitElement {
         this.facets = {
             eventTypeIds: [
                 ...new Set(this.events.map((event) => event.event_type)),
-            ],
+            ].sort(),
             targetGroupIds: [
                 ...new Set(
                     this.events.flatMap((event: any) =>
@@ -203,10 +204,12 @@ export default class LMSEventsFilter extends LitElement {
                         )
                     )
                 ),
-            ].filter(Number.isInteger),
+            ]
+                .filter(Number.isInteger)
+                .sort(),
             locationIds: [
                 ...new Set(this.events.map((event) => event.location)),
-            ],
+            ].sort(),
             ...this.events
                 .map((event: any) => {
                     const {
@@ -398,8 +401,9 @@ export default class LMSEventsFilter extends LitElement {
                                 })}
                                 @toggle=${this.handleDropdownToggle}
                             >
-                                ${map(
-                                    this.facets.eventTypeIds,
+                                ${repeat(
+                                    this.facets.eventTypeIds ?? [],
+                                    (eventTypeId) => eventTypeId,
                                     (eventTypeId) => html`
                                         <div class="form-control">
                                             <label
@@ -433,8 +437,9 @@ export default class LMSEventsFilter extends LitElement {
                                 })}
                                 @toggle=${this.handleDropdownToggle}
                             >
-                                ${map(
-                                    this.facets.targetGroupIds,
+                                ${repeat(
+                                    this.facets.targetGroupIds ?? [],
+                                    (targetGroupId) => targetGroupId,
                                     (targetGroupId) => html`
                                         <div class="form-control">
                                             <label
@@ -566,8 +571,9 @@ export default class LMSEventsFilter extends LitElement {
                                 })}
                                 @toggle=${this.handleDropdownToggle}
                             >
-                                ${map(
-                                    this.facets.locationIds,
+                                ${repeat(
+                                    this.facets.locationIds ?? [],
+                                    (locationId) => locationId,
                                     (locationId) =>
                                         html` <div class="form-control">
                                             <label
