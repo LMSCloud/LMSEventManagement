@@ -63,14 +63,16 @@ sub filter {
 =cut
 
 sub compose_fees_search_params {
-    my ( $self, $params ) = @_;
+    my ( $self, $params, $is_public ) = @_;
 
     my $search_params = {};
 
-    $search_params->{'me.selected'} = 1;
+    if ($is_public) {
+        $search_params->{'me.selected'} = 1;
+    }
+
     if ( defined $params->{'target_group'} && @{ $params->{'target_group'} } ) {
         $search_params->{'me.target_group_id'} = { '-in' => $params->{'target_group'} };
-        $search_params->{'me.selected'}        = { '-in' => $params->{'target_group'} };
     }
 
     if ( defined $params->{'fee'} ) {

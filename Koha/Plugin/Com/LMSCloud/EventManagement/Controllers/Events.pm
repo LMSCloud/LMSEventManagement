@@ -219,10 +219,15 @@ sub _filter_events {
     }
     $events_set = $events_set->filter($params);
 
+    my $fees_search_params = $events_set->compose_fees_search_params($params);
+    if ( !%{$fees_search_params} ) {
+        return $c->objects->search($events_set);
+    }
+
     my $fees_set       = Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->new;
     my $fees_event_ids = [
         $fees_set->search(
-            $events_set->compose_fees_search_params($params),
+            $fees_search_params,
             {   column   => ['event_id'],
                 distinct => 1,
             }

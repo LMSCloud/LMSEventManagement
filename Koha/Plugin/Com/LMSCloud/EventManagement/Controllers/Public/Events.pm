@@ -91,10 +91,11 @@ sub _filter_events {
 
     $events_set = $events_set->are_upcoming;
 
+    my $is_public      = $c->req->url->to_abs->path->parts->[4] eq 'public';
     my $fees_set       = Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->new;
     my $fees_event_ids = [
         $fees_set->search(
-            $events_set->compose_fees_search_params($params),
+            $events_set->compose_fees_search_params( $params, $is_public ),
             {   column   => ['event_id'],
                 distinct => 1,
             }
