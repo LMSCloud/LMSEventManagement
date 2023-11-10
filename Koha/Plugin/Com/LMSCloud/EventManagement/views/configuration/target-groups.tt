@@ -2,7 +2,5 @@
 [% INCLUDE "$PLUGIN_DIR/includes/body-header.inc" %]
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
-    <div class="lmse-content-block" id="entry-point">
-        <lms-staff-target-groups-view></lms-staff-target-groups-view>
-    </div>
+    <lms-staff-target-groups-view></lms-staff-target-groups-view>
 [% END %]

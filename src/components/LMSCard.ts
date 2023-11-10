@@ -1,6 +1,8 @@
-import { html, LitElement, nothing } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+import { ifDefined } from "lit/directives/if-defined.js";
+import { map } from "lit/directives/map.js";
 import { tailwindStyles } from "../tailwind.lit";
 import { Image } from "../types/common";
 
@@ -11,15 +13,15 @@ type Link = {
 
 @customElement("lms-card")
 export default class LMSCard extends LitElement {
-    @property({ type: String }) override title = "";
+    @property({ type: String }) caption?: string;
 
-    @property({ type: String }) text = "";
+    @property({ type: String }) text?: string;
 
-    @property({ type: Object }) image = {} as Image;
+    @property({ type: Object }) image?: Image;
 
-    @property({ type: Array }) links = [] as Link[];
+    @property({ type: Array }) links?: Array<Link>;
 
-    @property({ type: Array }) listItems = [];
+    @property({ type: Array }) listItems?: Array<any>;
 
     static override styles = [tailwindStyles];
 
@@ -30,20 +32,20 @@ export default class LMSCard extends LitElement {
             >
                 <figure>
                     <img
-                        src=${this.image.src}
-                        alt=${this.image.alt}
+                        src=${ifDefined(this.image?.src)}
+                        alt=${ifDefined(this.image?.alt)}
                         class="${classMap({
-                            hidden: !this.image.src,
+                            hidden: !this.image?.src,
                         })} w-full"
                     />
                 </figure>
                 <div class="card-body">
                     <h5
                         class="${classMap({
-                            hidden: !this.title,
+                            hidden: !this.caption,
                         })} card-title"
                     >
-                        ${this.title}
+                        ${this.caption}
                     </h5>
                     <p
                         class=${classMap({
@@ -54,26 +56,24 @@ export default class LMSCard extends LitElement {
                     </p>
                     <ul
                         class=${classMap({
-                            hidden: !this.listItems.length,
+                            hidden: !this.listItems?.length,
                         })}
                     >
-                        ${this.listItems.map(
+                        ${map(
+                            this.listItems,
                             (listItem) => html`<li>${listItem}</li>`
                         )}
                     </ul>
                     <div
                         class="${classMap({
-                            hidden: !this.links.length,
+                            hidden: !this.links?.length,
                         })} card-actions justify-end"
                     >
-                        ${this.links.length
-                            ? this.links.map(
-                                  (link) =>
-                                      html`<a href=${link.href}
-                                          >${link.text}</a
-                                      >`
-                              )
-                            : nothing}
+                        ${map(
+                            this.links,
+                            (link) =>
+                                html`<a href=${link.href}>${link.text}</a>`
+                        )}
                     </div>
                 </div>
             </div>

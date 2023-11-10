@@ -1,9 +1,14 @@
-import { html, LitElement } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import history from "history/browser";
+import { html } from "lit";
+import { customElement } from "lit/decorators.js";
+import { match } from "ts-pattern";
+import LMSAbstractView, { DataSource } from "../components/LMSAbstractView";
+import LMSOpenApiErrors from "../components/LMSOpenApiErrors";
 import LMSTargetGroupsModal from "../extensions/LMSTargetGroupsModal";
 import LMSTargetGroupsTable from "../extensions/LMSTargetGroupsTable";
-import { QueryBuilder } from "../lib/QueryBuilder";
-import { requestHandler } from "../lib/RequestHandler";
+import { requestHandler } from "../lib/RequestHandler/RequestHandler";
+import { QueryBuilder } from "../lib/URLStateHandler/QueryBuilder";
+import { merge } from "../lib/URLStateHandler/URLStateHandler";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
@@ -11,146 +16,140 @@ import { Column } from "../types/common";
 
 declare global {
     interface HTMLElementTagNameMap {
+        "lms-open-api-errors": LMSOpenApiErrors;
         "lms-target-groups-table": LMSTargetGroupsTable;
         "lms-target-groups-modal": LMSTargetGroupsModal;
     }
 }
 
 @customElement("lms-staff-target-groups-view")
-export default class StaffEventTypesView extends LitElement {
-    @state() hasLoaded = false;
+export default class StaffEventTypesView extends LMSAbstractView {
+    public queryBuilder = new QueryBuilder({
+        query: window.location.search,
+        staticParams: ["class", "method", "op"],
+    });
 
-    @state() nextPage: Column[] = [];
-
-    private _page = 1;
-
-    private _per_page = 10;
-
-    private isEmpty = false;
-
-    private hasNoResults = false;
-
-    private target_groups: Column[] = [];
-
-    private queryBuilder = new QueryBuilder();
+    public override dataSources?: Record<string, DataSource> = {
+        target_groups: {
+            endpoint: "targetGroups",
+            id: "target_groups",
+            main: true,
+        },
+    };
 
     static override styles = [tailwindStyles, skeletonStyles];
 
-    constructor() {
-        super();
-        this.queryBuilder.reservedParams = [
-            "_match",
+    override connectedCallback() {
+        super.connectedCallback();
+
+        let [orderBy, page, perPage, q] = this.queryBuilder.getValues(
             "_order_by",
             "_page",
             "_per_page",
-            "q",
-        ];
-        this.queryBuilder.query = window.location.search;
-        this.queryBuilder.staticParams = ["class", "method", "op"];
-        this.queryBuilder.updateQuery(
-            `_order_by=id&_page=${this._page}&_per_page=${this._per_page}`
+            "q"
         );
-    }
 
-    override connectedCallback() {
-        super.connectedCallback();
+        this.orderBy = orderBy ?? "id";
+        this.page = page ? parseInt(page, 10) : 1;
+        this.perPage = perPage ? parseInt(perPage, 10) : 10;
+        this.q = q ?? "{}";
+
+        this.queryBuilder.query = this.queryBuilder.merge({
+            _order_by: this.orderBy,
+            _page: this.page,
+            _per_page: this.perPage,
+            q: this.q,
+        });
+
         requestHandler
-            .get("targetGroups", this.queryBuilder.query.toString())
-            .then((response) => response.json())
-            .then((result) => {
-                this.target_groups = result;
+            .get({
+                endpoint: "targetGroups",
+                query: this.queryBuilder.without({ staticParams: true }),
             })
-            .then(() => {
-                this.queryBuilder.updateUrl();
-                this.isEmpty = this.target_groups.length === 0;
-                this.hasLoaded = true;
+            .then((response) =>
+                response.ok ? response.json() : this.throw(response)
+            )
+            .then((target_groups) => {
+                this.data = {};
+                this.data["target_groups"] = target_groups as Column[];
+                this.state = !this.data["target_groups"].length
+                    ? "no-content"
+                    : "success";
+
+                this.hashStore.hash = this.hashNeeded(
+                    this.hashStore.hash,
+                    this.q
+                );
+                history.replace(
+                    merge({
+                        href: window.location.href,
+                        searchParams: this.queryBuilder.query,
+                        hash: this.hashStore.hash,
+                    })
+                );
+                this.search = this.hashStore.hash;
+            })
+            .catch((error) => {
+                this.state = "error";
+                error
+                    .json()
+                    .then((errors: any) => {
+                        this.errors = errors;
+                    })
+                    .catch((error: Error) => {
+                        console.error(error);
+                    });
             });
     }
 
-    async fetchUpdate() {
-        const response = await requestHandler.get(
-            "targetGroups",
-            this.queryBuilder.query.toString()
-        );
-        this.target_groups = await response.json();
-        const isEmptyOrNoResults = this.target_groups.length === 0;
-        this.isEmpty = isEmptyOrNoResults;
-        this.hasNoResults = isEmptyOrNoResults;
-        this.queryBuilder.updateUrl();
-        this.requestUpdate();
-    }
-
-    async prefetchUpdate(e: CustomEvent) {
-        const { _page, _per_page } = e.detail;
-        this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
-        const response = await requestHandler.get(
-            "targetGroups",
-            this.queryBuilder.query.toString()
-        );
-        this.nextPage = await response.json();
-        this.queryBuilder.updateQuery(
-            `_page=${this._page}&_per_page=${this._per_page}`
-        );
-    }
-
-    private handleSort(e: CustomEvent) {
-        const { _order_by } = e.detail;
-        this.queryBuilder.updateQuery(`_order_by=${_order_by}`);
-        this.fetchUpdate();
-    }
-
-    private handleSearch(e: CustomEvent) {
-        const { q } = e.detail;
-        this.queryBuilder.updateQuery(`q=${q}`);
-        this.fetchUpdate();
-    }
-
-    private handleFilter(e: CustomEvent) {
-        console.log(e.detail);
-    }
-
-    private handlePageChange(e: CustomEvent) {
-        const { _page, _per_page } = e.detail;
-        this._page = _page;
-        this._per_page = _per_page;
-        this.queryBuilder.updateQuery(`_page=${_page}&_per_page=${_per_page}`);
-        this.fetchUpdate();
-    }
-
     override render() {
-        if (!this.hasLoaded) {
-            return html` <div class="mx-0">
-                <div class="skeleton skeleton-table"></div>
-            </div>`;
-        }
-
-        if (this.hasLoaded && this.isEmpty) {
-            return html` <h1 class="text-center">
-                    ${__("No data to display")}.
-                </h1>
-                <lms-target-groups-modal
-                    @created=${this.fetchUpdate}
-                ></lms-target-groups-modal>`;
-        }
-
-        return html`
-            <lms-target-groups-table
-                .target_groups=${this.target_groups}
-                ._page=${this._page}
-                ._per_page=${this._per_page}
-                .nextPage=${this.nextPage}
-                .hasNoResults=${this.hasNoResults}
-                @updated=${this.fetchUpdate}
-                @deleted=${this.fetchUpdate}
-                @sort=${this.handleSort}
-                @search=${this.handleSearch}
-                @filter=${this.handleFilter}
-                @page=${this.handlePageChange}
-                @prefetch=${this.prefetchUpdate}
-            ></lms-target-groups-table>
-            <lms-target-groups-modal
-                @created=${this.fetchUpdate}
-            ></lms-target-groups-modal>
-        `;
+        return match(this.state)
+            .with(
+                "initial",
+                "pending",
+                () =>
+                    html` <div class="mx-4">
+                        <div class="skeleton-floating-menu skeleton"></div>
+                        <div class="skeleton-table skeleton"></div>
+                    </div>`
+            )
+            .with("partial-content", () => html`<h1>Unimplemented</h1>`)
+            .with(
+                "no-content",
+                () =>
+                    html` <h1 class="text-center">
+                            ${__("No data to display")}.
+                        </h1>
+                        <lms-target-groups-modal
+                            @created=${this.handleCreated}
+                        ></lms-target-groups-modal>`
+            )
+            .with(
+                "no-results",
+                "success",
+                (state) => html`
+                    <lms-target-groups-table
+                        .target_groups=${this.data["target_groups"] ?? []}
+                        @updated=${this.handleUpdated}
+                        @deleted=${this.handleDeleted}
+                        @sort=${this.handleSort}
+                        @search=${this.handleSearch}
+                        @page=${this.handlePageChange}
+                        @per-page=${this.handlePerPageChange}
+                        @prefetch=${this.prefetchUpdate}
+                    ></lms-target-groups-table>
+                    ${this.renderNoResultsAlertMaybe(state)}
+                    <lms-target-groups-modal
+                        @created=${this.handleCreated}
+                    ></lms-target-groups-modal>
+                `
+            )
+            .with(
+                "error",
+                () => html`<lms-open-api-errors
+                    .openApiErrors=${this.errors}
+                ></lms-open-api-errors>`
+            )
+            .exhaustive();
     }
 }

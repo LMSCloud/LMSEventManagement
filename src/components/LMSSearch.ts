@@ -1,29 +1,48 @@
-import { html, LitElement } from "lit";
+import { consume } from "@lit/context";
+import { html, LitElement, PropertyValueMap } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { attr__ } from "../lib/translate";
+import { match } from "ts-pattern";
+import { searchContext } from "../context/search-context";
+import { __, attr__ } from "../lib/translate";
 import { debounce } from "../lib/utilities";
 import { tailwindStyles } from "../tailwind.lit";
 import { SortableColumns } from "../types/common";
 
+type Operator = "=" | "||" | ">=" | "<=" | ">" | "<" | "-like" | "-not_like";
+
+type ParsedQueryValue = string | number | string[];
+
 interface QueryEntry {
-    operator: string;
-    value: string | number | Array<string>;
+    operator: Operator;
+    value: ParsedQueryValue;
 }
 
 type ParsedQuery = Record<string, QueryEntry>;
 
+type QueryObj = unknown[] | Record<string, unknown>;
+
 @customElement("lms-search")
 export default class LMSSearch extends LitElement {
-    @property({ type: Array }) sortableColumns: SortableColumns = ["id"];
+    @property({ type: Array }) sortableColumns: Array<any> | SortableColumns = [
+        "id",
+    ];
 
     @query("input") input!: HTMLInputElement;
 
-    @state() isInputFocused = false;
+    @state() isFocused = false;
+
+    @state() hasValue = false;
+
+    @consume({ context: searchContext, subscribe: true })
+    @state()
+    search?: string;
 
     private isMacOS: boolean = /(Mac|iPhone|iPod|iPad)/i.test(
         navigator.userAgent
     );
+
+    private shortcutText = this.isMacOS ? "⌘" : "Ctrl";
 
     private boundHandleShortcut = (e: KeyboardEvent) =>
         this.handleShortcut.bind(this)(e);
@@ -39,55 +58,68 @@ export default class LMSSearch extends LitElement {
     private parseQuery(query: string): ParsedQuery {
         const entries: ParsedQuery = {};
         const parts = query.split(" AND ");
-
-        const operators = {
-            ">=": ">=",
-            "<=": "<=",
-            ">": ">",
-            "<": "<",
-            "~": "-like",
-            "!~": "-not_like",
-        };
-
         parts.forEach((part) => {
             const [rawKey, rawValue] = part.split(":").map((s) => s.trim());
             if (!rawKey || rawValue === undefined) {
                 return;
             }
 
-            let value: string | number | string[] | undefined = rawValue;
-            let operator = "=";
+            entries[rawKey] = match(rawValue)
+                .when(
+                    (v) => v.includes(" OR "),
+                    (value) => ({
+                        operator: "||" as const,
+                        value: value.split(" OR ").map((s) => s.trim()),
+                    })
+                )
+                .when(
+                    (v) => !isNaN(parseFloat(v)),
+                    (value) => ({
+                        operator: "=" as const,
+                        value: parseFloat(value),
+                    })
+                )
+                .when(
+                    (v) => v.startsWith('"') && v.endsWith('"'),
+                    (value) => ({
+                        operator: "=" as const,
+                        value: value.slice(1, -1),
+                    })
+                )
+                .when(
+                    (v) => {
+                        // Check if the value contains any of the defined operators
+                        return Object.keys({
+                            ">=": ">=",
+                            "<=": "<=",
+                            ">": ">",
+                            "<": "<",
+                            "~": "-like",
+                            "!~": "-not_like",
+                        }).some((op) => v.includes(op));
+                    },
+                    (value) => {
+                        const operator =
+                            Object.entries({
+                                ">=": ">=",
+                                "<=": "<=",
+                                ">": ">",
+                                "<": "<",
+                                "~": "-like",
+                                "!~": "-not_like",
+                            }).find(([op]) => value.includes(op))?.[1] || "=";
 
-            // Handle OR queries
-            if (rawValue.includes(" OR ")) {
-                operator = "||";
-                value = rawValue.split(" OR ").map((s) => s.trim());
-            }
-
-            // Handle numeric and quoted values
-            else if (!isNaN(parseFloat(rawValue))) {
-                value = parseFloat(rawValue);
-            } else if (rawValue.startsWith('"') && rawValue.endsWith('"')) {
-                value = rawValue.slice(1, -1);
-            }
-
-            // Handle operators
-            else {
-                for (const op of Object.keys(operators)) {
-                    if (rawValue.includes(op)) {
-                        operator = operators[op as keyof typeof operators];
-                        [, value] = rawValue.split(op);
-                        if (value) {
-                            value = value.trim();
-                        } else {
-                            value = "";
-                        }
-                        break;
+                        const [_, extractedValue] = value.split(operator);
+                        return {
+                            operator: operator as Operator,
+                            value: extractedValue ? extractedValue.trim() : "",
+                        };
                     }
-                }
-            }
-
-            entries[rawKey] = { operator, value };
+                )
+                .otherwise(() => ({
+                    operator: "=" as const,
+                    value: rawValue,
+                }));
         });
 
         return entries;
@@ -97,37 +129,25 @@ export default class LMSSearch extends LitElement {
      * Build a structured query object into the format expected by the backend.
      *
      * @param {ParsedQuery} query - The structured query object to build.
-     * @returns {unknown[] | Record<string, unknown>} The built query.
+     * @returns {QueryObj} The built query.
      */
-    private buildQuery(
-        query: ParsedQuery
-    ): unknown[] | Record<string, unknown> {
-        const builtQuery: unknown[] = [];
-        for (const [key, { operator, value }] of Object.entries(query)) {
-            switch (operator) {
-                case "=":
-                    builtQuery.push({ [key]: value });
-                    break;
-                case "||":
-                    if (Array.isArray(value)) {
-                        value.forEach((v: string) =>
-                            builtQuery.push({ [key]: v })
-                        );
-                    } else {
-                        builtQuery.push({ [key]: value });
-                    }
-                    break;
-                default:
-                    builtQuery.push({ [key]: { [operator]: value } });
-            }
-        }
+    private buildQuery(query: ParsedQuery): QueryObj {
+        const builtQuery: unknown[] = Object.entries(query)
+            .map(([key, { operator, value }]) =>
+                match(operator)
+                    .with("=", () => ({ [key]: value }))
+                    .with("||", () =>
+                        Array.isArray(value)
+                            ? value.map((v: string) => ({ [key]: v }))
+                            : { [key]: value }
+                    )
+                    .otherwise(() => ({ [key]: { [operator]: value } }))
+            )
+            .flat();
 
-        if (builtQuery.length === 1) {
-            const [queryItem] = builtQuery;
-            return queryItem as Record<string, unknown>;
-        }
-
-        return builtQuery;
+        return builtQuery.length === 1
+            ? (builtQuery[0] as Record<string, unknown>)
+            : builtQuery;
     }
 
     /**
@@ -137,37 +157,31 @@ export default class LMSSearch extends LitElement {
      * @returns {string} The built query as a string.
      */
     private getQuery(query: string): string {
-        let q = undefined;
-        if (query) {
-            if (query.includes(":")) {
-                // It's a structured query
-                const parsedQuery = this.parseQuery(query);
-                const builtQuery = this.buildQuery(parsedQuery);
-                q = JSON.stringify(builtQuery);
-            } else {
-                // It's a bare search term, build a wildcard query for each field
-                const encoded = {
-                    "%": window.encodeURIComponent("%"),
-                    query: window.encodeURIComponent(query),
-                };
-                const wildcardQuery = this.sortableColumns.reduce(
-                    (entries, field) => {
-                        entries.push({
-                            [field]: {
-                                "-like": `${encoded["%"]}${encoded.query}${encoded["%"]}`,
-                            },
-                        });
-                        return entries;
-                    },
-                    [] as Array<Record<string, unknown>>
-                );
-                q = JSON.stringify(wildcardQuery);
-            }
-        } else {
-            q = JSON.stringify({});
-        }
-
-        return q;
+        return match(query)
+            .when(
+                (q) => q.includes(":"),
+                (q) => {
+                    // It's a structured query
+                    const parsedQuery = this.parseQuery(q);
+                    const builtQuery = this.buildQuery(parsedQuery);
+                    return JSON.stringify(builtQuery);
+                }
+            )
+            .when(
+                (q) => q.length > 0,
+                (q) => {
+                    // Handle wildcard query
+                    const wildcardQuery = this.sortableColumns.reduce(
+                        (entries, field) => {
+                            entries.push({ [field]: { "-like": `%${q}%` } });
+                            return entries;
+                        },
+                        [] as Array<Record<string, unknown>>
+                    );
+                    return JSON.stringify(wildcardQuery);
+                }
+            )
+            .otherwise(() => JSON.stringify({}));
     }
 
     private debouncedSearch = debounce(
@@ -176,9 +190,10 @@ export default class LMSSearch extends LitElement {
                 new CustomEvent("search", {
                     detail: {
                         q: this.getQuery(query),
+                        search: query,
                     },
                     bubbles: true,
-                    composed: false,
+                    composed: true,
                 })
             );
         },
@@ -193,6 +208,9 @@ export default class LMSSearch extends LitElement {
      */
     private handleInput(e: InputEvent) {
         const inputElement = e.target as HTMLInputElement;
+        const { value } = inputElement;
+        this.hasValue = Boolean(value);
+
         this.debouncedSearch(inputElement.value);
     }
 
@@ -203,16 +221,16 @@ export default class LMSSearch extends LitElement {
      */
     private handleShortcut(e: KeyboardEvent) {
         const isCmdOrCtrlPressed = e.metaKey || e.ctrlKey;
-        if (isCmdOrCtrlPressed && e.key.toLowerCase() === "e") {
-            e.preventDefault();
-            if (this.input) {
-                this.input.focus();
-            }
-        } else if (e.key === "Escape") {
-            if (this.input) {
-                this.input.blur();
-            }
-        }
+
+        match({ key: e.key.toLowerCase(), isCmdOrCtrlPressed })
+            .with({ key: "e", isCmdOrCtrlPressed: true }, () => {
+                e.preventDefault();
+                this.input?.focus();
+            })
+            .with({ key: "escape" }, () => {
+                this.input?.blur();
+            })
+            .otherwise(() => {});
     }
 
     override connectedCallback() {
@@ -225,23 +243,29 @@ export default class LMSSearch extends LitElement {
         document.removeEventListener("keydown", this.boundHandleShortcut);
     }
 
+    protected override updated(
+        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+    ): void {
+        if (_changedProperties.has("search") && this.input) {
+            this.input.value = this.search ?? "";
+        }
+    }
+
     /**
      * Set the isInputFocused state to true when the search input is focused.
      */
     private handleFocus() {
-        this.isInputFocused = true;
+        this.isFocused = true;
     }
 
     /**
      * Set the isInputFocused state to false when the search input is blurred.
      */
     private handleBlur() {
-        this.isInputFocused = false;
+        this.isFocused = false;
     }
 
     override render() {
-        const shortcutText = this.isMacOS ? "⌘" : "Ctrl";
-
         return html`
             <div class="relative">
                 <input
@@ -258,13 +282,13 @@ export default class LMSSearch extends LitElement {
                 >
                     <kbd
                         class="${classMap({
-                            hidden: this.isInputFocused,
+                            hidden: this.isFocused || this.hasValue,
                         })} kbd kbd-md mr-1"
-                        >${shortcutText}</kbd
+                        >${__(this.shortcutText)}</kbd
                     >
                     <kbd
                         class="${classMap({
-                            hidden: this.isInputFocused,
+                            hidden: this.isFocused || this.hasValue,
                         })} kbd kbd-md"
                         >E</kbd
                     >

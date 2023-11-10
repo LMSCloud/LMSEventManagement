@@ -8,17 +8,18 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import DOMPurify from "dompurify";
-import { html, LitElement, nothing } from "lit";
+import { LitElement, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import { match } from "ts-pattern";
+import { requestHandler } from "../../lib/RequestHandler/RequestHandler";
 import { splitDateTime } from "../../lib/converters/datetimeConverters";
 import {
     formatAddress,
     formatMonetaryAmountByLocale,
 } from "../../lib/converters/displayConverters";
-import { requestHandler } from "../../lib/RequestHandler";
 import { __ } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";
 import { tailwindStyles } from "../../tailwind.lit";
@@ -32,16 +33,17 @@ import {
 
 @customElement("lms-card-details-modal")
 export default class LMSCardDetailsModal extends LitElement {
-    @property({ type: Object }) event: LMSEvent | LMSEventComprehensive =
-        {} as LMSEvent;
+    @property({ type: Object }) event?: LMSEvent | LMSEventComprehensive;
 
     @property({ type: Boolean }) isOpen = false;
 
-    @state() event_types: LMSEventType[] = [];
+    @state() state: "initial" | "pending" | "success" | "error" = "initial";
 
-    @state() locations: LMSLocation[] = [];
+    @state() event_types?: Array<LMSEventType>;
 
-    @state() target_groups: LMSEventTargetGroupFee[] = [];
+    @state() locations?: Array<LMSLocation>;
+
+    @state() target_groups?: Array<LMSEventTargetGroupFee>;
 
     @state() locale = "en";
 
@@ -59,32 +61,33 @@ export default class LMSCardDetailsModal extends LitElement {
     override connectedCallback() {
         super.connectedCallback();
 
-        requestHandler
-            .get("eventTypesPublic")
-            .then((response) => response.json())
-            .then(
-                (event_types: LMSEventType[]) =>
-                    (this.event_types = event_types)
-            );
+        Promise.all([
+            requestHandler
+                .get({ endpoint: "eventTypesPublic" })
+                .then((response) => response.json()),
+            requestHandler
+                .get({ endpoint: "locationsPublic" })
+                .then((response) => response.json()),
+            requestHandler
+                .get({ endpoint: "targetGroupsPublic" })
+                .then((response) => response.json()),
+        ])
+            .then(([eventTypes, locations, targetGroups]) => {
+                this.event_types = eventTypes as LMSEventType[];
+                this.locations = locations as LMSLocation[];
+                this.target_groups = targetGroups as LMSEventTargetGroupFee[];
 
-        requestHandler
-            .get("locationsPublic")
-            .then((response) => response.json())
-            .then((locations: LMSLocation[]) => (this.locations = locations));
-
-        requestHandler
-            .get("targetGroupsPublic")
-            .then((response) => response.json())
-            .then(
-                (target_groups: LMSEventTargetGroupFee[]) =>
-                    (this.target_groups = target_groups)
-            );
-
-        this.locale = document.documentElement.lang;
-        this.localeFull =
-            document.documentElement.lang === "en"
-                ? "en-US"
-                : document.documentElement.lang;
+                this.locale = document.documentElement.lang;
+                this.localeFull =
+                    document.documentElement.lang === "en"
+                        ? "en-US"
+                        : document.documentElement.lang;
+                this.state = "success";
+            })
+            .catch((error) => {
+                this.state = "error";
+                console.error(error);
+            });
 
         document.addEventListener("keydown", this.boundHandleKeyDown);
     }
@@ -120,64 +123,82 @@ export default class LMSCardDetailsModal extends LitElement {
     }
 
     override willUpdate() {
-        const { event } = this;
-        const { event_type, location } = event;
-
-        let target_groups: LMSEventTargetGroupFee[] | null = null;
-        if ({}.hasOwnProperty.call(event, "target_groups")) {
-            const comprehensiveEvent = event as LMSEventComprehensive;
-            target_groups = comprehensiveEvent.target_groups;
+        if (!this.event) {
+            return;
         }
 
-        // Resolve event_type and location ids to their state representations
-        if (event_type) {
-            const fullEventType = this.event_types.find(
-                (_event_type) => _event_type.id === event_type
-            );
-            this.event.event_type = fullEventType ?? ({} as LMSEventType);
+        const { event_type, location } = this.event;
+        if (
+            !(event_type && typeof event_type === "number") ||
+            !(location && typeof location === "number")
+        ) {
+            return;
         }
 
-        if (location) {
-            const fullLocation = this.locations.find(
-                (_location) => _location.id === location
-            );
-            this.event.location = fullLocation ?? ({} as LMSLocation);
+        this.updateEventType(event_type);
+        this.updateLocation(location);
+        this.updateTargetGroups();
+    }
+
+    private updateEventType(event_type: number) {
+        if (!event_type || !this.event_types) {
+            return;
         }
 
-        const isTruthyAndIsComprehensiveEvent =
-            target_groups &&
-            (target_groups as LMSEventTargetGroupFee[]).every(
+        const fullEventType = this.event_types.find(
+            (_event_type) => _event_type.id === event_type
+        );
+        if (fullEventType && this.event) {
+            this.event.event_type = fullEventType;
+        }
+    }
+
+    private updateLocation(location: number) {
+        if (!location || !this.locations) {
+            return;
+        }
+
+        const fullLocation = this.locations.find(
+            (_location) => _location.id === location
+        );
+        if (fullLocation && this.event) {
+            this.event.location = fullLocation;
+        }
+    }
+
+    private updateTargetGroups() {
+        if (!this.event?.hasOwnProperty("target_groups")) {
+            return;
+        }
+
+        const comprehensiveEvent = this.event as LMSEventComprehensive;
+        const target_groups = comprehensiveEvent.target_groups;
+
+        if (!target_groups || !this.target_groups) {
+            return;
+        }
+
+        const selectedTargetGroups = this.target_groups.filter((target_group) =>
+            target_groups.some(
                 (targetGroup: LMSEventTargetGroupFee) =>
-                    ({}.hasOwnProperty.call(targetGroup, "target_group_id"))
-            );
-        if (isTruthyAndIsComprehensiveEvent) {
-            const eventComprehensive = this.event as LMSEventComprehensive;
-            const selectedTargetGroups = this.target_groups.filter(
-                (target_group) =>
-                    target_groups?.some(
-                        (targetGroup: LMSEventTargetGroupFee) =>
-                            targetGroup.target_group_id === target_group.id
-                    )
-            );
+                    targetGroup.target_group_id === target_group.id
+            )
+        );
 
-            eventComprehensive.target_groups = selectedTargetGroups.map(
-                (selectedTargetGroup) => ({
+        comprehensiveEvent.target_groups = selectedTargetGroups.map(
+            (selectedTargetGroup) => {
+                const targetGroup = target_groups.find(
+                    (eventTargetGroup) =>
+                        eventTargetGroup.target_group_id ===
+                        selectedTargetGroup.id
+                );
+                return {
                     ...selectedTargetGroup,
-                    selected:
-                        target_groups?.find(
-                            (eventTargetGroup) =>
-                                eventTargetGroup.target_group_id ===
-                                selectedTargetGroup.id
-                        )?.selected ?? false,
-                    fee:
-                        target_groups?.find(
-                            (eventTargetGroup) =>
-                                eventTargetGroup.target_group_id ===
-                                selectedTargetGroup.id
-                        )?.fee ?? 0,
-                })
-            ) as LMSEventTargetGroupFee[];
-        }
+                    selected: targetGroup?.selected ?? false,
+                    fee: targetGroup?.fee ?? 0,
+                };
+            }
+        ) as LMSEventTargetGroupFee[];
     }
 
     override updated() {
@@ -200,43 +221,38 @@ export default class LMSCardDetailsModal extends LitElement {
 
     private renderTargetGroupInfo(
         targetGroupFees: LMSEventTargetGroupFee[],
-        noFees: boolean
+        hasNoFees: boolean
     ) {
+        if (!targetGroupFees) {
+            return nothing;
+        }
+
         const quantity = this.getSelectedQuantity(targetGroupFees);
-        return targetGroupFees
-            ? targetGroupFees.map((targetGroupFee, index) => {
-                  const hasTargetGroupId = {}.hasOwnProperty.call(
-                      targetGroupFee,
-                      "target_group_id"
-                  );
-                  if (hasTargetGroupId) {
-                      return nothing;
-                  }
+        return targetGroupFees.map((targetGroupFee, index) => {
+            if ({}.hasOwnProperty.call(targetGroupFee, "target_group_id")) {
+                return nothing;
+            }
 
-                  const { name, min_age, max_age, fee, selected } =
-                      targetGroupFee as LMSEventTargetGroupFee;
+            const { name, min_age, max_age, fee, selected } = targetGroupFee;
+            if (!selected) {
+                return nothing;
+            }
 
-                  if (!selected) {
-                      return nothing;
-                  }
-                  return noFees
-                      ? html`<span
-                            >${name}${index + 1 < quantity ? ", " : ""}</span
-                        >`
-                      : html`
-                            <tr>
-                                <td>${name}</td>
-                                <td>${min_age} - ${max_age}</td>
-                                <td>
-                                    ${formatMonetaryAmountByLocale(
-                                        this.localeFull,
-                                        fee
-                                    )}
-                                </td>
-                            </tr>
-                        `;
-              })
-            : nothing;
+            return hasNoFees
+                ? html`<span>${name}${index + 1 < quantity ? ", " : ""}</span>`
+                : html`
+                      <tr>
+                          <td>${name}</td>
+                          <td>${min_age} - ${max_age}</td>
+                          <td>
+                              ${formatMonetaryAmountByLocale(
+                                  this.localeFull,
+                                  fee
+                              )}
+                          </td>
+                      </tr>
+                  `;
+        });
     }
 
     private renderDateAndTime(start_time: Date | null, end_time: Date | null) {
@@ -288,182 +304,318 @@ export default class LMSCardDetailsModal extends LitElement {
         >`;
     }
 
+    private hasNoFees(targetGroups: LMSEventTargetGroupFee[]) {
+        return (
+            targetGroups?.every((targetGroup) => targetGroup.fee === 0) ?? true
+        );
+    }
+
+    private extractTargetGroups(event: LMSEvent | LMSEventComprehensive) {
+        return {}.hasOwnProperty.call(event, "target_groups")
+            ? (event as LMSEventComprehensive).target_groups
+            : undefined;
+    }
+
     override render() {
-        const {
-            name,
-            description,
-            location,
-            image,
-            registration_link,
-            start_time,
-            end_time,
-        } = this.event;
-
-        let target_groups = null;
-        if ({}.hasOwnProperty.call(this.event, "target_groups")) {
-            const eventComprehensive = this.event as LMSEventComprehensive;
-            target_groups = eventComprehensive.target_groups;
+        const targetGroups = this.event
+            ? this.extractTargetGroups(this.event)
+            : undefined;
+        const hasNoFees = targetGroups ? this.hasNoFees(targetGroups) : true;
+        if (this.isOpen && !this.lmsModal?.open) {
+            this.lmsModal?.showModal();
         }
 
-        let noFees = true;
-        if (target_groups) {
-            noFees =
-                target_groups?.every(
-                    (target_group) => target_group.fee === 0
-                ) ?? true;
-        }
-
-        if (this.isOpen && !this.lmsModal.open) this.lmsModal.showModal();
         return html`
             <dialog
                 class="modal"
                 id="lms-modal"
                 aria-labelledby="lms-modal-title"
             >
-                <form method="dialog" class="modal-box w-11/12 max-w-5xl">
-                    <h5 class="text-lg font-bold" id="lms-modal-title">
-                        ${name ?? "Event"}
-                    </h5>
-                    <button
-                        @click=${this.toggleModal}
-                        class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
-                    >
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <div class="flex flex-col md:flex-row">
-                        <!-- Left Column -->
-                        <div class="w-full md:w-1/2">
-                            <!-- Date and Time -->
-                            <div class="p-4">
-                                <p class="mb-2">
-                                    <span
-                                        >${litFontawesome(faCalendar, {
-                                            className: "w-4 h-4 inline-block",
-                                        })}</span
-                                    >
-                                    <strong>${__("Date and Time")}</strong>
-                                </p>
-                                <p>
-                                    ${this.renderDateAndTime(
-                                        start_time,
-                                        end_time
-                                    )}
-                                </p>
-                            </div>
-
-                            <!-- Description -->
-                            <div class="p-4">
-                                <p class="mb-2">
-                                    <span
-                                        >${litFontawesome(faInfoCircle, {
-                                            className: "w-4 h-4 inline-block",
-                                        })}</span
-                                    >
-                                    <strong>${__("Description")}</strong>
-                                </p>
-                                <p>
-                                    ${unsafeHTML(
-                                        DOMPurify.sanitize(description ?? "")
-                                    )}
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Right Column -->
-                        <div class="w-full md:w-1/2">
-                            <img
-                                src=${ifDefined(image ?? undefined)}
-                                class="${classMap({
-                                    hidden: !image,
-                                })} aspect-video w-full rounded object-cover"
-                            />
-
-                            <!-- Fees -->
-                            <div class="p-4">
-                                <p class="mb-2">
-                                    <span
-                                        >${litFontawesome(faCreditCard, {
-                                            className: "w-4 h-4 inline-block",
-                                        })}</span
-                                    >
-                                    <strong>${__("Fees")}</strong>
-                                </p>
-
-                                <div
-                                    class="${classMap({
-                                        hidden: !noFees,
-                                    })}"
+                ${match(this.state)
+                    .with(
+                        "initial",
+                        "pending",
+                        () =>
+                            html`
+                                <form
+                                    method="dialog"
+                                    class="modal-box w-11/12 max-w-5xl"
                                 >
-                                    <p class="mb-2">${__("No fees")}</p>
-                                    <p class="mb-2">
+                                    <h5
+                                        class="text-lg font-bold"
+                                        id="lms-modal-title"
+                                    >
+                                        ${__("Loading Details...")}
+                                    </h5>
+                                    <button
+                                        @click=${this.toggleModal}
+                                        class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+                                    >
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <div
+                                        class="flex items-center justify-center"
+                                    >
                                         <span
-                                            >${litFontawesome(faUsers, {
-                                                className:
-                                                    "w-4 h-4 inline-block",
-                                            })}</span
+                                            class="loading loading-spinner loading-lg"
+                                        ></span>
+                                    </div>
+                                    <div class="modal-action">
+                                        <button
+                                            class="btn btn-secondary"
+                                            @click=${this.toggleModal}
                                         >
-                                        <strong>${__("Target Groups")}</strong>
-                                    </p>
-                                    <p>
-                                        ${this.renderTargetGroupInfo(
-                                            target_groups as LMSEventTargetGroupFee[],
-                                            noFees
-                                        )}
-                                    </p>
-                                </div>
-
-                                <table
-                                    class="${classMap({
-                                        hidden: noFees,
-                                    })} table table-xs"
+                                            ${__("Close")}
+                                        </button>
+                                    </div>
+                                </form>
+                            `
+                    )
+                    .with(
+                        "success",
+                        () => html`
+                            <form
+                                method="dialog"
+                                class="modal-box w-11/12 max-w-5xl"
+                            >
+                                <h5
+                                    class="text-lg font-bold"
+                                    id="lms-modal-title"
                                 >
-                                    <thead>
-                                        <tr>
-                                            <th>${__("Target Group")}</th>
-                                            <th>${__("Age Range")}</th>
-                                            <th>${__("Fee")}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${this.renderTargetGroupInfo(
-                                            target_groups as LMSEventTargetGroupFee[],
-                                            noFees
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    ${this.event?.name ?? "Event"}
+                                </h5>
+                                <button
+                                    @click=${this.toggleModal}
+                                    class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+                                >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <div class="flex flex-col md:flex-row">
+                                    <!-- Left Column -->
+                                    <div class="w-full md:w-1/2">
+                                        <!-- Date and Time -->
+                                        <div class="p-4">
+                                            <p class="mb-2">
+                                                <span
+                                                    >${litFontawesome(
+                                                        faCalendar,
+                                                        {
+                                                            className:
+                                                                "w-4 h-4 inline-block",
+                                                        }
+                                                    )}</span
+                                                >
+                                                <strong
+                                                    >${__(
+                                                        "Date and Time"
+                                                    )}</strong
+                                                >
+                                            </p>
+                                            <p>
+                                                ${this.event
+                                                    ? this.renderDateAndTime(
+                                                          this.event.start_time,
+                                                          this.event.end_time
+                                                      )
+                                                    : nothing}
+                                            </p>
+                                        </div>
 
-                            <div class="p-4">
-                                <p class="mb-2">
-                                    <span
-                                        >${litFontawesome(faMapMarker, {
-                                            className: "w-4 h-4 inline-block",
-                                        })}</span
+                                        <!-- Description -->
+                                        <div class="p-4">
+                                            <p class="mb-2">
+                                                <span
+                                                    >${litFontawesome(
+                                                        faInfoCircle,
+                                                        {
+                                                            className:
+                                                                "w-4 h-4 inline-block",
+                                                        }
+                                                    )}</span
+                                                >
+                                                <strong
+                                                    >${__(
+                                                        "Description"
+                                                    )}</strong
+                                                >
+                                            </p>
+                                            <p>
+                                                ${unsafeHTML(
+                                                    DOMPurify.sanitize(
+                                                        this.event
+                                                            ?.description ?? ""
+                                                    )
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right Column -->
+                                    <div class="w-full md:w-1/2">
+                                        <img
+                                            src=${ifDefined(
+                                                this.event?.image ?? undefined
+                                            )}
+                                            class="${classMap({
+                                                hidden: !this.event?.image,
+                                            })} aspect-video w-full rounded object-cover"
+                                        />
+
+                                        <!-- Fees -->
+                                        <div class="p-4">
+                                            <p class="mb-2">
+                                                <span
+                                                    >${litFontawesome(
+                                                        faCreditCard,
+                                                        {
+                                                            className:
+                                                                "w-4 h-4 inline-block",
+                                                        }
+                                                    )}</span
+                                                >
+                                                <strong>${__("Fees")}</strong>
+                                            </p>
+
+                                            <div
+                                                class="${classMap({
+                                                    hidden: !hasNoFees,
+                                                })}"
+                                            >
+                                                <p class="mb-2">
+                                                    ${__("No fees")}
+                                                </p>
+                                                <p class="mb-2">
+                                                    <span
+                                                        >${litFontawesome(
+                                                            faUsers,
+                                                            {
+                                                                className:
+                                                                    "w-4 h-4 inline-block",
+                                                            }
+                                                        )}</span
+                                                    >
+                                                    <strong
+                                                        >${__(
+                                                            "Target Groups"
+                                                        )}</strong
+                                                    >
+                                                </p>
+                                                <p>
+                                                    ${this.renderTargetGroupInfo(
+                                                        targetGroups as LMSEventTargetGroupFee[],
+                                                        hasNoFees
+                                                    )}
+                                                </p>
+                                            </div>
+
+                                            <table
+                                                class="${classMap({
+                                                    hidden: hasNoFees,
+                                                })} table table-xs"
+                                            >
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            ${__(
+                                                                "Target Group"
+                                                            )}
+                                                        </th>
+                                                        <th>
+                                                            ${__("Age Range")}
+                                                        </th>
+                                                        <th>${__("Fee")}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${this.renderTargetGroupInfo(
+                                                        targetGroups as LMSEventTargetGroupFee[],
+                                                        hasNoFees
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="p-4">
+                                            <p class="mb-2">
+                                                <span
+                                                    >${litFontawesome(
+                                                        faMapMarker,
+                                                        {
+                                                            className:
+                                                                "w-4 h-4 inline-block",
+                                                        }
+                                                    )}</span
+                                                >
+                                                <strong
+                                                    >${__("Location")}</strong
+                                                >
+                                            </p>
+                                            <p class="mb-2">
+                                                ${this.event
+                                                    ? formatAddress(
+                                                          this.event.location
+                                                      )
+                                                    : nothing}
+                                            </p>
+                                            <p>
+                                                ${this.event
+                                                    ? this.renderLocationLink(
+                                                          this.event.location
+                                                      )
+                                                    : nothing}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-action">
+                                    <button
+                                        class="btn btn-secondary"
+                                        @click=${this.toggleModal}
                                     >
-                                    <strong>${__("Location")}</strong>
-                                </p>
-                                <p class="mb-2">${formatAddress(location)}</p>
-                                <p>${this.renderLocationLink(location)}</p>
+                                        ${__("Close")}
+                                    </button>
+                                    <a
+                                        class="${classMap({
+                                            hidden: !this.event
+                                                ?.registration_link,
+                                        })} btn btn-primary"
+                                        href=${ifDefined(
+                                            this.event?.registration_link ??
+                                                undefined
+                                        )}
+                                    >
+                                        ${__("Register")}
+                                    </a>
+                                </div>
+                            </form>
+                        `
+                    )
+                    .with(
+                        "error",
+                        () => html` <form
+                            method="dialog"
+                            class="modal-box w-11/12 max-w-5xl"
+                        >
+                            <h5 class="text-lg font-bold" id="lms-modal-title">
+                                ${__("There's been an error")}..
+                            </h5>
+                            <button
+                                @click=${this.toggleModal}
+                                class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <div class="modal-action">
+                                <button
+                                    class="btn btn-secondary"
+                                    @click=${this.toggleModal}
+                                >
+                                    ${__("Close")}
+                                </button>
                             </div>
-                        </div>
-                    </div>
-                    <div class="modal-action">
-                        <button
-                            class="btn btn-secondary"
-                            @click=${this.toggleModal}
-                        >
-                            ${__("Close")}
-                        </button>
-                        <a
-                            class="${classMap({
-                                hidden: !registration_link,
-                            })} btn btn-primary"
-                            href=${ifDefined(registration_link ?? undefined)}
-                        >
-                            ${__("Register")}
-                        </a>
-                    </div>
-                </form>
+                        </form>`
+                    )
+                    .exhaustive()}
             </dialog>
         `;
     }

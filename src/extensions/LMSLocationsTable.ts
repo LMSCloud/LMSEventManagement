@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
-import { requestHandler } from "../lib/RequestHandler";
+import { requestHandler } from "../lib/RequestHandler/RequestHandler";
 import { Input, LMSLocation } from "../types/common";
 
 @customElement("lms-locations-table")
@@ -26,20 +26,24 @@ export default class LMSLocationsTable extends LMSTable {
             return;
         }
 
-        const response = await requestHandler.put(
-            "locations",
-            {
-                ...Array.from(inputs).reduce(
-                    (acc: { [key: string]: number | string }, input: Input) => {
-                        acc[input.name] = input.value;
-                        return acc;
-                    },
-                    {}
-                ),
+        const response = await requestHandler.put({
+            endpoint: "locations",
+            path: [id.toString()],
+            requestInit: {
+                body: JSON.stringify({
+                    ...Array.from(inputs).reduce(
+                        (
+                            acc: { [key: string]: number | string },
+                            input: Input
+                        ) => {
+                            acc[input.name] = input.value;
+                            return acc;
+                        },
+                        {}
+                    ),
+                }),
             },
-            undefined,
-            [id.toString()]
-        );
+        });
         if (response.status >= 200 && response.status <= 299) {
             inputs.forEach((input) => {
                 input.disabled = true;
@@ -81,9 +85,10 @@ export default class LMSLocationsTable extends LMSTable {
             return;
         }
 
-        const response = await requestHandler.delete("locations", undefined, [
-            id.toString(),
-        ]);
+        const response = await requestHandler.delete({
+            endpoint: "locations",
+            path: [id.toString()],
+        });
         if (response.status >= 200 && response.status <= 299) {
             this.dispatchEvent(new CustomEvent("deleted", { detail: id }));
             return;

@@ -5,16 +5,16 @@ import {
     faXmarkCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { html, LitElement, TemplateResult } from "lit";
+import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { DirectiveResult } from "lit/directive";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { repeat } from "lit/directives/repeat.js";
-import { InputConverter } from "../lib/converters/InputConverter/InputConverter";
 import { InputsSnapshot } from "../lib/InputsSnapshot";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
-import { locale, TranslateDirective, __ } from "../lib/translate";
+import { InputConverter } from "../lib/converters/InputConverter/InputConverter";
+import { TranslateDirective, __, locale } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
 import {

@@ -1,6 +1,6 @@
 import { faCopy, faMouse, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { html, LitElement, PropertyValues } from "lit";
+import { LitElement, PropertyValues, html } from "lit";
 import {
     customElement,
     property /* state */,
@@ -9,8 +9,8 @@ import {
 } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
-import { requestHandler } from "../../lib/RequestHandler";
-import { attr__, __ } from "../../lib/translate";
+import { requestHandler } from "../../lib/RequestHandler/RequestHandler";
+import { __, attr__ } from "../../lib/translate";
 import { cardDeckStylesStaff } from "../../styles/cardDeck";
 import { skeletonStyles } from "../../styles/skeleton";
 import { tailwindStyles } from "../../tailwind.lit";
@@ -54,7 +54,7 @@ export default class LMSImageBrowser extends LitElement {
 
     private loadImages() {
         requestHandler
-            .get("images")
+            .get({ endpoint: "images" })
             .then(
                 async (response): Promise<UploadedImage[]> =>
                     await response.json()
@@ -155,7 +155,10 @@ export default class LMSImageBrowser extends LitElement {
                 const formData = new FormData();
                 formData.append("file", file);
                 requestHandler
-                    .post("images", formData)
+                    .post({
+                        endpoint: "images",
+                        requestInit: { body: formData },
+                    })
                     .then(async (response) => {
                         if (!response.ok) {
                             const error = await response.json();
@@ -202,7 +205,7 @@ export default class LMSImageBrowser extends LitElement {
         const { hashvalue } = target.dataset;
         if (hashvalue) {
             requestHandler
-                .delete("image", undefined, [hashvalue])
+                .delete({ endpoint: "image", path: [hashvalue] })
                 .then(async (response) => {
                     if (!response.ok) {
                         const error = await response.json();

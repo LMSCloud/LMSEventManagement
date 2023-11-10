@@ -1,3 +1,3 @@
 <body>
-  [% INCLUDE 'header.inc' %]
-  [% INCLUDE 'cat-search.inc' %]
+    [% INCLUDE 'header.inc' %]
+    [% INCLUDE 'cat-search.inc' %]

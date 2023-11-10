@@ -15,6 +15,7 @@ import LMSStaffEventCardForm from "./components/LMSStaffEventCard/LMSStaffEventC
 import LMSStaffEventCardPreview from "./components/LMSStaffEventCard/LMSStaffEventCardPreview";
 import LMSStaffEventsFilter from "./components/LMSStaffEventCard/LMSStaffEventsFilter";
 
+import LMSAbstractView from "./components/LMSAbstractView";
 import LMSAnchor from "./components/LMSAnchor";
 import LMSCard from "./components/LMSCard";
 import LMSConfirmationModal from "./components/LMSConfirmationModal";
@@ -23,11 +24,11 @@ import LMSDataNavbar from "./components/LMSDataNavbar";
 import LMSDropdown from "./components/LMSDropdown";
 import LMSFloatingMenu from "./components/LMSFloatingMenu";
 import LMSModal from "./components/LMSModal";
+import LMSOpenApiErrors from "./components/LMSOpenApiErrors";
 import LMSPagination from "./components/LMSPagination";
 import LMSSearch from "./components/LMSSearch";
 import LMSToast from "./components/LMSToast";
 import LMSTooltip from "./components/LMSTooltip";
-import LMSView from "./components/LMSView";
 
 /** extensions */
 import LMSEventManagementMenu from "./extensions/LMSEventManagementMenu";
@@ -61,13 +62,14 @@ export default {
     LMSConfirmationModal,
     LMSCardDetailsModal,
     LMSContainer,
-    LMSView,
+    LMSAbstractView,
     LMSDropdown,
     LMSEventsFilter,
     LMSFloatingMenu,
     LMSImageBrowser,
     LMSImagePicker,
     LMSModal,
+    LMSOpenApiErrors,
     LMSPagination,
     LMSPellEditor,
     LMSSearch,

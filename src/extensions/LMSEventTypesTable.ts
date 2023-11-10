@@ -1,8 +1,7 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSAnchor from "../components/LMSAnchor";
 import LMSTable from "../components/LMSTable";
-import { requestHandler } from "../lib/RequestHandler";
-import { __ } from "../lib/translate";
+import { requestHandler } from "../lib/RequestHandler/RequestHandler";
 import {
     LMSEventType,
     LMSLocation,
@@ -60,51 +59,55 @@ export default class LMSEventTypesTable extends LMSTable {
             return;
         }
 
-        const response = await requestHandler.put(
-            "eventTypes",
-            {
-                ...Array.from(inputs).reduce((acc, input) => {
-                    if (
-                        input.dataset["group"] &&
-                        input instanceof HTMLInputElement
-                    ) {
-                        const group = input.dataset["group"];
-                        if (!(group in acc)) {
-                            acc[group] = [];
-                        }
+        const response = await requestHandler.put({
+            endpoint: "eventTypes",
+            path: [id.toString()],
+            requestInit: {
+                body: JSON.stringify({
+                    ...Array.from(inputs).reduce((acc, input) => {
+                        if (
+                            input.dataset["group"] &&
+                            input instanceof HTMLInputElement
+                        ) {
+                            const group = input.dataset["group"];
+                            if (!(group in acc)) {
+                                acc[group] = [];
+                            }
 
-                        const { id, name, value } = input;
+                            const { id, name, value } = input;
 
-                        const groupArray = acc[group] as Array<
-                            Record<string, unknown>
-                        >;
-                        const groupIndex = groupArray.findIndex(
-                            (item) => item["id"] === id
-                        );
+                            const groupArray = acc[group] as Array<
+                                Record<string, unknown>
+                            >;
+                            const groupIndex = groupArray.findIndex(
+                                (item) => item["id"] === id
+                            );
 
-                        if (groupIndex === -1) {
-                            groupArray.push({
-                                id,
-                                [name]: this.handleInput(input, value),
-                            });
+                            if (groupIndex === -1) {
+                                groupArray.push({
+                                    id,
+                                    [name]: this.handleInput(input, value),
+                                });
+                                return acc;
+                            }
+
+                            const groupItem = groupArray[groupIndex];
+                            if (groupItem) {
+                                groupItem[name] = this.handleInput(
+                                    input,
+                                    value
+                                );
+                            }
+
                             return acc;
                         }
 
-                        const groupItem = groupArray[groupIndex];
-                        if (groupItem) {
-                            groupItem[name] = this.handleInput(input, value);
-                        }
-
+                        acc[input.name] = this.handleInput(input, input.value);
                         return acc;
-                    }
-
-                    acc[input.name] = this.handleInput(input, input.value);
-                    return acc;
-                }, {} as Record<string, unknown>),
+                    }, {} as Record<string, unknown>),
+                }),
             },
-            undefined,
-            [id.toString()]
-        );
+        });
 
         if (response.status >= 200 && response.status <= 299) {
             inputs.forEach((input) => {
@@ -147,9 +150,10 @@ export default class LMSEventTypesTable extends LMSTable {
             return;
         }
 
-        const response = await requestHandler.delete("eventTypes", undefined, [
-            id.toString(),
-        ]);
+        const response = await requestHandler.delete({
+            endpoint: "eventTypes",
+            path: [id.toString()],
+        });
         if (response.status >= 200 && response.status <= 299) {
             this.dispatchEvent(new CustomEvent("deleted", { detail: id }));
             return;
@@ -197,9 +201,9 @@ export default class LMSEventTypesTable extends LMSTable {
                 )
         );
 
-        this.confirmationModal.message = __(
-            "Are you sure you want to delete (This will delete all events with this event type): "
-        );
+        // this.confirmationModal.message = __(
+        //     "Are you sure you want to delete (This will delete all events with this event type): "
+        // );
     }
 
     override updated(changedProperties: Map<string, never>) {

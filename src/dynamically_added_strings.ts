@@ -27,3 +27,4 @@ __("status");
 __("registration_link");
 __("setting");
 __("value");
+__("Ctrl");

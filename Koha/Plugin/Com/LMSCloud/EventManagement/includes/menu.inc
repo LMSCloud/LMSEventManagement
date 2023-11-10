@@ -1,9 +1,6 @@
-[% base_url = "/cgi-bin/koha/plugins/run.pl" %]
+[% base_path = "/cgi-bin/koha/plugins/run.pl" %]
 
-<lms-event-management-menu
-  brand="LMSEventManagement"
-  logo='{"src":"/api/v1/contrib/eventmanagement/static/assets/lmscloud.webp","alt":"LMSCloud logo"}'
-  base-url="[% base_url %]"
-  plugin-class="[% CLASS %]"
->
+<lms-event-management-menu brand="LMSEventManagement" brand-href="https://github.com/LMSCloud/LMSEventManagement"
+    logo="/api/v1/contrib/eventmanagement/static/assets/lmscloud.webp" logo-href="https://lmscloud.de"
+    base-path="[% base_path %]" plugin-class="[% CLASS %]">
 </lms-event-management-menu>
