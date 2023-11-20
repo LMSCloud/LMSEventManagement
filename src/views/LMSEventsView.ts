@@ -83,7 +83,7 @@ export default class LMSEventsView extends LitElement {
         openRegistration ??= "true";
 
         this.queryBuilder.query = this.queryBuilder.merge({
-            _order_by: "start_time",
+            _order_by: orderBy,
             _page: page,
             _per_page: perPage,
             q,
@@ -172,7 +172,7 @@ export default class LMSEventsView extends LitElement {
         const { filters, q } = e.detail;
 
         this.queryBuilder.query = this.queryBuilder.merge(
-            filters.concat([["q", q]])
+            filters?.concat([["q", q]]) ?? {q}
         );
 
         requestHandler
