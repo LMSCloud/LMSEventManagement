@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-24 12:16+0200\n"
-"PO-Revision-Date: 2023-10-28 20:41+0200\n"
+"PO-Revision-Date: 2023-11-20 02:51+0100\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #: src/dynamically_added_strings.ts:8
 msgid "id"
@@ -25,7 +25,7 @@ msgstr "Nr."
 
 #: src/dynamically_added_strings.ts:9
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:85
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:149
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:75
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:85
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:74
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:75
@@ -37,7 +37,7 @@ msgstr "Name"
 
 #: src/dynamically_added_strings.ts:10 src/dynamically_added_strings.ts:18
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:99
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:163
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:89
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:98
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:87
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:83
@@ -47,7 +47,7 @@ msgstr "Mindestalter"
 
 #: src/dynamically_added_strings.ts:11 src/dynamically_added_strings.ts:19
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:90
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:154
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:80
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:90
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:79
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:91
@@ -95,14 +95,14 @@ msgstr "Veranstaltungstyp"
 
 #: src/dynamically_added_strings.ts:21
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:108
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:172
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:98
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:106
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:95
 msgid "max_participants"
 msgstr "Maximale Anzahl Teilnehmender"
 
-#: src/dynamically_added_strings.ts:22 src/views/StaffEventsView.ts:271
-#: src/views/StaffEventTypesView.ts:200
+#: src/dynamically_added_strings.ts:22 src/views/StaffEventsView.ts:295
+#: src/views/StaffEventTypesView.ts:173
 msgid "location"
 msgstr "Veranstaltungsort"
 
@@ -112,7 +112,7 @@ msgstr "Bild"
 
 #: src/dynamically_added_strings.ts:24
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:137
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:201
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:127
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:114
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:103
 msgid "description"
@@ -138,7 +138,23 @@ msgstr "Einstellung"
 msgid "value"
 msgstr "Wert"
 
-#: src/components/LMSConfirmationModal.ts:48 src/components/LMSTable.ts:722
+#: src/dynamically_added_strings.ts:30
+msgid "Ctrl"
+msgstr "Strg"
+
+#: src/components/LMSAbstractView.ts:322
+msgid "No matches found"
+msgstr "Keine Treffer gefunden"
+
+#: src/components/LMSAbstractView.ts:324
+msgid "Try refining your search."
+msgstr "Versuchen Sie, Ihre Suche zu verfeinern."
+
+#: src/components/LMSAbstractView.ts:331
+msgid "Help"
+msgstr "Hilfe"
+
+#: src/components/LMSConfirmationModal.ts:48 src/components/LMSTable.ts:591
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:486
 msgid "Abort"
 msgstr "Abbrechen"
@@ -156,7 +172,9 @@ msgid "Add"
 msgstr "Hinzufügen"
 
 #: src/components/LMSModal.ts:322
-#: src/components/custom/LMSCardDetailsModal.ts:455
+#: src/components/custom/LMSCardDetailsModal.ts:368
+#: src/components/custom/LMSCardDetailsModal.ts:575
+#: src/components/custom/LMSCardDetailsModal.ts:613
 #: src/components/custom/LMSImagePicker.ts:207
 #: src/components/custom/LMSPellEditor.ts:141
 msgid "Close"
@@ -166,85 +184,77 @@ msgstr "Schließen"
 msgid "Create"
 msgstr "Erstellen"
 
-#: src/components/LMSPagination.ts:151
+#: src/components/LMSOpenApiErrors.ts:118
+msgid "Go to plugins overview"
+msgstr "Zur Plugin-Übersicht"
+
+#: src/components/LMSOpenApiErrors.ts:157
+msgid "Reload without"
+msgstr "Neu laden ohne"
+
+#: src/components/LMSOpenApiErrors.ts:172
+msgid "Errors have occured"
+msgstr "Es sind Fehler aufgetreten"
+
+#: src/components/LMSPagination.ts:191
 msgid "Table navigation"
 msgstr "Tabellen-Navigation"
 
-#: src/components/LMSPagination.ts:157
+#: src/components/LMSPagination.ts:199
 msgid "Previous"
 msgstr "Zurück"
 
-#: src/components/LMSPagination.ts:180
+#: src/components/LMSPagination.ts:222
 msgid "Next"
 msgstr "Vor"
 
-#: src/components/LMSPagination.ts:190
-msgid "Loading"
-msgstr "Läd"
-
-#: src/components/LMSSearch.ts:250 src/components/LMSSearch.ts:251
+#: src/components/LMSSearch.ts:274 src/components/LMSSearch.ts:275
 msgid "Search"
 msgstr "Suche"
 
-#: src/components/LMSTable.ts:97 src/views/StaffLocationsView.ts:129
-#: src/views/StaffTargetGroupsView.ts:129
-msgid "No data to display"
-msgstr "Keine Daten vorhanden"
-
-#: src/components/LMSTable.ts:284
+#: src/components/LMSTable.ts:271
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:411
 msgid "Please confirm"
 msgstr "Bitte bestätigen Sie"
 
-#: src/components/LMSTable.ts:289
+#: src/components/LMSTable.ts:276
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:415
 msgid "Are you sure you want to delete: "
 msgstr "Sind Sie sich sicher, dass Sie Folgendes löschen möchten:"
 
-#: src/components/LMSTable.ts:290
+#: src/components/LMSTable.ts:277
 msgid "Are you sure you want to delete this entry?"
 msgstr "Sind Sie sich sicher, dass sie diesen Eintrag löschen möchten?"
 
-#: src/components/LMSTable.ts:387 src/components/custom/LMSImageBrowser.ts:130
+#: src/components/LMSTable.ts:374 src/components/custom/LMSImageBrowser.ts:130
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:259
 msgid "Path"
 msgstr "Pfad"
 
-#: src/components/LMSTable.ts:619
-#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:172
-msgid "No matches found"
-msgstr "Keine Treffer gefunden"
-
-#: src/components/LMSTable.ts:620
-#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:173
-msgid "Try refining your search."
-msgstr "Versuchen Sie, Ihre Suche zu verfeinern."
-
-#: src/components/LMSTable.ts:625
-#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:178
-msgid "Help"
-msgstr "Hilfe"
-
-#: src/components/LMSTable.ts:661
+#: src/components/LMSTable.ts:558
 msgid "actions"
 msgstr "Aktionen"
 
-#: src/components/LMSTable.ts:691 src/components/LMSTable.ts:706
+#: src/components/LMSTable.ts:572 src/components/LMSTable.ts:581
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:479
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: src/components/LMSTable.ts:733 src/components/LMSTable.ts:746
+#: src/components/LMSTable.ts:599 src/components/LMSTable.ts:605
 #: src/components/custom/LMSPellEditor.ts:147
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:498
 msgid "Save"
 msgstr "Speichern"
 
-#: src/components/LMSTable.ts:761 src/components/LMSTable.ts:774
-#: src/components/custom/LMSImageBrowser.ts:302
+#: src/components/LMSTable.ts:614 src/components/LMSTable.ts:620
+#: src/components/custom/LMSImageBrowser.ts:305
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:510
 msgid "Delete"
 msgstr "Löschen"
+
+#: src/components/LMSTable.ts:658
+msgid "Click to sort"
+msgstr "Klicken, um zu sortieren"
 
 #: src/components/LMSToast.ts:55
 msgid "sec ago"
@@ -401,34 +411,34 @@ msgstr ""
 "und rückwärtsgerichteter Trunkierung, d.h. *SUCHTERM*. Diese Option kann für "
 "umfängliche Suchen benutzt werden, in denen das Zielfeld unbekannt ist."
 
-#: src/extensions/LMSEventManagementMenu.ts:37
+#: src/extensions/LMSEventManagementMenu.ts:56
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/extensions/LMSEventManagementMenu.ts:43
+#: src/extensions/LMSEventManagementMenu.ts:63
 #: src/extensions/LMSEventsModal.ts:68 src/extensions/LMSEventTypesModal.ts:53
-#: src/components/custom/LMSCardDetailsModal.ts:405
+#: src/components/custom/LMSCardDetailsModal.ts:499
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:556
 #: src/lib/converters/InputConverter/inputs/Matrix.ts:37
 msgid "Target Groups"
 msgstr "Zielgruppen"
 
-#: src/extensions/LMSEventManagementMenu.ts:49
+#: src/extensions/LMSEventManagementMenu.ts:70
 msgid "Locations"
 msgstr "Veranstaltungsorte"
 
-#: src/extensions/LMSEventManagementMenu.ts:55
+#: src/extensions/LMSEventManagementMenu.ts:77
 msgid "Event Types"
 msgstr "Veranstaltungstypen"
 
-#: src/extensions/LMSEventManagementMenu.ts:61
+#: src/extensions/LMSEventManagementMenu.ts:84
 #: Koha/Plugin/Com/LMSCloud/EventManagement/views/opac/events.tt:8
+#: Koha/Plugin/Com/LMSCloud/EventManagement/views/opac/events.tt:26
 #: Koha/Plugin/Com/LMSCloud/EventManagement/views/opac/events.tt:31
-#: Koha/Plugin/Com/LMSCloud/EventManagement/views/opac/events.tt:37
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: src/extensions/LMSEventManagementMenu.ts:67
+#: src/extensions/LMSEventManagementMenu.ts:91
 msgid "Images"
 msgstr "Bilder"
 
@@ -453,7 +463,7 @@ msgstr "Name der Veranstaltung, bspw. ‘Konzert’ oder ‘Workshop’."
 
 #: src/extensions/LMSEventsModal.ts:74 src/extensions/LMSEventTypesModal.ts:60
 #: src/extensions/LMSTargetGroupsModal.ts:34
-#: src/components/custom/LMSEventsFilter.ts:478
+#: src/components/custom/LMSEventsFilter.ts:503
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:577
 msgid "Min Age"
 msgstr "Mindestalter"
@@ -464,7 +474,7 @@ msgstr "Minimalalter der Zielgruppe, bspw. ’18’."
 
 #: src/extensions/LMSEventsModal.ts:83 src/extensions/LMSEventTypesModal.ts:70
 #: src/extensions/LMSTargetGroupsModal.ts:44
-#: src/components/custom/LMSEventsFilter.ts:493
+#: src/components/custom/LMSEventsFilter.ts:518
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:583
 msgid "Max Age"
 msgstr "Maximalalter"
@@ -519,10 +529,10 @@ msgid "Registration end time, e.g. '2023-01-01 09:00'."
 msgstr "Ende der Registrierung, bspw. ‘2023-01-01 09:00’."
 
 #: src/extensions/LMSEventsModal.ts:137 src/extensions/LMSEventTypesModal.ts:90
-#: src/components/custom/LMSCardDetailsModal.ts:443
-#: src/components/custom/LMSEventsFilter.ts:563
+#: src/components/custom/LMSCardDetailsModal.ts:550
+#: src/components/custom/LMSEventsFilter.ts:451
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:666
-#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:238
+#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:244
 msgid "Location"
 msgstr "Veranstaltungsort"
 
@@ -537,7 +547,7 @@ msgstr "Bild-URL, bspw. ‘https://example.com/image.png’."
 
 #: src/extensions/LMSEventsModal.ts:152
 #: src/extensions/LMSEventTypesModal.ts:105
-#: src/components/custom/LMSCardDetailsModal.ts:362
+#: src/components/custom/LMSCardDetailsModal.ts:438
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:710
 msgid "Description"
 msgstr "Beschreibung"
@@ -562,28 +572,28 @@ msgstr "Registrierungslink, bspw. ‘https://example.com’."
 
 #: src/extensions/LMSEventsModal.ts:176
 #: src/extensions/LMSEventTypesModal.ts:115
-#: src/components/custom/LMSEventsFilter.ts:533
+#: src/components/custom/LMSEventsFilter.ts:558
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:702
 msgid "Open Registration"
 msgstr "Offene Registrierung"
 
 #: src/extensions/LMSEventsModal.ts:195
-#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:112
+#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:105
 msgid "pending"
 msgstr "Ausstehend"
 
 #: src/extensions/LMSEventsModal.ts:196
-#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:113
+#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:106
 msgid "confirmed"
 msgstr "Bestätigt"
 
 #: src/extensions/LMSEventsModal.ts:197
-#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:114
+#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:107
 msgid "canceled"
 msgstr "Abgesagt"
 
 #: src/extensions/LMSEventsModal.ts:198
-#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:115
+#: src/components/LMSStaffEventCard/LMSStaffEventCardDeck.ts:108
 msgid "sold_out"
 msgstr "Ausverkauft"
 
@@ -606,14 +616,6 @@ msgstr "Bild-URL"
 #: src/extensions/LMSEventTypesModal.ts:107
 msgid "Description of the event type, e.g. 'This is a workshop.'"
 msgstr "Beschreibung des Veranstaltungstyps, bspw. ‘Dies ist ein Workshop.’"
-
-#: src/extensions/LMSEventTypesTable.ts:201
-msgid ""
-"Are you sure you want to delete (This will delete all events with this event "
-"type): "
-msgstr ""
-"Sind Sie sich sicher, dass Sie Folgendes löschen möchten (Alle "
-"Veranstaltungen dieses Veranstaltungstyps werden gelöscht): "
 
 #: src/extensions/LMSLocationsModal.ts:19
 msgid "Create Location"
@@ -691,166 +693,181 @@ msgstr "Mindestalter der Zielgruppe, bspw. ’18’."
 msgid "Maximum age of the target group, e.g. '99'."
 msgstr "Maximalalter der Zielgruppe, bspw. ’99’."
 
-#: src/views/LMSEventsView.ts:272
-msgid "There are no events to display"
-msgstr "Es sind keine Veranstaltungen vorhanden, die angezeigt werden könnten"
-
-#: src/views/LMSEventsView.ts:335
+#: src/views/LMSEventsView.ts:316
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:45
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:70
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:144
 msgid "Location not found"
 msgstr "Veranstaltungsort nicht gefunden"
 
-#: src/views/LMSEventsView.ts:378
+#: src/views/LMSEventsView.ts:380
+msgid "There are no events to display"
+msgstr "Es sind keine Veranstaltungen vorhanden, die angezeigt werden könnten"
+
+#: src/views/LMSEventsView.ts:411
 msgid "You've reached the end"
 msgstr "Sie haben das Ende erreicht"
 
-#: src/views/LMSEventsView.ts:384
+#: src/views/LMSEventsView.ts:419
 msgid "Load more"
 msgstr "Mehr anzeigen"
 
-#: src/views/StaffEventsView.ts:240
-msgid "You can add a new event by clicking on the + button below"
-msgstr "Sie können eine neue Veranstaltung über den + Button hinzufügen"
+#: src/views/LMSEventsView.ts:428
+#: src/components/custom/LMSCardDetailsModal.ts:600
+#: src/lib/converters/datetimeConverters.ts:80
+#: src/lib/converters/displayConverters.ts:44
+msgid "There's been an error"
+msgstr "Es ist ein Fehler aufgetreten"
 
-#: src/views/StaffEventsView.ts:252 src/views/StaffEventTypesView.ts:181
+#: src/views/StaffEventsView.ts:276 src/views/StaffEventTypesView.ts:154
 msgid "You have to create a"
 msgstr "Sie müssen zuerst eine"
 
-#: src/views/StaffEventsView.ts:261 src/views/StaffEventTypesView.ts:190
+#: src/views/StaffEventsView.ts:285 src/views/StaffEventTypesView.ts:163
 msgid "target group"
 msgstr "Zielgruppe"
 
-#: src/views/StaffEventsView.ts:262
+#: src/views/StaffEventsView.ts:286
 msgid "a"
 msgstr "einen"
 
-#: src/views/StaffEventsView.ts:273
+#: src/views/StaffEventsView.ts:297
 msgid "and an"
 msgstr "und einen"
 
-#: src/views/StaffEventsView.ts:282
+#: src/views/StaffEventsView.ts:306
 msgid "event type"
 msgstr "Veranstaltungstyp"
 
-#: src/views/StaffEventsView.ts:284 src/views/StaffEventTypesView.ts:202
+#: src/views/StaffEventsView.ts:308 src/views/StaffEventTypesView.ts:175
 msgid "first"
 msgstr "erstellen"
 
-#: src/views/StaffEventTypesView.ts:171
-msgid "You can add a new event type by clicking the + button below"
-msgstr "Sie können einen neuen Veranstaltungstyp über den + Button hinzufügen"
+#: src/views/StaffEventsView.ts:317
+msgid "You can add a new event by clicking on the + button below"
+msgstr "Sie können eine neue Veranstaltung über den + Button hinzufügen"
 
-#: src/views/StaffEventTypesView.ts:191
+#: src/views/StaffEventTypesView.ts:164
 msgid "and a"
 msgstr "und einen"
 
-#: src/views/StaffSettingsView.ts:50
+#: src/views/StaffEventTypesView.ts:183
+msgid "You can add a new event type by clicking the + button below"
+msgstr "Sie können einen neuen Veranstaltungstyp über den + Button hinzufügen"
+
+#: src/views/StaffLocationsView.ts:121 src/views/StaffTargetGroupsView.ts:121
+msgid "No data to display"
+msgstr "Keine Daten vorhanden"
+
+#: src/views/StaffSettingsView.ts:90
 msgid "No settings found"
 msgstr "Keine Einstellungen gefunden"
 
-#: src/components/custom/LMSCardDetailsModal.ts:287
+#: src/components/custom/LMSCardDetailsModal.ts:303
 msgid "Directions to the venue by"
 msgstr "Wegbeschreibung zum Veranstaltungsort durch"
 
-#: src/components/custom/LMSCardDetailsModal.ts:344
+#: src/components/custom/LMSCardDetailsModal.ts:348
+msgid "Loading Details..."
+msgstr "Lade Details..."
+
+#: src/components/custom/LMSCardDetailsModal.ts:410
 msgid "Date and Time"
 msgstr "Datum und Uhrzeit"
 
-#: src/components/custom/LMSCardDetailsModal.ts:389
+#: src/components/custom/LMSCardDetailsModal.ts:476
 msgid "Fees"
 msgstr "Teilnahmegebühren"
 
-#: src/components/custom/LMSCardDetailsModal.ts:397
+#: src/components/custom/LMSCardDetailsModal.ts:485
 msgid "No fees"
 msgstr "Keine"
 
-#: src/components/custom/LMSCardDetailsModal.ts:422
-#: src/components/custom/LMSEventsFilter.ts:430
+#: src/components/custom/LMSCardDetailsModal.ts:520
+#: src/components/custom/LMSEventsFilter.ts:411
 msgid "Target Group"
 msgstr "Zielgruppe"
 
-#: src/components/custom/LMSCardDetailsModal.ts:423
+#: src/components/custom/LMSCardDetailsModal.ts:524
 msgid "Age Range"
 msgstr "Altersspanne"
 
-#: src/components/custom/LMSCardDetailsModal.ts:424
-#: src/components/custom/LMSEventsFilter.ts:597
-#: src/components/custom/LMSEventsFilter.ts:611
+#: src/components/custom/LMSCardDetailsModal.ts:526
+#: src/components/custom/LMSEventsFilter.ts:588
+#: src/components/custom/LMSEventsFilter.ts:602
 msgid "Fee"
 msgstr "Teilnahmegebühr"
 
-#: src/components/custom/LMSCardDetailsModal.ts:463
+#: src/components/custom/LMSCardDetailsModal.ts:587
 msgid "Register"
 msgstr "Registrieren"
 
-#: src/components/custom/LMSEventsFilter.ts:353
+#: src/components/custom/LMSEventsFilter.ts:329
 msgid "Filter"
 msgstr "Filtern"
 
-#: src/components/custom/LMSEventsFilter.ts:363
-#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:149
+#: src/components/custom/LMSEventsFilter.ts:339
+#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:153
 msgid "Sort by"
 msgstr "Sortieren nach"
 
-#: src/components/custom/LMSEventsFilter.ts:395
+#: src/components/custom/LMSEventsFilter.ts:371
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:547
 msgid "Event Type"
 msgstr "Veranstaltungstyp"
 
-#: src/components/custom/LMSEventsFilter.ts:465
+#: src/components/custom/LMSEventsFilter.ts:490
 msgid "Age"
 msgstr "Altersspanne"
 
-#: src/components/custom/LMSEventsFilter.ts:509
+#: src/components/custom/LMSEventsFilter.ts:534
 msgid "Registration & Dates"
 msgstr "Registrierung und Zeiten"
 
-#: src/components/custom/LMSEventsFilter.ts:540
+#: src/components/custom/LMSEventsFilter.ts:565
 msgid "Start Date"
 msgstr "Von"
 
-#: src/components/custom/LMSEventsFilter.ts:551
+#: src/components/custom/LMSEventsFilter.ts:576
 msgid "End Date"
 msgstr "Bis"
 
-#: src/components/custom/LMSEventsFilter.ts:642
-#: src/components/custom/LMSEventsFilter.ts:646
+#: src/components/custom/LMSEventsFilter.ts:633
+#: src/components/custom/LMSEventsFilter.ts:637
 msgid "Show filters"
 msgstr "Filter anzeigen"
 
-#: src/components/custom/LMSEventsFilter.ts:643
-#: src/components/custom/LMSEventsFilter.ts:647
+#: src/components/custom/LMSEventsFilter.ts:634
+#: src/components/custom/LMSEventsFilter.ts:638
 msgid "Hide filters"
 msgstr "Filter ausblenden"
 
-#: src/components/custom/LMSEventsFilter.ts:656
-#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:303
+#: src/components/custom/LMSEventsFilter.ts:647
+#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:312
 msgid "Reset filters"
 msgstr "Filter zurücksetzen"
 
-#: src/components/custom/LMSImageBrowser.ts:236
+#: src/components/custom/LMSImageBrowser.ts:239
 msgid "Select images"
 msgstr "Bilder auswählen"
 
-#: src/components/custom/LMSImageBrowser.ts:245
+#: src/components/custom/LMSImageBrowser.ts:248
 msgid "or drag and drop"
 msgstr "oder ziehen Sie sie aus dem Datei-Explorer"
 
-#: src/components/custom/LMSImageBrowser.ts:248
+#: src/components/custom/LMSImageBrowser.ts:251
 msgid "up to"
 msgstr "bis zu"
 
-#: src/components/custom/LMSImageBrowser.ts:284
+#: src/components/custom/LMSImageBrowser.ts:287
 msgid "Link constructed!"
 msgstr "Link konstruiert!"
 
-#: src/components/custom/LMSImageBrowser.ts:308
+#: src/components/custom/LMSImageBrowser.ts:311
 msgid "Link constructed"
 msgstr "Link konstruiert"
 
-#: src/components/custom/LMSImageBrowser.ts:328
+#: src/components/custom/LMSImageBrowser.ts:331
 msgid "Copy to clipboard"
 msgstr "In die Zwischenablage kopieren"
 
@@ -914,34 +931,29 @@ msgstr "Warteliste"
 msgid "Preview"
 msgstr "Vorschau"
 
-#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:180
+#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:184
 msgid "Event type"
 msgstr "Veranstaltungstyp"
 
-#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:209
+#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:214
 msgid "Target group"
 msgstr "Zielgruppe"
 
-#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:268
+#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:275
 msgid "Show events from"
 msgstr "Zeige Events ab"
 
-#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:280
+#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:289
 msgid "Now on"
 msgstr "Jetzt"
 
-#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:286
+#: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:295
 msgid "Custom date"
 msgstr "folgendem Datum"
 
 #: src/lib/converters/datetimeConverters.ts:35
 msgid "Error: Invalid date"
 msgstr "Fehler: Ungültiges Datum"
-
-#: src/lib/converters/datetimeConverters.ts:80
-#: src/lib/converters/displayConverters.ts:44
-msgid "There's been an error"
-msgstr "Es ist ein Fehler aufgetreten"
 
 #: src/lib/converters/InputConverter/InputConverter.ts:124
 msgid "Pending"
@@ -1014,32 +1026,32 @@ msgstr "Speichern der Datei in der Datenbank fehlgeschlagen"
 
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:52
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:80
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:214
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:216
 msgid "Event not found"
 msgstr "Veranstaltung nicht gefunden"
 
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:117
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:181
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:107
 msgid "start_time"
 msgstr "Veranstaltungsbeginn"
 
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:122
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:186
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:112
 msgid "end_time"
 msgstr "Veranstaltungsende"
 
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:127
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:191
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:117
 msgid "registration_start"
 msgstr "Registrierungsstart"
 
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:132
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:196
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:122
 msgid "registration_end"
 msgstr "Registrierungsende"
 
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:161
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:225
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:151
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:137
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:126
 msgid "At least one target group must be selected."
@@ -1147,9 +1159,19 @@ msgstr "Online"
 msgid "catalog"
 msgstr "Katalog"
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/views/opac/events.tt:28
+#: Koha/Plugin/Com/LMSCloud/EventManagement/views/opac/events.tt:23
 msgid "Home"
 msgstr "Start"
+
+#~ msgid "Loading"
+#~ msgstr "Läd"
+
+#~ msgid ""
+#~ "Are you sure you want to delete (This will delete all events with this "
+#~ "event type): "
+#~ msgstr ""
+#~ "Sind Sie sich sicher, dass Sie Folgendes löschen möchten (Alle "
+#~ "Veranstaltungen dieses Veranstaltungstyps werden gelöscht): "
 
 #, fuzzy
 #~ msgid "Reset Filters"
