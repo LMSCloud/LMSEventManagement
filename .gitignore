@@ -9,7 +9,7 @@ pnpm-lock.yaml
 p-kpz
 kpt
 TO-DO.md
-script.log
+tailwind.lit.log
 *.cache.json
 
 .DS_Store

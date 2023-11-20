@@ -11,12 +11,19 @@ export const skeletonStyles = css`
         width: 100%;
         height: 1em;
         margin-bottom: 0.25rem;
-        border-radius: 5px;
+        border-radius: 0.5rem;
     }
 
     .skeleton-text:last-child {
         margin-bottom: 0;
         width: 80%;
+    }
+
+    .skeleton-floating-menu {
+        width: 100%;
+        height: 5.75rem;
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
     }
 
     .skeleton-table {
@@ -27,14 +34,13 @@ export const skeletonStyles = css`
         border-collapse: collapse;
         border-spacing: 0;
         border: 1px solid #dee2e6;
-        border-radius: 5px;
+        border-radius: 0.5rem;
     }
 
     .skeleton-card {
-        margin: 1rem;
         height: 20rem;
         border: 1px solid #dee2e6;
-        border-radius: 0.25rem;
+        border-radius: 0.5rem;
     }
 
     @keyframes skeleton-loading {

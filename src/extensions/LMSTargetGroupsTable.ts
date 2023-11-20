@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
-import { requestHandler } from "../lib/RequestHandler";
+import { requestHandler } from "../lib/RequestHandler/RequestHandler";
 import { Input, LMSTargetGroup } from "../types/common";
 
 @customElement("lms-target-groups-table")
@@ -10,37 +10,32 @@ export default class LMSEventTypesTable extends LMSTable {
     override async handleSave(e: Event) {
         const target = e.target as HTMLElement;
 
-        let parent = target.parentElement;
-        while (parent && parent.tagName !== "TR") {
-            parent = parent.parentElement;
-        }
-
-        let id,
-            inputs = undefined;
-        if (parent) {
-            id = parent.firstElementChild?.textContent?.trim();
-            inputs = parent.querySelectorAll("input");
-        }
-
+        const parent = target.closest("tr");
+        const id = parent?.firstElementChild?.textContent?.trim();
+        const inputs = parent?.querySelectorAll("input");
         if (!id || !inputs) {
             return;
         }
 
-        const response = await requestHandler.put(
-            "targetGroups",
-            {
-                ...Array.from(inputs).reduce(
-                    (acc: { [key: string]: number | string }, input: Input) => {
-                        acc[input.name] = input.value;
-                        return acc;
-                    },
-                    {}
-                ),
+        const response = await requestHandler.put({
+            endpoint: "targetGroups",
+            path: [id.toString()],
+            requestInit: {
+                body: JSON.stringify({
+                    ...Array.from(inputs).reduce(
+                        (
+                            acc: { [key: string]: number | string },
+                            input: Input
+                        ) => {
+                            acc[input.name] = input.value;
+                            return acc;
+                        },
+                        {}
+                    ),
+                }),
             },
-            undefined,
-            [id.toString()]
-        );
-        if (response.status >= 200 && response.status <= 299) {
+        });
+        if (response.ok) {
             inputs.forEach((input) => {
                 input.disabled = true;
             });
@@ -53,7 +48,7 @@ export default class LMSEventTypesTable extends LMSTable {
             return;
         }
 
-        if (response.status >= 400) {
+        if (!response.ok) {
             const error = await response.json();
             this.renderToast(response.statusText, error);
         }
@@ -67,31 +62,21 @@ export default class LMSEventTypesTable extends LMSTable {
             target = e.target as HTMLElement;
         }
 
-        let parent = target.parentElement;
-        while (parent && parent.tagName !== "TR") {
-            parent = parent.parentElement;
-        }
-
-        let id = undefined;
-        if (parent) {
-            id = parent.firstElementChild?.textContent?.trim();
-        }
-
+        const id = target.closest("tr")?.firstElementChild?.textContent?.trim();
         if (!id) {
             return;
         }
 
-        const response = await requestHandler.delete(
-            "targetGroups",
-            undefined,
-            [id.toString()]
-        );
-        if (response.status >= 200 && response.status <= 299) {
+        const response = await requestHandler.delete({
+            endpoint: "targetGroups",
+            path: [id.toString()],
+        });
+        if (response.ok) {
             this.dispatchEvent(new CustomEvent("deleted", { detail: id }));
             return;
         }
 
-        if (response.status >= 400) {
+        if (!response.ok) {
             const error = await response.json();
             this.renderToast(response.statusText, error);
         }

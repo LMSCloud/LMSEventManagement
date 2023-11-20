@@ -35,7 +35,7 @@ const logger = createLogger({
   ),
   transports: [
     new transports.Console(),
-    new transports.File({ filename: "script.log" }),
+    new transports.File({ filename: "tailwind.lit.log" }),
   ],
 });
 
@@ -121,46 +121,16 @@ try {
   logger.info(chalk.green("Tailwind CSS generated successfully!"));
 
   // Wrap the generated CSS in a template literal
-  let cleanContents;
+  let cleanContents = tailwindCSS.toString();
 
   // Replace backticks inside the CSSResult
-  cleanContents = tailwindCSS.replace(/`/g, "");
+  cleanContents = cleanContents.replaceAll("`", "");
 
-  // Replace \: with \\: to properly escape colons in JavaScript
-  cleanContents = cleanContents.replace(/\\:/g, "\\\\:");
+  // Escape all double escaped chars
+  cleanContents = cleanContents.replaceAll("\\", "\\\\");
 
-  // Replace \! with \\! to properly escape exclamation points in JavaScript
-  cleanContents = cleanContents.replace(/\\!/g, "\\\\!");
-
-  // Replace \/ with \\/ to properly escape forward slashes in JavaScript
-  cleanContents = cleanContents.replace(/\\\//g, "\\\\/");
-
-  // Replace \# with \\# to properly escape hashes in JavaScript
-  cleanContents = cleanContents.replace(/\\#/g, "\\\\#");
-
-  // Replace \. with \\. to properly escape periods in JavaScript
-  cleanContents = cleanContents.replace(/\\\./g, "\\\\.");
-
-  // Replace \[ with \\[ to properly escape opening brackets in JavaScript
-  cleanContents = cleanContents.replace(/\\\[/g, "\\\\[");
-
-  // Replace \] with \\] to properly escape closing brackets in JavaScript
-  cleanContents = cleanContents.replace(/\\\]/g, "\\\\]");
-
-  // Replace \( with \\( to properly escape opening parentheses in JavaScript
-  cleanContents = cleanContents.replace(/\\\(/g, "\\\\\(");
-
-  // Replace \) with \\) to properly escape closing parentheses in JavaScript
-  cleanContents = cleanContents.replace(/\\\)/g, "\\\\\)");
-
-  // Replace \- with \\- to properly escape hyphens in JavaScript
-  cleanContents = cleanContents.replace(/\\-/g, "\\\\-");
-
-  // Replace \-- with \\-- to properly escape CSS variable syntax in JavaScript
-  cleanContents = cleanContents.replace(/\\--/g, "\\\\--");
-
-  // Replace :root with :host to scope the CSS to the component
-  cleanContents = cleanContents.replace(/:root/g, ":host");
+  // Replace references to :root w/ :host as there's no :root in lit
+  cleanContents = cleanContents.replaceAll(":root", ":host");
 
   const litContents = `
     import { css } from "lit";
@@ -194,8 +164,9 @@ if (options.watch) {
       logger.info(chalk.yellow("Processing file change..."));
       const contents = fs.readFileSync(outputPath, "utf8");
 
-      let cleanContents = contents.replace(/`/g, "");
-      cleanContents = cleanContents.replace(/\\/g, "\\\\");
+      let cleanContents = contents.replaceAll("`", "");
+      cleanContents = cleanContents.replace("\\", "\\\\");
+      cleanContents = cleanContents.replace(":root", ":host");
 
       const litContents = `
         import { css } from "lit";

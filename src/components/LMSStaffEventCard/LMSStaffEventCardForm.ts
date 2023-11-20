@@ -6,7 +6,7 @@ import {
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { html, LitElement, PropertyValueMap, TemplateResult } from "lit";
+import { LitElement, PropertyValueMap, TemplateResult, html } from "lit";
 import {
     customElement,
     property,
@@ -14,11 +14,11 @@ import {
     queryAll,
     state,
 } from "lit/decorators.js";
-import { convertToISO8601 } from "../../lib/converters/datetimeConverters";
-import { InputConverter } from "../../lib/converters/InputConverter/InputConverter";
 import { InputsSnapshot } from "../../lib/InputsSnapshot";
-import { requestHandler } from "../../lib/RequestHandler";
-import { attr__, __ } from "../../lib/translate";
+import { requestHandler } from "../../lib/RequestHandler/RequestHandler";
+import { InputConverter } from "../../lib/converters/InputConverter/InputConverter";
+import { convertToISO8601 } from "../../lib/converters/datetimeConverters";
+import { __, attr__ } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
 import { tailwindStyles } from "../../tailwind.lit";
@@ -323,12 +323,11 @@ export default class LMSStaffEventCardForm extends LitElement {
         requestBody["target_groups"] = Object.values(target_groups);
         requestBody["open_registration"] = openRegistration;
 
-        const response = await requestHandler.put(
-            "events",
-            requestBody,
-            undefined,
-            [this.event.id.toString()]
-        );
+        const response = await requestHandler.put({
+            endpoint: "events",
+            path: [this.event.id.toString()],
+            requestInit: { body: requestBody.toString() },
+        });
         if (response.ok) {
             target
                 ?.querySelectorAll("input, select, textarea")
@@ -368,9 +367,10 @@ export default class LMSStaffEventCardForm extends LitElement {
             return;
         }
 
-        const response = await requestHandler.delete("events", undefined, [
-            this.event.id.toString(),
-        ]);
+        const response = await requestHandler.delete({
+            endpoint: "events",
+            path: [this.event.id.toString()],
+        });
         if (response.status >= 200 && response.status <= 299) {
             this.dispatchEvent(
                 new CustomEvent("deleted", {

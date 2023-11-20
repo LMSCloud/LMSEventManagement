@@ -7,7 +7,7 @@ import {
     faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { html, LitElement } from "lit";
+import { LitElement, html } from "lit";
 import {
     customElement,
     property,
@@ -15,10 +15,11 @@ import {
     queryAll,
     state,
 } from "lit/decorators.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 import { map } from "lit/directives/map.js";
 import { repeat } from "lit/directives/repeat.js";
 import { normalizeForInput } from "../../lib/converters/datetimeConverters";
-import { attr__, __ } from "../../lib/translate";
+import { __, attr__ } from "../../lib/translate";
 import { utilityStyles } from "../../styles/utilities";
 import { tailwindStyles } from "../../tailwind.lit";
 import {
@@ -39,7 +40,9 @@ declare global {
 
 @customElement("lms-staff-events-filter")
 export default class LMSStaffEventsFilter extends LitElement {
-    @property({ type: Array }) sortableColumns: SortableColumns = ["id"];
+    @property({ type: Array }) sortableColumns: Array<any> | SortableColumns = [
+        "id",
+    ];
 
     @property({ type: Array }) event_types: LMSEventType[] = [];
 
@@ -47,7 +50,7 @@ export default class LMSStaffEventsFilter extends LitElement {
 
     @property({ type: Array }) locations: LMSLocation[] = [];
 
-    @property({ type: Object }) start_time: string | undefined;
+    @property({ type: String }) start_time?: string;
 
     @state() isXs = window.matchMedia("(max-width: 640px)").matches;
 
@@ -273,7 +276,9 @@ export default class LMSStaffEventsFilter extends LitElement {
                         .icon=${litFontawesome(faClock, {
                             className: "h-4 w-4 inline-block",
                         })}
-                        .position=${this.isXs ? ["end", "bottom"] : []}
+                        .position=${this.isXs
+                            ? ["end", "bottom"]
+                            : ["start", "bottom"]}
                     >
                         <div class="join">
                             <button
@@ -293,7 +298,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                                 <input
                                     type="datetime-local"
                                     class="input input-bordered"
-                                    value=${this.start_time}
+                                    value=${ifDefined(this.start_time)}
                                     name="start_time"
                                     id="start_time"
                                 />

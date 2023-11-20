@@ -5,7 +5,7 @@ import {
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { css, html, LitElement, nothing, PropertyValueMap } from "lit";
+import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import {
     customElement,
     property,
@@ -16,12 +16,11 @@ import {
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { repeat } from "lit/directives/repeat.js";
-import { searchSyntax } from "../docs/searchSyntax";
-import { InputConverter } from "../lib/converters/InputConverter/InputConverter";
 import { InputsSnapshot } from "../lib/InputsSnapshot";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
-import { QueryBuilder } from "../lib/QueryBuilder";
-import { attr__, __ } from "../lib/translate";
+import { QueryBuilder } from "../lib/URLStateHandler/QueryBuilder";
+import { InputConverter } from "../lib/converters/InputConverter/InputConverter";
+import { __, attr__ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { utilityStyles } from "../styles/utilities";
 import { tailwindStyles } from "../tailwind.lit";
@@ -59,23 +58,13 @@ export default class LMSTable extends LitElement {
 
     @property({ type: Array }) order: string[] = [];
 
-    @property({ type: Array }) private headers: string[] = [];
+    @property({ type: Array }) headers: string[] = [];
 
-    @property({ type: Boolean, attribute: "is-editable" })
-    protected isEditable = false;
+    @property({ type: Boolean, attribute: "is-editable" }) isEditable = false;
 
-    @property({ type: Boolean, attribute: "is-deletable" })
-    protected isDeletable = false;
+    @property({ type: Boolean, attribute: "is-deletable" }) isDeletable = false;
 
     @property({ type: Object }) queryBuilder?: QueryBuilder;
-
-    @property({ type: Array }) nextPage: Column[] | undefined = undefined;
-
-    @property({ type: Boolean }) hasNoResults = false;
-
-    @property({ type: Number }) _page = 1;
-
-    @property({ type: Number }) _per_page = 20;
 
     @state() toast: Toast = {
         heading: "",
@@ -93,8 +82,6 @@ export default class LMSTable extends LitElement {
     @query("table") table!: HTMLTableElement;
 
     @query("lms-confirmation-modal") confirmationModal!: LMSConfirmationModal;
-
-    protected emptyTableMessage = html`${__("No data to display")}.`;
 
     protected sortableColumns: SortableColumns = ["id"];
 
@@ -552,7 +539,7 @@ export default class LMSTable extends LitElement {
         this.dispatchEvent(
             new CustomEvent("sort", {
                 detail: {
-                    _order_by: name,
+                    orderBy: name,
                 },
                 bubbles: true,
                 composed: true,
@@ -560,37 +547,89 @@ export default class LMSTable extends LitElement {
         );
     }
 
-    private handleSearch(e: CustomEvent) {
-        const { detail } = e;
-        this.dispatchEvent(
-            new CustomEvent("search", {
-                detail,
-                composed: true,
-                bubbles: true,
-            })
-        );
-    }
-
-    private toggleDoc(e: MouseEvent) {
-        const target = e.target as HTMLElement;
-        const doc = target.nextElementSibling;
-        if (!doc) {
-            return;
-        }
-
-        doc.classList.toggle("hidden");
-    }
-
     override disconnectedCallback() {
         super.disconnectedCallback();
         this.intersectionObserverHandler?.destroy();
     }
 
-    override render() {
-        if (!this.data.length) {
-            html`<h1 class="text-center">${this.emptyTableMessage}</h1>`;
-        }
+    private renderActionHeaderMaybe() {
+        return this.isEditable
+            ? html`<th class="text-center text-base font-medium">
+                  ${__("actions")}
+              </th>`
+            : nothing;
+    }
 
+    private renderActionButtonsMaybe() {
+        return this.isEditable
+            ? html`
+                  <td class="p-0 text-center">
+                      <div class="join !flex">
+                          <button
+                              @click=${this.toggleEdit}
+                              type="button"
+                              class="btn-edit btn join-item flex-1 rounded-none"
+                              aria-label=${attr__("Edit")}
+                          >
+                              <span
+                                  class="start-edit pointer-events-none flex gap-2"
+                                  >${litFontawesome(faEdit, {
+                                      className:
+                                          "w-4 h-4 inline-block sm:hidden",
+                                  })}
+                                  <span class="hidden sm:inline"
+                                      >${__("Edit")}</span
+                                  ></span
+                              >
+                              <span
+                                  class="abort-edit pointer-events-none hidden gap-2"
+                                  >${litFontawesome(faTimes, {
+                                      className:
+                                          "w-4 h-4 inline-block sm:hidden",
+                                  })}
+                                  <span class="hidden sm:inline"
+                                      >${__("Abort")}</span
+                                  ></span
+                              >
+                          </button>
+                          <button
+                              @click=${this.handleSave}
+                              type="button"
+                              class="btn join-item flex-1 rounded-none"
+                              aria-label=${attr__("Save")}
+                          >
+                              ${litFontawesome(faSave, {
+                                  className: "w-4 h-4 inline-block sm:hidden",
+                              })}
+                              <span class="hidden sm:inline"
+                                  >${__("Save")}</span
+                              >
+                          </button>
+                          <button
+                              @click=${this.handleConfirm}
+                              type="button"
+                              class="${classMap({
+                                  hidden: !this.isDeletable,
+                              })} btn join-item flex-1 rounded-none"
+                              aria-label=${attr__("Delete")}
+                          >
+                              ${litFontawesome(faTrash, {
+                                  className: "w-4 h-4 inline-block sm:hidden",
+                              })}
+                              <span class="hidden sm:inline"
+                                  >${__("Delete")}</span
+                              >
+                          </button>
+                          <lms-confirmation-modal
+                              @confirm=${this.handleDelete}
+                          ></lms-confirmation-modal>
+                      </div>
+                  </td>
+              `
+            : nothing;
+    }
+
+    override render() {
         return html`
             <div class="mx-4">
                 <lms-data-navbar
@@ -600,67 +639,35 @@ export default class LMSTable extends LitElement {
                 >
                     <lms-search
                         slot="navbar-center"
-                        @search=${this.handleSearch}
                         .sortableColumns=${this.sortableColumns}
                     ></lms-search>
-                    <lms-pagination
-                        slot="navbar-end"
-                        .nextPage=${this.nextPage}
-                        ._page=${this._page}
-                        ._per_page=${this._per_page}
-                    ></lms-pagination>
+                    <lms-pagination slot="navbar-end"></lms-pagination>
                 </lms-data-navbar>
-                <div
-                    class="${classMap({
-                        hidden: !this.hasNoResults,
-                    })} alert alert-info"
-                    role="alert"
-                >
-                    <h4>${__("No matches found")}.</h4>
-                    <p>${__("Try refining your search.")}</p>
-                    <button
-                        class="btn btn-accent btn-outline"
-                        @click=${this.toggleDoc}
-                    >
-                        ${__("Help")}
-                    </button>
-                    <div class="hidden text-left">
-                        <hr />
-                        ${searchSyntax}
-                    </div>
-                </div>
                 <div class="overflow-x-auto overflow-y-clip">
                     <table
                         class="${classMap({
-                            hidden: this.hasNoResults,
+                            hidden: !this.data.length,
                         })} table table-lg bg-base-100"
                     >
                         <thead>
                             <tr>
-                                ${map(this.headers, (key) => {
-                                    if (!this.sortableColumns.includes(key)) {
-                                        return html`<th
-                                            class="text-center text-base font-medium"
-                                        >
-                                            ${__(key)}
-                                        </th>`;
-                                    }
-
-                                    return html`<th
-                                        class="text-center text-base font-medium"
-                                        data-name=${key}
-                                        @click=${this.handleSortChange}
-                                    >
-                                        ${__(key)}
-                                    </th>`;
-                                })}
-                                ${this.isEditable
-                                    ? html`<th
-                                          class="text-center text-base font-medium"
-                                      >
-                                          ${__("actions")}
-                                      </th>`
-                                    : nothing}
+                                ${map(this.headers, (key) =>
+                                    this.sortableColumns.includes(key)
+                                        ? html`<th
+                                              class="cursor-pointer text-center text-base font-medium"
+                                              title=${attr__("Click to sort")}
+                                              data-name=${key}
+                                              @click=${this.handleSortChange}
+                                          >
+                                              ${__(key)}
+                                          </th>`
+                                        : html`<th
+                                              class="text-center text-base font-medium"
+                                          >
+                                              ${__(key)}
+                                          </th>`
+                                )}
+                                ${this.renderActionHeaderMaybe()}
                             </tr>
                         </thead>
                         <tbody>
@@ -678,111 +685,7 @@ export default class LMSTable extends LitElement {
                                                     ${datum[header]}
                                                 </td>`
                                         )}
-                                        ${this.isEditable
-                                            ? html`
-                                                  <td class="p-0 text-center">
-                                                      <div class="join !flex">
-                                                          <button
-                                                              @click=${this
-                                                                  .toggleEdit}
-                                                              type="button"
-                                                              class="btn-edit btn join-item flex-1 rounded-none"
-                                                              aria-label=${attr__(
-                                                                  "Edit"
-                                                              )}
-                                                          >
-                                                              <span
-                                                                  class="start-edit pointer-events-none flex gap-2"
-                                                                  >${litFontawesome(
-                                                                      faEdit,
-                                                                      {
-                                                                          className:
-                                                                              "w-4 h-4 inline-block sm:hidden",
-                                                                      }
-                                                                  )}
-                                                                  <span
-                                                                      class="hidden sm:inline"
-                                                                      >${__(
-                                                                          "Edit"
-                                                                      )}</span
-                                                                  ></span
-                                                              >
-                                                              <span
-                                                                  class="abort-edit pointer-events-none flex hidden gap-2"
-                                                                  >${litFontawesome(
-                                                                      faTimes,
-                                                                      {
-                                                                          className:
-                                                                              "w-4 h-4 inline-block sm:hidden",
-                                                                      }
-                                                                  )}
-                                                                  <span
-                                                                      class="hidden sm:inline"
-                                                                      >${__(
-                                                                          "Abort"
-                                                                      )}</span
-                                                                  ></span
-                                                              >
-                                                          </button>
-                                                          <button
-                                                              @click=${this
-                                                                  .handleSave}
-                                                              type="button"
-                                                              class="btn join-item flex-1 rounded-none"
-                                                              aria-label=${attr__(
-                                                                  "Save"
-                                                              )}
-                                                          >
-                                                              ${litFontawesome(
-                                                                  faSave,
-                                                                  {
-                                                                      className:
-                                                                          "w-4 h-4 inline-block sm:hidden",
-                                                                  }
-                                                              )}
-                                                              <span
-                                                                  class="hidden sm:inline"
-                                                                  >${__(
-                                                                      "Save"
-                                                                  )}</span
-                                                              >
-                                                          </button>
-                                                          <button
-                                                              @click=${this
-                                                                  .handleConfirm}
-                                                              type="button"
-                                                              class="${classMap(
-                                                                  {
-                                                                      hidden: !this
-                                                                          .isDeletable,
-                                                                  }
-                                                              )} btn join-item flex-1 rounded-none"
-                                                              aria-label=${attr__(
-                                                                  "Delete"
-                                                              )}
-                                                          >
-                                                              ${litFontawesome(
-                                                                  faTrash,
-                                                                  {
-                                                                      className:
-                                                                          "w-4 h-4 inline-block sm:hidden",
-                                                                  }
-                                                              )}
-                                                              <span
-                                                                  class="hidden sm:inline"
-                                                                  >${__(
-                                                                      "Delete"
-                                                                  )}</span
-                                                              >
-                                                          </button>
-                                                          <lms-confirmation-modal
-                                                              @confirm=${this
-                                                                  .handleDelete}
-                                                          ></lms-confirmation-modal>
-                                                      </div>
-                                                  </td>
-                                              `
-                                            : nothing}
+                                        ${this.renderActionButtonsMaybe()}
                                     </tr>
                                 `
                             )}

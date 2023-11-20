@@ -2,23 +2,21 @@ import {
     faAngleDoubleLeft,
     faAngleDoubleRight,
 } from "@fortawesome/free-solid-svg-icons";
+import { consume } from "@lit/context";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { html, LitElement, PropertyValues } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { LitElement, PropertyValueMap, html } from "lit";
+import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 import { map } from "lit/directives/map.js";
-import { attr__, __ } from "../lib/translate";
-import { isDeepEqual } from "../lib/utilities";
+import { P, match } from "ts-pattern";
+import { nextPageContext } from "../context/next-page-context";
+import { pageContext } from "../context/page-context";
+import { perPageContext } from "../context/per-page-context";
+import { previousPageContext } from "../context/previous-page-context";
+import { __, attr__ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
-import { Column } from "../types/common";
-import LMSAnchor from "./LMSAnchor";
-
-declare global {
-    interface HTMLElementTagNameMap {
-        "lms-anchor": LMSAnchor;
-    }
-}
 
 @customElement("lms-pagination")
 export default class LMSPagination extends LitElement {
@@ -26,118 +24,124 @@ export default class LMSPagination extends LitElement {
         10, 20, 50, 100,
     ];
 
-    @property({ type: Boolean }) hasPrevious = false;
+    @consume({ context: pageContext, subscribe: true })
+    @property({ type: Number })
+    page?: number;
 
-    @property({ type: Boolean }) hasNext: boolean | undefined = undefined;
+    @consume({ context: perPageContext, subscribe: true })
+    @property({ type: Number, attribute: "per-page" })
+    perPage?: number;
 
-    @property({ type: Array }) nextPage: Column[] | undefined = undefined;
+    @consume({ context: previousPageContext, subscribe: true })
+    @state()
+    previousPage?: any;
 
-    @property({ type: Number }) _page = 1;
+    @consume({ context: nextPageContext, subscribe: true })
+    @state()
+    nextPage?: any;
 
-    @property({ type: Number }) _per_page = 20;
+    @query("#previous-page-anchor") previousPageAnchor!: HTMLAnchorElement;
 
-    private url = new URL(window.location.href);
+    @query("#next-page-anchor") nextPageAnchor!: HTMLAnchorElement;
 
     static override styles = [tailwindStyles, skeletonStyles];
 
-    override connectedCallback() {
-        super.connectedCallback();
-        this.getPaginationState();
-        this.prefetchNextPage();
-    }
+    private prefetchPage(direction: "previous" | "next", page?: number) {
+        if (!page || (direction === "previous" && page === 1)) {
+            this.previousPage = undefined;
+            return;
+        }
 
-    private prefetchNextPage() {
         this.dispatchEvent(
             new CustomEvent("prefetch", {
-                detail: {
-                    _page: this._page + 1,
-                    _per_page: this._per_page,
-                },
+                detail: match(direction)
+                    .with("previous", () => ({ direction, page: page - 1 }))
+                    .with("next", () => ({ direction, page: page + 1 }))
+                    .exhaustive(),
                 bubbles: true,
                 composed: true,
             })
         );
     }
 
-    private getPaginationState() {
-        const { searchParams } = this.url;
-
-        const _page = searchParams.get("_page");
-        const _per_page = searchParams.get("_per_page");
-
-        if (_page && _page !== this._page.toString()) {
-            this._page = parseInt(_page);
-            this.hasPrevious = this._page > 1;
+    protected override updated(
+        _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+    ): void {
+        if (
+            _changedProperties.has("page") ||
+            _changedProperties.has("perPage")
+        ) {
+            this.previousPageAnchor.classList.add("btn-disabled");
+            this.nextPageAnchor.classList.add("btn-disabled");
+            this.prefetchPage("previous", this.page);
+            this.prefetchPage("next", this.page);
         }
 
-        if (_per_page && _per_page !== this._per_page.toString()) {
-            this._per_page = parseInt(_per_page);
+        if (_changedProperties.has("previousPage")) {
+            this.previousPageAnchor.classList[
+                this.shouldBeDisabled(this.previousPage) ? "add" : "remove"
+            ]("btn-disabled");
+        }
+
+        if (_changedProperties.has("nextPage")) {
+            this.nextPageAnchor.classList[
+                this.shouldBeDisabled(this.nextPage) ? "add" : "remove"
+            ]("btn-disabled");
         }
     }
 
-    override updated(changedProperties: PropertyValues) {
-        if (
-            changedProperties.has("nextPage") &&
-            this.nextPage !== undefined &&
-            !isDeepEqual<Column[]>(
-                changedProperties.get("nextPage"),
-                this.nextPage
-            )
-        ) {
-            this.hasNext =
-                this.nextPage !== undefined && this.nextPage.length > 0;
-            if (this.hasNext) {
-                this.prefetchNextPage();
-            }
+    private getLinkForPageSize(pageSize?: number) {
+        if (!pageSize) {
+            return;
         }
 
-        if (
-            changedProperties.has("_page") ||
-            changedProperties.has("_per_page")
-        ) {
-            this.hasPrevious = this._page > 1;
-            this.prefetchNextPage();
-        }
-    }
-
-    private getLinkForPageSize(pageSize: number) {
-        const urlCopy = new URL(this.url.href);
+        const urlCopy = new URL(window.location.href);
         urlCopy.searchParams.set("_per_page", pageSize.toString());
         return urlCopy.href;
     }
 
-    private getLinkForPage(page: number, direction: "next" | "previous") {
-        const urlCopy = new URL(this.url.href);
-        if (direction === "next") {
-            urlCopy.searchParams.set("_page", (page + 1).toString());
+    private getLinkForPage(direction: "next" | "previous", page?: number) {
+        if (!page || (direction === "previous" && page === 1)) {
+            return;
         }
 
-        if (direction === "previous" && page > 1) {
-            urlCopy.searchParams.set("_page", (page - 1).toString());
-        }
-        return urlCopy.href;
+        const urlCopy = new URL(window.location.href);
+        return match(direction)
+            .with("previous", () => {
+                if (page > 1) {
+                    urlCopy.searchParams.set("_page", (page - 1).toString());
+                    return urlCopy.href;
+                }
+
+                return;
+            })
+            .with("next", () => {
+                urlCopy.searchParams.set("_page", (page + 1).toString());
+                return urlCopy.href;
+            })
+            .exhaustive();
     }
 
-    private handlePaginationChange(e: Event) {
+    private handlePageChange(e: Event) {
+        if (!this.page) {
+            return;
+        }
+
         e.preventDefault();
         const target = e.target as HTMLAnchorElement;
         const anchor = target.closest("a");
-        if (!anchor) {
+        if (!anchor?.href) {
             return;
         }
 
         const url = new URL(anchor.href);
-        let _page: string | number | null = url.searchParams.get("_page");
-        let _per_page: string | number | null =
-            url.searchParams.get("_per_page");
-        if (_page && _per_page) {
-            _page = parseInt(_page, 10);
-            _per_page = parseInt(_per_page, 10);
+        let page: string | number | null = url.searchParams.get("_page");
+        if (page) {
+            page = parseInt(page, 10);
             this.dispatchEvent(
                 new CustomEvent("page", {
                     detail: {
-                        _page,
-                        _per_page,
+                        page,
                     },
                     bubbles: true,
                     composed: true,
@@ -146,14 +150,52 @@ export default class LMSPagination extends LitElement {
         }
     }
 
+    private handlePerPageChange(e: Event) {
+        if (!this.perPage) {
+            return;
+        }
+
+        e.preventDefault();
+        const target = e.target as HTMLAnchorElement;
+        const anchor = target.closest("a");
+        if (!anchor) {
+            return;
+        }
+
+        const url = new URL(anchor.href);
+        let perPage: string | number | null = url.searchParams.get("_per_page");
+        if (perPage) {
+            perPage = parseInt(perPage, 10);
+            this.dispatchEvent(
+                new CustomEvent("per-page", {
+                    detail: {
+                        perPage,
+                    },
+                    bubbles: true,
+                    composed: true,
+                })
+            );
+        }
+    }
+
+    private shouldBeDisabled(any: any) {
+        return match(any)
+            .with(P.nullish, () => true)
+            .with(P.instanceOf(Array), (a) => !a.length)
+            .with(P.instanceOf(Object), () => false)
+            .otherwise(() => true);
+    }
+
     override render() {
         return html`
             <div class="join" aria-label=${attr__("Table navigation")}>
                 <a
-                    class="btn join-item"
-                    ?disabled=${!this.hasPrevious}
-                    href=${this.getLinkForPage(this._page, "previous")}
-                    @click=${this.handlePaginationChange}
+                    id="previous-page-anchor"
+                    class="btn btn-disabled join-item"
+                    href=${ifDefined(
+                        this.getLinkForPage("previous", this.page)
+                    )}
+                    @click=${this.handlePageChange}
                     ><span class="hidden lg:inline"> ${__("Previous")} </span>
                     ${litFontawesome(faAngleDoubleLeft, {
                         className: "w-4 h-4 inline-block lg:hidden",
@@ -164,31 +206,23 @@ export default class LMSPagination extends LitElement {
                     (pageSize) => html`
                         <a
                             class="${classMap({
-                                "bg-primary-focus": pageSize === this._per_page,
+                                "bg-primary-focus": pageSize === this.perPage,
                             })} btn btn-square join-item"
-                            href=${this.getLinkForPageSize(pageSize)}
-                            @click=${this.handlePaginationChange}
+                            href=${ifDefined(this.getLinkForPageSize(pageSize))}
+                            @click=${this.handlePerPageChange}
                             >${pageSize}</a
                         >
                     `
                 )}
                 <a
-                    class="btn join-item"
-                    ?disabled=${!this.hasNext}
-                    href=${this.getLinkForPage(this._page, "next")}
-                    @click=${this.handlePaginationChange}
+                    id="next-page-anchor"
+                    class="btn btn-disabled join-item"
+                    href=${ifDefined(this.getLinkForPage("next", this.page))}
+                    @click=${this.handlePageChange}
                     ><span class="hidden lg:inline"> ${__("Next")} </span>
                     ${litFontawesome(faAngleDoubleRight, {
                         className: "w-4 h-4 inline-block lg:hidden",
                     })}
-                    <div
-                        class="spinner-border spinner-border-sm ${classMap({
-                            "d-none": this.hasNext !== undefined,
-                        })} align-middle text-primary"
-                        role="status"
-                    >
-                        <span class="sr-only">${__("Loading")}...</span>
-                    </div>
                 </a>
             </div>
         `;

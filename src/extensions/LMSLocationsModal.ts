@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
-import { attr__, __ } from "../lib/translate";
+import { __, attr__ } from "../lib/translate";
 import { CreateOpts } from "../types/common";
 
 @customElement("lms-locations-modal")

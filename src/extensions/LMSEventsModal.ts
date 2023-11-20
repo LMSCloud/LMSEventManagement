@@ -1,7 +1,7 @@
 import { PropertyValueMap } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
-import { attr__, __ } from "../lib/translate";
+import { __, attr__ } from "../lib/translate";
 import {
     CreateOpts,
     LMSEvent,

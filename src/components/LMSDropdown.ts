@@ -11,9 +11,9 @@ type PositionsTuple = [Positions?, Positions?];
 export default class LMSDropdown extends LitElement {
     @property({ type: String }) label = "";
 
-    @property({ type: Object }) icon: SVGTemplateResult | undefined;
+    @property({ type: Object }) icon?: SVGTemplateResult;
 
-    @property({ type: Array }) position: PositionsTuple = [];
+    @property({ type: Array }) position?: Array<any> | PositionsTuple;
 
     @query("details") details!: HTMLDetailsElement;
 
@@ -81,7 +81,7 @@ export default class LMSDropdown extends LitElement {
     }
 
     private composePosition(): ClassInfo {
-        if (!this.position.length) {
+        if (!this.position?.length) {
             return {};
         }
 

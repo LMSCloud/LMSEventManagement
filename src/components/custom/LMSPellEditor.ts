@@ -2,7 +2,7 @@ import interact from "interactjs";
 import { css, html, LitElement, PropertyValues } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import pell from "pell";
-import { attr__, __ } from "../../lib/translate";
+import { __, attr__ } from "../../lib/translate";
 import { debounce } from "../../lib/utilities";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";

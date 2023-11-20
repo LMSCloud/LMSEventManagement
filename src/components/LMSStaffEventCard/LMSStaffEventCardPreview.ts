@@ -3,7 +3,7 @@ import {
     faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { html, LitElement, PropertyValueMap, TemplateResult } from "lit";
+import { LitElement, PropertyValueMap, TemplateResult, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { splitDateTime } from "../../lib/converters/datetimeConverters";
 import { locale } from "../../lib/translate";
@@ -20,13 +20,13 @@ declare global {
 
 @customElement("lms-staff-event-card-preview")
 export default class LMSStaffEventCardPreview extends LitElement {
-    @property({ type: Array }) event: LMSEvent | undefined;
+    @property({ type: Object }) event?: LMSEvent;
 
     @property({ type: Array }) taggedData: TaggedData[] = [];
 
-    @state() override title = "";
+    @state() caption?: string;
 
-    @state() image: Image = {} as Image;
+    @state() image?: Image;
 
     @state() listItems: TemplateResult[] = [];
 
@@ -49,7 +49,7 @@ export default class LMSStaffEventCardPreview extends LitElement {
 
         const { name, image, location, start_time, end_time } = this.event;
 
-        this.title = name ?? "";
+        this.caption = name ?? "";
         this.image = {
             src: image ?? "",
             alt: name ?? "",
@@ -88,7 +88,7 @@ export default class LMSStaffEventCardPreview extends LitElement {
 
     override render() {
         return html`<lms-card
-            .title=${this.title}
+            .caption=${this.caption}
             .image=${this.image}
             .listItems=${this.listItems}
             class="m-4"

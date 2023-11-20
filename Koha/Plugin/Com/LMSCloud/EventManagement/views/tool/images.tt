@@ -3,7 +3,5 @@
 [% INCLUDE "$PLUGIN_DIR/includes/body-header.inc" %]
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
-    <div class="lmse-content-block" id="entry-point">
-        <lms-image-browser></lms-image-browser>    
-    </div>
+    <lms-image-browser></lms-image-browser>
 [% END %]

@@ -1,0 +1,15 @@
+-- Reset auto-increment values
+ALTER TABLE koha_plugin_com_lmscloud_eventmanagement_e_tg_fees AUTO_INCREMENT = 1;
+ALTER TABLE koha_plugin_com_lmscloud_eventmanagement_et_tg_fees AUTO_INCREMENT = 1;
+ALTER TABLE koha_plugin_com_lmscloud_eventmanagement_events AUTO_INCREMENT = 1;
+ALTER TABLE koha_plugin_com_lmscloud_eventmanagement_event_types AUTO_INCREMENT = 1;
+ALTER TABLE koha_plugin_com_lmscloud_eventmanagement_locations AUTO_INCREMENT = 1;
+ALTER TABLE koha_plugin_com_lmscloud_eventmanagement_target_groups AUTO_INCREMENT = 1;
+
+-- Delete records from tables
+DELETE FROM koha_plugin_com_lmscloud_eventmanagement_e_tg_fees;
+DELETE FROM koha_plugin_com_lmscloud_eventmanagement_et_tg_fees;
+DELETE FROM koha_plugin_com_lmscloud_eventmanagement_events;
+DELETE FROM koha_plugin_com_lmscloud_eventmanagement_event_types;
+DELETE FROM koha_plugin_com_lmscloud_eventmanagement_locations;
+DELETE FROM koha_plugin_com_lmscloud_eventmanagement_target_groups;

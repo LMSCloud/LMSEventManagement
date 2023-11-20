@@ -8,13 +8,15 @@ import {
     faVcard,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { html, LitElement } from "lit";
+import { LitElement, html } from "lit";
 import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 import { map } from "lit/directives/map.js";
 import { repeat } from "lit/directives/repeat.js";
-import { requestHandler } from "../../lib/RequestHandler";
-import { attr__, __ } from "../../lib/translate";
+import { P, match } from "ts-pattern";
+import { requestHandler } from "../../lib/RequestHandler/RequestHandler";
+import { __, attr__ } from "../../lib/translate";
 import { throttle } from "../../lib/utilities";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
@@ -41,77 +43,93 @@ declare global {
 export default class LMSEventsFilter extends LitElement {
     private shouldFold = window.matchMedia("(max-width: 1024px)").matches;
 
-    @property({ type: Array }) events: LMSEvent[] = [];
+    @property({ type: Array }) events?: Array<LMSEvent>;
 
     @property({ type: Boolean }) shouldUpdateFacets = true;
 
     @property({ type: Boolean }) isHidden = this.shouldFold;
 
-    @property({ type: Array }) settings: LMSSettingResponse[] = [];
+    @property({ type: Array }) settings?: Array<LMSSettingResponse>;
 
-    @state() facets: Partial<Facets> = {};
+    @state() facets?: Partial<Facets>;
 
-    @state() event_types: LMSEventType[] = [];
+    @state() event_types?: Array<LMSEventType>;
 
-    @state() target_groups: LMSTargetGroup[] = [];
+    @state() target_groups?: Array<LMSTargetGroup>;
 
-    @state() locations: LMSLocation[] = [];
-
-    @state() activeFilters: Map<string, string | boolean> = new Map();
+    @state() locations?: Array<LMSLocation>;
 
     @queryAll("input") inputs!: NodeListOf<HTMLInputElement>;
 
     @queryAll("lms-dropdown") lmsDropdowns!: NodeListOf<LMSDropdown>;
 
-    private inputHandlers: {
-        [type: string]: (input: HTMLInputElement) => string | boolean;
-    } = {
-        checkbox: (input: HTMLInputElement) => {
-            if (input.id === "open_registration") {
-                return input.checked;
-            }
-
-            const { value } = input;
-            if (value) {
-                return input.checked ? value : false;
-            }
-
-            return input.checked ? input.id : false;
-        },
-        radio: (input: HTMLInputElement) =>
-            input.checked ? input.value : false,
-        date: (input: HTMLInputElement) => input.value,
-        number: (input: HTMLInputElement) => input.value,
-        default: (input: HTMLInputElement) => input.value,
-    };
-
-    private resetHandlers: {
-        [type: string]: (input: HTMLInputElement) => void;
-    } = {
-        checkbox: (input: HTMLInputElement) => {
-            if (input.id === "open_registration") {
-                input.checked = true;
+    private resetInputs() {
+        for (let i = 0; i < this.inputs.length; i++) {
+            const input = this.inputs[i];
+            if (!input) {
                 return;
             }
-            input.checked = false;
-        },
-        radio: (input: HTMLInputElement) => {
-            input.checked = false;
-        },
-        date: (input: HTMLInputElement) => {
-            input.value = "";
-        },
-        number: (input: HTMLInputElement) => {
-            if (["min_age", "max_age"].includes(input.id)) {
-                input.value = "";
+
+            match(input.type)
+                .with("checkbox", () => {
+                    input.checked =
+                        input.id === "open_registration" ? true : false;
+                })
+                .with("radio", () => {
+                    input.checked = false;
+                })
+                .with("date", () => {
+                    input.value = "";
+                })
+                .with("number", () => {
+                    input.value = ["min_age", "max_age"].includes(input.id)
+                        ? ""
+                        : input.min;
+                })
+                .otherwise(() => {
+                    input.value = "";
+                });
+        }
+    }
+
+    private getActiveFilters() {
+        const activeFilters = [];
+        for (let i = 0; i < this.inputs.length; i++) {
+            const input = this.inputs[i];
+            if (!input) {
                 return;
             }
-            input.value = input.min;
-        },
-        default: (input: HTMLInputElement) => {
-            input.value = "";
-        },
-    };
+
+            activeFilters.push(
+                match(input.type)
+                    .with("checkbox", () =>
+                        match(input)
+                            .with({ id: "open_registration" }, () => [
+                                "open_registration",
+                                input.checked,
+                            ])
+                            .with({ value: P.not("") }, () =>
+                                input.checked
+                                    ? [input.name, input.value]
+                                    : undefined
+                            )
+                            .with({ checked: true }, () => [
+                                input.name,
+                                input.id,
+                            ])
+                            .otherwise(() => undefined)
+                    )
+                    .with("radio", () =>
+                        input.checked ? [input.name, input.value] : undefined
+                    )
+                    .otherwise(() =>
+                        input.value ? [input.name, input.value] : undefined
+                    )
+            );
+        }
+
+        return activeFilters.filter(Boolean);
+    }
 
     private throttledHandleResize: () => void;
 
@@ -137,7 +155,7 @@ export default class LMSEventsFilter extends LitElement {
         window.addEventListener("resize", this.throttledHandleResize);
 
         requestHandler
-            .get("settingsPublic")
+            .get({ endpoint: "settingsPublic" })
             .then((response) => response.json())
             .then((settings) => {
                 this.settings = settings.map((setting: LMSSettingResponse) => {
@@ -155,7 +173,7 @@ export default class LMSEventsFilter extends LitElement {
             });
 
         requestHandler
-            .get("eventTypesPublic")
+            .get({ endpoint: "eventTypesPublic" })
             .then((response) => response.json())
             .then(
                 (event_types: LMSEventType[]) =>
@@ -163,7 +181,7 @@ export default class LMSEventsFilter extends LitElement {
             );
 
         requestHandler
-            .get("targetGroupsPublic")
+            .get({ endpoint: "targetGroupsPublic" })
             .then((response) => response.json())
             .then(
                 (target_groups: LMSTargetGroup[]) =>
@@ -171,7 +189,7 @@ export default class LMSEventsFilter extends LitElement {
             );
 
         requestHandler
-            .get("locationsPublic")
+            .get({ endpoint: "locationsPublic" })
             .then((response) => response.json())
             .then((locations: LMSLocation[]) => (this.locations = locations));
     }
@@ -182,11 +200,7 @@ export default class LMSEventsFilter extends LitElement {
     }
 
     override willUpdate() {
-        if (!this.events.length) {
-            return;
-        }
-
-        if (!this.shouldUpdateFacets) {
+        if (!this.events?.length || !this.shouldUpdateFacets) {
             return;
         }
 
@@ -226,63 +240,24 @@ export default class LMSEventsFilter extends LitElement {
     }
 
     private handleReset() {
-        this.inputs.forEach((input) => this.resetHandlers[input.type]?.(input));
+        this.resetInputs();
         this.dispatchEvent(
             new CustomEvent("filter", {
-                detail: "",
+                detail: {
+                    filters: this.getActiveFilters(),
+                },
                 composed: true,
                 bubbles: true,
             })
         );
     }
 
-    private isAllowedFilter(
-        name: string | boolean | undefined,
-        value: unknown,
-        exclude: string[]
-    ) {
-        if (!name) {
-            return false;
-        }
-
-        return !(name && exclude.includes(name.toString()) && value === false);
-    }
-
-    private getParamsFromActiveFilters() {
-        return [...(this.inputs ?? [])]
-            .filter((input) => input.value || input.checked)
-            .map((input) => {
-                const handler =
-                    this.inputHandlers?.[input.type] ||
-                    this.inputHandlers["default"];
-                if (!handler) {
-                    return [input.name, undefined];
-                }
-
-                const value = handler(input);
-                return [input.name, value];
-            })
-            .filter(([name, value]) =>
-                this.isAllowedFilter(name, value, [
-                    "event_type",
-                    "target_group",
-                    "location",
-                    "_order_by",
-                ])
-            );
-    }
-
     private handleChange() {
-        const query = new URLSearchParams();
-        this.getParamsFromActiveFilters().forEach(([name, value]) => {
-            if (typeof name === "string" && value !== undefined) {
-                return query.append(name, value?.toString());
-            }
-        });
-
         this.dispatchEvent(
             new CustomEvent("filter", {
-                detail: query.toString(),
+                detail: {
+                    filters: this.getActiveFilters(),
+                },
                 composed: true,
                 bubbles: true,
             })
@@ -290,16 +265,14 @@ export default class LMSEventsFilter extends LitElement {
     }
 
     private handleSearch(e: CustomEvent) {
-        const { q } = e.detail;
-        const query = new URLSearchParams();
-        this.getParamsFromActiveFilters().forEach(([name, value]) => {
-            if (typeof name === "string" && value !== undefined) {
-                return query.append(name, value?.toString());
-            }
-        });
+        const { q, search } = e.detail;
         this.dispatchEvent(
             new CustomEvent("search", {
-                detail: query.toString() + (q ? `&q=${q}` : ""),
+                detail: {
+                    filters: this.getActiveFilters(),
+                    q,
+                    search,
+                },
                 composed: true,
                 bubbles: true,
             })
@@ -402,7 +375,7 @@ export default class LMSEventsFilter extends LitElement {
                                 @toggle=${this.handleDropdownToggle}
                             >
                                 ${repeat(
-                                    this.facets.eventTypeIds ?? [],
+                                    this.facets?.eventTypeIds ?? [],
                                     (eventTypeId) => eventTypeId,
                                     (eventTypeId) => html`
                                         <div class="form-control">
@@ -415,10 +388,14 @@ export default class LMSEventsFilter extends LitElement {
                                                     class="checkbox mr-2"
                                                     name="event_type"
                                                     id="event_type_${eventTypeId}"
-                                                    value=${eventTypeId}
+                                                    value=${ifDefined(
+                                                        eventTypeId === null
+                                                            ? undefined
+                                                            : eventTypeId
+                                                    )}
                                                 />
                                                 <span class="label-text"
-                                                    >${this.event_types.find(
+                                                    >${this.event_types?.find(
                                                         (event_type) =>
                                                             event_type.id ===
                                                             eventTypeId
@@ -438,7 +415,7 @@ export default class LMSEventsFilter extends LitElement {
                                 @toggle=${this.handleDropdownToggle}
                             >
                                 ${repeat(
-                                    this.facets.targetGroupIds ?? [],
+                                    this.facets?.targetGroupIds ?? [],
                                     (targetGroupId) => targetGroupId,
                                     (targetGroupId) => html`
                                         <div class="form-control">
@@ -451,10 +428,14 @@ export default class LMSEventsFilter extends LitElement {
                                                     class="checkbox mr-2 text-base"
                                                     name="target_group"
                                                     id="target_group_${targetGroupId}"
-                                                    value=${targetGroupId}
+                                                    value=${ifDefined(
+                                                        targetGroupId === null
+                                                            ? undefined
+                                                            : targetGroupId
+                                                    )}
                                                 />
                                                 <span class="label-text">
-                                                    ${this.target_groups.find(
+                                                    ${this.target_groups?.find(
                                                         (target_group) =>
                                                             target_group.id ===
                                                             targetGroupId
@@ -463,6 +444,45 @@ export default class LMSEventsFilter extends LitElement {
                                             </label>
                                         </div>
                                     `
+                                )}
+                            </lms-dropdown>
+
+                            <lms-dropdown
+                                .label=${__("Location")}
+                                .icon=${litFontawesome(faMapMarker, {
+                                    className: "w-4 h-4 inline-block",
+                                })}
+                                @toggle=${this.handleDropdownToggle}
+                            >
+                                ${repeat(
+                                    this.facets?.locationIds ?? [],
+                                    (locationId) => locationId,
+                                    (locationId) =>
+                                        html` <div class="form-control">
+                                            <label
+                                                class="label cursor-pointer justify-start"
+                                                for="location_${locationId}"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    class="checkbox mr-2"
+                                                    name="location"
+                                                    id="location_${locationId}"
+                                                    value=${ifDefined(
+                                                        locationId === null
+                                                            ? undefined
+                                                            : locationId
+                                                    )}
+                                                />
+                                                <span class="label-text">
+                                                    ${this.locations?.find(
+                                                        (location) =>
+                                                            location.id ===
+                                                            locationId
+                                                    )?.name}
+                                                </span>
+                                            </label>
+                                        </div>`
                                 )}
                             </lms-dropdown>
 
@@ -484,7 +504,7 @@ export default class LMSEventsFilter extends LitElement {
                                     >
                                     <input
                                         type="number"
-                                        class="input input-bordered w-full"
+                                        class="input input-bordered input-sm w-full"
                                         id="min_age"
                                         name="min_age"
                                         min="0"
@@ -499,7 +519,7 @@ export default class LMSEventsFilter extends LitElement {
                                     >
                                     <input
                                         type="number"
-                                        class="input input-bordered w-full"
+                                        class="input input-bordered input-sm w-full"
                                         id="max_age"
                                         name="max_age"
                                         min="0"
@@ -529,7 +549,7 @@ export default class LMSEventsFilter extends LitElement {
                                     >
                                         <input
                                             type="checkbox"
-                                            class="checkbox"
+                                            class="checkbox mr-2"
                                             id="open_registration"
                                             name="open_registration"
                                             checked
@@ -547,7 +567,7 @@ export default class LMSEventsFilter extends LitElement {
                                     </label>
                                     <input
                                         type="date"
-                                        class="input input-bordered w-full"
+                                        class="input input-bordered input-sm w-full"
                                         id="start_time"
                                         name="start_time"
                                     />
@@ -558,46 +578,11 @@ export default class LMSEventsFilter extends LitElement {
                                     </label>
                                     <input
                                         type="date"
-                                        class="input input-bordered w-full"
+                                        class="input input-bordered input-sm w-full"
                                         id="end_time"
                                         name="end_time"
                                     /></div
                             ></lms-dropdown>
-
-                            <lms-dropdown
-                                .label=${__("Location")}
-                                .icon=${litFontawesome(faMapMarker, {
-                                    className: "w-4 h-4 inline-block",
-                                })}
-                                @toggle=${this.handleDropdownToggle}
-                            >
-                                ${repeat(
-                                    this.facets.locationIds ?? [],
-                                    (locationId) => locationId,
-                                    (locationId) =>
-                                        html` <div class="form-control">
-                                            <label
-                                                class="label cursor-pointer justify-start"
-                                                for="location_${locationId}"
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    class="checkbox mr-2"
-                                                    name="location"
-                                                    id="location_${locationId}"
-                                                    value=${locationId}
-                                                />
-                                                <span class="label-text">
-                                                    ${this.locations.find(
-                                                        (location) =>
-                                                            location.id ===
-                                                            locationId
-                                                    )?.name}
-                                                </span>
-                                            </label>
-                                        </div>`
-                                )}
-                            </lms-dropdown>
 
                             <lms-dropdown
                                 .label=${__("Fee")}
@@ -619,7 +604,7 @@ export default class LMSEventsFilter extends LitElement {
                                     </label>
                                     <input
                                         type="number"
-                                        class="input input-bordered w-full"
+                                        class="input input-bordered input-sm w-full"
                                         id="fee"
                                         name="fee"
                                         @input=${this.emitChange}

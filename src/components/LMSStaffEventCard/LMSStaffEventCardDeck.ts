@@ -1,15 +1,12 @@
 import { html, LitElement, PropertyValueMap } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { classMap } from "lit/directives/class-map.js";
 import { repeat } from "lit/directives/repeat.js";
-import { searchSyntax } from "../../docs/searchSyntax";
 import { __ } from "../../lib/translate";
 import { cardDeckStylesStaff } from "../../styles/cardDeck";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
 import { tailwindStyles } from "../../tailwind.lit";
 import {
-    Column,
     LMSEvent,
     LMSEventType,
     LMSLocation,
@@ -19,7 +16,9 @@ import {
     UploadedImage,
 } from "../../types/common";
 import LMSAnchor from "../LMSAnchor";
+import LMSPagination from "../LMSPagination";
 import LMSSearch from "../LMSSearch";
+import LMSStaffEventCard from "./LMSStaffEventCard";
 import LMSStaffEventCardAttendees from "./LMSStaffEventCardAttendees";
 import LMSStaffEventCardForm from "./LMSStaffEventCardForm";
 import LMSStaffEventCardPreview from "./LMSStaffEventCardPreview";
@@ -27,12 +26,14 @@ import LMSStaffEventsFilter from "./LMSStaffEventsFilter";
 
 declare global {
     interface HTMLElementTagNameMap {
-        "lms-staff-event-card-form": LMSStaffEventCardForm;
+        "lms-anchor": LMSAnchor;
+        "lms-pagination": LMSPagination;
+        "lms-search": LMSSearch;
+        "lms-staff-event-card": LMSStaffEventCard;
         "lms-staff-event-card-attendees": LMSStaffEventCardAttendees;
+        "lms-staff-event-card-form": LMSStaffEventCardForm;
         "lms-staff-event-card-preview": LMSStaffEventCardPreview;
         "lms-staff-events-filter": LMSStaffEventsFilter;
-        "lms-anchor": LMSAnchor;
-        "lms-search": LMSSearch;
     }
 }
 
@@ -48,15 +49,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
 
     @property({ type: Array }) images: UploadedImage[] = [];
 
-    @property({ type: Object }) start_time: string | undefined;
-
-    @property({ type: Array }) nextPage: Column[] | undefined = undefined;
-
-    @property({ type: Boolean }) hasNoResults = false;
-
-    @property({ type: Number }) _page = 1;
-
-    @property({ type: Number }) _per_page = 20;
+    @property({ type: String }) start_time?: string;
 
     @state() taggedData: TaggedData[] = [];
 
@@ -131,24 +124,14 @@ export default class LMSStaffEventCardDeck extends LitElement {
         );
     }
 
-    private toggleDoc(e: MouseEvent) {
-        const target = e.target as HTMLElement;
-        const doc = target.nextElementSibling;
-        if (!doc) {
-            return;
-        }
-
-        doc.classList.toggle("hidden");
-    }
-
     override render() {
         return html`
             <div class="mx-4">
                 <lms-staff-events-filter
                     .sortableColumns=${this.sortableColumns}
-                    .event_types=${this.event_types}
                     .target_groups=${this.target_groups}
                     .locations=${this.locations}
+                    .event_types=${this.event_types}
                     .start_time=${this.start_time}
                 >
                     <lms-search
@@ -156,32 +139,8 @@ export default class LMSStaffEventCardDeck extends LitElement {
                         @search=${this.handleSearch}
                         .sortableColumns=${this.sortableColumns}
                     ></lms-search>
-                    <lms-pagination
-                        slot="navbar-end"
-                        .nextPage=${this.nextPage}
-                        ._page=${this._page}
-                        ._per_page=${this._per_page}
-                    ></lms-pagination>
+                    <lms-pagination slot="navbar-end"></lms-pagination>
                 </lms-staff-events-filter>
-                <div
-                    class="${classMap({
-                        hidden: !this.hasNoResults,
-                    })} alert alert-info text-center"
-                    role="alert"
-                >
-                    <h4>${__("No matches found")}.</h4>
-                    <p>${__("Try refining your search.")}</p>
-                    <button
-                        class="btn btn-info btn-outline"
-                        @click=${this.toggleDoc}
-                    >
-                        ${__("Help")}
-                    </button>
-                    <div class="hidden text-left">
-                        <hr />
-                        ${searchSyntax}
-                    </div>
-                </div>
                 <div class="card-deck">
                     ${repeat(
                         this.events,

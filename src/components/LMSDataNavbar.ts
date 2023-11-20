@@ -1,6 +1,6 @@
 import { faSliders, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { html, LitElement, PropertyValueMap } from "lit";
+import { LitElement, PropertyValueMap, html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { __ } from "../lib/translate";
 import { tailwindStyles } from "../tailwind.lit";
@@ -90,9 +90,9 @@ export default class LMSDataNavbar extends LitElement {
             ></div>
             <nav
                 id="navbar-drawer"
-                class="navbar fixed bottom-0 left-0 z-[1050] mb-4 min-h-fit w-full
-                min-w-min flex-col gap-4 overflow-y-scroll rounded-t-xl bg-base-100 p-8
-                transition-all duration-200 sm:min-h-16 sm:static
+                class="navbar fixed bottom-0 left-0 z-[1050] mb-0 min-h-fit w-full min-w-min
+                flex-col gap-4 overflow-y-scroll rounded-t-xl bg-base-100 p-8 transition-all
+                duration-200 sm:min-h-16 sm:static sm:mb-4
                 sm:flex sm:flex-row sm:overflow-y-visible sm:rounded-xl sm:p-4"
             >
                 <div class="p-4 sm:hidden">
@@ -106,17 +106,13 @@ export default class LMSDataNavbar extends LitElement {
                         className: "w-4 h-4 inline-block",
                     })}
                 </button>
-                <div
-                    class="w-full justify-start justify-center sm:navbar-start sm:w-1/2"
-                >
+                <div class="w-full justify-center sm:navbar-start sm:w-1/2">
                     <slot name="navbar-start"></slot>
                 </div>
                 <div class="w-full justify-center sm:navbar-center sm:w-auto">
                     <slot name="navbar-center"></slot>
                 </div>
-                <div
-                    class="w-full justify-end justify-center sm:navbar-end sm:w-1/2"
-                >
+                <div class="w-full justify-center sm:navbar-end sm:w-1/2">
                     <slot name="navbar-end"></slot>
                 </div>
             </nav>
