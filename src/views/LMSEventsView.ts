@@ -171,8 +171,10 @@ export default class LMSEventsView extends LitElement {
     private handleSearch(e: CustomEvent) {
         const { filters, q } = e.detail;
 
+        console.log(filters, q);
+
         this.queryBuilder.query = this.queryBuilder.merge(
-            filters?.concat([["q", q]]) ?? {q}
+            filters?.concat([["q", q]]) ?? { q }
         );
 
         requestHandler

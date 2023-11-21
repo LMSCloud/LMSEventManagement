@@ -265,6 +265,7 @@ export default class LMSEventsFilter extends LitElement {
     }
 
     private handleSearch(e: CustomEvent) {
+        e.stopPropagation();
         const { q, search } = e.detail;
         this.dispatchEvent(
             new CustomEvent("search", {
@@ -627,7 +628,7 @@ export default class LMSEventsFilter extends LitElement {
                         <div class="actions">
                             <button
                                 type="button"
-                                class="btn btn-secondary btn-outline btn-xs lg:btn-md lg:hidden"
+                                class="btn btn-secondary btn-outline btn-sm lg:btn-md lg:hidden"
                                 @click=${this.handleHideToggle}
                                 aria-label=${this.isHidden
                                     ? attr__("Show filters")
@@ -641,7 +642,7 @@ export default class LMSEventsFilter extends LitElement {
                                 type="button"
                                 class="${classMap({
                                     hidden: this.isHidden,
-                                })} btn btn-secondary btn-outline btn-xs lg:btn-md lg:block"
+                                })} btn btn-secondary btn-outline btn-sm lg:btn-md lg:block"
                                 @click=${this.handleReset}
                             >
                                 ${__("Reset filters")}
