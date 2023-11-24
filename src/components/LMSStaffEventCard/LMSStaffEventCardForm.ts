@@ -326,7 +326,7 @@ export default class LMSStaffEventCardForm extends LitElement {
         const response = await requestHandler.put({
             endpoint: "events",
             path: [this.event.id.toString()],
-            requestInit: { body: requestBody.toString() },
+            requestInit: { body: JSON.stringify(requestBody) },
         });
         if (response.ok) {
             target
