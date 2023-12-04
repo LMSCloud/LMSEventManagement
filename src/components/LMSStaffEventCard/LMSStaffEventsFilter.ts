@@ -83,7 +83,7 @@ export default class LMSStaffEventsFilter extends LitElement {
         const target = e.target as HTMLInputElement;
         this.dispatchEvent(
             new CustomEvent("sort", {
-                detail: { _order_by: target.value },
+                detail: { orderBy: target.value },
                 bubbles: true,
                 composed: true,
             })
