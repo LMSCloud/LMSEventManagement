@@ -28,7 +28,7 @@ use GD::Image;
 use Cwd qw(abs_path);
 use LWP::UserAgent;
 use MARC::Record;
-use Mojo::JSON  qw(decode_json);
+use Mojo::JSON qw(decode_json);
 use URI::Escape qw(uri_unescape);
 use Try::Tiny;
 use Carp;
@@ -77,7 +77,7 @@ BEGIN {
 }
 
 ## Here we set our plugin version
-our $VERSION         = '1.6.4';
+our $VERSION         = '1.6.6';
 our $MINIMUM_VERSION = '18.05';
 
 ## Here is our metadata, some keys are required, some are optional
