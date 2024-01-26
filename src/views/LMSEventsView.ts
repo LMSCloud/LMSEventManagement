@@ -40,6 +40,8 @@ export default class LMSEventsView extends LitElement {
 
     @state() events?: Array<LMSEvent>;
 
+    @state() allEvents?: Array<LMSEvent>;
+
     @state() events_count?: number;
 
     @state() locations?: Array<LMSLocation>;
@@ -129,6 +131,26 @@ export default class LMSEventsView extends LitElement {
                 this.state = "error";
                 console.error(error);
             });
+
+        const params = this.queryBuilder.merge({
+            _order_by: "id",
+            _page: 1,
+            _per_page: this.events_count,
+            q: "{}",
+            open_registration: "true",
+        });
+        requestHandler
+            .get({
+                endpoint: "eventsPublic",
+                query: this.queryBuilder.without({
+                    staticParams: true,
+                    useParams: params,
+                }),
+            })
+            .then((response) => response.json())
+            .then((allEvents) => {
+                this.allEvents = allEvents;
+            });
     }
 
     private composeTotalCountPromise(response: Response) {
@@ -170,8 +192,6 @@ export default class LMSEventsView extends LitElement {
 
     private handleSearch(e: CustomEvent) {
         const { filters, q } = e.detail;
-
-        console.log(filters, q);
 
         this.queryBuilder.query = this.queryBuilder.merge(
             filters?.concat([["q", q]]) ?? { q }
@@ -346,7 +366,7 @@ export default class LMSEventsView extends LitElement {
                         <lms-events-filter
                             @filter=${this.handleFilter}
                             @search=${this.handleSearch}
-                            .events=${this.events ?? []}
+                            .events=${this.allEvents ?? this.events ?? []}
                             .shouldUpdateFacets=${Boolean(
                                 !this.isQueryParamSet() &&
                                     !this.isObjectAccessorSet()
