@@ -130,26 +130,27 @@ export default class LMSEventsView extends LitElement {
             .catch((error) => {
                 this.state = "error";
                 console.error(error);
-            });
-
-        const params = this.queryBuilder.merge({
-            _order_by: "id",
-            _page: 1,
-            _per_page: this.events_count,
-            q: "{}",
-            open_registration: "true",
-        });
-        requestHandler
-            .get({
-                endpoint: "eventsPublic",
-                query: this.queryBuilder.without({
-                    staticParams: true,
-                    useParams: params,
-                }),
             })
-            .then((response) => response.json())
-            .then((allEvents) => {
-                this.allEvents = allEvents;
+            .then(() => {
+                const params = this.queryBuilder.merge({
+                    _order_by: "id",
+                    _page: 1,
+                    _per_page: this.events_count,
+                    q: "{}",
+                    open_registration: "true",
+                });
+                requestHandler
+                    .get({
+                        endpoint: "eventsPublic",
+                        query: this.queryBuilder.without({
+                            staticParams: true,
+                            useParams: params,
+                        }),
+                    })
+                    .then((response) => response.json())
+                    .then((allEvents) => {
+                        this.allEvents = allEvents;
+                    });
             });
     }
 
