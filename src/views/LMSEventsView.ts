@@ -132,6 +132,10 @@ export default class LMSEventsView extends LitElement {
                 console.error(error);
             })
             .then(() => {
+                if (!this.events_count) {
+                    return;
+                }
+
                 const params = this.queryBuilder.merge({
                     _order_by: "id",
                     _page: 1,
@@ -151,6 +155,9 @@ export default class LMSEventsView extends LitElement {
                     .then((allEvents) => {
                         this.allEvents = allEvents;
                     });
+            })
+            .catch((error) => {
+                console.error(error);
             });
     }
 
