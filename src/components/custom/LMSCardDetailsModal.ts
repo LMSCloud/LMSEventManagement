@@ -228,31 +228,31 @@ export default class LMSCardDetailsModal extends LitElement {
         }
 
         const quantity = this.getSelectedQuantity(targetGroupFees);
-        return targetGroupFees.map((targetGroupFee, index) => {
-            if ({}.hasOwnProperty.call(targetGroupFee, "target_group_id")) {
-                return nothing;
-            }
-
-            const { name, min_age, max_age, fee, selected } = targetGroupFee;
-            if (!selected) {
-                return nothing;
-            }
-
-            return hasNoFees
-                ? html`<span>${name}${index + 1 < quantity ? ", " : ""}</span>`
-                : html`
-                      <tr>
-                          <td>${name}</td>
-                          <td>${min_age} - ${max_age}</td>
-                          <td>
-                              ${formatMonetaryAmountByLocale(
-                                  this.localeFull,
-                                  fee
-                              )}
-                          </td>
-                      </tr>
-                  `;
-        });
+        return targetGroupFees
+            .filter(
+                (targetGroupFee) =>
+                    targetGroupFee.selected &&
+                    !targetGroupFee["target_group_id"]
+            )
+            .map((targetGroupFee, index) => {
+                const { name, min_age, max_age, fee } = targetGroupFee;
+                return hasNoFees
+                    ? html`<span
+                          >${name}${index + 1 < quantity ? ", " : ""}</span
+                      >`
+                    : html`
+                          <tr>
+                              <td>${name}</td>
+                              <td>${min_age} - ${max_age}</td>
+                              <td>
+                                  ${formatMonetaryAmountByLocale(
+                                      this.localeFull,
+                                      fee
+                                  )}
+                              </td>
+                          </tr>
+                      `;
+            });
     }
 
     private renderDateAndTime(start_time: Date | null, end_time: Date | null) {
