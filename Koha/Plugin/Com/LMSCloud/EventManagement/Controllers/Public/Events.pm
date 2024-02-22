@@ -72,7 +72,7 @@ sub _filter_events {
     my $defined_keys = [ grep { defined $params->{$_} } keys %{$params} ];
     if ( @{$defined_keys} ) {
         for my $defined_key ( @{$defined_keys} ) {
-            delete $c->validation->output->{$_};
+            delete $c->validation->output->{$defined_key};
         }
     }
     $events_set = $events_set->filter($params);

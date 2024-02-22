@@ -2,6 +2,8 @@ package Koha::LMSCloud::EventManagement::Events;
 
 use Modern::Perl;
 
+use Koha::Database ();
+
 use Koha::LMSCloud::EventManagement::Event ();
 
 use base qw(Koha::Objects);
@@ -89,7 +91,10 @@ sub compose_fees_search_params {
 sub are_upcoming {
     my ($self) = @_;
 
-    return $self->search( { end_time => { '>' => DateTime->now( time_zone => 'UTC' ) } } );
+    my $schema = Koha::Database->new->schema;
+    my $dtf    = $schema->storage->datetime_parser;
+
+    return $self->search( { end_time => { '>' => $dtf->format_datetime( DateTime->now( time_zone => 'UTC' ) ) } } );
 }
 
 =head2 Internal methods
