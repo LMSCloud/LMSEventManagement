@@ -13,6 +13,7 @@
     "format:ts": "prettier --write --cache --cache-location .prettier.cache.json \"src/**/*.ts\"",
     "format:pl": "perltidyc --cache --cache-location .perltidy.cache.json $(find Koha/Plugin -type f -name '*.pl' -o -name '*.pm')",
     "build": "npm run css:build && npm run format && npx rollup -c && p-kpz -r \"lms-event-management\" -p \"Koha/Plugin/Com/LMSCloud/EventManagement.pm\"",
+    "build:no-fmt": "npm run css:build && npx rollup -c && p-kpz -r \"lms-event-management\" -p \"Koha/Plugin/Com/LMSCloud/EventManagement.pm\"",
     "build:5.030": "npm run css:build && npm run format && npx rollup -c && mkdir -p 5.030 && cp -r Koha 5.030/ && find 5.030 -type f -name '*.pl' -o -name '*.pm' -exec gsed -i 's/5.032/5.030/g' {} + && p-kpz -r 'lms-event-management-5.030' -p '5.030/Koha/Plugin/Com/LMSCloud/EventManagement.pm' && rm -rf 5.030",
     "test": "mocha \"test/**/*.test.mjs\"",
     "docs:package": "./tools/generate_docs.mjs",
