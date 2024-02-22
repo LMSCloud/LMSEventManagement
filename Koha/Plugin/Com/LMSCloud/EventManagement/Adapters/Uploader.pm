@@ -5,18 +5,18 @@ use Modern::Perl;
 use 5.032;
 use English qw( -no_match_vars );
 
-use Carp;
-use C4::Context;
-use Koha::UploadedFile;
-use Koha::UploadedFiles;
-use Digest::MD5 qw(md5_hex);
-use Time::HiRes;
-use IO::File;
-use Readonly;
-use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
-use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
-use POSIX qw(setlocale);
-use Encode;
+use Carp                ();
+use C4::Context         ();
+use Koha::UploadedFile  ();
+use Koha::UploadedFiles ();
+use Digest::MD5 qw( md5_hex );
+use Time::HiRes ();
+use IO::File    ();
+use Readonly    ();
+use Locale::TextDomain qw( __ );
+use Locale::Messages qw( bind_textdomain_filter bindtextdomain textdomain );
+use POSIX qw( setlocale );
+use Encode ();
 
 use Koha::Plugin::Com::LMSCloud::EventManagement;
 
@@ -74,7 +74,9 @@ sub upload {
     }
 
     my $dir = $self->{'rootdir'} . q{/} . $self->{'category'};
-    mkdir $dir if !-d $dir;
+    if ( !-d $dir ) {
+        mkdir $dir;
+    }
 
     # Filename preparation for storage
     my $stored_filename = $hashvalue . '_' . $args->{'filename'};

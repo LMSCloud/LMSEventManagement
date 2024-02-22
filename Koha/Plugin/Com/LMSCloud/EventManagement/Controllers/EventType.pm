@@ -5,21 +5,21 @@ use 5.032;
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
-use Try::Tiny;
-use Readonly;
-use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
-use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
-use POSIX qw(setlocale);
-use Encode;
 
-use Koha::Plugin::Com::LMSCloud::EventManagement;
-use Koha::LMSCloud::EventManagement::Events;
-use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees;
-use Koha::LMSCloud::EventManagement::EventType;
-use Koha::LMSCloud::EventManagement::EventTypes;
-use Koha::LMSCloud::EventManagement::EventType::TargetGroup::Fee;
-use Koha::LMSCloud::EventManagement::EventType::TargetGroup::Fees;
-use Koha::Plugin::Com::LMSCloud::EventManagement::lib::Validator;
+use Try::Tiny qw( catch try );
+use Readonly  ();
+
+use Locale::TextDomain qw( __ );
+use Locale::Messages   qw( bind_textdomain_filter bindtextdomain textdomain );
+use POSIX              qw( setlocale );
+use Encode             ();
+
+use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees     ();
+use Koha::LMSCloud::EventManagement::EventType::TargetGroup::Fee  ();
+use Koha::LMSCloud::EventManagement::EventType::TargetGroup::Fees ();
+use Koha::LMSCloud::EventManagement::EventType                    ();
+use Koha::LMSCloud::EventManagement::EventTypes                   ();
+use Koha::Plugin::Com::LMSCloud::Validator                        ();
 
 our $VERSION = '1.0.0';
 
@@ -31,12 +31,12 @@ bind_textdomain_filter 'com.lmscloud.eventmanagement', \&Encode::decode_utf8;
 bindtextdomain 'com.lmscloud.eventmanagement' => $self->bundle_path . '/locales/';
 
 Readonly::Scalar my $UPPER_AGE_BOUNDARY          => 255;
-Readonly::Scalar my $UPPER_PARTICIPANTS_BOUNDARY => 65535;
+Readonly::Scalar my $UPPER_PARTICIPANTS_BOUNDARY => 65_535;
 
 sub _validate {
     my ($args) = @_;
 
-    my $validator = Koha::Plugin::Com::LMSCloud::EventManagement::lib::Validator->new( { schema => $args->{'schema'}, lang => $args->{'lang'} } );
+    my $validator = Koha::Plugin::Com::LMSCloud::Validator->new( { schema => $args->{'schema'}, lang => $args->{'lang'} } );
     return $validator->validate();
 }
 

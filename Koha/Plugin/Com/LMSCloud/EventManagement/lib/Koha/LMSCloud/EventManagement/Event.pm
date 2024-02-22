@@ -4,7 +4,7 @@ use Modern::Perl;
 
 use base qw(Koha::Object);
 
-use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees;
+use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees ();
 
 =head1 NAME
 

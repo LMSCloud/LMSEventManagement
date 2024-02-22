@@ -1,18 +1,18 @@
-package Koha::Plugin::Com::LMSCloud::EventManagement::lib::MigrationHelper;
+package Koha::Plugin::Com::LMSCloud::MigrationHelper;
 
 use Modern::Perl;
 use utf8;
 use 5.032;
 
-use Carp;
-use English qw( -no_match_vars );
-use File::Spec;
-use File::Basename;
+use Carp           qw( carp croak );
+use English        qw( -no_match_vars );
+use File::Spec     ();
+use File::Basename qw( fileparse );
 use Moose;
-use Readonly;
-use Try::Tiny;
+use Readonly  ();
+use Try::Tiny qw( catch try );
 
-use C4::Context;
+use C4::Context ();
 
 our $VERSION = '1.0.0';
 
@@ -63,7 +63,9 @@ sub install() {
         }
 
         # Store the last migration
-        $args->{plugin}->store_data( { $CURRENT_MIGRATION_KEY => $last_migration } ) if defined $last_migration;
+        if ( defined $last_migration ) {
+            $args->{plugin}->store_data( { $CURRENT_MIGRATION_KEY => $last_migration } );
+        }
 
         return 1;
     }
@@ -129,7 +131,9 @@ sub upgrade() {
     }
     catch {
         my $error = $_;
-        $self->dbh->rollback if $self->dbh->in_transaction;    # Rollback transaction if inside transaction block
+        if ( $self->dbh->in_transaction ) {
+            $self->dbh->rollback;    # Rollback transaction if inside transaction block
+        }
         carp "UPGRADE ERROR: $error";
         return 0;
     };

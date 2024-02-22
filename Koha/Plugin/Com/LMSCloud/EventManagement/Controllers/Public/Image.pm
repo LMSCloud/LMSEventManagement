@@ -5,17 +5,16 @@ use 5.032;
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
-use Try::Tiny;
-use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
-use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
-use POSIX qw(setlocale);
-use Encode;
+use Try::Tiny          qw( catch try );
+use Locale::TextDomain qw( __ );
+use Locale::Messages   qw( bind_textdomain_filter bindtextdomain textdomain );
+use POSIX              qw( setlocale );
+use Encode             ();
 
-use Readonly;
+use Readonly qw( Readonly );
 use Mojo::Asset::File;
 
-use Koha::UploadedFiles;
-use Koha::Plugin::Com::LMSCloud::EventManagement;
+use Koha::UploadedFiles ();
 
 our $VERSION = '1.0.0';
 

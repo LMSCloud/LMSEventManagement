@@ -2,7 +2,7 @@ package Koha::LMSCloud::EventManagement::TargetGroups;
 
 use Modern::Perl;
 
-use Koha::LMSCloud::EventManagement::TargetGroup;
+use Koha::LMSCloud::EventManagement::TargetGroup ();
 
 use base qw(Koha::Objects);
 

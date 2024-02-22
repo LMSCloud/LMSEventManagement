@@ -7,16 +7,18 @@ use utf8;
 
 use Mojo::Base 'Mojolicious::Controller';
 
-use DateTime;
-use DateTime::Format::Strptime;
-use List::Util qw(none);
-use Try::Tiny;
+use DateTime::Format::Strptime ();
+use DateTime                   ();
+use List::Util                 qw( none );
+use Try::Tiny                  qw( catch try );
+use Readonly                   qw( Readonly );
 
-use Koha::Plugin::Com::LMSCloud::EventManagement;
-use Koha::LMSCloud::EventManagement::Events;
-use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees;
+use Koha::LMSCloud::EventManagement::Events                   ();
+use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees ();
 
 our $VERSION = '1.0.0';
+
+Readonly my $NAMESPACE_INDEX => 4;
 
 sub get {
     my $c = shift->openapi->valid_input or return;
@@ -66,15 +68,20 @@ sub _normalize_params {
 sub _filter_events {
     my ( $c, $params ) = @_;
 
-    my $events_set = Koha::LMSCloud::EventManagement::Events->new;
-    if ( my @defined_keys = grep { defined $params->{$_} } keys %{$params} ) {
-        delete $c->validation->output->{$_} for @defined_keys;
+    my $events_set   = Koha::LMSCloud::EventManagement::Events->new;
+    my $defined_keys = [ grep { defined $params->{$_} } keys %{$params} ];
+    if ( @{$defined_keys} ) {
+        for my $defined_key ( @{$defined_keys} ) {
+            delete $c->validation->output->{$_};
+        }
     }
     $events_set = $events_set->filter($params);
 
     $events_set = $events_set->are_upcoming;
 
-    my $is_public      = $c->req->url->to_abs->path->parts->[4] eq 'public';
+    my $url            = $c->req->url;
+    my $path           = $url->to_abs->path;
+    my $is_public      = $path->parts->[$NAMESPACE_INDEX] eq 'public';
     my $fees_set       = Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->new;
     my $fees_event_ids = [
         $fees_set->search(

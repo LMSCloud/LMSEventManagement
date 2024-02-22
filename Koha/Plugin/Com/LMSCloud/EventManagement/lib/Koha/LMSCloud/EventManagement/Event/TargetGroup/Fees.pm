@@ -2,7 +2,7 @@ package Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees;
 
 use Modern::Perl;
 
-use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fee;
+use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fee ();
 
 use base qw(Koha::Objects);
 

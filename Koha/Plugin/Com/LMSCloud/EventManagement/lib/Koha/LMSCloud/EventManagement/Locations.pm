@@ -2,7 +2,7 @@ package Koha::LMSCloud::EventManagement::Locations;
 
 use Modern::Perl;
 
-use Koha::LMSCloud::EventManagement::Location;
+use Koha::LMSCloud::EventManagement::Location ();
 
 use base qw(Koha::Objects);
 

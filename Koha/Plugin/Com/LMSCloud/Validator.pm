@@ -1,21 +1,21 @@
-package Koha::Plugin::Com::LMSCloud::EventManagement::lib::Validator;
+package Koha::Plugin::Com::LMSCloud::Validator;
 
 use Moose;
 use utf8;
 use 5.010;
-use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
-use Locale::Messages qw(:locale_h :libintl_h bind_textdomain_filter);
-use POSIX qw(setlocale);
-use Encode;
-use DateTime;
-use DateTime::Format::Strptime;
 
-use C4::Context;
-use Koha::Plugin::Com::LMSCloud::EventManagement;
+use DateTime                   ();
+use DateTime::Format::Strptime ();
+use Readonly                   ();
+
+use Locale::TextDomain qw( __ );
+use Locale::Messages   qw( bind_textdomain_filter bindtextdomain textdomain );
+use POSIX              qw( localtime setlocale );
+use Encode             ();
+
+use C4::Context ();
 
 our $VERSION = '1.0.0';
-use Exporter 'import';
-use Readonly;
 
 has 'schema' => (
     is       => 'ro',
@@ -78,7 +78,9 @@ sub validate {
                 %{ $task->{'options'} // {} }
             }
         );
-        push @{$errors}, @{$_errors} if !$is_valid;
+        if ( !$is_valid ) {
+            push @{$errors}, @{$_errors};
+        }
     }
     return ( 0, $errors ) if @{$errors};
 
@@ -148,9 +150,17 @@ sub is_valid_string {
 
     $errors = [];
     my $given_argument = defined $args->{'key'} ? __('The given value for ') . $args->{'key'} : __('The given value: ') . $args->{'value'};
-    push @{$errors}, $given_argument . __(' is not alphanumeric.')        if !$is_alphanumeric;
-    push @{$errors}, $given_argument . __(' has not the given length.')   if !$has_given_length;
-    push @{$errors}, $given_argument . __(' exceeds the maximum length.') if $exceeds_max_length;
+    if ( !$is_alphanumeric ) {
+        push @{$errors}, $given_argument . __(' is not alphanumeric.');
+    }
+
+    if ( !$has_given_length ) {
+        push @{$errors}, $given_argument . __(' has not the given length.');
+    }
+
+    if ($exceeds_max_length) {
+        push @{$errors}, $given_argument . __(' exceeds the maximum length.');
+    }
 
     return ( 0, $errors );
 }
@@ -175,7 +185,7 @@ sub is_valid_number {
     my $has_given_length = defined $args->{'length'} ? $args->{'value'} =~ m/^.{1,$args->{'length'}}$/smx : 1;
 
     # Uses a regular expression to check whether the given number is positive if the positive option is true.
-    my $is_positive = $args->{'positive'} ? $args->{'value'} =~ m/^[0-9]\d*$/smx : 1;
+    my $is_positive = $args->{'positive'} ? $args->{'value'} =~ m/^\d+$/smx : 1;
 
     # Checks whether the given value exceeds a certain value if the max_value option defined.
     my $exceeds_max_value = defined $args->{'max_value'} ? $args->{'value'} > $args->{'max_value'} : 0;
@@ -195,11 +205,21 @@ sub is_valid_number {
 
     $errors = [];
     my $given_argument = defined $args->{'key'} ? __('The given value for ') . $args->{'key'} : __('The given value: ') . $args->{'value'};
-    push @{$errors}, $given_argument . __(' is not a number.')           if !$is_number;
-    push @{$errors}, $given_argument . __(' has not the given length.')  if !$has_given_length;
-    push @{$errors}, $given_argument . __(' is not positive.')           if !$is_positive;
-    push @{$errors}, $given_argument . __(' exceeds the maximum value.') if $exceeds_max_value;
-    push @{$errors}, $given_argument . __(' is not in the given range.') if !$is_in_range;
+    if ( !$is_number ) {
+        push @{$errors}, $given_argument . __(' is not a number.');
+    }
+    if ( !$has_given_length ) {
+        push @{$errors}, $given_argument . __(' has not the given length.');
+    }
+    if ( !$is_positive ) {
+        push @{$errors}, $given_argument . __(' is not positive.');
+    }
+    if ($exceeds_max_value) {
+        push @{$errors}, $given_argument . __(' exceeds the maximum value.');
+    }
+    if ( !$is_in_range ) {
+        push @{$errors}, $given_argument . __(' is not in the given range.');
+    }
 
     return ( 0, $errors );
 }
@@ -238,9 +258,15 @@ sub is_valid_datetime {
 
     $errors = [];
     my $given_argument = defined $args->{'key'} ? __('The given value for ') . $args->{'key'} : __('The given value: ') . $args->{'value'};
-    push @{$errors}, $given_argument . __(' is not a valid datetime value.')      if !$is_valid_datetime;
-    push @{$errors}, $given_argument . __(' is not after the current localtime.') if !$is_after_localtime;
-    push @{$errors}, $given_argument . __(' is not before the given datetime.')   if !$is_before;
+    if ( !$is_valid_datetime ) {
+        push @{$errors}, $given_argument . __(' is not a valid datetime value.');
+    }
+    if ( !$is_after_localtime ) {
+        push @{$errors}, $given_argument . __(' is not after the current localtime.');
+    }
+    if ( !$is_before ) {
+        push @{$errors}, $given_argument . __(' is not before the given datetime.');
+    }
 
     return ( 0, $errors );
 }
@@ -269,7 +295,9 @@ sub is_valid_color {
 
     $errors = [];
     my $given_argument = defined $args->{'key'} ? __('The given value for ') . $args->{'key'} : __('The given value: ') . $args->{'value'};
-    push @{$errors}, $given_argument . __(' is not a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0).') if !$is_valid_color;
+    if ( !$is_valid_color ) {
+        push @{$errors}, $given_argument . __(' is not a color in the format #RRGGBB or rgb(0-255, 0-255, 0-255) or rgba(0-255, 0-255, 0-255, 0.0-1.0).');
+    }
 
     return ( 0, $errors );
 }
@@ -294,7 +322,9 @@ sub is_valid_time {
 
     $errors = [];
     my $given_argument = defined $args->{'key'} ? __('The given value for ') . $args->{'key'} : __('The given value: ') . $args->{'value'};
-    push @{$errors}, $given_argument . __(' is not a time in the format HH:mm.') if !$is_valid_time;
+    if ( !$is_valid_time ) {
+        push @{$errors}, $given_argument . __(' is not a time in the format HH:mm.');
+    }
 
     return ( 0, $errors );
 }
@@ -303,13 +333,13 @@ sub is_valid_time {
 
 =head1 NAME
 
-Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validators - A module containing functions to validate input.
+Koha::Plugin::Com::LMSCloud::Validator - A module containing functions to validate input.
 
 =head1 SYNOPSIS
 
-use Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator;
+use Koha::Plugin::Com::LMSCloud::Validator;
 
-my $validator = Koha::Plugin::Com::LMSCloud::RoomReservations::Lib::Validator->new(
+my $validator = Koha::Plugin::Com::LMSCloud::Validator->new(
     {   schema => [
             { key => 'maxcapacity',     value => $room->{'maxcapacity'},     type => 'number' },
             { key => 'color',           value => $room->{'color'},           type => 'color' },

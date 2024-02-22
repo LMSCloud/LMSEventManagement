@@ -5,11 +5,11 @@ use 5.032;
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
-use Try::Tiny;
 
-use Koha::Plugin::Com::LMSCloud::EventManagement;
-use Koha::LMSCloud::EventManagement::Location;
-use Koha::LMSCloud::EventManagement::Locations;
+use Try::Tiny qw( catch try );
+
+use Koha::LMSCloud::EventManagement::Location  ();
+use Koha::LMSCloud::EventManagement::Locations ();
 
 our $VERSION = '1.0.0';
 
