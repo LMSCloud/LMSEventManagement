@@ -1,2 +1,2 @@
 import { CSSResult } from "lit";
-export const tailwindStyles: CSSResult;
+    export const tailwindStyles: CSSResult;

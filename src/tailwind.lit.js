@@ -4776,6 +4776,14 @@ details.collapse summary::-webkit-details-marker {
   border-top-right-radius: 0.75rem;
 }
 
+.rounded-br-none {
+  border-bottom-right-radius: 0px;
+}
+
+.rounded-tr-none {
+  border-top-right-radius: 0px;
+}
+
 .border {
   border-width: 1px;
 }
