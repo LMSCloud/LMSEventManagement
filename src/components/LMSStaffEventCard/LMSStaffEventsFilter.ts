@@ -280,28 +280,30 @@ export default class LMSStaffEventsFilter extends LitElement {
                             ? ["end", "bottom"]
                             : ["start", "bottom"]}
                     >
-                        <div class="join">
+                        <div class="flex gap-2">
                             <button
-                                class="btn btn-primary join-item"
+                                class="btn btn-primary"
                                 id="start_time_now"
                                 @click=${this.handleStartTimeChange}
                             >
                                 ${__("Now on")}
                             </button>
-                            <button
-                                class="btn join-item"
-                                @click=${this.handleStartTimeChange}
-                            >
-                                ${__("Custom date")}
-                            </button>
-                            <div class="form-control join-item">
-                                <input
-                                    type="datetime-local"
-                                    class="input input-bordered"
-                                    value=${ifDefined(this.start_time)}
-                                    name="start_time"
-                                    id="start_time"
-                                />
+                            <div class="join">
+                                <div class="form-control join-item">
+                                    <input
+                                        type="datetime-local"
+                                        class="input input-bordered rounded-br-none rounded-tr-none"
+                                        value=${ifDefined(this.start_time)}
+                                        name="start_time"
+                                        id="start_time"
+                                    />
+                                </div>
+                                <button
+                                    class="btn join-item"
+                                    @click=${this.handleStartTimeChange}
+                                >
+                                    ${__("Custom date")}
+                                </button>
                             </div>
                         </div>
                     </lms-dropdown>
