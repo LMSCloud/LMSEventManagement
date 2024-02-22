@@ -276,7 +276,6 @@ export default class LMSModal extends LitElement {
                     class="modal-box bg-base-100"
                 >
                     <button
-                        for="lms-modal"
                         class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
                         @click=${this.toggleModal}
                     >
@@ -296,7 +295,6 @@ export default class LMSModal extends LitElement {
                             })}
                             <span>${this.alert.message}</span>
                             <button
-                                for="lms-modal"
                                 class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
                                 @click=${this.dismissAlert}
                             >

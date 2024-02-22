@@ -52,6 +52,10 @@ export class InputsSnapshot {
                     input.innerText = snapshotValue.value;
                 }
             }
+
+            if (index === 0) {
+                input.dispatchEvent(new Event("change", { bubbles: true }));
+            }
         });
     }
 }
