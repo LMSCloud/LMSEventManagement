@@ -216,7 +216,8 @@ export default class LMSEventsModal extends LMSModal {
             return;
         }
 
-        if (value === "Please select an option" && this.initialFields) {
+        const eventTypeId = parseInt(value, 10);
+        if (Number.isNaN(eventTypeId) && this.initialFields) {
             this.fields = this.initialFields;
             this.inputs = [];
             this.hydrate();
@@ -224,7 +225,7 @@ export default class LMSEventsModal extends LMSModal {
         }
 
         const newEventType = this.event_types.find(
-            (eventType) => eventType.id === parseInt(value)
+            (eventType) => eventType.id === eventTypeId
         );
         if (!newEventType) {
             return;
