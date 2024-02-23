@@ -212,10 +212,6 @@ export default class LMSEventsModal extends LMSModal {
         const target = e.target as HTMLSelectElement;
         const { value } = target;
 
-        if (!value) {
-            return;
-        }
-
         const eventTypeId = parseInt(value, 10);
         if (Number.isNaN(eventTypeId) && this.initialFields) {
             this.fields = this.initialFields;
