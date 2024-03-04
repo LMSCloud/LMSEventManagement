@@ -282,7 +282,7 @@ sub install() {
 
         my $bundle_path = $bundle_dir;
 
-        my $migration_helper = Koha::Plugin::Com::LMSCloud::Utils::MigrationHelper->new(
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::Util::MigrationHelper->new(
             {   table_name_mappings => {
                     target_groups_table                => $self->get_qualified_table_name('target_groups'),
                     locations_table                    => $self->get_qualified_table_name('locations'),
@@ -321,7 +321,7 @@ sub upgrade {
     my $bundle_path = $bundle_dir;
 
     return try {
-        my $migration_helper = Koha::Plugin::Com::LMSCloud::Utils::MigrationHelper->new(
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::Util::MigrationHelper->new(
             {   table_name_mappings => {
                     target_groups_table                => $self->get_qualified_table_name('target_groups'),
                     locations_table                    => $self->get_qualified_table_name('locations'),
