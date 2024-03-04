@@ -1,4 +1,5 @@
 import { html, TemplateResult } from "lit";
+import LMSImagePicker from "../../../components/custom/LMSImagePicker";
 import LMSPellEditor from "../../../components/custom/LMSPellEditor";
 import {
     InputType,
@@ -36,7 +37,8 @@ type TemplateFunction = (
 
 declare global {
     interface HTMLElementTagNameMap {
-        "lms-image-picker": LMSPellEditor;
+        "lms-image-picker": LMSImagePicker;
+        "lms-pell-editor": LMSPellEditor;
     }
 }
 

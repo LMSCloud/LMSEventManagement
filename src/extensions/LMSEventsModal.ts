@@ -1,5 +1,5 @@
 import { PropertyValueMap } from "lit";
-import { customElement, property, query, state } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import LMSModal from "../components/LMSModal";
 import { __, attr__ } from "../lib/translate";
 import {
@@ -9,7 +9,6 @@ import {
     LMSEventType,
     LMSLocation,
     LMSTargetGroup,
-    ModalField,
     UploadedImage,
 } from "../types/common";
 
@@ -30,8 +29,6 @@ export default class LMSEventsModal extends LMSModal {
         endpoint: "/api/v1/contrib/eventmanagement/events",
     };
 
-    @state() initialFields?: ModalField[];
-
     @query('select[name="event_type"]') eventTypeSelect!: HTMLSelectElement;
 
     private boundUpdateFieldsOnEventTypeChange =
@@ -40,9 +37,6 @@ export default class LMSEventsModal extends LMSModal {
     override async connectedCallback() {
         super.connectedCallback();
         this.hydrate();
-
-        // Save the initial state for resets
-        this.initialFields = [...this.fields];
     }
 
     private hydrate() {
@@ -208,18 +202,17 @@ export default class LMSEventsModal extends LMSModal {
         );
     }
 
+    protected override handleReset(e: Event) {
+        super.handleReset(e);
+
+        this.renderInputs();
+    }
+
     private updateFieldsOnEventTypeChange(e: Event) {
         const target = e.target as HTMLSelectElement;
         const { value } = target;
 
         const eventTypeId = parseInt(value, 10);
-        if (Number.isNaN(eventTypeId) && this.initialFields) {
-            this.fields = this.initialFields;
-            this.inputs = [];
-            this.hydrate();
-            return;
-        }
-
         const newEventType = this.event_types.find(
             (eventType) => eventType.id === eventTypeId
         );

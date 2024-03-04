@@ -11,7 +11,7 @@ import { DirectiveResult } from "lit/directive";
 import { classMap } from "lit/directives/class-map.js";
 import { map } from "lit/directives/map.js";
 import { repeat } from "lit/directives/repeat.js";
-import { InputsSnapshot } from "../lib/InputsSnapshot";
+import * as R from "remeda";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
 import { InputConverter } from "../lib/converters/InputConverter/InputConverter";
 import { TranslateDirective, __, locale } from "../lib/translate";
@@ -49,7 +49,11 @@ export default class LMSModal extends LitElement {
         | string
         | DirectiveResult<typeof TranslateDirective> = "";
 
+    @state() initialFields?: ModalField[];
+
     @query(".btn-modal") buttonModal!: HTMLElement;
+
+    @query("form") formElement!: HTMLFormElement;
 
     @query(".close") closeButton!: HTMLElement;
 
@@ -66,8 +70,6 @@ export default class LMSModal extends LitElement {
 
     private boundHandleKeyDown = (e: KeyboardEvent) =>
         this.handleKeyDown.bind(this)(e);
-
-    private snapshot?: InputsSnapshot;
 
     static override styles = [tailwindStyles, skeletonStyles];
 
@@ -112,7 +114,7 @@ export default class LMSModal extends LitElement {
 
         if (response.ok) {
             this.toggleModal();
-            this.snapshot?.revert();
+            this.formElement.reset();
 
             const event = new CustomEvent("created", { bubbles: true });
             this.dispatchEvent(event);
@@ -190,6 +192,23 @@ export default class LMSModal extends LitElement {
         }
     }
 
+    protected handleReset(e: Event) {
+        const target = e.target;
+        if (!(target instanceof HTMLFormElement)) {
+            return;
+        }
+
+        if (!this.initialFields) {
+            return;
+        }
+
+        this.fields = this.initialFields;
+
+        target.reset();
+
+        this.requestUpdate();
+    }
+
     protected composeTaggedInputs(
         field: ModalField,
         taggedData?: TaggedData[]
@@ -211,6 +230,9 @@ export default class LMSModal extends LitElement {
     }
 
     override firstUpdated() {
+        // Save the initial state for resets
+        this.initialFields = R.clone(this.fields);
+
         if (this.footer && this.buttonModal) {
             this.intersectionObserverHandler = new IntersectionObserverHandler({
                 intersecting: {
@@ -231,12 +253,6 @@ export default class LMSModal extends LitElement {
             });
 
             this.intersectionObserverHandler.init();
-        }
-
-        if (this.modal) {
-            this.snapshot = new InputsSnapshot(
-                this.modal.querySelectorAll("input, select, textarea")
-            );
         }
     }
 
@@ -272,6 +288,7 @@ export default class LMSModal extends LitElement {
                 <form
                     @submit=${this.create}
                     @change=${this.mediateChange}
+                    @reset=${this.handleReset}
                     method="dialog"
                     class="modal-box bg-base-100"
                 >
