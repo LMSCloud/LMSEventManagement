@@ -6,42 +6,31 @@ no warnings 'redefine';
 use Modern::Perl;
 use utf8;
 use 5.032;
-use English qw(-no_match_vars);
 
 ## Required for all plugins
 use base qw(Koha::Plugins::Base);
 
 ## We will also need to include any Koha libraries we want to access
-use C4::Auth qw( get_template_and_user );
+use C4::Auth      qw( get_template_and_user );
 use C4::Context   ();
 use C4::Languages ();
 
 use Koha::Account        ();
 use Koha::Account::Lines ();
 use Koha::Database       ();
-use Koha::DateUtils qw( dt_from_string );
-use Koha::Libraries                  ();
-use Koha::Patron                     ();
-use Koha::Patron::Categories         ();
-use Koha::Patrons                    ();
-use Koha::Template::Plugin::Branches ();
+use Koha::DateUtils      qw( dt_from_string );
+use Koha::Patrons        ();
+use Koha::Schema         ();
 
-use File::Basename ();
-use Carp qw( carp croak );
-use Cwd qw( abs_path );
-use GD::Image      ();
-use LWP::UserAgent ();
-use MARC::Record   ();
-use MIME::Base64   ();
-use Mojo::JSON qw( decode_json );
-use Readonly qw( Readonly );
-use Try::Tiny qw( catch try );
-use URI::Escape ();
-
-use Koha::Plugin::Com::LMSCloud::MigrationHelper ();
-
+use Carp             qw( carp croak );
+use Cwd              qw( abs_path );
+use English          qw(-no_match_vars);
 use Module::Metadata ();
-use Koha::Schema     ();
+use Mojo::JSON       qw( decode_json );
+use Readonly         qw( Readonly );
+use Try::Tiny        qw( catch try );
+
+use Koha::Plugin::Com::LMSCloud::Utils::MigrationHelper ();
 
 Readonly my $TINYINT_UPPER_BOUNDARY => 255;
 
@@ -293,7 +282,7 @@ sub install() {
 
         my $bundle_path = $bundle_dir;
 
-        my $migration_helper = Koha::Plugin::Com::LMSCloud::MigrationHelper->new(
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::Utils::MigrationHelper->new(
             {   table_name_mappings => {
                     target_groups_table                => $self->get_qualified_table_name('target_groups'),
                     locations_table                    => $self->get_qualified_table_name('locations'),
@@ -332,7 +321,7 @@ sub upgrade {
     my $bundle_path = $bundle_dir;
 
     return try {
-        my $migration_helper = Koha::Plugin::Com::LMSCloud::MigrationHelper->new(
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::Utils::MigrationHelper->new(
             {   table_name_mappings => {
                     target_groups_table                => $self->get_qualified_table_name('target_groups'),
                     locations_table                    => $self->get_qualified_table_name('locations'),

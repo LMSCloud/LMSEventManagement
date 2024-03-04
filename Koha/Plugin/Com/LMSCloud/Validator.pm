@@ -4,16 +4,17 @@ use Moose;
 use utf8;
 use 5.010;
 
-use DateTime                   ();
 use DateTime::Format::Strptime ();
 use Readonly                   ();
 
-use Locale::TextDomain qw( __ );
-use Locale::Messages   qw( bind_textdomain_filter bindtextdomain textdomain );
-use POSIX              qw( localtime setlocale );
-use Encode             ();
-
-use C4::Context ();
+use Locale::Messages qw(
+    bind_textdomain_filter
+    bindtextdomain
+    setlocale
+    textdomain
+);
+use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
+use POSIX qw( localtime );
 
 our $VERSION = '1.0.0';
 

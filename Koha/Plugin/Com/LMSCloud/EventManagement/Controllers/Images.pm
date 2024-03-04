@@ -8,14 +8,16 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Try::Tiny qw( catch try );
 
-use Locale::TextDomain ();
-use Locale::Messages   qw( bind_textdomain_filter bindtextdomain textdomain );
-use POSIX              qw( setlocale );
-use Encode             ();
+use Locale::Messages qw(
+    bind_textdomain_filter
+    bindtextdomain
+    setlocale
+    textdomain
+);
+use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
 
-use Koha::UploadedFiles                                              ();
-use MIME::Base64                                                     ();
-use File::Slurp                                                      ();
+use Koha::UploadedFiles ();
+
 use Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Uploader ();
 use Koha::Plugin::Com::LMSCloud::EventManagement;
 

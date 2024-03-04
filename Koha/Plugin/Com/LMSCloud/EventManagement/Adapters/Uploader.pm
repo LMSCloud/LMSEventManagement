@@ -3,20 +3,20 @@ package Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Uploader;
 use utf8;
 use Modern::Perl;
 use 5.032;
-use English qw( -no_match_vars );
 
-use Carp                ();
-use C4::Context         ();
+use Digest::MD5         qw( md5_hex );
+use English             qw( -no_match_vars );
 use Koha::UploadedFile  ();
 use Koha::UploadedFiles ();
-use Digest::MD5 qw( md5_hex );
-use Time::HiRes ();
-use IO::File    ();
-use Readonly    ();
-use Locale::TextDomain qw( __ );
-use Locale::Messages qw( bind_textdomain_filter bindtextdomain textdomain );
-use POSIX qw( setlocale );
-use Encode ();
+use Readonly            ();
+
+use Locale::Messages qw(
+    bind_textdomain_filter
+    bindtextdomain
+    setlocale
+    textdomain
+);
+use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
 
 use Koha::Plugin::Com::LMSCloud::EventManagement;
 

@@ -6,13 +6,16 @@ use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
 
-use Try::Tiny qw( catch try );
 use Readonly  ();
+use Try::Tiny qw( catch try );
 
-use Locale::TextDomain qw( __ );
-use Locale::Messages   qw( bind_textdomain_filter bindtextdomain textdomain );
-use POSIX              qw( setlocale );
-use Encode             ();
+use Locale::Messages qw(
+    bind_textdomain_filter
+    bindtextdomain
+    setlocale
+    textdomain
+);
+use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
 
 use Koha::LMSCloud::EventManagement::TargetGroup  ();
 use Koha::LMSCloud::EventManagement::TargetGroups ();

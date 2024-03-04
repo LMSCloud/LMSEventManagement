@@ -7,12 +7,14 @@ use utf8;
 use Mojo::Base 'Mojolicious::Controller';
 
 use Try::Tiny qw( catch try );
-use Readonly  ();
 
-use Locale::TextDomain qw( __ );
-use Locale::Messages   qw( bind_textdomain_filter bindtextdomain textdomain );
-use POSIX              qw( setlocale );
-use Encode             ();
+use Locale::Messages qw(
+    bind_textdomain_filter
+    bindtextdomain
+    setlocale
+    textdomain
+);
+use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
 
 use Koha::LMSCloud::EventManagement::Location  ();
 use Koha::LMSCloud::EventManagement::Locations ();

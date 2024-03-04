@@ -4,14 +4,11 @@ use 5.032;
 
 use Modern::Perl;
 use utf8;
-
 use Mojo::Base 'Mojolicious::Controller';
 
-use DateTime::Format::Strptime ();
-use DateTime                   ();
-use List::Util                 qw( none );
-use Try::Tiny                  qw( catch try );
-use Readonly                   qw( Readonly );
+use List::Util qw( none );
+use Try::Tiny  qw( catch try );
+use Readonly   qw( Readonly );
 
 use Koha::LMSCloud::EventManagement::Events                   ();
 use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees ();
