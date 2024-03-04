@@ -1,4 +1,4 @@
-package Koha::Plugin::Com::LMSCloud::MigrationHelper;
+package Koha::Plugin::Com::LMSCloud::Util::MigrationHelper;
 
 use Modern::Perl;
 use utf8;

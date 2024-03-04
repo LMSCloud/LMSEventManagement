@@ -30,7 +30,7 @@ use Mojo::JSON       qw( decode_json );
 use Readonly         qw( Readonly );
 use Try::Tiny        qw( catch try );
 
-use Koha::Plugin::Com::LMSCloud::Utils::MigrationHelper ();
+use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
 
 Readonly my $TINYINT_UPPER_BOUNDARY => 255;
 
