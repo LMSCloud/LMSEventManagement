@@ -1,0 +1,12 @@
+# This is the source of all truth for your plugin
+
+PLUGIN_VERSION=0.0.1
+PLUGIN_NAME=Koha::Plugin::[c]::[b]::[a]
+PLUGIN_AUTHOR=you
+PLUGIN_RELEASE_FILENAME=koha-plugin-[a]
+PLUGIN_STATIC_DIR_NAME=static
+PLUGIN_DATE_AUTHORED=today
+PLUGIN_DATE_UPDATED=today
+PLUGIN_MIN_KOHA_VERSION=
+PLUGIN_MAX_KOHA_VERSION=
+PLUGIN_DESCRIPTION="Probably awesome?"

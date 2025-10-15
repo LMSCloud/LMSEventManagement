@@ -1,0 +1,12 @@
+requires 'DateTime';
+requires 'JSON';
+requires 'Path::Tiny';
+requires 'Perl::Tidy';
+requires 'Readonly';
+requires 'Template';
+requires 'Term::ANSIColor';
+requires 'Term::Choose';
+requires 'Term::ReadLine';
+requires 'Term::UI';
+requires 'Types::Standard';
+requires 'YAML::Tiny';

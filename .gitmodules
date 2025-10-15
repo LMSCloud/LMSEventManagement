@@ -1,6 +1,3 @@
-[submodule "tools/package-kpz"]
-	path = tools/package-kpz
-	url = https://github.com/LMSCloudPauld/package-kpz.git
-[submodule "tools/ktd-plugin-tools"]
-	path = tools/ktd-plugin-tools
-	url = https://github.com/LMSCloudPauld/ktd-plugin-tools.git
+[submodule "Koha/Plugin/Com/LMSCloud/Util"]
+	path = Koha/Plugin/Com/LMSCloud/Util
+	url = https://github.com/lmscloudpauld/koha-plugin-lmscloud-util

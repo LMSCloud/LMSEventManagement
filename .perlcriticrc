@@ -1,0 +1,56 @@
+# My default is brutal, change it if you want.
+severity = 1
+
+program-extensions = .pl .pm .t
+
+[TestingAndDebugging::RequireUseStrict]
+equivalent_modules = Modern::Perl Moo Moose Object::Pad Test::Class::Moose Test2::V0 Test::Most common::sense
+
+[TestingAndDebugging::RequireUseWarnings]
+equivalent_modules = Modern::Perl Moo Moose Object::Pad Test::Class::Moose Test2::V0 Test::Most common::sense
+
+# Gets confused with subroutine signatures
+## Ah, should've left it in place!
+[-Subroutines::ProhibitSubroutinePrototypes]
+
+# I like strict and warnings, but No strict and no warnings are intentional
+## Not in my plugins!
+### [TestingAndDebugging::ProhibitNoStrict]
+#### allow = vars subs refs
+
+[-TestingAndDebugging::ProhibitNoWarnings]
+
+# Surprisingly controversial policy, considering Community::EmptyReturn recommends the exact opposite.
+## It is kind of redundant and looks gross.
+### [-Subroutines::ProhibitExplicitReturnUndef]
+
+# I find code such as if($foo and !$bar) to be clear enough. 
+## Ah, let's not allow it nevertheless.
+### [-ValuesAndExpressions::ProhibitMixedBooleanOperators]
+
+# Constant is part of core and seems fairly popular
+## Readonly is the way!
+### [-ValuesAndExpressions::ProhibitConstantPragma]
+
+# Multiple packages in one file is bad form, but it's not a bug or unintentional
+## Yes to that, let's not allow this.
+### [-Modules::ProhibitMultiplePackages]
+
+# I like the clarity.
+## [-Subroutines::RequireFinalReturn]
+
+# Object::Pad documentation has use Object::Pad as the first line of the module.
+[Modules::RequireExplicitPackage]
+allow_import_of = Object::Pad feature Feature::Compat::Class experimental
+
+# This is an odd one. Currently, the ADJUST is not recognized as a special Block by PPI, so I magled the code to "sub ADJUST", which then causes other issues.
+# Perhaps there's a better mangling, or PPI can be updated
+[Subroutines::ProhibitBuiltinHomonyms]
+allow = ADJUST
+
+# Not a default policy, but these exemptions are useful. I'm sure many others exist as well. 
+[Subroutines::ProhibitCallsToUndeclaredSubs]
+exempt_subs = Moo::has Moose::has Object::Pad::class Object::Pad::field Object::Pad::role Object::Pad::has Object::Pad::param Object::Pad::reader Object::Pad::writer Object::Pad::mutator Object::Pad::accessor experimental::field experimental::class experimental::param feature::field feature::class feature::param Future::AsyncAwait::await Future::AsyncAwait::async feature::try feature::catch Feature::Compat::Try::try Feature::Compat::Try::catch
+
+# I like pbp, core
+theme = pbp, core

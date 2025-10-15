@@ -1,0 +1,27 @@
+[% SET footerjs = 1 %]
+[% INCLUDE 'doc-head-open.inc' %]
+<title>Koha: <% a %> - <% action | capitalize %></title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+
+<body>
+    [% WRAPPER 'header.inc' %]
+        <% IF action == 'admin' %>[% INCLUDE 'prefs-admin-search.inc' %]<% END %>
+    [% END %]
+
+    <nav aria-label="breadcrumb" id="breadcrumbs">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/cgi-bin/koha/mainpage.pl">Home</a></li>
+            <li class="breadcrumb-item"><a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a></li>
+            <li class="breadcrumb-item"><a href="#"><% a %></a></li>
+            <li class="breadcrumb-item"><a href="#"><% action | capitalize %></a></li>
+        </ol>
+    </div>
+
+    <div class="main container-fluid">
+        <div class="row">
+            <div class="col-sm-12">Hello, <% a %>!</div>
+        </div>
+    </div>
+
+[% INCLUDE 'intranet-bottom.inc' %]
