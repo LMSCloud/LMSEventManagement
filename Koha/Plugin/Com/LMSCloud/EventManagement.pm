@@ -31,6 +31,7 @@ use Readonly         qw( Readonly );
 use Try::Tiny        qw( catch try );
 
 use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
+use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page page_exists );
 
 Readonly my $TINYINT_UPPER_BOUNDARY => 255;
 
@@ -300,6 +301,20 @@ sub install() {
             croak 'Migration failed';
         }
 
+        # Create OPAC page for events
+        my $page_content = $self->mbf_read('events.html');
+        my $page_id      = create_opac_page(
+            {   code    => 'lmscloud-eventmanagement',
+                title   => 'Events',
+                content => $page_content,
+                lang    => 'default',
+            }
+        );
+
+        if ( !$page_id ) {
+            carp 'Failed to create OPAC page for events';
+        }
+
         return 1;
     }
     catch {
@@ -339,6 +354,22 @@ sub upgrade {
             croak 'Migration failed';
         }
 
+        # Create OPAC page for events if it doesn't exist
+        if ( !page_exists( { code => 'lmscloud-eventmanagement', lang => 'default' } ) ) {
+            my $page_content = $self->mbf_read('events.html');
+            my $page_id      = create_opac_page(
+                {   code    => 'lmscloud-eventmanagement',
+                    title   => 'Events',
+                    content => $page_content,
+                    lang    => 'default',
+                }
+            );
+
+            if ( !$page_id ) {
+                carp 'Failed to create OPAC page for events during upgrade';
+            }
+        }
+
         my $dt = dt_from_string();
         $self->store_data( { last_upgraded => $dt->ymd(q{-}) . q{ } . $dt->hms(q{:}) } );
 
@@ -367,6 +398,13 @@ sub uninstall() {
         my $sth = $dbh->prepare(qq{DROP TABLE IF EXISTS $table });
         $sth->execute;
     }
+
+    # Remove OPAC page for events
+    delete_opac_page(
+        {   code => 'lmscloud-eventmanagement',
+            lang => 'default',
+        }
+    );
 
     return 1;
 

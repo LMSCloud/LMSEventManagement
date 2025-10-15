@@ -1,0 +1,20 @@
+<link rel="stylesheet" href="/api/v1/contrib/eventmanagement/static/dist/main.css">
+<script type="text/javascript" src="/api/v1/contrib/eventmanagement/static/dist/main.js"></script>
+
+<div id="lmse">
+    <lms-events-view></lms-events-view>
+</div>
+
+<script>
+(function() {
+    // Extract borrowernumber from Koha's logged-in user element
+    const loggedInUser = document.querySelector('.loggedinusername');
+    const borrowernumber = loggedInUser ? loggedInUser.getAttribute('data-borrowernumber') : null;
+
+    // Set the borrowernumber attribute on the component
+    const component = document.querySelector('lms-events-view');
+    if (component && borrowernumber) {
+        component.setAttribute('borrowernumber', borrowernumber);
+    }
+})();
+</script>

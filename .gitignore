@@ -5,6 +5,7 @@ img/
 archive
 package-lock.json
 pnpm-lock.yaml
+cpanfile.snapshot
 *.kpz
 p-kpz
 kpt
