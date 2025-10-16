@@ -20,6 +20,7 @@ use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
 use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fee  ();
 use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees ();
 use Koha::LMSCloud::EventManagement::Events                   ();
+use Koha::LMSCloud::EventManagement::ICalendar                ();
 use Koha::Plugin::Com::LMSCloud::Validator                    ();
 
 our $VERSION = '1.0.0';
@@ -225,6 +226,32 @@ sub delete {
         $event->delete;
 
         return $c->render( status => 204, openapi => q{} );
+    }
+    catch {
+        return $c->unhandled_exception($_);
+    };
+}
+
+sub export_ical {
+    my $c = shift->openapi->valid_input or return;
+
+    return try {
+        my $id    = $c->validation->param('id');
+        my $event = Koha::LMSCloud::EventManagement::Events->find($id);
+
+        if ( !$event ) {
+            return $c->render( status => 404, openapi => { error => 'Event not found' } );
+        }
+
+        my $location = $event->location;
+
+        my $ical_data = Koha::LMSCloud::EventManagement::ICalendar::generate_event_ical( $event, $location );
+
+        my $filename = join q{}, 'event-', $event->id, '.ics';
+        $c->res->headers->content_type('text/calendar; charset=utf-8');
+        $c->res->headers->content_disposition(qq{attachment; filename="$filename"});
+
+        return $c->render( data => $ical_data );
     }
     catch {
         return $c->unhandled_exception($_);

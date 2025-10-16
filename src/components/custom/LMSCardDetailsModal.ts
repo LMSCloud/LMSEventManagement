@@ -1,6 +1,7 @@
 import {
     faArrowRight,
     faCalendar,
+    faCalendarPlus,
     faCreditCard,
     faInfoCircle,
     faMapMarker,
@@ -335,6 +336,35 @@ export default class LMSCardDetailsModal extends LitElement {
             : undefined;
     }
 
+    private async handleExportIcal() {
+        if (!this.event?.id) {
+            return;
+        }
+
+        try {
+            const response = await requestHandler.get({
+                endpoint: "eventIcalPublic",
+                path: [this.event.id.toString(), "ical"],
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to export calendar event");
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `event-${this.event.id}.ics`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error("Error exporting calendar event:", error);
+        }
+    }
+
     override render() {
         const targetGroups = this.event
             ? this.extractTargetGroups(this.event)
@@ -586,12 +616,25 @@ export default class LMSCardDetailsModal extends LitElement {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="modal-action">
+                                <div class="modal-action flex-wrap">
                                     <button
                                         class="btn btn-secondary"
                                         @click=${this.toggleModal}
                                     >
                                         ${__("Close")}
+                                    </button>
+                                    <button
+                                        class="btn btn-neutral"
+                                        @click=${this.handleExportIcal}
+                                        title=${__("Export to Calendar")}
+                                        aria-label=${__("Export to Calendar")}
+                                    >
+                                        ${litFontawesome(faCalendarPlus, {
+                                            className: "w-4 h-4 sm:mr-2",
+                                        })}
+                                        <span class="hidden sm:inline"
+                                            >${__("Export to Calendar")}</span
+                                        >
                                     </button>
                                     <a
                                         class="${classMap({

@@ -32,6 +32,10 @@ export const ENDPOINTS: ApiEndpoints = {
             url: `${BASE_PATH}/public/settings`,
             cache: true,
         },
+        eventIcalPublic: {
+            url: `${BASE_PATH}/public/events`,
+            cache: false,
+        },
         settings: {
             url: `${BASE_PATH}/settings`,
             cache: false,

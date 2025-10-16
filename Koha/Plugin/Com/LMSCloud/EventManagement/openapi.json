@@ -325,6 +325,60 @@
       }
     }
   },
+  "/public/events/{id}/ical": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Events#export_ical",
+      "operationId": "exportEventIcalPublic",
+      "tags": [
+        "events"
+      ],
+      "description": "Export an event as iCalendar (ICS) file",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID of event to export",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "produces": [
+        "text/calendar"
+      ],
+      "responses": {
+        "200": {
+          "description": "iCalendar file",
+          "schema": {
+            "type": "string"
+          }
+        },
+        "404": {
+          "description": "Event not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/public/event_types": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::EventTypes#list",
