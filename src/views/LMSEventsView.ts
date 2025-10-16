@@ -56,7 +56,7 @@ export default class LMSEventsView extends LitElement {
         query: window.location.search,
         optionalParams: ["min_age", "max_age", "start_time", "end_time", "fee"],
         repeatableParams: ["event_type", "target_group", "location"],
-        staticParams: ["class", "method", "op"],
+        staticParams: ["class", "method", "op", "code"],
     });
 
     static override styles = [
