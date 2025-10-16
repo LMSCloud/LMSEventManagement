@@ -245,6 +245,12 @@ sub is_valid_datetime {
 
     my $is_valid_datetime = defined $dt ? 1 : 0;
 
+    # Check if the year is at least 1000 (4 digits) to prevent dates like "0226-01-01"
+    my $has_valid_year = 1;
+    if ( $is_valid_datetime && $dt ) {
+        $has_valid_year = $dt->year >= 1000;
+    }
+
     # Checks whether the given value is equal or greater than the current localtime if the after option is true.
     # This assumes that the server this is run on is in the same timezone as the client.
     my $is_after_localtime = defined $args->{'after'} ? ( $args->{'value'} ge localtime->strftime('%Y-%m-%dT%H:%M:%S%z') ) : 1;
@@ -253,7 +259,7 @@ sub is_valid_datetime {
     my $is_before = defined $args->{'before'} ? ( $args->{'value'} le $args->{'before'} ) : 1;
 
     # Check if all options specified in args are true.
-    if ( $is_valid_datetime && $is_after_localtime && $is_before ) {
+    if ( $is_valid_datetime && $has_valid_year && $is_after_localtime && $is_before ) {
         return (1);
     }
 
@@ -261,6 +267,9 @@ sub is_valid_datetime {
     my $given_argument = defined $args->{'key'} ? __('The given value for ') . $args->{'key'} : __('The given value: ') . $args->{'value'};
     if ( !$is_valid_datetime ) {
         push @{$errors}, $given_argument . __(' is not a valid datetime value.');
+    }
+    if ( !$has_valid_year ) {
+        push @{$errors}, $given_argument . __(' has an invalid year (must be 4 digits, >= 1000).');
     }
     if ( !$is_after_localtime ) {
         push @{$errors}, $given_argument . __(' is not after the current localtime.');
