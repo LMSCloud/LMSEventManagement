@@ -414,7 +414,7 @@ export default class LMSTable extends LitElement {
     private sortColumns() {
         const { data } = this;
 
-        const hasData = data?.length > 0 ?? false;
+        const hasData = data?.length > 0;
         const [headers] = hasData ? data : [];
         this.headers = this.order.filter(
             (header) => headers && {}.hasOwnProperty.call(headers, header)
