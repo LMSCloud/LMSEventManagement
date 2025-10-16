@@ -91,6 +91,7 @@ export default class LMSStaffEventCardPreview extends LitElement {
             .caption=${this.caption}
             .image=${this.image}
             .listItems=${this.listItems}
+            .status=${this.event?.status}
             class="m-4"
         >
         </lms-card>`;

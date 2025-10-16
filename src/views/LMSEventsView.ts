@@ -362,6 +362,7 @@ export default class LMSEventsView extends LitElement {
                           alt: event.name,
                       }
                     : undefined}
+                .status=${event.status}
             ></lms-card>
         `;
     }

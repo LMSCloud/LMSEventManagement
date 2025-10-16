@@ -1,8 +1,16 @@
-import { html, LitElement } from "lit";
+import {
+    faCheckCircle,
+    faClock,
+    faTimesCircle,
+    faUserSlash,
+} from "@fortawesome/free-solid-svg-icons";
+import { litFontawesome } from "@weavedev/lit-fontawesome";
+import { html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { map } from "lit/directives/map.js";
+import { __ } from "../lib/translate";
 import { tailwindStyles } from "../tailwind.lit";
 import { Image } from "../types/common";
 
@@ -10,6 +18,8 @@ type Link = {
     href: string;
     text: string;
 };
+
+type EventStatus = "pending" | "confirmed" | "canceled" | "sold_out";
 
 @customElement("lms-card")
 export default class LMSCard extends LitElement {
@@ -23,19 +33,88 @@ export default class LMSCard extends LitElement {
 
     @property({ type: Array }) listItems?: Array<any>;
 
+    @property({ type: String }) status?: EventStatus;
+
     static override styles = [tailwindStyles];
 
-    override render() {
+    private getStatusConfig() {
+        switch (this.status) {
+            case "confirmed":
+                return {
+                    icon: faCheckCircle,
+                    class: "badge-success",
+                    label: __("Confirmed"),
+                };
+            case "pending":
+                return {
+                    icon: faClock,
+                    class: "badge-warning",
+                    label: __("Pending"),
+                };
+            case "canceled":
+                return {
+                    icon: faTimesCircle,
+                    class: "badge-error",
+                    label: __("Canceled"),
+                };
+            case "sold_out":
+                return {
+                    icon: faUserSlash,
+                    class: "badge-neutral",
+                    label: __("Sold Out"),
+                };
+            default:
+                return null;
+        }
+    }
+
+    private renderStatusBadge(inline: boolean = false) {
+        const config = this.getStatusConfig();
+        if (!config) {
+            return nothing;
+        }
+
         return html`
             <div
-                class="card shadow-md hover:relative hover:bottom-2 hover:cursor-pointer hover:shadow-lg"
+                class="${classMap({
+                    badge: true,
+                    "badge-success": config.class === "badge-success",
+                    "badge-warning": config.class === "badge-warning",
+                    "badge-error": config.class === "badge-error",
+                    "badge-neutral": config.class === "badge-neutral",
+                    absolute: !inline,
+                    "right-2": !inline,
+                    "top-2": !inline,
+                    "z-10": !inline,
+                    "gap-1": true,
+                    "shadow-lg": !inline,
+                })}"
+                role="status"
+                aria-label="${config.label}"
             >
+                <span aria-hidden="true">
+                    ${litFontawesome(config.icon, {
+                        className: "w-3 h-3",
+                    })}
+                </span>
+                <span class="text-xs font-semibold">${config.label}</span>
+            </div>
+        `;
+    }
+
+    override render() {
+        const hasImage = !!this.image?.src;
+        return html`
+            <div
+                class="card relative shadow-md hover:bottom-2 hover:cursor-pointer hover:shadow-lg"
+            >
+                ${hasImage ? this.renderStatusBadge() : nothing}
                 <figure>
                     <img
                         src=${ifDefined(this.image?.src)}
                         alt=${ifDefined(this.image?.alt)}
                         class="${classMap({
-                            hidden: !this.image?.src,
+                            hidden: !hasImage,
                         })} w-full"
                     />
                 </figure>
@@ -43,9 +122,10 @@ export default class LMSCard extends LitElement {
                     <h5
                         class="${classMap({
                             hidden: !this.caption,
-                        })} card-title"
+                        })} card-title flex items-center justify-between"
                     >
-                        ${this.caption}
+                        <span>${this.caption}</span>
+                        ${!hasImage ? this.renderStatusBadge(true) : nothing}
                     </h5>
                     <p
                         class=${classMap({

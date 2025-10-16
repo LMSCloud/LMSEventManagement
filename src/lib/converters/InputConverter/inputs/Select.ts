@@ -27,8 +27,7 @@ export default class Select {
                 (datum) =>
                     html`<option
                         value=${datum.id}
-                        ?selected=${datum.id ===
-                        parseInt(this.value as string, 10)}
+                        ?selected=${datum.id == this.value}
                     >
                         ${datum.name}
                     </option>`

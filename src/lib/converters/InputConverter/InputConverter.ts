@@ -123,10 +123,10 @@ ${value}</textarea
                 new Input("registration_end", value).render(),
             status: (value) =>
                 new Select("status", value, [
-                    { id: 1, name: __("Pending") },
-                    { id: 2, name: __("Confirmed") },
-                    { id: 3, name: __("Canceled") },
-                    { id: 3, name: __("Sold Out") },
+                    { id: "pending", name: __("Pending") },
+                    { id: "confirmed", name: __("Confirmed") },
+                    { id: "canceled", name: __("Canceled") },
+                    { id: "sold_out", name: __("Sold Out") },
                 ] as SelectOption[]).render(),
             registration_link: (value) =>
                 new Input("registration_link", value).render(),
