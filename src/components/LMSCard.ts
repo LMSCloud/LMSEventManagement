@@ -85,7 +85,7 @@ export default class LMSCard extends LitElement {
                     absolute: !inline,
                     "right-2": !inline,
                     "top-2": !inline,
-                    "z-10": !inline,
+                    "z-[1]": !inline,
                     "gap-1": true,
                     "shadow-lg": !inline,
                 })}"
