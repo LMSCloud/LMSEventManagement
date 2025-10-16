@@ -8,7 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import DOMPurify from "dompurify";
-import { LitElement, html, nothing } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -56,7 +56,26 @@ export default class LMSCardDetailsModal extends LitElement {
     private boundHandleKeyDown = (e: KeyboardEvent) =>
         this.handleKeyDown.bind(this)(e);
 
-    static override styles = [tailwindStyles, skeletonStyles];
+    static override styles = [
+        tailwindStyles,
+        skeletonStyles,
+        css`
+            a:not(.btn):not(.badge) {
+                color: hsl(var(--s));
+                text-decoration: underline;
+                text-underline-offset: var(--border-btn);
+            }
+
+            a:not(.btn):not(.badge):hover {
+                text-decoration-thickness: var(--border-btn);
+            }
+
+            a:not(.btn):not(.badge):focus-visible {
+                outline: var(--border-btn) solid hsl(var(--s));
+                outline-offset: var(--border-btn);
+            }
+        `,
+    ];
 
     override connectedCallback() {
         super.connectedCallback();

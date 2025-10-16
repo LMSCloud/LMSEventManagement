@@ -1121,6 +1121,33 @@ html {
   justify-content: center;
 }
 
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  transition-duration: 200ms;
+  height: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  width: -moz-fit-content;
+  width: fit-content;
+  padding-left: 0.563rem;
+  padding-right: 0.563rem;
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: hsl(var(--b2) / var(--tw-border-opacity));
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--b1) / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: hsl(var(--bc) / var(--tw-text-opacity));
+  border-radius: var(--rounded-badge, 1.9rem);
+}
+
 @media (hover:hover) {
   .link-hover:hover {
     text-decoration-line: underline;
@@ -2253,6 +2280,59 @@ html {
   color: hsl(var(--erc) / var(--tw-text-opacity));
   --alert-bg: hsl(var(--er));
   --alert-bg-mix: hsl(var(--b1));
+}
+
+.badge-neutral {
+  --tw-border-opacity: 1;
+  border-color: hsl(var(--n) / var(--tw-border-opacity));
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--n) / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: hsl(var(--nc) / var(--tw-text-opacity));
+}
+
+.badge-success {
+  border-color: transparent;
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--su) / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: hsl(var(--suc) / var(--tw-text-opacity));
+}
+
+.badge-warning {
+  border-color: transparent;
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--wa) / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: hsl(var(--wac) / var(--tw-text-opacity));
+}
+
+.badge-error {
+  border-color: transparent;
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--er) / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: hsl(var(--erc) / var(--tw-text-opacity));
+}
+
+.badge-outline.badge-neutral {
+  --tw-text-opacity: 1;
+  color: hsl(var(--n) / var(--tw-text-opacity));
+}
+
+.badge-outline.badge-success {
+  --tw-text-opacity: 1;
+  color: hsl(var(--su) / var(--tw-text-opacity));
+}
+
+.badge-outline.badge-warning {
+  --tw-text-opacity: 1;
+  color: hsl(var(--wa) / var(--tw-text-opacity));
+}
+
+.badge-outline.badge-error {
+  --tw-text-opacity: 1;
+  color: hsl(var(--er) / var(--tw-text-opacity));
 }
 
 .btm-nav > *:where(.active) {
@@ -4415,6 +4495,10 @@ details.collapse summary::-webkit-details-marker {
   z-index: 1050;
 }
 
+.z-\\[1\\] {
+  z-index: 1;
+}
+
 .m-2 {
   margin: 0.5rem;
 }
@@ -4511,6 +4595,14 @@ details.collapse summary::-webkit-details-marker {
   display: inline-block;
 }
 
+.\\!inline {
+  display: inline !important;
+}
+
+.inline {
+  display: inline;
+}
+
 .\\!flex {
   display: flex !important;
 }
@@ -4549,6 +4641,10 @@ details.collapse summary::-webkit-details-marker {
 
 .h-24 {
   height: 6rem;
+}
+
+.h-3 {
+  height: 0.75rem;
 }
 
 .h-4 {
@@ -4606,6 +4702,10 @@ details.collapse summary::-webkit-details-marker {
 
 .w-20 {
   width: 5rem;
+}
+
+.w-3 {
+  width: 0.75rem;
 }
 
 .w-4 {
@@ -4708,6 +4808,14 @@ details.collapse summary::-webkit-details-marker {
 
 .justify-center {
   justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-1 {
+  gap: 0.25rem;
 }
 
 .gap-2 {
@@ -5099,10 +5207,6 @@ details.collapse summary::-webkit-details-marker {
 .checked\\:bg-primary:checked {
   --tw-bg-opacity: 1;
   background-color: hsl(var(--p) / var(--tw-bg-opacity));
-}
-
-.hover\\:relative:hover {
-  position: relative;
 }
 
 .hover\\:bottom-2:hover {
