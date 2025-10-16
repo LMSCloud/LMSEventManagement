@@ -38,3 +38,7 @@ ktd container="kohadev-koha-1" binary="docker":
 # Attempts to update the koha-plugin repository itself. If you've updated core components, you'll have to resolve the conflicts yourself, though.
 update-meta:
   ./scripts/update-meta.sh
+
+# Seeds test fixtures (events, locations, target groups, event types) into the database for testing
+seed container="kohadev" binary="docker":
+  CONTAINER_NAME={{container}} DOCKER_BINARY={{binary}} ./testing/seed-fixtures.pl
