@@ -92,7 +92,7 @@ if ( $? == 0 ) {
     say colored( ['green'], "✓ Fixtures loaded successfully!" );
     say "";
     say "Sample data created:";
-    say "  - 5 Target Groups (Children, Teens, Adults, Seniors, Families)";
+    say "  - 25 Target Groups (Children, Teens, Young Adults, Adults, Seniors, and more)";
     say "  - 4 Locations (Main Library, Community Center, Branch Library North, Online)";
     say "  - 5 Event Types (Workshop, Reading Group, Author Talk, Digital Skills, Arts & Crafts)";
     say "  - 5 Events with various dates, participants, and fees";

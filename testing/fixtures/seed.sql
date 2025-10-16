@@ -6,9 +6,29 @@
 INSERT INTO __TARGET_GROUPS_TABLE__ (name, min_age, max_age) VALUES
 ('Children', 5, 12),
 ('Teens', 13, 17),
-('Adults', 18, 64),
+('Young Adults', 18, 25),
+('Adults', 26, 64),
 ('Seniors', 65, 120),
-('Families', 0, 120);
+('Families', 0, 120),
+('Toddlers', 2, 4),
+('Preschool', 3, 5),
+('Elementary School', 6, 11),
+('Middle School', 12, 14),
+('High School', 15, 18),
+('College Students', 18, 22),
+('Graduate Students', 23, 30),
+('Working Professionals', 25, 55),
+('Early Career', 22, 30),
+('Mid Career', 31, 45),
+('Senior Professionals', 46, 64),
+('Retirees', 65, 100),
+('New Parents', 20, 40),
+('Single Parents', 18, 65),
+('Grandparents', 50, 100),
+('Homeschool Families', 0, 18),
+('ESL Learners', 16, 100),
+('Veterans', 18, 100),
+('Caregivers', 18, 80);
 
 -- Sample Locations
 INSERT INTO __LOCATIONS_TABLE__ (name, street, number, zip, city, country, link) VALUES
