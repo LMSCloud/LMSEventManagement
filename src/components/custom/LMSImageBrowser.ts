@@ -266,7 +266,7 @@ export default class LMSImageBrowser extends LitElement {
                                 "webp",
                                 "avif",
                                 "gif",
-                            ].includes(filetype);
+                            ].includes(filetype.toLowerCase());
                         }
                         return html`
                             <div
