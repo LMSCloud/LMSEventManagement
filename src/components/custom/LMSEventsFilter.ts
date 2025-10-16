@@ -316,6 +316,18 @@ export default class LMSEventsFilter extends LitElement {
         );
     }
 
+    private getSortedFilterOptions<T extends { id: number | null; name: string | null }>(
+        ids: Array<number | null>,
+        items: T[] | undefined
+    ) {
+        return ids
+            .map((id) => ({
+                id,
+                name: items?.find((item) => item.id === id)?.name ?? "",
+            }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
     override render() {
         return html`
             <div @change=${this.handleChange}>
@@ -376,31 +388,30 @@ export default class LMSEventsFilter extends LitElement {
                                 @toggle=${this.handleDropdownToggle}
                             >
                                 ${repeat(
-                                    this.facets?.eventTypeIds ?? [],
-                                    (eventTypeId) => eventTypeId,
-                                    (eventTypeId) => html`
+                                    this.getSortedFilterOptions(
+                                        this.facets?.eventTypeIds ?? [],
+                                        this.event_types
+                                    ),
+                                    (item) => item.id,
+                                    (item) => html`
                                         <div class="form-control">
                                             <label
                                                 class="label cursor-pointer justify-start"
-                                                for="event_type_${eventTypeId}"
+                                                for="event_type_${item.id}"
                                             >
                                                 <input
                                                     type="checkbox"
                                                     class="checkbox mr-2"
                                                     name="event_type"
-                                                    id="event_type_${eventTypeId}"
+                                                    id="event_type_${item.id}"
                                                     value=${ifDefined(
-                                                        eventTypeId === null
+                                                        item.id === null
                                                             ? undefined
-                                                            : eventTypeId
+                                                            : item.id
                                                     )}
                                                 />
                                                 <span class="label-text"
-                                                    >${this.event_types?.find(
-                                                        (event_type) =>
-                                                            event_type.id ===
-                                                            eventTypeId
-                                                    )?.name}</span
+                                                    >${item.name}</span
                                                 >
                                             </label>
                                         </div>
@@ -416,31 +427,30 @@ export default class LMSEventsFilter extends LitElement {
                                 @toggle=${this.handleDropdownToggle}
                             >
                                 ${repeat(
-                                    this.facets?.targetGroupIds ?? [],
-                                    (targetGroupId) => targetGroupId,
-                                    (targetGroupId) => html`
+                                    this.getSortedFilterOptions(
+                                        this.facets?.targetGroupIds ?? [],
+                                        this.target_groups
+                                    ),
+                                    (item) => item.id,
+                                    (item) => html`
                                         <div class="form-control">
                                             <label
                                                 class="label cursor-pointer justify-start"
-                                                for="target_group_${targetGroupId}"
+                                                for="target_group_${item.id}"
                                             >
                                                 <input
                                                     type="checkbox"
                                                     class="checkbox mr-2 text-base"
                                                     name="target_group"
-                                                    id="target_group_${targetGroupId}"
+                                                    id="target_group_${item.id}"
                                                     value=${ifDefined(
-                                                        targetGroupId === null
+                                                        item.id === null
                                                             ? undefined
-                                                            : targetGroupId
+                                                            : item.id
                                                     )}
                                                 />
                                                 <span class="label-text">
-                                                    ${this.target_groups?.find(
-                                                        (target_group) =>
-                                                            target_group.id ===
-                                                            targetGroupId
-                                                    )?.name}
+                                                    ${item.name}
                                                 </span>
                                             </label>
                                         </div>
@@ -456,31 +466,30 @@ export default class LMSEventsFilter extends LitElement {
                                 @toggle=${this.handleDropdownToggle}
                             >
                                 ${repeat(
-                                    this.facets?.locationIds ?? [],
-                                    (locationId) => locationId,
-                                    (locationId) =>
+                                    this.getSortedFilterOptions(
+                                        this.facets?.locationIds ?? [],
+                                        this.locations
+                                    ),
+                                    (item) => item.id,
+                                    (item) =>
                                         html` <div class="form-control">
                                             <label
                                                 class="label cursor-pointer justify-start"
-                                                for="location_${locationId}"
+                                                for="location_${item.id}"
                                             >
                                                 <input
                                                     type="checkbox"
                                                     class="checkbox mr-2"
                                                     name="location"
-                                                    id="location_${locationId}"
+                                                    id="location_${item.id}"
                                                     value=${ifDefined(
-                                                        locationId === null
+                                                        item.id === null
                                                             ? undefined
-                                                            : locationId
+                                                            : item.id
                                                     )}
                                                 />
                                                 <span class="label-text">
-                                                    ${this.locations?.find(
-                                                        (location) =>
-                                                            location.id ===
-                                                            locationId
-                                                    )?.name}
+                                                    ${item.name}
                                                 </span>
                                             </label>
                                         </div>`
