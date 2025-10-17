@@ -188,17 +188,26 @@ export default class LMSPellEditor extends LitElement {
         this.initResizableModal();
     }
 
+    private getDefaultModalSize() {
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        return {
+            width: Math.min(viewportWidth * 0.8, 1200),
+            height: Math.min(viewportHeight * 0.7, 800),
+        };
+    }
+
+    private setModalSize(width: number, height: number) {
+        this.modal.style.width = `${width}px`;
+        this.modal.style.height = `${height}px`;
+    }
+
     private openModal(e: MouseEvent) {
         e.stopPropagation();
 
         // Set initial modal size before showing to prevent auto-sizing
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        const defaultWidth = Math.min(viewportWidth * 0.8, 1200);
-        const defaultHeight = Math.min(viewportHeight * 0.7, 800);
-
-        this.modal.style.width = `${defaultWidth}px`;
-        this.modal.style.height = `${defaultHeight}px`;
+        const { width, height } = this.getDefaultModalSize();
+        this.setModalSize(width, height);
 
         // Initialize drag position if not set
         if (!this.modal.dataset["x"]) this.modal.dataset["x"] = '0';
@@ -266,14 +275,10 @@ export default class LMSPellEditor extends LitElement {
 
     private resetSize() {
         // Reset to viewport-relative size (80% width, 70% height)
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
+        const { width, height } = this.getDefaultModalSize();
+        this.setModalSize(width, height);
 
-        const defaultWidth = Math.min(viewportWidth * 0.8, 1200);
-        const defaultHeight = Math.min(viewportHeight * 0.7, 800);
-
-        this.modal.style.width = `${defaultWidth}px`;
-        this.modal.style.height = `${defaultHeight}px`;
+        // Reset position
         this.modal.style.transform = 'translate(0px, 0px)';
         this.modal.dataset["x"] = '0';
         this.modal.dataset["y"] = '0';
