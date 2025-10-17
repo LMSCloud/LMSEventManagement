@@ -4592,10 +4592,6 @@ details.collapse summary::-webkit-details-marker {
   margin: 1rem;
 }
 
-.m-auto {
-  margin: auto;
-}
-
 .mx-1 {
   margin-left: 0.25rem;
   margin-right: 0.25rem;
@@ -4844,10 +4840,6 @@ details.collapse summary::-webkit-details-marker {
 
 .flex-auto {
   flex: 1 1 auto;
-}
-
-.grow {
-  flex-grow: 1;
 }
 
 .rotate-45 {
@@ -5362,10 +5354,6 @@ details.collapse summary::-webkit-details-marker {
 
   .sm\\:w-full {
     width: 100%;
-  }
-
-  .sm\\:max-w-5xl {
-    max-width: 64rem;
   }
 
   .sm\\:grid-cols-2 {

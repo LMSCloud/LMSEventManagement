@@ -1,20 +1,11 @@
 import interact from "interactjs";
-import { css, html, LitElement, PropertyValues } from "lit";
+import { css, html, LitElement, PropertyValueMap } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import pell from "pell";
 import { __, attr__ } from "../../lib/translate";
-import { debounce } from "../../lib/utilities";
 import { skeletonStyles } from "../../styles/skeleton";
 import { utilityStyles } from "../../styles/utilities";
 import { tailwindStyles } from "../../tailwind.lit";
-
-type StyleProperties =
-    | "marginTop"
-    | "marginBottom"
-    | "paddingTop"
-    | "paddingBottom"
-    | "borderTopWidth"
-    | "borderBottomWidth";
 
 @customElement("lms-pell-editor")
 export default class LMSPellEditor extends LitElement {
@@ -26,24 +17,17 @@ export default class LMSPellEditor extends LitElement {
 
     @query(".input-slot") inputSlot!: HTMLSlotElement;
 
-    @query(".pell-actionbar") actionBar!: HTMLDivElement;
-
-    @query(".pell-content") pellContent!: HTMLDivElement;
-
-    @query(".btn-group-modal") buttonGroupModal!: HTMLDivElement;
+    @query(".drag-handle") dragHandle!: HTMLDivElement;
 
     @state() hasVisibleToggle = false;
 
     private editedValue = "";
 
-    private resizeObserver: ResizeObserver | undefined;
-
     private pellEditor: { content: HTMLElement } | undefined;
 
-    private originalSize: { width: number; height: number } = {
-        width: 0,
-        height: 0,
-    };
+    private dragInteractable: Interact.Interactable | undefined;
+
+    private resizeInteractable: Interact.Interactable | undefined;
 
     static override styles = [
         tailwindStyles,
@@ -56,16 +40,57 @@ export default class LMSPellEditor extends LitElement {
 
             #modal {
                 position: fixed;
-                padding: 1em;
+                padding: 0;
                 border: 1px solid var(--separator-mid);
                 border-radius: 0.5rem;
                 margin: auto;
                 box-shadow: var(--shadow-hv);
                 min-width: 25vw;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                transition: opacity 0.15s ease-out;
+            }
+
+            #modal.closing {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .drag-handle {
+                position: relative;
+                cursor: move;
+                font-size: 1.2em;
+                color: #999;
+                user-select: none;
+                padding: 0.5em 1em;
+                z-index: 10;
+                line-height: 1;
+                border-bottom: 1px solid #e0e0e0;
+                width: 100%;
+                text-align: center;
+                background-color: #fafafa;
+                flex-shrink: 0;
+                touch-action: none;
+            }
+
+            .drag-handle * {
+                pointer-events: none;
+            }
+
+            .drag-handle:hover {
+                color: #333;
+                background-color: #f0f0f0;
             }
 
             #editor {
                 width: 100%;
+                padding: 1em;
+                overflow-y: auto;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
             }
 
             .pell-actionbar {
@@ -76,6 +101,7 @@ export default class LMSPellEditor extends LitElement {
                 border: 1px solid #ddd;
                 border-radius: 0.25rem;
                 margin-bottom: 1em;
+                flex-shrink: 0;
             }
 
             .pell-button {
@@ -90,16 +116,25 @@ export default class LMSPellEditor extends LitElement {
             }
 
             .pell-content {
-                min-height: 15vh;
-                min-height: 15dvh;
+                flex: 1;
                 width: 100%;
                 border: 1px solid #ddd;
                 border-radius: 0.25rem;
                 padding: 1em;
+                overflow-wrap: break-word;
+                overflow-y: auto;
+                min-height: 0;
             }
 
             .pell-button-selected {
                 color: #007bff;
+            }
+
+            .btn-group-modal {
+                flex-shrink: 0;
+                padding: 1em;
+                border-top: 1px solid #e0e0e0;
+                background-color: #fff;
             }
 
             .input-slot {
@@ -108,28 +143,17 @@ export default class LMSPellEditor extends LitElement {
         `,
     ];
 
-    override connectedCallback() {
-        super.connectedCallback();
-
-        // Create a new ResizeObserver instance linked to the updateSize method
-        this.resizeObserver = new ResizeObserver(() =>
-            this.adjustContentHeight()
-        );
-    }
-
     override disconnectedCallback() {
         super.disconnectedCallback();
-
-        // Disconnect the ResizeObserver when the component is disconnected
-        this.resizeObserver?.disconnect();
-        this.resizeObserver = undefined;
+        this.cleanupInteractions();
     }
 
     override render() {
         return html`
-            <dialog id="modal" class="sm:max-w-5xl">
-                <div id="editor" class="m-auto"></div>
-                <div class="btn-group-modal join mt-3 flex content-end">
+            <dialog id="modal">
+                <div class="drag-handle" title=${attr__("Drag to move")}>⠿</div>
+                <div id="editor"></div>
+                <div class="btn-group-modal join flex content-end">
                     <button
                         class="btn btn-secondary btn-outline mr-auto"
                         @click=${this.resetSize}
@@ -158,18 +182,28 @@ export default class LMSPellEditor extends LitElement {
         `;
     }
 
-    override firstUpdated(changedProperties: PropertyValues) {
-        super.firstUpdated(changedProperties);
-
-        // Initialize resizable modal
+    override firstUpdated(_changedProperties: PropertyValueMap<never>) {
+        super.firstUpdated(_changedProperties);
+        // Initialize interactions once
         this.initResizableModal();
-
-        // Observe size changes on modal
-        this.resizeObserver?.observe(this.modal);
     }
 
     private openModal(e: MouseEvent) {
         e.stopPropagation();
+
+        // Set initial modal size before showing to prevent auto-sizing
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const defaultWidth = Math.min(viewportWidth * 0.8, 1200);
+        const defaultHeight = Math.min(viewportHeight * 0.7, 800);
+
+        this.modal.style.width = `${defaultWidth}px`;
+        this.modal.style.height = `${defaultHeight}px`;
+
+        // Initialize drag position if not set
+        if (!this.modal.dataset["x"]) this.modal.dataset["x"] = '0';
+        if (!this.modal.dataset["y"]) this.modal.dataset["y"] = '0';
+
         this.modal.showModal();
 
         // Read the current value from the slotted input/textarea element
@@ -194,27 +228,25 @@ export default class LMSPellEditor extends LitElement {
                 this.pellEditor.content.focus();
             }
         });
+    }
 
-        // Store the original size of the modal
-        this.originalSize = {
-            width: this.modal.offsetWidth,
-            height: this.modal.offsetHeight,
-        };
+    private performModalClose() {
+        // Hide modal immediately for instant feedback
+        this.modal.classList.add('closing');
+
+        // Close and cleanup
+        requestAnimationFrame(() => {
+            this.modal.close();
+            this.modal.classList.remove('closing');
+            this.requestUpdate();
+        });
     }
 
     private closeModalWithoutSaving() {
-        this.modal.close();
-
-        // Disconnect the ResizeObserver when the modal is closed
-        this.resizeObserver?.disconnect();
+        this.performModalClose();
     }
 
     private closeModalWithSave() {
-        this.modal.close();
-
-        // Disconnect the ResizeObserver when the modal is closed
-        this.resizeObserver?.disconnect();
-
         // Update slotted element value
         if (this.editedValue !== this.value) {
             const slottedElements = this.inputSlot?.assignedElements();
@@ -228,15 +260,23 @@ export default class LMSPellEditor extends LitElement {
                 }
             });
         }
+
+        this.performModalClose();
     }
 
     private resetSize() {
-        // Reset the size of the modal to the original size
-        this.modal.style.width = `${this.originalSize.width}px`;
-        this.modal.style.height = `${this.originalSize.height}px`;
+        // Reset to viewport-relative size (80% width, 70% height)
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
 
-        // Adjust the content height after resizing
-        this.adjustContentHeight();
+        const defaultWidth = Math.min(viewportWidth * 0.8, 1200);
+        const defaultHeight = Math.min(viewportHeight * 0.7, 800);
+
+        this.modal.style.width = `${defaultWidth}px`;
+        this.modal.style.height = `${defaultHeight}px`;
+        this.modal.style.transform = 'translate(0px, 0px)';
+        this.modal.dataset["x"] = '0';
+        this.modal.dataset["y"] = '0';
     }
 
     private initEditor() {
@@ -292,71 +332,39 @@ export default class LMSPellEditor extends LitElement {
         }
     }
 
-    private adjustContentHeight = debounce(
-        () => {
-            const dialogHeight = this.modal.offsetHeight;
-
-            // Calculate the total vertical space (height + margin + padding + border) occupied by the actionBar and buttons
-            const actionBarSpace = this.calculateTotalVerticalSpace(
-                this.actionBar
-            );
-            const buttonsSpace = this.calculateTotalVerticalSpace(
-                this.buttonGroupModal
-            );
-
-            // Calculate the total vertical padding inside the modal
-            const computedStyle = window.getComputedStyle(this.modal);
-            const paddingY =
-                parseFloat(computedStyle.paddingTop) +
-                parseFloat(computedStyle.paddingBottom);
-
-            // Calculate the contentHeight
-            let contentHeight =
-                dialogHeight - actionBarSpace - buttonsSpace - paddingY;
-
-            // Ensure that contentHeight is not negative
-            contentHeight = Math.max(0, contentHeight);
-
-            // Set the min-height of pellContent to allow it to grow with content
-            this.pellContent.style.minHeight = `${contentHeight}px`;
-            this.pellContent.style.height = 'auto';
-        },
-        10,
-        true
-    );
-
-    private sumStyleValues(
-        computedStyle: CSSStyleDeclaration,
-        values: StyleProperties[]
-    ): number {
-        return values.reduce(
-            (sum, value) => sum + parseFloat(computedStyle[value] || "0"),
-            0
-        );
-    }
-
-    private calculateTotalVerticalSpace(element: HTMLElement) {
-        const computedStyle = window.getComputedStyle(element);
-
-        const marginY = this.sumStyleValues(computedStyle, [
-            "marginTop",
-            "marginBottom",
-        ]);
-        const paddingY = this.sumStyleValues(computedStyle, [
-            "paddingTop",
-            "paddingBottom",
-        ]);
-        const borderY = this.sumStyleValues(computedStyle, [
-            "borderTopWidth",
-            "borderBottomWidth",
-        ]);
-
-        return element.offsetHeight + Math.max(0, marginY, paddingY, borderY);
+    private cleanupInteractions() {
+        // Unset and destroy interact.js instances
+        if (this.dragInteractable) {
+            this.dragInteractable.unset();
+            this.dragInteractable = undefined;
+        }
+        if (this.resizeInteractable) {
+            this.resizeInteractable.unset();
+            this.resizeInteractable = undefined;
+        }
     }
 
     private initResizableModal() {
-        interact(this.modal).resizable({
+        // Make drag handle draggable (moves the modal)
+        this.dragInteractable = interact(this.dragHandle).draggable({
+            inertia: false,
+            listeners: {
+                move: (event) => {
+                    let x = (parseFloat(this.modal.dataset["x"] ?? "0")|| 0) + event.dx;
+                    let y = (parseFloat(this.modal.dataset["y"] ?? "0") || 0) + event.dy;
+
+                    this.modal.style.transform = `translate(${x}px, ${y}px)`;
+
+                    this.modal.dataset["x"] = x.toString();
+                    this.modal.dataset["y"] = y.toString();
+                }
+            }
+        });
+
+        // Make modal resizable
+        this.resizeInteractable = interact(this.modal).resizable({
             edges: { left: true, right: true, bottom: true, top: true },
+            ignoreFrom: '.drag-handle',
             listeners: {
                 move: (event) => {
                     let { x, y } = event.target.dataset;
@@ -371,17 +379,23 @@ export default class LMSPellEditor extends LitElement {
                     });
 
                     Object.assign(event.target.dataset, { x, y });
-
-                    // Also resize the pell-content
-                    this.adjustContentHeight();
                 },
             },
             modifiers: [
                 interact.modifiers.restrictSize({
-                    min: { width: 100, height: 50 },
+                    min: { width: 200, height: 150 },
                 }),
+                interact.modifiers.aspectRatio({
+                    ratio: 'preserve',
+                    enabled: false,
+                    modifiers: [
+                        interact.modifiers.restrictSize({
+                            min: { width: 200, height: 150 }
+                        })
+                    ]
+                })
             ],
-            inertia: true,
+            inertia: false,
         });
     }
 }
