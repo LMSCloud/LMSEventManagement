@@ -5332,6 +5332,10 @@ details.collapse summary::-webkit-details-marker {
     margin-bottom: 1rem;
   }
 
+  .sm\\:mr-2 {
+    margin-right: 0.5rem;
+  }
+
   .sm\\:inline {
     display: inline;
   }
