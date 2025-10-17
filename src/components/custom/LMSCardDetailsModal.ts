@@ -5,7 +5,9 @@ import {
     faCreditCard,
     faInfoCircle,
     faMapMarker,
+    faUserPlus,
     faUsers,
+    faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import DOMPurify from "dompurify";
@@ -601,8 +603,15 @@ export default class LMSCardDetailsModal extends LitElement {
                                     <button
                                         class="btn btn-secondary"
                                         @click=${this.toggleModal}
+                                        title=${__("Close")}
+                                        aria-label=${__("Close")}
                                     >
-                                        ${__("Close")}
+                                        ${litFontawesome(faXmark, {
+                                            className: "w-4 h-4 sm:mr-2",
+                                        })}
+                                        <span class="hidden sm:inline"
+                                            >${__("Close")}</span
+                                        >
                                     </button>
                                     <button
                                         class="btn btn-neutral"
@@ -626,8 +635,15 @@ export default class LMSCardDetailsModal extends LitElement {
                                             this.event?.registration_link ??
                                                 undefined
                                         )}
+                                        title=${__("Register")}
+                                        aria-label=${__("Register")}
                                     >
-                                        ${__("Register")}
+                                        ${litFontawesome(faUserPlus, {
+                                            className: "w-4 h-4 sm:mr-2",
+                                        })}
+                                        <span class="hidden sm:inline"
+                                            >${__("Register")}</span
+                                        >
                                     </a>
                                 </div>
                             </form>
