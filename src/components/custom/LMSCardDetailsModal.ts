@@ -9,7 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import DOMPurify from "dompurify";
-import { LitElement, css, html, nothing } from "lit";
+import { LitElement, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -57,26 +57,7 @@ export default class LMSCardDetailsModal extends LitElement {
     private boundHandleKeyDown = (e: KeyboardEvent) =>
         this.handleKeyDown.bind(this)(e);
 
-    static override styles = [
-        tailwindStyles,
-        skeletonStyles,
-        css`
-            a:not(.btn):not(.badge) {
-                color: hsl(var(--s));
-                text-decoration: underline;
-                text-underline-offset: var(--border-btn);
-            }
-
-            a:not(.btn):not(.badge):hover {
-                text-decoration-thickness: var(--border-btn);
-            }
-
-            a:not(.btn):not(.badge):focus-visible {
-                outline: var(--border-btn) solid hsl(var(--s));
-                outline-offset: var(--border-btn);
-            }
-        `,
-    ];
+    static override styles = [tailwindStyles, skeletonStyles];
 
     override connectedCallback() {
         super.connectedCallback();
@@ -425,7 +406,7 @@ export default class LMSCardDetailsModal extends LitElement {
                         () => html`
                             <form
                                 method="dialog"
-                                class="modal-box w-11/12 max-w-5xl"
+                                class="modal-box w-11/12 max-w-5xl prose"
                             >
                                 <h5
                                     class="text-lg font-bold"
@@ -488,14 +469,14 @@ export default class LMSCardDetailsModal extends LitElement {
                                                     )}</strong
                                                 >
                                             </p>
-                                            <p>
+                                            <div>
                                                 ${unsafeHTML(
                                                     DOMPurify.sanitize(
                                                         this.event
                                                             ?.description ?? ""
                                                     )
                                                 )}
-                                            </p>
+                                            </div>
                                         </div>
                                     </div>
 

@@ -38,6 +38,8 @@ export default class LMSPellEditor extends LitElement {
 
     private resizeObserver: ResizeObserver | undefined;
 
+    private pellEditor: { content: HTMLElement } | undefined;
+
     private originalSize: { width: number; height: number } = {
         width: 0,
         height: 0,
@@ -159,9 +161,6 @@ export default class LMSPellEditor extends LitElement {
     override firstUpdated(changedProperties: PropertyValues) {
         super.firstUpdated(changedProperties);
 
-        // Initialize pell editor
-        this.initEditor();
-
         // Initialize resizable modal
         this.initResizableModal();
 
@@ -172,7 +171,29 @@ export default class LMSPellEditor extends LitElement {
     private openModal(e: MouseEvent) {
         e.stopPropagation();
         this.modal.showModal();
+
+        // Read the current value from the slotted input/textarea element
+        const slottedElements = this.inputSlot?.assignedElements();
+        if (slottedElements && slottedElements.length > 0) {
+            const element = slottedElements[0];
+            if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+                this.value = element.value;
+            }
+        }
+
         this.editedValue = this.value; // Copy the value property
+
+        // Wait for modal to be fully displayed before initializing the editor
+        // This ensures pell's event listeners are properly attached to visible elements
+        requestAnimationFrame(() => {
+            // Reinitialize the pell editor to ensure proper state
+            this.initEditor();
+
+            // Focus the editor content so toolbar buttons work
+            if (this.pellEditor) {
+                this.pellEditor.content.focus();
+            }
+        });
 
         // Store the original size of the modal
         this.originalSize = {
@@ -202,7 +223,7 @@ export default class LMSPellEditor extends LitElement {
                     element.value = this.editedValue;
                     element.blur();
                 } else if (element instanceof HTMLTextAreaElement) {
-                    element.innerHTML = this.editedValue;
+                    element.value = this.editedValue;
                     element.blur();
                 }
             });
@@ -220,8 +241,11 @@ export default class LMSPellEditor extends LitElement {
 
     private initEditor() {
         if (this.editor) {
+            // Clear the editor container to avoid duplicate elements
+            this.editor.innerHTML = "";
+
             // Initialize pell editor
-            const editor = pell.init({
+            this.pellEditor = pell.init({
                 element: this.editor,
                 onChange: (html) => {
                     this.editedValue = html; // Update the editedValue with the edited content
@@ -252,7 +276,19 @@ export default class LMSPellEditor extends LitElement {
                 },
             });
 
-            editor.content.innerHTML = this.value; // Set the initial value
+            this.pellEditor.content.innerHTML = this.value; // Set the initial value
+
+            // Add prose class for Tailwind typography styling
+            this.pellEditor.content.classList.add("prose", "max-w-none");
+
+            // Prevent toolbar buttons from stealing focus from the contenteditable area
+            // This is critical for document.execCommand() to work properly
+            const actionBar = this.editor.querySelector(".pell-actionbar");
+            if (actionBar) {
+                actionBar.addEventListener("mousedown", (e) => {
+                    e.preventDefault();
+                });
+            }
         }
     }
 
@@ -281,8 +317,9 @@ export default class LMSPellEditor extends LitElement {
             // Ensure that contentHeight is not negative
             contentHeight = Math.max(0, contentHeight);
 
-            // Set the height of pellContent
-            this.pellContent.style.height = `${contentHeight}px`;
+            // Set the min-height of pellContent to allow it to grow with content
+            this.pellContent.style.minHeight = `${contentHeight}px`;
+            this.pellContent.style.height = 'auto';
         },
         10,
         true
