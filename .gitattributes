@@ -1,0 +1,6 @@
+# Don't show diffs for minified JavaScript files
+Koha/Plugin/Com/LMSCloud/EventManagement/dist/*.js -diff
+Koha/Plugin/Com/LMSCloud/EventManagement/dist/*.js.map -diff
+
+# Don't show diffs for generated Tailwind CSS
+src/tailwind.lit.js -diff
