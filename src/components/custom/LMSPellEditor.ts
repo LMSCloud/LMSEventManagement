@@ -47,9 +47,12 @@ export default class LMSPellEditor extends LitElement {
                 box-shadow: var(--shadow-hv);
                 min-width: 25vw;
                 overflow: hidden;
+                transition: opacity 0.15s ease-out;
+            }
+
+            #modal[open] {
                 display: flex;
                 flex-direction: column;
-                transition: opacity 0.15s ease-out;
             }
 
             #modal.closing {
