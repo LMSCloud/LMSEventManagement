@@ -427,13 +427,13 @@ export default class LMSCardDetailsModal extends LitElement {
                                     <div class="w-full md:w-1/2">
                                         <!-- Date and Time -->
                                         <div class="p-4">
-                                            <p class="mb-2">
+                                            <p class="mb-2 flex items-center gap-1">
                                                 <span
                                                     >${litFontawesome(
                                                         faCalendar,
                                                         {
                                                             className:
-                                                                "w-4 h-4 inline-block",
+                                                                "w-4 h-4",
                                                         }
                                                     )}</span
                                                 >
@@ -455,13 +455,13 @@ export default class LMSCardDetailsModal extends LitElement {
 
                                         <!-- Description -->
                                         <div class="p-4">
-                                            <p class="mb-2">
+                                            <p class="mb-2 flex items-center gap-1">
                                                 <span
                                                     >${litFontawesome(
                                                         faInfoCircle,
                                                         {
                                                             className:
-                                                                "w-4 h-4 inline-block",
+                                                                "w-4 h-4",
                                                         }
                                                     )}</span
                                                 >
@@ -495,13 +495,13 @@ export default class LMSCardDetailsModal extends LitElement {
 
                                         <!-- Fees -->
                                         <div class="p-4">
-                                            <p class="mb-2">
+                                            <p class="mb-2 flex items-center gap-1">
                                                 <span
                                                     >${litFontawesome(
                                                         faCreditCard,
                                                         {
                                                             className:
-                                                                "w-4 h-4 inline-block",
+                                                                "w-4 h-4",
                                                         }
                                                     )}</span
                                                 >
@@ -516,13 +516,13 @@ export default class LMSCardDetailsModal extends LitElement {
                                                 <p class="mb-2">
                                                     ${__("No fees")}
                                                 </p>
-                                                <p class="mb-2">
+                                                <p class="mb-2 flex items-center gap-1">
                                                     <span
                                                         >${litFontawesome(
                                                             faUsers,
                                                             {
                                                                 className:
-                                                                    "w-4 h-4 inline-block",
+                                                                    "w-4 h-4",
                                                             }
                                                         )}</span
                                                     >
@@ -568,13 +568,13 @@ export default class LMSCardDetailsModal extends LitElement {
                                         </div>
 
                                         <div class="p-4">
-                                            <p class="mb-2">
+                                            <p class="mb-2 flex items-center gap-1">
                                                 <span
                                                     >${litFontawesome(
                                                         faMapMarker,
                                                         {
                                                             className:
-                                                                "w-4 h-4 inline-block",
+                                                                "w-4 h-4",
                                                         }
                                                     )}</span
                                                 >
