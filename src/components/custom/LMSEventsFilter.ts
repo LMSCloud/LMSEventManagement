@@ -1,11 +1,9 @@
 import {
     faCalendar,
     faCreditCard,
-    faMapMarker,
-    faSort,
-    faTag,
-    faUsers,
+    faFilter,
     faVcard,
+    faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { LitElement, html } from "lit";
@@ -47,7 +45,7 @@ export default class LMSEventsFilter extends LitElement {
 
     @property({ type: Boolean }) shouldUpdateFacets = true;
 
-    @property({ type: Boolean }) isHidden = this.shouldFold;
+    @property({ type: Boolean }) filtersExpanded = !this.shouldFold;
 
     @property({ type: Array }) settings?: Array<LMSSettingResponse>;
 
@@ -58,6 +56,8 @@ export default class LMSEventsFilter extends LitElement {
     @state() target_groups?: Array<LMSTargetGroup>;
 
     @state() locations?: Array<LMSLocation>;
+
+    @state() activeFilters: Array<{ label: string; inputId: string; name: string; value: string }> = [];
 
     @queryAll("input") inputs!: NodeListOf<HTMLInputElement>;
 
@@ -145,7 +145,7 @@ export default class LMSEventsFilter extends LitElement {
 
     private handleResize() {
         this.shouldFold = window.matchMedia("(max-width: 1024px)").matches;
-        this.isHidden = this.shouldFold;
+        this.filtersExpanded = !this.shouldFold;
         this.requestUpdate();
     }
 
@@ -199,6 +199,17 @@ export default class LMSEventsFilter extends LitElement {
         window.removeEventListener("resize", this.throttledHandleResize);
     }
 
+    override updated() {
+        // Always use bottom positioning - no left/right alignment
+        if (!this.lmsDropdowns) {
+            return;
+        }
+
+        this.lmsDropdowns.forEach((dropdown) => {
+            dropdown.position = ["bottom"];
+        });
+    }
+
     override willUpdate() {
         if (!this.events?.length || !this.shouldUpdateFacets) {
             return;
@@ -241,6 +252,10 @@ export default class LMSEventsFilter extends LitElement {
 
     private handleReset() {
         this.resetInputs();
+
+        // Update active filters state
+        this.updateActiveFiltersState();
+
         this.dispatchEvent(
             new CustomEvent("filter", {
                 detail: {
@@ -253,6 +268,9 @@ export default class LMSEventsFilter extends LitElement {
     }
 
     private handleChange() {
+        // Update active filters state
+        this.updateActiveFiltersState();
+
         this.dispatchEvent(
             new CustomEvent("filter", {
                 detail: {
@@ -262,6 +280,10 @@ export default class LMSEventsFilter extends LitElement {
                 bubbles: true,
             })
         );
+    }
+
+    private updateActiveFiltersState() {
+        this.activeFilters = this.getActiveFilterBadges();
     }
 
     private handleSearch(e: CustomEvent) {
@@ -289,8 +311,62 @@ export default class LMSEventsFilter extends LitElement {
         }
     }
 
-    private handleHideToggle() {
-        this.isHidden = !this.isHidden;
+    private handleFiltersToggle() {
+        this.filtersExpanded = !this.filtersExpanded;
+    }
+
+    private getActiveFilterBadges() {
+        const badges: Array<{ label: string; inputId: string; name: string; value: string }> = [];
+
+        for (let i = 0; i < this.inputs.length; i++) {
+            const input = this.inputs[i];
+            if (!input) continue;
+
+            // Skip if not active
+            if (input.type === "checkbox" && !input.checked) continue;
+            if (input.type === "radio" && !input.checked) continue;
+            if ((input.type === "text" || input.type === "date" || input.type === "number") && !input.value) continue;
+
+            // Skip open_registration checkbox (it's a default filter)
+            if (input.id === "open_registration") continue;
+
+            // Get human-readable label
+            let label = "";
+            const inputLabel = input.closest(".form-control")?.querySelector("label")?.textContent?.trim() || input.name;
+
+            if (input.type === "checkbox" || input.type === "radio") {
+                // For checkboxes/radios, find the associated text
+                const labelText = input.closest("label")?.querySelector(".label-text")?.textContent?.trim();
+                label = labelText || inputLabel;
+            } else {
+                // For text/date/number inputs
+                label = `${inputLabel}: ${input.value}`;
+            }
+
+            badges.push({
+                label,
+                inputId: input.id,
+                name: input.name,
+                value: input.value
+            });
+        }
+
+        return badges;
+    }
+
+
+    private dismissFilter(inputId: string) {
+        const input = this.shadowRoot?.querySelector(`#${inputId}`) as HTMLInputElement;
+        if (!input) return;
+
+        if (input.type === "checkbox" || input.type === "radio") {
+            input.checked = false;
+        } else {
+            input.value = "";
+        }
+
+        // Trigger change event (which will update state via handleChange)
+        input.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
     }
 
     private handleDropdownToggle(e: CustomEvent) {
@@ -329,30 +405,96 @@ export default class LMSEventsFilter extends LitElement {
     }
 
     override render() {
+        const filterCount = this.activeFilters.length;
+
         return html`
             <div @change=${this.handleChange}>
                 <div
-                    class="sticky top-0 z-10 mb-4 rounded-b-xl bg-base-100 text-sm shadow-lg lg:text-base"
+                    class="sticky top-0 z-10 mb-4 rounded-b-xl bg-base-100 shadow-lg"
                 >
-                    <div
-                        class="flex flex-col items-center justify-center gap-4 p-2 lg:flex-row lg:justify-between"
-                    >
-                        <div class="hidden lg:block">
-                            <h5 class="whitespace-nowrap">
-                                <span>${__("Filter")}</span>
-                            </h5>
+                    <!-- Top bar: Search + Filters button (always visible) -->
+                    <div class="flex items-center gap-2 p-4">
+                        <div class="flex-1">
+                            <lms-search
+                                @search=${this.handleSearch}
+                                .sortableColumns=${["name", "description"]}
+                            ></lms-search>
                         </div>
-
-                        <div
-                            class="dropdowns ${classMap({
-                                hidden: this.isHidden,
-                            })} flex flex-1 flex-wrap justify-center gap-4 lg:justify-start"
+                        <button
+                            type="button"
+                            class="btn btn-ghost btn-sm gap-1"
+                            @click=${this.handleFiltersToggle}
+                            aria-label=${this.filtersExpanded
+                                ? attr__("Hide filters")
+                                : attr__("Show filters")}
                         >
+                            ${litFontawesome(faFilter, {
+                                className: "w-4 h-4",
+                            })}
+                            <span class="hidden sm:inline">${__("Filters")}</span>
+                            ${filterCount > 0
+                                ? html`<span class="badge badge-primary badge-sm"
+                                      >${filterCount}</span
+                                  >`
+                                : ""}
+                        </button>
+                    </div>
+
+                    <!-- Expanded filters section -->
+                    ${this.filtersExpanded
+                        ? html`
+                              <div class="border-t px-4 pb-4">
+                                  <!-- Active filter badges -->
+                                  ${filterCount > 0
+                                      ? html`
+                                            <div
+                                                class="flex flex-wrap items-center gap-2 pt-3 pb-3"
+                                            >
+                                                ${this.activeFilters.map(
+                                                    (badge) => html`
+                                                        <div
+                                                            class="badge badge-outline gap-1 h-8"
+                                                        >
+                                                            <span
+                                                                >${badge.label}</span
+                                                            >
+                                                            <button
+                                                                type="button"
+                                                                class="btn btn-ghost btn-xs p-0 hover:text-error"
+                                                                @click=${() =>
+                                                                    this.dismissFilter(
+                                                                        badge.inputId
+                                                                    )}
+                                                                aria-label=${attr__(
+                                                                    "Remove filter"
+                                                                )}
+                                                            >
+                                                                ${litFontawesome(
+                                                                    faXmark,
+                                                                    {
+                                                                        className:
+                                                                            "w-3 h-3",
+                                                                    }
+                                                                )}
+                                                            </button>
+                                                        </div>
+                                                    `
+                                                )}
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-outline btn-error btn-xs h-8"
+                                                    @click=${this.handleReset}
+                                                >
+                                                    ${__("Clear all")}
+                                                </button>
+                                            </div>
+                                        `
+                                      : ""}
+
+                                  <!-- Filter dropdowns -->
+                                  <div class="flex flex-col sm:flex-row flex-wrap gap-2 pt-2">
                             <lms-dropdown
                                 .label=${__("Sort by")}
-                                .icon=${litFontawesome(faSort, {
-                                    className: "w-4 h-4 inline-block",
-                                })}
                                 @toggle=${this.handleDropdownToggle}
                             >
                                 ${map(
@@ -382,9 +524,6 @@ export default class LMSEventsFilter extends LitElement {
 
                             <lms-dropdown
                                 .label=${__("Event Type")}
-                                .icon=${litFontawesome(faTag, {
-                                    className: "w-4 h-4 inline-block",
-                                })}
                                 @toggle=${this.handleDropdownToggle}
                             >
                                 ${repeat(
@@ -421,9 +560,6 @@ export default class LMSEventsFilter extends LitElement {
 
                             <lms-dropdown
                                 .label=${__("Target Group")}
-                                .icon=${litFontawesome(faUsers, {
-                                    className: "w-4 h-4 inline-block",
-                                })}
                                 @toggle=${this.handleDropdownToggle}
                             >
                                 ${repeat(
@@ -460,9 +596,6 @@ export default class LMSEventsFilter extends LitElement {
 
                             <lms-dropdown
                                 .label=${__("Location")}
-                                .icon=${litFontawesome(faMapMarker, {
-                                    className: "w-4 h-4 inline-block",
-                                })}
                                 @toggle=${this.handleDropdownToggle}
                             >
                                 ${repeat(
@@ -621,43 +754,10 @@ export default class LMSEventsFilter extends LitElement {
                                     />
                                 </div>
                             </lms-dropdown>
-                        </div>
-
-                        <div
-                            class="search ${classMap({
-                                hidden: this.isHidden,
-                            })} lg:block"
-                        >
-                            <lms-search
-                                @search=${this.handleSearch}
-                                .sortableColumns=${["name", "description"]}
-                            ></lms-search>
-                        </div>
-
-                        <div class="actions">
-                            <button
-                                type="button"
-                                class="btn btn-secondary btn-outline btn-sm lg:btn-md lg:hidden"
-                                @click=${this.handleHideToggle}
-                                aria-label=${this.isHidden
-                                    ? attr__("Show filters")
-                                    : attr__("Hide filters")}
-                            >
-                                ${this.isHidden
-                                    ? __("Show filters")
-                                    : __("Hide filters")}
-                            </button>
-                            <button
-                                type="button"
-                                class="${classMap({
-                                    hidden: this.isHidden,
-                                })} btn btn-secondary btn-outline btn-sm lg:btn-md lg:block"
-                                @click=${this.handleReset}
-                            >
-                                ${__("Reset filters")}
-                            </button>
-                        </div>
-                    </div>
+                                  </div>
+                              </div>
+                          `
+                        : ""}
                 </div>
                 <!-- Slot for the filterable content -->
                 <slot></slot>

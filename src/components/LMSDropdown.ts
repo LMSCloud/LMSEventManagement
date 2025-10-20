@@ -113,7 +113,7 @@ export default class LMSDropdown extends LitElement {
     override render() {
         return html`
             <details
-                class="${classMap(this.composePosition())} dropdown"
+                class="${classMap(this.composePosition())} dropdown w-full sm:w-auto"
                 id=${this.uuid}
                 @toggle=${this.dispatchToggleEvent}
                 @blur=${this.handleBlur}
@@ -121,7 +121,7 @@ export default class LMSDropdown extends LitElement {
                 @mouseleave=${this.handleHover}
                 tabindex="0"
             >
-                <summary class="btn">
+                <summary class="btn w-full sm:w-auto">
                     <span id="icon" class="xl:hidden">${this.icon}</span>
                     <span
                         id="label"
@@ -132,7 +132,7 @@ export default class LMSDropdown extends LitElement {
                     >
                 </summary>
                 <ul
-                    class="menu dropdown-content rounded-box z-40 w-max bg-base-100 p-2 shadow"
+                    class="menu dropdown-content rounded-box z-40 w-full sm:w-max bg-base-100 p-2 shadow"
                 >
                     <slot></slot>
                 </ul>
