@@ -2,6 +2,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 import { IntersectionObserverHandler } from "../lib/IntersectionObserverHandler";
 import { __ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
@@ -12,6 +13,8 @@ export default class LMSToast extends LitElement {
     @property({ type: String }) heading: string | TemplateResult = "";
 
     @property({ type: String }) message: string | TemplateResult = "";
+
+    @property({ type: String }) type: "success" | "error" | "warning" | "info" = "error";
 
     @state() elapsedTime = 0;
 
@@ -32,7 +35,14 @@ export default class LMSToast extends LitElement {
     override render() {
         return html`
             <div class="toast toast-center z-50">
-                <div class="alert alert-error gap-2">
+                <div class="${classMap({
+                    alert: true,
+                    "alert-success": this.type === "success",
+                    "alert-error": this.type === "error",
+                    "alert-warning": this.type === "warning",
+                    "alert-info": this.type === "info",
+                    "gap-2": true,
+                })}">
                     <div id="heading">
                         <strong class="mr-auto">${this.heading}</strong>
                     </div>
