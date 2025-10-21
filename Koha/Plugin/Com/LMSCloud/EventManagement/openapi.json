@@ -1257,7 +1257,7 @@
   },
   "/settings/{key}": {
     "get": {
-      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Setting#get",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Settings#get",
       "operationId": "getEventManagementSetting",
       "tags": [
         "settings"
@@ -1371,7 +1371,7 @@
       }
     },
     "put": {
-      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Setting#update",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Settings#update",
       "operationId": "updateEventManagementSetting",
       "tags": [
         "settings"

@@ -117,7 +117,14 @@ sub _filter_events {
         )->get_column('event_id')
     ];
 
-    $events_set = $events_set->search( { 'me.id' => { -in => $fees_event_ids } } );
+    $events_set = $events_set->search(
+        { 'me.id' => { -in => $fees_event_ids } },
+        {
+            join     => 'location',
+            '+select' => ['location.name'],
+            '+as'     => ['location_name'],
+        }
+    );
 
     return $c->objects->search($events_set);
 }

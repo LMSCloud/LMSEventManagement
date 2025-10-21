@@ -1,17 +1,19 @@
 import { customElement, property } from "lit/decorators.js";
 import LMSTable from "../components/LMSTable";
 import { requestHandler } from "../lib/RequestHandler/RequestHandler";
-import { Input, LMSSettingResponse } from "../types/common";
+import { LMSSettingResponse } from "../types/common";
 
 type WithChangedPropertyNames<T> = {
     [P in keyof T as P extends "plugin_key"
         ? "id"
         : P extends "plugin_value"
         ? "value"
-        : P]: T[P];
+        : P]: P extends "plugin_value"
+            ? T extends { plugin_key: infer K; plugin_value: infer V }
+                ? [K, V]
+                : never
+            : T[P];
 };
-
-type ModifiedLMSSettingResponse = WithChangedPropertyNames<LMSSettingResponse>;
 
 @customElement("lms-settings-table")
 export default class LMSSettingsTable extends LMSTable {
@@ -36,18 +38,21 @@ export default class LMSSettingsTable extends LMSTable {
             return;
         }
 
+        let valueToStore: string | number = "";
+        Array.from(inputs).forEach((input) => {
+            if (input.name !== key) {
+                return;
+            }
+
+            valueToStore = input.type === "checkbox" ? (input.checked ? 1 : 0) : input.value;
+        });
+
         const response = await requestHandler.put({
             endpoint: "settings",
             path: [key.toString()],
             requestInit: {
                 body: JSON.stringify({
-                    ...Array.from(inputs).reduce(
-                        (acc: { [key: string]: string }, input: Input) => {
-                            acc[input.name] = input.value;
-                            return acc;
-                        },
-                        {}
-                    ),
+                    plugin_value: valueToStore,
                 }),
             },
         });
@@ -93,13 +98,16 @@ export default class LMSSettingsTable extends LMSTable {
                         "__INSTALLED_VERSION__",
                         "last_upgraded",
                         "__CURRENT_MIGRATION__",
-                    ].includes(plugin_key)
+                    ].includes(plugin_key) &&
+                    !plugin_key.startsWith("widget_")
             )
             .map((setting) => {
                 const { plugin_key, plugin_value } = setting;
-                const settingData: ModifiedLMSSettingResponse = {
+                // Store the value as [plugin_key, plugin_value] tuple
+                // so InputConverter can determine the right input type
+                const settingData: WithChangedPropertyNames<LMSSettingResponse> = {
                     id: plugin_key,
-                    value: plugin_value,
+                    value: [plugin_key, plugin_value],
                 };
                 return {
                     ...Object.fromEntries(this.getColumnData(settingData)),

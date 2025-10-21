@@ -130,7 +130,17 @@ ${value}</textarea
                 ] as SelectOption[]).render(),
             registration_link: (value) =>
                 new Input("registration_link", value).render(),
-            value: (value) => new Input("value", value).render(),
+            value: (value) => {
+                // For settings table, value is [setting_key, setting_value] tuple
+                if (Array.isArray(value) && value.length === 2) {
+                    const [settingKey, settingValue] = value as [string, string];
+                    if (this.conversionMap[settingKey]) {
+                        return this.conversionMap[settingKey](settingValue);
+                    }
+                    return new Input(settingKey as any, settingValue).render();
+                }
+                return new Input("value", value).render();
+            },
             modal_text: (value) =>
                 new ModalTextInput(value as ModalField).render(),
             modal_number: (value) =>
@@ -148,6 +158,20 @@ ${value}</textarea
                 new ModalCheckboxInput(value as ModalField).render(),
             "modal_datetime-local": (value) =>
                 new ModalDatetimeLocalInput(value as ModalField).render(),
+            // Settings checkboxes
+            opac_filters_age_enabled: (value) =>
+                new Checkbox("opac_filters_age_enabled", value).render(),
+            opac_filters_registration_and_dates_enabled: (value) =>
+                new Checkbox(
+                    "opac_filters_registration_and_dates_enabled",
+                    value
+                ).render(),
+            opac_filters_fee_enabled: (value) =>
+                new Checkbox("opac_filters_fee_enabled", value).render(),
+            widget_enabled: (value) =>
+                new Checkbox("widget_enabled", value).render(),
+            widget_auto_inject: (value) =>
+                new Checkbox("widget_auto_inject", value).render(),
         };
     }
 

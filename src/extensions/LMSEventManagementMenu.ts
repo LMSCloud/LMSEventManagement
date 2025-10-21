@@ -1,5 +1,6 @@
 import {
     faBullseye,
+    faCode,
     faCog,
     faImage,
     faList,
@@ -77,6 +78,13 @@ export default class LMSEventMangementMenu extends LMSFloatingMenu {
                 name: __("Event Types"),
                 icon: faTag,
                 url: this.composeUrl("configure", "event-types"),
+                method: "configure",
+            },
+            {
+                id: "opac-widget",
+                name: __("OPAC Widget"),
+                icon: faCode,
+                url: this.composeUrl("configure", "opac-widget"),
                 method: "configure",
             },
             {

@@ -29,7 +29,7 @@ textdomain 'com.lmscloud.eventmanagement';
 bind_textdomain_filter 'com.lmscloud.eventmanagement', \&Encode::decode_utf8;
 bindtextdomain 'com.lmscloud.eventmanagement' => $self->bundle_path . '/locales/';
 
-my $json = JSON::MaybeXS->new->utf8;
+my $json = JSON::MaybeXS->new->utf8->allow_nonref;
 
 sub list {
     my $c = shift->openapi->valid_input or return;
@@ -53,7 +53,20 @@ sub _get_settings {
         'plugin_data',
         [ 'plugin_key', 'plugin_value' ],
         {   'plugin_class' => 'Koha::Plugin::Com::LMSCloud::EventManagement',
-            'plugin_key'   => { -in => [ 'opac_filters_age_enabled', 'opac_filters_registration_and_dates_enabled', 'opac_filters_fee_enabled' ] }
+            'plugin_key'   => { -in => [
+                'opac_filters_age_enabled',
+                'opac_filters_registration_and_dates_enabled',
+                'opac_filters_fee_enabled',
+                'widget_enabled',
+                'widget_auto_inject',
+                'widget_title',
+                'widget_display_mode',
+                'widget_layout',
+                'widget_event_count',
+                'widget_time_period',
+                'widget_selected_events',
+                'widget_all_events_text',
+            ] }
         }
     );
     my $sth = $dbh->prepare($stmt);
@@ -63,9 +76,12 @@ sub _get_settings {
 
     foreach my $setting ( $settings->@* ) {
         my $plugin_value         = $setting->{'plugin_value'};
-        my $decoded_plugin_value = eval { $json->decode($plugin_value); } or do {
+        my $decoded_plugin_value = eval { $json->decode($plugin_value); };
+
+        # Skip only if there was an actual decode error, not if value is falsy
+        if ($@) {
             next;
-        };
+        }
 
         $setting->{'plugin_value'} = $decoded_plugin_value;
     }

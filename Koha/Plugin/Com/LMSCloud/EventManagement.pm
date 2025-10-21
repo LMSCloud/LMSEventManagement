@@ -25,13 +25,14 @@ use Koha::Schema         ();
 use Carp             qw( carp croak );
 use Cwd              qw( abs_path );
 use English          qw(-no_match_vars);
+use JSON::MaybeXS    ();
 use Module::Metadata ();
 use Mojo::JSON       qw( decode_json );
 use Readonly         qw( Readonly );
 use Try::Tiny        qw( catch try );
 
 use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
-use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page page_exists );
+use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page page_exists update_opac_page );
 
 Readonly my $TINYINT_UPPER_BOUNDARY => 255;
 
@@ -213,14 +214,23 @@ sub opac_online_payment_end {
 sub opac_head {
     my ($self) = @_;
 
-    return q{};
+    return q{<script type="module" src="/api/v1/contrib/eventmanagement/static/dist/opac-widget.js"></script>};
 }
 
 sub opac_js {
     my ($self) = @_;
 
-    return q{};
+    my $widget_enabled = $self->retrieve_data('widget_enabled')     || 0;
+    my $auto_inject    = $self->retrieve_data('widget_auto_inject') || 1;
 
+    if ( $widget_enabled != 1 ) {
+        return q{};
+    }
+    if ( $auto_inject != 1 ) {
+        return q{};
+    }
+
+    return q{<script type="text/javascript" src="/api/v1/contrib/eventmanagement/static/js/opac-widget-inject.js"></script>};
 }
 
 sub intranet_head {
@@ -265,10 +275,49 @@ sub configure {
 
             return $self->output_html( $template->output() );
         },
+        q{opac-widget} => sub {
+            $template = $self->get_template( { file => 'views/configuration/opac-widget.tt' } );
+
+            return $self->output_html( $template->output() );
+        },
 
     };
 
     return $responses->{$op}();
+}
+
+## Helper method to ensure all expected settings exist with defaults
+## This is called during both install and upgrade to handle new settings
+sub _ensure_settings_exist {
+    my ($self) = @_;
+
+    my $json = JSON::MaybeXS->new->utf8->allow_nonref;
+
+    my $default_settings = {
+        opac_filters_age_enabled                       => 0,
+        opac_filters_registration_and_dates_enabled    => 0,
+        opac_filters_fee_enabled                       => 0,
+        widget_enabled                                 => 0,
+        widget_auto_inject                             => 1,
+        widget_title                                   => q{},
+        widget_display_mode                            => 'count',
+        widget_layout                                  => 'vertical',
+        widget_event_count                             => '5',
+        widget_time_period                             => '14',
+        widget_selected_events                         => '[]',
+        widget_all_events_text                         => q{},
+    };
+
+    for my $setting_key ( keys %{$default_settings} ) {
+        my $existing_value = $self->retrieve_data($setting_key);
+        if ( !defined $existing_value ) {
+            # JSON-encode the value before storing (consistent with Settings controller)
+            my $json_value = $json->encode( $default_settings->{$setting_key} );
+            $self->store_data( { $setting_key => $json_value } );
+        }
+    }
+
+    return 1;
 }
 
 sub install() {
@@ -295,6 +344,8 @@ sub install() {
                 bundle_path => $bundle_path,
             }
         );
+
+        $self->_ensure_settings_exist();
 
         my $is_success = $migration_helper->install( { plugin => $self } );
         if ( !$is_success ) {
@@ -353,6 +404,9 @@ sub upgrade {
         if ( !$is_success ) {
             croak 'Migration failed';
         }
+
+        # Ensure all settings exist with defaults for upgrades
+        $self->_ensure_settings_exist();
 
         # Update or create OPAC page for events
         my $page_content = $self->mbf_read('events.html');

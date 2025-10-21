@@ -126,6 +126,9 @@ export default class LMSEventsView extends LitElement {
                         searchParams: this.queryBuilder.query,
                     })
                 );
+
+                // Check if we should auto-open an event from the hash
+                this.checkHashForEvent();
             })
             .catch((error) => {
                 this.state = "error";
@@ -239,6 +242,23 @@ export default class LMSEventsView extends LitElement {
     private handleHideDetails() {
         this.modalData = undefined;
         this.hasOpenModal = false;
+    }
+
+    private checkHashForEvent() {
+        const hash = window.location.hash;
+        if (!hash || !hash.startsWith('#event-')) {
+            return;
+        }
+
+        const eventId = parseInt(hash.replace('#event-', ''), 10);
+        if (isNaN(eventId)) {
+            return;
+        }
+
+        const event = this.events?.find(e => e.id === eventId);
+        if (event) {
+            this.handleShowDetails({ lmsEvent: event });
+        }
     }
 
     private handleLoadMore() {
