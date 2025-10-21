@@ -6,7 +6,7 @@ import {
     faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { LitElement, html } from "lit";
+import { LitElement, html, nothing } from "lit";
 import { customElement, property, queryAll, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -436,7 +436,7 @@ export default class LMSEventsFilter extends LitElement {
                                 ? html`<span class="badge badge-primary badge-sm"
                                       >${filterCount}</span
                                   >`
-                                : ""}
+                                : nothing}
                         </button>
                     </div>
 
@@ -489,7 +489,7 @@ export default class LMSEventsFilter extends LitElement {
                                                 </button>
                                             </div>
                                         `
-                                      : ""}
+                                      : nothing}
 
                                   <!-- Filter dropdowns -->
                                   <div class="flex flex-col sm:flex-row flex-wrap gap-2 pt-2">
@@ -757,7 +757,7 @@ export default class LMSEventsFilter extends LitElement {
                                   </div>
                               </div>
                           `
-                        : ""}
+                        : nothing}
                 </div>
                 <!-- Slot for the filterable content -->
                 <slot></slot>
