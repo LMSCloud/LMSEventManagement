@@ -2,7 +2,7 @@
 
 [% INCLUDE 'doc-head-open.inc' %]
 <title>Plugins - Koha: LMSEventManagement: ...</title>
-<script src="/api/v1/contrib/eventmanagement/static/dist/main.js"></script>
+<script src="/api/v1/contrib/eventmanagement/static/dist/staff.js" type="module"></script>
 <script>
     {
         const searchParams = new URLSearchParams(window.location.search);
