@@ -18,7 +18,6 @@
 # along with Koha; if not, see <http://www.gnu.org/licenses>.
 use Modern::Perl;
 use utf8;
-use 5.032;
 use English qw(-no_match_vars);
 
 use C4::Auth      qw( get_template_and_user );

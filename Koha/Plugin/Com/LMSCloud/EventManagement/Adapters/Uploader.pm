@@ -2,7 +2,6 @@ package Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Uploader;
 
 use utf8;
 use Modern::Perl;
-use 5.032;
 
 use Digest::MD5         qw( md5_hex );
 use English             qw( -no_match_vars );

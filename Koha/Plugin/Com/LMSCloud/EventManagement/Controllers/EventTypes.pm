@@ -1,6 +1,5 @@
 package Koha::Plugin::Com::LMSCloud::EventManagement::Controllers::EventTypes;
 
-use 5.032;
 
 use Modern::Perl;
 use utf8;
