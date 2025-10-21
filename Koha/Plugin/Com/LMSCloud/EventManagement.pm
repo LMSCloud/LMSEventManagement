@@ -354,10 +354,26 @@ sub upgrade {
             croak 'Migration failed';
         }
 
-        # Create OPAC page for events if it doesn't exist
-        if ( !page_exists( { code => 'lmscloud-eventmanagement', lang => 'default' } ) ) {
-            my $page_content = $self->mbf_read('events.html');
-            my $page_id      = create_opac_page(
+        # Update or create OPAC page for events
+        my $page_content = $self->mbf_read('events.html');
+
+        if ( page_exists( { code => 'lmscloud-eventmanagement', lang => 'default' } ) ) {
+            # Update existing page
+            my $updated = update_opac_page(
+                {   code    => 'lmscloud-eventmanagement',
+                    title   => 'Events',
+                    content => $page_content,
+                    lang    => 'default',
+                }
+            );
+
+            if ( !$updated ) {
+                carp 'Failed to update OPAC page for events during upgrade';
+            }
+        }
+        else {
+            # Create new page
+            my $page_id = create_opac_page(
                 {   code    => 'lmscloud-eventmanagement',
                     title   => 'Events',
                     content => $page_content,
