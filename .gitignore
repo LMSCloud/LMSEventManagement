@@ -1,6 +1,7 @@
 ValidatorXSC/
 node_modules/
 img/
+local/
 
 archive
 package-lock.json
