@@ -86,7 +86,7 @@ export default class StaffEventTypesView extends LMSAbstractView {
 
         Promise.all([
             requestHandler.get({ endpoint: "targetGroups" }),
-            requestHandler.get({ endpoint: "locations" }),
+            requestHandler.get({ endpoint: "locations", query: { _per_page: "-1" } }),
             requestHandler.get({ endpoint: "images" }),
             requestHandler.get({
                 endpoint: "eventTypes",
