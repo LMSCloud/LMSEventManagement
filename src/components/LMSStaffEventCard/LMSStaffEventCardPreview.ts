@@ -66,7 +66,7 @@ export default class LMSStaffEventCardPreview extends LitElement {
         const locationName = locations?.find((loc) => loc.id == location)?.name;
 
         this.listItems = [
-            html`<span class="font-thin">
+            html`<span>
                 <small>
                     ${litFontawesome(faMapMarkerAlt, {
                         className: "w-4 h-4 inline-block",
@@ -74,7 +74,7 @@ export default class LMSStaffEventCardPreview extends LitElement {
                     ${locationName}
                 </small>
             </span>`,
-            html`<span class="font-thin">
+            html`<span>
                 <small>
                     ${litFontawesome(faCalendarAlt, {
                         className: "w-4 h-4 inline-block",

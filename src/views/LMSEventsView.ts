@@ -336,7 +336,7 @@ export default class LMSEventsView extends LitElement {
                 }}
                 .caption=${event?.name ?? ""}
                 .listItems=${[
-                    html`<span class="text-muted font-thin">
+                    html`<span class="text-muted">
                         <small>
                             ${litFontawesome(faMapMarkerAlt, {
                                 className: "w-4 h-4 inline-block",
@@ -346,7 +346,7 @@ export default class LMSEventsView extends LitElement {
                             )?.name || __("Location not found")}
                         </small>
                     </span>`,
-                    html`<span class="text-muted font-thin">
+                    html`<span class="text-muted">
                         <small>
                             ${litFontawesome(faCalendarAlt, {
                                 className: "w-4 h-4 inline-block",
