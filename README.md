@@ -22,12 +22,52 @@ To set up the Koha plugin system you must first make some changes to your instal
 
 Once set up is complete you will need to alter your UseKohaPlugins system preference.
 
-## Additional steps
+## OPAC Access
 
-At the moment you also need to make some changes to your apache2 configuration to make this plugin work.
-This will be addressed in a future release.
+The plugin automatically creates a Koha Page during installation that provides the event management interface.
 
-### /etc/apache2/apache2.conf
+### Access URL
+
+After installation, the events page is available at:
+
+```plain
+/cgi-bin/koha/opac-page.pl?code=lmscloud-eventmanagement
+```
+
+### Koha Page System
+
+The plugin uses Koha's built-in Pages feature (Additional Contents) to create an OPAC-accessible page. This approach:
+
+- **No Apache configuration required** - Works immediately after plugin installation
+- **Integrated with Koha** - Full access to Koha's OPAC theme, navigation, and authentication
+- **Easy to maintain** - Page content is managed via the plugin's install/uninstall hooks
+
+### Adding Navigation Links
+
+To make the events page easily discoverable, you can add a link to it in various ways:
+
+1. **OpacNav System Preference**: Add this HTML to the OpacNav system preference:
+
+   ```html
+   <li>
+     <a href="/cgi-bin/koha/opac-page.pl?code=lmscloud-eventmanagement"
+       >Events</a
+     >
+   </li>
+   ```
+
+2. **OpacMainUserBlock**: Add a prominent link on the OPAC home page
+
+3. **Custom OPAC template**: Modify your OPAC theme to include a navigation link
+
+### Legacy Apache Configuration (Deprecated)
+
+**Note**: The following Apache configuration is no longer required. It is kept here for reference only.
+
+<details>
+<summary>Click to expand deprecated Apache configuration</summary>
+
+The old approach used Apache ScriptAlias to directly access events.pl:
 
 ```conf
 <Directory /var/lib/koha/INSTANCE/plugins/>
@@ -35,27 +75,14 @@ This will be addressed in a future release.
     AllowOverride None
     Require all granted
 </Directory>
-```
-
-### /etc/apache2/sites-available/INSTANCE.conf
-
-```conf
-ScriptAlias /events "/var/lib/koha/INSTANCE/plugins/Koha/Plugin/Com/LMSCloud/EventManagement/Opac/events.pl"
-Alias /plugin "/var/lib/koha/INSTANCE/plugins"
-```
-
-### Or in /etc/apache2/sites-available/INSTANCE.conf
-
-```conf
-<Directory /var/lib/koha/INSTANCE/plugins/>
-    Options FollowSymLinks
-    AllowOverride None
-    Require all granted
-</Directory>
 
 ScriptAlias /events "/var/lib/koha/INSTANCE/plugins/Koha/Plugin/Com/LMSCloud/EventManagement/Opac/events.pl"
 Alias /plugin "/var/lib/koha/INSTANCE/plugins"
 ```
+
+This configuration is no longer necessary and can be removed.
+
+</details>
 
 # Usage
 
@@ -161,6 +188,49 @@ are supported:
 If possible use AVIF or WEBP as they are the most efficient formats. If you upload an image that is not
 in one of the supported formats you'll get an error. The maximum file size is 10MB. To ensure optimal
 performance you should keep the file size as small as possible, e.g. in a low kilobyte range.
+
+## OPAC Widget
+
+The plugin includes a configurable widget that can display events on the OPAC home page. Configure it through the plugin's configuration interface under the "OPAC Widget" tab.
+
+### Widget Features
+
+- **Three display modes**: Show count of upcoming events, events by period, or manually selected events
+- **Location filtering**: Restrict to events from specific libraries
+- **Customizable styling**: Full theming support via CSS design tokens
+- **Auto-injection**: Optional automatic loading on the OPAC home page
+
+## Submodules
+
+This project uses Git submodules to share code across LMSCloud plugins:
+
+- **`Koha/Plugin/Com/LMSCloud/Util/`** - Shared utility modules (Pages, MigrationHelper, I18N)
+
+**Important**: After cloning this repository, initialize submodules with:
+
+```bash
+git submodule update --init --recursive
+```
+
+For detailed information on working with submodules, see [SUBMODULES.md](./SUBMODULES.md).
+
+## Build
+
+- To use the build scripts in `package.json` you'll need [package-kpz](https://github.com/LMSCloudPaulD/package-kpz) in your **PATH**.
+
+## Testing
+
+### Seeding Test Data
+
+For development and testing, you can seed the database with sample data:
+
+```bash
+just seed
+```
+
+This will create sample target groups, locations, event types, and events for testing purposes.
+
+**Note**: This is for testing only and should not be used in production. The fixtures are located in `testing/fixtures/` and are not included in the production build.
 
 # Development
 
