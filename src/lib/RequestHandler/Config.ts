@@ -60,6 +60,10 @@ export const ENDPOINTS: ApiEndpoints = {
             url: `${BASE_PATH}/target_groups`,
             cache: true,
         },
+        branches: {
+            url: `/api/v1/libraries`,
+            cache: true,
+        },
     },
     post: {
         settings: {
