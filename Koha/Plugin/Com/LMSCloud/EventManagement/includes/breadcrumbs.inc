@@ -24,6 +24,7 @@
             "target-groups": '[% "Target Groups" | gettext %]',
             "locations": '[% "Locations" | gettext %]',
             "event-types": '[% "Event Types" | gettext %]',
+            "opac-widget": '[% "OPAC Widget" | gettext %]',
             "events": '[% "Events" | gettext %]',
             "images": '[% "Images" | gettext %]',
         };
