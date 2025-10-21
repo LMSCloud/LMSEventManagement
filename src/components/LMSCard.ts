@@ -10,7 +10,7 @@ import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { map } from "lit/directives/map.js";
-import { __ } from "../lib/translate";
+import { __, attr__ } from "../lib/translate";
 import { tailwindStyles } from "../tailwind.lit";
 import { Image } from "../types/common";
 
@@ -44,24 +44,28 @@ export default class LMSCard extends LitElement {
                     icon: faCheckCircle,
                     class: "badge-success",
                     label: __("Confirmed"),
+                    ariaLabel: attr__("Confirmed"),
                 };
             case "pending":
                 return {
                     icon: faClock,
                     class: "badge-warning",
                     label: __("Pending"),
+                    ariaLabel: attr__("Pending"),
                 };
             case "canceled":
                 return {
                     icon: faTimesCircle,
                     class: "badge-error",
                     label: __("Canceled"),
+                    ariaLabel: attr__("Canceled"),
                 };
             case "sold_out":
                 return {
                     icon: faUserSlash,
                     class: "badge-neutral",
                     label: __("Sold Out"),
+                    ariaLabel: attr__("Sold Out"),
                 };
             default:
                 return null;
@@ -90,7 +94,7 @@ export default class LMSCard extends LitElement {
                     "shadow-lg": !inline,
                 })}"
                 role="status"
-                aria-label="${config.label}"
+                aria-label="${config.ariaLabel}"
             >
                 <span aria-hidden="true">
                     ${litFontawesome(config.icon, {
@@ -108,7 +112,6 @@ export default class LMSCard extends LitElement {
             <div
                 class="card relative shadow-md hover:bottom-2 hover:cursor-pointer hover:shadow-lg"
             >
-                ${hasImage ? this.renderStatusBadge() : nothing}
                 <figure>
                     <img
                         src=${ifDefined(this.image?.src)}
@@ -117,6 +120,7 @@ export default class LMSCard extends LitElement {
                             hidden: !hasImage,
                         })} w-full"
                     />
+                    ${hasImage ? this.renderStatusBadge() : nothing}
                 </figure>
                 <div class="card-body">
                     <h5
