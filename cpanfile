@@ -4,6 +4,7 @@ requires 'Path::Tiny';
 requires 'Perl::Tidy';
 requires 'Readonly';
 requires 'Template';
+requires 'Template::Plugin::Gettext';
 requires 'Term::ANSIColor';
 requires 'Term::Choose';
 requires 'Term::ReadLine';
