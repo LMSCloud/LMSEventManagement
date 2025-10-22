@@ -68,15 +68,15 @@ BEGIN {
 }
 
 ## Here we set our plugin version
-our $VERSION         = '1.6.12';
-our $MINIMUM_VERSION = '18.05';
+our $VERSION         = '2.8.0';
+our $MINIMUM_VERSION = '22.11';
 
 ## Here is our metadata, some keys are required, some are optional
 our $METADATA = {
     name            => 'LMSEventManagement',
     author          => 'LMSCloud GmbH',
     date_authored   => '2021-10-15',
-    date_updated    => '2024-03-04',
+    date_updated    => '2025-10-22',
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
@@ -293,23 +293,24 @@ sub _ensure_settings_exist {
     my $json = JSON::MaybeXS->new->utf8->allow_nonref;
 
     my $default_settings = {
-        opac_filters_age_enabled                       => 0,
-        opac_filters_registration_and_dates_enabled    => 0,
-        opac_filters_fee_enabled                       => 0,
-        widget_enabled                                 => 0,
-        widget_auto_inject                             => 1,
-        widget_title                                   => q{},
-        widget_display_mode                            => 'count',
-        widget_layout                                  => 'vertical',
-        widget_event_count                             => '5',
-        widget_time_period                             => '14',
-        widget_selected_events                         => '[]',
-        widget_all_events_text                         => q{},
+        opac_filters_age_enabled                    => 0,
+        opac_filters_registration_and_dates_enabled => 0,
+        opac_filters_fee_enabled                    => 0,
+        widget_enabled                              => 0,
+        widget_auto_inject                          => 1,
+        widget_title                                => q{},
+        widget_display_mode                         => 'count',
+        widget_layout                               => 'vertical',
+        widget_event_count                          => '5',
+        widget_time_period                          => '14',
+        widget_selected_events                      => '[]',
+        widget_all_events_text                      => q{},
     };
 
     for my $setting_key ( keys %{$default_settings} ) {
         my $existing_value = $self->retrieve_data($setting_key);
         if ( !defined $existing_value ) {
+
             # JSON-encode the value before storing (consistent with Settings controller)
             my $json_value = $json->encode( $default_settings->{$setting_key} );
             $self->store_data( { $setting_key => $json_value } );
@@ -411,6 +412,7 @@ sub upgrade {
         my $page_content = $self->mbf_read('events.html');
 
         if ( page_exists( { code => 'lmscloud-eventmanagement', lang => 'default' } ) ) {
+
             # Update existing page
             my $updated = update_opac_page(
                 {   code    => 'lmscloud-eventmanagement',
