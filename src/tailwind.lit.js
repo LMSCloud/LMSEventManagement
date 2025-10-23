@@ -4984,6 +4984,10 @@ details.collapse summary::-webkit-details-marker {
   width: 100vw;
 }
 
+.min-w-0 {
+  min-width: 0px;
+}
+
 .min-w-min {
   min-width: -moz-min-content;
   min-width: min-content;
@@ -5013,6 +5017,10 @@ details.collapse summary::-webkit-details-marker {
 
 .flex-auto {
   flex: 1 1 auto;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
 }
 
 .rotate-45 {
@@ -5046,6 +5054,10 @@ details.collapse summary::-webkit-details-marker {
 
 .content-end {
   align-content: flex-end;
+}
+
+.items-start {
+  align-items: flex-start;
 }
 
 .items-center {
