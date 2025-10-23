@@ -1,6 +1,4 @@
-// Auto-inject OPAC events widget on homepage
 $(document).ready(function() {
-    // Only inject on the main OPAC page
     const isMainPage =
         window.location.pathname === '/cgi-bin/koha/opac-main.pl' ||
         window.location.pathname === '/' ||
@@ -10,19 +8,28 @@ $(document).ready(function() {
         return;
     }
 
-    // Find a suitable container - adjust selector based on your OPAC theme
-    let container = document.getElementById('opacmainuserblock');
+    fetch('/api/v1/contrib/eventmanagement/public/settings')
+        .then(response => response.json())
+        .then(settings => {
+            const autoInject = settings.find(s => s.plugin_key === 'widget_auto_inject');
 
-    if (!container) {
-        const mainContent = document.querySelector('.maincontent .row');
-        container = mainContent;
-    }
+            if (!autoInject || autoInject.plugin_value != 1) {
+                return;
+            }
 
-    if (container) {
-        // Create widget element
-        const widget = document.createElement('lms-opac-events-widget');
+            let container = document.getElementById('opacmainuserblock');
 
-        // Prepend to container
-        container.insertBefore(widget, container.firstChild);
-    }
+            if (!container) {
+                const mainContent = document.querySelector('.maincontent .row');
+                container = mainContent;
+            }
+
+            if (container) {
+                const widget = document.createElement('lms-opac-events-widget');
+                container.appendChild(widget);
+            }
+        })
+        .catch(error => {
+            console.error('Failed to load widget settings:', error);
+        });
 });
