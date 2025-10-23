@@ -126,10 +126,10 @@ export default class LMSCard extends LitElement {
                     <h5
                         class="${classMap({
                             hidden: !this.caption,
-                        })} card-title flex items-center justify-between"
+                        })} card-title flex items-start justify-between gap-2"
                     >
-                        <span>${this.caption}</span>
-                        ${!hasImage ? this.renderStatusBadge(true) : nothing}
+                        <span class="flex-1 min-w-0">${this.caption}</span>
+                        ${!hasImage ? html`<span class="flex-shrink-0">${this.renderStatusBadge(true)}</span>` : nothing}
                     </h5>
                     <p
                         class=${classMap({
