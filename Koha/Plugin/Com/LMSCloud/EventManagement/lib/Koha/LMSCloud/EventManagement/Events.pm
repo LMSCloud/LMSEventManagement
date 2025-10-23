@@ -26,7 +26,7 @@ sub filter {
     my $search_params = {};
 
     if ( defined $params->{name} && $params->{name} ne q{} ) {
-        $search_params->{name} = { 'like' => "%$params->{name}%" };
+        $search_params->{'me.name'} = { 'like' => "%$params->{name}%" };
     }
 
     if ( defined $params->{event_type} && @{ $params->{event_type} } ) {

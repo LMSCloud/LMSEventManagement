@@ -1,10 +1,10 @@
 package Koha::Plugin::Com::LMSCloud::EventManagement::Controllers::Public::Events;
 
-
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
 
+use JSON       qw( decode_json encode_json );
 use List::Util qw( none );
 use Try::Tiny  qw( catch try );
 use Readonly   qw( Readonly );
@@ -22,6 +22,12 @@ sub get {
     my $c = shift->openapi->valid_input or return;
 
     return try {
+
+        # Fix ambiguous column names in q parameter before processing
+        if ( $c->validation->output->{'q'} ) {
+            _fix_q_parameter_column_ambiguity($c);
+        }
+
         my $params = _normalize_params($c);
         my $events = _filter_events( $c, $params );
 
@@ -118,8 +124,7 @@ sub _filter_events {
 
     $events_set = $events_set->search(
         { 'me.id' => { -in => $fees_event_ids } },
-        {
-            join     => 'location',
+        {   join      => 'location',
             '+select' => ['location.name'],
             '+as'     => ['location_name'],
         }
@@ -135,6 +140,50 @@ sub _interlace_target_groups {
     for my $event ( @{$events} ) {
         my $target_groups = $fees_set->search( { event_id => $event->{'id'} } );
         $event->{'target_groups'} = $target_groups->as_list;
+    }
+}
+
+sub _fix_q_parameter_column_ambiguity {
+    my ($c) = @_;
+
+    my $q_param = $c->validation->output->{q};
+    if ( !defined $q_param || $q_param eq '{}' ) {
+        return;
+    }
+
+    my $q_json;
+    eval { $q_json = decode_json($q_param); };
+    if ($@) {
+        return;
+    }
+
+    if ( ref $q_json eq 'HASH' && !keys %{$q_json} ) {
+        return;
+    }
+    if ( ref $q_json eq 'ARRAY' && !@{$q_json} ) {
+        return;
+    }
+
+    _fix_name_refs_recursive($q_json);
+
+    $c->validation->output->{q} = encode_json($q_json);
+}
+
+sub _fix_name_refs_recursive {
+    my ($obj) = @_;
+
+    if ( ref $obj eq 'HASH' ) {
+        if ( exists $obj->{name} && !exists $obj->{'me.name'} ) {
+            $obj->{'me.name'} = delete $obj->{name};
+        }
+        for my $value ( values %{$obj} ) {
+            _fix_name_refs_recursive($value);
+        }
+    }
+    elsif ( ref $obj eq 'ARRAY' ) {
+        for my $element ( @{$obj} ) {
+            _fix_name_refs_recursive($element);
+        }
     }
 }
 
