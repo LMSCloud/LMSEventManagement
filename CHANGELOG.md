@@ -1,5 +1,19 @@
 ## [unreleased]
 
+### 🐛 Bug Fixes
+
+- Prevent status badge from overlapping event title
+- Resolve ambiguous 'name' column in SQL queries
+- Respect auto_inject setting in widget inject script
+
+### ⚙️ Miscellaneous Tasks
+
+- Increment major, minor versions for new release
+- Increment patch version
+- Increment patch version
+- Build new bundle
+## [2.8.0-beta.15] - 2025-10-21
+
 ### 🚀 Features
 
 - Migrate OPAC interface to Koha Pages
@@ -67,6 +81,10 @@
 - Add local dir to gitignore
 - Update german translations
 - Build new bundle
+- Add CHANGELOG.md
+- Add SUBMODULES.md
+- Update README.md
+- Remove use 5.032 requirement
 ## [1.6.12-beta.14] - 2024-03-04
 
 ### 🐛 Bug Fixes
