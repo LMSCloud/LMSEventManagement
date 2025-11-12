@@ -7,6 +7,7 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Readonly  ();
 use Try::Tiny qw( catch try );
+use Encode    qw( encode_utf8 );
 
 use Locale::Messages qw(
     bind_textdomain_filter
@@ -250,7 +251,7 @@ sub export_ical {
         $c->res->headers->content_type('text/calendar; charset=utf-8');
         $c->res->headers->content_disposition(qq{attachment; filename="$filename"});
 
-        return $c->render( data => $ical_data );
+        return $c->render( data => encode_utf8($ical_data) );
     }
     catch {
         return $c->unhandled_exception($_);

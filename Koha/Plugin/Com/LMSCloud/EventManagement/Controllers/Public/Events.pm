@@ -8,6 +8,7 @@ use JSON       qw( decode_json encode_json );
 use List::Util qw( none );
 use Try::Tiny  qw( catch try );
 use Readonly   qw( Readonly );
+use Encode     qw( encode_utf8 );
 
 use Koha::LMSCloud::EventManagement::Events                   ();
 use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees ();
@@ -63,7 +64,7 @@ sub export_ical {
         $c->res->headers->content_type('text/calendar; charset=utf-8');
         $c->res->headers->content_disposition(qq{attachment; filename="$filename"});
 
-        return $c->render( data => $ical_data );
+        return $c->render( data => encode_utf8($ical_data) );
     }
     catch {
         return $c->unhandled_exception($_);
