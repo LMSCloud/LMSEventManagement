@@ -23,7 +23,7 @@ import {
     formatAddress,
     formatMonetaryAmountByLocale,
 } from "../../lib/converters/displayConverters";
-import { __ } from "../../lib/translate";
+import { __, attr__ } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";
 import { tailwindStyles } from "../../tailwind.lit";
 import {
@@ -603,8 +603,8 @@ export default class LMSCardDetailsModal extends LitElement {
                                     <button
                                         class="btn btn-secondary"
                                         @click=${this.toggleModal}
-                                        title=${__("Close")}
-                                        aria-label=${__("Close")}
+                                        title=${attr__("Close")}
+                                        aria-label=${attr__("Close")}
                                     >
                                         ${litFontawesome(faXmark, {
                                             className: "w-4 h-4 sm:mr-2",
@@ -616,8 +616,8 @@ export default class LMSCardDetailsModal extends LitElement {
                                     <button
                                         class="btn btn-neutral"
                                         @click=${this.handleExportIcal}
-                                        title=${__("Export to Calendar")}
-                                        aria-label=${__("Export to Calendar")}
+                                        title=${attr__("Export to Calendar")}
+                                        aria-label=${attr__("Export to Calendar")}
                                     >
                                         ${litFontawesome(faCalendarPlus, {
                                             className: "w-4 h-4 sm:mr-2",
@@ -635,8 +635,8 @@ export default class LMSCardDetailsModal extends LitElement {
                                             this.event?.registration_link ??
                                                 undefined
                                         )}
-                                        title=${__("Register")}
-                                        aria-label=${__("Register")}
+                                        title=${attr__("Register")}
+                                        aria-label=${attr__("Register")}
                                     >
                                         ${litFontawesome(faUserPlus, {
                                             className: "w-4 h-4 sm:mr-2",
