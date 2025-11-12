@@ -56,6 +56,7 @@ sub _get_settings {
                 'opac_filters_age_enabled',
                 'opac_filters_registration_and_dates_enabled',
                 'opac_filters_fee_enabled',
+                'opac_hide_pending_events',
                 'widget_enabled',
                 'widget_auto_inject',
                 'widget_title',

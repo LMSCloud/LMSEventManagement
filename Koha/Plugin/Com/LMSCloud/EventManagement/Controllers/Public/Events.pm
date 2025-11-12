@@ -15,6 +15,8 @@ use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees ();
 use Koha::LMSCloud::EventManagement::Locations                ();
 use Koha::LMSCloud::EventManagement::ICalendar                ();
 
+use Koha::Plugin::Com::LMSCloud::EventManagement ();
+
 our $VERSION = '1.0.0';
 
 Readonly my $NAMESPACE_INDEX => 4;
@@ -109,6 +111,12 @@ sub _filter_events {
     $events_set = $events_set->filter($params);
 
     $events_set = $events_set->are_upcoming;
+
+    my $plugin       = Koha::Plugin::Com::LMSCloud::EventManagement->new;
+    my $hide_pending = $plugin->retrieve_data('opac_hide_pending_events');
+    if ( $hide_pending && $hide_pending eq '1' ) {
+        $events_set = $events_set->search( { 'me.status' => { '!=' => 'pending' } } );
+    }
 
     my $url            = $c->req->url;
     my $path           = $url->to_abs->path;

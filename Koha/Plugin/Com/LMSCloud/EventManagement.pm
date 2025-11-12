@@ -296,6 +296,7 @@ sub _ensure_settings_exist {
         opac_filters_age_enabled                    => 0,
         opac_filters_registration_and_dates_enabled => 0,
         opac_filters_fee_enabled                    => 0,
+        opac_hide_pending_events                    => 0,
         widget_enabled                              => 0,
         widget_auto_inject                          => 1,
         widget_title                                => q{},

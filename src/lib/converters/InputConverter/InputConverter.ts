@@ -168,6 +168,8 @@ ${value}</textarea
                 ).render(),
             opac_filters_fee_enabled: (value) =>
                 new Checkbox("opac_filters_fee_enabled", value).render(),
+            opac_hide_pending_events: (value) =>
+                new Checkbox("opac_hide_pending_events", value).render(),
             widget_enabled: (value) =>
                 new Checkbox("widget_enabled", value).render(),
             widget_auto_inject: (value) =>

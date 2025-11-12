@@ -163,7 +163,8 @@ export type LMSSettingResponse = {
         | "__INSTALLED_VERSION__"
         | "opac_filters_age_enabled"
         | "opac_filters_registration_and_dates_enabled"
-        | "opac_filters_fee_enabled";
+        | "opac_filters_fee_enabled"
+        | "opac_hide_pending_events";
     plugin_value:
         | string
         | number
@@ -175,7 +176,8 @@ export type LMSSettingResponse = {
 export type LMSSettingObj = Record<
     | "opac_filters_age_enabled"
     | "opac_filters_registration_and_dates_enabled"
-    | "opac_filters_fee_enabled",
+    | "opac_filters_fee_enabled"
+    | "opac_hide_pending_events",
     string | number | boolean | Array<unknown> | Record<string, unknown>
 >;
 
