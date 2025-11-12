@@ -5,11 +5,16 @@
 - Prevent status badge from overlapping event title
 - Resolve ambiguous 'name' column in SQL queries
 - Respect auto_inject setting in widget inject script
+- Use attr__ macro for attribute translations
+- Prevent wide character print by utf8 encoding ical exports
 
 ### ⚙️ Miscellaneous Tasks
 
 - Increment major, minor versions for new release
 - Increment patch version
+- Increment patch version
+- Build new bundle
+- Update CHANGELOG.md
 - Increment patch version
 - Build new bundle
 ## [2.8.0-beta.15] - 2025-10-21
