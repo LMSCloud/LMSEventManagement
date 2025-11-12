@@ -259,8 +259,8 @@ const Yn={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},
                                     <button
                                         class="btn btn-secondary"
                                         @click=${this.toggleModal}
-                                        title=${q(`Close`)}
-                                        aria-label=${q(`Close`)}
+                                        title=${K(`Close`)}
+                                        aria-label=${K(`Close`)}
                                     >
                                         ${(0,pt.litFontawesome)(ue,{className:`w-4 h-4 sm:mr-2`})}
                                         <span class="hidden sm:inline"
@@ -270,8 +270,8 @@ const Yn={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},
                                     <button
                                         class="btn btn-neutral"
                                         @click=${this.handleExportIcal}
-                                        title=${q(`Export to Calendar`)}
-                                        aria-label=${q(`Export to Calendar`)}
+                                        title=${K(`Export to Calendar`)}
+                                        aria-label=${K(`Export to Calendar`)}
                                     >
                                         ${(0,pt.litFontawesome)(b,{className:`w-4 h-4 sm:mr-2`})}
                                         <span class="hidden sm:inline"
@@ -281,8 +281,8 @@ const Yn={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},
                                     <a
                                         class="${B({hidden:!this.event?.registration_link})} btn btn-primary"
                                         href=${Qn(this.event?.registration_link??void 0)}
-                                        title=${q(`Register`)}
-                                        aria-label=${q(`Register`)}
+                                        title=${K(`Register`)}
+                                        aria-label=${K(`Register`)}
                                     >
                                         ${(0,pt.litFontawesome)(w,{className:`w-4 h-4 sm:mr-2`})}
                                         <span class="hidden sm:inline"
