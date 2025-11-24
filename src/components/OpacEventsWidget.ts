@@ -295,6 +295,9 @@ export default class OpacEventsWidget extends LitElement {
             // Build query parameters
             const params = new URLSearchParams();
 
+            // Use server-side sorting for consistency
+            params.append("_order_by", "start_time");
+
             // Calculate time range if using period mode
             if (this.config.displayMode === "period") {
                 const now = new Date();
@@ -324,13 +327,6 @@ export default class OpacEventsWidget extends LitElement {
                     e.location === this.selectedLocation
                 );
             }
-
-            // Sort by start time
-            events.sort(
-                (a: EventData, b: EventData) =>
-                    new Date(a.start_time).getTime() -
-                    new Date(b.start_time).getTime()
-            );
 
             // Handle different display modes
             if (this.config.displayMode === "manual") {
