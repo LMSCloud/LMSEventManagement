@@ -367,6 +367,19 @@ sub install() {
             carp 'Failed to create OPAC page for events';
         }
 
+        # Create German (de-DE) version of OPAC page
+        my $page_id_de = create_opac_page(
+            {   code    => 'lmscloud-eventmanagement',
+                title   => 'Veranstaltungen',
+                content => $page_content,
+                lang    => 'de-DE',
+            }
+        );
+
+        if ( !$page_id_de ) {
+            carp 'Failed to create German OPAC page for events';
+        }
+
         return 1;
     }
     catch {
@@ -439,6 +452,37 @@ sub upgrade {
 
             if ( !$page_id ) {
                 carp 'Failed to create OPAC page for events during upgrade';
+            }
+        }
+
+        # Update or create German (de-DE) version of OPAC page
+        if ( page_exists( { code => 'lmscloud-eventmanagement', lang => 'de-DE' } ) ) {
+
+            # Update existing German page
+            my $updated_de = update_opac_page(
+                {   code    => 'lmscloud-eventmanagement',
+                    title   => 'Veranstaltungen',
+                    content => $page_content,
+                    lang    => 'de-DE',
+                }
+            );
+
+            if ( !$updated_de ) {
+                carp 'Failed to update German OPAC page for events during upgrade';
+            }
+        }
+        else {
+            # Create new German page
+            my $page_id_de = create_opac_page(
+                {   code    => 'lmscloud-eventmanagement',
+                    title   => 'Veranstaltungen',
+                    content => $page_content,
+                    lang    => 'de-DE',
+                }
+            );
+
+            if ( !$page_id_de ) {
+                carp 'Failed to create German OPAC page for events during upgrade';
             }
         }
 
