@@ -36,6 +36,7 @@ export default class ModalDatetimeLocalInput {
                 name=${this.name}
                 ?required=${this.required}
                 value=${this.value}
+                min="1000-01-01T00:00"
             />
         </div>`;
     }

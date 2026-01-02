@@ -245,7 +245,15 @@ sub is_valid_datetime {
 
     my $is_valid_datetime = defined $dt ? 1 : 0;
 
-    # Check if the year is at least 1000 (4 digits) to prevent dates like "0226-01-01"
+    # Check if the year is at least 1000 (4 digits).
+    # This prevents issues with JSON::Validator's date-time format validation, which uses
+    # Time::Local::timegm. When JSON::Validator strips leading zeros from year components
+    # (e.g., "0226" becomes "226"), Time::Local interprets 2 and 3-digit years relative
+    # to 1900, causing incorrect leap year validation and year interpretation.
+    # Example: "0226-02-29" would be validated as "2126-02-29" (a valid leap year),
+    # even though year 226 is not a leap year.
+    # Client-side validation (min="1000-01-01T00:00" on datetime-local inputs) should
+    # prevent this, but we validate here as a safety measure.
     my $has_valid_year = 1;
     if ( $is_valid_datetime && $dt ) {
         $has_valid_year = $dt->year >= 1000;
