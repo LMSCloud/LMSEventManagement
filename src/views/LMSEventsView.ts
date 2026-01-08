@@ -195,6 +195,18 @@ export default class LMSEventsView extends LitElement {
                 );
                 this.events = events;
                 this.events_count = events_count;
+
+                // Sync "Show more" button / "You've reached the end" visibility with current state
+                const hasMore = events_count > events.length;
+                const button = this.loadMore.querySelector("button");
+                const endMessage = this.loadMore.firstElementChild;
+                if (hasMore) {
+                    button?.classList.remove("hidden");
+                    endMessage?.classList.add("hidden");
+                } else {
+                    button?.classList.add("hidden");
+                    endMessage?.classList.remove("hidden");
+                }
             })
             .catch((error) => {
                 console.error(error);
@@ -268,9 +280,28 @@ export default class LMSEventsView extends LitElement {
         }
 
         const nextSize = parseInt(currentSize, 10) + 20;
-        this.queryBuilder.query = this.queryBuilder.merge({
-            _per_page: nextSize,
+
+        // Preserve current filter params when loading more
+        // The merge() method treats absence of repeatable/optional params as removal,
+        // so we must explicitly include all current filter values
+        const currentParams: [string, string][] = [
+            ["_per_page", String(nextSize)],
+        ];
+
+        this.queryBuilder.repeatableParams.forEach((param) => {
+            this.queryBuilder.paramMap.getAll(param).forEach((value) => {
+                currentParams.push([param, value]);
+            });
         });
+
+        this.queryBuilder.optionalParams.forEach((param) => {
+            const value = this.queryBuilder.paramMap.get(param);
+            if (value) {
+                currentParams.push([param, value]);
+            }
+        });
+
+        this.queryBuilder.query = this.queryBuilder.merge(currentParams);
 
         requestHandler
             .get({
@@ -307,16 +338,12 @@ export default class LMSEventsView extends LitElement {
             });
     }
 
-    private isEventsSizeEqualCount() {
-        return (this.events?.length ?? 0) >= (this.events_count ?? 0);
-    }
-
     private isQueryParamSet() {
         return ![null, "{}"].includes(this.queryBuilder.getValue("q"));
     }
 
     private shouldHideLoadMore() {
-        return this.isEventsSizeEqualCount() || this.isQueryParamSet();
+        return this.isQueryParamSet();
     }
 
     private isObjectAccessorSet() {
