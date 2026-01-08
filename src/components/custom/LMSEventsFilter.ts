@@ -173,7 +173,7 @@ export default class LMSEventsFilter extends LitElement {
             });
 
         requestHandler
-            .get({ endpoint: "eventTypesPublic" })
+            .get({ endpoint: "eventTypesPublic", query: { _per_page: "-1" } })
             .then((response) => response.json())
             .then(
                 (event_types: LMSEventType[]) =>
@@ -181,7 +181,7 @@ export default class LMSEventsFilter extends LitElement {
             );
 
         requestHandler
-            .get({ endpoint: "targetGroupsPublic" })
+            .get({ endpoint: "targetGroupsPublic", query: { _per_page: "-1" } })
             .then((response) => response.json())
             .then(
                 (target_groups: LMSTargetGroup[]) =>
@@ -189,7 +189,7 @@ export default class LMSEventsFilter extends LitElement {
             );
 
         requestHandler
-            .get({ endpoint: "locationsPublic" })
+            .get({ endpoint: "locationsPublic", query: { _per_page: "-1" } })
             .then((response) => response.json())
             .then((locations: LMSLocation[]) => (this.locations = locations));
     }
