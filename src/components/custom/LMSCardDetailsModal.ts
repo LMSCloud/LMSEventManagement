@@ -210,16 +210,23 @@ export default class LMSCardDetailsModal extends LitElement {
         }
     }
 
-    private getSelectedQuantity(
-        targetGroupFees: LMSEventTargetGroupFee[] | null
-    ) {
-        if (!targetGroupFees) {
-            return 0;
-        }
+    private formatAgeRange(
+        min_age: number | null | undefined,
+        max_age: number | null | undefined
+    ): string {
+        const hasMin = min_age != null;
+        const hasMax = max_age != null && max_age < 255;
 
-        return targetGroupFees?.filter(
-            (targetGroupFee) => targetGroupFee.selected
-        ).length;
+        if (hasMin && hasMax) {
+            return `${min_age} - ${max_age}`;
+        }
+        if (hasMin) {
+            return `${min_age}+`;
+        }
+        if (hasMax) {
+            return `0 - ${max_age}`;
+        }
+        return "-";
     }
 
     private renderTargetGroupInfo(
@@ -230,23 +237,26 @@ export default class LMSCardDetailsModal extends LitElement {
             return nothing;
         }
 
-        const quantity = this.getSelectedQuantity(targetGroupFees);
         return targetGroupFees
             .filter(
                 (targetGroupFee) =>
                     targetGroupFee.selected &&
                     !targetGroupFee["target_group_id"]
             )
-            .map((targetGroupFee, index) => {
+            .map((targetGroupFee) => {
                 const { name, min_age, max_age, fee } = targetGroupFee;
+                const ageRange = this.formatAgeRange(min_age, max_age);
                 return hasNoFees
-                    ? html`<span
-                          >${name}${index + 1 < quantity ? ", " : ""}</span
-                      >`
+                    ? html`
+                          <tr>
+                              <td>${name ?? "-"}</td>
+                              <td>${ageRange}</td>
+                          </tr>
+                      `
                     : html`
                           <tr>
-                              <td>${name}</td>
-                              <td>${min_age} - ${max_age}</td>
+                              <td>${name ?? "-"}</td>
+                              <td>${ageRange}</td>
                               <td>
                                   ${formatMonetaryAmountByLocale(
                                       this.localeFull,
@@ -493,8 +503,52 @@ export default class LMSCardDetailsModal extends LitElement {
                                             })} aspect-video w-full rounded object-cover"
                                         />
 
-                                        <!-- Fees -->
-                                        <div class="p-4">
+                                        <!-- Target Groups (no fees) -->
+                                        <div
+                                            class="${classMap({
+                                                hidden: !hasNoFees,
+                                            })} p-4"
+                                        >
+                                            <p class="mb-2 flex items-center gap-1">
+                                                <span
+                                                    >${litFontawesome(faUsers, {
+                                                        className: "w-4 h-4",
+                                                    })}</span
+                                                >
+                                                <strong
+                                                    >${__(
+                                                        "Target Groups"
+                                                    )}</strong
+                                                >
+                                            </p>
+                                            <table class="table table-xs">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            ${__(
+                                                                "Target Group"
+                                                            )}
+                                                        </th>
+                                                        <th>
+                                                            ${__("Age Range")}
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${this.renderTargetGroupInfo(
+                                                        targetGroups as LMSEventTargetGroupFee[],
+                                                        hasNoFees
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- Fees (with target groups) -->
+                                        <div
+                                            class="${classMap({
+                                                hidden: hasNoFees,
+                                            })} p-4"
+                                        >
                                             <p class="mb-2 flex items-center gap-1">
                                                 <span
                                                     >${litFontawesome(
@@ -507,44 +561,7 @@ export default class LMSCardDetailsModal extends LitElement {
                                                 >
                                                 <strong>${__("Fees")}</strong>
                                             </p>
-
-                                            <div
-                                                class="${classMap({
-                                                    hidden: !hasNoFees,
-                                                })}"
-                                            >
-                                                <p class="mb-2">
-                                                    ${__("No fees")}
-                                                </p>
-                                                <p class="mb-2 flex items-center gap-1">
-                                                    <span
-                                                        >${litFontawesome(
-                                                            faUsers,
-                                                            {
-                                                                className:
-                                                                    "w-4 h-4",
-                                                            }
-                                                        )}</span
-                                                    >
-                                                    <strong
-                                                        >${__(
-                                                            "Target Groups"
-                                                        )}</strong
-                                                    >
-                                                </p>
-                                                <p>
-                                                    ${this.renderTargetGroupInfo(
-                                                        targetGroups as LMSEventTargetGroupFee[],
-                                                        hasNoFees
-                                                    )}
-                                                </p>
-                                            </div>
-
-                                            <table
-                                                class="${classMap({
-                                                    hidden: hasNoFees,
-                                                })} table table-xs"
-                                            >
+                                            <table class="table table-xs">
                                                 <thead>
                                                     <tr>
                                                         <th>
