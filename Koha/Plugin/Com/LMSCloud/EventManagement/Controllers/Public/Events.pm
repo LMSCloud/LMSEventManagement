@@ -8,7 +8,7 @@ use JSON       qw( decode_json encode_json );
 use List::Util qw( none );
 use Try::Tiny  qw( catch try );
 use Readonly   qw( Readonly );
-use Encode     qw( encode_utf8 );
+use Encode     qw( decode_utf8 encode_utf8 );
 
 use Koha::LMSCloud::EventManagement::Events                   ();
 use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees ();
@@ -161,7 +161,7 @@ sub _fix_q_parameter_column_ambiguity {
     }
 
     my $q_json;
-    eval { $q_json = decode_json($q_param); };
+    eval { $q_json = decode_json( encode_utf8($q_param) ); };
     if ($@) {
         return;
     }
@@ -175,7 +175,7 @@ sub _fix_q_parameter_column_ambiguity {
 
     _fix_name_refs_recursive($q_json);
 
-    $c->validation->output->{q} = encode_json($q_json);
+    $c->validation->output->{q} = decode_utf8( encode_json($q_json) );
 }
 
 sub _fix_name_refs_recursive {
