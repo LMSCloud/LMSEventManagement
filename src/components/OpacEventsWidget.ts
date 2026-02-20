@@ -1,5 +1,5 @@
 import { html, LitElement, css, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { requestHandler } from "../lib/RequestHandler/RequestHandler";
 import { __ } from "../lib/translate";
@@ -17,6 +17,8 @@ interface EventData {
 
 @customElement("lms-opac-events-widget")
 export default class OpacEventsWidget extends LitElement {
+    @property({ type: String, attribute: "page-url" }) pageUrl: string = "";
+
     @state() private events: EventData[] = [];
     @state() private loading = true;
     @state() private error = false;
@@ -366,14 +368,12 @@ export default class OpacEventsWidget extends LitElement {
     }
 
     private getEventUrl(eventId: number): string {
-        // Link to the events page - the SPA will handle showing the event
-        // You could potentially add a hash or query param to auto-open the event details
-        return `/cgi-bin/koha/opac-page.pl?code=lmscloud-eventmanagement#event-${eventId}`;
+        if (!this.pageUrl) return "";
+        return `${this.pageUrl}#event-${eventId}`;
     }
 
     private getAllEventsUrl(): string {
-        // Link to the main events OPAC page
-        return "/cgi-bin/koha/opac-page.pl?code=lmscloud-eventmanagement";
+        return this.pageUrl;
     }
 
     override render() {

@@ -26,6 +26,10 @@ $(document).ready(function() {
 
             if (container) {
                 const widget = document.createElement('lms-opac-events-widget');
+                const pageUrl = window.__LMS_EVENT_MANAGEMENT_PAGE_URL__;
+                if (pageUrl) {
+                    widget.setAttribute('page-url', pageUrl);
+                }
                 container.appendChild(widget);
             }
         })

@@ -31,7 +31,7 @@ use Readonly         qw( Readonly );
 use Try::Tiny        qw( catch try );
 
 use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
-use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page page_exists update_opac_page );
+use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page page_exists update_opac_page get_page_url );
 
 Readonly my $TINYINT_UPPER_BOUNDARY => 255;
 
@@ -229,7 +229,12 @@ sub opac_js {
         return q{};
     }
 
-    return q{<script type="text/javascript" src="/api/v1/contrib/eventmanagement/static/js/opac-widget-inject.js"></script>};
+    my $page_url = get_page_url( { code => 'lmscloud-eventmanagement' } ) // q{};
+
+    return <<~"JS";
+        <script>window.__LMS_EVENT_MANAGEMENT_PAGE_URL__ = "$page_url";</script>
+        <script type="text/javascript" src="/api/v1/contrib/eventmanagement/static/js/opac-widget-inject.js"></script>
+    JS
 }
 
 sub intranet_head {
