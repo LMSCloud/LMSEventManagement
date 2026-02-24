@@ -16,8 +16,7 @@ declare global {
 
 @customElement("lms-staff-settings-view")
 export default class StaffSettingsView extends LitElement {
-    @state() state: "initial" | "pending" | "success" | "no-content" | "error" =
-        "initial";
+    @state() state: "initial" | "pending" | "success" | "no-content" | "error" = "initial";
 
     private settings: Column[] = [];
 
@@ -25,52 +24,33 @@ export default class StaffSettingsView extends LitElement {
 
     override connectedCallback() {
         super.connectedCallback();
-        requestHandler
-            .get({ endpoint: "settings" })
-            .then((response) => response.json())
-            .then((settings) => {
-                this.settings = settings.map((setting: LMSSettingResponse) => {
-                    try {
-                        return {
-                            ...setting,
-                            plugin_value: JSON.parse(
-                                setting.plugin_value.toString()
-                            ),
-                        };
-                    } catch {
-                        return setting;
-                    }
-                });
-                this.state = "success";
-            })
-            .catch((error) => {
-                this.state = "error";
-                console.error(error);
-            });
+        this.fetchUpdate();
     }
 
-    private fetchUpdate() {
-        requestHandler
-            .get({ endpoint: "settings" })
-            .then((response) => response.json())
-            .then((settings) => {
-                this.settings = settings.map((setting: LMSSettingResponse) => {
-                    try {
-                        return {
-                            ...setting,
-                            plugin_value: JSON.parse(
-                                setting.plugin_value.toString()
-                            ),
-                        };
-                    } catch {
-                        return setting;
-                    }
-                });
-                this.requestUpdate();
-            })
-            .catch((error) => {
-                console.error(error);
+    private async fetchUpdate() {
+        this.state = "pending";
+
+        try {
+            const response = await requestHandler.get({ endpoint: "settings" });
+            const settings = await response.json();
+
+            this.settings = settings.map((setting: LMSSettingResponse) => {
+                try {
+                    return {
+                        ...setting,
+                        plugin_value: JSON.parse(setting.plugin_value.toString()),
+                    };
+                } catch {
+                    return setting;
+                }
             });
+
+            this.state = this.settings.length ? "success" : "no-content";
+            this.requestUpdate();
+        } catch (error) {
+            this.state = "error";
+            console.error(error);
+        }
     }
 
     override render() {
@@ -78,10 +58,9 @@ export default class StaffSettingsView extends LitElement {
             .with(
                 "initial",
                 "pending",
-                () =>
-                    html` <div class="mx-8">
-                        <div class="skeleton skeleton-table"></div>
-                    </div>`
+                () => html` <div class="mx-8">
+                    <div class="skeleton skeleton-table"></div>
+                </div>`
             )
             .with(
                 "no-content",
