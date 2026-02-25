@@ -17,6 +17,7 @@ use Locale::Messages qw(
 );
 use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
 
+use Koha::Database                                            ();
 use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fee  ();
 use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees ();
 use Koha::LMSCloud::EventManagement::Events                   ();
@@ -69,6 +70,8 @@ sub get {
 
 sub update {
     my $c = shift->openapi->valid_input or return;
+
+    my $schema = Koha::Database->new->schema;
 
     return try {
         my $lang = $c->validation->param('lang') || 'en';
@@ -171,6 +174,8 @@ sub update {
 
         $target_groups = delete $body->{'target_groups'};
 
+        $schema->storage->txn_begin;
+
         $event->set_from_api($body);
         $event->store;
 
@@ -188,6 +193,8 @@ sub update {
             }
         }
 
+        $schema->storage->txn_commit;
+
         $event->discard_changes;
 
         $event = $event->unblessed;
@@ -200,6 +207,7 @@ sub update {
         );
     }
     catch {
+        $schema->storage->txn_rollback;
         return $c->unhandled_exception($_);
     };
 }
