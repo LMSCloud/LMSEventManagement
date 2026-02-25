@@ -5,6 +5,7 @@ use Modern::Perl;
 
 use Digest::MD5         qw( md5_hex );
 use English             qw( -no_match_vars );
+use File::Basename      qw( fileparse );
 use Koha::UploadedFile  ();
 use Koha::UploadedFiles ();
 use Readonly            ();
@@ -77,18 +78,23 @@ sub upload {
         mkdir $dir;
     }
 
+    # Sanitize filename to prevent path traversal
+    my ($basename) = fileparse( $args->{'filename'} );
+    $basename =~ s{[/\\]}{}gxms;
+
     # Filename preparation for storage
-    my $stored_filename = $hashvalue . '_' . $args->{'filename'};
+    my $stored_filename = $hashvalue . '_' . $basename;
 
     my $file_path = "$dir/$stored_filename";
     open my $fh, '>', $file_path or return { error => __('Could not open file') . "'$file_path' $OS_ERROR" };
+    binmode $fh;
     syswrite $fh, $args->{'filecontent'} or return { error => __('Could not write to file') . "'$file_path' $OS_ERROR" };
     close $fh or return { error => __('Could not close file') . "'$file_path' $OS_ERROR" };
 
     # Register the file in the database
     my $uploaded_file = Koha::UploadedFile->new(
         {   hashvalue          => $hashvalue,
-            filename           => $args->{'filename'},
+            filename           => $basename,
             dir                => $self->{'category'},
             filesize           => $filesize,             # Use calculated filesize
             owner              => $args->{'userid'},
