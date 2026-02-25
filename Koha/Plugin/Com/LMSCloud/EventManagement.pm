@@ -14,11 +14,8 @@ use C4::Auth      qw( get_template_and_user );
 use C4::Context   ();
 use C4::Languages ();
 
-use Koha::Account        ();
-use Koha::Account::Lines ();
-use Koha::Database       ();
-use Koha::DateUtils      qw( dt_from_string );
-use Koha::Patrons        ();
+use Koha::Database  ();
+use Koha::DateUtils qw( dt_from_string );
 use Koha::Schema         ();
 
 use Carp             qw( carp croak );
@@ -129,85 +126,15 @@ sub tool {
 }
 
 sub opac_online_payment {
-    my ( $self, $args ) = @_;
-
-    return $self->retrieve_data('enable_opac_payments') eq 'Yes';
+    return;
 }
 
 sub opac_online_payment_begin {
-    my ( $self, $args ) = @_;
-    my $cgi = $self->{'cgi'};
-
-    my ( $template, $borrowernumber ) = get_template_and_user(
-        {   template_name   => abs_path( $self->mbf_path('opac_online_payment_begin.tt') ),
-            query           => $cgi,
-            type            => 'opac',
-            authnotrequired => 0,
-            is_plugin       => 1,
-        }
-    );
-
-    my @accountline_ids = $cgi->multi_param('accountline');
-
-    my $rs           = Koha::Database->new()->schema()->resultset('Accountline');
-    my @accountlines = map { $rs->find($_) } @accountline_ids;
-
-    $template->param(
-        borrower             => scalar Koha::Patrons->find($borrowernumber),
-        payment_method       => scalar $cgi->param('payment_method'),
-        enable_opac_payments => $self->retrieve_data('enable_opac_payments'),
-        accountlines         => \@accountlines,
-    );
-
-    return $self->output_html( $template->output() );
+    return;
 }
 
 sub opac_online_payment_end {
-    my ( $self, $args ) = @_;
-    my $cgi = $self->{'cgi'};
-
-    my ( $template, $borrowernumber ) = get_template_and_user(
-        {   template_name   => abs_path( $self->mbf_path('opac_online_payment_end.tt') ),
-            query           => $cgi,
-            type            => 'opac',
-            authnotrequired => 0,
-            is_plugin       => 1,
-        }
-    );
-
-    my $m;
-    my $v;
-
-    my $amount          = $cgi->param('amount');
-    my @accountline_ids = $cgi->multi_param('accountlines_id');
-
-    $m = $amount          || 'no_amount';
-    $m = @accountline_ids || 'no_accountlines';
-
-    if ( $amount && @accountline_ids ) {
-        my $account = Koha::Account->new( { patron_id => $borrowernumber } );
-        my @accountlines =
-            Koha::Account::Lines->search( { accountlines_id => { -in => \@accountline_ids } } )->as_list();
-        foreach my $id (@accountline_ids) {
-            $account->pay(
-                {   amount => $amount,
-                    lines  => \@accountlines,
-                    note   => 'Paid via KitchenSink ImaginaryPay',
-                }
-            );
-        }
-
-        $m = 'valid_payment';
-        $v = $amount;
-    }
-
-    $template->param(
-        borrower      => scalar Koha::Patrons->find($borrowernumber),
-        message       => $m,
-        message_value => $v,
-    );
-
-    return $self->output_html( $template->output() );
+    return;
 }
 
 sub opac_head {
