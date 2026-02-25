@@ -7,13 +7,9 @@ use 5.010;
 use DateTime::Format::Strptime ();
 use Readonly                   ();
 
-use Locale::Messages qw(
-    bind_textdomain_filter
-    bindtextdomain
-    setlocale
-    textdomain
-);
 use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
+
+use Koha::Plugin::Com::LMSCloud::EventManagement::I18N;
 use POSIX qw( localtime );
 
 our $VERSION = '1.0.0';
@@ -42,12 +38,6 @@ Readonly::Scalar our $MAX_LENGTH_INT     => 2_147_483_647;
 
 sub BUILD {
     my ($self) = @_;
-    my $plugin = Koha::Plugin::Com::LMSCloud::EventManagement->new;
-
-    setlocale Locale::Messages::LC_MESSAGES(), q{};
-    textdomain 'com.lmscloud.eventmanagement';
-    bind_textdomain_filter 'com.lmscloud.eventmanagement', \&Encode::decode_utf8;
-    bindtextdomain 'com.lmscloud.eventmanagement' => $plugin->bundle_path . '/locales/';
 
     $self->{'_parsers'} = [
         DateTime::Format::Strptime->new( pattern => '%Y-%m-%dT%H:%M:%S%z',    on_error => 'undef' ),    # format with timezone and seconds
