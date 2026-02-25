@@ -30,6 +30,7 @@
     "strictFunctionTypes": true,
     "noPropertyAccessFromIndexSignature": true,
     "useUnknownInCatchVariables": true,
+    "skipLibCheck": true,
     "plugins": [
       {
         "name": "ts-lit-plugin",

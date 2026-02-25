@@ -42,49 +42,46 @@ subtest 'list() tests' => sub {
 
     $schema->storage->txn_begin;
 
-    $t->get_ok("$base_url/target_groups")->status_is(200)->json_is( [] );
+    $t->get_ok("$base_url/locations")->status_is(200)->json_is( [] );
 
-    my $target_groups =
-        [ map { $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::TargetGroups' } ) } 1 .. 5 ];
-    my $size = scalar @{$target_groups};
+    my $locations =
+        [ map { $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::Locations' } ) } 1 .. 3 ];
+    my $size = scalar @{$locations};
 
-    $t->get_ok("$base_url/target_groups")->status_is(200);
+    $t->get_ok("$base_url/locations")->status_is(200);
     my $response = $t->tx->res->json;
 
-    is @{$response}, $size, 'initialized target groups and response have same size';
+    is @{$response}, $size, 'initialized locations and response have same size';
 
     $schema->storage->txn_rollback;
 };
 
 subtest 'add() tests' => sub {
 
-    plan tests => 8;
+    plan tests => 9;
 
     $schema->storage->txn_begin;
 
     # Valid add
     $t->post_ok(
-        "$base_url/target_groups" => json => {
-            name    => 'Children',
-            min_age => 6,
-            max_age => 12,
+        "$base_url/locations" => json => {
+            name    => 'Main Library',
+            street  => 'Bibliotheksplatz',
+            number  => '1',
+            city    => 'Leipzig',
+            zip     => '04103',
+            country => 'Germany',
         }
     )->status_is(200);
 
     my $response = $t->tx->res->json;
-    is( $response->{name},    'Children', 'name matches' );
-    is( $response->{min_age}, 6,          'min_age matches' );
-    is( $response->{max_age}, 12,         'max_age matches' );
+    is( $response->{name},    'Main Library',     'name matches' );
+    is( $response->{street},  'Bibliotheksplatz', 'street matches' );
+    is( $response->{number},  '1',                'number matches' );
+    is( $response->{city},    'Leipzig',          'city matches' );
+    is( $response->{zip},     '04103',            'zip matches' );
+    is( $response->{country}, 'Germany',          'country matches' );
     ok( $response->{id}, 'id is set' );
-
-    # Invalid add - age out of range
-    $t->post_ok(
-        "$base_url/target_groups" => json => {
-            name    => 'Invalid Group',
-            min_age => 0,
-            max_age => 300,
-        }
-    )->status_is(400);
 
     $schema->storage->txn_rollback;
 };
@@ -95,16 +92,16 @@ subtest 'delete() tests' => sub {
 
     $schema->storage->txn_begin;
 
-    my $target_group = $builder->build_object(
-        { class => 'Koha::LMSCloud::EventManagement::TargetGroups' }
+    my $location = $builder->build_object(
+        { class => 'Koha::LMSCloud::EventManagement::Locations' }
     );
 
     # Delete existing
-    $t->delete_ok( "$base_url/target_groups/" . $target_group->id )
+    $t->delete_ok( "$base_url/locations/" . $location->id )
         ->status_is(204);
 
     # Delete non-existent
-    $t->delete_ok("$base_url/target_groups/99999999")
+    $t->delete_ok("$base_url/locations/99999999")
         ->status_is(404);
 
     $schema->storage->txn_rollback;

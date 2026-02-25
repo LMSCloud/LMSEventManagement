@@ -1635,6 +1635,87 @@
           "plugins": "configure"
         }
       }
+    },
+    "delete": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Settings#delete",
+      "operationId": "deleteEventManagementSetting",
+      "tags": [
+        "settings"
+      ],
+      "parameters": [
+        {
+          "name": "key",
+          "in": "path",
+          "description": "Setting key",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "description": "Delete a setting by key",
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "204": {
+          "description": "Setting deleted",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Setting not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "An explanation for the error",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "configure"
+        }
+      }
     }
   },
   "/events": {
