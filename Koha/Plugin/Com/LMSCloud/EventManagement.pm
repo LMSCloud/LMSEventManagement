@@ -68,7 +68,7 @@ BEGIN {
 }
 
 ## Here we set our plugin version
-our $VERSION         = '2.10.2';
+our $VERSION         = '2.10.3';
 our $MINIMUM_VERSION = '22.11';
 
 ## Here is our metadata, some keys are required, some are optional
@@ -76,7 +76,7 @@ our $METADATA = {
     name            => 'LMSEventManagement',
     author          => 'LMSCloud GmbH',
     date_authored   => '2021-10-15',
-    date_updated    => '2026-02-20',
+    date_updated    => '2026-02-25',
     minimum_version => $MINIMUM_VERSION,
     maximum_version => undef,
     version         => $VERSION,
