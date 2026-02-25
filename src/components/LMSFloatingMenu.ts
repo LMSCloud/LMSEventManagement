@@ -86,6 +86,7 @@ export default class LMSFloatingMenu extends LitElement {
                         class="text-xl normal-case"
                         href=${ifDefined(this.brandHref)}
                         target="_blank"
+                        rel="noopener noreferrer"
                         ><strong ?hidden=${!this.brand}
                             >${this.brand}</strong
                         ></a

@@ -95,6 +95,7 @@ const{entries:Vt,setPrototypeOf:Ht,isFrozen:Ut,getPrototypeOf:Wt,getOwnPropertyD
             class="link-hover link-neutral link text-sm"
             href=${o?.href}
             target="_blank"
+            rel="noopener noreferrer"
             >${R(`Directions to the venue by`)} ${o?.hostname}</a
         >`}hasNoFees(e){return e?.every(e=>e.fee===0)??!0}extractTargetGroups(e){return{}.hasOwnProperty.call(e,`target_groups`)?e.target_groups:void 0}async handleExportIcal(){if(this.event?.id)try{let e=await X.get({endpoint:`eventIcalPublic`,path:[this.event.id.toString(),`ical`]});if(!e.ok)throw Error(`Failed to export calendar event`);let t=await e.blob(),n=window.URL.createObjectURL(t),r=document.createElement(`a`);r.href=n,r.download=`event-${this.event.id}.ics`,document.body.appendChild(r),r.click(),window.URL.revokeObjectURL(n),document.body.removeChild(r)}catch(e){console.error(`Error exporting calendar event:`,e)}}render(){var e;let t=this.event?this.extractTargetGroups(this.event):void 0,n=t?this.hasNoFees(t):!0;return this.isOpen&&!this.lmsModal?.open&&((e=this.lmsModal)==null||e.showModal()),O`
             <dialog

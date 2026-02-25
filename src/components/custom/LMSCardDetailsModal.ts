@@ -313,6 +313,7 @@ export default class LMSCardDetailsModal extends LitElement {
             class="link-hover link-neutral link text-sm"
             href=${url?.href}
             target="_blank"
+            rel="noopener noreferrer"
             >${__("Directions to the venue by")} ${url?.hostname}</a
         >`;
     }
