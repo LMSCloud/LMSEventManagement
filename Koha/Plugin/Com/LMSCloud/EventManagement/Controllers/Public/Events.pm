@@ -15,6 +15,9 @@ use Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees ();
 use Koha::LMSCloud::EventManagement::Locations                ();
 use Koha::LMSCloud::EventManagement::ICalendar                ();
 
+use Koha::Database ();
+use DateTime       ();
+
 use Koha::Plugin::Com::LMSCloud::EventManagement ();
 
 our $VERSION = '1.0.0';
@@ -55,6 +58,20 @@ sub export_ical {
         my $event = Koha::LMSCloud::EventManagement::Events->find($id);
 
         if ( !$event ) {
+            return $c->render( status => 404, openapi => { error => 'Event not found' } );
+        }
+
+        # Apply same visibility rules as public event list
+        my $plugin       = Koha::Plugin::Com::LMSCloud::EventManagement->new;
+        my $hide_pending = $plugin->retrieve_data('opac_hide_pending_events');
+        if ( $hide_pending && $hide_pending eq '1' && $event->status eq 'pending' ) {
+            return $c->render( status => 404, openapi => { error => 'Event not found' } );
+        }
+
+        my $schema = Koha::Database->new->schema;
+        my $dtf    = $schema->storage->datetime_parser;
+        my $now    = $dtf->format_datetime( DateTime->now( time_zone => 'UTC' ) );
+        if ( $event->end_time le $now ) {
             return $c->render( status => 404, openapi => { error => 'Event not found' } );
         }
 
