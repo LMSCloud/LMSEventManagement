@@ -122,7 +122,7 @@ sub tool {
         },
     };
 
-    return $responses->{$op}();
+    return ($responses->{$op} // $responses->{q{}})->();
 }
 
 sub opac_online_payment {
@@ -214,7 +214,7 @@ sub configure {
 
     };
 
-    return $responses->{$op}();
+    return ($responses->{$op} // $responses->{q{}})->();
 }
 
 ## Helper method to ensure all expected settings exist with defaults
