@@ -90,13 +90,7 @@ export class RequestHandler {
         /* Check which headers to append. */
         _requestInit = match(requestInit?.body)
             .with(P.nullish, () => _requestInit)
-            .with(P.instanceOf(FormData), (body) => ({
-                ..._requestInit,
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body,
-            }))
+            .with(P.instanceOf(FormData), () => _requestInit)
             .with(P._, (body) => ({
                 ..._requestInit,
                 headers: {
@@ -147,7 +141,7 @@ export class RequestHandler {
             url += `?${_query.toString()}`;
         }
 
-        return fetch(url, requestInit);
+        return fetch(url, _requestInit);
     }
 
     public get({
