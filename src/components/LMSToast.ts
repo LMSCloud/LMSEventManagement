@@ -26,6 +26,12 @@ export default class LMSToast extends LitElement {
     private intersectionObserverHandler: IntersectionObserverHandler | null =
         null;
 
+    private boundHandleClick = (e: Event) => {
+        if (!e.target) return;
+        const element = e.target as HTMLElement;
+        if (element.tagName === "SPAN") this.remove();
+    };
+
     static override styles = [tailwindStyles, skeletonStyles];
 
     private handleDismiss() {
@@ -86,16 +92,7 @@ export default class LMSToast extends LitElement {
             this.elapsedTime++;
         }, 1000);
 
-        this.renderRoot.addEventListener("click", (e) => {
-            if (!e.target) {
-                return;
-            }
-
-            const element = e.target as HTMLElement;
-            if (element.tagName === "SPAN") {
-                this.remove();
-            }
-        });
+        this.renderRoot.addEventListener("click", this.boundHandleClick);
 
         setTimeout(() => {
             this.remove();
@@ -104,16 +101,7 @@ export default class LMSToast extends LitElement {
 
     override disconnectedCallback() {
         super.disconnectedCallback();
-        this.renderRoot.removeEventListener("click", (e) => {
-            if (!e.target) {
-                return;
-            }
-
-            const element = e.target as HTMLElement;
-            if (element.tagName === "SPAN") {
-                this.remove();
-            }
-        });
+        this.renderRoot.removeEventListener("click", this.boundHandleClick);
 
         this.intersectionObserverHandler?.destroy();
     }
