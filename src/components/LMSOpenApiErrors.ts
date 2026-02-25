@@ -1,7 +1,6 @@
 import { LitElement, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
-import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { P, match } from "ts-pattern";
 import { __ } from "../lib/translate";
 import { tailwindStyles } from "../tailwind.lit";
@@ -21,49 +20,13 @@ export default class LMSOpenApiErrors extends LitElement {
 
     static override styles = [tailwindStyles];
 
-    private _mark(substring: string, in_: string) {
-        return in_.replaceAll(substring, `|${substring}|`);
-    }
-
-    private _indicesOf(pattern: RegExp, in_: string) {
-        const indices: [number, number][] = [];
-        const clonedPattern = new RegExp(pattern.source, "g");
-
-        let match;
-        while ((match = clonedPattern.exec(in_)) !== null) {
-            const leftIndex = match.index;
-            const rightIndex = leftIndex + match[0].length - 1;
-            indices.push([leftIndex, rightIndex]);
-        }
-
-        return indices;
-    }
-
-    private _insert(into: string, value: string, at: number, end: number) {
-        if (at < 0 || end < 0 || at > end || end > into.length) {
-            throw new Error("Invalid indices");
-        }
-
-        return `${into.slice(0, at)}${value}${into.slice(end + 1)}`;
-    }
-
-    private _substitute(pattern: RegExp, with_: string, in_: string): string {
-        let result = in_;
-        let offset = 0;
-
-        this._indicesOf(pattern, in_).forEach(([start, end]) => {
-            const match = in_.slice(start, end + 1);
-            const replacement = with_.replace("|x|", match);
-            result = this._insert(
-                result,
-                replacement,
-                start + offset,
-                end + offset
-            );
-            offset += replacement.length - match.length;
-        });
-
-        return result;
+    private _renderHighlighted(substring: string, text: string) {
+        const parts = text.split(substring);
+        return parts.map((part, i) =>
+            i < parts.length - 1
+                ? html`${part}<span class="text-error">${substring}</span>`
+                : html`${part}`
+        );
     }
 
     private _composeHrefWithRemovedOffender(href: string, offender: string) {
@@ -97,17 +60,9 @@ export default class LMSOpenApiErrors extends LitElement {
                         <div class="card-body">
                             <h2 class="card-title">${message}</h2>
                             <code>
-                                ...${unsafeHTML(
-                                    this._substitute(
-                                        /[|](.*?)[|]/,
-                                        `<span class="text-error"
-                                        >|x|</span
-                                    >`,
-                                        this._mark(
-                                            ps.slice(-1).toString(),
-                                            this.href.pathname
-                                        )
-                                    )
+                                ...${this._renderHighlighted(
+                                    ps.slice(-1).toString(),
+                                    this.href.pathname
                                 )}...</code
                             >
                             <div class="card-actions justify-end">
@@ -133,17 +88,9 @@ export default class LMSOpenApiErrors extends LitElement {
                             <div class="card-body">
                                 <h2 class="card-title">${message}</h2>
                                 <code
-                                    >...${unsafeHTML(
-                                        this._substitute(
-                                            /[|](.*?)[|]/,
-                                            `<span class="text-error"
-                                        >|x|</span
-                                    >`,
-                                            this._mark(
-                                                offender,
-                                                this.href.search
-                                            )
-                                        )
+                                    >...${this._renderHighlighted(
+                                        offender,
+                                        this.href.search
                                     )}...</code
                                 >
                                 <div class="card-actions justify-end">
