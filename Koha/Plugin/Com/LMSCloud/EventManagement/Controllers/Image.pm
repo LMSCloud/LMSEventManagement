@@ -34,7 +34,7 @@ sub delete {
         local $ENV{OUTPUT_CHARSET} = 'UTF-8';
         my $hashvalue = $c->validation->param('hashvalue');
 
-        my $file = Koha::UploadedFiles->find( { hashvalue => $hashvalue } );
+        my $file = Koha::UploadedFiles->find( { hashvalue => $hashvalue, uploadcategorycode => 'LMSEventManagement' } );
         if ( !$file ) {
             return $c->render( status => 404, openapi => { message => __('File not found') } );
         }
