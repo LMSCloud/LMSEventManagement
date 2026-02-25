@@ -185,8 +185,7 @@ sub delete {
         local $ENV{OUTPUT_CHARSET} = 'UTF-8';
         my $id = $c->validation->param('id');
 
-        # This is a temporary fix for the issue with the delete method on rvs of find calls
-        my $event_type = Koha::LMSCloud::EventManagement::EventTypes->search( { id => $id } );
+        my $event_type = Koha::LMSCloud::EventManagement::EventTypes->search( { id => $id } )->next;
 
         if ( !$event_type ) {
             return $c->render( status => 404, openapi => { error => __('Event type not found') } );

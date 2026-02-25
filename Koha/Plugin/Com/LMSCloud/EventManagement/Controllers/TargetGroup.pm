@@ -129,8 +129,7 @@ sub delete {
         local $ENV{OUTPUT_CHARSET} = 'UTF-8';
         my $id = $c->validation->param('id');
 
-        # This is a temporary fix for the issue with the delete method on rvs of find calls
-        my $target_group = Koha::LMSCloud::EventManagement::TargetGroups->search( { id => $id } );
+        my $target_group = Koha::LMSCloud::EventManagement::TargetGroups->search( { id => $id } )->next;
 
         if ( !$target_group ) {
             return $c->render( status => 404, openapi => { error => __('Target Group not found') } );
