@@ -65,15 +65,19 @@ export default class LMSCardDetailsModal extends LitElement {
         super.connectedCallback();
 
         Promise.all([
-            requestHandler
-                .get({ endpoint: "eventTypesPublic" })
-                .then((response) => response.json()),
-            requestHandler
-                .get({ endpoint: "locationsPublic" })
-                .then((response) => response.json()),
-            requestHandler
-                .get({ endpoint: "targetGroupsPublic" })
-                .then((response) => response.json()),
+            requestHandler.get({ endpoint: "eventTypesPublic" }).then((r) => {
+                if (!r.ok) throw new Error(`eventTypesPublic: ${r.status}`);
+                return r.json();
+            }),
+            requestHandler.get({ endpoint: "locationsPublic" }).then((r) => {
+                if (!r.ok) throw new Error(`locationsPublic: ${r.status}`);
+                return r.json();
+            }),
+            requestHandler.get({ endpoint: "targetGroupsPublic" }).then((r) => {
+                if (!r.ok)
+                    throw new Error(`targetGroupsPublic: ${r.status}`);
+                return r.json();
+            }),
         ])
             .then(([eventTypes, locations, targetGroups]) => {
                 this.event_types = eventTypes as LMSEventType[];
