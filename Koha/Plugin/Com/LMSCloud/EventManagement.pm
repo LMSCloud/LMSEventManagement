@@ -65,7 +65,7 @@ BEGIN {
 }
 
 ## Here we set our plugin version
-our $VERSION         = '2.10.3';
+our $VERSION         = '2.10.16';
 our $MINIMUM_VERSION = '22.11';
 
 ## Here is our metadata, some keys are required, some are optional
