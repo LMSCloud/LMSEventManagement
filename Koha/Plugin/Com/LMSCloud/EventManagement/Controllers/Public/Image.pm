@@ -50,8 +50,7 @@ sub get {
         local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
         local $ENV{OUTPUT_CHARSET} = 'UTF-8';
         my $hashvalue     = $c->validation->param('hashvalue');
-        my $files_rs      = Koha::UploadedFiles->search( { hashvalue => $hashvalue } )->next;
-        my $uploaded_file = Koha::UploadedFiles->find( $files_rs->id );
+        my $uploaded_file = Koha::UploadedFiles->find( { hashvalue => $hashvalue, uploadcategorycode => 'LMSEventManagement' } );
 
         if ( !$uploaded_file || !$uploaded_file->public ) {
             return $c->render( status => 404, openapi => { message => __('File not found or not public') } );
