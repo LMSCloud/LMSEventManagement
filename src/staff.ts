@@ -30,6 +30,10 @@ import LMSSearch from "./components/LMSSearch";
 import LMSToast from "./components/LMSToast";
 import LMSTooltip from "./components/LMSTooltip";
 
+/** settings */
+import LMSSettingText from "./components/settings/LMSSettingText";
+import LMSSettingToggle from "./components/settings/LMSSettingToggle";
+
 /** extensions */
 import LMSEventManagementMenu from "./extensions/LMSEventManagementMenu";
 import LMSEventsModal from "./extensions/LMSEventsModal";
@@ -81,6 +85,8 @@ export default {
     LMSEventTypesTable,
     LMSLocationsModal,
     LMSLocationsTable,
+    LMSSettingText,
+    LMSSettingToggle,
     LMSSettingsTable,
     LMSTargetGroupsModal,
     LMSTargetGroupsTable,

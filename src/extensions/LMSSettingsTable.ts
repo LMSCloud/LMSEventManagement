@@ -30,8 +30,6 @@ const CHECKBOX_KEYS = new Set([
 export default class LMSSettingsTable extends LitElement {
     @property({ type: Array }) settings: LMSSettingResponse[] = [];
 
-    @state() private draftValues: Record<string, string | boolean> = {};
-
     @state() private savingBySetting: Record<string, boolean> = {};
 
     @state() private activeSectionId = "";
@@ -63,14 +61,20 @@ export default class LMSSettingsTable extends LitElement {
             }
 
             .settings-section {
+                scroll-margin-top: 1rem;
                 border-radius: 1rem;
                 border: 1px solid rgb(226 232 240);
-                background: rgb(248 250 252 / 0.45);
+                background: rgb(255 255 255);
                 padding: 1rem;
+                overflow: hidden;
             }
 
             .settings-section__header {
-                margin-bottom: 0.9rem;
+                padding: 1rem;
+                margin: -1rem -1rem 0;
+                border-bottom: 1px solid rgb(226 232 240);
+                background: rgb(248 250 252);
+                border-radius: 1rem 1rem 0 0;
             }
 
             .settings-section__title {
@@ -82,55 +86,21 @@ export default class LMSSettingsTable extends LitElement {
             .settings-section__description {
                 margin-top: 0.25rem;
                 font-size: 0.85rem;
-                color: rgb(71 85 105);
+                color: rgb(100 116 139);
             }
 
-            .settings-section__grid {
+            .settings-rows {
                 display: grid;
-                gap: 1rem;
+                margin: 0 -1rem -1rem;
             }
 
-            .setting-card {
-                border-radius: 0.9rem;
-                border: 1px solid rgb(226 232 240);
-                background: rgb(255 255 255);
-                box-shadow: 0 6px 20px -20px rgb(15 23 42 / 0.65);
+            .settings-rows > * {
+                padding: 0 1rem;
+                border-bottom: 1px solid rgb(241 245 249);
             }
 
-            .setting-card__inner {
-                padding: 0.95rem 1rem;
-                display: grid;
-                gap: 0.65rem;
-            }
-
-            .setting-card__header {
-                display: grid;
-                gap: 0.15rem;
-            }
-
-            .setting-card__name {
-                font-size: 0.95rem;
-                font-weight: 700;
-                line-height: 1.2;
-            }
-
-            .setting-card__description {
-                font-size: 0.85rem;
-                color: rgb(71 85 105);
-                line-height: 1.3;
-            }
-
-            .setting-card__checkbox {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .setting-card__actions {
-                display: flex;
-                gap: 0.5rem;
-                flex-wrap: wrap;
+            .settings-rows > :last-child {
+                border-bottom: none;
             }
 
             @media (min-width: 1100px) {
@@ -139,7 +109,7 @@ export default class LMSSettingsTable extends LitElement {
                 }
 
                 .settings-layout {
-                    grid-template-columns: 17rem minmax(0, 1fr);
+                    grid-template-columns: 25rem minmax(0, 1fr);
                     align-items: start;
                 }
 
@@ -164,25 +134,6 @@ export default class LMSSettingsTable extends LitElement {
             }
         `,
     ];
-
-    override willUpdate(changedProperties: Map<string, unknown>) {
-        if (!changedProperties.has("settings")) {
-            return;
-        }
-
-        this.draftValues = this.visibleSettings.reduce<Record<string, string | boolean>>((acc, setting) => {
-            const key = setting.plugin_key;
-            const value = setting.plugin_value;
-
-            if (this.isCheckboxSetting(key, value)) {
-                acc[key] = this.toBool(value);
-                return acc;
-            }
-
-            acc[key] = value == null ? "" : String(value);
-            return acc;
-        }, {});
-    }
 
     override updated(changedProperties: Map<string, unknown>) {
         if (changedProperties.has("settings")) {
@@ -336,61 +287,21 @@ export default class LMSSettingsTable extends LitElement {
         this.dispatchEvent(new CustomEvent("updated", { detail: setting }));
     }
 
-    private handleTextLikeInput(setting: LMSSettingResponse, e: Event) {
-        const target = e.target as HTMLInputElement;
-        this.draftValues = {
-            ...this.draftValues,
-            [setting.plugin_key]: target.value,
-        };
-    }
-
-    private handleCheckboxInput(setting: LMSSettingResponse, e: Event) {
-        const target = e.target as HTMLInputElement;
-        this.draftValues = {
-            ...this.draftValues,
-            [setting.plugin_key]: target.checked,
-        };
-    }
-
-    private resetDraft(setting: LMSSettingResponse) {
-        const key = setting.plugin_key;
-        const value = this.isCheckboxSetting(key, setting.plugin_value)
-            ? this.toBool(setting.plugin_value)
-            : String(setting.plugin_value ?? "");
-
-        this.draftValues = {
-            ...this.draftValues,
-            [key]: value,
-        };
-    }
-
-    private hasDraftChanged(setting: LMSSettingResponse) {
-        const key = setting.plugin_key;
-        const draft = this.draftValues[key];
-
-        if (this.isCheckboxSetting(key, setting.plugin_value)) {
-            return Boolean(draft) !== this.toBool(setting.plugin_value);
-        }
-
-        return String(draft ?? "") !== String(setting.plugin_value ?? "");
-    }
-
-    private coerceValueForSave(setting: LMSSettingResponse, draft: string | boolean | undefined) {
+    private coerceValueForSave(setting: LMSSettingResponse, value: string) {
         if (this.isCheckboxSetting(setting.plugin_key, setting.plugin_value)) {
-            return Boolean(draft) ? 1 : 0;
+            return value === "1" ? 1 : 0;
         }
 
         if (typeof setting.plugin_value === "number") {
-            const parsed = Number(draft);
+            const parsed = Number(value);
             return Number.isNaN(parsed) ? 0 : parsed;
         }
 
-        return String(draft ?? "");
+        return value;
     }
 
-    private async saveSetting(setting: LMSSettingResponse) {
-        const key = setting.plugin_key;
-        const draft = this.draftValues[key];
+    private async handleSettingSave(setting: LMSSettingResponse, e: CustomEvent) {
+        const { key, value } = e.detail as { key: string; value: string };
 
         this.setSaving(key, true);
 
@@ -399,7 +310,7 @@ export default class LMSSettingsTable extends LitElement {
             path: [key],
             requestInit: {
                 body: JSON.stringify({
-                    plugin_value: this.coerceValueForSave(setting, draft),
+                    plugin_value: this.coerceValueForSave(setting, value),
                 }),
             },
         });
@@ -414,53 +325,30 @@ export default class LMSSettingsTable extends LitElement {
         this.dispatchUpdated(key);
     }
 
-    private renderSettingInput(setting: LMSSettingResponse) {
+    private renderSettingRow(setting: LMSSettingResponse) {
         const key = setting.plugin_key;
-        const isCheckbox = this.isCheckboxSetting(key, setting.plugin_value);
+        const isSaving = Boolean(this.savingBySetting[key]);
 
-        if (isCheckbox) {
-            const enabled = Boolean(this.draftValues[key]);
+        if (this.isCheckboxSetting(key, setting.plugin_value)) {
             return html`
-                <div class="setting-card__checkbox">
-                    <span class="text-sm font-medium">${__("Enabled")} - ${enabled ? __("On") : __("Off")}</span>
-                    <input
-                        class="toggle toggle-primary"
-                        type="checkbox"
-                        name=${key}
-                        .checked=${enabled}
-                        @change=${(e: Event) => this.handleCheckboxInput(setting, e)}
-                    />
-                </div>
+                <lms-setting-toggle
+                    .name=${key}
+                    .value=${this.toBool(setting.plugin_value)}
+                    .saving=${isSaving}
+                    @setting-save=${(e: CustomEvent) => this.handleSettingSave(setting, e)}
+                ></lms-setting-toggle>
             `;
         }
 
+        const inputType = typeof setting.plugin_value === "number" ? "number" : "text";
         return html`
-            <input
-                class="input input-bordered w-full"
-                type=${typeof setting.plugin_value === "number" ? "text" : "text"}
-                inputmode=${typeof setting.plugin_value === "number" ? "numeric" : "text"}
-                pattern=${typeof setting.plugin_value === "number" ? "[0-9]*" : ".*"}
-                name=${key}
-                .value=${String(this.draftValues[key] ?? "")}
-                @input=${(e: Event) => this.handleTextLikeInput(setting, e)}
-            />
-        `;
-    }
-
-    private renderActions(setting: LMSSettingResponse) {
-        const key = setting.plugin_key;
-        const isSaving = Boolean(this.savingBySetting[key]);
-        const hasChanges = this.hasDraftChanged(setting);
-
-        return html`
-            <div class="setting-card__actions">
-                <button class="btn btn-primary btn-sm" ?disabled=${isSaving || !hasChanges} @click=${() => this.saveSetting(setting)}>
-                    ${__("Save")}
-                </button>
-                <button class="btn btn-ghost btn-sm" ?disabled=${isSaving || !hasChanges} @click=${() => this.resetDraft(setting)}>
-                    ${__("Abort")}
-                </button>
-            </div>
+            <lms-setting-text
+                .name=${key}
+                .value=${setting.plugin_value == null ? "" : String(setting.plugin_value)}
+                .inputType=${inputType}
+                .saving=${isSaving}
+                @setting-save=${(e: CustomEvent) => this.handleSettingSave(setting, e)}
+            ></lms-setting-text>
         `;
     }
 
@@ -512,20 +400,11 @@ export default class LMSSettingsTable extends LitElement {
                                         <h2 class="settings-section__title">${section.title}</h2>
                                         <p class="settings-section__description">${section.description}</p>
                                     </header>
-                                    <div class="settings-section__grid">
+                                    <div class="settings-rows">
                                         ${repeat(
                                             section.settings,
                                             (setting) => setting.plugin_key,
-                                            (setting) => html`
-                                                <article class="setting-card">
-                                                    <div class="setting-card__inner">
-                                                        <header class="setting-card__header">
-                                                            <h3 class="setting-card__name">${__(setting.plugin_key)}</h3>
-                                                        </header>
-                                                        ${this.renderSettingInput(setting)} ${this.renderActions(setting)}
-                                                    </div>
-                                                </article>
-                                            `
+                                            (setting) => this.renderSettingRow(setting)
                                         )}
                                     </div>
                                 </section>
