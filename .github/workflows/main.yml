@@ -36,7 +36,7 @@ jobs:
 
     - name: Get Koha stable branch
       id: koha-version
-      uses: "bywatersolutions/github-action-koha-get-version-by-label@master"
+      uses: "bywatersolutions/github-action-koha-get-version-by-label@main"
       with:
         version-label: stable
 
@@ -136,7 +136,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        koha-version: [master, stable, oldstable]
+        koha-version: [main, stable, oldstable]
 
     steps:
     - uses: actions/checkout@v4
@@ -145,7 +145,7 @@ jobs:
 
     - name: Get Koha Version Branch Name
       id: koha-version
-      uses: "bywatersolutions/github-action-koha-get-version-by-label@master"
+      uses: "bywatersolutions/github-action-koha-get-version-by-label@main"
       with:
         version-label: "${{ matrix.koha-version }}"
 
@@ -264,7 +264,7 @@ jobs:
 
     - name: Get Koha Version Branch Name
       id: koha-version-oldstable
-      uses: "bywatersolutions/github-action-koha-get-version-by-label@master"
+      uses: "bywatersolutions/github-action-koha-get-version-by-label@main"
       with:
         version-label: "oldstable"
 
@@ -279,7 +279,7 @@ jobs:
 
     - name: Build Koha Plugin kpz artifact
       id: kpz
-      uses: "bywatersolutions/github-action-koha-plugin-create-kpz@master"
+      uses: "bywatersolutions/github-action-koha-plugin-create-kpz@main"
       with:
         release-version: ${{ steps.myvars.outputs.tag_version }}
         release-name: ${{ steps.myvars.outputs.github_repo }}
