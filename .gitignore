@@ -15,6 +15,7 @@ tailwind.lit.log
 .DS_Store
 .vscode/
 .idea/
+*.po~
 
 # Ignore .d.ts and .map files in the "dist" directory
 Koha/Plugin/Com/LMSCloud/EventManagement/dist/**/*.d.ts
