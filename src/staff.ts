@@ -31,6 +31,8 @@ import LMSToast from "./components/LMSToast";
 import LMSTooltip from "./components/LMSTooltip";
 
 /** settings */
+import LMSSettingColor from "./components/settings/LMSSettingColor";
+import LMSSettingSelect from "./components/settings/LMSSettingSelect";
 import LMSSettingText from "./components/settings/LMSSettingText";
 import LMSSettingToggle from "./components/settings/LMSSettingToggle";
 
@@ -85,6 +87,8 @@ export default {
     LMSEventTypesTable,
     LMSLocationsModal,
     LMSLocationsTable,
+    LMSSettingColor,
+    LMSSettingSelect,
     LMSSettingText,
     LMSSettingToggle,
     LMSSettingsTable,
