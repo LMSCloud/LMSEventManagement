@@ -27,8 +27,8 @@ use Mojo::JSON       qw( decode_json );
 use Readonly         qw( Readonly );
 use Try::Tiny        qw( catch try );
 
-use Koha::Plugin::Com::LMSCloud::Util::MigrationHelper ();
-use Koha::Plugin::Com::LMSCloud::Util::Pages           qw( create_opac_page delete_opac_page page_exists update_opac_page get_page_url );
+use Koha::Plugin::Com::LMSCloud::EventManagement::Util::MigrationHelper ();
+use Koha::Plugin::Com::LMSCloud::EventManagement::Util::Pages           qw( create_opac_page delete_opac_page page_exists update_opac_page get_page_url );
 
 Readonly my $TINYINT_UPPER_BOUNDARY => 255;
 
@@ -265,7 +265,7 @@ sub install() {
 
         my $bundle_path = $bundle_dir;
 
-        my $migration_helper = Koha::Plugin::Com::LMSCloud::Util::MigrationHelper->new(
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::EventManagement::Util::MigrationHelper->new(
             {   table_name_mappings => {
                     target_groups_table                => $self->get_qualified_table_name('target_groups'),
                     locations_table                    => $self->get_qualified_table_name('locations'),
@@ -333,7 +333,7 @@ sub upgrade {
     my $bundle_path = $bundle_dir;
 
     return try {
-        my $migration_helper = Koha::Plugin::Com::LMSCloud::Util::MigrationHelper->new(
+        my $migration_helper = Koha::Plugin::Com::LMSCloud::EventManagement::Util::MigrationHelper->new(
             {   table_name_mappings => {
                     target_groups_table                => $self->get_qualified_table_name('target_groups'),
                     locations_table                    => $self->get_qualified_table_name('locations'),

@@ -5,6 +5,7 @@
   "main": "gulpfile.js",
   "scripts": {
     "archive": "./tools/archive.mjs",
+    "util:sync": "./tools/sync_util.sh",
     "package-kpz:build": "cd tools/package-kpz && cargo build --release",
     "ktd-plugin-tools:build": "cd tools/ktd-plugin-tools && go build",
     "tools:link": "mkdir -p $HOME/.local/bin && ln -s $(pwd)/tools/ktd-plugin-tools/ktd-plugin-tools $HOME/.local/bin/kpt && ln -s $(pwd)/tools/package-kpz/target/release/package-kpz $HOME/.local/bin/p-kpz && ln -s $(pwd)/tools/perltidyc $HOME/.local/bin/ && echo 'Include $HOME/.local/bin in your path:\nexport PATH=\"$HOME/.local/bin:$PATH\"'",
@@ -13,8 +14,8 @@
     "format": "npm run format:ts && npm run format:pl",
     "format:ts": "prettier --write --cache --cache-location .prettier.cache.json \"src/**/*.ts\"",
     "format:pl": "perltidyc --cache --cache-location .perltidy.cache.json $(find Koha/Plugin -type f -name '*.pl' -o -name '*.pm')",
-    "build": "npm run css:build && npm run format && rolldown -c && just package",
-    "build:no-fmt": "npm run css:build && rolldown -c && just package",
+    "build": "npm run util:sync && npm run css:build && npm run format && rolldown -c && just package",
+    "build:no-fmt": "./tools/sync_util.sh && npm run css:build && rolldown -c && just package",
     "build:5.030": "npm run css:build && npm run format && npx rollup -c && mkdir -p 5.030 && cp -r Koha 5.030/ && find 5.030 -type f -name '*.pl' -o -name '*.pm' -exec gsed -i 's/5.032/5.030/g' {} + && p-kpz -r 'lms-event-management-5.030' -p '5.030/Koha/Plugin/Com/LMSCloud/EventManagement.pm' && rm -rf 5.030",
     "test": "vitest run",
     "test:watch": "vitest",

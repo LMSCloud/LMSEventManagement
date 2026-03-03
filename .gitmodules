@@ -1,3 +1,3 @@
-[submodule "Koha/Plugin/Com/LMSCloud/Util"]
-	path = Koha/Plugin/Com/LMSCloud/Util
+[submodule "vendor/koha-plugin-lmscloud-util"]
+	path = vendor/koha-plugin-lmscloud-util
 	url = https://github.com/lmscloudpauld/koha-plugin-lmscloud-util
