@@ -4,20 +4,20 @@
 const kohaStaffTheme = new CSSStyleSheet();
 kohaStaffTheme.replaceSync(/* css */ `
   :host {
-    /* Primary – golden yellow (#FFC32B) */
-    --p: 43 100% 58%;
-    --pc: 210 11% 15%;
-    --pf: 43 100% 51%;
+    /* Primary – Koha brand green (#408540) */
+    --p: 120 36% 39%;
+    --pc: 0 0% 100%;
+    --pf: 120 36% 32%;
 
     /* Secondary – Bootstrap gray-600 (#6c757d) */
     --s: 208 7% 46%;
     --sc: 0 0% 100%;
     --sf: 208 7% 39%;
 
-    /* Accent – Koha brand green (#408540) */
-    --a: 120 36% 39%;
-    --ac: 0 0% 100%;
-    --af: 120 36% 32%;
+    /* Accent – golden yellow (#FFC32B) */
+    --a: 43 100% 58%;
+    --ac: 210 11% 15%;
+    --af: 43 100% 51%;
 
     /* Neutral – dark brown (#352c2e) */
     --n: 347 9% 19%;
@@ -54,6 +54,23 @@ kohaStaffTheme.replaceSync(/* css */ `
     --tab-radius: 0.375rem;
     --animation-btn: 0;
     --animation-input: 0;
+  }
+
+  a:not(.btn) {
+    color: hsl(120 36% 39%);
+  }
+
+  a:not(.btn):hover {
+    color: hsl(120 36% 32%);
+  }
+
+  .navbar a,
+  .menu a {
+    color: inherit;
+  }
+
+  .bg-primary-focus {
+    color: hsl(var(--pc));
   }
 `);
 
