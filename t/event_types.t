@@ -5,7 +5,7 @@ use Modern::Perl;
 use FindBin qw($Bin);
 use File::Basename;
 
-use Test::More tests => 4;
+use Test::More tests => 6;
 use Test::Mojo;
 
 use t::lib::TestBuilder;
@@ -40,11 +40,12 @@ my $base_url = "//$userid:$password@/api/v1/contrib/eventmanagement";
 
 subtest 'list() tests' => sub {
 
-    plan tests => 8;
+    plan tests => 7;
 
     $schema->storage->txn_begin;
 
-    $t->get_ok("$base_url/event_types")->status_is(200)->json_is( [] );
+    $t->get_ok("$base_url/event_types?_per_page=-1")->status_is(200);
+    my $initial_count = scalar @{ $t->tx->res->json };
 
     # Create target groups, location, and an event type with fees
     my $tg1 = $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::TargetGroups' } );
@@ -67,12 +68,12 @@ subtest 'list() tests' => sub {
         }
     )->store;
 
-    $t->get_ok("$base_url/event_types")->status_is(200);
+    $t->get_ok("$base_url/event_types?_per_page=-1")->status_is(200);
     my $response = $t->tx->res->json;
 
-    is( scalar @{$response}, 1, 'one event type returned' );
+    is( scalar @{$response}, $initial_count + 1, 'one additional event type returned' );
 
-    my $returned_et = $response->[0];
+    my ($returned_et) = grep { $_->{id} == $et->id } @{$response};
     is( $returned_et->{name}, $et->name, 'event type name matches' );
     ok( exists $returned_et->{target_groups}, 'target_groups key present in response' );
 
@@ -141,6 +142,94 @@ subtest 'add() invalid tests' => sub {
             ],
         }
     )->status_is(400);
+
+    $schema->storage->txn_rollback;
+};
+
+subtest 'get() tests' => sub {
+
+    plan tests => 5;
+
+    $schema->storage->txn_begin;
+
+    my $loc = $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::Locations' } );
+    my $tg  = $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::TargetGroups' } );
+    my $et  = $builder->build_object(
+        {
+            class => 'Koha::LMSCloud::EventManagement::EventTypes',
+            value => { location => $loc->id }
+        }
+    );
+
+    Koha::LMSCloud::EventManagement::EventType::TargetGroup::Fee->new(
+        {
+            event_type_id   => $et->id,
+            target_group_id => $tg->id,
+            selected        => 1,
+            fee             => 3.00,
+        }
+    )->store;
+
+    $t->get_ok( "$base_url/event_types/" . $et->id )
+        ->status_is(200)
+        ->json_is( '/name' => $et->name );
+
+    # Non-existent
+    $t->get_ok("$base_url/event_types/99999999")
+        ->status_is(404);
+
+    $schema->storage->txn_rollback;
+};
+
+subtest 'update() tests' => sub {
+
+    plan tests => 6;
+
+    $schema->storage->txn_begin;
+
+    my $loc = $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::Locations' } );
+    my $tg  = $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::TargetGroups' } );
+    my $et  = $builder->build_object(
+        {
+            class => 'Koha::LMSCloud::EventManagement::EventTypes',
+            value => { location => $loc->id }
+        }
+    );
+
+    # Valid update — must supply all validated fields
+    $t->put_ok(
+        "$base_url/event_types/" . $et->id => json => {
+            name             => 'Updated Workshop',
+            min_age          => 6,
+            max_age          => 99,
+            max_participants => 30,
+            description      => 'Updated description',
+            location         => $loc->id,
+            target_groups    => [
+                { id => $tg->id, selected => \1, fee => 7.50 },
+            ],
+        }
+    )->status_is(200)
+      ->json_is( '/name' => 'Updated Workshop' );
+    diag $t->tx->res->body if $t->tx->res->code != 200;
+
+    # No selected target groups -> 400
+    $t->put_ok(
+        "$base_url/event_types/" . $et->id => json => {
+            name          => 'No TG Selected',
+            target_groups => [
+                { id => $tg->id, selected => \0, fee => 0 },
+            ],
+        }
+    )->status_is(400);
+
+    # Non-existent
+    $t->put_ok("$base_url/event_types/99999999" => json => {
+        name          => 'Ghost',
+        target_groups => [
+            { id => $tg->id, selected => \1, fee => 0 },
+        ],
+    } );
 
     $schema->storage->txn_rollback;
 };

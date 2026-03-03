@@ -5,7 +5,7 @@ use Modern::Perl;
 use FindBin qw($Bin);
 use File::Basename;
 
-use Test::More tests => 4;
+use Test::More tests => 7;
 use Test::Mojo;
 
 use t::lib::TestBuilder;
@@ -38,11 +38,12 @@ my $base_url = "//$userid:$password@/api/v1/contrib/eventmanagement";
 
 subtest 'list() tests' => sub {
 
-    plan tests => 7;
+    plan tests => 6;
 
     $schema->storage->txn_begin;
 
-    $t->get_ok("$base_url/events")->status_is(200)->json_is( [] );
+    $t->get_ok("$base_url/events?_per_page=-1")->status_is(200);
+    my $initial_count = scalar @{ $t->tx->res->json };
 
     # Create prerequisites
     my $loc = $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::Locations' } );
@@ -60,11 +61,12 @@ subtest 'list() tests' => sub {
         }
     );
 
-    $t->get_ok("$base_url/events")->status_is(200);
+    $t->get_ok("$base_url/events?_per_page=-1")->status_is(200);
     my $response = $t->tx->res->json;
 
-    is( scalar @{$response}, 1, 'one event returned' );
-    ok( exists $response->[0]->{target_groups}, 'target_groups key present in response' );
+    is( scalar @{$response}, $initial_count + 1, 'one additional event returned' );
+    my ($returned_event) = grep { $_->{id} == $event->id } @{$response};
+    ok( exists $returned_event->{target_groups}, 'target_groups key present in response' );
 
     $schema->storage->txn_rollback;
 };
@@ -148,6 +150,144 @@ subtest 'add() invalid tests' => sub {
             ],
         }
     )->status_is(400);
+
+    $schema->storage->txn_rollback;
+};
+
+subtest 'get() tests' => sub {
+
+    plan tests => 5;
+
+    $schema->storage->txn_begin;
+
+    my $loc = $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::Locations' } );
+    my $et  = $builder->build_object(
+        {
+            class => 'Koha::LMSCloud::EventManagement::EventTypes',
+            value => { location => $loc->id }
+        }
+    );
+    my $event = $builder->build_object(
+        {
+            class => 'Koha::LMSCloud::EventManagement::Events',
+            value => { event_type => $et->id, location => $loc->id }
+        }
+    );
+
+    $t->get_ok( "$base_url/events/" . $event->id )
+        ->status_is(200)
+        ->json_is( '/name' => $event->name );
+
+    # Non-existent
+    $t->get_ok("$base_url/events/99999999")
+        ->status_is(404);
+
+    $schema->storage->txn_rollback;
+};
+
+subtest 'update() tests' => sub {
+
+    plan tests => 6;
+
+    $schema->storage->txn_begin;
+
+    my $loc = $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::Locations' } );
+    my $et  = $builder->build_object(
+        {
+            class => 'Koha::LMSCloud::EventManagement::EventTypes',
+            value => { location => $loc->id }
+        }
+    );
+    my $tg = $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::TargetGroups' } );
+    my $event = $builder->build_object(
+        {
+            class => 'Koha::LMSCloud::EventManagement::Events',
+            value => { event_type => $et->id, location => $loc->id }
+        }
+    );
+
+    # Valid update — supply all validated fields
+    $t->put_ok(
+        "$base_url/events/" . $event->id => json => {
+            name               => 'Updated Event',
+            event_type         => $et->id,
+            location           => $loc->id,
+            min_age            => 0,
+            max_age            => 99,
+            max_participants   => 50,
+            start_time         => '2027-06-15T10:00:00Z',
+            end_time           => '2027-06-15T12:00:00Z',
+            registration_start => '2027-06-01T00:00:00Z',
+            registration_end   => '2027-06-14T23:59:00Z',
+            description        => 'Updated event description',
+            target_groups      => [
+                { id => $tg->id, selected => \1, fee => 2.50 },
+            ],
+        }
+    )->status_is(200)
+      ->json_is( '/name' => 'Updated Event' );
+    diag $t->tx->res->body if $t->tx->res->code != 200;
+
+    # No selected target groups -> 400
+    $t->put_ok(
+        "$base_url/events/" . $event->id => json => {
+            name          => 'No TG',
+            event_type    => $et->id,
+            location      => $loc->id,
+            target_groups => [
+                { id => $tg->id, selected => \0, fee => 0 },
+            ],
+        }
+    )->status_is(400);
+
+    # Non-existent
+    $t->put_ok("$base_url/events/99999999" => json => {
+        name          => 'Ghost',
+        target_groups => [
+            { id => $tg->id, selected => \1, fee => 0 },
+        ],
+    } );
+
+    $schema->storage->txn_rollback;
+};
+
+subtest 'export_ical() tests' => sub {
+
+    plan tests => 6;
+
+    $schema->storage->txn_begin;
+
+    my $loc = $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::Locations' } );
+    my $et  = $builder->build_object(
+        {
+            class => 'Koha::LMSCloud::EventManagement::EventTypes',
+            value => { location => $loc->id }
+        }
+    );
+    my $event = $builder->build_object(
+        {
+            class => 'Koha::LMSCloud::EventManagement::Events',
+            value => {
+                event_type => $et->id,
+                location   => $loc->id,
+                start_time => '2027-12-01 10:00:00',
+                end_time   => '2027-12-01 12:00:00',
+            }
+        }
+    );
+
+    my $public_url = "/api/v1/contrib/eventmanagement";
+
+    $t->get_ok("$public_url/public/events/" . $event->id . "/ical")
+        ->status_is(200)
+        ->content_type_like(qr{text/calendar});
+
+    my $body = $t->tx->res->body;
+    like( $body, qr/BEGIN:VCALENDAR/, 'iCal body contains VCALENDAR' );
+    like( $body, qr/SUMMARY/,         'iCal body contains SUMMARY' );
+
+    # Non-existent event
+    $t->get_ok("$public_url/public/events/99999999/ical");
 
     $schema->storage->txn_rollback;
 };

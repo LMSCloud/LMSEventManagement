@@ -5,7 +5,7 @@ use Modern::Perl;
 use FindBin qw($Bin);
 use File::Basename;
 
-use Test::More tests => 3;
+use Test::More tests => 5;
 use Test::Mojo;
 
 use t::lib::TestBuilder;
@@ -38,20 +38,21 @@ my $base_url = "//$userid:$password@/api/v1/contrib/eventmanagement";
 
 subtest 'list() tests' => sub {
 
-    plan tests => 6;
+    plan tests => 5;
 
     $schema->storage->txn_begin;
 
-    $t->get_ok("$base_url/target_groups")->status_is(200)->json_is( [] );
+    $t->get_ok("$base_url/target_groups?_per_page=-1")->status_is(200);
+    my $initial_count = scalar @{ $t->tx->res->json };
 
     my $target_groups =
         [ map { $builder->build_object( { class => 'Koha::LMSCloud::EventManagement::TargetGroups' } ) } 1 .. 5 ];
     my $size = scalar @{$target_groups};
 
-    $t->get_ok("$base_url/target_groups")->status_is(200);
+    $t->get_ok("$base_url/target_groups?_per_page=-1")->status_is(200);
     my $response = $t->tx->res->json;
 
-    is @{$response}, $size, 'initialized target groups and response have same size';
+    is( scalar @{$response}, $initial_count + $size, 'response has correct number of target groups' );
 
     $schema->storage->txn_rollback;
 };
@@ -81,6 +82,58 @@ subtest 'add() tests' => sub {
     $t->post_ok(
         "$base_url/target_groups" => json => {
             name    => 'Invalid Group',
+            min_age => 0,
+            max_age => 300,
+        }
+    )->status_is(400);
+
+    $schema->storage->txn_rollback;
+};
+
+subtest 'get() tests' => sub {
+
+    plan tests => 4;
+
+    $schema->storage->txn_begin;
+
+    my $target_group = $builder->build_object(
+        { class => 'Koha::LMSCloud::EventManagement::TargetGroups' }
+    );
+
+    $t->get_ok( "$base_url/target_groups/" . $target_group->id )
+        ->status_is(200);
+
+    # Non-existent
+    $t->get_ok("$base_url/target_groups/99999999")
+        ->status_is(404);
+
+    $schema->storage->txn_rollback;
+};
+
+subtest 'update() tests' => sub {
+
+    plan tests => 5;
+
+    $schema->storage->txn_begin;
+
+    my $target_group = $builder->build_object(
+        { class => 'Koha::LMSCloud::EventManagement::TargetGroups' }
+    );
+
+    # Valid update
+    $t->put_ok(
+        "$base_url/target_groups/" . $target_group->id => json => {
+            name    => 'Teens',
+            min_age => 13,
+            max_age => 19,
+        }
+    )->status_is(200)
+      ->json_is( '/name' => 'Teens' );
+
+    # max_age out of range -> 400
+    $t->put_ok(
+        "$base_url/target_groups/" . $target_group->id => json => {
+            name    => 'Invalid',
             min_age => 0,
             max_age => 300,
         }
