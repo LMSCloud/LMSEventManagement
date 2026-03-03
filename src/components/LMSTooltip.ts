@@ -39,13 +39,13 @@ export default class LMSTooltip extends LitElement {
     override willUpdate(changedProperties: PropertyValues<this>) {
         if (changedProperties.has("target")) {
             const previousTarget = changedProperties.get(
-                "target"
+                "target",
             ) as HTMLElement | null;
 
             if (previousTarget) {
                 previousTarget.removeEventListener(
                     "click",
-                    this.showTooltipBound
+                    this.showTooltipBound,
                 );
             }
 

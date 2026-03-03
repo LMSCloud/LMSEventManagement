@@ -88,7 +88,7 @@ export default class StaffEventsView extends LMSAbstractView {
                 "_page",
                 "_per_page",
                 "q",
-                "start_time"
+                "start_time",
             );
 
         // const searchParams = new URLSearchParams(this.queryBuilder.query);
@@ -132,16 +132,22 @@ export default class StaffEventsView extends LMSAbstractView {
 
         Promise.all([
             requestHandler.get({ endpoint: "targetGroups" }),
-            requestHandler.get({ endpoint: "locations", query: { _per_page: "-1" } }),
+            requestHandler.get({
+                endpoint: "locations",
+                query: { _per_page: "-1" },
+            }),
             requestHandler.get({ endpoint: "images" }),
-            requestHandler.get({ endpoint: "eventTypes", query: { _per_page: "-1" } }),
+            requestHandler.get({
+                endpoint: "eventTypes",
+                query: { _per_page: "-1" },
+            }),
             requestHandler.get({
                 endpoint: "events",
                 query: this.queryBuilder.without({ staticParams: true }),
             }),
         ])
             .then((results) =>
-                Promise.all(results.map((result) => result.json()))
+                Promise.all(results.map((result) => result.json())),
             )
             .then(([target_groups, locations, images, event_types, events]) => {
                 this.data["target_groups"] = target_groups;
@@ -168,14 +174,14 @@ export default class StaffEventsView extends LMSAbstractView {
 
                 this.hashStore.hash = this.hashNeeded(
                     this.hashStore.hash,
-                    this.q
+                    this.q,
                 );
                 history.replace(
                     merge({
                         href: window.location.href,
                         searchParams: this.queryBuilder.query,
                         hash: this.hashStore.hash,
-                    })
+                    }),
                 );
                 this.search = this.hashStore.hash;
 
@@ -205,7 +211,7 @@ export default class StaffEventsView extends LMSAbstractView {
         const { filters } = e.detail;
         this.filters = filters;
         this.queryBuilder.query = this.queryBuilder.merge(
-            this.getParamsFromActiveFilters(filters)
+            this.getParamsFromActiveFilters(filters),
         );
         this.fetchUpdate({ method: "push", provideHash: false });
     }
@@ -242,7 +248,7 @@ export default class StaffEventsView extends LMSAbstractView {
             q: "{}",
             start_time: normalizeForInput(
                 new Date().toString(),
-                "datetime-local"
+                "datetime-local",
             ),
         });
         this.setActiveFiltersFromParams();
@@ -263,58 +269,57 @@ export default class StaffEventsView extends LMSAbstractView {
                                 () =>
                                     html`<div
                                         class="skeleton skeleton-card"
-                                    ></div>`
+                                    ></div>`,
                             )}
                         </div>
-                    </div>`
+                    </div>`,
             )
             .with(
                 "no-content",
-                () =>
-                    html`
-                        <h1 class="text-center">
-                            ${__("You have to create a")}&nbsp;
-                            <lms-anchor
-                                .href=${{
-                                    ...this.href,
-                                    params: {
-                                        ...this.href.params,
-                                        op: "target-groups",
-                                    },
-                                }}
-                                >${__("target group")}</lms-anchor
-                            >, ${__("a")}&nbsp;
-                            <lms-anchor
-                                .href=${{
-                                    ...this.href,
-                                    params: {
-                                        ...this.href.params,
-                                        op: "locations",
-                                    },
-                                }}
-                                >${__("location")}</lms-anchor
-                            >
-                            &nbsp;${__("and an")}&nbsp;
-                            <lms-anchor
-                                .href=${{
-                                    ...this.href,
-                                    params: {
-                                        ...this.href.params,
-                                        op: "event-types",
-                                    },
-                                }}
-                                >${__("event type")}</lms-anchor
-                            >
-                            &nbsp;${__("first")}.
-                        </h1>
-                    `
+                () => html`
+                    <h1 class="text-center">
+                        ${__("You have to create a")}&nbsp;
+                        <lms-anchor
+                            .href=${{
+                                ...this.href,
+                                params: {
+                                    ...this.href.params,
+                                    op: "target-groups",
+                                },
+                            }}
+                            >${__("target group")}</lms-anchor
+                        >, ${__("a")}&nbsp;
+                        <lms-anchor
+                            .href=${{
+                                ...this.href,
+                                params: {
+                                    ...this.href.params,
+                                    op: "locations",
+                                },
+                            }}
+                            >${__("location")}</lms-anchor
+                        >
+                        &nbsp;${__("and an")}&nbsp;
+                        <lms-anchor
+                            .href=${{
+                                ...this.href,
+                                params: {
+                                    ...this.href.params,
+                                    op: "event-types",
+                                },
+                            }}
+                            >${__("event type")}</lms-anchor
+                        >
+                        &nbsp;${__("first")}.
+                    </h1>
+                `,
             )
             .with(
                 "partial-content",
                 () =>
                     html` <h1 class="text-center">
                             ${__(
-                                "You can add a new event by clicking on the + button below"
+                                "You can add a new event by clicking on the + button below",
                             )}.
                         </h1>
                         <lms-events-modal
@@ -323,40 +328,39 @@ export default class StaffEventsView extends LMSAbstractView {
                             .images=${this.data["images"] ?? []}
                             .event_types=${this.data["event_types"] ?? []}
                             @created=${this.handleCreated}
-                        ></lms-events-modal>`
+                        ></lms-events-modal>`,
             )
             .with(
                 "no-results",
                 "success",
-                (state) =>
-                    html`
-                        <lms-staff-event-card-deck
-                            .target_groups=${this.data["target_groups"] ?? []}
-                            .locations=${this.data["locations"] ?? []}
-                            .images=${this.data["images"] ?? []}
-                            .event_types=${this.data["event_types"] ?? []}
-                            .events=${this.data["events"] ?? []}
-                            .start_time=${this.start_time}
-                            @updated=${this.handleUpdated}
-                            @deleted=${this.handleDeleted}
-                            @sort=${this.handleSort}
-                            @search=${this.handleSearch}
-                            @filter=${this.handleFilter}
-                            @start-time-change=${this.handleStartTimeChange}
-                            @page=${this.handlePageChange}
-                            @per-page=${this.handlePerPageChange}
-                            @prefetch=${this.prefetchUpdate}
-                            @reset=${this.handleReset}
-                        ></lms-staff-event-card-deck>
-                        ${this.renderNoResultsAlertMaybe(state)}
-                        <lms-events-modal
-                            .target_groups=${this.data["target_groups"] ?? []}
-                            .locations=${this.data["locations"] ?? []}
-                            .images=${this.data["images"] ?? []}
-                            .event_types=${this.data["event_types"] ?? []}
-                            @created=${this.handleCreated}
-                        ></lms-events-modal>
-                    `
+                (state) => html`
+                    <lms-staff-event-card-deck
+                        .target_groups=${this.data["target_groups"] ?? []}
+                        .locations=${this.data["locations"] ?? []}
+                        .images=${this.data["images"] ?? []}
+                        .event_types=${this.data["event_types"] ?? []}
+                        .events=${this.data["events"] ?? []}
+                        .start_time=${this.start_time}
+                        @updated=${this.handleUpdated}
+                        @deleted=${this.handleDeleted}
+                        @sort=${this.handleSort}
+                        @search=${this.handleSearch}
+                        @filter=${this.handleFilter}
+                        @start-time-change=${this.handleStartTimeChange}
+                        @page=${this.handlePageChange}
+                        @per-page=${this.handlePerPageChange}
+                        @prefetch=${this.prefetchUpdate}
+                        @reset=${this.handleReset}
+                    ></lms-staff-event-card-deck>
+                    ${this.renderNoResultsAlertMaybe(state)}
+                    <lms-events-modal
+                        .target_groups=${this.data["target_groups"] ?? []}
+                        .locations=${this.data["locations"] ?? []}
+                        .images=${this.data["images"] ?? []}
+                        .event_types=${this.data["event_types"] ?? []}
+                        @created=${this.handleCreated}
+                    ></lms-events-modal>
+                `,
             )
             .with("error", () => html`<h1 class="text-center">Error</h1>`)
             .exhaustive();

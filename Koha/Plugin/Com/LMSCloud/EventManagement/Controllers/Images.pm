@@ -1,6 +1,5 @@
 package Koha::Plugin::Com::LMSCloud::EventManagement::Controllers::Images;
 
-
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
@@ -17,7 +16,6 @@ use Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Uploader ();
 use Koha::Plugin::Com::LMSCloud::EventManagement;
 
 our $VERSION = '1.0.0';
-
 
 sub list {
     my $c = shift->openapi->valid_input or return;

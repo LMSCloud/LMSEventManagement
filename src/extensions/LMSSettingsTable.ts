@@ -121,7 +121,11 @@ export default class LMSSettingsTable extends LitElement {
                     overflow: auto;
                     border-radius: 1rem;
                     border: 1px solid rgb(226 232 240);
-                    background: linear-gradient(180deg, rgb(255 255 255) 0%, rgb(248 250 252) 100%);
+                    background: linear-gradient(
+                        180deg,
+                        rgb(255 255 255) 0%,
+                        rgb(248 250 252) 100%
+                    );
                     padding: 0.75rem;
                     box-shadow: 0 8px 24px -18px rgb(15 23 42 / 0.45);
                 }
@@ -156,7 +160,7 @@ export default class LMSSettingsTable extends LitElement {
                     "__INSTALLED_VERSION__",
                     "last_upgraded",
                     "__CURRENT_MIGRATION__",
-                ].includes(plugin_key) && !plugin_key.startsWith("widget_")
+                ].includes(plugin_key) && !plugin_key.startsWith("widget_"),
         );
     }
 
@@ -189,12 +193,16 @@ export default class LMSSettingsTable extends LitElement {
             {
                 id: "filters",
                 title: __("OPAC Filters"),
-                description: __("Control which filters are shown in the OPAC event list."),
+                description: __(
+                    "Control which filters are shown in the OPAC event list.",
+                ),
             },
             {
                 id: "visibility",
                 title: __("Visibility"),
-                description: __("Control event visibility behavior in OPAC views."),
+                description: __(
+                    "Control event visibility behavior in OPAC views.",
+                ),
             },
             {
                 id: "general",
@@ -203,7 +211,9 @@ export default class LMSSettingsTable extends LitElement {
             },
         ];
 
-        const settingsBySection = this.visibleSettings.reduce<Record<string, LMSSettingResponse[]>>((acc, setting) => {
+        const settingsBySection = this.visibleSettings.reduce<
+            Record<string, LMSSettingResponse[]>
+        >((acc, setting) => {
             const sectionId = this.getSectionIdForSetting(setting.plugin_key);
             acc[sectionId] = [...(acc[sectionId] ?? []), setting];
             return acc;
@@ -216,7 +226,9 @@ export default class LMSSettingsTable extends LitElement {
     }
 
     private scrollToSection(sectionId: string) {
-        const section = this.renderRoot.querySelector<HTMLElement>(`#section-${sectionId}`);
+        const section = this.renderRoot.querySelector<HTMLElement>(
+            `#section-${sectionId}`,
+        );
         if (!section) {
             return;
         }
@@ -228,20 +240,27 @@ export default class LMSSettingsTable extends LitElement {
         this.sectionObserver?.disconnect();
         this.sectionObserver = null;
 
-        const sections = this.renderRoot.querySelectorAll<HTMLElement>(".settings-section[id]");
+        const sections = this.renderRoot.querySelectorAll<HTMLElement>(
+            ".settings-section[id]",
+        );
         if (!sections.length) {
             this.activeSectionId = "";
             return;
         }
 
         const firstSection = sections.item(0);
-        this.activeSectionId = firstSection ? firstSection.id.replace("section-", "") : "";
+        this.activeSectionId = firstSection
+            ? firstSection.id.replace("section-", "")
+            : "";
 
         this.sectionObserver = new IntersectionObserver(
             (entries) => {
                 const visibleSections = entries
                     .filter((entry) => entry.isIntersecting)
-                    .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+                    .sort(
+                        (a, b) =>
+                            a.boundingClientRect.top - b.boundingClientRect.top,
+                    );
 
                 const current = visibleSections[0];
                 if (!current || !(current.target instanceof HTMLElement)) {
@@ -259,7 +278,7 @@ export default class LMSSettingsTable extends LitElement {
                 root: null,
                 threshold: [0.2, 0.5, 0.8],
                 rootMargin: "-15% 0px -60% 0px",
-            }
+            },
         );
 
         sections.forEach((section) => this.sectionObserver?.observe(section));
@@ -300,7 +319,10 @@ export default class LMSSettingsTable extends LitElement {
         return value;
     }
 
-    private async handleSettingSave(setting: LMSSettingResponse, e: CustomEvent) {
+    private async handleSettingSave(
+        setting: LMSSettingResponse,
+        e: CustomEvent,
+    ) {
         const { key, value } = e.detail as { key: string; value: string };
 
         this.setSaving(key, true);
@@ -335,25 +357,32 @@ export default class LMSSettingsTable extends LitElement {
                     .name=${key}
                     .value=${this.toBool(setting.plugin_value)}
                     .saving=${isSaving}
-                    @setting-save=${(e: CustomEvent) => this.handleSettingSave(setting, e)}
+                    @setting-save=${(e: CustomEvent) =>
+                        this.handleSettingSave(setting, e)}
                 ></lms-setting-toggle>
             `;
         }
 
-        const inputType = typeof setting.plugin_value === "number" ? "number" : "text";
+        const inputType =
+            typeof setting.plugin_value === "number" ? "number" : "text";
         return html`
             <lms-setting-text
                 .name=${key}
-                .value=${setting.plugin_value == null ? "" : String(setting.plugin_value)}
+                .value=${setting.plugin_value == null
+                    ? ""
+                    : String(setting.plugin_value)}
                 .inputType=${inputType}
                 .saving=${isSaving}
-                @setting-save=${(e: CustomEvent) => this.handleSettingSave(setting, e)}
+                @setting-save=${(e: CustomEvent) =>
+                    this.handleSettingSave(setting, e)}
             ></lms-setting-text>
         `;
     }
 
     private renderSidebar() {
-        const sections = this.sections.filter((section) => section.settings.length > 0);
+        const sections = this.sections.filter(
+            (section) => section.settings.length > 0,
+        );
 
         return html`
             <aside class="settings-sidebar">
@@ -366,17 +395,22 @@ export default class LMSSettingsTable extends LitElement {
                                 <button
                                     class=${classMap({
                                         btn: true,
-                                        "btn-ghost": section.id !== this.activeSectionId,
-                                        "btn-active": section.id === this.activeSectionId,
+                                        "btn-ghost":
+                                            section.id !== this.activeSectionId,
+                                        "btn-active":
+                                            section.id === this.activeSectionId,
                                         "justify-between": true,
                                     })}
-                                    @click=${() => this.scrollToSection(section.id)}
+                                    @click=${() =>
+                                        this.scrollToSection(section.id)}
                                 >
                                     <span>${section.title}</span>
-                                    <span class="badge badge-sm">${section.settings.length}</span>
+                                    <span class="badge badge-sm"
+                                        >${section.settings.length}</span
+                                    >
                                 </button>
                             </li>
-                        `
+                        `,
                     )}
                 </nav>
             </aside>
@@ -384,7 +418,9 @@ export default class LMSSettingsTable extends LitElement {
     }
 
     override render() {
-        const sections = this.sections.filter((section) => section.settings.length > 0);
+        const sections = this.sections.filter(
+            (section) => section.settings.length > 0,
+        );
 
         return html`
             <div class="settings-shell">
@@ -395,26 +431,39 @@ export default class LMSSettingsTable extends LitElement {
                             sections,
                             (section) => section.id,
                             (section) => html`
-                                <section class="settings-section" id=${`section-${section.id}`}>
+                                <section
+                                    class="settings-section"
+                                    id=${`section-${section.id}`}
+                                >
                                     <header class="settings-section__header">
-                                        <h2 class="settings-section__title">${section.title}</h2>
-                                        <p class="settings-section__description">${section.description}</p>
+                                        <h2 class="settings-section__title">
+                                            ${section.title}
+                                        </h2>
+                                        <p
+                                            class="settings-section__description"
+                                        >
+                                            ${section.description}
+                                        </p>
                                     </header>
                                     <div class="settings-rows">
                                         ${repeat(
                                             section.settings,
                                             (setting) => setting.plugin_key,
-                                            (setting) => this.renderSettingRow(setting)
+                                            (setting) =>
+                                                this.renderSettingRow(setting),
                                         )}
                                     </div>
                                 </section>
-                            `
+                            `,
                         )}
                     </div>
                 </div>
             </div>
             ${this.toast.heading && this.toast.message
-                ? html`<lms-toast .heading=${this.toast.heading} .message=${this.toast.message}></lms-toast>`
+                ? html`<lms-toast
+                      .heading=${this.toast.heading}
+                      .message=${this.toast.message}
+                  ></lms-toast>`
                 : null}
         `;
     }

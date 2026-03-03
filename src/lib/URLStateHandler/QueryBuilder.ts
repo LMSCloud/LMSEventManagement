@@ -119,13 +119,13 @@ export class QueryBuilder {
             match(key)
                 .when(
                     (key) => this._isForbidden(key),
-                    () => {}
+                    () => {},
                 )
                 .when(
                     (key) => this._isRepeatable(key),
                     () => {
                         this.paramMap.append(key, value);
-                    }
+                    },
                 )
                 .when(
                     (key) => this._isStatic(key),
@@ -133,7 +133,7 @@ export class QueryBuilder {
                         if (!this.paramMap.has(key)) {
                             this.paramMap.set(key, value);
                         }
-                    }
+                    },
                 )
                 .otherwise(() => {
                     this.paramMap.set(key, value);
@@ -160,7 +160,7 @@ export class QueryBuilder {
 
     public without({ staticParams, useParams }: WithoutOptions) {
         const current = new URLSearchParams(
-            useParams ?? this.paramMap.toString()
+            useParams ?? this.paramMap.toString(),
         );
 
         if (staticParams) {
@@ -188,7 +188,7 @@ export class QueryBuilder {
         this.repeatableParams.forEach((repeatableParam) => {
             const [appended, removed] = this._diffValues(
                 new Set(currentRepeatables[repeatableParam]),
-                new Set(mergingRepeatables[repeatableParam])
+                new Set(mergingRepeatables[repeatableParam]),
             );
 
             current.delete(repeatableParam);
@@ -206,7 +206,7 @@ export class QueryBuilder {
         this.optionalParams.forEach((optionalParam) => {
             const [_, removed] = this._diffValues(
                 new Set([current.get(optionalParam)]),
-                new Set([merging.get(optionalParam)])
+                new Set([merging.get(optionalParam)]),
             );
 
             current.delete(optionalParam);

@@ -128,8 +128,12 @@ export default class LMSCard extends LitElement {
                             hidden: !this.caption,
                         })} card-title flex items-start justify-between gap-2"
                     >
-                        <span class="flex-1 min-w-0">${this.caption}</span>
-                        ${!hasImage ? html`<span class="flex-shrink-0">${this.renderStatusBadge(true)}</span>` : nothing}
+                        <span class="min-w-0 flex-1">${this.caption}</span>
+                        ${!hasImage
+                            ? html`<span class="flex-shrink-0"
+                                  >${this.renderStatusBadge(true)}</span
+                              >`
+                            : nothing}
                     </h5>
                     <p
                         class=${classMap({
@@ -145,7 +149,7 @@ export default class LMSCard extends LitElement {
                     >
                         ${map(
                             this.listItems,
-                            (listItem) => html`<li>${listItem}</li>`
+                            (listItem) => html`<li>${listItem}</li>`,
                         )}
                     </ul>
                     <div
@@ -156,7 +160,7 @@ export default class LMSCard extends LitElement {
                         ${map(
                             this.links,
                             (link) =>
-                                html`<a href=${link.href}>${link.text}</a>`
+                                html`<a href=${link.href}>${link.text}</a>`,
                         )}
                     </div>
                 </div>

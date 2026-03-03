@@ -100,7 +100,11 @@ export default class LMSSettingToggle extends LitElement {
             <div class="setting-row">
                 <div>
                     <div class="setting-row__name">${__(this.name)}</div>
-                    ${this.description ? html`<div class="setting-row__description">${this.description}</div>` : null}
+                    ${this.description
+                        ? html`<div class="setting-row__description">
+                              ${this.description}
+                          </div>`
+                        : null}
                 </div>
                 <div class="setting-row__inline">
                     <div class="setting-row__toggle-label">
@@ -111,12 +115,22 @@ export default class LMSSettingToggle extends LitElement {
                             .checked=${this.draft}
                             @change=${this.handleChange}
                         />
-                        <span class="setting-row__on-off">${this.draft ? __("On") : __("Off")}</span>
+                        <span class="setting-row__on-off"
+                            >${this.draft ? __("On") : __("Off")}</span
+                        >
                     </div>
-                    <button class="btn btn-primary" ?disabled=${this.saving || !this.dirty} @click=${this.save}>
+                    <button
+                        class="btn btn-primary"
+                        ?disabled=${this.saving || !this.dirty}
+                        @click=${this.save}
+                    >
                         ${__("Save")}
                     </button>
-                    <button class="btn btn-ghost" ?disabled=${this.saving || !this.dirty} @click=${this.abort}>
+                    <button
+                        class="btn btn-ghost"
+                        ?disabled=${this.saving || !this.dirty}
+                        @click=${this.abort}
+                    >
                         ${__("Abort")}
                     </button>
                 </div>

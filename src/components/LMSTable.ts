@@ -173,7 +173,7 @@ export default class LMSTable extends LitElement {
 
     private toggleInputs(tableRow: Element, isEnabled: boolean) {
         const inputs = tableRow.querySelectorAll(
-            "input, select, textarea, .lit-element"
+            "input, select, textarea, .lit-element",
         );
         inputs.forEach((input) => {
             isEnabled
@@ -184,7 +184,7 @@ export default class LMSTable extends LitElement {
 
     private toggleCollapse(tableRow: Element, isExpanded: boolean) {
         const collapsibles = tableRow.querySelectorAll(
-            ".collapse"
+            ".collapse",
         ) as NodeListOf<HTMLDetailsElement>;
         collapsibles.forEach((collapse) => {
             const parent = collapse.parentElement;
@@ -200,7 +200,7 @@ export default class LMSTable extends LitElement {
 
     private takeSnapshot(tableRow: HTMLTableRowElement) {
         const inputs = tableRow.querySelectorAll(
-            "input, select, textarea, .lit-element"
+            "input, select, textarea, .lit-element",
         );
         this.snapshot = new InputsSnapshot(inputs);
     }
@@ -292,7 +292,7 @@ export default class LMSTable extends LitElement {
             | Record<string, unknown>
             | null
         >,
-        data?: TaggedData[]
+        data?: TaggedData[],
     ) {
         for (const [name, value] of Object.entries(query)) {
             yield [
@@ -348,7 +348,7 @@ export default class LMSTable extends LitElement {
 
     protected renderToast(
         status: string,
-        result: { error: string | string[]; errors: KohaAPIError[] }
+        result: { error: string | string[]; errors: KohaAPIError[] },
     ) {
         if (result.error) {
             this.toast = {
@@ -357,7 +357,8 @@ export default class LMSTable extends LitElement {
                     ? html`<span>Sorry!</span>
                           <ol>
                               ${result.error.map(
-                                  (message: string) => html`<li>${message}</li>`
+                                  (message: string) =>
+                                      html`<li>${message}</li>`,
                               )}
                           </ol>`
                     : html`<span>Sorry! ${result.error}</span>`,
@@ -374,7 +375,7 @@ export default class LMSTable extends LitElement {
                                 html`<li>
                                     ${error.message} ${__("Path")}:
                                     ${error.path}
-                                </li>`
+                                </li>`,
                         )}
                     </ol>`,
             };
@@ -407,7 +408,7 @@ export default class LMSTable extends LitElement {
                     return 1;
                 }
                 return 0;
-            }, 0)
+            }, 0),
         );
     }
 
@@ -417,7 +418,7 @@ export default class LMSTable extends LitElement {
         const hasData = data?.length > 0;
         const [headers] = hasData ? data : [];
         this.headers = this.order.filter(
-            (header) => headers && {}.hasOwnProperty.call(headers, header)
+            (header) => headers && {}.hasOwnProperty.call(headers, header),
         );
 
         if (hasData) {
@@ -428,14 +429,14 @@ export default class LMSTable extends LitElement {
     }
 
     protected override willUpdate(
-        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>,
     ): void {
         super.willUpdate(_changedProperties);
         this.sortColumns();
     }
 
     protected override firstUpdated(
-        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>,
     ): void {
         super.firstUpdated(_changedProperties);
         const preexistingColumns = [
@@ -511,7 +512,7 @@ export default class LMSTable extends LitElement {
 
             totalSourroundingWidth += props.reduce(
                 (total, prop) => total + parseFloat(style[prop]),
-                0
+                0,
             );
 
             element =
@@ -544,7 +545,7 @@ export default class LMSTable extends LitElement {
                 },
                 bubbles: true,
                 composed: true,
-            })
+            }),
         );
     }
 
@@ -666,7 +667,7 @@ export default class LMSTable extends LitElement {
                                               class="text-center text-base font-medium"
                                           >
                                               ${__(key)}
-                                          </th>`
+                                          </th>`,
                                 )}
                                 ${this.renderActionHeaderMaybe()}
                             </tr>
@@ -684,11 +685,11 @@ export default class LMSTable extends LitElement {
                                                     class="p-0 text-center"
                                                 >
                                                     ${datum[header]}
-                                                </td>`
+                                                </td>`,
                                         )}
                                         ${this.renderActionButtonsMaybe()}
                                     </tr>
-                                `
+                                `,
                             )}
                         </tbody>
                     </table>

@@ -33,7 +33,7 @@ export default class LMSFloatingMenu extends LitElement {
     public isActive(id: string) {
         console.info(
             "Override this method in your extended LMSFloatingMenu class.",
-            id
+            id,
         );
         return false;
     }
@@ -54,26 +54,24 @@ export default class LMSFloatingMenu extends LitElement {
                         >
                             ${map(
                                 this.items,
-                                ({ id, url, icon, name }) =>
-                                    html`
-                                        <li
-                                            class="${classMap({
-                                                "bg-base-200":
-                                                    this.isActive(id),
-                                            })} rounded-lg hover:bg-base-200"
+                                ({ id, url, icon, name }) => html`
+                                    <li
+                                        class="${classMap({
+                                            "bg-base-200": this.isActive(id),
+                                        })} rounded-lg hover:bg-base-200"
+                                    >
+                                        <a
+                                            href=${url}
+                                            class="text-base font-medium"
                                         >
-                                            <a
-                                                href=${url}
-                                                class="text-base font-medium"
-                                            >
-                                                ${litFontawesome(icon, {
-                                                    className:
-                                                        "w-4 h-4 inline-block",
-                                                })}&nbsp;
-                                                ${name}</a
-                                            >
-                                        </li>
-                                    `
+                                            ${litFontawesome(icon, {
+                                                className:
+                                                    "w-4 h-4 inline-block",
+                                            })}&nbsp;
+                                            ${name}</a
+                                        >
+                                    </li>
+                                `,
                             )}
                         </ul>
                     </div>
@@ -96,22 +94,20 @@ export default class LMSFloatingMenu extends LitElement {
                     <ul class="menu menu-horizontal px-1">
                         ${map(
                             this.items,
-                            ({ id, url, icon, name }) =>
-                                html`
-                                    <li
-                                        class="${classMap({
-                                            "bg-base-200": this.isActive(id),
-                                        })} mx-1 rounded-lg text-base hover:bg-base-200"
+                            ({ id, url, icon, name }) => html`
+                                <li
+                                    class="${classMap({
+                                        "bg-base-200": this.isActive(id),
+                                    })} mx-1 rounded-lg text-base hover:bg-base-200"
+                                >
+                                    <a href=${url}
+                                        >${litFontawesome(icon, {
+                                            className: "w-4 h-4 inline-block",
+                                        })}&nbsp;
+                                        ${name}</a
                                     >
-                                        <a href=${url}
-                                            >${litFontawesome(icon, {
-                                                className:
-                                                    "w-4 h-4 inline-block",
-                                            })}&nbsp;
-                                            ${name}</a
-                                        >
-                                    </li>
-                                `
+                                </li>
+                            `,
                         )}
                     </ul>
                 </div>

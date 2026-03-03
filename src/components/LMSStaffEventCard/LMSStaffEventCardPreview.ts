@@ -33,7 +33,7 @@ export default class LMSStaffEventCardPreview extends LitElement {
     static override styles = [tailwindStyles, skeletonStyles];
 
     protected override updated(
-        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>,
     ): void {
         super.updated(_changedProperties);
         if (

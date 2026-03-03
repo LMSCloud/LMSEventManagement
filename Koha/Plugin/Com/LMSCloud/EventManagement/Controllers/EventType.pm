@@ -1,6 +1,5 @@
 package Koha::Plugin::Com::LMSCloud::EventManagement::Controllers::EventType;
 
-
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
@@ -21,7 +20,6 @@ use Koha::LMSCloud::EventManagement::EventTypes                   ();
 use Koha::Plugin::Com::LMSCloud::Validator                        ();
 
 our $VERSION = '1.0.0';
-
 
 Readonly::Scalar my $UPPER_AGE_BOUNDARY          => 255;
 Readonly::Scalar my $UPPER_PARTICIPANTS_BOUNDARY => 65_535;

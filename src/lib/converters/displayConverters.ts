@@ -10,7 +10,7 @@ import { LMSLocation } from "../../types/common";
  */
 export function formatMonetaryAmountByLocale(
     locale: string,
-    amount?: number | null
+    amount?: number | null,
 ): string {
     if (!amount) {
         return "";

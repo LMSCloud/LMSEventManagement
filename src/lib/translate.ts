@@ -20,14 +20,14 @@ export const localeFull =
         : document.documentElement.lang;
 
 async function loadTranslations(
-    localeUrl = "/api/v1/contrib/eventmanagement/static/locales"
+    localeUrl = "/api/v1/contrib/eventmanagement/static/locales",
 ) {
     if (locale.startsWith("en") || translationsLoaded) {
         return;
     }
     try {
         const response = await fetch(
-            `${localeUrl}/${locale}/LC_MESSAGES/${locale}.json`
+            `${localeUrl}/${locale}/LC_MESSAGES/${locale}.json`,
         );
         if (response.status >= 200 && response.status <= 299) {
             const translations = await response.json();
@@ -41,13 +41,13 @@ async function loadTranslations(
             });
         } else {
             console.info(
-                `No translations found for locale ${locale}. Using default locale.`
+                `No translations found for locale ${locale}. Using default locale.`,
             );
         }
     } catch (error) {
         console.error(
             `Error loading translations for locale ${locale}:`,
-            error
+            error,
         );
     }
 }
@@ -90,7 +90,7 @@ export class TranslateDirective extends Directive {
                     if (this._element) {
                         this._element.classList.remove(
                             "skeleton",
-                            "skeleton-text"
+                            "skeleton-text",
                         );
                     }
                 },
@@ -153,7 +153,7 @@ export class TranslateAttributeDirective extends Directive {
             partInfo.type !== PartType.ATTRIBUTE
         ) {
             throw new Error(
-                "Use of TranslateAttributeDirective on non-attribute/non-property is forbidden."
+                "Use of TranslateAttributeDirective on non-attribute/non-property is forbidden.",
             );
         }
     }
@@ -178,7 +178,7 @@ export class TranslateAttributeDirective extends Directive {
                     if (this._element) {
                         this._element.classList.remove(
                             "skeleton",
-                            "skeleton-text"
+                            "skeleton-text",
                         );
                     }
                 },
@@ -197,7 +197,7 @@ export class TranslateAttributeDirective extends Directive {
 
     override update(
         part: PropertyPart | AttributePart,
-        [text]: Parameters<this["render"]>
+        [text]: Parameters<this["render"]>,
     ) {
         this.____(part, text).then((translatedText) => {
             this.updateTranslation(translatedText);

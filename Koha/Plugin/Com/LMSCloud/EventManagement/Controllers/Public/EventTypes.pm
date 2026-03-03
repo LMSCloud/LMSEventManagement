@@ -1,6 +1,5 @@
 package Koha::Plugin::Com::LMSCloud::EventManagement::Controllers::Public::EventTypes;
 
-
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';

@@ -107,8 +107,8 @@ export default class LMSModal extends LitElement {
             body: JSON.stringify(
                 this.fields.reduce(
                     (acc, field) => ({ ...acc, [field.name]: field.value }),
-                    {}
-                )
+                    {},
+                ),
             ),
         });
 
@@ -132,7 +132,7 @@ export default class LMSModal extends LitElement {
                                   ${map(
                                       result.error,
                                       (message: string) =>
-                                          html`<li>${message}</li>`
+                                          html`<li>${message}</li>`,
                                   )}
                               </ol>`
                         : html`<span>Sorry! ${result.error}</span>`,
@@ -154,7 +154,7 @@ export default class LMSModal extends LitElement {
                                             className: "w-4 h-4 inline-block",
                                         })}
                                         ${error.path}
-                                    </li>`
+                                    </li>`,
                             )}
                         </ol>`,
                 };
@@ -211,10 +211,10 @@ export default class LMSModal extends LitElement {
 
     protected composeTaggedInputs(
         field: ModalField,
-        taggedData?: TaggedData[]
+        taggedData?: TaggedData[],
     ) {
         return Array.from(
-            this.getColumnData({ name: field.name, value: field }, taggedData)
+            this.getColumnData({ name: field.name, value: field }, taggedData),
         ).map((template) => [field, template] as [ModalField, TemplateResult]);
     }
 
@@ -239,7 +239,7 @@ export default class LMSModal extends LitElement {
                     ref: this.buttonModal,
                     do: () => {
                         const bottom = parseFloat(
-                            getComputedStyle(this.buttonModal).bottom
+                            getComputedStyle(this.buttonModal).bottom,
                         );
                         this.buttonModal.style.bottom = `${
                             bottom +
@@ -258,7 +258,7 @@ export default class LMSModal extends LitElement {
 
     protected *getColumnData(
         query: { name: string; value: ModalField },
-        data?: TaggedData[]
+        data?: TaggedData[],
     ) {
         const { value } = query;
 
@@ -274,8 +274,7 @@ export default class LMSModal extends LitElement {
             <button
                 class="btn-modal ${classMap({
                     "rotate-45": this.isOpen,
-                })} btn btn-circle fixed bottom-4 right-4 h-20 w-20 rounded-full 
-                border-none bg-primary text-primary-content text-4xl shadow hover:shadow-md"
+                })} btn btn-circle fixed bottom-4 right-4 h-20 w-20 rounded-full border-none bg-primary text-4xl text-primary-content shadow hover:shadow-md"
                 @click=${this.toggleModal}
             >
                 <span class="flex items-center justify-center">
@@ -322,7 +321,7 @@ export default class LMSModal extends LitElement {
                         ${repeat(
                             this.inputs,
                             ([field]) => field.value,
-                            ([, templateResult]) => templateResult
+                            ([, templateResult]) => templateResult,
                         )}
                     </div>
                     <div class="modal-action">
@@ -362,7 +361,7 @@ export default class LMSModal extends LitElement {
 
         // Create a copy of fields, modify it, and then replace the original.
         const newFields = this.fields.map((field) =>
-            field.name === name ? { ...field, value } : field
+            field.name === name ? { ...field, value } : field,
         );
 
         this.fields = [...newFields];

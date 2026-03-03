@@ -52,7 +52,7 @@ export default class ModalMatrix {
                     let fee = undefined;
                     if (Array.isArray(this.value)) {
                         const row = this.value.find(
-                            (row: any) => row.id == datum.id
+                            (row: any) => row.id == datum.id,
                         ) as any;
 
                         if (row) {
@@ -110,10 +110,10 @@ export default class ModalMatrix {
         const matrixData = rows.map((row) => {
             const id = row.querySelector("td")?.id;
             const selectedInput = row.querySelector(
-                'input[type="checkbox"]'
+                'input[type="checkbox"]',
             ) as HTMLInputElement;
             const feeInput = row.querySelector(
-                'input[type="number"]'
+                'input[type="number"]',
             ) as HTMLInputElement;
 
             if (!id || !selectedInput || !feeInput) {

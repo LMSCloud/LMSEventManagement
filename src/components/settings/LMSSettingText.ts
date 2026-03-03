@@ -94,23 +94,37 @@ export default class LMSSettingText extends LitElement {
             <div class="setting-row">
                 <div>
                     <div class="setting-row__name">${__(this.name)}</div>
-                    ${this.description ? html`<div class="setting-row__description">${this.description}</div>` : null}
+                    ${this.description
+                        ? html`<div class="setting-row__description">
+                              ${this.description}
+                          </div>`
+                        : null}
                 </div>
                 <div class="setting-row__inline">
                     <input
                         class="input input-bordered w-full"
                         type=${this.inputType === "email" ? "email" : "text"}
-                        inputmode=${this.inputType === "number" ? "numeric" : "text"}
+                        inputmode=${this.inputType === "number"
+                            ? "numeric"
+                            : "text"}
                         pattern=${this.inputType === "number" ? "[0-9]*" : ".*"}
                         name=${this.name}
                         placeholder=${this.placeholder}
                         .value=${this.draft}
                         @input=${this.handleInput}
                     />
-                    <button class="btn btn-primary" ?disabled=${this.saving || !this.dirty} @click=${this.save}>
+                    <button
+                        class="btn btn-primary"
+                        ?disabled=${this.saving || !this.dirty}
+                        @click=${this.save}
+                    >
                         ${__("Save")}
                     </button>
-                    <button class="btn btn-ghost" ?disabled=${this.saving || !this.dirty} @click=${this.abort}>
+                    <button
+                        class="btn btn-ghost"
+                        ?disabled=${this.saving || !this.dirty}
+                        @click=${this.abort}
+                    >
                         ${__("Abort")}
                     </button>
                 </div>

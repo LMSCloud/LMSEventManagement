@@ -32,7 +32,7 @@ export default class Matrix {
             @click=${this.togglePip}
         >
             <summary
-                class="collapse-title min-h-12 !flex items-center justify-center p-0 "
+                class="collapse-title min-h-12 !flex items-center justify-center p-0"
             >
                 ${__("Target Groups")}
             </summary>
@@ -52,7 +52,7 @@ export default class Matrix {
                                     this.value as LMSEventTargetGroupFee[]
                                 ).find(
                                     (targetGroupFee: LMSEventTargetGroupFee) =>
-                                        targetGroupFee.target_group_id === id
+                                        targetGroupFee.target_group_id === id,
                                 );
                                 const selected =
                                     targetGroupFee?.selected ?? false;
@@ -87,7 +87,7 @@ export default class Matrix {
                                         </td>
                                     </tr>
                                 `;
-                            }
+                            },
                         )}
                     </tbody>
                 </table>

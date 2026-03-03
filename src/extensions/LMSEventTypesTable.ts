@@ -27,7 +27,7 @@ export default class LMSEventTypesTable extends LMSTable {
 
     private handleInput(
         input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
-        value: unknown
+        value: unknown,
     ) {
         if (input instanceof HTMLInputElement && input.type === "checkbox") {
             return Boolean(input.checked);
@@ -49,7 +49,7 @@ export default class LMSEventTypesTable extends LMSTable {
         if (parent) {
             id = parent.firstElementChild?.textContent?.trim();
             inputs = parent.querySelectorAll(
-                "input, select, textarea"
+                "input, select, textarea",
             ) as NodeListOf<
                 HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
             >;
@@ -64,47 +64,53 @@ export default class LMSEventTypesTable extends LMSTable {
             path: [id.toString()],
             requestInit: {
                 body: JSON.stringify({
-                    ...Array.from(inputs).reduce((acc, input) => {
-                        if (
-                            input.dataset["group"] &&
-                            input instanceof HTMLInputElement
-                        ) {
-                            const group = input.dataset["group"];
-                            if (!(group in acc)) {
-                                acc[group] = [];
-                            }
+                    ...Array.from(inputs).reduce(
+                        (acc, input) => {
+                            if (
+                                input.dataset["group"] &&
+                                input instanceof HTMLInputElement
+                            ) {
+                                const group = input.dataset["group"];
+                                if (!(group in acc)) {
+                                    acc[group] = [];
+                                }
 
-                            const { id, name, value } = input;
+                                const { id, name, value } = input;
 
-                            const groupArray = acc[group] as Array<
-                                Record<string, unknown>
-                            >;
-                            const groupIndex = groupArray.findIndex(
-                                (item) => item["id"] === id
-                            );
+                                const groupArray = acc[group] as Array<
+                                    Record<string, unknown>
+                                >;
+                                const groupIndex = groupArray.findIndex(
+                                    (item) => item["id"] === id,
+                                );
 
-                            if (groupIndex === -1) {
-                                groupArray.push({
-                                    id,
-                                    [name]: this.handleInput(input, value),
-                                });
+                                if (groupIndex === -1) {
+                                    groupArray.push({
+                                        id,
+                                        [name]: this.handleInput(input, value),
+                                    });
+                                    return acc;
+                                }
+
+                                const groupItem = groupArray[groupIndex];
+                                if (groupItem) {
+                                    groupItem[name] = this.handleInput(
+                                        input,
+                                        value,
+                                    );
+                                }
+
                                 return acc;
                             }
 
-                            const groupItem = groupArray[groupIndex];
-                            if (groupItem) {
-                                groupItem[name] = this.handleInput(
-                                    input,
-                                    value
-                                );
-                            }
-
+                            acc[input.name] = this.handleInput(
+                                input,
+                                input.value,
+                            );
                             return acc;
-                        }
-
-                        acc[input.name] = this.handleInput(input, input.value);
-                        return acc;
-                    }, {} as Record<string, unknown>),
+                        },
+                        {} as Record<string, unknown>,
+                    ),
                 }),
             },
         });
@@ -116,7 +122,7 @@ export default class LMSEventTypesTable extends LMSTable {
             this.toggleEdit(
                 new CustomEvent("click", {
                     detail: target.closest("td")?.querySelector(".btn-edit"),
-                })
+                }),
             );
             this.dispatchEvent(new CustomEvent("updated", { detail: id }));
             return;
@@ -130,7 +136,7 @@ export default class LMSEventTypesTable extends LMSTable {
 
     override async handleDelete(
         e: Event,
-        target = this.confirmationModal.ref as HTMLElement
+        target = this.confirmationModal.ref as HTMLElement,
     ) {
         if (!target) {
             target = e.target as HTMLElement;
@@ -197,8 +203,8 @@ export default class LMSEventTypesTable extends LMSTable {
                         ["target_groups", this.target_groups],
                         ["location", this.locations],
                         ["image", this.images],
-                    ])
-                )
+                    ]),
+                ),
         );
 
         // this.confirmationModal.message = __(

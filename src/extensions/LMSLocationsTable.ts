@@ -34,12 +34,12 @@ export default class LMSLocationsTable extends LMSTable {
                     ...Array.from(inputs).reduce(
                         (
                             acc: { [key: string]: number | string },
-                            input: Input
+                            input: Input,
                         ) => {
                             acc[input.name] = input.value;
                             return acc;
                         },
-                        {}
+                        {},
                     ),
                 }),
             },
@@ -51,7 +51,7 @@ export default class LMSLocationsTable extends LMSTable {
             this.toggleEdit(
                 new CustomEvent("click", {
                     detail: target.closest("td")?.querySelector(".btn-edit"),
-                })
+                }),
             );
             this.dispatchEvent(new CustomEvent("updated", { detail: id }));
             return;
@@ -65,7 +65,7 @@ export default class LMSLocationsTable extends LMSTable {
 
     override async handleDelete(
         e: Event,
-        target = this.confirmationModal.ref as HTMLElement
+        target = this.confirmationModal.ref as HTMLElement,
     ) {
         if (!target) {
             target = e.target as HTMLElement;
@@ -125,7 +125,7 @@ export default class LMSLocationsTable extends LMSTable {
         this.data = this.locations.map(
             (location: { [key in keyof LMSLocation]: LMSLocation[key] }) => {
                 return Object.fromEntries(this.getColumnData(location));
-            }
+            },
         );
     }
 

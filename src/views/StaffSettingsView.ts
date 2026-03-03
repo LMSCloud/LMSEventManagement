@@ -16,7 +16,8 @@ declare global {
 
 @customElement("lms-staff-settings-view")
 export default class StaffSettingsView extends LitElement {
-    @state() state: "initial" | "pending" | "success" | "no-content" | "error" = "initial";
+    @state() state: "initial" | "pending" | "success" | "no-content" | "error" =
+        "initial";
 
     private settings: Column[] = [];
 
@@ -38,7 +39,9 @@ export default class StaffSettingsView extends LitElement {
                 try {
                     return {
                         ...setting,
-                        plugin_value: JSON.parse(setting.plugin_value.toString()),
+                        plugin_value: JSON.parse(
+                            setting.plugin_value.toString(),
+                        ),
                     };
                 } catch {
                     return setting;
@@ -58,16 +61,17 @@ export default class StaffSettingsView extends LitElement {
             .with(
                 "initial",
                 "pending",
-                () => html` <div class="mx-8">
-                    <div class="skeleton skeleton-table"></div>
-                </div>`
+                () =>
+                    html` <div class="mx-8">
+                        <div class="skeleton skeleton-table"></div>
+                    </div>`,
             )
             .with(
                 "no-content",
                 () =>
                     html`<h1 class="text-center">
                         ${__("No settings found")}!
-                    </h1>`
+                    </h1>`,
             )
             .with(
                 "success",
@@ -75,7 +79,7 @@ export default class StaffSettingsView extends LitElement {
                     html`<lms-settings-table
                         @updated=${this.fetchUpdate}
                         .settings=${this.settings}
-                    ></lms-settings-table>`
+                    ></lms-settings-table>`,
             )
             .with("error", () => html`<h1 class="text-center">Error</h1>`)
             .exhaustive();

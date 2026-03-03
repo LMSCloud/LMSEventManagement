@@ -75,7 +75,7 @@ export default class LMSEventsView extends LitElement {
                 "_page",
                 "_per_page",
                 "q",
-                "open_registration"
+                "open_registration",
             );
 
         orderBy ??= "start_time";
@@ -104,7 +104,7 @@ export default class LMSEventsView extends LitElement {
                     eventsResponse.json(),
                     this.composeTotalCountPromise(eventsResponse),
                     locationsResponse.json(),
-                ])
+                ]),
             )
             .then(([events, events_count, locations]) => {
                 this.events = events;
@@ -124,7 +124,7 @@ export default class LMSEventsView extends LitElement {
                     merge({
                         href: window.location.href,
                         searchParams: this.queryBuilder.query,
-                    })
+                    }),
                 );
 
                 // Check if we should auto-open an event from the hash
@@ -166,7 +166,7 @@ export default class LMSEventsView extends LitElement {
 
     private composeTotalCountPromise(response: Response) {
         return new Promise<number>((resolve) =>
-            resolve(parseInt(response.headers.get("X-Total-Count")!, 10))
+            resolve(parseInt(response.headers.get("X-Total-Count")!, 10)),
         );
     }
 
@@ -184,14 +184,14 @@ export default class LMSEventsView extends LitElement {
                 Promise.all([
                     response.json(),
                     this.composeTotalCountPromise(response),
-                ])
+                ]),
             )
             .then(([events, events_count]) => {
                 history.replace(
                     merge({
                         href: window.location.href,
                         searchParams: this.queryBuilder.query,
-                    })
+                    }),
                 );
                 this.events = events;
                 this.events_count = events_count;
@@ -217,7 +217,7 @@ export default class LMSEventsView extends LitElement {
         const { filters, q } = e.detail;
 
         this.queryBuilder.query = this.queryBuilder.merge(
-            filters?.concat([["q", q]]) ?? { q }
+            filters?.concat([["q", q]]) ?? { q },
         );
 
         requestHandler
@@ -229,14 +229,14 @@ export default class LMSEventsView extends LitElement {
                 Promise.all([
                     response.json(),
                     this.composeTotalCountPromise(response),
-                ])
+                ]),
             )
             .then(([events, events_count]) => {
                 history.replace(
                     merge({
                         href: window.location.href,
                         searchParams: this.queryBuilder.query,
-                    })
+                    }),
                 );
                 this.events = events;
                 this.events_count = events_count;
@@ -258,16 +258,16 @@ export default class LMSEventsView extends LitElement {
 
     private checkHashForEvent() {
         const hash = window.location.hash;
-        if (!hash || !hash.startsWith('#event-')) {
+        if (!hash || !hash.startsWith("#event-")) {
             return;
         }
 
-        const eventId = parseInt(hash.replace('#event-', ''), 10);
+        const eventId = parseInt(hash.replace("#event-", ""), 10);
         if (isNaN(eventId)) {
             return;
         }
 
-        const event = this.events?.find(e => e.id === eventId);
+        const event = this.events?.find((e) => e.id === eventId);
         if (event) {
             this.handleShowDetails({ lmsEvent: event });
         }
@@ -312,14 +312,14 @@ export default class LMSEventsView extends LitElement {
                 Promise.all([
                     response.json(),
                     this.composeTotalCountPromise(response),
-                ])
+                ]),
             )
             .then(([events, events_count]) => {
                 history.replace(
                     merge({
                         href: window.location.href,
                         searchParams: this.queryBuilder.query,
-                    })
+                    }),
                 );
                 this.events = events;
                 this.events_count = events_count;
@@ -389,7 +389,7 @@ export default class LMSEventsView extends LitElement {
                                 className: "w-4 h-4 inline-block",
                             })}
                             ${this.locations?.find(
-                                (location) => location.id === event.location
+                                (location) => location.id === event.location,
                             )?.name || __("Location not found")}
                         </small>
                     </span>`,
@@ -425,7 +425,7 @@ export default class LMSEventsView extends LitElement {
                             .events=${this.allEvents ?? this.events ?? []}
                             .shouldUpdateFacets=${Boolean(
                                 !this.isQueryParamSet() &&
-                                    !this.isObjectAccessorSet()
+                                    !this.isObjectAccessorSet(),
                             )}
                         >
                             ${match(this.state)
@@ -439,9 +439,9 @@ export default class LMSEventsView extends LitElement {
                                                 () =>
                                                     html`<div
                                                         class="skeleton skeleton-card"
-                                                    ></div>`
+                                                    ></div>`,
                                             )}
-                                        </div>`
+                                        </div>`,
                                 )
                                 .with(
                                     "no-results",
@@ -455,10 +455,10 @@ export default class LMSEventsView extends LitElement {
                                         >
                                             <div class="alert alert-info">
                                                 ${__(
-                                                    "There are no events to display"
+                                                    "There are no events to display",
                                                 )}
                                             </div>
-                                        </div>`
+                                        </div>`,
                                 )
                                 .with(
                                     "success",
@@ -469,7 +469,7 @@ export default class LMSEventsView extends LitElement {
                                                     this.events ?? [],
                                                     (event) => event["id"],
                                                     (event) =>
-                                                        this.renderCard(event)
+                                                        this.renderCard(event),
                                                 )}
                                                 <lms-card-details-modal
                                                     .event=${this.modalData}
@@ -486,7 +486,7 @@ export default class LMSEventsView extends LitElement {
                                                 <span
                                                     class="mt-4 hidden text-center"
                                                     >${__(
-                                                        "You've reached the end"
+                                                        "You've reached the end",
                                                     )}</span
                                                 >
                                                 <button
@@ -497,14 +497,14 @@ export default class LMSEventsView extends LitElement {
                                                     ${__("Load more")}
                                                 </button>
                                             </div>
-                                        </div>`
+                                        </div>`,
                                 )
                                 .with(
                                     "error",
                                     () =>
                                         html`<h1 class="text-center">
                                             ${__("There's been an error")}..
-                                        </h1> `
+                                        </h1> `,
                                 )
                                 .exhaustive()}
                         </lms-events-filter>

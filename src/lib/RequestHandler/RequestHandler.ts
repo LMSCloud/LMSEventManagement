@@ -41,7 +41,7 @@ export class RequestHandler {
     private _toRelativeUrl(
         basePath: string,
         path?: Array<string>,
-        query?: string | Record<string, string>
+        query?: string | Record<string, string>,
     ) {
         if (!basePath) {
             throw new Error(`Argument basePath is ${basePath}.`);
@@ -106,12 +106,12 @@ export class RequestHandler {
             .when(
                 (ua) => ua.includes("chrome"),
                 () =>
-                    endpointConfiguration.ignoreCache ? "no-cache" : "no-store"
+                    endpointConfiguration.ignoreCache ? "no-cache" : "no-store",
             )
             .when(
                 (ua) => ua.includes("firefox"),
                 () =>
-                    endpointConfiguration.ignoreCache ? "no-cache" : "default"
+                    endpointConfiguration.ignoreCache ? "no-cache" : "default",
             )
             .otherwise(() => {
                 if (endpointConfiguration.ignoreCache) {

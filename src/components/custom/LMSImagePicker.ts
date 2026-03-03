@@ -144,7 +144,7 @@ export default class LMSImagePicker extends LitElement {
                                         type="text"
                                         class="input input-bordered w-full"
                                         placeholder=${attr__(
-                                            "Custom Image URL, e.g. https://example.com/image.png"
+                                            "Custom Image URL, e.g. https://example.com/image.png",
                                         )}
                                     />
                                 </label>
@@ -164,7 +164,7 @@ export default class LMSImagePicker extends LitElement {
                                         @keydown=${(e: KeyboardEvent) =>
                                             this.handleImageKeyDown(
                                                 e,
-                                                imageUrl
+                                                imageUrl,
                                             )}
                                     >
                                         <div class="form-contol">

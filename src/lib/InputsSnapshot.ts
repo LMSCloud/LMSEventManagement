@@ -14,7 +14,7 @@ export class InputsSnapshot {
             (element) =>
                 element instanceof HTMLInputElement ||
                 element instanceof HTMLSelectElement ||
-                element instanceof HTMLTextAreaElement
+                element instanceof HTMLTextAreaElement,
         ) as InputElement[];
     }
 

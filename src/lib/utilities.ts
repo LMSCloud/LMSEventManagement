@@ -15,7 +15,7 @@ export function deepCopy<T>(obj: T): T {
     for (const key in obj) {
         if ({}.hasOwnProperty.call(obj, key)) {
             (newObj as Record<string, unknown>)[key] = deepCopy(
-                (obj as Record<string, unknown>)[key]
+                (obj as Record<string, unknown>)[key],
             );
         }
     }
@@ -81,7 +81,7 @@ export function throttle(callback: () => void, delay: number) {
 export function debounce<F extends (...args: never[]) => void>(
     func: F,
     wait: number,
-    immediate: boolean
+    immediate: boolean,
 ): (...args: Parameters<F>) => void {
     let timeout: ReturnType<typeof setTimeout> | null = null;
 

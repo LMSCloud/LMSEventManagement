@@ -23,7 +23,7 @@ export default class LMSLocationsModal extends LMSModal {
                 type: "text",
                 desc: __("Name"),
                 placeholder: attr__(
-                    "Name of the location, e.g. 'World Trade Center' or 'Room 101'."
+                    "Name of the location, e.g. 'World Trade Center' or 'Room 101'.",
                 ),
                 required: true,
                 value: "",
@@ -33,7 +33,7 @@ export default class LMSLocationsModal extends LMSModal {
                 type: "text",
                 desc: __("Street"),
                 placeholder: attr__(
-                    "Street name and number, e.g. 'Main Street'."
+                    "Street name and number, e.g. 'Main Street'.",
                 ),
                 required: false,
                 value: "",
@@ -75,7 +75,7 @@ export default class LMSLocationsModal extends LMSModal {
                 type: "text",
                 desc: __("Link"),
                 placeholder: attr__(
-                    "Link to the location's website or a map, e.g. 'https://www.example.com' or 'https://openstreetmap.org'."
+                    "Link to the location's website or a map, e.g. 'https://www.example.com' or 'https://openstreetmap.org'.",
                 ),
                 required: false,
                 value: "",
@@ -83,7 +83,7 @@ export default class LMSLocationsModal extends LMSModal {
         ];
 
         this.inputs = this.fields.flatMap((field) =>
-            this.composeTaggedInputs(field)
+            this.composeTaggedInputs(field),
         );
     }
 }

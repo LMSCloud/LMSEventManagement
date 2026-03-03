@@ -46,7 +46,7 @@ export default class StaffEventTypesView extends LMSAbstractView {
             "_order_by",
             "_page",
             "_per_page",
-            "q"
+            "q",
         );
 
         this.orderBy = orderBy ?? "id";
@@ -67,7 +67,7 @@ export default class StaffEventTypesView extends LMSAbstractView {
                 query: this.queryBuilder.without({ staticParams: true }),
             })
             .then((response) =>
-                response.ok ? response.json() : this.throw(response)
+                response.ok ? response.json() : this.throw(response),
             )
             .then((target_groups) => {
                 this.data = {};
@@ -78,14 +78,14 @@ export default class StaffEventTypesView extends LMSAbstractView {
 
                 this.hashStore.hash = this.hashNeeded(
                     this.hashStore.hash,
-                    this.q
+                    this.q,
                 );
                 history.replace(
                     merge({
                         href: window.location.href,
                         searchParams: this.queryBuilder.query,
                         hash: this.hashStore.hash,
-                    })
+                    }),
                 );
                 this.search = this.hashStore.hash;
             })
@@ -111,7 +111,7 @@ export default class StaffEventTypesView extends LMSAbstractView {
                     html` <div class="mx-4">
                         <div class="skeleton-floating-menu skeleton"></div>
                         <div class="skeleton-table skeleton"></div>
-                    </div>`
+                    </div>`,
             )
             .with("partial-content", () => html`<h1>Unimplemented</h1>`)
             .with(
@@ -122,7 +122,7 @@ export default class StaffEventTypesView extends LMSAbstractView {
                         </h1>
                         <lms-target-groups-modal
                             @created=${this.handleCreated}
-                        ></lms-target-groups-modal>`
+                        ></lms-target-groups-modal>`,
             )
             .with(
                 "no-results",
@@ -142,13 +142,14 @@ export default class StaffEventTypesView extends LMSAbstractView {
                     <lms-target-groups-modal
                         @created=${this.handleCreated}
                     ></lms-target-groups-modal>
-                `
+                `,
             )
             .with(
                 "error",
-                () => html`<lms-open-api-errors
-                    .openApiErrors=${this.errors}
-                ></lms-open-api-errors>`
+                () =>
+                    html`<lms-open-api-errors
+                        .openApiErrors=${this.errors}
+                    ></lms-open-api-errors>`,
             )
             .exhaustive();
     }

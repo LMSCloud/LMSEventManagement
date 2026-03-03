@@ -39,7 +39,7 @@ export default class LMSSearch extends LitElement {
     search?: string;
 
     private isMacOS: boolean = /(Mac|iPhone|iPod|iPad)/i.test(
-        navigator.userAgent
+        navigator.userAgent,
     );
 
     private shortcutText = this.isMacOS ? "⌘" : "Ctrl";
@@ -70,21 +70,21 @@ export default class LMSSearch extends LitElement {
                     (value) => ({
                         operator: "||" as const,
                         value: value.split(" OR ").map((s) => s.trim()),
-                    })
+                    }),
                 )
                 .when(
                     (v) => !isNaN(parseFloat(v)),
                     (value) => ({
                         operator: "=" as const,
                         value: parseFloat(value),
-                    })
+                    }),
                 )
                 .when(
                     (v) => v.startsWith('"') && v.endsWith('"'),
                     (value) => ({
                         operator: "=" as const,
                         value: value.slice(1, -1),
-                    })
+                    }),
                 )
                 .when(
                     (v) => {
@@ -114,7 +114,7 @@ export default class LMSSearch extends LitElement {
                             operator: operator as Operator,
                             value: extractedValue ? extractedValue.trim() : "",
                         };
-                    }
+                    },
                 )
                 .otherwise(() => ({
                     operator: "=" as const,
@@ -139,9 +139,9 @@ export default class LMSSearch extends LitElement {
                     .with("||", () =>
                         Array.isArray(value)
                             ? value.map((v: string) => ({ [key]: v }))
-                            : { [key]: value }
+                            : { [key]: value },
                     )
-                    .otherwise(() => ({ [key]: { [operator]: value } }))
+                    .otherwise(() => ({ [key]: { [operator]: value } })),
             )
             .flat();
 
@@ -165,7 +165,7 @@ export default class LMSSearch extends LitElement {
                     const parsedQuery = this.parseQuery(q);
                     const builtQuery = this.buildQuery(parsedQuery);
                     return JSON.stringify(builtQuery);
-                }
+                },
             )
             .when(
                 (q) => q.length > 0,
@@ -176,10 +176,10 @@ export default class LMSSearch extends LitElement {
                             entries.push({ [field]: { "-like": `%${q}%` } });
                             return entries;
                         },
-                        [] as Array<Record<string, unknown>>
+                        [] as Array<Record<string, unknown>>,
                     );
                     return JSON.stringify(wildcardQuery);
-                }
+                },
             )
             .otherwise(() => JSON.stringify({}));
     }
@@ -194,11 +194,11 @@ export default class LMSSearch extends LitElement {
                     },
                     bubbles: true,
                     composed: true,
-                })
+                }),
             );
         },
         250,
-        false
+        false,
     );
 
     /**
@@ -244,7 +244,7 @@ export default class LMSSearch extends LitElement {
     }
 
     protected override updated(
-        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>,
     ): void {
         if (_changedProperties.has("search") && this.input) {
             this.input.value = this.search ?? "";

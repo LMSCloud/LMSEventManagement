@@ -1,6 +1,5 @@
 package Koha::Plugin::Com::LMSCloud::EventManagement::Controllers::Public::Settings;
 
-
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
@@ -16,7 +15,6 @@ use Locale::TextDomain ( 'com.lmscloud.eventmanagement', undef );
 use Koha::Plugin::Com::LMSCloud::EventManagement::I18N;
 
 our $VERSION = '1.0.0';
-
 
 my $json = JSON::MaybeXS->new->utf8->allow_nonref;
 
@@ -42,21 +40,14 @@ sub _get_settings {
         'plugin_data',
         [ 'plugin_key', 'plugin_value' ],
         {   'plugin_class' => 'Koha::Plugin::Com::LMSCloud::EventManagement',
-            'plugin_key'   => { -in => [
-                'opac_filters_age_enabled',
-                'opac_filters_registration_and_dates_enabled',
-                'opac_filters_fee_enabled',
-                'opac_hide_pending_events',
-                'widget_enabled',
-                'widget_auto_inject',
-                'widget_title',
-                'widget_display_mode',
-                'widget_layout',
-                'widget_event_count',
-                'widget_time_period',
-                'widget_selected_events',
-                'widget_all_events_text',
-            ] }
+            'plugin_key'   => {
+                -in => [
+                    'opac_filters_age_enabled', 'opac_filters_registration_and_dates_enabled', 'opac_filters_fee_enabled', 'opac_hide_pending_events',
+                    'widget_enabled',           'widget_auto_inject',                          'widget_title',             'widget_display_mode',
+                    'widget_layout',            'widget_event_count',                          'widget_time_period',       'widget_selected_events',
+                    'widget_all_events_text',
+                ]
+            }
         }
     );
     my $sth = $dbh->prepare($stmt);

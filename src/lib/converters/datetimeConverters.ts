@@ -15,7 +15,7 @@ dayjs.extend(localizedFormat);
 export function convertToFormat(
     string: string,
     format: string,
-    locale: string
+    locale: string,
 ): string {
     const datetime = dayjs(string);
     return datetime.locale(locale).format(format);
@@ -29,7 +29,7 @@ export function convertToFormat(
  */
 export function splitDateTime(
     string: string | Date | null,
-    locale: string
+    locale: string,
 ): string[] {
     if (!string) {
         return [`${__("Error: Invalid date")}`, ""];
@@ -74,14 +74,14 @@ export function convertToISO8601(string: string): string {
  */
 export function formatDatetimeByLocale(
     datetime: string | Date | null,
-    locale: string
+    locale: string,
 ): TemplateResult {
     if (!datetime) {
         return html`<span>${__("There's been an error")}..</span>`;
     }
 
     const formattedDatetime = dayjs(datetime).locale(locale).format(
-        "LLLL" // Use the appropriate format for the desired localized datetime representation
+        "LLLL", // Use the appropriate format for the desired localized datetime representation
     );
     return html`<span>${formattedDatetime}</span>`;
 }

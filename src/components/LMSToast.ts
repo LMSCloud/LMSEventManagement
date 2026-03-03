@@ -14,7 +14,8 @@ export default class LMSToast extends LitElement {
 
     @property({ type: String }) message: string | TemplateResult = "";
 
-    @property({ type: String }) type: "success" | "error" | "warning" | "info" = "error";
+    @property({ type: String }) type: "success" | "error" | "warning" | "info" =
+        "error";
 
     @state() elapsedTime = 0;
 
@@ -41,21 +42,22 @@ export default class LMSToast extends LitElement {
     override render() {
         return html`
             <div class="toast toast-center z-50">
-                <div class="${classMap({
-                    alert: true,
-                    "alert-success": this.type === "success",
-                    "alert-error": this.type === "error",
-                    "alert-warning": this.type === "warning",
-                    "alert-info": this.type === "info",
-                    "gap-2": true,
-                })}">
+                <div
+                    class="${classMap({
+                        alert: true,
+                        "alert-success": this.type === "success",
+                        "alert-error": this.type === "error",
+                        "alert-warning": this.type === "warning",
+                        "alert-info": this.type === "info",
+                        "gap-2": true,
+                    })}"
+                >
                     <div id="heading">
                         <strong class="mr-auto">${this.heading}</strong>
                     </div>
 
                     <div
-                        class="inline-block h-full min-h-[1em] w-0.5 
-                        self-stretch bg-current opacity-100 dark:opacity-50"
+                        class="inline-block h-full min-h-[1em] w-0.5 self-stretch bg-current opacity-100 dark:opacity-50"
                     ></div>
 
                     <div id="message">
@@ -63,8 +65,7 @@ export default class LMSToast extends LitElement {
                     </div>
 
                     <div
-                        class="inline-block h-full min-h-[1em] w-0.5 
-                        self-stretch  bg-current opacity-100 dark:opacity-50"
+                        class="inline-block h-full min-h-[1em] w-0.5 self-stretch bg-current opacity-100 dark:opacity-50"
                     ></div>
 
                     <div id="controls" class="flex items-center justify-center">
@@ -114,7 +115,7 @@ export default class LMSToast extends LitElement {
                     ref: this.toast,
                     do: () => {
                         const bottom = parseFloat(
-                            getComputedStyle(toast).bottom
+                            getComputedStyle(toast).bottom,
                         );
                         toast.style.bottom = `${
                             bottom +

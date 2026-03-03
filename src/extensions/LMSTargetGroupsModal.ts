@@ -23,7 +23,7 @@ export default class LMSTargetGroupsModal extends LMSModal {
                 type: "text",
                 desc: __("Name"),
                 placeholder: attr__(
-                    "Name of the target group, e.g. 'Children' or 'Adults'."
+                    "Name of the target group, e.g. 'Children' or 'Adults'.",
                 ),
                 required: true,
                 value: "",
@@ -33,7 +33,7 @@ export default class LMSTargetGroupsModal extends LMSModal {
                 type: "number",
                 desc: __("Min Age"),
                 placeholder: attr__(
-                    "Minimum age of the target group, e.g. '18'."
+                    "Minimum age of the target group, e.g. '18'.",
                 ),
                 required: true,
                 value: "",
@@ -43,7 +43,7 @@ export default class LMSTargetGroupsModal extends LMSModal {
                 type: "number",
                 desc: __("Max Age"),
                 placeholder: attr__(
-                    "Maximum age of the target group, e.g. '99'."
+                    "Maximum age of the target group, e.g. '99'.",
                 ),
                 required: false,
                 value: "",
@@ -51,7 +51,7 @@ export default class LMSTargetGroupsModal extends LMSModal {
         ];
 
         this.inputs = this.fields.flatMap((field) =>
-            this.composeTaggedInputs(field)
+            this.composeTaggedInputs(field),
         );
     }
 }

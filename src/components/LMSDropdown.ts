@@ -68,7 +68,7 @@ export default class LMSDropdown extends LitElement {
                         id: this.uuid,
                         open: this.details.open,
                     },
-                })
+                }),
             );
         }
     }
@@ -113,7 +113,9 @@ export default class LMSDropdown extends LitElement {
     override render() {
         return html`
             <details
-                class="${classMap(this.composePosition())} dropdown w-full sm:w-auto"
+                class="${classMap(
+                    this.composePosition(),
+                )} dropdown w-full sm:w-auto"
                 id=${this.uuid}
                 @toggle=${this.dispatchToggleEvent}
                 @blur=${this.handleBlur}
@@ -132,7 +134,7 @@ export default class LMSDropdown extends LitElement {
                     >
                 </summary>
                 <ul
-                    class="menu dropdown-content rounded-box z-40 w-full sm:w-max bg-base-100 p-2 shadow"
+                    class="menu dropdown-content rounded-box z-40 w-full bg-base-100 p-2 shadow sm:w-max"
                 >
                     <slot></slot>
                 </ul>

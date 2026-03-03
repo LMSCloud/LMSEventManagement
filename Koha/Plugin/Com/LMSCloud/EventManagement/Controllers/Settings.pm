@@ -1,6 +1,5 @@
 package Koha::Plugin::Com::LMSCloud::EventManagement::Controllers::Settings;
 
-
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
@@ -18,7 +17,6 @@ use Koha::Plugin::Com::LMSCloud::EventManagement::I18N;
 our $VERSION = '1.0.0';
 
 my $self = Koha::Plugin::Com::LMSCloud::EventManagement->new;
-
 
 my $json = JSON::MaybeXS->new->utf8->allow_nonref;
 

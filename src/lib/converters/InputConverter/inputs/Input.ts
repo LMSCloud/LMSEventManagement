@@ -52,7 +52,7 @@ export default class Input {
             case "datetime-local":
                 return normalizeForInput(
                     this.value as string,
-                    "datetime-local"
+                    "datetime-local",
                 );
             default:
                 return this.value;

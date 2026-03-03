@@ -16,7 +16,7 @@ use C4::Languages ();
 
 use Koha::Database  ();
 use Koha::DateUtils qw( dt_from_string );
-use Koha::Schema         ();
+use Koha::Schema    ();
 
 use Carp             qw( carp croak );
 use Cwd              qw( abs_path );
@@ -122,7 +122,7 @@ sub tool {
         },
     };
 
-    return ($responses->{$op} // $responses->{q{}})->();
+    return ( $responses->{$op} // $responses->{q{}} )->();
 }
 
 sub opac_online_payment {
@@ -214,7 +214,7 @@ sub configure {
 
     };
 
-    return ($responses->{$op} // $responses->{q{}})->();
+    return ( $responses->{$op} // $responses->{q{}} )->();
 }
 
 ## Helper method to ensure all expected settings exist with defaults

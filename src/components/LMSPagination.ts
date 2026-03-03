@@ -60,12 +60,12 @@ export default class LMSPagination extends LitElement {
                     .exhaustive(),
                 bubbles: true,
                 composed: true,
-            })
+            }),
         );
     }
 
     protected override updated(
-        _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+        _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>,
     ): void {
         if (
             _changedProperties.has("page") ||
@@ -145,7 +145,7 @@ export default class LMSPagination extends LitElement {
                     },
                     bubbles: true,
                     composed: true,
-                })
+                }),
             );
         }
     }
@@ -173,7 +173,7 @@ export default class LMSPagination extends LitElement {
                     },
                     bubbles: true,
                     composed: true,
-                })
+                }),
             );
         }
     }
@@ -193,7 +193,7 @@ export default class LMSPagination extends LitElement {
                     id="previous-page-anchor"
                     class="btn btn-disabled join-item"
                     href=${ifDefined(
-                        this.getLinkForPage("previous", this.page)
+                        this.getLinkForPage("previous", this.page),
                     )}
                     @click=${this.handlePageChange}
                     ><span class="hidden lg:inline"> ${__("Previous")} </span>
@@ -212,7 +212,7 @@ export default class LMSPagination extends LitElement {
                             @click=${this.handlePerPageChange}
                             >${pageSize}</a
                         >
-                    `
+                    `,
                 )}
                 <a
                     id="next-page-anchor"

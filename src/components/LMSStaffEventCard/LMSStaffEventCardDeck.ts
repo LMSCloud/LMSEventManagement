@@ -85,7 +85,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
     }
 
     protected override updated(
-        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>,
     ): void {
         super.updated(_changedProperties);
 
@@ -120,7 +120,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
                 detail,
                 composed: true,
                 bubbles: true,
-            })
+            }),
         );
     }
 
@@ -149,7 +149,7 @@ export default class LMSStaffEventCardDeck extends LitElement {
                             html`<lms-staff-event-card
                                 .event=${event}
                                 .taggedData=${this.taggedData}
-                            ></lms-staff-event-card>`
+                            ></lms-staff-event-card>`,
                     )}
                 </div>
             </div>

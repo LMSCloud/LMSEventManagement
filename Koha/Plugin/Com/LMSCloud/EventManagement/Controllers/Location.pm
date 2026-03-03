@@ -1,6 +1,5 @@
 package Koha::Plugin::Com::LMSCloud::EventManagement::Controllers::Location;
 
-
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
@@ -16,7 +15,6 @@ use Koha::LMSCloud::EventManagement::Locations ();
 use Koha::Plugin::Com::LMSCloud::Validator     ();
 
 our $VERSION = '1.0.0';
-
 
 sub _validate {
     my ($args) = @_;

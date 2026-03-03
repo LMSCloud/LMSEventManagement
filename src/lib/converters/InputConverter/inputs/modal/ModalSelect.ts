@@ -50,7 +50,7 @@ export default class ModalSelect {
                             ?selected=${datum.id === this.value}
                         >
                             ${datum.name}
-                        </option>`
+                        </option>`,
                 )}
             </select>
         </div>`;

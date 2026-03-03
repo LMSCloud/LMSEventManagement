@@ -99,7 +99,11 @@ export default class LMSSettingSelect extends LitElement {
             <div class="setting-row">
                 <div>
                     <div class="setting-row__name">${__(this.name)}</div>
-                    ${this.description ? html`<div class="setting-row__description">${this.description}</div>` : null}
+                    ${this.description
+                        ? html`<div class="setting-row__description">
+                              ${this.description}
+                          </div>`
+                        : null}
                 </div>
                 <div class="setting-row__inline">
                     <select
@@ -111,13 +115,27 @@ export default class LMSSettingSelect extends LitElement {
                         <option value="">${__("Default")}</option>
                         ${map(
                             this.options,
-                            (opt) => html`<option value=${opt.value} ?selected=${this.draft === opt.value}>${opt.label}</option>`,
+                            (opt) =>
+                                html`<option
+                                    value=${opt.value}
+                                    ?selected=${this.draft === opt.value}
+                                >
+                                    ${opt.label}
+                                </option>`,
                         )}
                     </select>
-                    <button class="btn btn-primary" ?disabled=${this.saving || !this.dirty} @click=${this.save}>
+                    <button
+                        class="btn btn-primary"
+                        ?disabled=${this.saving || !this.dirty}
+                        @click=${this.save}
+                    >
                         ${__("Save")}
                     </button>
-                    <button class="btn btn-ghost" ?disabled=${this.saving || !this.dirty} @click=${this.abort}>
+                    <button
+                        class="btn btn-ghost"
+                        ?disabled=${this.saving || !this.dirty}
+                        @click=${this.abort}
+                    >
                         ${__("Abort")}
                     </button>
                 </div>

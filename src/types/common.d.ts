@@ -122,7 +122,7 @@ export type TaggedColumn = Column & {
 
 export type TaggedData = [
     "target_groups" | "location" | "event_type" | "image" | "status",
-    Array<unknown>
+    Array<unknown>,
 ];
 
 export type Toast = {

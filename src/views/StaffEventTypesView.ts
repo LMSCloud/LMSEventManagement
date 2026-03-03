@@ -69,7 +69,7 @@ export default class StaffEventTypesView extends LMSAbstractView {
             "_order_by",
             "_page",
             "_per_page",
-            "q"
+            "q",
         );
 
         this.orderBy = orderBy ?? "id";
@@ -86,7 +86,10 @@ export default class StaffEventTypesView extends LMSAbstractView {
 
         Promise.all([
             requestHandler.get({ endpoint: "targetGroups" }),
-            requestHandler.get({ endpoint: "locations", query: { _per_page: "-1" } }),
+            requestHandler.get({
+                endpoint: "locations",
+                query: { _per_page: "-1" },
+            }),
             requestHandler.get({ endpoint: "images" }),
             requestHandler.get({
                 endpoint: "eventTypes",
@@ -94,7 +97,7 @@ export default class StaffEventTypesView extends LMSAbstractView {
             }),
         ])
             .then((results) =>
-                Promise.all(results.map((result) => result.json()))
+                Promise.all(results.map((result) => result.json())),
             )
             .then(([target_groups, locations, images, event_types]) => {
                 this.data = {};
@@ -119,14 +122,14 @@ export default class StaffEventTypesView extends LMSAbstractView {
 
                 this.hashStore.hash = this.hashNeeded(
                     this.hashStore.hash,
-                    this.q
+                    this.q,
                 );
                 history.replace(
                     merge({
                         href: window.location.href,
                         searchParams: this.queryBuilder.query,
                         hash: this.hashStore.hash,
-                    })
+                    }),
                 );
                 this.search = this.hashStore.hash;
             })
@@ -145,7 +148,7 @@ export default class StaffEventTypesView extends LMSAbstractView {
                     html` <div class="mx-4">
                         <div class="skeleton skeleton-floating-menu"></div>
                         <div class="skeleton skeleton-table"></div>
-                    </div>`
+                    </div>`,
             )
             .with(
                 "no-content",
@@ -173,14 +176,14 @@ export default class StaffEventTypesView extends LMSAbstractView {
                             >${__("location")}</lms-anchor
                         >
                         &nbsp;${__("first")}.
-                    </h1>`
+                    </h1>`,
             )
             .with(
                 "partial-content",
                 () =>
                     html` <h1 class="text-center">
                             ${__(
-                                "You can add a new event type by clicking the + button below"
+                                "You can add a new event type by clicking the + button below",
                             )}.
                         </h1>
                         <lms-event-types-modal
@@ -188,34 +191,33 @@ export default class StaffEventTypesView extends LMSAbstractView {
                             .locations=${this.data["locations"] ?? []}
                             .images=${this.data["images"] ?? []}
                             @created=${this.handleCreated}
-                        ></lms-event-types-modal>`
+                        ></lms-event-types-modal>`,
             )
             .with(
                 "no-results",
                 "success",
-                (state) =>
-                    html`
-                        <lms-event-types-table
-                            .target_groups=${this.data["target_groups"] ?? []}
-                            .locations=${this.data["locations"] ?? []}
-                            .images=${this.data["images"] ?? []}
-                            .event_types=${this.data["event_types"] ?? []}
-                            @updated=${this.handleUpdated}
-                            @deleted=${this.handleDeleted}
-                            @sort=${this.handleSort}
-                            @search=${this.handleSearch}
-                            @page=${this.handlePageChange}
-                            @per-page=${this.handlePerPageChange}
-                            @prefetch=${this.prefetchUpdate}
-                        ></lms-event-types-table>
-                        ${this.renderNoResultsAlertMaybe(state)}
-                        <lms-event-types-modal
-                            .target_groups=${this.data["target_groups"] ?? []}
-                            .locations=${this.data["locations"] ?? []}
-                            .images=${this.data["images"] ?? []}
-                            @created=${this.handleCreated}
-                        ></lms-event-types-modal>
-                    `
+                (state) => html`
+                    <lms-event-types-table
+                        .target_groups=${this.data["target_groups"] ?? []}
+                        .locations=${this.data["locations"] ?? []}
+                        .images=${this.data["images"] ?? []}
+                        .event_types=${this.data["event_types"] ?? []}
+                        @updated=${this.handleUpdated}
+                        @deleted=${this.handleDeleted}
+                        @sort=${this.handleSort}
+                        @search=${this.handleSearch}
+                        @page=${this.handlePageChange}
+                        @per-page=${this.handlePerPageChange}
+                        @prefetch=${this.prefetchUpdate}
+                    ></lms-event-types-table>
+                    ${this.renderNoResultsAlertMaybe(state)}
+                    <lms-event-types-modal
+                        .target_groups=${this.data["target_groups"] ?? []}
+                        .locations=${this.data["locations"] ?? []}
+                        .images=${this.data["images"] ?? []}
+                        @created=${this.handleCreated}
+                    ></lms-event-types-modal>
+                `,
             )
             .with("error", () => html`<h1 class="text-center">Error</h1>`)
             .exhaustive();

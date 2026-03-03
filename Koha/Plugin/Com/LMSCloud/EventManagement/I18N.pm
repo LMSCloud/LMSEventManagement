@@ -3,7 +3,7 @@ package Koha::Plugin::Com::LMSCloud::EventManagement::I18N;
 use Modern::Perl;
 use utf8;
 
-use Encode qw( decode_utf8 );
+use Encode           qw( decode_utf8 );
 use Locale::Messages qw(
     bind_textdomain_filter
     bindtextdomain

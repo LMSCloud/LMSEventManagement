@@ -112,7 +112,7 @@ export default class LMSStaffEventCardForm extends LitElement {
         });
 
         const hasOpenCollapsibles = Array.from(this.collapsibles).some(
-            (collapsible) => collapsible.open
+            (collapsible) => collapsible.open,
         );
         if (!hasOpenCollapsibles) {
             this.expandAll();
@@ -128,7 +128,7 @@ export default class LMSStaffEventCardForm extends LitElement {
      */
     private processTargetGroupElements(target: HTMLFormElement) {
         const targetGroupElements: Array<HTMLInputElement> = Array.from(
-            target.querySelectorAll(`[data-group="target_groups"]`)
+            target.querySelectorAll(`[data-group="target_groups"]`),
         );
         if (!targetGroupElements.length) {
             return;
@@ -139,7 +139,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                 target_groups: {
                     [key: number]: LMSEventTargetGroupFeeReduced;
                 },
-                element
+                element,
             ) => {
                 const { name, id } = element;
                 const databaseId = parseInt(id, 10);
@@ -173,7 +173,7 @@ export default class LMSStaffEventCardForm extends LitElement {
 
                 return target_groups;
             },
-            {}
+            {},
         );
     }
 
@@ -187,7 +187,7 @@ export default class LMSStaffEventCardForm extends LitElement {
      */
     private processDatetimeLocalElements(target: HTMLFormElement) {
         const datetimeLocalElements: Array<HTMLInputElement> = Array.from(
-            target.querySelectorAll(`[type="datetime-local"]`)
+            target.querySelectorAll(`[type="datetime-local"]`),
         );
         if (!datetimeLocalElements.length) {
             return;
@@ -221,7 +221,7 @@ export default class LMSStaffEventCardForm extends LitElement {
     private processOpenRegistrationElement(target: HTMLFormElement) {
         const openRegistrationElement: HTMLInputElement | undefined =
             (target?.querySelector(
-                '[name="open_registration"]'
+                '[name="open_registration"]',
             ) as HTMLInputElement) ?? undefined;
         if (!openRegistrationElement) {
             return;
@@ -232,7 +232,7 @@ export default class LMSStaffEventCardForm extends LitElement {
 
     protected renderToast(
         status: string,
-        result: { error: string | string[]; errors: KohaAPIError[] }
+        result: { error: string | string[]; errors: KohaAPIError[] },
     ) {
         if (result.error) {
             this.toast = {
@@ -241,7 +241,8 @@ export default class LMSStaffEventCardForm extends LitElement {
                     ? html`<span>Sorry!</span>
                           <ol>
                               ${result.error.map(
-                                  (message: string) => html`<li>${message}</li>`
+                                  (message: string) =>
+                                      html`<li>${message}</li>`,
                               )}
                           </ol>`
                     : html`<span>Sorry! ${result.error}</span>`,
@@ -258,7 +259,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                                 html`<li>
                                     ${error.message} ${__("Path")}:
                                     ${error.path}
-                                </li>`
+                                </li>`,
                         )}
                     </ol>`,
             };
@@ -317,7 +318,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                 }
                 return acc;
             },
-            {}
+            {},
         );
 
         requestBody["target_groups"] = Object.values(target_groups);
@@ -338,14 +339,14 @@ export default class LMSStaffEventCardForm extends LitElement {
             this.toggleEdit(
                 new CustomEvent("click", {
                     detail: target.querySelector(".btn-edit"),
-                })
+                }),
             );
             this.dispatchEvent(
                 new CustomEvent("updated", {
                     detail: this.event.id,
                     bubbles: true,
                     composed: true,
-                })
+                }),
             );
             return;
         }
@@ -377,7 +378,7 @@ export default class LMSStaffEventCardForm extends LitElement {
                     detail: this.event.id,
                     bubbles: true,
                     composed: true,
-                })
+                }),
             );
 
             return;
@@ -412,12 +413,12 @@ export default class LMSStaffEventCardForm extends LitElement {
 
         if (typeof this.event?.name === "string") {
             this.confirmationModal.message = __(
-                "Are you sure you want to delete: "
+                "Are you sure you want to delete: ",
             );
             this.confirmationModal.obj = this.event.name;
         } else {
             this.confirmationModal.message = __(
-                "Are you sure you want to delete this event?"
+                "Are you sure you want to delete this event?",
             );
         }
 
@@ -439,7 +440,7 @@ export default class LMSStaffEventCardForm extends LitElement {
     }
 
     protected override updated(
-        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>,
     ): void {
         if (_changedProperties.has("taggedData")) {
             if (!this.event) {

@@ -32,7 +32,7 @@ type TemplateQuery = {
 
 type TemplateFunction = (
     value: InputTypeValue | ModalField,
-    data?: LMSEventType[] | LMSLocation[] | LMSTargetGroup[] | UploadedImage[]
+    data?: LMSEventType[] | LMSLocation[] | LMSTargetGroup[] | UploadedImage[],
 ) => TemplateResult;
 
 declare global {
@@ -64,8 +64,8 @@ export class InputConverter {
                     "event_type",
                     value,
                     (data as LMSEventType[]).map(
-                        ({ id, name }) => ({ id, name } as SelectOption)
-                    )
+                        ({ id, name }) => ({ id, name }) as SelectOption,
+                    ),
                 ).render(),
             target_groups: (value, data) =>
                 new Matrix("target_groups", value, data as any[]).render(),
@@ -78,8 +78,8 @@ export class InputConverter {
                     "location",
                     value,
                     (data as LMSLocation[]).map(
-                        ({ id, name }) => ({ id, name } as SelectOption)
-                    )
+                        ({ id, name }) => ({ id, name }) as SelectOption,
+                    ),
                 ).render(),
             link: (value) => new Input("link", value).render(),
             image: (value, data) =>
@@ -133,7 +133,10 @@ ${value}</textarea
             value: (value) => {
                 // For settings table, value is [setting_key, setting_value] tuple
                 if (Array.isArray(value) && value.length === 2) {
-                    const [settingKey, settingValue] = value as [string, string];
+                    const [settingKey, settingValue] = value as [
+                        string,
+                        string,
+                    ];
                     if (this.conversionMap[settingKey]) {
                         return this.conversionMap[settingKey](settingValue);
                     }
@@ -151,8 +154,8 @@ ${value}</textarea
                 new ModalSelect(
                     value as ModalField,
                     (data as any[]).map(
-                        ({ id, name }) => ({ id, name } as SelectOption)
-                    )
+                        ({ id, name }) => ({ id, name }) as SelectOption,
+                    ),
                 ).render(),
             modal_checkbox: (value) =>
                 new ModalCheckboxInput(value as ModalField).render(),
@@ -164,7 +167,7 @@ ${value}</textarea
             opac_filters_registration_and_dates_enabled: (value) =>
                 new Checkbox(
                     "opac_filters_registration_and_dates_enabled",
-                    value
+                    value,
                 ).render(),
             opac_filters_fee_enabled: (value) =>
                 new Checkbox("opac_filters_fee_enabled", value).render(),

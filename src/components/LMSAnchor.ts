@@ -42,7 +42,7 @@ export default class LMSAnchor extends LitElement {
     hasChanged() {
         return (newValues: PropertyValues, oldValues: PropertyValues) => {
             return Object.keys(newValues).some(
-                (key) => newValues.get(key) !== oldValues.get(key)
+                (key) => newValues.get(key) !== oldValues.get(key),
             );
         };
     }

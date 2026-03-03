@@ -57,7 +57,7 @@ export default class LMSImageBrowser extends LitElement {
             .get({ endpoint: "images" })
             .then(
                 async (response): Promise<UploadedImage[]> =>
-                    await response.json()
+                    await response.json(),
             )
             .then((uploadedImages) => {
                 this.uploadedImages = uploadedImages;
@@ -69,7 +69,7 @@ export default class LMSImageBrowser extends LitElement {
 
     private handleClipboardCopy(hashvalue: string) {
         navigator.clipboard.writeText(
-            `/cgi-bin/koha/opac-retrieve-file.pl?id=${hashvalue}`
+            `/cgi-bin/koha/opac-retrieve-file.pl?id=${hashvalue}`,
         );
     }
 
@@ -89,7 +89,7 @@ export default class LMSImageBrowser extends LitElement {
                 const { id } = tooltipReference;
                 const tooltipHashvalue = id.split("-").pop();
                 tooltipReference.target = Array.from(
-                    this.buttonReferences
+                    this.buttonReferences,
                 ).find((buttonReference) => {
                     const { id } = buttonReference;
                     const buttonHashvalue = id.split("-").pop();
@@ -103,7 +103,7 @@ export default class LMSImageBrowser extends LitElement {
 
     private renderToast(
         status: string,
-        result: { error: string | string[]; errors: KohaAPIError[] }
+        result: { error: string | string[]; errors: KohaAPIError[] },
     ) {
         if (result.error) {
             this.toast = {
@@ -112,7 +112,8 @@ export default class LMSImageBrowser extends LitElement {
                     ? html`<span>Sorry!</span>
                           <ol>
                               ${result.error.map(
-                                  (message: string) => html`<li>${message}</li>`
+                                  (message: string) =>
+                                      html`<li>${message}</li>`,
                               )}
                           </ol>`
                     : html`<span>Sorry! ${result.error}</span>`,
@@ -129,7 +130,7 @@ export default class LMSImageBrowser extends LitElement {
                                 html`<li>
                                     ${error.message} ${__("Path")}:
                                     ${error.path}
-                                </li>`
+                                </li>`,
                         )}
                     </ol>`,
             };
@@ -308,7 +309,7 @@ export default class LMSImageBrowser extends LitElement {
                                             id="tooltip-${hashvalue}"
                                             data-placement="top"
                                             data-text=${attr__(
-                                                "Link constructed"
+                                                "Link constructed",
                                             )}
                                             data-timeout="1000"
                                         >
@@ -317,7 +318,7 @@ export default class LMSImageBrowser extends LitElement {
                                                 data-placement="bottom"
                                                 @click=${() => {
                                                     this.handleClipboardCopy(
-                                                        hashvalue
+                                                        hashvalue,
                                                     );
                                                 }}
                                                 class="btn btn-secondary text-center"
@@ -328,7 +329,7 @@ export default class LMSImageBrowser extends LitElement {
                                                 })}
                                                 <span
                                                     >${__(
-                                                        "Copy to clipboard"
+                                                        "Copy to clipboard",
                                                     )}</span
                                                 >
                                             </button>

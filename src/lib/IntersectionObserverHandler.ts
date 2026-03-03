@@ -48,7 +48,7 @@ export class IntersectionObserverHandler {
             this.observer.observe(this.intersected.ref);
         } else {
             throw new Error(
-                "Invalid parameters supplied to IntersectionObserverClass. Please ensure both 'intersecting' and 'intersected' are valid Intersectable types."
+                "Invalid parameters supplied to IntersectionObserverClass. Please ensure both 'intersecting' and 'intersected' are valid Intersectable types.",
             );
         }
     }

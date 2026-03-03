@@ -53,7 +53,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "text",
                 desc: __("Name"),
                 placeholder: attr__(
-                    "Name of the event, e.g. 'Concert' or 'Workshop'."
+                    "Name of the event, e.g. 'Concert' or 'Workshop'.",
                 ),
                 required: true,
             },
@@ -73,7 +73,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "number",
                 desc: __("Min Age"),
                 placeholder: attr__(
-                    "Minimum age of the target groups, e.g. '18'."
+                    "Minimum age of the target groups, e.g. '18'.",
                 ),
                 required: true,
             },
@@ -82,7 +82,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "number",
                 desc: __("Max Age"),
                 placeholder: attr__(
-                    "Maximum age of the target groups, e.g. '99'."
+                    "Maximum age of the target groups, e.g. '99'.",
                 ),
                 required: true,
             },
@@ -91,7 +91,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "number",
                 desc: __("Max Participants"),
                 placeholder: attr__(
-                    "Maximum number of participants, e.g. '100'."
+                    "Maximum number of participants, e.g. '100'.",
                 ),
                 required: true,
             },
@@ -100,7 +100,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "datetime-local",
                 desc: __("Start Time"),
                 placeholder: attr__(
-                    "Start time of the event, e.g. '2023-01-01 10:00'."
+                    "Start time of the event, e.g. '2023-01-01 10:00'.",
                 ),
                 required: true,
             },
@@ -109,7 +109,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "datetime-local",
                 desc: __("End Time"),
                 placeholder: attr__(
-                    "End time of the event, e.g. '2023-01-01 12:00'."
+                    "End time of the event, e.g. '2023-01-01 12:00'.",
                 ),
                 required: true,
             },
@@ -118,7 +118,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "datetime-local",
                 desc: __("Registration Start"),
                 placeholder: attr__(
-                    "Registration start time, e.g. '2023-01-01 08:00'."
+                    "Registration start time, e.g. '2023-01-01 08:00'.",
                 ),
                 required: false,
             },
@@ -127,7 +127,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "datetime-local",
                 desc: __("Registration End"),
                 placeholder: attr__(
-                    "Registration end time, e.g. '2023-01-01 09:00'."
+                    "Registration end time, e.g. '2023-01-01 09:00'.",
                 ),
                 required: false,
             },
@@ -142,7 +142,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "text",
                 desc: __("Image"),
                 placeholder: attr__(
-                    "Image URL, e.g. 'https://example.com/image.png'."
+                    "Image URL, e.g. 'https://example.com/image.png'.",
                 ),
                 required: false,
             },
@@ -151,7 +151,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "text",
                 desc: __("Description"),
                 placeholder: attr__(
-                    "Description of the event, e.g. 'This is a concert.'."
+                    "Description of the event, e.g. 'This is a concert.'.",
                 ),
                 required: false,
             },
@@ -166,7 +166,7 @@ export default class LMSEventsModal extends LMSModal {
                 type: "text",
                 desc: __("Registration Link"),
                 placeholder: attr__(
-                    "Registration link, e.g. 'https://example.com'."
+                    "Registration link, e.g. 'https://example.com'.",
                 ),
                 required: false,
             },
@@ -198,7 +198,7 @@ export default class LMSEventsModal extends LMSModal {
                         { id: 4, name: __("sold_out") },
                     ],
                 ],
-            ])
+            ]),
         );
     }
 
@@ -214,7 +214,7 @@ export default class LMSEventsModal extends LMSModal {
 
         const eventTypeId = parseInt(value, 10);
         const newEventType = this.event_types.find(
-            (eventType) => eventType.id === eventTypeId
+            (eventType) => eventType.id === eventTypeId,
         );
         if (!newEventType) {
             return;
@@ -222,7 +222,7 @@ export default class LMSEventsModal extends LMSModal {
 
         // Convert fields into a map for O(1) lookup.
         const fieldsMap = new Map(
-            this.fields.map((field) => [field.name, field])
+            this.fields.map((field) => [field.name, field]),
         );
 
         // You can now access and update fields directly in O(1) time.
@@ -240,7 +240,7 @@ export default class LMSEventsModal extends LMSModal {
                             target_group_id: id,
                             selected,
                             fee,
-                        }: LMSEventTargetGroupFee) => ({ id, selected, fee })
+                        }: LMSEventTargetGroupFee) => ({ id, selected, fee }),
                     );
 
                     continue;
@@ -254,14 +254,14 @@ export default class LMSEventsModal extends LMSModal {
     }
 
     protected override updated(
-        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>
+        _changedProperties: PropertyValueMap<never> | Map<PropertyKey, unknown>,
     ): void {
         super.updated(_changedProperties);
 
         if (this.eventTypeSelect) {
             this.eventTypeSelect.addEventListener(
                 "change",
-                this.boundUpdateFieldsOnEventTypeChange
+                this.boundUpdateFieldsOnEventTypeChange,
             );
         }
     }
@@ -272,7 +272,7 @@ export default class LMSEventsModal extends LMSModal {
         if (this.eventTypeSelect) {
             this.eventTypeSelect.removeEventListener(
                 "change",
-                this.boundUpdateFieldsOnEventTypeChange
+                this.boundUpdateFieldsOnEventTypeChange,
             );
         }
     }

@@ -30,7 +30,7 @@ export default class Select {
                         ?selected=${datum.id == this.value}
                     >
                         ${datum.name}
-                    </option>`
+                    </option>`,
             )};
         </select>`;
     }

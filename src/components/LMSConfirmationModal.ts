@@ -21,7 +21,7 @@ export default class LMSConfirmationModal extends LitElement {
     private handleClick(e: Event) {
         const { name } = e.target as HTMLButtonElement;
         this.dispatchEvent(
-            new CustomEvent(name, { bubbles: true, composed: true })
+            new CustomEvent(name, { bubbles: true, composed: true }),
         );
     }
 

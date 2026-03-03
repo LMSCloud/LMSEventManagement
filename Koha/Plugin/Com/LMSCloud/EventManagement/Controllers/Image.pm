@@ -1,6 +1,5 @@
 package Koha::Plugin::Com::LMSCloud::EventManagement::Controllers::Image;
 
-
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
@@ -14,7 +13,6 @@ use Koha::Plugin::Com::LMSCloud::EventManagement::I18N;
 use Koha::UploadedFiles ();
 
 our $VERSION = '1.0.0';
-
 
 sub delete {
     my $c = shift->openapi->valid_input or return;

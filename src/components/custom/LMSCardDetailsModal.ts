@@ -74,8 +74,7 @@ export default class LMSCardDetailsModal extends LitElement {
                 return r.json();
             }),
             requestHandler.get({ endpoint: "targetGroupsPublic" }).then((r) => {
-                if (!r.ok)
-                    throw new Error(`targetGroupsPublic: ${r.status}`);
+                if (!r.ok) throw new Error(`targetGroupsPublic: ${r.status}`);
                 return r.json();
             }),
         ])
@@ -118,7 +117,7 @@ export default class LMSCardDetailsModal extends LitElement {
                 new CustomEvent("close", {
                     bubbles: true,
                     composed: true,
-                })
+                }),
             );
         }
     }
@@ -153,7 +152,7 @@ export default class LMSCardDetailsModal extends LitElement {
         }
 
         const fullEventType = this.event_types.find(
-            (_event_type) => _event_type.id === event_type
+            (_event_type) => _event_type.id === event_type,
         );
         if (fullEventType && this.event) {
             this.event.event_type = fullEventType;
@@ -166,7 +165,7 @@ export default class LMSCardDetailsModal extends LitElement {
         }
 
         const fullLocation = this.locations.find(
-            (_location) => _location.id === location
+            (_location) => _location.id === location,
         );
         if (fullLocation && this.event) {
             this.event.location = fullLocation;
@@ -188,8 +187,8 @@ export default class LMSCardDetailsModal extends LitElement {
         const selectedTargetGroups = this.target_groups.filter((target_group) =>
             target_groups.some(
                 (targetGroup: LMSEventTargetGroupFee) =>
-                    targetGroup.target_group_id === target_group.id
-            )
+                    targetGroup.target_group_id === target_group.id,
+            ),
         );
 
         comprehensiveEvent.target_groups = selectedTargetGroups.map(
@@ -197,14 +196,14 @@ export default class LMSCardDetailsModal extends LitElement {
                 const targetGroup = target_groups.find(
                     (eventTargetGroup) =>
                         eventTargetGroup.target_group_id ===
-                        selectedTargetGroup.id
+                        selectedTargetGroup.id,
                 );
                 return {
                     ...selectedTargetGroup,
                     selected: targetGroup?.selected ?? false,
                     fee: targetGroup?.fee ?? 0,
                 };
-            }
+            },
         ) as LMSEventTargetGroupFee[];
     }
 
@@ -216,7 +215,7 @@ export default class LMSCardDetailsModal extends LitElement {
 
     private formatAgeRange(
         min_age: number | null | undefined,
-        max_age: number | null | undefined
+        max_age: number | null | undefined,
     ): string {
         const hasMin = min_age != null;
         const hasMax = max_age != null && max_age < 255;
@@ -235,7 +234,7 @@ export default class LMSCardDetailsModal extends LitElement {
 
     private renderTargetGroupInfo(
         targetGroupFees: LMSEventTargetGroupFee[],
-        hasNoFees: boolean
+        hasNoFees: boolean,
     ) {
         if (!targetGroupFees) {
             return nothing;
@@ -245,7 +244,7 @@ export default class LMSCardDetailsModal extends LitElement {
             .filter(
                 (targetGroupFee) =>
                     targetGroupFee.selected &&
-                    !targetGroupFee["target_group_id"]
+                    !targetGroupFee["target_group_id"],
             )
             .map((targetGroupFee) => {
                 const { name, min_age, max_age, fee } = targetGroupFee;
@@ -264,7 +263,7 @@ export default class LMSCardDetailsModal extends LitElement {
                               <td>
                                   ${formatMonetaryAmountByLocale(
                                       this.localeFull,
-                                      fee
+                                      fee,
                                   )}
                               </td>
                           </tr>
@@ -300,7 +299,7 @@ export default class LMSCardDetailsModal extends LitElement {
         const protocol = "https";
         const urlRegex = new RegExp(
             `^${protocol}:\\/\\/[\\S\\/.$?#][\\S]*$`,
-            "i"
+            "i",
         );
 
         const isValid = urlRegex.test(link);
@@ -382,48 +381,45 @@ export default class LMSCardDetailsModal extends LitElement {
                     .with(
                         "initial",
                         "pending",
-                        () =>
-                            html`
-                                <form
-                                    method="dialog"
-                                    class="modal-box w-11/12 max-w-5xl"
+                        () => html`
+                            <form
+                                method="dialog"
+                                class="modal-box w-11/12 max-w-5xl"
+                            >
+                                <h5
+                                    class="text-lg font-bold"
+                                    id="lms-modal-title"
                                 >
-                                    <h5
-                                        class="text-lg font-bold"
-                                        id="lms-modal-title"
-                                    >
-                                        ${__("Loading Details...")}
-                                    </h5>
+                                    ${__("Loading Details...")}
+                                </h5>
+                                <button
+                                    @click=${this.toggleModal}
+                                    class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+                                >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <div class="flex items-center justify-center">
+                                    <span
+                                        class="loading loading-spinner loading-lg"
+                                    ></span>
+                                </div>
+                                <div class="modal-action">
                                     <button
+                                        class="btn btn-secondary"
                                         @click=${this.toggleModal}
-                                        class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
                                     >
-                                        <span aria-hidden="true">&times;</span>
+                                        ${__("Close")}
                                     </button>
-                                    <div
-                                        class="flex items-center justify-center"
-                                    >
-                                        <span
-                                            class="loading loading-spinner loading-lg"
-                                        ></span>
-                                    </div>
-                                    <div class="modal-action">
-                                        <button
-                                            class="btn btn-secondary"
-                                            @click=${this.toggleModal}
-                                        >
-                                            ${__("Close")}
-                                        </button>
-                                    </div>
-                                </form>
-                            `
+                                </div>
+                            </form>
+                        `,
                     )
                     .with(
                         "success",
                         () => html`
                             <form
                                 method="dialog"
-                                class="modal-box w-11/12 max-w-5xl prose"
+                                class="prose modal-box w-11/12 max-w-5xl"
                             >
                                 <h5
                                     class="text-lg font-bold"
@@ -442,19 +438,21 @@ export default class LMSCardDetailsModal extends LitElement {
                                     <div class="w-full md:w-1/2">
                                         <!-- Date and Time -->
                                         <div class="p-4">
-                                            <p class="mb-2 flex items-center gap-1">
+                                            <p
+                                                class="mb-2 flex items-center gap-1"
+                                            >
                                                 <span
                                                     >${litFontawesome(
                                                         faCalendar,
                                                         {
                                                             className:
                                                                 "w-4 h-4",
-                                                        }
+                                                        },
                                                     )}</span
                                                 >
                                                 <strong
                                                     >${__(
-                                                        "Date and Time"
+                                                        "Date and Time",
                                                     )}</strong
                                                 >
                                             </p>
@@ -462,7 +460,7 @@ export default class LMSCardDetailsModal extends LitElement {
                                                 ${this.event
                                                     ? this.renderDateAndTime(
                                                           this.event.start_time,
-                                                          this.event.end_time
+                                                          this.event.end_time,
                                                       )
                                                     : nothing}
                                             </p>
@@ -470,19 +468,21 @@ export default class LMSCardDetailsModal extends LitElement {
 
                                         <!-- Description -->
                                         <div class="p-4">
-                                            <p class="mb-2 flex items-center gap-1">
+                                            <p
+                                                class="mb-2 flex items-center gap-1"
+                                            >
                                                 <span
                                                     >${litFontawesome(
                                                         faInfoCircle,
                                                         {
                                                             className:
                                                                 "w-4 h-4",
-                                                        }
+                                                        },
                                                     )}</span
                                                 >
                                                 <strong
                                                     >${__(
-                                                        "Description"
+                                                        "Description",
                                                     )}</strong
                                                 >
                                             </p>
@@ -490,8 +490,8 @@ export default class LMSCardDetailsModal extends LitElement {
                                                 ${unsafeHTML(
                                                     DOMPurify.sanitize(
                                                         this.event
-                                                            ?.description ?? ""
-                                                    )
+                                                            ?.description ?? "",
+                                                    ),
                                                 )}
                                             </div>
                                         </div>
@@ -501,7 +501,7 @@ export default class LMSCardDetailsModal extends LitElement {
                                     <div class="w-full md:w-1/2">
                                         <img
                                             src=${ifDefined(
-                                                this.event?.image ?? undefined
+                                                this.event?.image ?? undefined,
                                             )}
                                             class="${classMap({
                                                 hidden: !this.event?.image,
@@ -514,7 +514,9 @@ export default class LMSCardDetailsModal extends LitElement {
                                                 hidden: !hasNoFees,
                                             })} p-4"
                                         >
-                                            <p class="mb-2 flex items-center gap-1">
+                                            <p
+                                                class="mb-2 flex items-center gap-1"
+                                            >
                                                 <span
                                                     >${litFontawesome(faUsers, {
                                                         className: "w-4 h-4",
@@ -522,7 +524,7 @@ export default class LMSCardDetailsModal extends LitElement {
                                                 >
                                                 <strong
                                                     >${__(
-                                                        "Target Groups"
+                                                        "Target Groups",
                                                     )}</strong
                                                 >
                                             </p>
@@ -531,7 +533,7 @@ export default class LMSCardDetailsModal extends LitElement {
                                                     <tr>
                                                         <th>
                                                             ${__(
-                                                                "Target Group"
+                                                                "Target Group",
                                                             )}
                                                         </th>
                                                         <th>
@@ -542,7 +544,7 @@ export default class LMSCardDetailsModal extends LitElement {
                                                 <tbody>
                                                     ${this.renderTargetGroupInfo(
                                                         targetGroups as LMSEventTargetGroupFee[],
-                                                        hasNoFees
+                                                        hasNoFees,
                                                     )}
                                                 </tbody>
                                             </table>
@@ -554,14 +556,16 @@ export default class LMSCardDetailsModal extends LitElement {
                                                 hidden: hasNoFees,
                                             })} p-4"
                                         >
-                                            <p class="mb-2 flex items-center gap-1">
+                                            <p
+                                                class="mb-2 flex items-center gap-1"
+                                            >
                                                 <span
                                                     >${litFontawesome(
                                                         faCreditCard,
                                                         {
                                                             className:
                                                                 "w-4 h-4",
-                                                        }
+                                                        },
                                                     )}</span
                                                 >
                                                 <strong>${__("Fees")}</strong>
@@ -571,7 +575,7 @@ export default class LMSCardDetailsModal extends LitElement {
                                                     <tr>
                                                         <th>
                                                             ${__(
-                                                                "Target Group"
+                                                                "Target Group",
                                                             )}
                                                         </th>
                                                         <th>
@@ -583,21 +587,23 @@ export default class LMSCardDetailsModal extends LitElement {
                                                 <tbody>
                                                     ${this.renderTargetGroupInfo(
                                                         targetGroups as LMSEventTargetGroupFee[],
-                                                        hasNoFees
+                                                        hasNoFees,
                                                     )}
                                                 </tbody>
                                             </table>
                                         </div>
 
                                         <div class="p-4">
-                                            <p class="mb-2 flex items-center gap-1">
+                                            <p
+                                                class="mb-2 flex items-center gap-1"
+                                            >
                                                 <span
                                                     >${litFontawesome(
                                                         faMapMarker,
                                                         {
                                                             className:
                                                                 "w-4 h-4",
-                                                        }
+                                                        },
                                                     )}</span
                                                 >
                                                 <strong
@@ -607,14 +613,14 @@ export default class LMSCardDetailsModal extends LitElement {
                                             <p class="mb-2">
                                                 ${this.event
                                                     ? formatAddress(
-                                                          this.event.location
+                                                          this.event.location,
                                                       )
                                                     : nothing}
                                             </p>
                                             <p>
                                                 ${this.event
                                                     ? this.renderLocationLink(
-                                                          this.event.location
+                                                          this.event.location,
                                                       )
                                                     : nothing}
                                             </p>
@@ -639,7 +645,9 @@ export default class LMSCardDetailsModal extends LitElement {
                                         class="btn btn-neutral"
                                         @click=${this.handleExportIcal}
                                         title=${attr__("Export to Calendar")}
-                                        aria-label=${attr__("Export to Calendar")}
+                                        aria-label=${attr__(
+                                            "Export to Calendar",
+                                        )}
                                     >
                                         ${litFontawesome(faCalendarPlus, {
                                             className: "w-4 h-4 sm:mr-2",
@@ -655,7 +663,7 @@ export default class LMSCardDetailsModal extends LitElement {
                                         })} btn btn-primary"
                                         href=${ifDefined(
                                             this.event?.registration_link ??
-                                                undefined
+                                                undefined,
                                         )}
                                         title=${attr__("Register")}
                                         aria-label=${attr__("Register")}
@@ -669,32 +677,36 @@ export default class LMSCardDetailsModal extends LitElement {
                                     </a>
                                 </div>
                             </form>
-                        `
+                        `,
                     )
                     .with(
                         "error",
-                        () => html` <form
-                            method="dialog"
-                            class="modal-box w-11/12 max-w-5xl"
-                        >
-                            <h5 class="text-lg font-bold" id="lms-modal-title">
-                                ${__("There's been an error")}..
-                            </h5>
-                            <button
-                                @click=${this.toggleModal}
-                                class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+                        () =>
+                            html` <form
+                                method="dialog"
+                                class="modal-box w-11/12 max-w-5xl"
                             >
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            <div class="modal-action">
-                                <button
-                                    class="btn btn-secondary"
-                                    @click=${this.toggleModal}
+                                <h5
+                                    class="text-lg font-bold"
+                                    id="lms-modal-title"
                                 >
-                                    ${__("Close")}
+                                    ${__("There's been an error")}..
+                                </h5>
+                                <button
+                                    @click=${this.toggleModal}
+                                    class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+                                >
+                                    <span aria-hidden="true">&times;</span>
                                 </button>
-                            </div>
-                        </form>`
+                                <div class="modal-action">
+                                    <button
+                                        class="btn btn-secondary"
+                                        @click=${this.toggleModal}
+                                    >
+                                        ${__("Close")}
+                                    </button>
+                                </div>
+                            </form>`,
                     )
                     .exhaustive()}
             </dialog>

@@ -1,4 +1,4 @@
-import { html, LitElement, css, nothing } from "lit";
+import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { requestHandler } from "../lib/RequestHandler/RequestHandler";
@@ -97,7 +97,8 @@ export default class OpacEventsWidget extends LitElement {
             font-weight: var(--header-font-weight);
             margin-bottom: var(--widget-spacing);
             padding-bottom: var(--widget-spacing-sm);
-            border-bottom: var(--widget-border-width) solid var(--widget-border-color);
+            border-bottom: var(--widget-border-width) solid
+                var(--widget-border-color);
             color: var(--header-text-color);
         }
 
@@ -131,7 +132,8 @@ export default class OpacEventsWidget extends LitElement {
         .event-item {
             padding: var(--event-padding);
             margin-bottom: var(--widget-spacing-sm);
-            border-left: var(--event-border-width) solid var(--event-border-color);
+            border-left: var(--event-border-width) solid
+                var(--event-border-color);
             background: var(--event-bg-color);
             transition: background var(--transition-duration);
             cursor: pointer;
@@ -176,7 +178,8 @@ export default class OpacEventsWidget extends LitElement {
         .widget-footer {
             margin-top: var(--widget-spacing);
             padding-top: var(--event-padding);
-            border-top: var(--widget-border-width) solid var(--widget-border-color);
+            border-top: var(--widget-border-width) solid
+                var(--widget-border-color);
             text-align: center;
         }
 
@@ -236,7 +239,9 @@ export default class OpacEventsWidget extends LitElement {
         }
     }
 
-    override updated(changedProperties: Map<string | number | symbol, unknown>) {
+    override updated(
+        changedProperties: Map<string | number | symbol, unknown>,
+    ) {
         super.updated(changedProperties);
         // Reload events when selectedLocation changes
         if (changedProperties.has("selectedLocation") && this.config.enabled) {
@@ -246,7 +251,9 @@ export default class OpacEventsWidget extends LitElement {
 
     private async loadConfig() {
         try {
-            const response = await requestHandler.get({ endpoint: "settingsPublic" });
+            const response = await requestHandler.get({
+                endpoint: "settingsPublic",
+            });
             const allSettings = await response.json();
 
             const widgetSettings = allSettings.reduce((acc: any, s: any) => {
@@ -260,7 +267,8 @@ export default class OpacEventsWidget extends LitElement {
             this.config = {
                 enabled: widgetSettings.enabled === 1,
                 title: widgetSettings.title || this.config.title,
-                displayMode: widgetSettings.display_mode || this.config.displayMode,
+                displayMode:
+                    widgetSettings.display_mode || this.config.displayMode,
                 layout: widgetSettings.layout || this.config.layout,
                 eventCount: parseInt(widgetSettings.event_count || "5", 10),
                 timePeriod: parseInt(widgetSettings.time_period || "14", 10),
@@ -278,7 +286,9 @@ export default class OpacEventsWidget extends LitElement {
 
     private async loadLocations() {
         try {
-            const response = await requestHandler.get({ endpoint: "locationsPublic" });
+            const response = await requestHandler.get({
+                endpoint: "locationsPublic",
+            });
             const locations = await response.json();
             this.locations = locations.map((l: any) => ({
                 id: l.id,
@@ -304,7 +314,8 @@ export default class OpacEventsWidget extends LitElement {
             if (this.config.displayMode === "period") {
                 const now = new Date();
                 const endDate = new Date(
-                    now.getTime() + this.config.timePeriod * 24 * 60 * 60 * 1000
+                    now.getTime() +
+                        this.config.timePeriod * 24 * 60 * 60 * 1000,
                 );
                 params.append("start_time", now.toISOString());
                 params.append("end_time", endDate.toISOString());
@@ -320,13 +331,13 @@ export default class OpacEventsWidget extends LitElement {
             // Filter only future events
             const now = new Date();
             events = events.filter(
-                (e: EventData) => new Date(e.start_time) > now
+                (e: EventData) => new Date(e.start_time) > now,
             );
 
             // Filter by location if selected by user
             if (this.selectedLocation) {
-                events = events.filter((e: EventData) =>
-                    e.location === this.selectedLocation
+                events = events.filter(
+                    (e: EventData) => e.location === this.selectedLocation,
                 );
             }
 
@@ -335,7 +346,7 @@ export default class OpacEventsWidget extends LitElement {
                 // Show only selected events
                 if (this.config.selectedEvents.length > 0) {
                     events = events.filter((e: EventData) =>
-                        this.config.selectedEvents.includes(e.id)
+                        this.config.selectedEvents.includes(e.id),
                     );
                 } else {
                     events = [];
@@ -409,27 +420,34 @@ export default class OpacEventsWidget extends LitElement {
 
                     ${this.locations.length > 0
                         ? html`
-                            <div class="location-filter">
-                                <select
-                                    @change=${(e: Event) => {
-                                        const target = e.target as HTMLSelectElement;
-                                        this.selectedLocation = target.value ? Number(target.value) : null;
-                                    }}
-                                >
-                                    <option value="">${__("All Locations")}</option>
-                                    ${this.locations.map(
-                                        (location) => html`
-                                            <option
-                                                value="${location.id}"
-                                                ?selected=${this.selectedLocation === location.id}
-                                            >
-                                                ${location.name}
-                                            </option>
-                                        `
-                                    )}
-                                </select>
-                            </div>
-                        `
+                              <div class="location-filter">
+                                  <select
+                                      @change=${(e: Event) => {
+                                          const target =
+                                              e.target as HTMLSelectElement;
+                                          this.selectedLocation = target.value
+                                              ? Number(target.value)
+                                              : null;
+                                      }}
+                                  >
+                                      <option value="">
+                                          ${__("All Locations")}
+                                      </option>
+                                      ${this.locations.map(
+                                          (location) => html`
+                                              <option
+                                                  value="${location.id}"
+                                                  ?selected=${this
+                                                      .selectedLocation ===
+                                                  location.id}
+                                              >
+                                                  ${location.name}
+                                              </option>
+                                          `,
+                                      )}
+                                  </select>
+                              </div>
+                          `
                         : nothing}
 
                     <div class="no-events">
@@ -453,27 +471,34 @@ export default class OpacEventsWidget extends LitElement {
 
                 ${this.locations.length > 0
                     ? html`
-                        <div class="location-filter">
-                            <select
-                                @change=${(e: Event) => {
-                                    const target = e.target as HTMLSelectElement;
-                                    this.selectedLocation = target.value ? Number(target.value) : null;
-                                }}
-                            >
-                                <option value="">${__("All Locations")}</option>
-                                ${this.locations.map(
-                                    (location) => html`
-                                        <option
-                                            value="${location.id}"
-                                            ?selected=${this.selectedLocation === location.id}
-                                        >
-                                            ${location.name}
-                                        </option>
-                                    `
-                                )}
-                            </select>
-                        </div>
-                    `
+                          <div class="location-filter">
+                              <select
+                                  @change=${(e: Event) => {
+                                      const target =
+                                          e.target as HTMLSelectElement;
+                                      this.selectedLocation = target.value
+                                          ? Number(target.value)
+                                          : null;
+                                  }}
+                              >
+                                  <option value="">
+                                      ${__("All Locations")}
+                                  </option>
+                                  ${this.locations.map(
+                                      (location) => html`
+                                          <option
+                                              value="${location.id}"
+                                              ?selected=${this
+                                                  .selectedLocation ===
+                                              location.id}
+                                          >
+                                              ${location.name}
+                                          </option>
+                                      `,
+                                  )}
+                              </select>
+                          </div>
+                      `
                     : nothing}
 
                 <ul
@@ -492,7 +517,9 @@ export default class OpacEventsWidget extends LitElement {
                                     <div class="event-name">${event.name}</div>
                                     <div class="event-details">
                                         <span class="event-time">
-                                            ${this.formatDateTime(event.start_time)}
+                                            ${this.formatDateTime(
+                                                event.start_time,
+                                            )}
                                         </span>
                                         ${event.location_name
                                             ? html`
@@ -504,11 +531,14 @@ export default class OpacEventsWidget extends LitElement {
                                     </div>
                                 </a>
                             </li>
-                        `
+                        `,
                     )}
                 </ul>
                 <div class="widget-footer">
-                    <a href="${this.getAllEventsUrl()}" class="all-events-button">
+                    <a
+                        href="${this.getAllEventsUrl()}"
+                        class="all-events-button"
+                    >
                         ${this.config.allEventsText}
                     </a>
                 </div>

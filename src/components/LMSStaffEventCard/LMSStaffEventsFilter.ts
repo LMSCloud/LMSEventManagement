@@ -86,7 +86,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                 detail: { orderBy: target.value },
                 bubbles: true,
                 composed: true,
-            })
+            }),
         );
     }
 
@@ -98,7 +98,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                 },
                 bubbles: true,
                 composed: true,
-            })
+            }),
         );
     }
 
@@ -118,7 +118,7 @@ export default class LMSStaffEventsFilter extends LitElement {
         if (target.id === "start_time_now") {
             this.startTimeInput.value = normalizeForInput(
                 new Date().toString(),
-                "datetime-local"
+                "datetime-local",
             );
         }
         this.dispatchEvent(
@@ -128,7 +128,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                 },
                 bubbles: true,
                 composed: true,
-            })
+            }),
         );
     }
 
@@ -137,7 +137,7 @@ export default class LMSStaffEventsFilter extends LitElement {
             new CustomEvent("reset", {
                 bubbles: true,
                 composed: true,
-            })
+            }),
         );
     }
 
@@ -177,7 +177,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                                         >
                                     </label>
                                 </div>
-                            `
+                            `,
                         )}
                     </lms-dropdown>
                     <lms-dropdown
@@ -190,7 +190,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                             this.event_types,
                             (event_type) => event_type["id"],
                             (event_type) => html`
-                                <div class="form-control ">
+                                <div class="form-control">
                                     <label
                                         for="event_types_${event_type.id}"
                                         class="label cursor-pointer justify-start"
@@ -207,7 +207,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                                         >
                                     </label>
                                 </div>
-                            `
+                            `,
                         )}
                     </lms-dropdown>
                     <lms-dropdown
@@ -220,7 +220,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                             this.target_groups,
                             (target_group) => target_group["id"],
                             (target_group) => html`
-                                <div class="form-control ">
+                                <div class="form-control">
                                     <label
                                         for="target_groups_${target_group.id}"
                                         class="label cursor-pointer justify-start"
@@ -237,7 +237,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                                         </span>
                                     </label>
                                 </div>
-                            `
+                            `,
                         )}
                     </lms-dropdown>
                     <lms-dropdown
@@ -267,7 +267,7 @@ export default class LMSStaffEventsFilter extends LitElement {
                                         </span>
                                     </label>
                                 </div>
-                            `
+                            `,
                         )}
                     </lms-dropdown>
 

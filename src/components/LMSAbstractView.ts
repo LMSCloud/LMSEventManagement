@@ -99,7 +99,7 @@ export default abstract class LMSAbstractView extends LitElement {
         this.page = parseInt(this.queryBuilder.getValue("_page") ?? "1", 10);
         this.perPage = parseInt(
             this.queryBuilder.getValue("_per_page") ?? "10",
-            10
+            10,
         );
         this.q = this.queryBuilder.getValue("q") ?? "{}";
 
@@ -122,7 +122,7 @@ export default abstract class LMSAbstractView extends LitElement {
         }
 
         return Object.values(this.dataSources).some(
-            (dataSource) => dataSource.main
+            (dataSource) => dataSource.main,
         );
     }
 
@@ -132,7 +132,7 @@ export default abstract class LMSAbstractView extends LitElement {
         }
 
         return Object.values(this.dataSources!).find(
-            (dataSource) => dataSource.main
+            (dataSource) => dataSource.main,
         );
     }
 
@@ -152,7 +152,7 @@ export default abstract class LMSAbstractView extends LitElement {
                 query: this.queryBuilder.without({ staticParams: true }),
             })
             .then((response) =>
-                response.ok ? response.json() : this.throw(response)
+                response.ok ? response.json() : this.throw(response),
             )
             .then((result) => {
                 this.data[id] = result;
@@ -167,7 +167,7 @@ export default abstract class LMSAbstractView extends LitElement {
                         href: window.location.href,
                         searchParams: this.queryBuilder.query,
                         hash: this.hashStore.hash,
-                    })
+                    }),
                 );
 
                 if (provideHash) {
@@ -221,7 +221,7 @@ export default abstract class LMSAbstractView extends LitElement {
                     .with("next", () => {
                         this.nextPage = result;
                     })
-                    .otherwise(() => {})
+                    .otherwise(() => {}),
             )
             .catch((error) => {
                 console.error(error);
@@ -276,7 +276,7 @@ export default abstract class LMSAbstractView extends LitElement {
                     page: this.page,
                     perPage: this.perPage,
                 },
-            })
+            }),
         );
     }
 
@@ -288,7 +288,7 @@ export default abstract class LMSAbstractView extends LitElement {
                     page: this.page,
                     perPage: this.perPage,
                 },
-            })
+            }),
         );
     }
 

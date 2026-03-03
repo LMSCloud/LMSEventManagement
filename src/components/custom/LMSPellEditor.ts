@@ -213,8 +213,8 @@ export default class LMSPellEditor extends LitElement {
         this.setModalSize(width, height);
 
         // Initialize drag position if not set
-        if (!this.modal.dataset["x"]) this.modal.dataset["x"] = '0';
-        if (!this.modal.dataset["y"]) this.modal.dataset["y"] = '0';
+        if (!this.modal.dataset["x"]) this.modal.dataset["x"] = "0";
+        if (!this.modal.dataset["y"]) this.modal.dataset["y"] = "0";
 
         this.modal.showModal();
 
@@ -222,7 +222,10 @@ export default class LMSPellEditor extends LitElement {
         const slottedElements = this.inputSlot?.assignedElements();
         if (slottedElements && slottedElements.length > 0) {
             const element = slottedElements[0];
-            if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+            if (
+                element instanceof HTMLInputElement ||
+                element instanceof HTMLTextAreaElement
+            ) {
                 this.value = element.value;
             }
         }
@@ -244,12 +247,12 @@ export default class LMSPellEditor extends LitElement {
 
     private performModalClose() {
         // Hide modal immediately for instant feedback
-        this.modal.classList.add('closing');
+        this.modal.classList.add("closing");
 
         // Close and cleanup
         requestAnimationFrame(() => {
             this.modal.close();
-            this.modal.classList.remove('closing');
+            this.modal.classList.remove("closing");
             this.requestUpdate();
         });
     }
@@ -282,9 +285,9 @@ export default class LMSPellEditor extends LitElement {
         this.setModalSize(width, height);
 
         // Reset position
-        this.modal.style.transform = 'translate(0px, 0px)';
-        this.modal.dataset["x"] = '0';
-        this.modal.dataset["y"] = '0';
+        this.modal.style.transform = "translate(0px, 0px)";
+        this.modal.dataset["x"] = "0";
+        this.modal.dataset["y"] = "0";
     }
 
     private initEditor() {
@@ -358,21 +361,25 @@ export default class LMSPellEditor extends LitElement {
             inertia: false,
             listeners: {
                 move: (event) => {
-                    let x = (parseFloat(this.modal.dataset["x"] ?? "0")|| 0) + event.dx;
-                    let y = (parseFloat(this.modal.dataset["y"] ?? "0") || 0) + event.dy;
+                    let x =
+                        (parseFloat(this.modal.dataset["x"] ?? "0") || 0) +
+                        event.dx;
+                    let y =
+                        (parseFloat(this.modal.dataset["y"] ?? "0") || 0) +
+                        event.dy;
 
                     this.modal.style.transform = `translate(${x}px, ${y}px)`;
 
                     this.modal.dataset["x"] = x.toString();
                     this.modal.dataset["y"] = y.toString();
-                }
-            }
+                },
+            },
         });
 
         // Make modal resizable
         this.resizeInteractable = interact(this.modal).resizable({
             edges: { left: true, right: true, bottom: true, top: true },
-            ignoreFrom: '.drag-handle',
+            ignoreFrom: ".drag-handle",
             listeners: {
                 move: (event) => {
                     let { x, y } = event.target.dataset;
@@ -394,14 +401,14 @@ export default class LMSPellEditor extends LitElement {
                     min: { width: 200, height: 150 },
                 }),
                 interact.modifiers.aspectRatio({
-                    ratio: 'preserve',
+                    ratio: "preserve",
                     enabled: false,
                     modifiers: [
                         interact.modifiers.restrictSize({
-                            min: { width: 200, height: 150 }
-                        })
-                    ]
-                })
+                            min: { width: 200, height: 150 },
+                        }),
+                    ],
+                }),
             ],
             inertia: false,
         });

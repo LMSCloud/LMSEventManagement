@@ -10,13 +10,13 @@ const PATCHED = Symbol.for("koha-staff-theme-applied");
 const proto = LitElement.prototype as any;
 
 if (!proto[PATCHED]) {
-  const original = proto.createRenderRoot;
+    const original = proto.createRenderRoot;
 
-  proto.createRenderRoot = function () {
-    const root = original.call(this) as ShadowRoot;
-    root.adoptedStyleSheets = [...root.adoptedStyleSheets, kohaStaffTheme];
-    return root;
-  };
+    proto.createRenderRoot = function () {
+        const root = original.call(this) as ShadowRoot;
+        root.adoptedStyleSheets = [...root.adoptedStyleSheets, kohaStaffTheme];
+        return root;
+    };
 
-  proto[PATCHED] = true;
+    proto[PATCHED] = true;
 }

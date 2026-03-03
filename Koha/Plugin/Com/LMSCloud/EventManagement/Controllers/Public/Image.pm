@@ -1,6 +1,5 @@
 package Koha::Plugin::Com::LMSCloud::EventManagement::Controllers::Public::Image;
 
-
 use Modern::Perl;
 use utf8;
 use Mojo::Base 'Mojolicious::Controller';
@@ -16,7 +15,6 @@ use Koha::Plugin::Com::LMSCloud::EventManagement::I18N;
 use Koha::UploadedFiles ();
 
 our $VERSION = '1.0.0';
-
 
 Readonly::Scalar my $OK                => 200;
 Readonly::Scalar my $DAYS_TO_CACHE     => 30;

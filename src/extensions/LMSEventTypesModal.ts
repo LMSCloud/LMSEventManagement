@@ -37,7 +37,7 @@ export default class LMSEventTypesModal extends LMSModal {
                 type: "text",
                 desc: __("Name"),
                 placeholder: attr__(
-                    "Name of the event type, e.g. 'Workshop' or 'Lecture'."
+                    "Name of the event type, e.g. 'Workshop' or 'Lecture'.",
                 ),
                 required: true,
                 value: "",
@@ -59,7 +59,7 @@ export default class LMSEventTypesModal extends LMSModal {
                 type: "number",
                 desc: __("Min Age"),
                 placeholder: attr__(
-                    "Minimum age of the target groups, e.g. '18'."
+                    "Minimum age of the target groups, e.g. '18'.",
                 ),
                 required: true,
                 value: "",
@@ -69,7 +69,7 @@ export default class LMSEventTypesModal extends LMSModal {
                 type: "number",
                 desc: __("Max Age"),
                 placeholder: attr__(
-                    "Maximum age of the target groups, e.g. '99'."
+                    "Maximum age of the target groups, e.g. '99'.",
                 ),
                 required: true,
                 value: "",
@@ -79,7 +79,7 @@ export default class LMSEventTypesModal extends LMSModal {
                 type: "number",
                 desc: __("Max Participants"),
                 placeholder: attr__(
-                    "Maximum number of participants, e.g. '20'."
+                    "Maximum number of participants, e.g. '20'.",
                 ),
                 required: true,
                 value: "",
@@ -104,7 +104,7 @@ export default class LMSEventTypesModal extends LMSModal {
                 type: "text",
                 desc: __("Description"),
                 placeholder: attr__(
-                    "Description of the event type, e.g. 'This is a workshop.'"
+                    "Description of the event type, e.g. 'This is a workshop.'",
                 ),
                 required: false,
                 value: "",
@@ -123,7 +123,7 @@ export default class LMSEventTypesModal extends LMSModal {
                 ["target_groups", this.target_groups],
                 ["location", this.locations],
                 ["image", this.images],
-            ])
+            ]),
         );
     }
 }

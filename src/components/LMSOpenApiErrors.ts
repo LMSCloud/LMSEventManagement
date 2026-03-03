@@ -25,7 +25,7 @@ export default class LMSOpenApiErrors extends LitElement {
         return parts.map((part, i) =>
             i < parts.length - 1
                 ? html`${part}<span class="text-error">${substring}</span>`
-                : html`${part}`
+                : html`${part}`,
         );
     }
 
@@ -49,7 +49,7 @@ export default class LMSOpenApiErrors extends LitElement {
                             <h2 class="card-title">${message}</h2>
                         </div>
                     </div>
-                `
+                `,
             )
             .when(
                 (ps) => ps.includes("path"),
@@ -62,7 +62,7 @@ export default class LMSOpenApiErrors extends LitElement {
                             <code>
                                 ...${this._renderHighlighted(
                                     ps.slice(-1).toString(),
-                                    this.href.pathname
+                                    this.href.pathname,
                                 )}...</code
                             >
                             <div class="card-actions justify-end">
@@ -75,7 +75,7 @@ export default class LMSOpenApiErrors extends LitElement {
                             </div>
                         </div>
                     </div>
-                `
+                `,
             )
             .when(
                 (ps) => ps.includes("query"),
@@ -90,14 +90,14 @@ export default class LMSOpenApiErrors extends LitElement {
                                 <code
                                     >...${this._renderHighlighted(
                                         offender,
-                                        this.href.search
+                                        this.href.search,
                                     )}...</code
                                 >
                                 <div class="card-actions justify-end">
                                     <a
                                         href=${this._composeHrefWithRemovedOffender(
                                             window.location.href,
-                                            offender
+                                            offender,
                                         )}
                                         class="btn btn-primary"
                                     >
@@ -107,7 +107,7 @@ export default class LMSOpenApiErrors extends LitElement {
                             </div>
                         </div>
                     `;
-                }
+                },
             )
             .otherwise(() => nothing);
     }
@@ -127,7 +127,7 @@ export default class LMSOpenApiErrors extends LitElement {
                     ${this._renderHeading()}
                 </h1>
                 ${map(this.openApiErrors, (error) =>
-                    this._renderErrorDescription(error)
+                    this._renderErrorDescription(error),
                 )}
             </div>
         `;
