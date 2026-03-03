@@ -6,6 +6,7 @@ use Test::More tests => 6;
 
 use FindBin qw($Bin);
 
+use lib "$Bin/..";
 use lib "$Bin/../Koha/Plugin/Com/LMSCloud/EventManagement/lib";
 
 # Load the plugin first — its BEGIN block registers schema classes and forces
