@@ -275,7 +275,7 @@ export default class LMSModal extends LitElement {
                 class="btn-modal ${classMap({
                     "rotate-45": this.isOpen,
                 })} btn btn-circle fixed bottom-4 right-4 h-20 w-20 rounded-full 
-                border-none bg-primary text-4xl shadow hover:shadow-md"
+                border-none bg-accent text-accent-content text-4xl shadow hover:shadow-md"
                 @click=${this.toggleModal}
             >
                 <span class="flex items-center justify-center">

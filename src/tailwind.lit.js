@@ -5293,6 +5293,11 @@ details.collapse summary::-webkit-details-marker {
   border-color: transparent;
 }
 
+.bg-accent {
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--a) / var(--tw-bg-opacity, 1));
+}
+
 .bg-base-100 {
   --tw-bg-opacity: 1;
   background-color: hsl(var(--b1) / var(--tw-bg-opacity, 1));
@@ -5460,6 +5465,11 @@ details.collapse summary::-webkit-details-marker {
 
 .italic {
   font-style: italic;
+}
+
+.text-accent-content {
+  --tw-text-opacity: 1;
+  color: hsl(var(--ac) / var(--tw-text-opacity, 1));
 }
 
 .text-error {

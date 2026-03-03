@@ -1,5 +1,7 @@
 /** Staff Interface Bundle */
 
+import "./themes/apply-koha-theme";
+
 /**   /custom */
 import LMSCardDetailsModal from "./components/custom/LMSCardDetailsModal";
 import LMSEventsFilter from "./components/custom/LMSEventsFilter";
