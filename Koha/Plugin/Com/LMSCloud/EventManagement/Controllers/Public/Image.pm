@@ -68,7 +68,7 @@ sub get {
         # Set Cache-Control header for browser caching
         $c->res->headers->cache_control("public, max-age=$SECONDS_TO_CACHE");
 
-        $c->res->headers->content_disposition( q{attachment; filename*=UTF-8''} . $uploaded_file->filename );
+        $c->res->headers->content_disposition( q{inline; filename*=UTF-8''} . $uploaded_file->filename );
         $c->res->content->asset( Mojo::Asset::File->new( path => $filepath ) );
         $c->rendered($OK);
 
