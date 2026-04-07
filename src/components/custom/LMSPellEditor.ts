@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import interact from "interactjs";
 import { css, html, LitElement, PropertyValueMap } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
@@ -327,7 +328,7 @@ export default class LMSPellEditor extends LitElement {
                 },
             });
 
-            this.pellEditor.content.innerHTML = this.value; // Set the initial value
+            this.pellEditor.content.innerHTML = DOMPurify.sanitize(this.value);
 
             // Add prose class for Tailwind typography styling
             this.pellEditor.content.classList.add("prose", "max-w-none");
