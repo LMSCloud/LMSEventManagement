@@ -152,7 +152,7 @@ sub add {
         return $c->render( status => 200, openapi => { %{ $event_type->unblessed }, target_groups => $event_type_target_group_fees->as_list || [] } || {} );
     }
     catch {
-        $schema->storage->txn_rollback;
+        eval { $schema->storage->txn_rollback };
         return $c->unhandled_exception($_);
     };
 }

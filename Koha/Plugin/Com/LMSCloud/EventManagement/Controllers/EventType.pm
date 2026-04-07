@@ -168,7 +168,7 @@ sub update {
         );
     }
     catch {
-        $schema->storage->txn_rollback;
+        eval { $schema->storage->txn_rollback };
         return $c->unhandled_exception($_);
     };
 }
