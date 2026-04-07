@@ -157,9 +157,10 @@ sub opac_js {
     }
 
     my $page_url = get_page_url( { code => 'lmscloud-eventmanagement' } ) // q{};
+    my $encoded_url = JSON::MaybeXS->new->utf8->allow_nonref->encode($page_url);
 
     return <<~"JS";
-        <script>window.__LMS_EVENT_MANAGEMENT_PAGE_URL__ = "$page_url";</script>
+        <script>window.__LMS_EVENT_MANAGEMENT_PAGE_URL__ = $encoded_url;</script>
         <script type="text/javascript" src="/api/v1/contrib/eventmanagement/static/js/opac-widget-inject.js"></script>
     JS
 }
