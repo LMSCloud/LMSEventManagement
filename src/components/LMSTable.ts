@@ -1,4 +1,6 @@
 import {
+    faChevronDown,
+    faChevronUp,
     faEdit,
     faSave,
     faTimes,
@@ -64,6 +66,11 @@ export default class LMSTable extends LitElement {
 
     @property({ type: Boolean, attribute: "is-deletable" }) isDeletable = false;
 
+    @property({ type: Boolean, attribute: "is-expandable" })
+    protected isExpandable = false;
+
+    @state() private expandedUUIDs = new Set<string>();
+
     @property({ type: Object }) queryBuilder?: QueryBuilder;
 
     @state() toast: Toast = {
@@ -87,6 +94,8 @@ export default class LMSTable extends LitElement {
 
     protected unsortableColumns: string[] = [];
 
+    protected leftAlignedColumns: string[] = [];
+
     protected hasControls = true;
 
     protected inputConverter = new InputConverter();
@@ -103,6 +112,8 @@ export default class LMSTable extends LitElement {
     private snapshot?: InputsSnapshot;
 
     private orphanedTableRow?: HTMLTableRowElement;
+
+    private UUIDs = new Set<string>();
 
     static override styles = [
         tailwindStyles,
@@ -157,6 +168,31 @@ export default class LMSTable extends LitElement {
             select:focus,
             textarea:focus {
                 outline: none !important;
+            }
+
+            .expansion-pane {
+                background: rgba(0, 0, 0, 0.025);
+                border-top: 1px solid rgba(0, 0, 0, 0.06);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+                padding: 1rem 1.5rem;
+            }
+
+            .expansion-label {
+                color: rgba(0, 0, 0, 0.55);
+                font-size: 0.75rem;
+                font-weight: 600;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+            }
+
+            .expansion-value {
+                word-break: break-word;
+                white-space: normal;
+            }
+
+            .expansion-empty {
+                color: rgba(0, 0, 0, 0.35);
+                font-style: italic;
             }
         `,
     ];
@@ -262,6 +298,71 @@ export default class LMSTable extends LitElement {
 
     public handleSave(e: Event) {
         console.info(e, this.notImplementedInBaseMessage);
+    }
+
+    private toggleExpandFor(uuid: string) {
+        if (!uuid) {
+            return;
+        }
+
+        const next = new Set(this.expandedUUIDs);
+        if (next.has(uuid)) {
+            next.delete(uuid);
+        } else {
+            next.add(uuid);
+        }
+        this.expandedUUIDs = next;
+    }
+
+    protected formatExpansionValue(value: unknown): unknown {
+        if (value === null || value === undefined || value === "") {
+            return html`<span class="expansion-empty">${__("—")}</span>`;
+        }
+        if (typeof value === "boolean") {
+            return value ? __("Yes") : __("No");
+        }
+        if (typeof value === "string" || typeof value === "number") {
+            return String(value);
+        }
+        if (Array.isArray(value)) {
+            return value
+                .map((item) =>
+                    item && typeof item === "object" && "name" in item
+                        ? (item as { name: unknown }).name
+                        : String(item),
+                )
+                .join(", ");
+        }
+        return String(value);
+    }
+
+    protected getExpansionFields(
+        datum: Column,
+    ): Array<{ label: unknown; value: unknown }> {
+        const raw = (datum as { _raw?: Column })._raw ?? datum;
+        return this.headers.map((header) => ({
+            label: __(header),
+            value: this.formatExpansionValue(raw[header]),
+        }));
+    }
+
+    protected renderExpansionContent(datum: Column) {
+        const fields = this.getExpansionFields(datum);
+        return html`
+            <div class="expansion-pane">
+                <dl class="grid grid-cols-1 gap-x-8 gap-y-3 md:grid-cols-2">
+                    ${map(
+                        fields,
+                        (field) => html`
+                            <div class="flex flex-col gap-1">
+                                <dt class="expansion-label">${field.label}</dt>
+                                <dd class="expansion-value">${field.value}</dd>
+                            </div>
+                        `,
+                    )}
+                </dl>
+            </div>
+        `;
     }
 
     public handleDelete(e: Event) {
@@ -433,6 +534,35 @@ export default class LMSTable extends LitElement {
     ): void {
         super.willUpdate(_changedProperties);
         this.sortColumns();
+        this.assignUUIDs();
+    }
+
+    private generateRandomUUID() {
+        const array = new Uint32Array(4);
+        crypto.getRandomValues(array);
+        const valueString = array
+            .map((value) => Number(value.toString(16).padStart(8, "0")))
+            .join("");
+        return [
+            valueString.slice(0, 8),
+            valueString.slice(8, 12),
+            valueString.slice(12, 16),
+            valueString.slice(16, 20),
+            valueString.slice(20),
+        ].join("-");
+    }
+
+    private assignUUIDs() {
+        this.data.forEach((datum) => {
+            if (!datum["uuid"]) {
+                let newUUID = this.generateRandomUUID();
+                while (this.UUIDs.has(newUUID)) {
+                    newUUID = this.generateRandomUUID();
+                }
+                datum["uuid"] = newUUID;
+                this.UUIDs.add(newUUID);
+            }
+        });
     }
 
     protected override firstUpdated(
@@ -562,6 +692,45 @@ export default class LMSTable extends LitElement {
             : nothing;
     }
 
+    private renderExpandHeaderMaybe() {
+        return this.isExpandable
+            ? html`<th class="text-center text-base font-medium">
+                  ${__("details")}
+              </th>`
+            : nothing;
+    }
+
+    private renderExpandButtonMaybe(uuid: string, isExpanded: boolean) {
+        return this.isExpandable
+            ? html`
+                  <td class="p-0 text-center">
+                      <div class="join !flex">
+                          <button
+                              @click=${() => this.toggleExpandFor(uuid)}
+                              type="button"
+                              class="btn join-item flex-1 rounded-none"
+                              aria-expanded=${isExpanded ? "true" : "false"}
+                              aria-label=${attr__("Toggle details")}
+                          >
+                              ${litFontawesome(
+                                  isExpanded ? faChevronUp : faChevronDown,
+                                  {
+                                      className:
+                                          "w-4 h-4 inline-block sm:hidden",
+                                  },
+                              )}
+                              <span class="hidden sm:inline"
+                                  >${isExpanded
+                                      ? __("Collapse")
+                                      : __("Expand")}</span
+                              >
+                          </button>
+                      </div>
+                  </td>
+              `
+            : nothing;
+    }
+
     private renderActionButtonsMaybe() {
         return this.isEditable
             ? html`
@@ -670,26 +839,67 @@ export default class LMSTable extends LitElement {
                                           </th>`,
                                 )}
                                 ${this.renderActionHeaderMaybe()}
+                                ${this.renderExpandHeaderMaybe()}
                             </tr>
                         </thead>
                         <tbody>
                             ${repeat(
                                 this.data,
-                                (datum) => datum["id"],
-                                (datum) => html`
-                                    <tr class="h-full">
-                                        ${map(
-                                            this.headers,
-                                            (header) =>
-                                                html`<td
-                                                    class="p-0 text-center"
+                                (datum) => datum["uuid"],
+                                (datum) => {
+                                    const uuid = datum["uuid"] as string;
+                                    const isExpanded =
+                                        this.expandedUUIDs.has(uuid);
+                                    const colSpan =
+                                        this.headers.length +
+                                        (this.isEditable ? 1 : 0) +
+                                        (this.isExpandable ? 1 : 0);
+                                    return html`
+                                        <tr class="h-full">
+                                            ${map(this.headers, (header) => {
+                                                const value = datum[header];
+                                                const titleText =
+                                                    typeof value === "string"
+                                                        ? value
+                                                        : typeof value ===
+                                                            "number"
+                                                          ? String(value)
+                                                          : "";
+                                                const alignClass =
+                                                    this.leftAlignedColumns.includes(
+                                                        header,
+                                                    )
+                                                        ? "px-2 py-0 text-left"
+                                                        : "p-0 text-center";
+                                                return html`<td
+                                                    class=${alignClass}
+                                                    title="${titleText || ""}"
                                                 >
-                                                    ${datum[header]}
-                                                </td>`,
-                                        )}
-                                        ${this.renderActionButtonsMaybe()}
-                                    </tr>
-                                `,
+                                                    ${value}
+                                                </td>`;
+                                            })}
+                                            ${this.renderActionButtonsMaybe()}
+                                            ${this.renderExpandButtonMaybe(
+                                                uuid,
+                                                isExpanded,
+                                            )}
+                                        </tr>
+                                        ${this.isExpandable && isExpanded
+                                            ? html`
+                                                  <tr class="expansion">
+                                                      <td
+                                                          colspan=${colSpan}
+                                                          class="p-0"
+                                                      >
+                                                          ${this.renderExpansionContent(
+                                                              datum,
+                                                          )}
+                                                      </td>
+                                                  </tr>
+                                              `
+                                            : nothing}
+                                    `;
+                                },
                             )}
                         </tbody>
                     </table>
