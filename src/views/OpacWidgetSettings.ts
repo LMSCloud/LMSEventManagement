@@ -103,10 +103,10 @@ export default class OpacWidgetSettings extends LitElement {
         try {
             const response = await requestHandler.get({ endpoint: "events" });
             const events = await response.json();
-            // Get upcoming events only
+            // Keep events that haven't ended yet (includes currently-running ones).
             const now = new Date();
             this.availableEvents = events
-                .filter((e: any) => new Date(e.start_time) > now)
+                .filter((e: any) => new Date(e.end_time) > now)
                 .sort(
                     (a: any, b: any) =>
                         new Date(a.start_time).getTime() -

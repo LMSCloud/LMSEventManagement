@@ -328,10 +328,10 @@ export default class OpacEventsWidget extends LitElement {
             });
             let events = await response.json();
 
-            // Filter only future events
+            // Keep events that haven't ended yet (includes currently-running ones).
             const now = new Date();
             events = events.filter(
-                (e: EventData) => new Date(e.start_time) > now,
+                (e: EventData) => new Date(e.end_time) > now,
             );
 
             // Filter by location if selected by user
