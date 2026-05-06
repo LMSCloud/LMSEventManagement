@@ -156,7 +156,7 @@ sub opac_js {
         return q{};
     }
 
-    my $page_url = get_page_url( { code => 'lmscloud-eventmanagement' } ) // q{};
+    my $page_url    = get_page_url( { code => 'lmscloud-eventmanagement' } ) // q{};
     my $encoded_url = JSON::MaybeXS->new->utf8->allow_nonref->encode($page_url);
 
     return <<~"JS";
