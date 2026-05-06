@@ -317,11 +317,29 @@ export default class StaffEventsView extends LMSAbstractView {
             .with(
                 "partial-content",
                 () =>
-                    html` <h1 class="text-center">
-                            ${__(
-                                "You can add a new event by clicking on the + button below",
-                            )}.
-                        </h1>
+                    html` <div class="mx-4">
+                            <lms-staff-events-filter
+                                .target_groups=${this.data["target_groups"] ??
+                                []}
+                                .locations=${this.data["locations"] ?? []}
+                                .event_types=${this.data["event_types"] ?? []}
+                                .start_time=${this.start_time}
+                                @sort=${this.handleSort}
+                                @filter=${this.handleFilter}
+                                @start-time-change=${this.handleStartTimeChange}
+                                @reset=${this.handleReset}
+                            >
+                                <lms-search
+                                    slot="navbar-center"
+                                    @search=${this.handleSearch}
+                                ></lms-search>
+                            </lms-staff-events-filter>
+                            <h1 class="text-center">
+                                ${__(
+                                    "You can add a new event by clicking on the + button below",
+                                )}.
+                            </h1>
+                        </div>
                         <lms-events-modal
                             .target_groups=${this.data["target_groups"] ?? []}
                             .locations=${this.data["locations"] ?? []}
