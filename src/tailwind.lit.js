@@ -5175,6 +5175,15 @@ details.collapse summary::-webkit-details-marker {
   gap: 1rem;
 }
 
+.gap-x-8 {
+  -moz-column-gap: 2rem;
+       column-gap: 2rem;
+}
+
+.gap-y-3 {
+  row-gap: 0.75rem;
+}
+
 .space-y-2 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
@@ -5369,9 +5378,19 @@ details.collapse summary::-webkit-details-marker {
   padding-right: 0.25rem;
 }
 
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.py-0 {
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 
 .py-4 {
@@ -5688,6 +5707,10 @@ details.collapse summary::-webkit-details-marker {
 @media (min-width: 768px) {
   .md\\:w-1\\/2 {
     width: 50%;
+  }
+
+  .md\\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .md\\:grid-cols-3 {
