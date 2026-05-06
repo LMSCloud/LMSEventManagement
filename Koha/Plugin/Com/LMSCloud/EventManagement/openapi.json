@@ -85,14 +85,14 @@
         {
           "name": "start_time",
           "in": "query",
-          "description": "Starting time of the event",
+          "description": "Lower time bound: only events whose end_time is after this value are returned (so currently-running events are kept).",
           "required": false,
           "type": "string"
         },
         {
           "name": "end_time",
           "in": "query",
-          "description": "Ending time of the event",
+          "description": "Upper time bound: only events whose end_time is on or before this value (end of day) are returned.",
           "required": false,
           "type": "string"
         },
@@ -1804,14 +1804,14 @@
         {
           "name": "start_time",
           "in": "query",
-          "description": "Starting time of the event",
+          "description": "Lower time bound: only events whose end_time is after this value are returned (so currently-running events are kept).",
           "required": false,
           "type": "string"
         },
         {
           "name": "end_time",
           "in": "query",
-          "description": "Ending time of the event",
+          "description": "Upper time bound: only events whose end_time is on or before this value (end of day) are returned.",
           "required": false,
           "type": "string"
         },

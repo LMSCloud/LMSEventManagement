@@ -50,7 +50,10 @@ sub filter {
     }
 
     if ( defined $params->{start_time} ) {
-        $search_params->{start_time} = { '>=' => $params->{start_time} };
+
+        # "Show events from <time>" means events that haven't ended by then,
+        # so currently-running events are not hidden once their start_time has passed.
+        $search_params->{end_time} = { '>' => $params->{start_time} };
     }
 
     if ( defined $params->{end_time} && $params->{end_time} ne q{} ) {
