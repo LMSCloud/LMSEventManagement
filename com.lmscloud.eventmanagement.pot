@@ -8,199 +8,199 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-25 14:49+0100\n"
+"POT-Creation-Date: 2026-05-06 16:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/components/custom/LMSCardDetailsModal.ts:321
+#: src/components/custom/LMSCardDetailsModal.ts:320
 msgid "Directions to the venue by"
 msgstr ""
 
-#: src/components/custom/LMSCardDetailsModal.ts:395
+#: src/components/custom/LMSCardDetailsModal.ts:393
 msgid "Loading Details..."
 msgstr ""
 
-#: src/components/custom/LMSCardDetailsModal.ts:415
-#: src/components/custom/LMSCardDetailsModal.ts:628
-#: src/components/custom/LMSCardDetailsModal.ts:629
+#: src/components/custom/LMSCardDetailsModal.ts:411
+#: src/components/custom/LMSCardDetailsModal.ts:634
 #: src/components/custom/LMSCardDetailsModal.ts:635
-#: src/components/custom/LMSCardDetailsModal.ts:694
+#: src/components/custom/LMSCardDetailsModal.ts:641
+#: src/components/custom/LMSCardDetailsModal.ts:706
 #: src/components/custom/LMSImagePicker.ts:207
-#: src/components/custom/LMSPellEditor.ts:170 src/components/LMSModal.ts:337
+#: src/components/custom/LMSPellEditor.ts:171 src/components/LMSModal.ts:336
 msgid "Close"
 msgstr ""
 
-#: src/components/custom/LMSCardDetailsModal.ts:457
+#: src/components/custom/LMSCardDetailsModal.ts:455
 msgid "Date and Time"
 msgstr ""
 
 #: src/components/custom/LMSCardDetailsModal.ts:485
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:710
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:711
 #: src/extensions/LMSEventsModal.ts:152
 #: src/extensions/LMSEventTypesModal.ts:105
 msgid "Description"
 msgstr ""
 
-#: src/components/custom/LMSCardDetailsModal.ts:525
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:556
+#: src/components/custom/LMSCardDetailsModal.ts:527
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:557
 #: src/extensions/LMSEventManagementMenu.ts:64
 #: src/extensions/LMSEventsModal.ts:68 src/extensions/LMSEventTypesModal.ts:53
 #: src/lib/converters/InputConverter/inputs/Matrix.ts:37
 msgid "Target Groups"
 msgstr ""
 
-#: src/components/custom/LMSCardDetailsModal.ts:534
-#: src/components/custom/LMSCardDetailsModal.ts:574
-#: src/components/custom/LMSEventsFilter.ts:562
+#: src/components/custom/LMSCardDetailsModal.ts:536
+#: src/components/custom/LMSCardDetailsModal.ts:578
+#: src/components/custom/LMSEventsFilter.ts:602
 msgid "Target Group"
 msgstr ""
 
-#: src/components/custom/LMSCardDetailsModal.ts:538
-#: src/components/custom/LMSCardDetailsModal.ts:578
+#: src/components/custom/LMSCardDetailsModal.ts:540
+#: src/components/custom/LMSCardDetailsModal.ts:582
 msgid "Age Range"
 msgstr ""
 
-#: src/components/custom/LMSCardDetailsModal.ts:567
+#: src/components/custom/LMSCardDetailsModal.ts:571
 msgid "Fees"
 msgstr ""
 
-#: src/components/custom/LMSCardDetailsModal.ts:580
-#: src/components/custom/LMSEventsFilter.ts:731
-#: src/components/custom/LMSEventsFilter.ts:745
+#: src/components/custom/LMSCardDetailsModal.ts:584
+#: src/components/custom/LMSEventsFilter.ts:790
+#: src/components/custom/LMSEventsFilter.ts:804
 msgid "Fee"
 msgstr ""
 
-#: src/components/custom/LMSCardDetailsModal.ts:604
-#: src/components/custom/LMSEventsFilter.ts:598
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:666
+#: src/components/custom/LMSCardDetailsModal.ts:610
+#: src/components/custom/LMSEventsFilter.ts:642
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:667
 #: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:244
 #: src/extensions/LMSEventsModal.ts:137 src/extensions/LMSEventTypesModal.ts:90
 msgid "Location"
 msgstr ""
 
-#: src/components/custom/LMSCardDetailsModal.ts:641
-#: src/components/custom/LMSCardDetailsModal.ts:642
-#: src/components/custom/LMSCardDetailsModal.ts:648
+#: src/components/custom/LMSCardDetailsModal.ts:647
+#: src/components/custom/LMSCardDetailsModal.ts:649
+#: src/components/custom/LMSCardDetailsModal.ts:656
 msgid "Export to Calendar"
 msgstr ""
 
-#: src/components/custom/LMSCardDetailsModal.ts:660
-#: src/components/custom/LMSCardDetailsModal.ts:661
-#: src/components/custom/LMSCardDetailsModal.ts:667
+#: src/components/custom/LMSCardDetailsModal.ts:668
+#: src/components/custom/LMSCardDetailsModal.ts:669
+#: src/components/custom/LMSCardDetailsModal.ts:675
 msgid "Register"
 msgstr ""
 
-#: src/components/custom/LMSCardDetailsModal.ts:681
+#: src/components/custom/LMSCardDetailsModal.ts:693
 #: src/lib/converters/datetimeConverters.ts:80
 #: src/lib/converters/displayConverters.ts:44 src/views/LMSEventsView.ts:506
 msgid "There's been an error"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:428
+#: src/components/custom/LMSEventsFilter.ts:453
 msgid "Hide filters"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:429
+#: src/components/custom/LMSEventsFilter.ts:454
 msgid "Show filters"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:434
+#: src/components/custom/LMSEventsFilter.ts:460
 msgid "Filters"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:469
+#: src/components/custom/LMSEventsFilter.ts:497
 msgid "Remove filter"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:488
+#: src/components/custom/LMSEventsFilter.ts:516
 msgid "Clear all"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:497
+#: src/components/custom/LMSEventsFilter.ts:527
 #: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:153
 msgid "Sort by"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:526
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:547
+#: src/components/custom/LMSEventsFilter.ts:563
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:548
 msgid "Event Type"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:633
+#: src/components/custom/LMSEventsFilter.ts:683
 msgid "Age"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:646
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:577
+#: src/components/custom/LMSEventsFilter.ts:696
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:578
 #: src/extensions/LMSEventsModal.ts:74 src/extensions/LMSEventTypesModal.ts:60
 #: src/extensions/LMSTargetGroupsModal.ts:34
 msgid "Min Age"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:661
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:583
+#: src/components/custom/LMSEventsFilter.ts:714
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:584
 #: src/extensions/LMSEventsModal.ts:83 src/extensions/LMSEventTypesModal.ts:70
 #: src/extensions/LMSTargetGroupsModal.ts:44
 msgid "Max Age"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:677
+#: src/components/custom/LMSEventsFilter.ts:730
 msgid "Registration & Dates"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:701
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:702
+#: src/components/custom/LMSEventsFilter.ts:754
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:703
 #: src/extensions/LMSEventsModal.ts:176
 #: src/extensions/LMSEventTypesModal.ts:115
 msgid "Open Registration"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:708
+#: src/components/custom/LMSEventsFilter.ts:764
 msgid "Start Date"
 msgstr ""
 
-#: src/components/custom/LMSEventsFilter.ts:719
+#: src/components/custom/LMSEventsFilter.ts:778
 msgid "End Date"
 msgstr ""
 
-#: src/components/custom/LMSImageBrowser.ts:130
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:259
-#: src/components/LMSTable.ts:375
+#: src/components/custom/LMSImageBrowser.ts:131
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:260
+#: src/components/LMSTable.ts:477
 msgid "Path"
 msgstr ""
 
-#: src/components/custom/LMSImageBrowser.ts:239
+#: src/components/custom/LMSImageBrowser.ts:240
 msgid "Select images"
 msgstr ""
 
-#: src/components/custom/LMSImageBrowser.ts:248
+#: src/components/custom/LMSImageBrowser.ts:249
 msgid "or drag and drop"
 msgstr ""
 
-#: src/components/custom/LMSImageBrowser.ts:251
+#: src/components/custom/LMSImageBrowser.ts:252
 msgid "up to"
 msgstr ""
 
-#: src/components/custom/LMSImageBrowser.ts:287
+#: src/components/custom/LMSImageBrowser.ts:288
 msgid "Link constructed!"
 msgstr ""
 
-#: src/components/custom/LMSImageBrowser.ts:305
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:510
-#: src/components/LMSTable.ts:615 src/components/LMSTable.ts:621
+#: src/components/custom/LMSImageBrowser.ts:306
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:511
+#: src/components/LMSTable.ts:785 src/components/LMSTable.ts:791
 msgid "Delete"
 msgstr ""
 
-#: src/components/custom/LMSImageBrowser.ts:311
+#: src/components/custom/LMSImageBrowser.ts:312
 msgid "Link constructed"
 msgstr ""
 
-#: src/components/custom/LMSImageBrowser.ts:331
+#: src/components/custom/LMSImageBrowser.ts:332
 msgid "Copy to clipboard"
 msgstr ""
 
@@ -212,22 +212,25 @@ msgstr ""
 msgid "Custom Image URL, e.g. https://example.com/image.png"
 msgstr ""
 
-#: src/components/custom/LMSPellEditor.ts:157
+#: src/components/custom/LMSPellEditor.ts:158
 msgid "Drag to move"
 msgstr ""
 
-#: src/components/custom/LMSPellEditor.ts:164
+#: src/components/custom/LMSPellEditor.ts:165
 msgid "Reset size"
 msgstr ""
 
-#: src/components/custom/LMSPellEditor.ts:176
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:498
-#: src/components/LMSTable.ts:600 src/components/LMSTable.ts:606
-#: src/extensions/LMSSettingsTable.ts:458
+#: src/components/custom/LMSPellEditor.ts:177
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:499
+#: src/components/LMSTable.ts:770 src/components/LMSTable.ts:776
+#: src/components/settings/LMSSettingColor.ts:137
+#: src/components/settings/LMSSettingSelect.ts:132
+#: src/components/settings/LMSSettingText.ts:121
+#: src/components/settings/LMSSettingToggle.ts:127
 msgid "Save"
 msgstr ""
 
-#: src/components/custom/LMSPellEditor.ts:183
+#: src/components/custom/LMSPellEditor.ts:184
 msgid "Double click to open the editor."
 msgstr ""
 
@@ -264,8 +267,12 @@ msgid "Sold Out"
 msgstr ""
 
 #: src/components/LMSConfirmationModal.ts:48
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:486
-#: src/components/LMSTable.ts:592 src/extensions/LMSSettingsTable.ts:461
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:487
+#: src/components/LMSTable.ts:762
+#: src/components/settings/LMSSettingColor.ts:144
+#: src/components/settings/LMSSettingSelect.ts:139
+#: src/components/settings/LMSSettingText.ts:128
+#: src/components/settings/LMSSettingToggle.ts:134
 msgid "Abort"
 msgstr ""
 
@@ -273,15 +280,15 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: src/components/LMSDataNavbar.ts:99
+#: src/components/LMSDataNavbar.ts:96
 msgid "Table Controls"
 msgstr ""
 
-#: src/components/LMSModal.ts:302
+#: src/components/LMSModal.ts:301
 msgid "Add"
 msgstr ""
 
-#: src/components/LMSModal.ts:343
+#: src/components/LMSModal.ts:342
 msgid "Create"
 msgstr ""
 
@@ -322,7 +329,7 @@ msgid "Waitlist"
 msgstr ""
 
 #: src/components/LMSStaffEventCard/LMSStaffEventCard.ts:78
-#: src/views/OpacWidgetSettings.ts:544
+#: src/views/OpacWidgetSettings.ts:696
 msgid "Preview"
 msgstr ""
 
@@ -350,92 +357,92 @@ msgstr ""
 msgid "sold_out"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:411
-#: src/components/LMSTable.ts:272
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:412
+#: src/components/LMSTable.ts:373
 msgid "Please confirm"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:415
-#: src/components/LMSTable.ts:277
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:416
+#: src/components/LMSTable.ts:378
 msgid "Are you sure you want to delete: "
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:420
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:421
 msgid "Are you sure you want to delete this event?"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:468
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:469
 msgid "Event controls"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:479
-#: src/components/LMSTable.ts:573 src/components/LMSTable.ts:582
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:480
+#: src/components/LMSTable.ts:743 src/components/LMSTable.ts:752
 msgid "Edit"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:522
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:523
 msgid "Collapse All"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:535
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:536
 msgid "Basic Information"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:540
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:541
 #: src/extensions/LMSEventsModal.ts:54 src/extensions/LMSEventTypesModal.ts:38
 #: src/extensions/LMSLocationsModal.ts:24
 #: src/extensions/LMSTargetGroupsModal.ts:24
 msgid "Name"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:572
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:573
 msgid "Age and Participants"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:591
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:592
 #: src/extensions/LMSEventsModal.ts:92 src/extensions/LMSEventTypesModal.ts:80
 msgid "Max Participants"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:607
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:608
 msgid "Event Times"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:616
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:617
 #: src/extensions/LMSEventsModal.ts:101
 msgid "Start Time"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:624
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:625
 #: src/extensions/LMSEventsModal.ts:110
 msgid "End Time"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:633
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:634
 #: src/extensions/LMSEventsModal.ts:119
 msgid "Registration Start"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:641
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:642
 #: src/extensions/LMSEventsModal.ts:128
 msgid "Registration End"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:657
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:658
 msgid "Additional Information"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:674
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:675
 #: src/extensions/LMSEventsModal.ts:143 src/extensions/LMSEventTypesModal.ts:97
 msgid "Image"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:681
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:682
 #: src/extensions/LMSEventsModal.ts:161
 msgid "Status"
 msgstr ""
 
-#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:689
+#: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:690
 #: src/extensions/LMSEventsModal.ts:167
 msgid "Registration Link"
 msgstr ""
@@ -464,19 +471,47 @@ msgstr ""
 msgid "Reset filters"
 msgstr ""
 
-#: src/components/LMSTable.ts:278
+#: src/components/LMSTable.ts:319
+msgid "—"
+msgstr ""
+
+#: src/components/LMSTable.ts:322
+msgid "Yes"
+msgstr ""
+
+#: src/components/LMSTable.ts:322
+msgid "No"
+msgstr ""
+
+#: src/components/LMSTable.ts:379
 msgid "Are you sure you want to delete this entry?"
 msgstr ""
 
-#: src/components/LMSTable.ts:559
+#: src/components/LMSTable.ts:690
 msgid "actions"
 msgstr ""
 
-#: src/components/LMSTable.ts:659
+#: src/components/LMSTable.ts:698
+msgid "details"
+msgstr ""
+
+#: src/components/LMSTable.ts:713
+msgid "Toggle details"
+msgstr ""
+
+#: src/components/LMSTable.ts:724
+msgid "Collapse"
+msgstr ""
+
+#: src/components/LMSTable.ts:725
+msgid "Expand"
+msgstr ""
+
+#: src/components/LMSTable.ts:829
 msgid "Click to sort"
 msgstr ""
 
-#: src/components/LMSToast.ts:71
+#: src/components/LMSToast.ts:72
 msgid "sec ago"
 msgstr ""
 
@@ -488,21 +523,33 @@ msgstr ""
 msgid "All Events"
 msgstr ""
 
-#: src/components/OpacEventsWidget.ts:389
+#: src/components/OpacEventsWidget.ts:400
 msgid "Loading events..."
 msgstr ""
 
-#: src/components/OpacEventsWidget.ts:399
+#: src/components/OpacEventsWidget.ts:410
 msgid "Failed to load events. Please try again later."
 msgstr ""
 
-#: src/components/OpacEventsWidget.ts:419
-#: src/components/OpacEventsWidget.ts:463
+#: src/components/OpacEventsWidget.ts:434
+#: src/components/OpacEventsWidget.ts:485
 msgid "All Locations"
 msgstr ""
 
-#: src/components/OpacEventsWidget.ts:436
+#: src/components/OpacEventsWidget.ts:454
 msgid "No upcoming events at this time."
+msgstr ""
+
+#: src/components/settings/LMSSettingSelect.ts:115
+msgid "Default"
+msgstr ""
+
+#: src/components/settings/LMSSettingToggle.ts:119
+msgid "On"
+msgstr ""
+
+#: src/components/settings/LMSSettingToggle.ts:119
+msgid "Off"
 msgstr ""
 
 #: src/docs/searchSyntax.ts:4
@@ -662,64 +709,64 @@ msgid "id"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:9
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:81
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:69
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:80
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:70
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:68
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Locations.pm:55
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:71
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroups.pm:57
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:79
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:67
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:78
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:68
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:66
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Locations.pm:53
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:69
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroups.pm:55
 msgid "name"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:10 src/dynamically_added_strings.ts:18
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:95
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:83
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:93
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:83
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:76
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroups.pm:63
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:93
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:81
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:91
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:81
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:74
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroups.pm:61
 msgid "min_age"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:11 src/dynamically_added_strings.ts:19
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:86
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:74
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:85
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:75
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:84
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroups.pm:71
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:84
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:72
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:83
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:73
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:82
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroups.pm:69
 msgid "max_age"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:12
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:73
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Locations.pm:60
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:71
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Locations.pm:58
 msgid "street"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:13
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:79
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Locations.pm:66
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:77
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Locations.pm:64
 msgid "number"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:14
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:85
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Locations.pm:72
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:83
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Locations.pm:70
 msgid "city"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:15
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:91
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Locations.pm:78
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:89
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Locations.pm:76
 msgid "zip"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:16
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:97
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Locations.pm:84
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:95
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Locations.pm:82
 msgid "country"
 msgstr ""
 
@@ -732,15 +779,15 @@ msgid "event_type"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:21
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:104
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:92
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:101
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:91
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:102
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:90
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:99
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:89
 msgid "max_participants"
 msgstr ""
 
-#: src/dynamically_added_strings.ts:22 src/views/StaffEventsView.ts:295
-#: src/views/StaffEventTypesView.ts:173
+#: src/dynamically_added_strings.ts:22 src/views/StaffEventsView.ts:300
+#: src/views/StaffEventTypesView.ts:176
 msgid "location"
 msgstr ""
 
@@ -749,10 +796,10 @@ msgid "image"
 msgstr ""
 
 #: src/dynamically_added_strings.ts:24
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:133
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:121
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:109
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:99
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:131
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:119
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:107
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:97
 msgid "description"
 msgstr ""
 
@@ -934,48 +981,36 @@ msgid ""
 "'https://openstreetmap.org'."
 msgstr ""
 
-#: src/extensions/LMSSettingsTable.ts:240
+#: src/extensions/LMSSettingsTable.ts:195
 msgid "OPAC Filters"
 msgstr ""
 
-#: src/extensions/LMSSettingsTable.ts:241
+#: src/extensions/LMSSettingsTable.ts:197
 msgid "Control which filters are shown in the OPAC event list."
 msgstr ""
 
-#: src/extensions/LMSSettingsTable.ts:245
+#: src/extensions/LMSSettingsTable.ts:202
 msgid "Visibility"
 msgstr ""
 
-#: src/extensions/LMSSettingsTable.ts:246
+#: src/extensions/LMSSettingsTable.ts:204
 msgid "Control event visibility behavior in OPAC views."
 msgstr ""
 
-#: src/extensions/LMSSettingsTable.ts:250
+#: src/extensions/LMSSettingsTable.ts:209
 msgid "General"
 msgstr ""
 
-#: src/extensions/LMSSettingsTable.ts:251
+#: src/extensions/LMSSettingsTable.ts:210
 msgid "Other event management settings."
 msgstr ""
 
-#: src/extensions/LMSSettingsTable.ts:326
-#: src/lib/converters/InputConverter/InputConverter.ts:231
+#: src/extensions/LMSSettingsTable.ts:296
+#: src/lib/converters/InputConverter/InputConverter.ts:234
 #: src/lib/converters/InputConverter/inputs/Matrix.ts:114
 #: src/lib/converters/InputConverter/inputs/modal/ModalMatrix.ts:148
 #: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:60
 msgid "Error"
-msgstr ""
-
-#: src/extensions/LMSSettingsTable.ts:425
-msgid "Enabled"
-msgstr ""
-
-#: src/extensions/LMSSettingsTable.ts:425
-msgid "On"
-msgstr ""
-
-#: src/extensions/LMSSettingsTable.ts:425
-msgid "Off"
 msgstr ""
 
 #: src/extensions/LMSTargetGroupsModal.ts:19
@@ -1015,9 +1050,9 @@ msgid "Please select an option"
 msgstr ""
 
 #: src/views/LMSEventsView.ts:393
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:38
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:63
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:136
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:36
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:61
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:134
 msgid "Location not found"
 msgstr ""
 
@@ -1033,183 +1068,183 @@ msgstr ""
 msgid "Load more"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:188
+#: src/views/OpacWidgetSettings.ts:208
 msgid "Settings saved successfully"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:191
+#: src/views/OpacWidgetSettings.ts:213
 msgid "Failed to save settings"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:220
+#: src/views/OpacWidgetSettings.ts:244
 msgid "Saving settings..."
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:234
+#: src/views/OpacWidgetSettings.ts:260
 msgid "OPAC Events Widget Configuration"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:249
+#: src/views/OpacWidgetSettings.ts:282
 msgid "Enable widget on OPAC homepage"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:272
+#: src/views/OpacWidgetSettings.ts:312
 msgid "Automatically inject widget on OPAC main page"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:277
+#: src/views/OpacWidgetSettings.ts:319
 msgid "If disabled, manual embedding instructions will be shown"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:288
+#: src/views/OpacWidgetSettings.ts:332
 msgid "Manual Widget Embedding"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:291
+#: src/views/OpacWidgetSettings.ts:339
 msgid ""
 "Add the following HTML code to your OPACMainUserBlock or OPACUserJS system "
 "preference:"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:302
+#: src/views/OpacWidgetSettings.ts:354
 msgid "Widget Title"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:308
+#: src/views/OpacWidgetSettings.ts:363
 msgid "e.g., Upcoming Events"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:313
+#: src/views/OpacWidgetSettings.ts:370
 msgid "The heading text displayed at the top of the widget"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:321
+#: src/views/OpacWidgetSettings.ts:380
 msgid "Display Mode"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:337
+#: src/views/OpacWidgetSettings.ts:400
 msgid "Show next X events"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:344
+#: src/views/OpacWidgetSettings.ts:409
 msgid "Show events in time period"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:351
+#: src/views/OpacWidgetSettings.ts:419
 msgid "Manually select events"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:361
+#: src/views/OpacWidgetSettings.ts:434
 msgid "Number of Events"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:374
+#: src/views/OpacWidgetSettings.ts:452
 msgid "How many upcoming events to display (1-20)"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:386
+#: src/views/OpacWidgetSettings.ts:469
 msgid "Time Period (days)"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:397
+#: src/views/OpacWidgetSettings.ts:485
 msgid "Current/Next 7 days"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:404
+#: src/views/OpacWidgetSettings.ts:496
 msgid "Next 14 days"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:411
+#: src/views/OpacWidgetSettings.ts:507
 msgid "Next 30 days"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:423
+#: src/views/OpacWidgetSettings.ts:524
 msgid "Select Events"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:434
+#: src/views/OpacWidgetSettings.ts:544
 msgid "No upcoming events available"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:469
+#: src/views/OpacWidgetSettings.ts:598
 msgid "Select which events to display in the widget"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:479
+#: src/views/OpacWidgetSettings.ts:611
 msgid "Widget Layout"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:489
+#: src/views/OpacWidgetSettings.ts:625
 msgid "Vertical List"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:495
+#: src/views/OpacWidgetSettings.ts:634
 msgid "Horizontal Scrollable List"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:500
+#: src/views/OpacWidgetSettings.ts:641
 msgid "Choose the layout style for the widget"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:508
+#: src/views/OpacWidgetSettings.ts:652
 msgid "\"All Events\" Button Text"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:514
+#: src/views/OpacWidgetSettings.ts:662
 msgid "e.g., Alle Veranstaltungen"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:519
+#: src/views/OpacWidgetSettings.ts:669
 msgid "Text for the button at the bottom of the widget"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:532
+#: src/views/OpacWidgetSettings.ts:684
 msgid "Saving..."
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:533
+#: src/views/OpacWidgetSettings.ts:685
 msgid "Save Settings"
 msgstr ""
 
-#: src/views/OpacWidgetSettings.ts:548
+#: src/views/OpacWidgetSettings.ts:701
 msgid ""
 "This preview shows how the widget will appear on the OPAC. Use the location "
 "filter in the widget to preview different locations."
 msgstr ""
 
-#: src/views/StaffEventsView.ts:276 src/views/StaffEventTypesView.ts:154
+#: src/views/StaffEventsView.ts:281 src/views/StaffEventTypesView.ts:157
 msgid "You have to create a"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:285 src/views/StaffEventTypesView.ts:163
+#: src/views/StaffEventsView.ts:290 src/views/StaffEventTypesView.ts:166
 msgid "target group"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:286
+#: src/views/StaffEventsView.ts:291
 msgid "a"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:297
+#: src/views/StaffEventsView.ts:302
 msgid "and an"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:306
+#: src/views/StaffEventsView.ts:311
 msgid "event type"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:308 src/views/StaffEventTypesView.ts:175
+#: src/views/StaffEventsView.ts:313 src/views/StaffEventTypesView.ts:178
 msgid "first"
 msgstr ""
 
-#: src/views/StaffEventsView.ts:317
+#: src/views/StaffEventsView.ts:339
 msgid "You can add a new event by clicking on the + button below"
 msgstr ""
 
-#: src/views/StaffEventTypesView.ts:164
+#: src/views/StaffEventTypesView.ts:167
 msgid "and a"
 msgstr ""
 
-#: src/views/StaffEventTypesView.ts:183
+#: src/views/StaffEventTypesView.ts:186
 msgid "You can add a new event type by clicking the + button below"
 msgstr ""
 
@@ -1217,7 +1252,7 @@ msgstr ""
 msgid "No data to display"
 msgstr ""
 
-#: src/views/StaffSettingsView.ts:69
+#: src/views/StaffSettingsView.ts:73
 msgid "No settings found"
 msgstr ""
 
@@ -1251,64 +1286,64 @@ msgstr ""
 msgid "Failed to store uploaded file in database"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:46
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:76
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:216
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:44
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:74
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:214
 msgid "Event not found"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:113
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:101
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:111
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:99
 msgid "start_time"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:118
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:106
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:116
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:104
 msgid "end_time"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:123
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:111
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:121
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:109
 msgid "registration_start"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:128
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:116
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:126
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:114
 msgid "registration_end"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:157
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:145
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:132
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:122
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:155
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Events.pm:143
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:130
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventTypes.pm:120
 msgid "At least one target group must be selected."
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:46
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:75
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:189
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:44
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:73
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:187
 msgid "Event type not found"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Image.pm:29
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Image.pm:27
 msgid "File not found"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Public/Image.pm:46
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Public/Image.pm:44
 msgid "File not found or not public"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Public/Image.pm:53
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Public/Image.pm:51
 msgid "File does not exist"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Public/Image.pm:61
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Public/Image.pm:59
 msgid "Unsupported file type"
 msgstr ""
 
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:41
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:66
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:125
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:39
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:64
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/TargetGroup.pm:123
 msgid "Target Group not found"
 msgstr ""
 
