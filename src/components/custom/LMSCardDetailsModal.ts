@@ -247,7 +247,9 @@ export default class LMSCardDetailsModal extends LitElement {
                     !targetGroupFee["target_group_id"],
             )
             .map((targetGroupFee) => {
-                const { name, min_age, max_age, fee } = targetGroupFee;
+                const { name, fee } = targetGroupFee;
+                const min_age = this.event?.min_age ?? targetGroupFee.min_age;
+                const max_age = this.event?.max_age ?? targetGroupFee.max_age;
                 const ageRange = this.formatAgeRange(min_age, max_age);
                 return hasNoFees
                     ? html`
