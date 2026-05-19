@@ -546,7 +546,9 @@ export default class LMSCardDetailsModal extends LitElement {
                                                     )}</strong
                                                 >
                                             </p>
-                                            <table class="not-prose table table-xs">
+                                            <table
+                                                class="not-prose table table-xs"
+                                            >
                                                 <thead>
                                                     <tr>
                                                         <th>
@@ -588,7 +590,9 @@ export default class LMSCardDetailsModal extends LitElement {
                                                 >
                                                 <strong>${__("Fees")}</strong>
                                             </p>
-                                            <table class="not-prose table table-xs">
+                                            <table
+                                                class="not-prose table table-xs"
+                                            >
                                                 <thead>
                                                     <tr>
                                                         <th>
