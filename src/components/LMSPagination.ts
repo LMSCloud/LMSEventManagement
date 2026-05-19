@@ -5,7 +5,7 @@ import {
 import { consume } from "@lit/context";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import { LitElement, PropertyValueMap, html } from "lit";
-import { customElement, property, query, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { map } from "lit/directives/map.js";
@@ -18,10 +18,17 @@ import { __, attr__ } from "../lib/translate";
 import { skeletonStyles } from "../styles/skeleton";
 import { tailwindStyles } from "../tailwind.lit";
 
+/** Sentinel value matching Koha REST API's "return everything" convention. */
+const ALL_PAGE_SIZE = -1;
+
 @customElement("lms-pagination")
 export default class LMSPagination extends LitElement {
     @property({ type: Array, attribute: "page-sizes" }) pageSizes = [
-        10, 20, 50, 100,
+        10,
+        20,
+        50,
+        100,
+        ALL_PAGE_SIZE,
     ];
 
     @consume({ context: pageContext, subscribe: true })
@@ -40,15 +47,23 @@ export default class LMSPagination extends LitElement {
     @state()
     nextPage?: any;
 
-    @query("#previous-page-anchor") previousPageAnchor!: HTMLAnchorElement;
-
-    @query("#next-page-anchor") nextPageAnchor!: HTMLAnchorElement;
-
     static override styles = [tailwindStyles, skeletonStyles];
 
-    private prefetchPage(direction: "previous" | "next", page?: number) {
-        if (!page || (direction === "previous" && page === 1)) {
+    private clearAdjacentPage(direction: "previous" | "next") {
+        if (direction === "previous") {
             this.previousPage = undefined;
+        } else {
+            this.nextPage = undefined;
+        }
+    }
+
+    private prefetchPage(direction: "previous" | "next", page?: number) {
+        const showingEverything = this.perPage === ALL_PAGE_SIZE;
+        const beforeFirstPage = direction === "previous" && page === 1;
+        const noPageToPrefetch = showingEverything || !page || beforeFirstPage;
+
+        if (noPageToPrefetch) {
+            this.clearAdjacentPage(direction);
             return;
         }
 
@@ -71,23 +86,21 @@ export default class LMSPagination extends LitElement {
             _changedProperties.has("page") ||
             _changedProperties.has("perPage")
         ) {
-            this.previousPageAnchor.classList.add("btn-disabled");
-            this.nextPageAnchor.classList.add("btn-disabled");
             this.prefetchPage("previous", this.page);
             this.prefetchPage("next", this.page);
         }
+    }
 
-        if (_changedProperties.has("previousPage")) {
-            this.previousPageAnchor.classList[
-                this.shouldBeDisabled(this.previousPage) ? "add" : "remove"
-            ]("btn-disabled");
-        }
+    private isPreviousDisabled() {
+        if (this.perPage === ALL_PAGE_SIZE) return true;
+        if (!this.page || this.page === 1) return true;
+        return this.shouldBeDisabled(this.previousPage);
+    }
 
-        if (_changedProperties.has("nextPage")) {
-            this.nextPageAnchor.classList[
-                this.shouldBeDisabled(this.nextPage) ? "add" : "remove"
-            ]("btn-disabled");
-        }
+    private isNextDisabled() {
+        if (this.perPage === ALL_PAGE_SIZE) return true;
+        if (!this.page) return true;
+        return this.shouldBeDisabled(this.nextPage);
     }
 
     private getLinkForPageSize(pageSize?: number) {
@@ -191,7 +204,11 @@ export default class LMSPagination extends LitElement {
             <div class="join" aria-label=${attr__("Table navigation")}>
                 <a
                     id="previous-page-anchor"
-                    class="btn btn-disabled join-item"
+                    class="${classMap({
+                        btn: true,
+                        "btn-disabled": this.isPreviousDisabled(),
+                        "join-item": true,
+                    })}"
                     href=${ifDefined(
                         this.getLinkForPage("previous", this.page),
                     )}
@@ -207,16 +224,23 @@ export default class LMSPagination extends LitElement {
                         <a
                             class="${classMap({
                                 "bg-primary-focus": pageSize === this.perPage,
-                            })} btn btn-square join-item"
+                                "btn-square": pageSize !== ALL_PAGE_SIZE,
+                            })} btn join-item"
                             href=${ifDefined(this.getLinkForPageSize(pageSize))}
                             @click=${this.handlePerPageChange}
-                            >${pageSize}</a
+                            >${pageSize === ALL_PAGE_SIZE
+                                ? __("All")
+                                : pageSize}</a
                         >
                     `,
                 )}
                 <a
                     id="next-page-anchor"
-                    class="btn btn-disabled join-item"
+                    class="${classMap({
+                        btn: true,
+                        "btn-disabled": this.isNextDisabled(),
+                        "join-item": true,
+                    })}"
                     href=${ifDefined(this.getLinkForPage("next", this.page))}
                     @click=${this.handlePageChange}
                     ><span class="hidden lg:inline"> ${__("Next")} </span>
