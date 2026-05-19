@@ -6,8 +6,8 @@ use Carp qw( croak );
 
 use base qw(Koha::Object);
 
-use Koha::Database                              ();
-use Koha::DateUtils                             qw( dt_from_string );
+use Koha::Database                             ();
+use Koha::DateUtils                            qw( dt_from_string );
 use Koha::LMSCloud::EventManagement::Attendees ();
 
 =head1 NAME
@@ -46,12 +46,13 @@ sub is_anonymous {
 
 =head2 confirm
 
-Mark the booking as confirmed: clear the token, set confirmed_at, and flip
-every pending attendee to confirmed. Waitlisted attendees stay waitlisted.
-Idempotent: a second call is a no-op.
+Mark the booking as confirmed (set confirmed_at) and flip every pending
+attendee to confirmed. Waitlisted attendees stay waitlisted. Idempotent:
+a second call short-circuits when confirmed_at is already set.
 
-Croaks with C<BOOKING_TOKEN_INVALID> if the booking is already confirmed
-and no further work is needed.
+The confirmation token is intentionally B<not> cleared. It doubles as a
+management token for anonymous cancellation; the API never exposes it,
+the email is the only delivery channel.
 
 =cut
 
@@ -70,7 +71,6 @@ sub confirm {
             my $now = $dtf->format_datetime( dt_from_string() );
 
             $self->confirmed_at($now);
-            $self->confirmation_token(undef);
             $self->store;
 
             my $pending = $self->attendees->search( { status => 'pending' } );
@@ -85,8 +85,9 @@ sub confirm {
 
 =head2 cancel
 
-Cancel the booking and every active attendee on it. Waitlist promotion is
-the caller's responsibility (see Attendees->promote_waitlisted_for_event).
+Cancel the booking and every active attendee on it. For each attendee that
+was consuming capacity (pending or confirmed), promote one waitlisted
+attendee in the same target group to keep the event filled.
 
 =cut
 
@@ -97,10 +98,22 @@ sub cancel {
 
     return $schema->txn_do(
         sub {
-            my $active = $self->attendees->search( { status => { -in => [ 'pending', 'confirmed', 'waitlisted' ] } } );
-            while ( my $attendee = $active->next ) {
+            # Koha::Objects guards ->all behind its method-coverage allowlist;
+            # ->as_list is the always-permitted equivalent.
+            my $active = [ $self->attendees->search( { status => { -in => [ 'pending', 'confirmed', 'waitlisted' ] } } )->as_list ];
+
+            my $freed_target_groups = [];
+            for my $attendee ( @{$active} ) {
+                my $was_consuming = $attendee->status eq 'pending' || $attendee->status eq 'confirmed';
                 $attendee->transition_to('canceled');
+                push @{$freed_target_groups}, $attendee->target_group_id if $was_consuming;
             }
+
+            my $attendees_set = Koha::LMSCloud::EventManagement::Attendees->new;
+            for my $tg ( @{$freed_target_groups} ) {
+                $attendees_set->promote_waitlisted_for_event( $self->event_id, $tg );
+            }
+
             return $self;
         }
     );

@@ -112,7 +112,7 @@ sub confirm {
 
         my $booking = Koha::LMSCloud::EventManagement::Bookings->new->find_by_token($token);
         if ( !$booking ) {
-            return $c->render( status => 404, openapi => { error => 'token invalid or already used' } );
+            return $c->render( status => 404, openapi => { error => 'token invalid' } );
         }
 
         $booking->confirm;
@@ -121,6 +121,85 @@ sub confirm {
             status  => 200,
             openapi => _booking_to_api($booking),
         );
+    }
+    catch {
+        my $err = $_;
+        return _render_booking_error( $c, $err );
+    };
+}
+
+sub cancel {
+    my $c = shift->openapi->valid_input or return;
+
+    return try {
+        my $id    = $c->validation->param('id');
+        my $body  = $c->validation->param('body') // {};
+        my $token = $body->{token};
+
+        my $booking = Koha::LMSCloud::EventManagement::Bookings->new->find($id);
+        if ( !$booking ) {
+            return $c->render( status => 404, openapi => { error => 'booking not found' } );
+        }
+
+        my $current_user = $c->stash('koha.user');
+        my $authorized   = 0;
+        if (   $current_user
+            && $booking->booker_borrowernumber
+            && $booking->booker_borrowernumber == $current_user->borrowernumber )
+        {
+            $authorized = 1;
+        }
+        elsif ( $token
+            && $booking->confirmation_token
+            && $booking->confirmation_token eq $token )
+        {
+            $authorized = 1;
+        }
+
+        if ( !$authorized ) {
+            return $c->render(
+                status  => 403,
+                openapi => { error => 'not allowed to cancel this booking' }
+            );
+        }
+
+        $booking->cancel;
+        $booking->discard_changes;
+
+        return $c->render(
+            status  => 200,
+            openapi => _booking_to_api($booking),
+        );
+    }
+    catch {
+        my $err = $_;
+        return _render_booking_error( $c, $err );
+    };
+}
+
+sub mine {
+    my $c = shift->openapi->valid_input or return;
+
+    return try {
+        my $current_user = $c->stash('koha.user');
+        if ( !$current_user || !$current_user->borrowernumber ) {
+            return $c->render(
+                status  => 401,
+                openapi => { error => 'authentication required' }
+            );
+        }
+
+        my $bookings = Koha::LMSCloud::EventManagement::Bookings->new->search(
+            { booker_borrowernumber => $current_user->borrowernumber },
+            { order_by => { -desc => 'created_at' } },
+        );
+
+        my $out = [];
+        while ( my $b = $bookings->next ) {
+            push @{$out}, _booking_to_api($b);
+        }
+
+        return $c->render( status => 200, openapi => $out );
     }
     catch {
         my $err = $_;
