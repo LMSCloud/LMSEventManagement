@@ -68,7 +68,7 @@ export default class LMSStaffEventCard extends LitElement {
                             data-content="attendees"
                             @click=${this.handleTabClick}
                         >
-                            ${__("Waitlist")}</a
+                            ${__("Attendees")}</a
                         >
                         <a
                             class="tab tab-bordered tab-lg flex-auto text-base"
@@ -96,6 +96,7 @@ export default class LMSStaffEventCard extends LitElement {
                         })}
                     ></lms-staff-event-card-form>
                     <lms-staff-event-card-attendees
+                        .event=${this.event}
                         class=${classMap({
                             hidden: this.state !== "attendees",
                         })}
