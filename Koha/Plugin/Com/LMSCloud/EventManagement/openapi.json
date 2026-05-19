@@ -3409,6 +3409,174 @@
       }
     }
   },
+  "/events/{event_id}/attendees": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Bookings#list_attendees",
+      "operationId": "listAttendees",
+      "tags": [
+        "bookings"
+      ],
+      "description": "List attendees for an event. Optional 'status' query param (repeatable) filters by lifecycle state.",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "name": "event_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "confirmed",
+              "waitlisted",
+              "canceled",
+              "attended",
+              "no_show"
+            ]
+          },
+          "collectionFormat": "multi"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "List of attendees",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "404": {
+          "description": "Event not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "tool"
+        }
+      }
+    }
+  },
+  "/attendees/{id}": {
+    "patch": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Bookings#update_attendee",
+      "operationId": "updateAttendee",
+      "tags": [
+        "bookings"
+      ],
+      "description": "Update a single attendee. Currently only status changes are supported; invalid transitions are rejected with 409.",
+      "consumes": [
+        "application/json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "confirmed",
+                  "waitlisted",
+                  "canceled",
+                  "attended",
+                  "no_show"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Attendee updated",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "404": {
+          "description": "Attendee not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Invalid status transition from the attendee's current state",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "plugins": "tool"
+        }
+      }
+    }
+  },
   "/event_types": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::EventTypes#list",
