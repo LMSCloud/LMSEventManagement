@@ -4848,6 +4848,11 @@ details.collapse summary::-webkit-details-marker {
   margin-right: 2rem;
 }
 
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -4855,6 +4860,10 @@ details.collapse summary::-webkit-details-marker {
 
 .mb-0 {
   margin-bottom: 0px;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
 }
 
 .mb-12 {
@@ -4955,10 +4964,6 @@ details.collapse summary::-webkit-details-marker {
 
 .aspect-square {
   aspect-ratio: 1 / 1;
-}
-
-.aspect-video {
-  aspect-ratio: 16 / 9;
 }
 
 .h-12 {
@@ -5117,6 +5122,14 @@ details.collapse summary::-webkit-details-marker {
 
 .resize {
   resize: both;
+}
+
+.list-inside {
+  list-style-position: inside;
+}
+
+.list-disc {
+  list-style-type: disc;
 }
 
 .grid-cols-1 {
@@ -5723,6 +5736,10 @@ details.collapse summary::-webkit-details-marker {
 }
 
 @media (min-width: 1024px) {
+  .lg\\:col-start-2 {
+    grid-column-start: 2;
+  }
+
   .lg\\:inline {
     display: inline;
   }
