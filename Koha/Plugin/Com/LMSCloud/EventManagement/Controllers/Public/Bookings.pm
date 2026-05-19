@@ -11,6 +11,8 @@ use Koha::LMSCloud::EventManagement::Booking  ();
 use Koha::LMSCloud::EventManagement::Bookings ();
 use Koha::LMSCloud::EventManagement::Events   ();
 
+use Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::HouseholdRoster ();
+
 our $VERSION = '1.0.0';
 
 # Anti-grief cap on attendees per booking. The unique-per-borrower
@@ -204,6 +206,41 @@ sub mine {
     catch {
         my $err = $_;
         return _render_booking_error( $c, $err );
+    };
+}
+
+sub household {
+    my $c = shift->openapi->valid_input or return;
+
+    return try {
+        my $current_user = $c->stash('koha.user');
+        if ( !$current_user || !$current_user->borrowernumber ) {
+            return $c->render(
+                status  => 401,
+                openapi => { error => 'authentication required' }
+            );
+        }
+
+        my $event_id = $c->validation->param('event_id');
+        if ( !$event_id ) {
+            return $c->render( status => 400, openapi => { error => 'event_id required' } );
+        }
+
+        my $event = Koha::LMSCloud::EventManagement::Events->find($event_id);
+        if ( !$event ) {
+            return $c->render( status => 404, openapi => { error => 'event not found' } );
+        }
+
+        my $roster = Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::HouseholdRoster->for_patron(
+            {   borrowernumber => $current_user->borrowernumber,
+                event_id       => $event_id,
+            }
+        );
+
+        return $c->render( status => 200, openapi => $roster );
+    }
+    catch {
+        $c->unhandled_exception($_);
     };
 }
 

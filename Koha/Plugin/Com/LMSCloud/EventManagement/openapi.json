@@ -720,6 +720,82 @@
       }
     }
   },
+  "/public/bookings/household": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Bookings#household",
+      "operationId": "bookingHouseholdPublic",
+      "tags": [
+        "bookings"
+      ],
+      "description": "Return the authenticated patron and their Koha guarantees as a household roster, each with a suggested target group for the given event.",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "name": "event_id",
+          "in": "query",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Roster",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "400": {
+          "description": "Missing event_id",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Authentication required",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Event not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/public/event_types": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::EventTypes#list",
