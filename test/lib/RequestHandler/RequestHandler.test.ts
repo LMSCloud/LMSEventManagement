@@ -21,6 +21,9 @@ const TEST_ENDPOINTS: ApiEndpoints = {
     put: {
         events: { url: `${BASE}/events`, cache: false },
     },
+    patch: {
+        attendee: { url: `${BASE}/attendees`, cache: false },
+    },
     delete: {
         events: { url: `${BASE}/events`, cache: false },
     },
@@ -127,6 +130,34 @@ describe("RequestHandler", () => {
             expect(init.headers).toEqual({
                 "Content-Type": "application/json",
             });
+        });
+    });
+
+    describe("PATCH requests", () => {
+        it("should set Content-Type: application/json for JSON body", async () => {
+            vi.stubGlobal("navigator", { userAgent: "TestAgent" });
+            const body = JSON.stringify({ status: "confirmed" });
+            await handler.patch({
+                endpoint: "attendee",
+                path: ["42"],
+                requestInit: { method: "patch", body },
+            });
+
+            const [url, init] = fetchSpy.mock.calls[0]!;
+            expect(url).toBe(`${BASE}/attendees/42`);
+            expect(init.method).toBe("patch");
+            expect(init.headers).toEqual({
+                "Content-Type": "application/json",
+            });
+            expect(init.body).toBe(body);
+        });
+
+        it("should fall back when endpoint is unknown", async () => {
+            vi.stubGlobal("navigator", { userAgent: "TestAgent" });
+            await handler.patch({ endpoint: "nonexistent" });
+
+            const [url] = fetchSpy.mock.calls[0]!;
+            expect(url).toContain(`${BASE}/undefined?`);
         });
     });
 

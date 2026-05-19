@@ -24,11 +24,13 @@ export type ApiGroup = Record<string, Endpoint>;
  * @property {ApiGroup} get - Endpoints for GET requests
  * @property {ApiGroup} post - Endpoints for POST requests
  * @property {ApiGroup} put - Endpoints for PUT requests
+ * @property {ApiGroup} patch - Endpoints for PATCH requests
  * @property {ApiGroup} delete - Endpoints for DELETE requests
  */
 export type ApiEndpoints = {
     get: ApiGroup;
     post: ApiGroup;
     put: ApiGroup;
+    patch: ApiGroup;
     delete: ApiGroup;
 };

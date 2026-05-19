@@ -64,6 +64,10 @@ export const ENDPOINTS: ApiEndpoints = {
             url: `/api/v1/libraries`,
             cache: true,
         },
+        eventAttendees: {
+            url: `${BASE_PATH}/events`,
+            cache: false,
+        },
     },
     post: {
         settings: {
@@ -110,6 +114,12 @@ export const ENDPOINTS: ApiEndpoints = {
         },
         targetGroups: {
             url: `${BASE_PATH}/target_groups`,
+            cache: false,
+        },
+    },
+    patch: {
+        attendee: {
+            url: `${BASE_PATH}/attendees`,
             cache: false,
         },
     },

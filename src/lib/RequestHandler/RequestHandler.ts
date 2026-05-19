@@ -2,7 +2,7 @@ import { P, match } from "ts-pattern";
 import { BASE_PATH, ENDPOINTS } from "./Config";
 import { ApiEndpoints, ApiGroup } from "./types/RequestHandler";
 
-export type SupportedMethod = "get" | "post" | "put" | "delete";
+export type SupportedMethod = "get" | "post" | "put" | "patch" | "delete";
 
 export interface RequestParams {
     endpoint: keyof ApiGroup;
@@ -59,7 +59,7 @@ export class RequestHandler {
         /* Check first whether we got a method passed that conforms to the
          * SupportedMethod type. */
         let method = requestInit?.method;
-        if (!["get", "post", "put", "delete"].includes(method ?? "")) {
+        if (!["get", "post", "put", "patch", "delete"].includes(method ?? "")) {
             method = undefined;
         }
 
@@ -183,6 +183,20 @@ export class RequestHandler {
             path,
             query,
             requestInit: { ...requestInit, method: "put" },
+        });
+    }
+
+    public patch({
+        endpoint,
+        path,
+        query,
+        requestInit = { method: "patch" },
+    }: RequestParams): Promise<Response> {
+        return this._request({
+            endpoint,
+            path,
+            query,
+            requestInit: { ...requestInit, method: "patch" },
         });
     }
 
