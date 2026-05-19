@@ -325,6 +325,57 @@
       }
     }
   },
+  "/public/events/{id}": {
+    "get": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Event#get",
+      "operationId": "getEventPublic",
+      "tags": [
+        "events"
+      ],
+      "description": "Fetch a single event with its target groups (and fees) inlined. Honours the opac_hide_pending_events setting.",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "The event",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "404": {
+          "description": "Event not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/public/events/{id}/ical": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Events#export_ical",
@@ -381,8 +432,8 @@
   },
   "/public/bookings": {
     "post": {
-      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Bookings#create",
-      "operationId": "createBookingPublic",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Bookings#add",
+      "operationId": "addBookingPublic",
       "tags": [
         "bookings"
       ],
@@ -536,7 +587,7 @@
   },
   "/public/bookings/confirm/{token}": {
     "post": {
-      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Bookings#confirm",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Booking#confirm",
       "operationId": "confirmBookingPublic",
       "tags": [
         "bookings"
@@ -598,7 +649,7 @@
   },
   "/public/bookings/{id}/cancel": {
     "post": {
-      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Bookings#cancel",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Booking#cancel",
       "operationId": "cancelBookingPublic",
       "tags": [
         "bookings"
@@ -676,7 +727,7 @@
   },
   "/public/bookings/mine": {
     "get": {
-      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Bookings#mine",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Bookings#list",
       "operationId": "listMyBookingsPublic",
       "tags": [
         "bookings"
@@ -3487,7 +3538,7 @@
   },
   "/events/{event_id}/attendees": {
     "get": {
-      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Bookings#list_attendees",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Attendees#list",
       "operationId": "listAttendees",
       "tags": [
         "bookings"
@@ -3564,7 +3615,7 @@
   },
   "/attendees/{id}": {
     "patch": {
-      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Bookings#update_attendee",
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Attendee#update",
       "operationId": "updateAttendee",
       "tags": [
         "bookings"

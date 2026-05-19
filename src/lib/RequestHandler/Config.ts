@@ -8,6 +8,10 @@ export const ENDPOINTS: ApiEndpoints = {
             url: `${BASE_PATH}/public/events`,
             cache: false,
         },
+        eventPublic: {
+            url: `${BASE_PATH}/public/events`,
+            cache: false,
+        },
         eventsCountPublic: {
             url: `${BASE_PATH}/public/events/count`,
             cache: false,
@@ -34,6 +38,14 @@ export const ENDPOINTS: ApiEndpoints = {
         },
         eventIcalPublic: {
             url: `${BASE_PATH}/public/events`,
+            cache: false,
+        },
+        bookingHouseholdPublic: {
+            url: `${BASE_PATH}/public/bookings/household`,
+            cache: false,
+        },
+        bookingsMinePublic: {
+            url: `${BASE_PATH}/public/bookings/mine`,
             cache: false,
         },
         settings: {
@@ -92,6 +104,18 @@ export const ENDPOINTS: ApiEndpoints = {
         },
         targetGroups: {
             url: `${BASE_PATH}/target_groups`,
+            cache: false,
+        },
+        bookingsPublic: {
+            url: `${BASE_PATH}/public/bookings`,
+            cache: false,
+        },
+        bookingConfirmPublic: {
+            url: `${BASE_PATH}/public/bookings/confirm`,
+            cache: false,
+        },
+        bookingCancelPublic: {
+            url: `${BASE_PATH}/public/bookings`,
             cache: false,
         },
     },

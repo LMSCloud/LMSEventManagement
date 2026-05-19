@@ -44,6 +44,24 @@ sub is_anonymous {
     return !defined $self->booker_borrowernumber;
 }
 
+=head2 to_response
+
+Return a hashref suitable for JSON serialisation in API responses. Strips
+the confirmation_token (never leaked over the API; the email is the only
+delivery channel) and inlines the attendees array via Attendee->to_response.
+
+=cut
+
+sub to_response {
+    my ($self) = @_;
+
+    my $hash = $self->unblessed;
+    delete $hash->{confirmation_token};
+    $hash->{attendees} = [ map { $_->to_response } $self->attendees->as_list ];
+
+    return $hash;
+}
+
 =head2 confirm
 
 Mark the booking as confirmed (set confirmed_at) and flip every pending

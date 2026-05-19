@@ -67,6 +67,22 @@ sub transition_to {
     return $self->store;
 }
 
+=head2 to_response
+
+Return a hashref suitable for JSON serialisation. Strips the
+DB-internal active_borrower_key generated column.
+
+=cut
+
+sub to_response {
+    my ($self) = @_;
+
+    my $hash = $self->unblessed;
+    delete $hash->{active_borrower_key};
+
+    return $hash;
+}
+
 =head2 Internal methods
 
 =head3 _type

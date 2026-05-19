@@ -20,7 +20,7 @@ our $VERSION = '1.0.0';
 # ad-hoc kids one booker can claim in a single submission.
 Readonly::Scalar my $MAX_ATTENDEES_PER_BOOKING => 10;
 
-sub create {
+sub add {
     my $c = shift->openapi->valid_input or return;
 
     return try {
@@ -56,8 +56,6 @@ sub create {
             return $c->render( status => 409, openapi => { error => 'event has been canceled' } );
         }
 
-        # Auth detection: use the logged-in patron if present, otherwise expect
-        # booker name+email in the body for anonymous flow.
         my $current_user = $c->stash('koha.user');
         my $booker;
         if ( $current_user && $current_user->borrowernumber ) {
@@ -92,94 +90,14 @@ sub create {
             }
         );
 
-        return $c->render(
-            status  => 201,
-            openapi => _booking_to_api($booking),
-        );
+        return $c->render( status => 201, openapi => $booking->to_response );
     }
     catch {
-        my $err = $_;
-        return _render_booking_error( $c, $err );
+        return _render_booking_error( $c, $_ );
     };
 }
 
-sub confirm {
-    my $c = shift->openapi->valid_input or return;
-
-    return try {
-        my $token = $c->validation->param('token');
-        if ( !$token ) {
-            return $c->render( status => 400, openapi => { error => 'token required' } );
-        }
-
-        my $booking = Koha::LMSCloud::EventManagement::Bookings->new->find_by_token($token);
-        if ( !$booking ) {
-            return $c->render( status => 404, openapi => { error => 'token invalid' } );
-        }
-
-        $booking->confirm;
-
-        return $c->render(
-            status  => 200,
-            openapi => _booking_to_api($booking),
-        );
-    }
-    catch {
-        my $err = $_;
-        return _render_booking_error( $c, $err );
-    };
-}
-
-sub cancel {
-    my $c = shift->openapi->valid_input or return;
-
-    return try {
-        my $id    = $c->validation->param('id');
-        my $body  = $c->validation->param('body') // {};
-        my $token = $body->{token};
-
-        my $booking = Koha::LMSCloud::EventManagement::Bookings->new->find($id);
-        if ( !$booking ) {
-            return $c->render( status => 404, openapi => { error => 'booking not found' } );
-        }
-
-        my $current_user = $c->stash('koha.user');
-        my $authorized   = 0;
-        if (   $current_user
-            && $booking->booker_borrowernumber
-            && $booking->booker_borrowernumber == $current_user->borrowernumber )
-        {
-            $authorized = 1;
-        }
-        elsif ( $token
-            && $booking->confirmation_token
-            && $booking->confirmation_token eq $token )
-        {
-            $authorized = 1;
-        }
-
-        if ( !$authorized ) {
-            return $c->render(
-                status  => 403,
-                openapi => { error => 'not allowed to cancel this booking' }
-            );
-        }
-
-        $booking->cancel;
-        $booking->discard_changes;
-
-        return $c->render(
-            status  => 200,
-            openapi => _booking_to_api($booking),
-        );
-    }
-    catch {
-        my $err = $_;
-        return _render_booking_error( $c, $err );
-    };
-}
-
-sub mine {
+sub list {
     my $c = shift->openapi->valid_input or return;
 
     return try {
@@ -198,14 +116,13 @@ sub mine {
 
         my $out = [];
         while ( my $b = $bookings->next ) {
-            push @{$out}, _booking_to_api($b);
+            push @{$out}, $b->to_response;
         }
 
         return $c->render( status => 200, openapi => $out );
     }
     catch {
-        my $err = $_;
-        return _render_booking_error( $c, $err );
+        return _render_booking_error( $c, $_ );
     };
 }
 
@@ -242,21 +159,6 @@ sub household {
     catch {
         $c->unhandled_exception($_);
     };
-}
-
-sub _booking_to_api {
-    my ($booking) = @_;
-    my $hash = $booking->unblessed;
-    delete $hash->{confirmation_token};    # never leak the token in responses
-
-    $hash->{attendees} = [
-        map { $_->unblessed } $booking->attendees->as_list
-    ];
-    for my $a ( @{ $hash->{attendees} } ) {
-        delete $a->{active_borrower_key};
-    }
-
-    return $hash;
 }
 
 sub _render_booking_error {
