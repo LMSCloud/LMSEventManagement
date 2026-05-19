@@ -42,105 +42,19 @@ the nightly TTL sweep.
 
 =back
 
-C<install_letters> seeds default English content into Koha's C<letter>
-table on plugin install or upgrade; templates already present are left
-alone so library customisations survive. Sends are wrapped in eval, so a
-broken template or transport never aborts a booking-lifecycle operation.
+Letter templates are B<not> installed by the plugin; the library
+administrator is expected to add them via Tools → Notices & slips with
+module C<lms_event_management> and the codes above. This matches the
+LMSRoomReservations approach and gives staff full control over wording,
+language variants, transports, and HTML toggling without an upgrade ever
+overwriting their edits. When a template is missing the send is skipped
+with a single C<carp> so the booking still goes through.
 
 =head1 API
 
 =cut
 
 my $MODULE_CODE = 'lms_event_management';
-
-my $DEFAULT_LETTERS = [
-    {   code  => 'EVENT_BOOKING_CONFIRM',
-        title => 'Please confirm your event registration',
-        body  => <<'BODY',
-Hello [% IF borrower.firstname %][% borrower.firstname %][% ELSE %][% booker_name %][% END %],
-
-Thank you for registering for [% event.name %].
-
-To confirm your registration please use the following token at your
-library's event-confirmation page:
-
-    [% confirmation_token %]
-
-If your library has provided a confirmation link it should look like:
-
-    [% confirm_url %]
-
-If you did not request this registration you can safely ignore this email.
-
--- Library Events
-BODY
-    },
-    {   code  => 'EVENT_WAITLIST_PROMOTED',
-        title => 'A seat is now available for the event you joined',
-        body  => <<'BODY',
-Hello [% IF borrower.firstname %][% borrower.firstname %][% ELSE %][% attendee.attendee_name %][% END %],
-
-Good news: a seat has opened up for [% event.name %] and you have been
-moved from the waitlist into the confirmed attendees list.
-
-If you can no longer attend please cancel your registration so the seat
-can be offered to the next waitlisted person.
-
--- Library Events
-BODY
-    },
-    {   code  => 'EVENT_BOOKING_CANCELED',
-        title => 'Your event registration has been canceled',
-        body  => <<'BODY',
-Hello [% IF borrower.firstname %][% borrower.firstname %][% ELSE %][% booker_name %][% END %],
-
-Your registration for [% event.name %] has been canceled.
-
-If this was not expected please contact the library.
-
--- Library Events
-BODY
-    },
-];
-
-=head2 install_letters
-
-Insert the three default templates into the C<letter> table for each
-existing C<lang> setting, only when no row already exists for that
-C<(module, code, branchcode, lang)> combination. Safe to call repeatedly.
-
-=cut
-
-sub install_letters {
-    my ($class) = @_;
-
-    my $dbh = C4::Context->dbh;
-
-    my $find = $dbh->prepare(<<'SQL');
-        SELECT 1 FROM letter
-         WHERE module = ?
-           AND code   = ?
-           AND ( branchcode IS NULL OR branchcode = '' )
-           AND lang   = 'default'
-SQL
-
-    my $insert = $dbh->prepare(<<'SQL');
-        INSERT INTO letter ( module, code, branchcode, name, title, content, message_transport_type, is_html, lang )
-        VALUES             ( ?,      ?,    '',          ?,    ?,     ?,       'email',                0,       'default' )
-SQL
-
-    for my $tmpl ( @{$DEFAULT_LETTERS} ) {
-        $find->execute( $MODULE_CODE, $tmpl->{code} );
-        my ($exists) = $find->fetchrow_array;
-        next if $exists;
-
-        $insert->execute(
-            $MODULE_CODE, $tmpl->{code}, $tmpl->{title}, $tmpl->{title}, $tmpl->{body},
-        );
-    }
-
-    return 1;
-}
 
 =head2 send_booking_confirmation($booking)
 
@@ -263,7 +177,10 @@ sub _send {
         tables      => $tables,
         substitute  => $substitute,
     );
-    return if !$letter;
+    if ( !$letter ) {
+        carp "$MODULE_CODE letter '$code' is not installed; skipping notification";
+        return;
+    }
 
     C4::Letters::EnqueueLetter(
         {   letter                 => $letter,
