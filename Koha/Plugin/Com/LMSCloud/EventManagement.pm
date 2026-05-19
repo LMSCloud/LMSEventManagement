@@ -234,6 +234,7 @@ sub _ensure_settings_exist {
         opac_filters_fee_enabled                    => 0,
         opac_hide_pending_events                    => 0,
         opac_compact_list_enabled                   => 0,
+        opac_image_crop_enabled                     => 0,
         widget_enabled                              => 0,
         widget_auto_inject                          => 1,
         widget_title                                => q{},

@@ -58,6 +58,8 @@ export default class LMSEventsView extends LitElement {
 
     @state() compactListOpen = false;
 
+    @state() imageCropEnabled = false;
+
     @query(".load-more") loadMore!: HTMLButtonElement;
 
     private queryBuilder = new QueryBuilder({
@@ -333,24 +335,36 @@ export default class LMSEventsView extends LitElement {
             .get({ endpoint: "settingsPublic" })
             .then((response) => response.json())
             .then((settings: LMSSettingResponse[]) => {
-                const setting = settings.find(
-                    (s) => s.plugin_key === "opac_compact_list_enabled",
+                this.compactListEnabled = this.readBoolSetting(
+                    settings,
+                    "opac_compact_list_enabled",
                 );
-                if (!setting) {
-                    return;
-                }
-
-                let value: unknown = setting.plugin_value;
-                try {
-                    value = JSON.parse(String(value));
-                } catch {
-                    /* leave as-is */
-                }
-                this.compactListEnabled = Boolean(Number(value));
+                this.imageCropEnabled = this.readBoolSetting(
+                    settings,
+                    "opac_image_crop_enabled",
+                );
             })
             .catch((error) => {
                 console.error(error);
             });
+    }
+
+    private readBoolSetting(
+        settings: LMSSettingResponse[],
+        key: LMSSettingResponse["plugin_key"],
+    ): boolean {
+        const setting = settings.find((s) => s.plugin_key === key);
+        if (!setting) {
+            return false;
+        }
+
+        let value: unknown = setting.plugin_value;
+        try {
+            value = JSON.parse(String(value));
+        } catch {
+            /* leave as-is */
+        }
+        return Boolean(Number(value));
     }
 
     private toggleCompactList(open: boolean) {
@@ -672,6 +686,7 @@ export default class LMSEventsView extends LitElement {
                       }
                     : undefined}
                 .status=${event.status}
+                ?crop-images=${this.imageCropEnabled}
             ></lms-card>
         `;
     }
@@ -748,6 +763,8 @@ export default class LMSEventsView extends LitElement {
                                                         .event=${this.modalData}
                                                         .isOpen=${this
                                                             .hasOpenModal}
+                                                        ?crop-images=${this
+                                                            .imageCropEnabled}
                                                         @close=${this
                                                             .handleHideDetails}
                                                     ></lms-card-details-modal>

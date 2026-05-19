@@ -5,7 +5,7 @@ import {
     faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
-import { html, LitElement, nothing } from "lit";
+import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -35,7 +35,19 @@ export default class LMSCard extends LitElement {
 
     @property({ type: String }) status?: EventStatus;
 
-    static override styles = [tailwindStyles];
+    @property({ type: Boolean, attribute: "crop-images", reflect: true })
+    cropImages = false;
+
+    private static cropStyles = css`
+        :host([crop-images]) figure img {
+            aspect-ratio: var(--lms-card-image-aspect-ratio, 16 / 9);
+            object-fit: var(--lms-card-image-object-fit, cover);
+            object-position: var(--lms-card-image-object-position, center);
+            height: auto;
+        }
+    `;
+
+    static override styles = [tailwindStyles, LMSCard.cropStyles];
 
     private getStatusConfig() {
         switch (this.status) {

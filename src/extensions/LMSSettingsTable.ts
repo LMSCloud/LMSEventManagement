@@ -25,6 +25,7 @@ const CHECKBOX_KEYS = new Set([
     "opac_filters_fee_enabled",
     "opac_hide_pending_events",
     "opac_compact_list_enabled",
+    "opac_image_crop_enabled",
 ]);
 
 @customElement("lms-settings-table")
@@ -188,7 +189,8 @@ export default class LMSSettingsTable extends LitElement {
 
         if (
             settingKey.startsWith("opac_compact_list_") ||
-            settingKey.startsWith("opac_layout_")
+            settingKey.startsWith("opac_layout_") ||
+            settingKey.startsWith("opac_image_")
         ) {
             return "layout";
         }

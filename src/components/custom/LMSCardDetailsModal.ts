@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { litFontawesome } from "@weavedev/lit-fontawesome";
 import DOMPurify from "dompurify";
-import { LitElement, html, nothing } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -40,6 +40,9 @@ export default class LMSCardDetailsModal extends LitElement {
 
     @property({ type: Boolean }) isOpen = false;
 
+    @property({ type: Boolean, attribute: "crop-images", reflect: true })
+    cropImages = false;
+
     @state() state: "initial" | "pending" | "success" | "error" = "initial";
 
     @state() event_types?: Array<LMSEventType>;
@@ -59,7 +62,20 @@ export default class LMSCardDetailsModal extends LitElement {
     private boundHandleKeyDown = (e: KeyboardEvent) =>
         this.handleKeyDown.bind(this)(e);
 
-    static override styles = [tailwindStyles, skeletonStyles];
+    private static cropStyles = css`
+        :host([crop-images]) .event-detail-image {
+            aspect-ratio: var(--lms-card-image-aspect-ratio, 16 / 9);
+            object-fit: var(--lms-card-image-object-fit, cover);
+            object-position: var(--lms-card-image-object-position, center);
+            height: auto;
+        }
+    `;
+
+    static override styles = [
+        tailwindStyles,
+        skeletonStyles,
+        LMSCardDetailsModal.cropStyles,
+    ];
 
     override connectedCallback() {
         super.connectedCallback();
@@ -507,7 +523,7 @@ export default class LMSCardDetailsModal extends LitElement {
                                             )}
                                             class="${classMap({
                                                 hidden: !this.event?.image,
-                                            })} aspect-video w-full rounded object-cover"
+                                            })} event-detail-image w-full rounded"
                                         />
 
                                         <!-- Target Groups (no fees) -->
