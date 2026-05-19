@@ -230,7 +230,7 @@ export default class OpacWidgetSettings extends LitElement {
 }`;
 
         return html`
-            <div class="collapse collapse-arrow mt-6 border bg-base-100">
+            <div class="collapse collapse-arrow border bg-base-100">
                 <input type="checkbox" />
                 <div class="collapse-title text-sm font-semibold">
                     ${__("Custom styling (CSS variables)")}
@@ -281,6 +281,11 @@ export default class OpacWidgetSettings extends LitElement {
                             <code>--text-color-muted</code>
                         </li>
                     </ul>
+                    <p class="mt-3 text-xs">
+                        ${__(
+                            "For the full list of CSS variables and recipes, see docs/OPAC_THEMING.md in the plugin source.",
+                        )}
+                    </p>
                 </div>
             </div>
         `;
@@ -784,9 +789,11 @@ export default class OpacWidgetSettings extends LitElement {
                                     <lms-opac-events-widget
                                         page-url=${this.pageUrl}
                                     ></lms-opac-events-widget>
-
-                                    ${this.renderThemingHelp()}
                                 </div>
+                            </div>
+
+                            <div class="lg:col-start-2">
+                                ${this.renderThemingHelp()}
                             </div>
                         </div>
                     </div>

@@ -161,16 +161,18 @@ export default class LMSEventsView extends LitElement {
          *       for sticky to engage even with a short main column.
          */
         :host {
-            --lms-events-sidebar-top-collapsed: 11rem;
-            --lms-events-sidebar-top-expanded: 14rem;
+            --lms-events-sidebar-top-without-chips: 11rem;
+            --lms-events-sidebar-top-with-chips: 14rem;
         }
 
         lms-events-filter:not([has-active-filters]) .opac-layout--with-sidebar {
-            --lms-events-sidebar-top: var(--lms-events-sidebar-top-collapsed);
+            --lms-events-sidebar-top: var(
+                --lms-events-sidebar-top-without-chips
+            );
         }
 
         lms-events-filter[has-active-filters] .opac-layout--with-sidebar {
-            --lms-events-sidebar-top: var(--lms-events-sidebar-top-expanded);
+            --lms-events-sidebar-top: var(--lms-events-sidebar-top-with-chips);
         }
 
         @media (min-width: 1024px) {

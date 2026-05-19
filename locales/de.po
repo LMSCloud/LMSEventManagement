@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-19 13:12+0200\n"
-"PO-Revision-Date: 2026-05-19 13:18+0200\n"
+"POT-Creation-Date: 2026-05-19 13:36+0200\n"
+"PO-Revision-Date: 2026-05-19 13:38+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -99,7 +99,7 @@ msgstr "Registrieren"
 
 #: src/components/custom/LMSCardDetailsModal.ts:715
 #: src/lib/converters/datetimeConverters.ts:80
-#: src/lib/converters/displayConverters.ts:44 src/views/LMSEventsView.ts:800
+#: src/lib/converters/displayConverters.ts:44 src/views/LMSEventsView.ts:802
 msgid "There's been an error"
 msgstr "Es ist ein Fehler aufgetreten"
 
@@ -335,7 +335,7 @@ msgid "Waitlist"
 msgstr "Warteliste"
 
 #: src/components/LMSStaffEventCard/LMSStaffEventCard.ts:78
-#: src/views/OpacWidgetSettings.ts:774
+#: src/views/OpacWidgetSettings.ts:779
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -1098,34 +1098,34 @@ msgstr "Teilnahmegebühr"
 msgid "Please select an option"
 msgstr "Bitte wählen Sie eine Option"
 
-#: src/views/LMSEventsView.ts:597 src/views/LMSEventsView.ts:600
+#: src/views/LMSEventsView.ts:599 src/views/LMSEventsView.ts:602
 msgid "Upcoming events"
 msgstr "Kommende Veranstaltungen"
 
-#: src/views/LMSEventsView.ts:606
+#: src/views/LMSEventsView.ts:608
 msgid "Hide upcoming events list"
 msgstr "Liste kommender Veranstaltungen ausblenden"
 
-#: src/views/LMSEventsView.ts:636
+#: src/views/LMSEventsView.ts:638
 msgid "Show upcoming events"
 msgstr "Liste kommender Veranstaltungen einblenden"
 
-#: src/views/LMSEventsView.ts:669
+#: src/views/LMSEventsView.ts:671
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:36
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:61
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:134
 msgid "Location not found"
 msgstr "Veranstaltungsort nicht gefunden"
 
-#: src/views/LMSEventsView.ts:735
+#: src/views/LMSEventsView.ts:737
 msgid "There are no events to display"
 msgstr "Es sind keine Veranstaltungen vorhanden, die angezeigt werden könnten"
 
-#: src/views/LMSEventsView.ts:782
+#: src/views/LMSEventsView.ts:784
 msgid "You've reached the end"
 msgstr "Sie haben das Ende erreicht"
 
-#: src/views/LMSEventsView.ts:790
+#: src/views/LMSEventsView.ts:792
 msgid "Load more"
 msgstr "Mehr anzeigen"
 
@@ -1156,31 +1156,39 @@ msgstr ""
 msgid "Commonly overridden variables"
 msgstr "Häufig überschriebene Variablen"
 
-#: src/views/OpacWidgetSettings.ts:315
+#: src/views/OpacWidgetSettings.ts:286
+msgid ""
+"For the full list of CSS variables and recipes, see docs/OPAC_THEMING.md in "
+"the plugin source."
+msgstr ""
+"Eine vollständige Liste der CSS-Variablen und Anwendungsbeispiele finden Sie "
+"in docs/OPAC_THEMING.md im Plugin-Quellcode."
+
+#: src/views/OpacWidgetSettings.ts:320
 msgid "Saving settings..."
 msgstr "Einstellungen werden gespeichert…"
 
-#: src/views/OpacWidgetSettings.ts:331
+#: src/views/OpacWidgetSettings.ts:336
 msgid "OPAC Events Widget Configuration"
 msgstr "OPAC-Veranstaltungs-Widget-Konfiguration"
 
-#: src/views/OpacWidgetSettings.ts:353
+#: src/views/OpacWidgetSettings.ts:358
 msgid "Enable widget on OPAC homepage"
 msgstr "Widget auf der OPAC-Startseite aktivieren"
 
-#: src/views/OpacWidgetSettings.ts:383
+#: src/views/OpacWidgetSettings.ts:388
 msgid "Automatically inject widget on OPAC main page"
 msgstr "Widget automatisch in die OPAC-Startseite einfügen"
 
-#: src/views/OpacWidgetSettings.ts:390
+#: src/views/OpacWidgetSettings.ts:395
 msgid "If disabled, manual embedding instructions will be shown"
 msgstr "Wenn deaktiviert, werden Hinweise zur manuellen Einbettung angezeigt"
 
-#: src/views/OpacWidgetSettings.ts:403
+#: src/views/OpacWidgetSettings.ts:408
 msgid "Manual Widget Embedding"
 msgstr "Manuelle Widget-Einbettung"
 
-#: src/views/OpacWidgetSettings.ts:410
+#: src/views/OpacWidgetSettings.ts:415
 msgid ""
 "Add the following HTML to an OPACMainUserBlock entry under Tools → HTML "
 "Customizations (or the OPACMainUserBlock system preference on older Koha "
@@ -1190,7 +1198,7 @@ msgstr ""
 "Werkzeuge → HTML-Anpassungen ein (oder in die Systempräferenz "
 "OPACMainUserBlock bei älteren Koha-Versionen):"
 
-#: src/views/OpacWidgetSettings.ts:420
+#: src/views/OpacWidgetSettings.ts:425
 msgid ""
 "The page-url attribute is required so event links resolve to the correct "
 "OPAC events page."
@@ -1198,107 +1206,107 @@ msgstr ""
 "Das Attribut page-url ist erforderlich, damit Veranstaltungslinks auf die "
 "korrekte OPAC-Veranstaltungsseite verweisen."
 
-#: src/views/OpacWidgetSettings.ts:432
+#: src/views/OpacWidgetSettings.ts:437
 msgid "Widget Title"
 msgstr "Widget-Titel"
 
-#: src/views/OpacWidgetSettings.ts:441
+#: src/views/OpacWidgetSettings.ts:446
 msgid "e.g., Upcoming Events"
 msgstr "bspw. Kommende Veranstaltungen"
 
-#: src/views/OpacWidgetSettings.ts:448
+#: src/views/OpacWidgetSettings.ts:453
 msgid "The heading text displayed at the top of the widget"
 msgstr "Überschrift, die am oberen Ende des Widgets angezeigt wird"
 
-#: src/views/OpacWidgetSettings.ts:458
+#: src/views/OpacWidgetSettings.ts:463
 msgid "Display Mode"
 msgstr "Anzeige-Modus"
 
-#: src/views/OpacWidgetSettings.ts:478
+#: src/views/OpacWidgetSettings.ts:483
 msgid "Show next X events"
 msgstr "Kommende X Veranstaltungen anzeigen"
 
-#: src/views/OpacWidgetSettings.ts:487
+#: src/views/OpacWidgetSettings.ts:492
 msgid "Show events in time period"
 msgstr "Veranstaltungen im Zeitraum anzeigen"
 
-#: src/views/OpacWidgetSettings.ts:497
+#: src/views/OpacWidgetSettings.ts:502
 msgid "Manually select events"
 msgstr "Veranstaltungen manuell auswählen"
 
-#: src/views/OpacWidgetSettings.ts:512
+#: src/views/OpacWidgetSettings.ts:517
 msgid "Number of Events"
 msgstr "Anzahl der Veranstaltungen"
 
-#: src/views/OpacWidgetSettings.ts:530
+#: src/views/OpacWidgetSettings.ts:535
 msgid "How many upcoming events to display (1-20)"
 msgstr "Anzahl der anzuzeigenden kommenden Veranstaltungen (1-20)"
 
-#: src/views/OpacWidgetSettings.ts:547
+#: src/views/OpacWidgetSettings.ts:552
 msgid "Time Period (days)"
 msgstr "Zeitraum (Tage)"
 
-#: src/views/OpacWidgetSettings.ts:563
+#: src/views/OpacWidgetSettings.ts:568
 msgid "Current/Next 7 days"
 msgstr "Aktuell/Nächste 7 Tage"
 
-#: src/views/OpacWidgetSettings.ts:574
+#: src/views/OpacWidgetSettings.ts:579
 msgid "Next 14 days"
 msgstr "Nächste 14 Tage"
 
-#: src/views/OpacWidgetSettings.ts:585
+#: src/views/OpacWidgetSettings.ts:590
 msgid "Next 30 days"
 msgstr "Nächste 30 Tage"
 
-#: src/views/OpacWidgetSettings.ts:602
+#: src/views/OpacWidgetSettings.ts:607
 msgid "Select Events"
 msgstr "Wählen Sie Veranstaltungen"
 
-#: src/views/OpacWidgetSettings.ts:622
+#: src/views/OpacWidgetSettings.ts:627
 msgid "No upcoming events available"
 msgstr "Keine kommenden Veranstaltungen verfügbar"
 
-#: src/views/OpacWidgetSettings.ts:676
+#: src/views/OpacWidgetSettings.ts:681
 msgid "Select which events to display in the widget"
 msgstr "Wählen Sie, welche Veranstaltungen im Widget angezeigt werden sollen"
 
-#: src/views/OpacWidgetSettings.ts:689
+#: src/views/OpacWidgetSettings.ts:694
 msgid "Widget Layout"
 msgstr "Widget-Layout"
 
-#: src/views/OpacWidgetSettings.ts:703
+#: src/views/OpacWidgetSettings.ts:708
 msgid "Vertical List"
 msgstr "Vertikale Liste"
 
-#: src/views/OpacWidgetSettings.ts:712
+#: src/views/OpacWidgetSettings.ts:717
 msgid "Horizontal Scrollable List"
 msgstr "Horizontal scrollbare Liste"
 
-#: src/views/OpacWidgetSettings.ts:719
+#: src/views/OpacWidgetSettings.ts:724
 msgid "Choose the layout style for the widget"
 msgstr "Wählen Sie eine Layout-Variante für das Widget"
 
-#: src/views/OpacWidgetSettings.ts:730
+#: src/views/OpacWidgetSettings.ts:735
 msgid "\"All Events\" Button Text"
 msgstr "Schaltflächentext 'Alle Veranstaltungen'"
 
-#: src/views/OpacWidgetSettings.ts:740
+#: src/views/OpacWidgetSettings.ts:745
 msgid "e.g., Alle Veranstaltungen"
 msgstr "bspw. Alle Veranstaltungen"
 
-#: src/views/OpacWidgetSettings.ts:747
+#: src/views/OpacWidgetSettings.ts:752
 msgid "Text for the button at the bottom of the widget"
 msgstr "Text für die Schaltfläche am unteren Ende des Widgets"
 
-#: src/views/OpacWidgetSettings.ts:762
+#: src/views/OpacWidgetSettings.ts:767
 msgid "Saving..."
 msgstr "Speichern…"
 
-#: src/views/OpacWidgetSettings.ts:763
+#: src/views/OpacWidgetSettings.ts:768
 msgid "Save Settings"
 msgstr "Einstellungen speichern"
 
-#: src/views/OpacWidgetSettings.ts:779
+#: src/views/OpacWidgetSettings.ts:784
 msgid ""
 "This preview shows how the widget will appear on the OPAC. Use the location "
 "filter in the widget to preview different locations."
