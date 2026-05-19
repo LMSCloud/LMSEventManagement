@@ -379,6 +379,223 @@
       }
     }
   },
+  "/public/bookings": {
+    "post": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Bookings#create",
+      "operationId": "createBookingPublic",
+      "tags": [
+        "bookings"
+      ],
+      "description": "Create a booking for an event. Uses the logged-in patron if present, otherwise the body must supply booker.name and booker.email (only allowed on events with open_registration=1 and only when every attendee's target group is free).",
+      "consumes": [
+        "application/json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "required": [
+              "event_id",
+              "attendees"
+            ],
+            "properties": {
+              "event_id": {
+                "type": "integer",
+                "description": "The event to book"
+              },
+              "booker": {
+                "type": "object",
+                "description": "Required for anonymous bookings; ignored when a patron is authenticated",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              },
+              "attendees": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "target_group_id"
+                  ],
+                  "properties": {
+                    "borrowernumber": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "dob": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date"
+                    },
+                    "target_group_id": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "responses": {
+        "201": {
+          "description": "Booking created",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Anonymous booking not permitted on this event or with paid attendees",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Event not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Event has been canceled",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Attendee references a target group not offered on this event",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/public/bookings/confirm/{token}": {
+    "post": {
+      "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::Bookings#confirm",
+      "operationId": "confirmBookingPublic",
+      "tags": [
+        "bookings"
+      ],
+      "description": "Confirm a pending booking via its emailed token. Flips every pending attendee on the booking to confirmed.",
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "name": "token",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Booking confirmed",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Token invalid or already used",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/public/event_types": {
     "get": {
       "x-mojo-to": "Com::LMSCloud::EventManagement::Controllers::Public::EventTypes#list",
