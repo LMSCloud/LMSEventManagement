@@ -25,16 +25,13 @@ sub list {
 
         my $search_params = { event_id => $event_id };
         if ( $status_param && @{$status_param} ) {
-            my $statuses = [ grep { defined } @{$status_param} ];
+            my $statuses = [ grep {defined} @{$status_param} ];
             if ( @{$statuses} ) {
                 $search_params->{status} = { -in => $statuses };
             }
         }
 
-        my $rs = Koha::LMSCloud::EventManagement::Attendees->new->search(
-            $search_params,
-            { order_by => { -asc => 'created_at' } },
-        );
+        my $rs = Koha::LMSCloud::EventManagement::Attendees->new->search( $search_params, { order_by => { -asc => 'created_at' } }, );
 
         my $out = [];
         while ( my $attendee = $rs->next ) {

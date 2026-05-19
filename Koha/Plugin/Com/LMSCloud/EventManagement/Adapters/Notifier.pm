@@ -80,9 +80,9 @@ sub send_booking_confirmation {
         };
 
         _send(
-            {   booking   => $booking,
-                event     => $event,
-                code      => 'EVENT_BOOKING_CONFIRM',
+            {   booking    => $booking,
+                event      => $event,
+                code       => 'EVENT_BOOKING_CONFIRM',
                 substitute => $substitute,
             }
         );
@@ -153,7 +153,7 @@ sub send_booking_canceled {
 }
 
 sub _send {
-    my ($args) = @_;
+    my ($args)     = @_;
     my $booking    = $args->{booking};
     my $event      = $args->{event};
     my $code       = $args->{code};

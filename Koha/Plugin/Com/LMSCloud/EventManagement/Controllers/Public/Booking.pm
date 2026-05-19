@@ -55,7 +55,7 @@ sub cancel {
         {
             $authorized = 1;
         }
-        elsif ( $token
+        elsif ($token
             && $booking->confirmation_token
             && $booking->confirmation_token eq $token )
         {

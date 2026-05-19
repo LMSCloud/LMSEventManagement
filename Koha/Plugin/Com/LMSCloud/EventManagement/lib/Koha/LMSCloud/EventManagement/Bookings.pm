@@ -88,9 +88,7 @@ sub create_with_attendees {
             # Lock the event row for the duration of the transaction. Without
             # this, two concurrent bookings can both see the same available
             # seat count and overcommit.
-            my $event_row =
-                $schema->resultset('KohaPluginComLmscloudEventmanagementEvent')
-                ->search( { id => $event_id }, { for => 'update' } )->next;
+            my $event_row = $schema->resultset('KohaPluginComLmscloudEventmanagementEvent')->search( { id => $event_id }, { for => 'update' } )->next;
             croak 'BOOKING_EVENT_NOT_FOUND' if !$event_row;
 
             my $max_participants = $event_row->max_participants;
@@ -161,8 +159,7 @@ sub create_with_attendees {
             $booking->discard_changes;
 
             require Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier;
-            Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier
-                ->send_booking_confirmation($booking);
+            Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier->send_booking_confirmation($booking);
 
             return $booking;
         }
@@ -201,9 +198,7 @@ sub sweep_stale_pending {
 
     my $schema = Koha::Database->new->schema;
     my $dtf    = $schema->storage->datetime_parser;
-    my $cutoff = $dtf->format_datetime(
-        DateTime->now( time_zone => 'UTC' )->subtract( hours => $hours )
-    );
+    my $cutoff = $dtf->format_datetime( DateTime->now( time_zone => 'UTC' )->subtract( hours => $hours ) );
 
     my $stale = $class->new->search(
         {   confirmed_at => undef,

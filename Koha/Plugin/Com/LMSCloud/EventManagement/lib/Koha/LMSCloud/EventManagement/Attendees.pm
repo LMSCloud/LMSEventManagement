@@ -56,8 +56,7 @@ sub promote_waitlisted_for_event {
     $candidate->transition_to('confirmed');
 
     require Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier;
-    Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier
-        ->send_waitlist_promotion($candidate);
+    Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier->send_waitlist_promotion($candidate);
 
     return $candidate;
 }

@@ -109,10 +109,8 @@ sub list {
             );
         }
 
-        my $bookings = Koha::LMSCloud::EventManagement::Bookings->new->search(
-            { booker_borrowernumber => $current_user->borrowernumber },
-            { order_by => { -desc => 'created_at' } },
-        );
+        my $bookings =
+            Koha::LMSCloud::EventManagement::Bookings->new->search( { booker_borrowernumber => $current_user->borrowernumber }, { order_by => { -desc => 'created_at' } }, );
 
         my $out = [];
         while ( my $b = $bookings->next ) {
