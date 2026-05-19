@@ -114,6 +114,9 @@ sub cancel {
                 $attendees_set->promote_waitlisted_for_event( $self->event_id, $tg );
             }
 
+            require Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier;
+            Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier->send_booking_canceled($self);
+
             return $self;
         }
     );

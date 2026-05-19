@@ -157,6 +157,11 @@ sub create_with_attendees {
             }
 
             $booking->discard_changes;
+
+            require Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier;
+            Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier
+                ->send_booking_confirmation($booking);
+
             return $booking;
         }
     );
@@ -165,8 +170,9 @@ sub create_with_attendees {
 =head2 find_by_token($token)
 
 Returns the booking carrying the given confirmation token, or undef.
-Tokens are cleared on confirm, so a successful lookup implies the booking
-has not been confirmed yet.
+A booking keeps its token for its lifetime (used as a management token
+for anonymous cancellation), so a successful lookup does not imply the
+booking is still unconfirmed.
 
 =cut
 

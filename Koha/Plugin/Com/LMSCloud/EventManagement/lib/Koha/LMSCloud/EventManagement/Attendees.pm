@@ -35,8 +35,8 @@ sub count_active_for_event {
 =head2 promote_waitlisted_for_event($event_id, $target_group_id)
 
 Promote the oldest waitlisted attendee for the given event + target group
-to C<confirmed>. Returns the promoted attendee, or undef if none was
-waiting. The caller is responsible for triggering any notification.
+to C<confirmed>, and send the waitlist-promotion email. Returns the
+promoted attendee, or undef if none was waiting.
 
 =cut
 
@@ -54,6 +54,11 @@ sub promote_waitlisted_for_event {
     return if !$candidate;
 
     $candidate->transition_to('confirmed');
+
+    require Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier;
+    Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier
+        ->send_waitlist_promotion($candidate);
+
     return $candidate;
 }
 

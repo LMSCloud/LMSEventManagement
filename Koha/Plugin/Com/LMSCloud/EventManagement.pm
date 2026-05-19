@@ -27,6 +27,7 @@ use Mojo::JSON       qw( decode_json );
 use Readonly         qw( Readonly );
 use Try::Tiny        qw( catch try );
 
+use Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier   ();
 use Koha::Plugin::Com::LMSCloud::EventManagement::Util::MigrationHelper ();
 use Koha::Plugin::Com::LMSCloud::EventManagement::Util::Pages           qw( create_opac_page delete_opac_page page_exists update_opac_page get_page_url );
 
@@ -301,6 +302,8 @@ sub install() {
             croak 'Migration failed';
         }
 
+        Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier->install_letters;
+
         # Create OPAC page for events
         my $page_content = $self->mbf_read('events.html');
         my $page_id      = create_opac_page(
@@ -368,6 +371,8 @@ sub upgrade {
         if ( !$is_success ) {
             croak 'Migration failed';
         }
+
+        Koha::Plugin::Com::LMSCloud::EventManagement::Adapters::Notifier->install_letters;
 
         # Ensure all settings exist with defaults for upgrades
         $self->_ensure_settings_exist();
