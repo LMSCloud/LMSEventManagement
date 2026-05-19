@@ -203,6 +203,8 @@ sub update {
 sub delete {
     my $c = shift->openapi->valid_input or return;
 
+    my $schema = Koha::Database->new->schema;
+
     return try {
         local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
         local $ENV{OUTPUT_CHARSET} = 'UTF-8';
@@ -214,15 +216,20 @@ sub delete {
             return $c->render( status => 404, openapi => { error => __('Event not found') } );
         }
 
+        $schema->storage->txn_begin;
+
         # delete the entries from the junction table first
         Koha::LMSCloud::EventManagement::Event::TargetGroup::Fees->search( { event_id => $id } )->delete;
 
         # delete the event
         $event->delete;
 
+        $schema->storage->txn_commit;
+
         return $c->render( status => 204, openapi => q{} );
     }
     catch {
+        eval { $schema->storage->txn_rollback };
         return $c->unhandled_exception($_);
     };
 }

@@ -176,6 +176,8 @@ sub update {
 sub delete {
     my $c = shift->openapi->valid_input or return;
 
+    my $schema = Koha::Database->new->schema;
+
     return try {
         local $ENV{LANGUAGE}       = $c->validation->param('lang') || 'en';
         local $ENV{OUTPUT_CHARSET} = 'UTF-8';
@@ -186,6 +188,8 @@ sub delete {
         if ( !$event_type ) {
             return $c->render( status => 404, openapi => { error => __('Event type not found') } );
         }
+
+        $schema->storage->txn_begin;
 
         # delete associated events
         my $events = Koha::LMSCloud::EventManagement::Events->search( { event_type => $id } );
@@ -203,9 +207,12 @@ sub delete {
         # delete the event
         $event_type->delete;
 
+        $schema->storage->txn_commit;
+
         return $c->render( status => 204, openapi => q{} );
     }
     catch {
+        eval { $schema->storage->txn_rollback };
         return $c->unhandled_exception($_);
     };
 }
