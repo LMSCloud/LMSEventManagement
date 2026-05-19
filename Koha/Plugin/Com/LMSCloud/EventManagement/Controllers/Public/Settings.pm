@@ -42,10 +42,10 @@ sub _get_settings {
         {   'plugin_class' => 'Koha::Plugin::Com::LMSCloud::EventManagement',
             'plugin_key'   => {
                 -in => [
-                    'opac_filters_age_enabled', 'opac_filters_registration_and_dates_enabled', 'opac_filters_fee_enabled', 'opac_hide_pending_events',
-                    'widget_enabled',           'widget_auto_inject',                          'widget_title',             'widget_display_mode',
-                    'widget_layout',            'widget_event_count',                          'widget_time_period',       'widget_selected_events',
-                    'widget_all_events_text',
+                    'opac_filters_age_enabled',  'opac_filters_registration_and_dates_enabled', 'opac_filters_fee_enabled', 'opac_hide_pending_events',
+                    'opac_compact_list_enabled', 'widget_enabled',                              'widget_auto_inject',       'widget_title',
+                    'widget_display_mode',       'widget_layout',                               'widget_event_count',       'widget_time_period',
+                    'widget_selected_events',    'widget_all_events_text',
                 ]
             }
         }

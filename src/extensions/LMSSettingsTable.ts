@@ -24,6 +24,7 @@ const CHECKBOX_KEYS = new Set([
     "opac_filters_registration_and_dates_enabled",
     "opac_filters_fee_enabled",
     "opac_hide_pending_events",
+    "opac_compact_list_enabled",
 ]);
 
 @customElement("lms-settings-table")
@@ -185,6 +186,13 @@ export default class LMSSettingsTable extends LitElement {
             return "visibility";
         }
 
+        if (
+            settingKey.startsWith("opac_compact_list_") ||
+            settingKey.startsWith("opac_layout_")
+        ) {
+            return "layout";
+        }
+
         return "general";
     }
 
@@ -202,6 +210,13 @@ export default class LMSSettingsTable extends LitElement {
                 title: __("Visibility"),
                 description: __(
                     "Control event visibility behavior in OPAC views.",
+                ),
+            },
+            {
+                id: "layout",
+                title: __("Layout"),
+                description: __(
+                    "Control supplementary layout elements of the OPAC event list.",
                 ),
             },
             {

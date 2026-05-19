@@ -47,6 +47,19 @@ export default class LMSEventsFilter extends LitElement {
 
     @property({ type: Boolean }) filtersExpanded = !this.shouldFold;
 
+    /*
+     * Reflects whether any filter chips are currently rendered. Used by
+     * LMSEventsView to widen the sticky-sidebar top offset so the sidebar
+     * still clears the filter bar when chips are present (chips add an
+     * extra row to the filter's rendered height).
+     */
+    @property({
+        type: Boolean,
+        attribute: "has-active-filters",
+        reflect: true,
+    })
+    hasActiveFilters = false;
+
     @property({ type: Array }) settings?: Array<LMSSettingResponse>;
 
     @state() facets?: Partial<Facets>;
@@ -289,6 +302,7 @@ export default class LMSEventsFilter extends LitElement {
 
     private updateActiveFiltersState() {
         this.activeFilters = this.getActiveFilterBadges();
+        this.hasActiveFilters = this.activeFilters.length > 0;
     }
 
     private handleSearch(e: CustomEvent) {
