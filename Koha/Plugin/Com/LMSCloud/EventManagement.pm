@@ -279,6 +279,8 @@ sub install() {
                     events_table                       => $self->get_qualified_table_name('events'),
                     event_target_group_fees_table      => $self->get_qualified_table_name('e_tg_fees'),
                     event_type_target_group_fees_table => $self->get_qualified_table_name('et_tg_fees'),
+                    event_bookings_table               => $self->get_qualified_table_name('e_bookings'),
+                    event_attendees_table              => $self->get_qualified_table_name('e_attendees'),
                 },
                 bundle_path => $bundle_path,
             }
@@ -347,6 +349,8 @@ sub upgrade {
                     events_table                       => $self->get_qualified_table_name('events'),
                     event_target_group_fees_table      => $self->get_qualified_table_name('e_tg_fees'),
                     event_type_target_group_fees_table => $self->get_qualified_table_name('et_tg_fees'),
+                    event_bookings_table               => $self->get_qualified_table_name('e_bookings'),
+                    event_attendees_table              => $self->get_qualified_table_name('e_attendees'),
                 },
                 bundle_path => $bundle_path,
             }
@@ -443,6 +447,7 @@ sub uninstall() {
     my $dbh = C4::Context->dbh;
 
     my @tables = (
+        $self->get_qualified_table_name('e_attendees'),   $self->get_qualified_table_name('e_bookings'),
         $self->get_qualified_table_name('e_tg_fees'),     $self->get_qualified_table_name('events'),
         $self->get_qualified_table_name('et_tg_fees'),    $self->get_qualified_table_name('event_types'),
         $self->get_qualified_table_name('target_groups'), $self->get_qualified_table_name('locations'),
