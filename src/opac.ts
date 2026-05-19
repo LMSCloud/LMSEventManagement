@@ -9,6 +9,7 @@ import LMSSearch from "./components/LMSSearch";
 import LMSToast from "./components/LMSToast";
 import LMSEventBookingConfirmPage from "./views/LMSEventBookingConfirmPage";
 import LMSEventBookingPage from "./views/LMSEventBookingPage";
+import LMSEventManagementRoot from "./views/LMSEventManagementRoot";
 import LMSEventsView from "./views/LMSEventsView";
 
 export default {
@@ -21,5 +22,6 @@ export default {
     LMSToast,
     LMSEventBookingConfirmPage,
     LMSEventBookingPage,
+    LMSEventManagementRoot,
     LMSEventsView,
 };
