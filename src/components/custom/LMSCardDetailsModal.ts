@@ -17,12 +17,13 @@ import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { match } from "ts-pattern";
-import { requestHandler } from "../../lib/RequestHandler/RequestHandler";
 import { splitDateTime } from "../../lib/converters/datetimeConverters";
 import {
     formatAddress,
     formatMonetaryAmountByLocale,
 } from "../../lib/converters/displayConverters";
+import { buildOpacUrl } from "../../lib/opacUrl";
+import { requestHandler } from "../../lib/RequestHandler/RequestHandler";
 import { __, attr__ } from "../../lib/translate";
 import { skeletonStyles } from "../../styles/skeleton";
 import { tailwindStyles } from "../../tailwind.lit";
@@ -337,6 +338,35 @@ export default class LMSCardDetailsModal extends LitElement {
             rel="noopener noreferrer"
             >${__("Directions to the venue by")} ${url?.hostname}</a
         >`;
+    }
+
+    private renderRegisterButton() {
+        // Admins who set a registration_link wired an external flow on
+        // purpose — honour that. Otherwise route to the built-in booking
+        // page.
+        const externalLink = this.event?.registration_link;
+        const eventId = this.event?.id;
+        const internalHref = eventId
+            ? buildOpacUrl({
+                  action: "book",
+                  event_id: String(eventId),
+              })
+            : undefined;
+        const href = externalLink ?? internalHref;
+        const isExternal = Boolean(externalLink);
+        return html`<a
+            class="${classMap({ hidden: !href })} btn btn-primary"
+            href=${ifDefined(href)}
+            target=${ifDefined(isExternal ? "_blank" : undefined)}
+            rel=${ifDefined(isExternal ? "noopener noreferrer" : undefined)}
+            title=${attr__("Register")}
+            aria-label=${attr__("Register")}
+        >
+            ${litFontawesome(faUserPlus, {
+                className: "w-4 h-4 sm:mr-2",
+            })}
+            <span class="hidden sm:inline">${__("Register")}</span>
+        </a>`;
     }
 
     private hasNoFees(targetGroups: LMSEventTargetGroupFee[]) {
@@ -678,25 +708,7 @@ export default class LMSCardDetailsModal extends LitElement {
                                             >${__("Export to Calendar")}</span
                                         >
                                     </button>
-                                    <a
-                                        class="${classMap({
-                                            hidden: !this.event
-                                                ?.registration_link,
-                                        })} btn btn-primary"
-                                        href=${ifDefined(
-                                            this.event?.registration_link ??
-                                                undefined,
-                                        )}
-                                        title=${attr__("Register")}
-                                        aria-label=${attr__("Register")}
-                                    >
-                                        ${litFontawesome(faUserPlus, {
-                                            className: "w-4 h-4 sm:mr-2",
-                                        })}
-                                        <span class="hidden sm:inline"
-                                            >${__("Register")}</span
-                                        >
-                                    </a>
+                                    ${this.renderRegisterButton()}
                                 </div>
                             </form>
                         `,
