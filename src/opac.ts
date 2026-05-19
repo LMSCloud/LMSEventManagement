@@ -7,6 +7,7 @@ import LMSDropdown from "./components/LMSDropdown";
 import LMSPagination from "./components/LMSPagination";
 import LMSSearch from "./components/LMSSearch";
 import LMSToast from "./components/LMSToast";
+import LMSEventBookingConfirmPage from "./views/LMSEventBookingConfirmPage";
 import LMSEventBookingPage from "./views/LMSEventBookingPage";
 import LMSEventsView from "./views/LMSEventsView";
 
@@ -18,6 +19,7 @@ export default {
     LMSPagination,
     LMSSearch,
     LMSToast,
+    LMSEventBookingConfirmPage,
     LMSEventBookingPage,
     LMSEventsView,
 };
