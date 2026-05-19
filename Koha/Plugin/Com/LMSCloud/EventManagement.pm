@@ -210,6 +210,9 @@ sub configure {
         q{opac-widget} => sub {
             $template = $self->get_template( { file => 'views/configuration/opac-widget.tt' } );
 
+            my $page_url = get_page_url( { code => 'lmscloud-eventmanagement' } ) // q{};
+            $template->param( page_url => $page_url );
+
             return $self->output_html( $template->output() );
         },
 

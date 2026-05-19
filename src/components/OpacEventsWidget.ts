@@ -37,31 +37,52 @@ export default class OpacEventsWidget extends LitElement {
 
     static override styles = css`
         :host {
-            /* Design Tokens */
-            --widget-bg-color: #fff;
-            --widget-border-color: #ddd;
+            /*
+             * Design tokens — override any of these from the host page
+             * (e.g. via OPACUserCSS) to restyle the widget without
+             * piercing the shadow DOM.
+             *
+             * Defaults pull from Koha's Bootstrap CSS variables so the
+             * widget blends in with the surrounding OPAC theme. 22.11
+             * ships Bootstrap 4 without CSS variables, so the var()
+             * fallbacks below are what actually applies there; 25.11
+             * ships Bootstrap 5 and customises the same hex values via
+             * SCSS, so --bs-* resolves to the matching theme tokens.
+             */
+            --widget-bg-color: var(--bs-body-bg, transparent);
+            --widget-border-color: var(--bs-border-color, #ddd);
             --widget-border-width: 1px;
-            --widget-border-radius: 4px;
+            --widget-border-radius: var(--bs-border-radius, 3px);
             --widget-padding: 1rem;
             --widget-spacing: 1rem;
             --widget-spacing-sm: 0.5rem;
             --widget-spacing-xs: 0.25rem;
             --widget-spacing-lg: 2rem;
 
-            --header-font-size: 1.25rem;
+            /*
+             * Heading defaults mirror Koha's h2: $h2-font-size = 1.4rem,
+             * $headings-font-weight = 600, $headings-line-height = 1.2,
+             * $headings-color = $gray-550 (#727272). Bootstrap 5.3 also
+             * exposes --bs-heading-color at runtime, which Koha picks up
+             * when present.
+             */
+            --header-font-size: 1.4rem;
             --header-font-weight: 600;
-            --header-text-color: #333;
+            --header-line-height: 1.2;
+            --header-text-color: var(
+                --bs-heading-color,
+                var(--bs-body-color, #727272)
+            );
 
-            --accent-color: #0076b6;
-            --accent-color-hover: #005a8c;
-            --accent-color-light: #e3f2fd;
+            --accent-color: var(--bs-link-color, #0074ad);
+            --accent-color-hover: var(--bs-link-hover-color, #005580);
 
-            --text-color: inherit;
-            --text-color-muted: #666;
+            --text-color: var(--bs-body-color, inherit);
+            --text-color-muted: var(--bs-secondary-color, #727272);
             --text-color-on-accent: #fff;
 
-            --event-bg-color: #fafafa;
-            --event-bg-color-hover: #f0f0f0;
+            --event-bg-color: var(--bs-tertiary-bg, #f3f3f3);
+            --event-bg-color-hover: var(--bs-secondary-bg, #dddddd);
             --event-border-color: var(--accent-color);
             --event-border-width: 2px;
             --event-padding: 0.75rem;
@@ -71,34 +92,48 @@ export default class OpacEventsWidget extends LitElement {
             --input-font-size: 0.9rem;
             --input-border-radius: var(--widget-border-radius);
 
+            /*
+             * Koha's --bs-primary is Bootstrap's blue; the green "action"
+             * colour is applied via .btn-primary overrides in SCSS rather
+             * than exposed as a CSS variable. We hardcode #548300 to
+             * match and let admins override via OPACUserCSS for custom
+             * brands.
+             */
+            --button-bg-color: #548300;
+            --button-bg-color-hover: #436900;
+            --button-text-color: var(--text-color-on-accent);
             --button-padding-y: 0.5rem;
             --button-padding-x: 1.25rem;
             --button-font-weight: 500;
+            --button-border-radius: var(--widget-border-radius);
 
-            --error-color: #d32f2f;
+            --error-color: var(--bs-danger, #d32f2f);
             --spinner-size: 32px;
             --spinner-border-width: 2px;
-            --spinner-bg-color: #f3f3f3;
+            --spinner-bg-color: var(--bs-secondary-bg, #f3f3f3);
 
             --transition-duration: 0.15s;
 
             display: block;
+            color: var(--text-color);
             font-family: inherit;
+            line-height: inherit;
         }
 
         .widget-container {
             background: var(--widget-bg-color);
-            border: var(--widget-border-width) solid var(--widget-border-color);
             padding: var(--widget-padding);
         }
 
         .widget-header {
-            font-size: var(--header-font-size);
-            font-weight: var(--header-font-weight);
-            margin-bottom: var(--widget-spacing);
+            margin: 0 0 var(--widget-spacing);
             padding-bottom: var(--widget-spacing-sm);
             border-bottom: var(--widget-border-width) solid
                 var(--widget-border-color);
+            font-family: inherit;
+            font-size: var(--header-font-size);
+            font-weight: var(--header-font-weight);
+            line-height: var(--header-line-height);
             color: var(--header-text-color);
         }
 
@@ -185,17 +220,18 @@ export default class OpacEventsWidget extends LitElement {
 
         .all-events-button {
             display: inline-block;
-            background: var(--accent-color);
-            color: var(--text-color-on-accent);
+            background: var(--button-bg-color);
+            color: var(--button-text-color);
             padding: var(--button-padding-y) var(--button-padding-x);
             text-decoration: none;
             font-weight: var(--button-font-weight);
-            transition: background var(--transition-duration);
             border: none;
+            border-radius: var(--button-border-radius);
+            transition: background var(--transition-duration);
         }
 
         .all-events-button:hover {
-            background: var(--accent-color-hover);
+            background: var(--button-bg-color-hover);
         }
 
         .loading,
@@ -416,7 +452,7 @@ export default class OpacEventsWidget extends LitElement {
         if (this.events.length === 0) {
             return html`
                 <div class="widget-container">
-                    <div class="widget-header">${this.config.title}</div>
+                    <h2 class="widget-header">${this.config.title}</h2>
 
                     ${this.locations.length > 0
                         ? html`
@@ -467,7 +503,7 @@ export default class OpacEventsWidget extends LitElement {
 
         return html`
             <div class="widget-container">
-                <div class="widget-header">${this.config.title}</div>
+                <h2 class="widget-header">${this.config.title}</h2>
 
                 ${this.locations.length > 0
                     ? html`

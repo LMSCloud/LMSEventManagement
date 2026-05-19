@@ -3,5 +3,5 @@
 [% INCLUDE "$PLUGIN_DIR/includes/body-header.inc" %]
 
 [% WRAPPER "$PLUGIN_DIR/wrappers/body-main.inc" %]
-    <lms-opac-widget-settings></lms-opac-widget-settings>
+    <lms-opac-widget-settings page-url="[% page_url | html %]"></lms-opac-widget-settings>
 [% END %]

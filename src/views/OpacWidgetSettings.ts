@@ -1,5 +1,5 @@
 import { html, LitElement, nothing, TemplateResult } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { match } from "ts-pattern";
 import LMSToast from "../components/LMSToast";
 import OpacEventsWidget from "../components/OpacEventsWidget";
@@ -28,6 +28,8 @@ interface WidgetSettings {
 
 @customElement("lms-opac-widget-settings")
 export default class OpacWidgetSettings extends LitElement {
+    @property({ type: String, attribute: "page-url" }) pageUrl: string = "";
+
     @state() state: "initial" | "pending" | "success" | "error" | "saving" =
         "initial";
 
@@ -215,6 +217,75 @@ export default class OpacWidgetSettings extends LitElement {
         }
     }
 
+    private renderManualSnippet() {
+        const pageUrl = this.pageUrl ?? "";
+        return `<lms-opac-events-widget page-url="${pageUrl}"></lms-opac-events-widget>`;
+    }
+
+    private renderThemingHelp() {
+        const sampleCss = `lms-opac-events-widget {
+    --accent-color: #b22222;
+    --header-text-color: #222;
+    --event-bg-color: #f7f7f7;
+}`;
+
+        return html`
+            <div class="collapse collapse-arrow mt-6 border bg-base-100">
+                <input type="checkbox" />
+                <div class="collapse-title text-sm font-semibold">
+                    ${__("Custom styling (CSS variables)")}
+                </div>
+                <div class="collapse-content text-sm">
+                    <p class="mb-2">
+                        ${__(
+                            "The widget inherits the OPAC's Bootstrap colours by default. To customise it further, override any of its CSS variables from your OPACUserCSS system preference — they pierce the shadow DOM without forking the component.",
+                        )}
+                    </p>
+                    <pre
+                        class="my-2 overflow-x-auto rounded bg-base-200 p-3 text-xs"
+                    ><code>${sampleCss}</code></pre>
+                    <p class="mb-1 mt-3 font-semibold">
+                        ${__("Commonly overridden variables")}
+                    </p>
+                    <ul class="list-inside list-disc text-xs">
+                        <li>
+                            <code>--widget-bg-color</code>,
+                            <code>--widget-border-color</code>,
+                            <code>--widget-padding</code>
+                        </li>
+                        <li>
+                            <code>--header-text-color</code>,
+                            <code>--header-font-size</code>,
+                            <code>--header-font-weight</code>,
+                            <code>--header-line-height</code>
+                        </li>
+                        <li>
+                            <code>--accent-color</code>,
+                            <code>--accent-color-hover</code>
+                            (used for links and the event accent rule)
+                        </li>
+                        <li>
+                            <code>--button-bg-color</code>,
+                            <code>--button-bg-color-hover</code>,
+                            <code>--button-text-color</code>,
+                            <code>--button-border-radius</code>
+                        </li>
+                        <li>
+                            <code>--event-bg-color</code>,
+                            <code>--event-bg-color-hover</code>,
+                            <code>--event-border-color</code>,
+                            <code>--event-padding</code>
+                        </li>
+                        <li>
+                            <code>--text-color</code>,
+                            <code>--text-color-muted</code>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    }
+
     private renderToast(
         message: string | TemplateResult,
         type: "success" | "error",
@@ -341,7 +412,14 @@ export default class OpacWidgetSettings extends LitElement {
                                                           </p>
                                                           <pre
                                                               class="mt-2 overflow-x-auto rounded bg-base-200 p-3 text-sm"
-                                                          ><code>&lt;lms-opac-events-widget&gt;&lt;/lms-opac-events-widget&gt;</code></pre>
+                                                          ><code>${this.renderManualSnippet()}</code></pre>
+                                                          <p
+                                                              class="mt-2 text-xs"
+                                                          >
+                                                              ${__(
+                                                                  "The page-url attribute is required so event links resolve to the correct OPAC events page.",
+                                                              )}
+                                                          </p>
                                                       </div>
                                                   </div>
                                               `
@@ -703,7 +781,11 @@ export default class OpacWidgetSettings extends LitElement {
                                         </span>
                                     </div>
 
-                                    <lms-opac-events-widget></lms-opac-events-widget>
+                                    <lms-opac-events-widget
+                                        page-url=${this.pageUrl}
+                                    ></lms-opac-events-widget>
+
+                                    ${this.renderThemingHelp()}
                                 </div>
                             </div>
                         </div>
