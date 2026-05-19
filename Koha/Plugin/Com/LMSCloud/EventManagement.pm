@@ -61,6 +61,14 @@ BEGIN {
     require Koha::LMSCloud::EventManagement::EventType::TargetGroup::Fees;
     Koha::Schema->register_class( KohaPluginComLmscloudEventmanagementEtTgFee => 'Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEtTgFee' );
 
+    require Koha::LMSCloud::EventManagement::Bookings;
+    require Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEBooking;
+    Koha::Schema->register_class( KohaPluginComLmscloudEventmanagementEBooking => 'Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEBooking' );
+
+    require Koha::LMSCloud::EventManagement::Attendees;
+    require Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEAttendee;
+    Koha::Schema->register_class( KohaPluginComLmscloudEventmanagementEAttendee => 'Koha::Schema::Result::KohaPluginComLmscloudEventmanagementEAttendee' );
+
     Koha::Database->schema( { new => 1 } );
 }
 
