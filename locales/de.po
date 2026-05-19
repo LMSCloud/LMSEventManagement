@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-06 16:06+0200\n"
-"PO-Revision-Date: 2026-05-07 09:29+0200\n"
+"POT-Creation-Date: 2026-05-19 13:12+0200\n"
+"PO-Revision-Date: 2026-05-19 13:18+0200\n"
 "Last-Translator: Paul Derscheid <paul.derscheid@lmscloud.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -19,36 +19,36 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.9\n"
 
-#: src/components/custom/LMSCardDetailsModal.ts:320
+#: src/components/custom/LMSCardDetailsModal.ts:338
 msgid "Directions to the venue by"
 msgstr "Wegbeschreibung zum Veranstaltungsort durch"
 
-#: src/components/custom/LMSCardDetailsModal.ts:393
+#: src/components/custom/LMSCardDetailsModal.ts:411
 msgid "Loading Details..."
 msgstr "Details werden geladen…"
 
-#: src/components/custom/LMSCardDetailsModal.ts:411
-#: src/components/custom/LMSCardDetailsModal.ts:634
-#: src/components/custom/LMSCardDetailsModal.ts:635
-#: src/components/custom/LMSCardDetailsModal.ts:641
-#: src/components/custom/LMSCardDetailsModal.ts:706
+#: src/components/custom/LMSCardDetailsModal.ts:429
+#: src/components/custom/LMSCardDetailsModal.ts:656
+#: src/components/custom/LMSCardDetailsModal.ts:657
+#: src/components/custom/LMSCardDetailsModal.ts:663
+#: src/components/custom/LMSCardDetailsModal.ts:728
 #: src/components/custom/LMSImagePicker.ts:207
 #: src/components/custom/LMSPellEditor.ts:171 src/components/LMSModal.ts:336
 msgid "Close"
 msgstr "Schließen"
 
-#: src/components/custom/LMSCardDetailsModal.ts:455
+#: src/components/custom/LMSCardDetailsModal.ts:473
 msgid "Date and Time"
 msgstr "Datum und Uhrzeit"
 
-#: src/components/custom/LMSCardDetailsModal.ts:485
+#: src/components/custom/LMSCardDetailsModal.ts:503
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:711
 #: src/extensions/LMSEventsModal.ts:152
 #: src/extensions/LMSEventTypesModal.ts:105
 msgid "Description"
 msgstr "Beschreibung"
 
-#: src/components/custom/LMSCardDetailsModal.ts:527
+#: src/components/custom/LMSCardDetailsModal.ts:545
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:557
 #: src/extensions/LMSEventManagementMenu.ts:64
 #: src/extensions/LMSEventsModal.ts:68 src/extensions/LMSEventTypesModal.ts:53
@@ -56,117 +56,117 @@ msgstr "Beschreibung"
 msgid "Target Groups"
 msgstr "Zielgruppen"
 
-#: src/components/custom/LMSCardDetailsModal.ts:536
-#: src/components/custom/LMSCardDetailsModal.ts:578
-#: src/components/custom/LMSEventsFilter.ts:602
+#: src/components/custom/LMSCardDetailsModal.ts:556
+#: src/components/custom/LMSCardDetailsModal.ts:600
+#: src/components/custom/LMSEventsFilter.ts:616
 msgid "Target Group"
 msgstr "Zielgruppe"
 
-#: src/components/custom/LMSCardDetailsModal.ts:540
-#: src/components/custom/LMSCardDetailsModal.ts:582
+#: src/components/custom/LMSCardDetailsModal.ts:560
+#: src/components/custom/LMSCardDetailsModal.ts:604
 msgid "Age Range"
 msgstr "Altersspanne"
 
-#: src/components/custom/LMSCardDetailsModal.ts:571
+#: src/components/custom/LMSCardDetailsModal.ts:591
 msgid "Fees"
 msgstr "Teilnahmegebühren"
 
-#: src/components/custom/LMSCardDetailsModal.ts:584
-#: src/components/custom/LMSEventsFilter.ts:790
+#: src/components/custom/LMSCardDetailsModal.ts:606
 #: src/components/custom/LMSEventsFilter.ts:804
+#: src/components/custom/LMSEventsFilter.ts:818
 msgid "Fee"
 msgstr "Teilnahmegebühr"
 
-#: src/components/custom/LMSCardDetailsModal.ts:610
-#: src/components/custom/LMSEventsFilter.ts:642
+#: src/components/custom/LMSCardDetailsModal.ts:632
+#: src/components/custom/LMSEventsFilter.ts:656
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:667
 #: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:244
 #: src/extensions/LMSEventsModal.ts:137 src/extensions/LMSEventTypesModal.ts:90
 msgid "Location"
 msgstr "Veranstaltungsort"
 
-#: src/components/custom/LMSCardDetailsModal.ts:647
-#: src/components/custom/LMSCardDetailsModal.ts:649
-#: src/components/custom/LMSCardDetailsModal.ts:656
+#: src/components/custom/LMSCardDetailsModal.ts:669
+#: src/components/custom/LMSCardDetailsModal.ts:671
+#: src/components/custom/LMSCardDetailsModal.ts:678
 msgid "Export to Calendar"
 msgstr "In Kalender exportieren"
 
-#: src/components/custom/LMSCardDetailsModal.ts:668
-#: src/components/custom/LMSCardDetailsModal.ts:669
-#: src/components/custom/LMSCardDetailsModal.ts:675
+#: src/components/custom/LMSCardDetailsModal.ts:690
+#: src/components/custom/LMSCardDetailsModal.ts:691
+#: src/components/custom/LMSCardDetailsModal.ts:697
 msgid "Register"
 msgstr "Registrieren"
 
-#: src/components/custom/LMSCardDetailsModal.ts:693
+#: src/components/custom/LMSCardDetailsModal.ts:715
 #: src/lib/converters/datetimeConverters.ts:80
-#: src/lib/converters/displayConverters.ts:44 src/views/LMSEventsView.ts:506
+#: src/lib/converters/displayConverters.ts:44 src/views/LMSEventsView.ts:800
 msgid "There's been an error"
 msgstr "Es ist ein Fehler aufgetreten"
 
-#: src/components/custom/LMSEventsFilter.ts:453
+#: src/components/custom/LMSEventsFilter.ts:467
 msgid "Hide filters"
 msgstr "Filter ausblenden"
 
-#: src/components/custom/LMSEventsFilter.ts:454
+#: src/components/custom/LMSEventsFilter.ts:468
 msgid "Show filters"
 msgstr "Filter anzeigen"
 
-#: src/components/custom/LMSEventsFilter.ts:460
+#: src/components/custom/LMSEventsFilter.ts:474
 msgid "Filters"
 msgstr "Filter"
 
-#: src/components/custom/LMSEventsFilter.ts:497
+#: src/components/custom/LMSEventsFilter.ts:511
 msgid "Remove filter"
 msgstr "Filter zurücksetzen"
 
-#: src/components/custom/LMSEventsFilter.ts:516
+#: src/components/custom/LMSEventsFilter.ts:530
 msgid "Clear all"
 msgstr "Alle Filter zurücksetzen"
 
-#: src/components/custom/LMSEventsFilter.ts:527
+#: src/components/custom/LMSEventsFilter.ts:541
 #: src/components/LMSStaffEventCard/LMSStaffEventsFilter.ts:153
 msgid "Sort by"
 msgstr "Sortieren nach"
 
-#: src/components/custom/LMSEventsFilter.ts:563
+#: src/components/custom/LMSEventsFilter.ts:577
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:548
 msgid "Event Type"
 msgstr "Veranstaltungstyp"
 
-#: src/components/custom/LMSEventsFilter.ts:683
+#: src/components/custom/LMSEventsFilter.ts:697
 msgid "Age"
 msgstr "Altersspanne"
 
-#: src/components/custom/LMSEventsFilter.ts:696
+#: src/components/custom/LMSEventsFilter.ts:710
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:578
 #: src/extensions/LMSEventsModal.ts:74 src/extensions/LMSEventTypesModal.ts:60
 #: src/extensions/LMSTargetGroupsModal.ts:34
 msgid "Min Age"
 msgstr "Mindestalter"
 
-#: src/components/custom/LMSEventsFilter.ts:714
+#: src/components/custom/LMSEventsFilter.ts:728
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:584
 #: src/extensions/LMSEventsModal.ts:83 src/extensions/LMSEventTypesModal.ts:70
 #: src/extensions/LMSTargetGroupsModal.ts:44
 msgid "Max Age"
 msgstr "Maximalalter"
 
-#: src/components/custom/LMSEventsFilter.ts:730
+#: src/components/custom/LMSEventsFilter.ts:744
 msgid "Registration & Dates"
 msgstr "Registrierung und Datum"
 
-#: src/components/custom/LMSEventsFilter.ts:754
+#: src/components/custom/LMSEventsFilter.ts:768
 #: src/components/LMSStaffEventCard/LMSStaffEventCardForm.ts:703
 #: src/extensions/LMSEventsModal.ts:176
 #: src/extensions/LMSEventTypesModal.ts:115
 msgid "Open Registration"
 msgstr "Offene Registrierung"
 
-#: src/components/custom/LMSEventsFilter.ts:764
+#: src/components/custom/LMSEventsFilter.ts:778
 msgid "Start Date"
 msgstr "Von"
 
-#: src/components/custom/LMSEventsFilter.ts:778
+#: src/components/custom/LMSEventsFilter.ts:792
 msgid "End Date"
 msgstr "Bis"
 
@@ -248,22 +248,22 @@ msgstr "Versuchen Sie, Ihre Suche zu verfeinern."
 msgid "Help"
 msgstr "Hilfe"
 
-#: src/components/LMSCard.ts:46 src/components/LMSCard.ts:47
+#: src/components/LMSCard.ts:58 src/components/LMSCard.ts:59
 #: src/lib/converters/InputConverter/InputConverter.ts:127
 msgid "Confirmed"
 msgstr "Bestätigt"
 
-#: src/components/LMSCard.ts:53 src/components/LMSCard.ts:54
+#: src/components/LMSCard.ts:65 src/components/LMSCard.ts:66
 #: src/lib/converters/InputConverter/InputConverter.ts:126
 msgid "Pending"
 msgstr "Ausstehend"
 
-#: src/components/LMSCard.ts:60 src/components/LMSCard.ts:61
+#: src/components/LMSCard.ts:72 src/components/LMSCard.ts:73
 #: src/lib/converters/InputConverter/InputConverter.ts:128
 msgid "Canceled"
 msgstr "Abgesagt"
 
-#: src/components/LMSCard.ts:67 src/components/LMSCard.ts:68
+#: src/components/LMSCard.ts:79 src/components/LMSCard.ts:80
 #: src/lib/converters/InputConverter/InputConverter.ts:129
 msgid "Sold Out"
 msgstr "Ausverkauft"
@@ -306,15 +306,19 @@ msgstr "Neu laden ohne"
 msgid "Errors have occured"
 msgstr "Es sind Fehler aufgetreten"
 
-#: src/components/LMSPagination.ts:191
+#: src/components/LMSPagination.ts:204
 msgid "Table navigation"
 msgstr "Tabellen-Navigation"
 
-#: src/components/LMSPagination.ts:199
+#: src/components/LMSPagination.ts:216
 msgid "Previous"
 msgstr "Zurück"
 
-#: src/components/LMSPagination.ts:222
+#: src/components/LMSPagination.ts:232
+msgid "All"
+msgstr "Alle"
+
+#: src/components/LMSPagination.ts:246
 msgid "Next"
 msgstr "Vor"
 
@@ -331,7 +335,7 @@ msgid "Waitlist"
 msgstr "Warteliste"
 
 #: src/components/LMSStaffEventCard/LMSStaffEventCard.ts:78
-#: src/views/OpacWidgetSettings.ts:696
+#: src/views/OpacWidgetSettings.ts:774
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -525,22 +529,22 @@ msgstr "Kommende Veranstaltungen"
 msgid "All Events"
 msgstr "Alle Veranstaltungen"
 
-#: src/components/OpacEventsWidget.ts:400
+#: src/components/OpacEventsWidget.ts:436
 msgid "Loading events..."
 msgstr "Veranstaltungen werden geladen…"
 
-#: src/components/OpacEventsWidget.ts:410
+#: src/components/OpacEventsWidget.ts:446
 msgid "Failed to load events. Please try again later."
 msgstr ""
 "Laden der Veranstaltungen fehlgeschlagen. Bitte versuchen Sie es später noch "
 "einmal."
 
-#: src/components/OpacEventsWidget.ts:434
-#: src/components/OpacEventsWidget.ts:485
+#: src/components/OpacEventsWidget.ts:470
+#: src/components/OpacEventsWidget.ts:521
 msgid "All Locations"
 msgstr "Alle Veranstaltungsorte"
 
-#: src/components/OpacEventsWidget.ts:454
+#: src/components/OpacEventsWidget.ts:490
 msgid "No upcoming events at this time."
 msgstr "Derzeit keine kommenden Veranstaltungen."
 
@@ -614,7 +618,8 @@ msgstr "."
 #: src/docs/searchSyntax.ts:30
 msgid " will return results where the age field is greater than 25."
 msgstr ""
-" liefert Ergebnisse, bei denen das 'age'-Feld einen Wert größer als 25 enthält."
+" liefert Ergebnisse, bei denen das 'age'-Feld einen Wert größer als 25 "
+"enthält."
 
 #: src/docs/searchSyntax.ts:33
 msgid "Multi-field Filtering"
@@ -962,7 +967,8 @@ msgstr "Veranstaltungsort hinzufügen"
 
 #: src/extensions/LMSLocationsModal.ts:26
 msgid "Name of the location, e.g. 'World Trade Center' or 'Room 101'."
-msgstr "Name des Veranstaltungsortes, bspw. 'Brandenburger Tor' oder 'Raum 101'."
+msgstr ""
+"Name des Veranstaltungsortes, bspw. 'Brandenburger Tor' oder 'Raum 101'."
 
 #: src/extensions/LMSLocationsModal.ts:34
 msgid "Street"
@@ -1016,32 +1022,40 @@ msgstr ""
 "Link zur Website oder einem Kartenanbieter, bspw. 'https://www.example.com' "
 "oder 'https://openstreetmap.org'."
 
-#: src/extensions/LMSSettingsTable.ts:195
+#: src/extensions/LMSSettingsTable.ts:205
 msgid "OPAC Filters"
 msgstr "OPAC Filter"
 
-#: src/extensions/LMSSettingsTable.ts:197
+#: src/extensions/LMSSettingsTable.ts:207
 msgid "Control which filters are shown in the OPAC event list."
 msgstr "Sichtbarkeit der Filter in der OPAC-Veranstaltungsliste steuern."
 
-#: src/extensions/LMSSettingsTable.ts:202
+#: src/extensions/LMSSettingsTable.ts:212
 msgid "Visibility"
 msgstr "Sichtbarkeit"
 
-#: src/extensions/LMSSettingsTable.ts:204
+#: src/extensions/LMSSettingsTable.ts:214
 msgid "Control event visibility behavior in OPAC views."
 msgstr "Sichtbarkeit von Veranstaltungen in OPAC-Ansichten steuern."
 
-#: src/extensions/LMSSettingsTable.ts:209
+#: src/extensions/LMSSettingsTable.ts:219
+msgid "Layout"
+msgstr "Layout"
+
+#: src/extensions/LMSSettingsTable.ts:221
+msgid "Control supplementary layout elements of the OPAC event list."
+msgstr "Zusätzliche Layout-Elemente der OPAC-Veranstaltungsliste steuern."
+
+#: src/extensions/LMSSettingsTable.ts:226
 msgid "General"
 msgstr "Allgemein"
 
-#: src/extensions/LMSSettingsTable.ts:210
+#: src/extensions/LMSSettingsTable.ts:227
 msgid "Other event management settings."
 msgstr "Weitere Einstellungen für die Veranstaltungsverwaltung."
 
-#: src/extensions/LMSSettingsTable.ts:296
-#: src/lib/converters/InputConverter/InputConverter.ts:234
+#: src/extensions/LMSSettingsTable.ts:313
+#: src/lib/converters/InputConverter/InputConverter.ts:238
 #: src/lib/converters/InputConverter/inputs/Matrix.ts:114
 #: src/lib/converters/InputConverter/inputs/modal/ModalMatrix.ts:148
 #: src/lib/converters/InputConverter/inputs/modal/ModalSelect.ts:60
@@ -1084,167 +1098,207 @@ msgstr "Teilnahmegebühr"
 msgid "Please select an option"
 msgstr "Bitte wählen Sie eine Option"
 
-#: src/views/LMSEventsView.ts:393
+#: src/views/LMSEventsView.ts:597 src/views/LMSEventsView.ts:600
+msgid "Upcoming events"
+msgstr "Kommende Veranstaltungen"
+
+#: src/views/LMSEventsView.ts:606
+msgid "Hide upcoming events list"
+msgstr "Liste kommender Veranstaltungen ausblenden"
+
+#: src/views/LMSEventsView.ts:636
+msgid "Show upcoming events"
+msgstr "Liste kommender Veranstaltungen einblenden"
+
+#: src/views/LMSEventsView.ts:669
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:36
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:61
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Location.pm:134
 msgid "Location not found"
 msgstr "Veranstaltungsort nicht gefunden"
 
-#: src/views/LMSEventsView.ts:458
+#: src/views/LMSEventsView.ts:735
 msgid "There are no events to display"
 msgstr "Es sind keine Veranstaltungen vorhanden, die angezeigt werden könnten"
 
-#: src/views/LMSEventsView.ts:489
+#: src/views/LMSEventsView.ts:782
 msgid "You've reached the end"
 msgstr "Sie haben das Ende erreicht"
 
-#: src/views/LMSEventsView.ts:497
+#: src/views/LMSEventsView.ts:790
 msgid "Load more"
 msgstr "Mehr anzeigen"
 
-#: src/views/OpacWidgetSettings.ts:208
+#: src/views/OpacWidgetSettings.ts:210
 msgid "Settings saved successfully"
 msgstr "Einstellungen erfolgreich gespeichert"
 
-#: src/views/OpacWidgetSettings.ts:213
+#: src/views/OpacWidgetSettings.ts:215
 msgid "Failed to save settings"
 msgstr "Speichern der Einstellungen fehlgeschlagen"
 
-#: src/views/OpacWidgetSettings.ts:244
+#: src/views/OpacWidgetSettings.ts:236
+msgid "Custom styling (CSS variables)"
+msgstr "Eigenes Styling (CSS-Variablen)"
+
+#: src/views/OpacWidgetSettings.ts:241
+msgid ""
+"The widget inherits the OPAC's Bootstrap colours by default. To customise it "
+"further, override any of its CSS variables from your OPACUserCSS system "
+"preference — they pierce the shadow DOM without forking the component."
+msgstr ""
+"Standardmäßig übernimmt das Widget die Bootstrap-Farben des OPAC. Für "
+"weitergehende Anpassungen können Sie die CSS-Variablen des Widgets über die "
+"Systempräferenz OPACUserCSS überschreiben, sie wirken durch das Shadow DOM "
+"hindurch, ohne dass die Komponente angepasst werden muss."
+
+#: src/views/OpacWidgetSettings.ts:248
+msgid "Commonly overridden variables"
+msgstr "Häufig überschriebene Variablen"
+
+#: src/views/OpacWidgetSettings.ts:315
 msgid "Saving settings..."
 msgstr "Einstellungen werden gespeichert…"
 
-#: src/views/OpacWidgetSettings.ts:260
+#: src/views/OpacWidgetSettings.ts:331
 msgid "OPAC Events Widget Configuration"
 msgstr "OPAC-Veranstaltungs-Widget-Konfiguration"
 
-#: src/views/OpacWidgetSettings.ts:282
+#: src/views/OpacWidgetSettings.ts:353
 msgid "Enable widget on OPAC homepage"
 msgstr "Widget auf der OPAC-Startseite aktivieren"
 
-#: src/views/OpacWidgetSettings.ts:312
+#: src/views/OpacWidgetSettings.ts:383
 msgid "Automatically inject widget on OPAC main page"
 msgstr "Widget automatisch in die OPAC-Startseite einfügen"
 
-#: src/views/OpacWidgetSettings.ts:319
+#: src/views/OpacWidgetSettings.ts:390
 msgid "If disabled, manual embedding instructions will be shown"
 msgstr "Wenn deaktiviert, werden Hinweise zur manuellen Einbettung angezeigt"
 
-#: src/views/OpacWidgetSettings.ts:332
+#: src/views/OpacWidgetSettings.ts:403
 msgid "Manual Widget Embedding"
 msgstr "Manuelle Widget-Einbettung"
 
-#: src/views/OpacWidgetSettings.ts:339
+#: src/views/OpacWidgetSettings.ts:410
 msgid ""
-"Add the following HTML code to your OPACMainUserBlock or OPACUserJS system "
-"preference:"
+"Add the following HTML to an OPACMainUserBlock entry under Tools → HTML "
+"Customizations (or the OPACMainUserBlock system preference on older Koha "
+"versions):"
 msgstr ""
-"Fügen Sie den folgenden HTML-Code in die Systempräferenz OPACMainUserBlock "
-"oder OPACUserJS ein:"
+"Fügen Sie den folgenden HTML-Code als OPACMainUserBlock-Eintrag unter "
+"Werkzeuge → HTML-Anpassungen ein (oder in die Systempräferenz "
+"OPACMainUserBlock bei älteren Koha-Versionen):"
 
-#: src/views/OpacWidgetSettings.ts:354
+#: src/views/OpacWidgetSettings.ts:420
+msgid ""
+"The page-url attribute is required so event links resolve to the correct "
+"OPAC events page."
+msgstr ""
+"Das Attribut page-url ist erforderlich, damit Veranstaltungslinks auf die "
+"korrekte OPAC-Veranstaltungsseite verweisen."
+
+#: src/views/OpacWidgetSettings.ts:432
 msgid "Widget Title"
 msgstr "Widget-Titel"
 
-#: src/views/OpacWidgetSettings.ts:363
+#: src/views/OpacWidgetSettings.ts:441
 msgid "e.g., Upcoming Events"
 msgstr "bspw. Kommende Veranstaltungen"
 
-#: src/views/OpacWidgetSettings.ts:370
+#: src/views/OpacWidgetSettings.ts:448
 msgid "The heading text displayed at the top of the widget"
 msgstr "Überschrift, die am oberen Ende des Widgets angezeigt wird"
 
-#: src/views/OpacWidgetSettings.ts:380
+#: src/views/OpacWidgetSettings.ts:458
 msgid "Display Mode"
 msgstr "Anzeige-Modus"
 
-#: src/views/OpacWidgetSettings.ts:400
+#: src/views/OpacWidgetSettings.ts:478
 msgid "Show next X events"
 msgstr "Kommende X Veranstaltungen anzeigen"
 
-#: src/views/OpacWidgetSettings.ts:409
+#: src/views/OpacWidgetSettings.ts:487
 msgid "Show events in time period"
 msgstr "Veranstaltungen im Zeitraum anzeigen"
 
-#: src/views/OpacWidgetSettings.ts:419
+#: src/views/OpacWidgetSettings.ts:497
 msgid "Manually select events"
 msgstr "Veranstaltungen manuell auswählen"
 
-#: src/views/OpacWidgetSettings.ts:434
+#: src/views/OpacWidgetSettings.ts:512
 msgid "Number of Events"
 msgstr "Anzahl der Veranstaltungen"
 
-#: src/views/OpacWidgetSettings.ts:452
+#: src/views/OpacWidgetSettings.ts:530
 msgid "How many upcoming events to display (1-20)"
-msgstr ""
-"Anzahl der anzuzeigenden kommenden Veranstaltungen (1-20)"
+msgstr "Anzahl der anzuzeigenden kommenden Veranstaltungen (1-20)"
 
-#: src/views/OpacWidgetSettings.ts:469
+#: src/views/OpacWidgetSettings.ts:547
 msgid "Time Period (days)"
 msgstr "Zeitraum (Tage)"
 
-#: src/views/OpacWidgetSettings.ts:485
+#: src/views/OpacWidgetSettings.ts:563
 msgid "Current/Next 7 days"
 msgstr "Aktuell/Nächste 7 Tage"
 
-#: src/views/OpacWidgetSettings.ts:496
+#: src/views/OpacWidgetSettings.ts:574
 msgid "Next 14 days"
 msgstr "Nächste 14 Tage"
 
-#: src/views/OpacWidgetSettings.ts:507
+#: src/views/OpacWidgetSettings.ts:585
 msgid "Next 30 days"
 msgstr "Nächste 30 Tage"
 
-#: src/views/OpacWidgetSettings.ts:524
+#: src/views/OpacWidgetSettings.ts:602
 msgid "Select Events"
 msgstr "Wählen Sie Veranstaltungen"
 
-#: src/views/OpacWidgetSettings.ts:544
+#: src/views/OpacWidgetSettings.ts:622
 msgid "No upcoming events available"
 msgstr "Keine kommenden Veranstaltungen verfügbar"
 
-#: src/views/OpacWidgetSettings.ts:598
+#: src/views/OpacWidgetSettings.ts:676
 msgid "Select which events to display in the widget"
 msgstr "Wählen Sie, welche Veranstaltungen im Widget angezeigt werden sollen"
 
-#: src/views/OpacWidgetSettings.ts:611
+#: src/views/OpacWidgetSettings.ts:689
 msgid "Widget Layout"
 msgstr "Widget-Layout"
 
-#: src/views/OpacWidgetSettings.ts:625
+#: src/views/OpacWidgetSettings.ts:703
 msgid "Vertical List"
 msgstr "Vertikale Liste"
 
-#: src/views/OpacWidgetSettings.ts:634
+#: src/views/OpacWidgetSettings.ts:712
 msgid "Horizontal Scrollable List"
 msgstr "Horizontal scrollbare Liste"
 
-#: src/views/OpacWidgetSettings.ts:641
+#: src/views/OpacWidgetSettings.ts:719
 msgid "Choose the layout style for the widget"
 msgstr "Wählen Sie eine Layout-Variante für das Widget"
 
-#: src/views/OpacWidgetSettings.ts:652
+#: src/views/OpacWidgetSettings.ts:730
 msgid "\"All Events\" Button Text"
 msgstr "Schaltflächentext 'Alle Veranstaltungen'"
 
-#: src/views/OpacWidgetSettings.ts:662
+#: src/views/OpacWidgetSettings.ts:740
 msgid "e.g., Alle Veranstaltungen"
 msgstr "bspw. Alle Veranstaltungen"
 
-#: src/views/OpacWidgetSettings.ts:669
+#: src/views/OpacWidgetSettings.ts:747
 msgid "Text for the button at the bottom of the widget"
 msgstr "Text für die Schaltfläche am unteren Ende des Widgets"
 
-#: src/views/OpacWidgetSettings.ts:684
+#: src/views/OpacWidgetSettings.ts:762
 msgid "Saving..."
 msgstr "Speichern…"
 
-#: src/views/OpacWidgetSettings.ts:685
+#: src/views/OpacWidgetSettings.ts:763
 msgid "Save Settings"
 msgstr "Einstellungen speichern"
 
-#: src/views/OpacWidgetSettings.ts:701
+#: src/views/OpacWidgetSettings.ts:779
 msgid ""
 "This preview shows how the widget will appear on the OPAC. Use the location "
 "filter in the widget to preview different locations."
@@ -1287,7 +1341,8 @@ msgstr "und einen"
 
 #: src/views/StaffEventTypesView.ts:186
 msgid "You can add a new event type by clicking the + button below"
-msgstr "Sie können einen neuen Veranstaltungstyp über die +-Schaltfläche hinzufügen"
+msgstr ""
+"Sie können einen neuen Veranstaltungstyp über die +-Schaltfläche hinzufügen"
 
 #: src/views/StaffLocationsView.ts:121 src/views/StaffTargetGroupsView.ts:121
 msgid "No data to display"
@@ -1330,7 +1385,7 @@ msgstr "Speichern der Datei in der Datenbank fehlgeschlagen"
 
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:44
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:74
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:214
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/Event.pm:216
 msgid "Event not found"
 msgstr "Veranstaltung nicht gefunden"
 
@@ -1363,7 +1418,7 @@ msgstr "Sie müssen mindestens eine Zielgruppe auswählen."
 
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:44
 #: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:73
-#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:187
+#: Koha/Plugin/Com/LMSCloud/EventManagement/Controllers/EventType.pm:189
 msgid "Event type not found"
 msgstr "Veranstaltungstyp nicht gefunden"
 
@@ -1444,7 +1499,8 @@ msgstr " ist kein gültiger Datums-/Uhrzeitwert."
 
 #: Koha/Plugin/Com/LMSCloud/Validator.pm:270
 msgid " has an invalid year (must be 4 digits, >= 1000)."
-msgstr " enthält eine ungültige Jahreszahl (muss 4 Ziffern enthalten, >= 1000)."
+msgstr ""
+" enthält eine ungültige Jahreszahl (muss 4 Ziffern enthalten, >= 1000)."
 
 #: Koha/Plugin/Com/LMSCloud/Validator.pm:273
 msgid " is not after the current localtime."

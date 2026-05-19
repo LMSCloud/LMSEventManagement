@@ -407,7 +407,7 @@ export default class OpacWidgetSettings extends LitElement {
                                                               class="mt-2 text-sm"
                                                           >
                                                               ${__(
-                                                                  "Add the following HTML code to your OPACMainUserBlock or OPACUserJS system preference:",
+                                                                  "Add the following HTML to an OPACMainUserBlock entry under Tools → HTML Customizations (or the OPACMainUserBlock system preference on older Koha versions):",
                                                               )}
                                                           </p>
                                                           <pre
