@@ -134,6 +134,12 @@ sub tool {
     return ( $responses->{$op} // $responses->{q{}} )->();
 }
 
+sub cronjob_nightly {
+    my ($self) = @_;
+    Koha::LMSCloud::EventManagement::Bookings->sweep_stale_pending;
+    return;
+}
+
 sub opac_online_payment {
     return;
 }

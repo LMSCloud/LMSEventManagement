@@ -2,7 +2,9 @@ package Koha::LMSCloud::EventManagement::Bookings;
 
 use Modern::Perl;
 
-use Carp qw( croak );
+use Carp      qw( carp croak );
+use DateTime  ();
+use Try::Tiny qw( catch try );
 
 use Koha::Database ();
 
@@ -180,6 +182,50 @@ sub find_by_token {
     my ( $self, $token ) = @_;
     return if !defined $token || $token eq q{};
     return $self->search( { confirmation_token => $token } )->next;
+}
+
+=head2 sweep_stale_pending({ older_than_hours => 24 })
+
+Cancel bookings that have been sitting unconfirmed for too long. Default
+cutoff is 24 hours, matching the design doc's confirmation window. Each
+cancellation runs through Booking->cancel, which promotes one waitlisted
+attendee per freed seat and dispatches the cancellation letter. Returns
+the number of bookings canceled. Per-booking failures are carped and the
+sweep continues.
+
+=cut
+
+sub sweep_stale_pending {
+    my ( $class, $args ) = @_;
+    my $hours = $args->{older_than_hours} // 24;
+
+    my $schema = Koha::Database->new->schema;
+    my $dtf    = $schema->storage->datetime_parser;
+    my $cutoff = $dtf->format_datetime(
+        DateTime->now( time_zone => 'UTC' )->subtract( hours => $hours )
+    );
+
+    my $stale = $class->new->search(
+        {   confirmed_at => undef,
+            created_at   => { '<' => $cutoff },
+        }
+    );
+
+    my $count = 0;
+    while ( my $booking = $stale->next ) {
+        my $has_pending = $booking->attendees->search( { status => 'pending' } )->count;
+        next if !$has_pending;
+
+        try {
+            $booking->cancel;
+            $count++;
+        }
+        catch {
+            carp 'sweep_stale_pending: cancel failed for booking ' . $booking->id . ": $_";
+        };
+    }
+
+    return $count;
 }
 
 sub _generate_token {
