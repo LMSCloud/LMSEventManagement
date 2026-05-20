@@ -81,6 +81,19 @@ sub upgrade() {
 
     return try {
         my $last_migration = $args->{plugin}->retrieve_data($CURRENT_MIGRATION_KEY);
+
+        # Defend against the counter outliving the schema. If uninstall()
+        # dropped the tables without clearing plugin_data, retrieve_data
+        # still returns the old high-water mark and the loop below would
+        # skip every migration, leaving the schema empty. Treat that case
+        # as a fresh install — the CREATE TABLE / CREATE INDEX statements
+        # are idempotent, and later ALTER migrations only re-run when
+        # their predecessor really hasn't been applied.
+        if ( defined $last_migration && !$self->_schema_is_present ) {
+            carp "__CURRENT_MIGRATION__=$last_migration but no plugin tables exist; re-applying all migrations.";
+            $last_migration = 0;
+        }
+
         if ( !defined $last_migration ) {
             carp <<~"MESSAGE";
                 No last migration found. This is likely a mistake as there should
@@ -136,6 +149,26 @@ sub upgrade() {
         carp "UPGRADE ERROR: $error";
         return 0;
     };
+}
+
+sub _schema_is_present {
+    my ($self) = @_;
+
+    my @table_names = map { $self->table_name_mappings->{$_} }
+        grep { !/_idx$/smx }
+        keys %{ $self->table_name_mappings || {} };
+
+    return 1 unless @table_names;
+
+    my $placeholders = join q{,}, (q{?}) x scalar @table_names;
+    my $sth          = $self->dbh->prepare(
+        "SELECT COUNT(*) FROM information_schema.tables
+         WHERE table_schema = DATABASE() AND table_name IN ($placeholders)"
+    );
+    $sth->execute(@table_names);
+    my ($count) = $sth->fetchrow_array;
+
+    return $count ? 1 : 0;
 }
 
 sub _get_migration_files {
