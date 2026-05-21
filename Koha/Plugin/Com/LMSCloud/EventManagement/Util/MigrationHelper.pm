@@ -154,9 +154,10 @@ sub upgrade() {
 sub _schema_is_present {
     my ($self) = @_;
 
-    my @table_names = map { $self->table_name_mappings->{$_} }
-        grep { !/_idx$/smx }
-        keys %{ $self->table_name_mappings || {} };
+    my @table_names
+        = map  { $self->table_name_mappings->{$_} }
+          grep { !/_idx$/smx }
+          keys %{ $self->table_name_mappings || {} };
 
     return 1 unless @table_names;
 

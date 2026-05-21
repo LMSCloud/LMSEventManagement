@@ -52,3 +52,16 @@ done < <(find "$VENDOR_DIR" \
     -type f -name '*.pm' -print0)
 
 echo "Util modules synced into $SHORT_NAME namespace."
+
+# Mirror Perl tooling configs (formatter / linter / import rewrite rules)
+# from the vendor root to the project root. No namespace rewrite -- these
+# are repo-global tooling configs, not Perl modules.
+for cfg in .perltidyrc .perlcriticrc .perlimports.toml; do
+    src="$VENDOR_DIR/$cfg"
+    if [[ ! -f "$src" ]]; then
+        echo "Skipped tooling config: $cfg (not present in vendor)"
+        continue
+    fi
+    cp "$src" "$PROJECT_ROOT/$cfg"
+    echo "Synced tooling config: $cfg"
+done
