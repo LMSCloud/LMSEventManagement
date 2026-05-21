@@ -31,14 +31,14 @@ height; the filter bar grows by one row when chips are present.
 
 | Property | Default | Effect |
 |---|---|---|
-| `--lms-events-sidebar-top-without-chips` | `11rem` | Sidebar top offset when no filter chips are rendered. |
-| `--lms-events-sidebar-top-with-chips` | `14rem` | Sidebar top offset when chips are present. |
-| `--lms-events-sidebar-top` | (computed) | Resolved value applied to the sidebar's `top` / `max-height` and to `grid-auto-rows`. Override directly only if both states should use the same offset. |
+| `--lmsem-sidebar-top-without-chips` | `11rem` | Sidebar top offset when no filter chips are rendered. |
+| `--lmsem-sidebar-top-with-chips` | `14rem` | Sidebar top offset when chips are present. |
+| `--lmsem-sidebar-top` | (computed) | Resolved value applied to the sidebar's `top` / `max-height` and to `grid-auto-rows`. Override directly only if both states should use the same offset. |
 
 Selection between the two is driven by a reflected `has-active-filters` boolean
 attribute on `<lms-events-filter>` — the matching `:not([has-active-filters])` /
 `[has-active-filters]` rules inside the shadow DOM swap the resolved
-`--lms-events-sidebar-top` automatically.
+`--lmsem-sidebar-top` automatically.
 
 ### Recipe: taller filter bar
 
@@ -47,8 +47,8 @@ search row), bump both knobs in lockstep:
 
 ```css
 lms-events-view {
-    --lms-events-sidebar-top-without-chips: 13rem;
-    --lms-events-sidebar-top-with-chips: 16rem;
+    --lmsem-sidebar-top-without-chips: 13rem;
+    --lmsem-sidebar-top-with-chips: 16rem;
 }
 ```
 

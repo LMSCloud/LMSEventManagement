@@ -155,24 +155,22 @@ export default class LMSEventsView extends LitElement {
          * tuned to clear the filter's rendered height in each state.
          * Override via OPACUserCSS to fit a different filter layout.
          *
-         *   --lms-events-sidebar-top: applied to .compact-list top /
+         *   --lmsem-sidebar-top: applied to .compact-list top /
          *       max-height and to .opac-layout--with-sidebar's row min,
          *       so the grid row hosting the sidebar is always tall enough
          *       for sticky to engage even with a short main column.
          */
         :host {
-            --lms-events-sidebar-top-without-chips: 11rem;
-            --lms-events-sidebar-top-with-chips: 14rem;
+            --lmsem-sidebar-top-without-chips: 11rem;
+            --lmsem-sidebar-top-with-chips: 14rem;
         }
 
         lms-events-filter:not([has-active-filters]) .opac-layout--with-sidebar {
-            --lms-events-sidebar-top: var(
-                --lms-events-sidebar-top-without-chips
-            );
+            --lmsem-sidebar-top: var(--lmsem-sidebar-top-without-chips);
         }
 
         lms-events-filter[has-active-filters] .opac-layout--with-sidebar {
-            --lms-events-sidebar-top: var(--lms-events-sidebar-top-with-chips);
+            --lmsem-sidebar-top: var(--lmsem-sidebar-top-with-chips);
         }
 
         @media (min-width: 1024px) {
@@ -182,15 +180,15 @@ export default class LMSEventsView extends LitElement {
                 gap: 1.25rem;
                 align-items: start;
                 grid-auto-rows: minmax(
-                    calc(100vh - var(--lms-events-sidebar-top)),
+                    calc(100vh - var(--lmsem-sidebar-top)),
                     auto
                 );
             }
 
             .compact-list {
                 position: sticky;
-                top: var(--lms-events-sidebar-top);
-                max-height: calc(100vh - var(--lms-events-sidebar-top));
+                top: var(--lmsem-sidebar-top);
+                max-height: calc(100vh - var(--lmsem-sidebar-top));
                 margin-bottom: 0;
             }
 
