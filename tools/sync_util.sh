@@ -32,16 +32,23 @@ fi
 
 mkdir -p "$TARGET_DIR"
 
-# Copy .pm files and rewrite package namespace
-for src in "$VENDOR_DIR"/*.pm; do
-    filename="$(basename "$src")"
-    dest="$TARGET_DIR/$filename"
+# Walk every .pm under the vendor root (skipping VCS / test trees) and
+# rewrite the package namespace in place, preserving the directory layout
+# under TARGET_DIR. This lets the vendor ship nested modules
+# (e.g. Reporting/Metric/Counter.pm) without losing the namespace
+# rewrite that consumers depend on.
+while IFS= read -r -d '' src; do
+    rel="${src#"$VENDOR_DIR/"}"
+    dest="$TARGET_DIR/$rel"
 
+    mkdir -p "$(dirname "$dest")"
     sed \
         -e "s/Koha::Plugin::Com::LMSCloud::Util::/Koha::Plugin::Com::LMSCloud::${SHORT_NAME}::Util::/g" \
         "$src" > "$dest"
 
-    echo "Synced: $filename"
-done
+    echo "Synced: $rel"
+done < <(find "$VENDOR_DIR" \
+    \( -name .git -o -name t \) -prune -o \
+    -type f -name '*.pm' -print0)
 
 echo "Util modules synced into $SHORT_NAME namespace."
