@@ -210,13 +210,16 @@ sub _normalize_params {
 sub _filter_events {
     my ( $c, $params ) = @_;
 
-    my $events_set   = Koha::LMSCloud::EventManagement::Events->new;
-    my $defined_keys = [ grep { defined $params->{$_} } keys %{$params} ];
-    if ( @{$defined_keys} ) {
-        for my $defined_key ( @{$defined_keys} ) {
-            delete $c->validation->output->{$defined_key};
-        }
-    }
+    my $events_set = Koha::LMSCloud::EventManagement::Events->new;
+
+    # These params carry plugin-specific filter semantics and are applied via
+    # filter() (and compose_fees_search_params) below. Remove them from the
+    # request params so Koha's objects->search -- which reads
+    # $c->req->params->to_hash, not the validation output -- does not ALSO apply
+    # them as plain column matches (e.g. start_time = <value>, which never
+    # matches and yields an empty resultset).
+    $c->req->params->remove($_) for keys %{$params};
+
     $events_set = $events_set->filter($params);
 
     my $fees_search_params = $events_set->compose_fees_search_params($params);
