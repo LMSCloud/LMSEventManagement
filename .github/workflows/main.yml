@@ -49,61 +49,31 @@ jobs:
       run: |
         sudo sysctl -w vm.max_map_count=262144
         IFS='/' read -r -a parts <<< "$GITHUB_REPOSITORY"
-        export GITHUB_REPO="${parts[1]}"
-        export SYNC_REPO="$(cd .. && pwd)/koha"
-        export LOCAL_USER_ID="$(id -u)"
-        export KOHA_INTRANET_URL="http://127.0.0.1:8081"
-        export KOHA_MARC_FLAVOUR="marc21"
-        export RUN_TESTS_AND_EXIT="no"
-        export KOHA_IMAGE="main"
-        echo "GITHUB_REPO=$GITHUB_REPO" >> "$GITHUB_ENV"
-        echo "SYNC_REPO=$SYNC_REPO" >> "$GITHUB_ENV"
-        echo "LOCAL_USER_ID=$LOCAL_USER_ID" >> "$GITHUB_ENV"
-        echo "KOHA_INTRANET_URL=$KOHA_INTRANET_URL" >> "$GITHUB_ENV"
-        echo "KOHA_MARC_FLAVOUR=$KOHA_MARC_FLAVOUR" >> "$GITHUB_ENV"
-        echo "RUN_TESTS_AND_EXIT=$RUN_TESTS_AND_EXIT" >> "$GITHUB_ENV"
-        echo "KOHA_IMAGE=$KOHA_IMAGE" >> "$GITHUB_ENV"
-        wget -O docker-compose.yml https://gitlab.com/koha-community/koha-testing-docker/-/raw/main/docker-compose.yml
-        mkdir -p env
-        wget -O env/defaults.env https://gitlab.com/koha-community/koha-testing-docker/-/raw/main/env/defaults.env
-        cp env/defaults.env .env
-        echo "CACHE_DATE=$(date +%Y-%m-%d)" >> "$GITHUB_ENV"
-
-    - name: Restore Docker image cache
-      id: docker-cache
-      uses: actions/cache/restore@v4
-      with:
-        path: /tmp/docker-images
-        key: docker-koha-${{ env.CACHE_DATE }}-${{ hashFiles('docker-compose.yml') }}
-
-    - name: Load cached Docker images
-      if: steps.docker-cache.outputs.cache-hit == 'true'
-      run: docker load -i /tmp/docker-images/images.tar
-
-    - name: Pull Docker images
-      if: steps.docker-cache.outputs.cache-hit != 'true'
-      run: |
-        docker compose pull
-        mkdir -p /tmp/docker-images
-        docker save $(docker compose config --images) -o /tmp/docker-images/images.tar
-
-    - name: Save Docker image cache
-      if: always() && steps.docker-cache.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
-      with:
-        path: /tmp/docker-images
-        key: docker-koha-${{ env.CACHE_DATE }}-${{ hashFiles('docker-compose.yml') }}
+        cd ..
+        git clone --depth 1 https://gitlab.com/koha-community/koha-testing-docker.git koha-testing-docker
+        cp koha-testing-docker/env/defaults.env koha-testing-docker/.env
+        echo "$(cd koha-testing-docker && pwd)/bin" >> "$GITHUB_PATH"
+        {
+          echo "GITHUB_REPO=${parts[1]}"
+          echo "KTD_HOME=$(cd koha-testing-docker && pwd)"
+          echo "SYNC_REPO=$(pwd)/koha"
+          echo "LOCAL_USER_ID=$(id -u)"
+          echo "KOHA_IMAGE=main"
+          echo "KOHA_MARC_FLAVOUR=marc21"
+          echo "KOHA_INTRANET_URL=http://127.0.0.1:8081"
+          echo "RUN_TESTS_AND_EXIT=no"
+        } >> "$GITHUB_ENV"
 
     - name: Start Koha services
       run: |
-        docker compose -f docker-compose.yml -p koha up --detach
-        docker compose -p koha exec koha apt-get install -y libyaml-syck-perl libemail-valid-perl libmojo-jwt-perl 2>/dev/null || true
+        ktd --name lmseventmanagement up -d
+        docker exec lmseventmanagement-koha-1 apt-get install -y libyaml-syck-perl libemail-valid-perl libmojo-jwt-perl 2>/dev/null || true
 
     - name: Wait for Koha to be ready
       run: |
         echo "Waiting for Koha services to initialize..."
         for i in $(seq 1 60); do
-          if docker compose -p koha exec -T koha perl -e '
+          if docker exec lmseventmanagement-koha-1 perl -e '
             use C4::Context;
             my $dbh = C4::Context->dbh or die;
             $dbh->selectrow_array("SELECT 1 FROM systempreferences LIMIT 1") or die;
@@ -116,18 +86,18 @@ jobs:
 
     - name: Copy plugin and run tests
       run: |
-        docker cp . "$(docker compose -p koha ps -q koha)":/var/lib/koha/kohadev/plugins
-        docker compose -p koha exec koha /kohadevbox/koha/misc/devel/install_plugins.pl
-        docker compose -p koha exec koha bash -c 'prove -v /var/lib/koha/kohadev/plugins/t'
+        docker cp . lmseventmanagement-koha-1:/var/lib/koha/kohadev/plugins
+        docker exec lmseventmanagement-koha-1 /kohadevbox/koha/misc/devel/install_plugins.pl
+        docker exec lmseventmanagement-koha-1 bash -c 'prove -v /var/lib/koha/kohadev/plugins/t'
 
     - name: Show logs on failure
       if: failure()
-      run: docker compose -p koha logs koha 2>&1 | tail -100
+      run: docker logs lmseventmanagement-koha-1 2>&1 | tail -100
 
     - name: Cleanup
       if: always()
       run: |
-        docker compose -p koha down -v 2>/dev/null || true
+        ktd --name lmseventmanagement down 2>/dev/null || true
 
   unit_tests:
     name: Run multi-version compatibility tests
@@ -158,61 +128,31 @@ jobs:
       run: |
         sudo sysctl -w vm.max_map_count=262144
         IFS='/' read -r -a parts <<< "$GITHUB_REPOSITORY"
-        export GITHUB_REPO="${parts[1]}"
-        export SYNC_REPO="$(cd .. && pwd)/koha"
-        export LOCAL_USER_ID="$(id -u)"
-        export KOHA_INTRANET_URL="http://127.0.0.1:8081"
-        export KOHA_MARC_FLAVOUR="marc21"
-        export RUN_TESTS_AND_EXIT="no"
-        export KOHA_IMAGE="main"
-        echo "GITHUB_REPO=$GITHUB_REPO" >> "$GITHUB_ENV"
-        echo "SYNC_REPO=$SYNC_REPO" >> "$GITHUB_ENV"
-        echo "LOCAL_USER_ID=$LOCAL_USER_ID" >> "$GITHUB_ENV"
-        echo "KOHA_INTRANET_URL=$KOHA_INTRANET_URL" >> "$GITHUB_ENV"
-        echo "KOHA_MARC_FLAVOUR=$KOHA_MARC_FLAVOUR" >> "$GITHUB_ENV"
-        echo "RUN_TESTS_AND_EXIT=$RUN_TESTS_AND_EXIT" >> "$GITHUB_ENV"
-        echo "KOHA_IMAGE=$KOHA_IMAGE" >> "$GITHUB_ENV"
-        wget -O docker-compose.yml https://gitlab.com/koha-community/koha-testing-docker/-/raw/main/docker-compose.yml
-        mkdir -p env
-        wget -O env/defaults.env https://gitlab.com/koha-community/koha-testing-docker/-/raw/main/env/defaults.env
-        cp env/defaults.env .env
-        echo "CACHE_DATE=$(date +%Y-%m-%d)" >> "$GITHUB_ENV"
-
-    - name: Restore Docker image cache
-      id: docker-cache
-      uses: actions/cache/restore@v4
-      with:
-        path: /tmp/docker-images
-        key: docker-koha-${{ env.CACHE_DATE }}-${{ hashFiles('docker-compose.yml') }}
-
-    - name: Load cached Docker images
-      if: steps.docker-cache.outputs.cache-hit == 'true'
-      run: docker load -i /tmp/docker-images/images.tar
-
-    - name: Pull Docker images
-      if: steps.docker-cache.outputs.cache-hit != 'true'
-      run: |
-        docker compose pull
-        mkdir -p /tmp/docker-images
-        docker save $(docker compose config --images) -o /tmp/docker-images/images.tar
-
-    - name: Save Docker image cache
-      if: always() && steps.docker-cache.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
-      with:
-        path: /tmp/docker-images
-        key: docker-koha-${{ env.CACHE_DATE }}-${{ hashFiles('docker-compose.yml') }}
+        cd ..
+        git clone --depth 1 https://gitlab.com/koha-community/koha-testing-docker.git koha-testing-docker
+        cp koha-testing-docker/env/defaults.env koha-testing-docker/.env
+        echo "$(cd koha-testing-docker && pwd)/bin" >> "$GITHUB_PATH"
+        {
+          echo "GITHUB_REPO=${parts[1]}"
+          echo "KTD_HOME=$(cd koha-testing-docker && pwd)"
+          echo "SYNC_REPO=$(pwd)/koha"
+          echo "LOCAL_USER_ID=$(id -u)"
+          echo "KOHA_IMAGE=main"
+          echo "KOHA_MARC_FLAVOUR=marc21"
+          echo "KOHA_INTRANET_URL=http://127.0.0.1:8081"
+          echo "RUN_TESTS_AND_EXIT=no"
+        } >> "$GITHUB_ENV"
 
     - name: Start Koha services
       run: |
-        docker compose -f docker-compose.yml -p koha up --detach
-        docker compose -p koha exec koha apt-get install -y libyaml-syck-perl libemail-valid-perl libmojo-jwt-perl 2>/dev/null || true
+        ktd --name lmseventmanagement up -d
+        docker exec lmseventmanagement-koha-1 apt-get install -y libyaml-syck-perl libemail-valid-perl libmojo-jwt-perl 2>/dev/null || true
 
     - name: Wait for Koha to be ready
       run: |
         echo "Waiting for Koha services to initialize..."
         for i in $(seq 1 60); do
-          if docker compose -p koha exec -T koha perl -e '
+          if docker exec lmseventmanagement-koha-1 perl -e '
             use C4::Context;
             my $dbh = C4::Context->dbh or die;
             $dbh->selectrow_array("SELECT 1 FROM systempreferences LIMIT 1") or die;
@@ -225,18 +165,18 @@ jobs:
 
     - name: Copy plugin and run tests
       run: |
-        docker cp . "$(docker compose -p koha ps -q koha)":/var/lib/koha/kohadev/plugins
-        docker compose -p koha exec koha /kohadevbox/koha/misc/devel/install_plugins.pl
-        docker compose -p koha exec koha bash -c 'prove -v /var/lib/koha/kohadev/plugins/t'
+        docker cp . lmseventmanagement-koha-1:/var/lib/koha/kohadev/plugins
+        docker exec lmseventmanagement-koha-1 /kohadevbox/koha/misc/devel/install_plugins.pl
+        docker exec lmseventmanagement-koha-1 bash -c 'prove -v /var/lib/koha/kohadev/plugins/t'
 
     - name: Show logs on failure
       if: failure()
-      run: docker compose -p koha logs koha 2>&1 | tail -100
+      run: docker logs lmseventmanagement-koha-1 2>&1 | tail -100
 
     - name: Cleanup
       if: always()
       run: |
-        docker compose -p koha down -v 2>/dev/null || true
+        ktd --name lmseventmanagement down 2>/dev/null || true
 
   release:
     name: Build & Release
