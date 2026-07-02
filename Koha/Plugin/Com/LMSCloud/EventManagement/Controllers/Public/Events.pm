@@ -30,7 +30,7 @@ sub get {
     return try {
 
         # Fix ambiguous column names in q parameter before processing
-        if ( $c->validation->output->{'q'} ) {
+        if ( $c->req->params->param('q') ) {
             _fix_q_parameter_column_ambiguity($c);
         }
 
@@ -175,7 +175,11 @@ sub _interlace_target_groups {
 sub _fix_q_parameter_column_ambiguity {
     my ($c) = @_;
 
-    my $q_param = $c->validation->output->{q};
+    # Read and write the q via $c->req->params: that is the source
+    # objects->search reads (through ->to_hash), not $c->validation->output.
+    # The public list joins the location table, so an unqualified `name` in the
+    # q is ambiguous -- qualify it to `me.name` before the query runs.
+    my $q_param = $c->req->params->param('q');
     if ( !defined $q_param || $q_param eq '{}' ) {
         return;
     }
@@ -195,7 +199,7 @@ sub _fix_q_parameter_column_ambiguity {
 
     _fix_name_refs_recursive($q_json);
 
-    $c->validation->output->{q} = decode_utf8( encode_json($q_json) );
+    $c->req->params->param( q => decode_utf8( encode_json($q_json) ) );
 }
 
 sub _fix_name_refs_recursive {
