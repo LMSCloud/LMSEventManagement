@@ -67,22 +67,11 @@ jobs:
     - name: Start Koha services
       run: |
         ktd --name lmseventmanagement up -d
-        docker exec lmseventmanagement-koha-1 apt-get install -y libyaml-syck-perl libemail-valid-perl libmojo-jwt-perl 2>/dev/null || true
 
     - name: Wait for Koha to be ready
       run: |
-        echo "Waiting for Koha services to initialize..."
-        for i in $(seq 1 60); do
-          if docker exec lmseventmanagement-koha-1 perl -e '
-            use C4::Context;
-            my $dbh = C4::Context->dbh or die;
-            $dbh->selectrow_array("SELECT 1 FROM systempreferences LIMIT 1") or die;
-          ' 2>/dev/null; then
-            echo "Koha is ready after ~${i}0 seconds."
-            break
-          fi
-          sleep 10
-        done
+        ktd --name lmseventmanagement --wait-ready 300
+        docker exec lmseventmanagement-koha-1 apt-get install -y libyaml-syck-perl libemail-valid-perl libmojo-jwt-perl 2>/dev/null || true
 
     - name: Copy plugin and run tests
       run: |
@@ -146,22 +135,11 @@ jobs:
     - name: Start Koha services
       run: |
         ktd --name lmseventmanagement up -d
-        docker exec lmseventmanagement-koha-1 apt-get install -y libyaml-syck-perl libemail-valid-perl libmojo-jwt-perl 2>/dev/null || true
 
     - name: Wait for Koha to be ready
       run: |
-        echo "Waiting for Koha services to initialize..."
-        for i in $(seq 1 60); do
-          if docker exec lmseventmanagement-koha-1 perl -e '
-            use C4::Context;
-            my $dbh = C4::Context->dbh or die;
-            $dbh->selectrow_array("SELECT 1 FROM systempreferences LIMIT 1") or die;
-          ' 2>/dev/null; then
-            echo "Koha is ready after ~${i}0 seconds."
-            break
-          fi
-          sleep 10
-        done
+        ktd --name lmseventmanagement --wait-ready 300
+        docker exec lmseventmanagement-koha-1 apt-get install -y libyaml-syck-perl libemail-valid-perl libmojo-jwt-perl 2>/dev/null || true
 
     - name: Copy plugin and run tests
       run: |
