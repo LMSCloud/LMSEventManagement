@@ -237,6 +237,9 @@ sub _extract_migration_number {
     return $number;
 }
 
-__PACKAGE__->meta->make_immutable;
+# Deliberately not made immutable: Koha::Plugins->InstallPlugins forgets and
+# recompiles every module under the plugin dirs, and an immutable Moose class
+# cannot be recompiled in the same process (Moose dies in 'add_method'),
+# which breaks plugin installs and upgrades in long-lived Plack workers.
 
 1;
